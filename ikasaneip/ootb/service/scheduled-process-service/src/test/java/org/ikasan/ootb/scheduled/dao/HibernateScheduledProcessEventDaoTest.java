@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduled.dao;
 
+import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.ScheduledProcessEventDao;
@@ -97,6 +98,7 @@ public class HibernateScheduledProcessEventDaoTest {
         scheduledProcessEvent.setSuccessful(false);
         scheduledProcessEvent.setCompletionTime(3000L);
         scheduledProcessEvent.setUser("user");
+        scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
 
         return scheduledProcessEvent;
     }

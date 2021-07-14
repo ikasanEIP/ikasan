@@ -90,9 +90,12 @@
                   column="Successful"
                   not-null="false" />
         <property name="outcome"
-                  type="java.lang.String"
                   column="Outcome"
-                  not-null="false" />
+                  not-null="false">
+            <type name="org.hibernate.type.EnumType">
+                <param name="enumClass">org.ikasan.ootb.scheduled.model.Outcome</param>
+            </type>
+        </property>
         <property name="resultOutput"
                   type="java.lang.String"
                   column="ResultOutput"

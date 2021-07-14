@@ -47,9 +47,7 @@ import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
-import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobKey;
+import org.quartz.*;
 
 import java.util.Date;
 
@@ -69,8 +67,8 @@ public class JobExecutionConverterTest
     }};
 
     JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class,"mockJobExecutionContext");
-    JobDetail jobDetail = mockery.mock(JobDetail.class,"mockJobDetail");
-    JobKey jobKey = new JobKey("name", "group");
+    Trigger trigger = mockery.mock(Trigger.class,"trigger");
+    TriggerKey triggerKey = new TriggerKey("name", "group");
 
     /**
      * Test simple invocation.
@@ -88,14 +86,15 @@ public class JobExecutionConverterTest
                 exactly(1).of(jobExecutionContext).getFireTime();
                 will(returnValue(currentFireDate));
 
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
 
-                exactly(1).of(jobDetail).getDescription();
-                will(returnValue("job detail"));
+                exactly(1).of(trigger).getDescription();
+                will(returnValue("job description"));
 
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
 
                 exactly(2).of(jobExecutionContext).getNextFireTime();
                 will(returnValue(nextFireDate));
@@ -106,7 +105,9 @@ public class JobExecutionConverterTest
 
         Assert.assertEquals(scheduledProcessEvent.getFireTime(),currentFireDate.getTime());
         Assert.assertEquals("moduleName", scheduledProcessEvent.getAgentName());
-        Assert.assertEquals("job detail", scheduledProcessEvent.getJobDescription());
+        Assert.assertEquals("job description", scheduledProcessEvent.getJobDescription());
+        Assert.assertEquals("name", scheduledProcessEvent.getJobName());
+        Assert.assertEquals("group", scheduledProcessEvent.getJobGroup());
         Assert.assertEquals(scheduledProcessEvent.getNextFireTime(),nextFireDate.getTime());
         Assert.assertNull(scheduledProcessEvent.getCommandLine());
         Assert.assertTrue(scheduledProcessEvent.getPid() == 0);
