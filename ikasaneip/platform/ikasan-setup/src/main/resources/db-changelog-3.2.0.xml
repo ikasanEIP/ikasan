@@ -12,6 +12,8 @@
     <!-- 3.2.x cardinality creation -->
 
     <!-- 3.2.x data creation -->
+    <include file="db/data/db-changelog-scheduler-policies.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-business-stream-policies.xml" relativeToChangelogFile="true" />
 
     <!-- 3.2.x index creation -->
 
