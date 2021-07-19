@@ -61,10 +61,4 @@ public class ModuleHousekeepingAutoConfiguration
     {
         return new HousekeepingJobImpl("messageHistoryHousekeepingJob", messageHistoryService, environment);
     }
-
-    @Bean
-    public HousekeepingJob scheduledProcessEventHousekeepingJob(HousekeepService scheduledProcessService, Environment environment)
-    {
-        return new HousekeepingJobImpl("scheduledProcessEventHousekeepingJob", scheduledProcessService, environment);
-    }
 }
