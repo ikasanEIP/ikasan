@@ -100,7 +100,7 @@ import javax.annotation.Resource;
  */
 @Configuration
 @ImportResource( {
-    "classpath:h2-datasource-conf.xml", "classpath:scheduled-process-service-conf.xml"
+    "classpath:h2-datasource-conf.xml"
 } )
 public class ComponentFactory
 {

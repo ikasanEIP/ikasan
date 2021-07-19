@@ -5,7 +5,6 @@
     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
 
     <!-- 3.2.x table creation -->
-    <include file="db/tables/db-changeLog-createScheduledProcessEvent.xml" relativeToChangelogFile="true" />
 
     <!-- 3.2.x table alterations -->
 
