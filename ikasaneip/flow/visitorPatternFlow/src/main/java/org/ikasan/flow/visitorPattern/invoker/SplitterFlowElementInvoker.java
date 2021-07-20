@@ -132,13 +132,13 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
         if (nextFlowElement == null)
         {
             throw new InvalidFlowException("FlowElement [" + flowElement.getComponentName() + "] contains a Splitter, but it has no default transition! "
-                    + "Splitters should never be the last component in a flow");
+                + "Splitters should never be the last component in a flow");
         }
 
         if (payloads == null || payloads.size() == 0)
         {
             throw new SplitterException("FlowElement [" + flowElement.getComponentName() + "] contains a Splitter. "
-                    + "Splitters must return at least one payload.");
+                + "Splitters must return at least one payload.");
         }
 
         if(this.configuration.isSplitEventToListOfPayloads())
@@ -226,27 +226,26 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
                 // Create a new event for each payload; if the payload is a FlowEvent then use that rather than creating another
                 for (Object payload : payloads)
                 {
+                    FlowEvent flowEventForPayload;
                     if (payload instanceof FlowEvent)
                     {
-                        eventList.add((FlowEvent)payload);
+                        flowEventForPayload = (FlowEvent)payload;
                     }
                     else
                     {
-                        eventList.add(eventFactory.newEvent(flowEvent.getIdentifier(), flowEvent.getRelatedIdentifier(),
-                            flowEvent.getTimestamp(), payload));
+                        flowEventForPayload = eventFactory.newEvent(flowEvent.getIdentifier(), flowEvent.getRelatedIdentifier(),
+                            flowEvent.getTimestamp(), payload);
                     }
-                }
 
-                // send each flow event down stream sequentially
-                for (FlowEvent event : eventList)
-                {
-                    notifyListenersAfterElement(flowEventListeners, moduleName, flowName, event, flowElement);
+                    // send each flow event down stream
+                    // Note this is done lazily ie. as each payload is dealt with rather than creating all payload flow events up front as this is more efficient
+                    notifyListenersAfterElement(flowEventListeners, moduleName, flowName, flowEventForPayload, flowElement);
 
                     FlowElement nextFlowElementInRoute = nextFlowElement;
                     while (nextFlowElementInRoute != null)
                     {
-                        notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, event);
-                        nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, event, nextFlowElementInRoute);
+                        notifyFlowInvocationContextListenersSnapEvent(nextFlowElementInRoute, flowEventForPayload);
+                        nextFlowElementInRoute = nextFlowElementInRoute.getFlowElementInvoker().invoke(flowEventListeners, moduleName, flowName, flowInvocationContext, flowEventForPayload, nextFlowElementInRoute);
                     }
                 }
             }
