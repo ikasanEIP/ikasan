@@ -7,6 +7,7 @@ import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.rest.module.dto.ChangeFlowStartupModeDto;
 import org.ikasan.rest.module.dto.ChangeFlowStateDto;
+import org.ikasan.rest.module.dto.ModuleActivationDto;
 import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -42,6 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -183,11 +185,12 @@ public class ModuleControlApplicationTest
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
-            .when(moduleService.getModule("testModule"))
-            .thenReturn(module);
+            .when(moduleService.getModules())
+            .thenReturn(List.of(module));
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator/testModule/activate")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator")
             .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(createModuleActivationDto("activate"))
             .contentType(MediaType.APPLICATION_JSON_VALUE);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -203,11 +206,12 @@ public class ModuleControlApplicationTest
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
-            .when(moduleService.getModule("testModule"))
-            .thenReturn(module);
+            .when(moduleService.getModules())
+            .thenReturn(List.of(module));
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator/testModule/deactivate")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator")
             .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(createModuleActivationDto("deactivate"))
             .contentType(MediaType.APPLICATION_JSON_VALUE);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
@@ -223,16 +227,36 @@ public class ModuleControlApplicationTest
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
-            .when(moduleService.getModule("testModule"))
-            .thenReturn(module);
+            .when(moduleService.getModules())
+            .thenReturn(List.of(module));
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator/testModule/bad-action")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator")
             .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(createModuleActivationDto("bad-action"))
             .contentType(MediaType.APPLICATION_JSON_VALUE);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito.verifyNoMoreInteractions(moduleActivator);
         assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void moduleActivatorNoModuleFound() throws Exception
+    {
+        Mockito
+            .when(moduleService.getModules())
+            .thenReturn(List.of());
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(createModuleActivationDto("activate"))
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito.verifyNoMoreInteractions(moduleActivator);
+        assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+        assertEquals("\"Could not load module!\"", result.getResponse().getContentAsString());
     }
 
     @Test
@@ -419,6 +443,12 @@ public class ModuleControlApplicationTest
             JSONCompareMode.LENIENT);
     }
 
+    private String createModuleActivationDto(String action) throws JsonProcessingException
+    {
+        ModuleActivationDto moduleActivationDto = new ModuleActivationDto();
+        moduleActivationDto.setAction(action);
+        return mapper.writeValueAsString(moduleActivationDto);
+    }
 
     private String createChangeStateDto(String action) throws JsonProcessingException
     {
