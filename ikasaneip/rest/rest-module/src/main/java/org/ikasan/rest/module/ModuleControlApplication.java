@@ -12,13 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -293,33 +292,32 @@ public class ModuleControlApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-        value = "/activator/{moduleName}/{action}")
+        value = "/activator")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity activator(@PathVariable("moduleName") String moduleName,
-                                    @PathVariable("action") String action)
+    public ResponseEntity activator(@RequestBody ModuleActivationDto moduleActivationDto)
     {
         try
         {
-            Module<Flow> module = moduleService.getModule(moduleName);
+            Module<Flow> module = this.getModule();
 
-            if (action.equalsIgnoreCase("activate"))
+            if (moduleActivationDto.getAction().equalsIgnoreCase("activate"))
             {
                 this.moduleActivator.activate(module);
             }
-            else if (action.equalsIgnoreCase("deactivate"))
+            else if (moduleActivationDto.getAction().equalsIgnoreCase("deactivate"))
             {
                 this.moduleActivator.deactivate(module);
             }
             else
             {
-                return new ResponseEntity("Unknown module activation action [" + action + "].", HttpStatus.FORBIDDEN);
+                return new ResponseEntity("Unknown module activation action [" + moduleActivationDto.getAction() + "].", HttpStatus.FORBIDDEN);
             }
         }
         catch (Exception e)
         {
             return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity(String.format("Module action[%s] successfully applied!", action), HttpStatus.OK);
+        return new ResponseEntity(String.format("Module action[%s] successfully applied!", moduleActivationDto.getAction()), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET,
@@ -329,6 +327,21 @@ public class ModuleControlApplication
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         return this.moduleActivator.isActivated(module) ? "activated" : "deactivated";
+    }
+
+    /**
+     * Helper method to get a handle to the module.
+     *
+     * @return
+     */
+    private Module getModule() {
+        AtomicReference<Module> module = new AtomicReference<>();
+
+        this.moduleService.getModules().stream()
+            .findFirst()
+            .ifPresentOrElse(module::set, () -> {throw new RuntimeException("Could not load module!");});
+
+        return module.get();
     }
 
 }
