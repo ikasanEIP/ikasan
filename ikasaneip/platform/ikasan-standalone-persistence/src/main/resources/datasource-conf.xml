@@ -14,6 +14,7 @@
         <entry key="hibernate.transaction.coordinator_class" value="jta" />
         <entry key="hibernate.transaction.jta.platform" value="JBossTS" />
         <entry key="hibernate.connection.autocommit" value="false" />
+        <entry key="hibernate.criteria.literal_handling_mode" value="BIND"/>
     </util:map>
 
     <bean id="ikasanDatasource" name="ikasan.ds" class="org.apache.commons.dbcp2.BasicDataSource">
