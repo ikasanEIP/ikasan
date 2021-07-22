@@ -20,7 +20,7 @@
     
     
     <!-- Baseline change log -->    
-	<include file="db-changeLog-createScheduledProcessEvent.xml" relativeToChangelogFile="true" />
+	<include file="./db/db-changelog-createScheduledProcessEvent.xml" relativeToChangelogFile="true" />
 
 
 </databaseChangeLog>
