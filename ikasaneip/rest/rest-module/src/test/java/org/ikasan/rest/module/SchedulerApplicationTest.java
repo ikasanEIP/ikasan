@@ -2,6 +2,7 @@ package org.ikasan.rest.module;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.rest.module.model.TestFlow;
@@ -81,6 +82,10 @@ public class SchedulerApplicationTest
 
     @Mock
     protected ScheduledConsumer scheduledConsumer;
+
+    @Mock
+    protected ScheduledConsumerConfiguration scheduledConsumerConfiguration;
+
     @Mock
     protected FlowElement scheduledConsumerElement ;
 
@@ -276,6 +281,18 @@ public class SchedulerApplicationTest
         Mockito
             .when(scheduledConsumerElement.getFlowComponent())
             .thenReturn(scheduledConsumer);
+
+        Mockito
+            .when(scheduledConsumer.getConfiguration())
+            .thenReturn(scheduledConsumerConfiguration);
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getJobName())
+            .thenReturn("jobName");
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getJobGroupName())
+            .thenReturn("jobGroup");
 
         Mockito
             .when(scheduledConsumer.getJobDetail())
