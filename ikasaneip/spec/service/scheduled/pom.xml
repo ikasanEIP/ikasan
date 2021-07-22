@@ -56,4 +56,11 @@
     <packaging>jar</packaging>
     <name>Ikasan Specification Message History Service Contracts</name>
     <description>The message history service contracts for the Ikasan Enterprise Integration Platform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>org.quartz-scheduler</groupId>
+            <artifactId>quartz</artifactId>
+        </dependency>
+    </dependencies>
 </project>
