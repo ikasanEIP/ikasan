@@ -255,6 +255,7 @@ public class SchedulerApplicationTest
 
 
     }
+
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
     public void triggerNow() throws Exception
@@ -328,7 +329,155 @@ public class SchedulerApplicationTest
 
 
         assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void triggerNow_null_job_name_etc() throws Exception
+    {
+
+        Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
+        SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
+
+        JobDetailImpl jobDetail = new JobDetailImpl();
+        jobDetail.setName("testName");
+        jobDetail.setGroup("testGroup");
+        Mockito
+            .when(platformScheduler.isShutdown())
+            .thenReturn(false);
+
+        Mockito
+            .when(moduleContainer.getModule("testModule"))
+            .thenReturn(module);
+
+        Mockito
+            .when(flowConfiguration.getConsumerFlowElement())
+            .thenReturn(scheduledConsumerElement);
+
+        Mockito
+            .when(scheduledConsumerElement.getFlowComponent())
+            .thenReturn(scheduledConsumer);
+
+        Mockito
+            .when(scheduledConsumer.getConfiguration())
+            .thenReturn(scheduledConsumerConfiguration);
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getJobName())
+            .thenReturn(null);
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getJobGroupName())
+            .thenReturn(null);
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getDescription())
+            .thenReturn(null);
+
+        Mockito
+            .when(scheduledConsumer.getJobDetail())
+            .thenReturn(jobDetail);
 
 
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+
+        Mockito
+            .verify(platformScheduler).isShutdown();
+
+        Mockito
+            .verify(moduleContainer).getModule("testModule");
+
+        Mockito
+            .verify(flowConfiguration).getConsumerFlowElement();
+
+        Mockito
+            .verify(scheduledConsumerElement,Mockito.times(2)).getFlowComponent();
+
+        Mockito
+            .verify(scheduledConsumer).getJobDetail();
+
+        Mockito
+            .verify(scheduledConsumer).scheduleAsEagerTrigger(Mockito.any(Trigger.class),Mockito.eq(0));
+
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void triggerNow_empty_job_name_etc() throws Exception
+    {
+
+        Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
+        SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
+
+        JobDetailImpl jobDetail = new JobDetailImpl();
+        jobDetail.setName("testName");
+        jobDetail.setGroup("testGroup");
+        Mockito
+            .when(platformScheduler.isShutdown())
+            .thenReturn(false);
+
+        Mockito
+            .when(moduleContainer.getModule("testModule"))
+            .thenReturn(module);
+
+        Mockito
+            .when(flowConfiguration.getConsumerFlowElement())
+            .thenReturn(scheduledConsumerElement);
+
+        Mockito
+            .when(scheduledConsumerElement.getFlowComponent())
+            .thenReturn(scheduledConsumer);
+
+        Mockito
+            .when(scheduledConsumer.getConfiguration())
+            .thenReturn(scheduledConsumerConfiguration);
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getJobName())
+            .thenReturn("");
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getJobGroupName())
+            .thenReturn("");
+
+        Mockito
+            .when(scheduledConsumerConfiguration.getDescription())
+            .thenReturn("");
+
+        Mockito
+            .when(scheduledConsumer.getJobDetail())
+            .thenReturn(jobDetail);
+
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+
+        Mockito
+            .verify(platformScheduler).isShutdown();
+
+        Mockito
+            .verify(moduleContainer).getModule("testModule");
+
+        Mockito
+            .verify(flowConfiguration).getConsumerFlowElement();
+
+        Mockito
+            .verify(scheduledConsumerElement,Mockito.times(2)).getFlowComponent();
+
+        Mockito
+            .verify(scheduledConsumer).getJobDetail();
+
+        Mockito
+            .verify(scheduledConsumer).scheduleAsEagerTrigger(Mockito.any(Trigger.class),Mockito.eq(0));
+
+
+        assertEquals(200, result.getResponse().getStatus());
     }
 }
