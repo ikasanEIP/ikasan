@@ -131,8 +131,11 @@ public class SchedulerApplication
                     {
                         ScheduledConsumer scheduledConsumer = (ScheduledConsumer) consumer;
                         JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
-                        Trigger trigger = newTrigger().withIdentity(scheduledConsumer.getConfiguration().getJobName()
-                            , scheduledConsumer.getConfiguration().getJobGroupName()).forJob(jobDetail).build();
+                        Trigger trigger = newTrigger()
+                            .withIdentity(scheduledConsumer.getConfiguration().getJobName()
+                                , scheduledConsumer.getConfiguration().getJobGroupName())
+                            .withDescription(scheduledConsumer.getConfiguration().getDescription())
+                            .forJob(jobDetail).build();
                         scheduledConsumer.scheduleAsEagerTrigger(trigger, 0);
                     }
                 }

@@ -295,6 +295,10 @@ public class SchedulerApplicationTest
             .thenReturn("jobGroup");
 
         Mockito
+            .when(scheduledConsumerConfiguration.getDescription())
+            .thenReturn("jobDescription");
+
+        Mockito
             .when(scheduledConsumer.getJobDetail())
             .thenReturn(jobDetail);
 
