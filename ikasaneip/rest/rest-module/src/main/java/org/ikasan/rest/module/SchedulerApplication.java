@@ -126,14 +126,16 @@ public class SchedulerApplication
                 FlowElement<Consumer> flowConfigurationConsumerFlowElement = flowConfiguration.getConsumerFlowElement();
                 if (flowConfigurationConsumerFlowElement != null && flowConfigurationConsumerFlowElement.getFlowComponent() != null)
                 {
-                    Consumer consumer = resolveProxiedComponent( flowConfigurationConsumerFlowElement.getFlowComponent() );
+                    Consumer consumer = resolveProxiedComponent( flowConfigurationConsumerFlowElement.getFlowComponent());
                     if (consumer instanceof ScheduledConsumer)
                     {
                         ScheduledConsumer scheduledConsumer = (ScheduledConsumer) consumer;
                         JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
                         Trigger trigger = newTrigger()
-                            .withIdentity(scheduledConsumer.getConfiguration().getJobName()
-                                , scheduledConsumer.getConfiguration().getJobGroupName())
+                            .withIdentity((scheduledConsumer.getConfiguration().getJobName()  != null && !scheduledConsumer.getConfiguration().getJobName().isEmpty())
+                                    ? scheduledConsumer.getConfiguration().getJobName() : "name",
+                                (scheduledConsumer.getConfiguration().getJobGroupName() != null && !scheduledConsumer.getConfiguration().getJobGroupName().isEmpty())
+                                    ? scheduledConsumer.getConfiguration().getJobGroupName() + " (manual fire)" : "group (manual fire)")
                             .withDescription(scheduledConsumer.getConfiguration().getDescription())
                             .forJob(jobDetail).build();
                         scheduledConsumer.scheduleAsEagerTrigger(trigger, 0);
