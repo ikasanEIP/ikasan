@@ -344,7 +344,7 @@
         <version.com.google.guava>30.0-jre</version.com.google.guava>
         <version.tomcat>9.0.46</version.tomcat>
         <version.wiremock>2.8.0</version.wiremock>
-        <version.org.apache.httpcomponents>4.5.10</version.org.apache.httpcomponents>
+        <version.org.apache.httpcomponents>4.5.13</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
         <version.org.junit.jupiter>5.7.0</version.org.junit.jupiter>
