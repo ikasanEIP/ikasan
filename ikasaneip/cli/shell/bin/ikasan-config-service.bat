@@ -56,5 +56,5 @@ IF EXIST %localEnv% (
 IF "%$CONFIG_SERVICE_URL%"=="" SET CONFIG_SERVICE_URL="http://localhost:8880"
 IF "%$CONFIG_SERVICE_BOOTSTRAP_LOCATION%"=="" SET CONFIG_SERVICE_BOOTSTRAP_LOCATION="%USERPROFILE%/bootstrap.properties"
 
-"%JAVA_HOME%"\bin\java --illegal-access=deny -Dspring.cloud.config.enabled=true -Dspring.cloud.bootstrap.location=file:%CONFIG_SERVICE_BOOTSTRAP_LOCATION% -Dspring.cloud.config.uri=%CONFIG_SERVICE_URL% -Dspring.application.name=%MODULE_NAME% -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
+"%JAVA_HOME%\bin\java" --illegal-access=deny -Dspring.cloud.config.enabled=true -Dspring.cloud.bootstrap.location=file:%CONFIG_SERVICE_BOOTSTRAP_LOCATION% -Dspring.cloud.config.uri=%CONFIG_SERVICE_URL% -Dspring.application.name=%MODULE_NAME% -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
 
