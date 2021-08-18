@@ -56,7 +56,7 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -127,14 +127,14 @@ public class ApplicationTest
     // AMQ Broker
     BrokerService broker;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @Before
+    @BeforeEach
     public void start() throws Exception
     {
         // clean up any previous failures that left persisted state
@@ -152,7 +152,7 @@ public class ApplicationTest
         amqTestUtil = new AMQTestUtil(brokerUrl);
     }
 
-    @After
+    @AfterEach
     public void stop() throws Exception
     {
         flow3TestRule.stopFlow();
@@ -161,7 +161,7 @@ public class ApplicationTest
         broker.stop();
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardown()
     {
         server.shutdown();

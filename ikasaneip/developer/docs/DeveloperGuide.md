@@ -319,7 +319,9 @@ public class Application
 {
     public static void main(String[] args)
     {
-        SpringApplication.run(Application.class, args);
+        new SpringApplicationBuilder()
+            .environment(new StandardEncryptableEnvironment())
+            .sources(Application.class).run(args);
     }
 }
 ```

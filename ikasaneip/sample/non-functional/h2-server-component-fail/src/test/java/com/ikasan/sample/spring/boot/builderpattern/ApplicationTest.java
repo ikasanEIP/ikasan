@@ -53,7 +53,7 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.*;
+import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -120,14 +120,14 @@ public class ApplicationTest
     String amqPersistenceBaseDir = "./activemq-data";
     String amqPersistenceDir = amqPersistenceBaseDir + "/localhost/KahaDB";
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server =  Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @Before
+    @BeforeEach
     public void start() throws Exception
     {
 
@@ -143,7 +143,7 @@ public class ApplicationTest
         wiretapTestUtil = new WiretapTestUtil(wiretapService, jobAwareFlowEventListener);
     }
 
-    @After
+    @AfterEach
     public void stop() throws Exception
     {
         flow1TestRule.stopFlow();
@@ -155,7 +155,7 @@ public class ApplicationTest
         broker.stop();
     }
 
-    @AfterClass
+    @AfterAll
     public static void teardown()
     {
         server.shutdown();

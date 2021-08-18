@@ -357,6 +357,7 @@
         <version.javax.validation.api>2.0.1.Final</version.javax.validation.api>
         <version.glassfish.javax.el>3.0.0</version.glassfish.javax.el>
         <version.commons-io>2.8.0</version.commons-io>
+        <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
     </properties>
 
     <!-- Distribution for releases -->
@@ -1599,6 +1600,12 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-config-client</artifactId>
                 <version>${version.spring.cloud.config.client}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${version.org.jasypt.springboot.starter}</version>
             </dependency>
 
             <dependency>
