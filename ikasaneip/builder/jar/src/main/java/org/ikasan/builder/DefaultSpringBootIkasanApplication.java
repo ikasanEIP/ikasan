@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import com.ulisesbocchio.jasyptspringboot.environment.StandardEncryptableEnvironment;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
@@ -48,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.ExitCodeGenerator;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -74,7 +76,9 @@ public final class DefaultSpringBootIkasanApplication implements IkasanApplicati
     public static IkasanApplication createDefaultSpringBootIkasanApplication(Class<?> applicationClass, String[] args)
     {
         logger.debug("Spring boot createDefaultSpringBootIkasanApplication");
-        final ConfigurableApplicationContext context = SpringApplication.run(applicationClass, args);
+        final ConfigurableApplicationContext context = new SpringApplicationBuilder()
+            .environment(new StandardEncryptableEnvironment())
+            .sources(applicationClass).run(args);
         return context.getBean(IkasanApplication.class);
     }
 

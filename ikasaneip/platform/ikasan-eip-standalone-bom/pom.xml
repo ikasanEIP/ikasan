@@ -529,7 +529,6 @@
                         <artifactId>xml-apis</artifactId>
                     </exclusion>
                 </exclusions>
-
             </dependency>
 
             <dependency>
@@ -749,6 +748,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-actuator</artifactId>
                 <version>${version.org.springboot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.ulisesbocchio</groupId>
+                <artifactId>jasypt-spring-boot-starter</artifactId>
+                <version>${version.org.jasypt.springboot.starter}</version>
             </dependency>
 
             <dependency>

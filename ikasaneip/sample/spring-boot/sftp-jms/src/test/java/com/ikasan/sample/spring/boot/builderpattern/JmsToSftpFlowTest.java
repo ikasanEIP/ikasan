@@ -46,9 +46,9 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +94,7 @@ public class JmsToSftpFlowTest
 
     public SftpRule sftp;
 
-    @Before
+    @BeforeEach
     public void setup(){
         sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
@@ -102,7 +102,7 @@ public class JmsToSftpFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Flow"));
     }
 
-    @After
+    @AfterEach
     public void teardown()
     {
         flowTestRule.stopFlow();

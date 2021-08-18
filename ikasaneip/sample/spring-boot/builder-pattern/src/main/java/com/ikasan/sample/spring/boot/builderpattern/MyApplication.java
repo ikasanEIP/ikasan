@@ -40,8 +40,10 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import com.ulisesbocchio.jasyptspringboot.environment.StandardEncryptableEnvironment;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
 /**
  * Sample standalone bootstrap application using the builder pattern.
@@ -53,7 +55,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class MyApplication
 {
     public static void main(String[] args) {
-        SpringApplication.run(MyApplication.class, args);
+        new SpringApplicationBuilder()
+            .environment(new StandardEncryptableEnvironment())
+            .sources(MyApplication.class).run(args);
     }
 
 }
