@@ -1,40 +1,40 @@
 /*
  * $Id:$
  * $URL:$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -60,7 +60,7 @@ import org.ikasan.filetransfer.util.FileUtil;
  * <code>ListEntry</code> as well as other information which facilitates
  * the filtering, comparison and transportation of a received file.
  *
- * @author Ikasan Development Team 
+ * @author Ikasan Development Team
  */
 public class ClientListEntry
 {
@@ -92,9 +92,9 @@ public class ClientListEntry
     /** Complete filename - combined pwd result and filename */
     private String fullPath;
     /** Last accessed time as long */
-    private long Atime;                  
+    private long Atime;
     /** Last modified time as long */
-    private long Mtime;                  
+    private long Mtime;
     /** Last accessed time as a string formatted by jsch (e.g. "1/14/70 12:27 PM") */
     private String AtimeString;
     /** Last modified time as a string formatted by jsch (e.g. "Sat Nov 25 17:36:21 GMT 2006") */
@@ -104,11 +104,11 @@ public class ClientListEntry
     /** Group id (e.g. "501") */
     private String gid;
     /** User  id (e.g. "501") */
-    private String uid;                 
+    private String uid;
     /** Permissions as an int (e.g. "16877") */
     private int permissions;
     /** Permissions as a String (e.g. "drwxr-xr-x") */
-    private String permissionsString;   
+    private String permissionsString;
     /** Additional info (Has not been encountered yet!) */
     private ArrayList<String> extended;
 
@@ -151,7 +151,7 @@ public class ClientListEntry
     {
         this.clientId = clientId;
     }
-    
+
     /**
      * @return the atime
      */
@@ -208,7 +208,7 @@ public class ClientListEntry
      * @return the atimeString
      */
     public String getAtimeString(){
-    
+
         return AtimeString;
     }
 
@@ -448,21 +448,21 @@ public class ClientListEntry
      * Method used to implement the Comparable interface and compare/order
      * <code>ClientListEntries</code> according to the following natural
      * order:
-     * 
+     *
      * <ol>
      *   <li>Uri</li>
      *   <li>LastModified</li>
      *   <li>LastAccessed</li>
      *   <li>Size</li>
      * </ol>
-     * 
+     *
      * @param object The <code>ClientListEntry</code> to compare with this
      * one.
-     * 
+     *
      * @return <code>0</code> if the objects are identical, <code>-1</code> if
      * the object compared to this one is relatively smaller, <code>1</code> if
      * the object compared to this one is relatively bigger.
-     * 
+     *
      * @throws ClassCastException If the <code>object</code> parameter is not of
      * type <code>ClientListEntry</code>
      */
@@ -499,17 +499,17 @@ public class ClientListEntry
         else
             return 1;
     }
-    
+
     /**
      * Used to create a <code>FileFilter</code> object which can
      * be used for persisting/filtering the entry.
-     * 
+     *
      * <p>Note: size is currently downcast from long to int. Maybe change the
      * persist object and table definition to handle this.</p>
-     * 
+     *
      * NOTE:  Order is important due to the Hibernate mapping
-     * 
-     * @return An <code>FileFilter</code> object holding this 
+     *
+     * @return An <code>FileFilter</code> object holding this
      * entry's URI as string, lastModified, lastAccessed and size.
      */
     public FileFilter toPersistObject()
@@ -519,7 +519,7 @@ public class ClientListEntry
             this.getFullPath(),
             this.getDtLastModified(),
             this.getDtLastAccessed(),
-            (int)this.getSize()); 
+            (int)this.getSize());
     }
 
     /**
@@ -535,7 +535,7 @@ public class ClientListEntry
 
         sb.append("]\nURI     = ["); //$NON-NLS-1$
         sb.append(this.uri);
-        
+
         sb.append("]\nLast accessed     = ["); //$NON-NLS-1$
         if (this.dtLastAccessed != null)
         {
@@ -572,7 +572,7 @@ public class ClientListEntry
         {
             sb.append("null"); //$NON-NLS-1$
         }
-        
+
         sb.append("]\nAtime             = ["); //$NON-NLS-1$
         sb.append(this.Atime);
         sb.append("]\nAtimeString       = ["); //$NON-NLS-1$
@@ -592,7 +592,7 @@ public class ClientListEntry
         sb.append("]\nPermissionsString = ["); //$NON-NLS-1$
         sb.append(this.permissionsString);
         sb.append("]\n"); //$NON-NLS-1$
-        
+
         if (this.extended != null)
         {
             for (String i : this.extended)
@@ -617,10 +617,17 @@ public class ClientListEntry
         return convertToUnix(Path.of(convertToUnix(baseDirectory)).relativize(Path.of(parent)).toString());
     }
 
+    /**
+     * This is put in primarily when running sftp on windows boxes - in particular when spinning up a SftpServer
+     * during tests.
+     *
+     * @param path
+     * @return
+     */
     private String convertToUnix(String path)
     {
         String p = FilenameUtils.separatorsToUnix(path);
-        if (path.charAt(1) == ':') {
+        if (path.contains(":") && path.length() > 2 && path.charAt(1) == ':') {
             p = "/" + path.charAt(0) + p.substring(2);
         }
         return FileUtil.removeDoubleSlashIfPresent(p);
