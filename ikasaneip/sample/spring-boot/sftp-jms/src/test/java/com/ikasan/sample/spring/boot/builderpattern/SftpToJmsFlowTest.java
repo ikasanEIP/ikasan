@@ -48,6 +48,7 @@ import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -72,6 +73,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Disabled
 public class SftpToJmsFlowTest
 {
     private static String SAMPLE_MESSAGE = "Hello world!";
