@@ -924,6 +924,43 @@ public class MyConverter implements Converter<String,Integer>,
     }
 }
 ```
+## Encrypting Clear Text Passwords
+Ikasan supports the encryption of sensitive configuration properties in the Spring Boot application.properties file using Java Simplified Encryption 
+(http://www.jasypt.org/) and jasypt-spring-boot (https://github.com/ulisesbocchio/jasypt-spring-boot). 
+
+The [sample encrypted properties](../../sample/non-functional/encrypted-properties) module is a working example of an Ikasan module that employs property encryption. 
+In order encrypt properties the following steps are required.
+
+Generate a private key:
+```
+openssl genpkey -algorithm RSA -out <key-name>.pem -pkeyopt rsa_keygen_bits:2048
+```
+Generate a public key from the private key:
+```
+openssl rsa -pubout -in <key-name>.pem -out <key-name>_pub.pem
+```
+
+Store the keys in a secure location.
+
+[PropertyEncryptor.java](../../sample/non-functional/encrypted-properties/src/test/java/com/ikasan/sample/spring/boot/builderpattern/PropertyEncryptor.java) provides a sample implementation
+of an approach to using the public key in order to encrypt a property value. In this case the default H2 password.
+
+In the application.properties file add the encrypted password to the properties file. It must be prefixed with 'ENC(' and with a ')' suffix.
+
+```
+datasource.password=ENC(uXO66pHlRQGR9mNBtSpCALrJPHvJ1hfgM+zDqRWUYWSWic4pM/uOduNZa+LkJuONiOwbQjbecDJwfLN0wPs4XWIs/1xV+feDpdK62+UygY1ePxjzUJlAUDBa7eXqqlmsmEq9LGuR3BVtXjMd0s2Jihy8FVD+9WmJ3HlQQv4N9JlOHjt+vBWsoh+Hof/IJEY7y80FFp2ABBy1MOt/c/52fIXzz8nlqEXKUbA4HYpUGU01+mwcnF/UhP75KWo5UK4uUcSU9jgm7dRa+iuSp67IFLhgTJ/gg5x/wWzMq/Rf/7rVHa1Rf0nNaLXzykc9tPaJIogWbfHqvvNPtt8/mxKG3g==)
+```
+
+Details of the private key location must also be shared with the Spring Boot application in the properties file.
+
+```
+# encryption configuration
+jasypt.encryptor.private-key-format=pem
+jasypt.encryptor.private-key-location=<path-to-private-key>/jasypt.pem
+```
+
+The application will now bootstrap and delegate to jasypt to decrypt all encrypted values in the application.properties file.
+
 ## Testing
 TOOO
 ### Unit Testing
