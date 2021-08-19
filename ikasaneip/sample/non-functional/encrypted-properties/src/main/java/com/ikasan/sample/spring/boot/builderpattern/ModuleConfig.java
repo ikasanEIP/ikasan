@@ -64,66 +64,27 @@ public class ModuleConfig
 {
     @Resource
     private BuilderFactory builderFactory;
-    @Resource
-    private ComponentFactory componentFactory;
-
-    public static int  EVENT_GENERATOR_COUNT = 10000;
 
     @Bean
     public Module getModule()
     {
         // get the builders
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("Component Stress Test Module");
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("Encrypted Properties Test Module");
 
         // event generating flow
         Flow splitterPerformanceFlow = moduleBuilder
-                .getFlowBuilder("splitter stress flow")
-                .withDescription("Stress test splitter.")
-                .consumer("Event Generating Consumer", builderFactory.getComponentBuilder()
-                        .eventGeneratingConsumer().setEndpointEventProvider( new TechEndpointEventProvider()))
-                .splitter("splitter", builderFactory.getComponentBuilder().listSplitter(), Configuration.splitterInvoker().withSplitAsIndividualEvents())
+                .getFlowBuilder("sample flow")
+                .withDescription("Sample of encrypted properties flow.")
+                .consumer("Consumer", builderFactory.getComponentBuilder()
+                        .fileConsumer().setFilenames(List.of("test")).setCronExpression("0 0 0 * * ?"))
+                .splitter("Splitter", builderFactory.getComponentBuilder().listSplitter(), Configuration.splitterInvoker().withSplitAsIndividualEvents())
                 .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer()).build();
 
-        Module module = moduleBuilder.withDescription("Component Stress Test Flows.")
+        Module module = moduleBuilder.withDescription("Sample of encrypted properties module.")
                 .addFlow(splitterPerformanceFlow)
             .build();
 
         return module;
     }
 
-    class TechEndpointEventProvider implements EndpointEventProvider<List<String>>
-    {
-        long count;
-        List<String> event = new ArrayList<String>();
-        boolean rollback;
-
-        @Override
-        public List<String> getEvent()
-        {
-            if(rollback)
-            {
-                rollback = false;
-                return event;
-            }
-
-            event.clear();
-            for(int i=0; i<5 && count < EVENT_GENERATOR_COUNT; i++)
-            {
-                event.add("Test Message " + ++count);
-            }
-
-            if(event.size() > 0)
-            {
-                return event;
-            }
-
-            return null;
-        }
-
-        @Override
-        public void rollback()
-        {
-            this.rollback = true;
-        }
-    }
 }
