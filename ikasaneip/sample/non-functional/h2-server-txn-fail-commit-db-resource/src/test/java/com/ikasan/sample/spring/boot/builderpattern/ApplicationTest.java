@@ -56,6 +56,7 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;

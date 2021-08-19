@@ -56,6 +56,7 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
+import org.junit.Assert;
 import org.junit.jupiter.api.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -88,6 +89,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Disabled
 public class ApplicationTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
