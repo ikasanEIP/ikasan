@@ -929,7 +929,7 @@ Ikasan supports the encryption of sensitive configuration properties in the Spri
 (http://www.jasypt.org/) and jasypt-spring-boot (https://github.com/ulisesbocchio/jasypt-spring-boot). 
 
 The [sample encrypted properties](../../sample/non-functional/encrypted-properties) module is a working example of an Ikasan module that employs property encryption. 
-In order encrypt properties the following steps are required.
+In order to encrypt properties the following steps are required.
 
 Generate a private key:
 ```
