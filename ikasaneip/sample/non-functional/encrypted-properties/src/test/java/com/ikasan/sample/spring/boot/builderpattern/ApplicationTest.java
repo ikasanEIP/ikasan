@@ -41,22 +41,15 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.h2.tools.Server;
-import org.ikasan.nonfunctional.test.util.WiretapTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.ikasan.spec.wiretap.WiretapEvent;
-import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -107,7 +100,7 @@ public class ApplicationTest
     {
         // All we want to is bootstrap, start and stop the flow!
         // event generator publishing to JMS topic
-        splitterFlowTestRule.withFlow(moduleUnderTest.getFlow("splitter stress flow"));
+        splitterFlowTestRule.withFlow(moduleUnderTest.getFlow("sample flow"));
 
         // start flows right to left
         splitterFlowTestRule.startFlow();
