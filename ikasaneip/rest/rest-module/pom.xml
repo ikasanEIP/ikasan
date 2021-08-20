@@ -203,12 +203,7 @@
             <artifactId>spring-boot-test</artifactId>
             <version>${version.org.springboot}</version>
             <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-            </exclusions>
+
         </dependency>
 
         <dependency>

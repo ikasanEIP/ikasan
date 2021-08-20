@@ -59,7 +59,7 @@ public class TranslatorInvokerConfigurationBuilderTest
     {
         TranslatorInvokerConfigurationBuilder ticb = new TranslatorInvokerConfigurationBuilder(new TranslatorInvokerConfiguration());
 
-        Assert.assertTrue("TranslatorInvokerConfiguration should have 2 properties", TestUtils.getFields(TranslatorInvokerConfiguration.class).size() == 2);
+        Assert.assertTrue("TranslatorInvokerConfiguration should have 4 properties", TestUtils.getFields(TranslatorInvokerConfiguration.class).size() == 4);
         Assert.assertFalse("TranslatorInvokerConfiguration should be false", ticb.withDynamicConfiguration(false).build().isDynamicConfiguration());
         Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withDynamicConfiguration(true).build().isDynamicConfiguration());
         Assert.assertFalse("TranslatorInvokerConfiguration should be false", ticb.withApplyTranslator(false).build().isApplyTranslator());

@@ -59,7 +59,7 @@ public class SplitterInvokerConfigurationBuilderTest
     {
         SplitterInvokerConfigurationBuilder sicb = new SplitterInvokerConfigurationBuilder(new SplitterInvokerConfiguration());
 
-        Assert.assertTrue("SplitterInvokerConfiguration should have 2 properties", TestUtils.getFields(SplitterInvokerConfiguration.class).size() == 2);
+        Assert.assertTrue("SplitterInvokerConfiguration should have 4 properties", TestUtils.getFields(SplitterInvokerConfiguration.class).size() == 4);
         Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.withDynamicConfiguration(false).build().isDynamicConfiguration());
         Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
 
