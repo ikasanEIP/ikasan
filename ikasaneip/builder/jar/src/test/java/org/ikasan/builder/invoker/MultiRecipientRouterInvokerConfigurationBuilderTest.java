@@ -59,7 +59,7 @@ public class MultiRecipientRouterInvokerConfigurationBuilderTest
     {
         MultiRecipientRouterInvokerConfigurationBuilder mrricb = new MultiRecipientRouterInvokerConfigurationBuilder(new MultiRecipientRouterInvokerConfiguration());
 
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should have 2 properties", TestUtils.getFields(MultiRecipientRouterInvokerConfiguration.class).size() == 2);
+        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should have 4 properties", TestUtils.getFields(MultiRecipientRouterInvokerConfiguration.class).size() == 4);
         Assert.assertFalse("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withDynamicConfiguration(false).build().isDynamicConfiguration());
         Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withDynamicConfiguration(true).build().isDynamicConfiguration());
         Assert.assertFalse("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withCloneEventPerRoute(false).build().isCloneEventPerRoute());

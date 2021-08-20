@@ -341,7 +341,7 @@
         <version.org.apache.httpcomponents>4.5.13</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
-        <version.org.junit.jupiter>5.7.0</version.org.junit.jupiter>
+        <version.org.junit.jupiter>5.7.2</version.org.junit.jupiter>
         <version.jacoco>0.8.7</version.jacoco>
         <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
@@ -1541,6 +1541,22 @@
                         <groupId>org.ow2.asm</groupId>
                         <artifactId>asm</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-junit-jupiter</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.jupiter</groupId>
+                        <artifactId>junit-jupiter-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.junit.vintage</groupId>
+                        <artifactId>junit-vintage-engine</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1949,6 +1965,18 @@
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
+                <version>${version.org.junit.jupiter}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${version.org.junit.jupiter}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
                 <version>${version.org.junit.jupiter}</version>
             </dependency>
 
