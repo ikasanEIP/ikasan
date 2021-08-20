@@ -56,8 +56,7 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.Assert;
-import org.junit.jupiter.api.*;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +88,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Disabled
+@Ignore
 public class ApplicationTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -128,14 +127,14 @@ public class ApplicationTest
     // AMQ Broker
     BrokerService broker;
 
-    @BeforeAll
+    @BeforeClass
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @BeforeEach
+    @Before
     public void start() throws Exception
     {
         // clean up any previous failures that left persisted state
@@ -153,7 +152,7 @@ public class ApplicationTest
         amqTestUtil = new AMQTestUtil(brokerUrl);
     }
 
-    @AfterEach
+    @After
     public void stop() throws Exception
     {
         flow3TestRule.stopFlow();
@@ -169,7 +168,7 @@ public class ApplicationTest
         FileTestUtil.deleteFile(new File(objectStoreDir));
     }
 
-    @AfterAll
+    @AfterClass
     public static void teardown()
     {
         server.shutdown();
