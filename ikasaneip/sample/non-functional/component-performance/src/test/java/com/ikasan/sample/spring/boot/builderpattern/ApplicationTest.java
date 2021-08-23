@@ -40,6 +40,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import org.apache.activemq.broker.BrokerService;
 import org.h2.tools.Server;
 import org.ikasan.nonfunctional.test.util.WiretapTestUtil;
 import org.ikasan.spec.flow.Flow;
@@ -50,10 +51,10 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,20 +109,20 @@ public class ApplicationTest
     // test utils
     WiretapTestUtil wiretapTestUtil;
 
-    @BeforeAll
+    @BeforeClass
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @BeforeEach
+    @Before
     public void start() throws Exception
     {
         wiretapTestUtil = new WiretapTestUtil(wiretapService, jobAwareFlowEventListener);
     }
 
-    @AfterAll
+    @AfterClass
     public static void teardown()
     {
         server.shutdown();

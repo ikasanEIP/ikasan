@@ -46,9 +46,9 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.ftp.FtpRule;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -95,7 +95,7 @@ public class JmsToFtpFlowTest
     public FtpRule ftp;
 
 
-    @BeforeEach
+    @Before
     public void setup(){
         ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
         ftp.start();
@@ -103,7 +103,7 @@ public class JmsToFtpFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Ftp Flow"));
     }
 
-    @AfterEach
+    @After
     public void teardown()
     {
         flowTestRule.stopFlow();

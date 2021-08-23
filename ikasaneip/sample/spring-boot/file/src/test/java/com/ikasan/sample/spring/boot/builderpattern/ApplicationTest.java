@@ -48,8 +48,8 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -103,8 +103,7 @@ public class ApplicationTest
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
 
-    @AfterEach
-    public void shutdown() throws IOException
+    @After public void shutdown() throws IOException
     {
         flowTestRule.stopFlow();
 

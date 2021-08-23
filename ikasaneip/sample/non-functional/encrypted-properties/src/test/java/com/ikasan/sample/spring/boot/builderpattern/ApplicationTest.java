@@ -44,9 +44,9 @@ import org.h2.tools.Server;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,14 +81,14 @@ public class ApplicationTest
     // h2 server instance
     static Server server;
 
-    @BeforeAll
+    @Before
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @AfterAll
+    @After
     public static void teardown()
     {
         server.shutdown();

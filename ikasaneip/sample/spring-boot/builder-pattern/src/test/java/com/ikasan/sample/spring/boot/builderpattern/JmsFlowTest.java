@@ -44,9 +44,9 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringRunner.class)
@@ -93,7 +93,7 @@ public class JmsFlowTest
 
     private  MessageListenerVerifier messageListenerVerifier;
 
-    @BeforeEach
+    @Before
     public void setup(){
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Flow"));
@@ -102,7 +102,7 @@ public class JmsFlowTest
 
     }
 
-    @AfterEach
+    @After
     public void shutdown(){
         flowTestRule.stopFlow();
         messageListenerVerifier.stop();
