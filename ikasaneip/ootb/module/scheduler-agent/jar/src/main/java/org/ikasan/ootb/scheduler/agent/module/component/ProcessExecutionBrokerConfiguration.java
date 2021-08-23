@@ -41,9 +41,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Process Execution Broker Configuration.
@@ -52,14 +50,26 @@ import java.util.Map;
  */
 public class ProcessExecutionBrokerConfiguration
 {
+    // command line to be executed
     String commandLine;
-    String workingDirectory;
-    List<String> successfulReturnCodes = new ArrayList<String>();
-    long secondsToWaitForProcessStart = 10L;
-    String stdErr;
-    String stdOut;
-    boolean retryOnFail;
 
+    // working directory from which to execute the command line
+    String workingDirectory;
+
+    // allow the return codes that represent success be defined by the user
+    List<String> successfulReturnCodes = new ArrayList<String>();
+
+    // number of seconds to wait for the process to start before we report the status
+    long secondsToWaitForProcessStart = 10L;
+
+    // standard error path
+    String stdErr;
+
+    // standard output path
+    String stdOut;
+
+    // whether we should retry on failure
+    boolean retryOnFail;
 
     public List<String> getSuccessfulReturnCodes()
     {
@@ -136,6 +146,9 @@ public class ProcessExecutionBrokerConfiguration
     {
         return "ProcessExecutionBrokerConfiguration{" +
             "commandLine='" + commandLine + '\'' +
+            ", workingDirectory='" + workingDirectory + '\'' +
+            ", successfulReturnCodes=" + successfulReturnCodes +
+            ", secondsToWaitForProcessStart=" + secondsToWaitForProcessStart +
             ", stdErr='" + stdErr + '\'' +
             ", stdOut='" + stdOut + '\'' +
             ", retryOnFail=" + retryOnFail +

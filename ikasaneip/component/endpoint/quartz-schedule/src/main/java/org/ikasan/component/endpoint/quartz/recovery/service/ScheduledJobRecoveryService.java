@@ -38,14 +38,27 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.component.endpoint.quartz.recovery.service;
 
 /**
- * Interface representing a factory for flow creation.
+ * This generic Scheduler recovery Interface.
  *
  * @author Ikasan Development Team
  */
-public interface FlowFactory
+public interface ScheduledJobRecoveryService<CONTEXT>
 {
-    Flow newInstance(String flowName);
+    /**
+     * Save the given context representing a scheduled job recovery.
+     * @param context
+     */
+    void save(CONTEXT context);
+
+    /**
+     * Is a recovery required for the given name and group based on the specified time tolerance.
+     * @param name
+     * @param group
+     * @param tolerance
+     * @return
+     */
+    boolean isRecoveryRequired(String name, String group, long tolerance);
 }

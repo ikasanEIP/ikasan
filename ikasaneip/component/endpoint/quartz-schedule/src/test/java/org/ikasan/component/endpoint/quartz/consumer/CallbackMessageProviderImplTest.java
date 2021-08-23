@@ -184,6 +184,9 @@ public class CallbackMessageProviderImplTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 

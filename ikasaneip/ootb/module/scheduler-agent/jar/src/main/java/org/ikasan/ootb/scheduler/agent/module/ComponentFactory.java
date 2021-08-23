@@ -121,7 +121,7 @@ public class ComponentFactory
     Broker getProcessExecutionBroker()
     {
         ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
-        configuration.setCommandLine("pwd");
+        configuration.setCommandLine("pwd");    // default safe command across all platforms
 
         ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
         processExecutionBroker.setConfiguration(configuration);

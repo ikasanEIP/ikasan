@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.management.ManagedLifecycle;
@@ -136,6 +137,8 @@ public class ScheduledConsumer<T>
     /** resubmission event factory */
     private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
+    private ScheduledJobRecoveryService scheduledJobRecoveryService;
+
     /**
      * Constructor
      *
@@ -171,7 +174,21 @@ public class ScheduledConsumer<T>
             }
 
             TriggerBuilder triggerBuilder = newTriggerFor(jobName, jobGroupName);
-            Trigger trigger = getBusinessTrigger(triggerBuilder);
+            Trigger trigger;
+
+            // check if last invocation was successful
+            if(consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService.isRecoveryRequired(jobGroupName, jobName, consumerConfiguration.getRecoveryTolerance()))
+            {
+                // schedule a callback through recovery trigger
+                trigger = triggerBuilder
+                    .startNow()
+                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
+            }
+            else
+            {
+                trigger = getBusinessTrigger(triggerBuilder);
+            }
+
             if(getConfiguration().getPassthroughProperties() != null)
             {
                 for(Map.Entry<String,String> entry:getConfiguration().getPassthroughProperties().entrySet())
@@ -254,7 +271,15 @@ public class ScheduledConsumer<T>
     {
         try
         {
+            // are we in a runtime fail / recovery scenario invoked from the Recoveyr Manager
             boolean isRecovering = managedResourceRecoveryManager.isRecovering();
+
+            // only persist schedule for misfire if a business schedule ie not a recovery manager schedule
+            if(!isRecovering && this.consumerConfiguration.isPersistentRecovery())
+            {
+                this.scheduledJobRecoveryService.save(context);
+            }
+
             T t = (T) messageProvider.invoke(context);
             this.invoke(t);
 

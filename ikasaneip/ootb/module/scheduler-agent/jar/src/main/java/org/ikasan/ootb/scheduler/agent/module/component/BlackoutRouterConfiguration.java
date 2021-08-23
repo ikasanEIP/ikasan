@@ -55,7 +55,6 @@ public class BlackoutRouterConfiguration
     List<String> cronExpressions = new ArrayList<>();
     Map<String,String> dateTimeRanges = new HashMap<>();
 
-
     public List<String> getCronExpressions()
     {
         return cronExpressions;
