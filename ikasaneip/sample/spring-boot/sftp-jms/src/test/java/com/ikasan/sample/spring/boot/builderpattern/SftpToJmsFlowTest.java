@@ -46,10 +46,9 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -66,7 +65,7 @@ import static org.junit.Assert.assertEquals;
 
 /**
  * This test Sftp To JMS Flow.
- * 
+ *
  * @author Ikasan Development Team
  */
 @RunWith(SpringRunner.class)
@@ -75,6 +74,7 @@ import static org.junit.Assert.assertEquals;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class SftpToJmsFlowTest
 {
+
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     @Resource
@@ -92,7 +92,7 @@ public class SftpToJmsFlowTest
 
     public MessageListenerVerifier messageListenerVerifier;
 
-    @BeforeEach
+    @Before
     public void setup(){
         sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
         sftp.start();
@@ -102,8 +102,7 @@ public class SftpToJmsFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
 
-    @AfterEach
-    public void teardown()
+    @After public void teardown()
     {
         flowTestRule.stopFlow();
         messageListenerVerifier.stop();
@@ -113,13 +112,14 @@ public class SftpToJmsFlowTest
     @Test
     public void test_file_download() throws Exception
     {
+
+        // Upload data to fake SFTP
+        sftp.putFile("testDownload.txt",SAMPLE_MESSAGE);
+
         //Update Sftp Consumer config
         SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer",SftpConsumerConfiguration.class);
         consumerConfiguration.setSourceDirectory(sftp.getBaseDir());
         consumerConfiguration.setRemotePort(sftp.getPort());
-
-        // Upload data to fake SFTP
-        sftp.putFile("testDownload.txt",SAMPLE_MESSAGE);
 
         //Setup component expectations
 
@@ -129,7 +129,6 @@ public class SftpToJmsFlowTest
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
               .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 

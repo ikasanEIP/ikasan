@@ -94,9 +94,9 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -165,7 +165,7 @@ public class JmsSampleFlowTest {
 
     private BrowseMessagesOnQueueVerifier browseMessagesOnQueueVerifier;
 
-    @BeforeEach
+    @Before
     public void setup() throws JMSException {
         flowTestRule = new IkasanFlowTestRule();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
@@ -174,7 +174,7 @@ public class JmsSampleFlowTest {
         browseMessagesOnQueueVerifier.start();
     }
 
-    @AfterEach
+    @After
     public void teardown() throws Exception {
         browseMessagesOnQueueVerifier.stop();
         removeAllMessages();
