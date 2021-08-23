@@ -83,6 +83,12 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
     /** generic properties to be passed into the job at schedule time and subsequently passed back on schedule execution */
     private Map<String,String> passthroughProperties = new HashMap<String,String>();
 
+    /** allow for persistent recovery of a schedule - default true */
+    private boolean persistentRecovery = true;
+
+    /** tolerance period in millis within which it makes sense to rerun a schedule if it was missed - default 30 minutes */
+    private long recoveryTolerance = 30 * 60 * 1000;
+
     public String getJobName()
     {
         return jobName;
@@ -167,6 +173,26 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
     public void setTimezone(String timezone)
     {
         this.timezone = timezone;
+    }
+
+    public long getRecoveryTolerance()
+    {
+        return recoveryTolerance;
+    }
+
+    public void setRecoveryTolerance(long recoveryTolerance)
+    {
+        this.recoveryTolerance = recoveryTolerance;
+    }
+
+    public boolean isPersistentRecovery()
+    {
+        return persistentRecovery;
+    }
+
+    public void setPersistentRecovery(boolean persistentRecovery)
+    {
+        this.persistentRecovery = persistentRecovery;
     }
 
     @Override

@@ -58,7 +58,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ * Implementation of the Scheduled Process Event DAO based on Hibernate persistence.
+ *
  * @author Ikasan Development Team
  * 
  */

@@ -38,14 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.component.endpoint.quartz.recovery.dao;
 
 /**
- * Interface representing a factory for flow creation.
+ * This generic Scheduler recovery Interface.
  *
  * @author Ikasan Development Team
  */
-public interface FlowFactory
+public interface ScheduledJobRecoveryDao<MODEL>
 {
-    Flow newInstance(String flowName);
+    /**
+     * Find the scheduled job recovery for the given name and group.
+     * @param name
+     * @param group
+     * @return
+     */
+    MODEL find(String group, String name);
+
+    /**
+     * Save the modelled shceduled job recovery.
+     * @param model
+     */
+    void save(MODEL model);
 }

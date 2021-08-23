@@ -44,7 +44,6 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
-import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -77,7 +76,7 @@ public class MyModule
         return builderFactory.getModuleBuilder(moduleName)
                 .withDescription("Scheduler Agent Integration Module.")
                 .withType(ModuleType.SCHEDULER_AGENT)
-                .withFlowFactory( new MyFlowFactory(builderFactory, componentFactory) )
+                .withFlowFactory( new MyFlowFactory(moduleName, builderFactory, componentFactory) )
                 .setConfiguration(configuration)
             .build();
     }

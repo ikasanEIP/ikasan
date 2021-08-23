@@ -38,14 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.component.endpoint.quartz.recovery.model;
+
+import org.junit.Assert;
+import org.junit.Test;
+
+import java.util.Date;
 
 /**
- * Interface representing a factory for flow creation.
- *
+ * This test class supports the <code>ScheduledJobRecoveryModel</code> class.
+ * 
  * @author Ikasan Development Team
  */
-public interface FlowFactory
+public class ScheduledJobRecoveryModelTest
 {
-    Flow newInstance(String flowName);
+    /**
+     * Test.
+     */
+    @Test
+    public void test_successful_default_instantiation()
+    {
+        ScheduledJobRecoveryModel scheduledJobRecoveryModel = new ScheduledJobRecoveryModel();
+        Assert.assertNull("group should be null", scheduledJobRecoveryModel.getGroup());
+        Assert.assertNull("name should be null", scheduledJobRecoveryModel.getName());
+        Assert.assertNull("fireTime should be null", scheduledJobRecoveryModel.getFireTime());
+        Assert.assertNull("nextFireTime should be null", scheduledJobRecoveryModel.getNextFireTime());
+    }
+
+    /**
+     * Test.
+     */
+    @Test
+    public void test_successful_mutators()
+    {
+        Date fireTime = new Date();
+        ScheduledJobRecoveryModel scheduledJobRecoveryModel = new ScheduledJobRecoveryModel();
+        scheduledJobRecoveryModel.setGroup("group");
+        scheduledJobRecoveryModel.setName("name");
+        scheduledJobRecoveryModel.setFireTime(fireTime);
+        Date nextFireTime = new Date();
+        scheduledJobRecoveryModel.setNextFireTime(nextFireTime);
+
+        Assert.assertTrue("group should 'group''", scheduledJobRecoveryModel.getGroup().equals("group"));
+        Assert.assertTrue("name should be 'name'", scheduledJobRecoveryModel.getName().equals("name"));
+        Assert.assertTrue("fireTime should be " + fireTime, scheduledJobRecoveryModel.getFireTime().equals(fireTime));
+        Assert.assertTrue("nextFireTime should be " + nextFireTime, scheduledJobRecoveryModel.getNextFireTime().equals(nextFireTime));
+    }
 }

@@ -51,7 +51,6 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 import org.quartz.*;
-import org.quartz.utils.Key;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -77,9 +76,6 @@ public class ScheduledConsumerTest
 
     /** Mock scheduler */
     private final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
-
-    /** Mock scheduler Context */
-    private final SchedulerContext schedulerContext = mockery.mock(SchedulerContext.class, "mockSchedulerContext");
 
     /** Mock job detail */
     private final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
@@ -169,6 +165,10 @@ public class ScheduledConsumerTest
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 
@@ -333,6 +333,9 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 
@@ -377,6 +380,9 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 
@@ -450,6 +456,10 @@ public class ScheduledConsumerTest
                 will(returnValue(new Date()));
 
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
+
+                // persistent recovery not invoked as we are not on a business schedule
+                exactly(0).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 
@@ -494,6 +504,10 @@ public class ScheduledConsumerTest
                 will(returnValue(mockFlowEvent));
 
                 exactly(0).of(eventListener).invoke(mockFlowEvent);
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 
@@ -503,6 +517,7 @@ public class ScheduledConsumerTest
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setMessageProvider(mockMessageProvider);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         // test
         scheduledConsumer.execute(jobExecutionContext);
@@ -564,6 +579,10 @@ public class ScheduledConsumerTest
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 
@@ -639,6 +658,10 @@ public class ScheduledConsumerTest
                 will(returnValue(true));
 
                 exactly(1).of(scheduler).rescheduleJob(with(any(TriggerKey.class)), with(any(Trigger.class)));
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 

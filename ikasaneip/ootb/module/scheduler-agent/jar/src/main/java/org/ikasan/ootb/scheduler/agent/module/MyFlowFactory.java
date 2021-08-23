@@ -47,23 +47,25 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowFactory;
 
 /**
- * Flow factory implemnentation.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
 public class MyFlowFactory implements FlowFactory
 {
+    String moduleName;
     BuilderFactory builderFactory;
     ComponentFactory componentFactory;
 
-    public MyFlowFactory(BuilderFactory builderFactory, ComponentFactory componentFactory)
+    public MyFlowFactory(String moduleName, BuilderFactory builderFactory, ComponentFactory componentFactory)
     {
+        this.moduleName = moduleName;
         this.builderFactory = builderFactory;
         this.componentFactory = componentFactory;
     }
 
     @Override
-    public Flow newInstance(String moduleName, String flowName)
+    public Flow newInstance(String flowName)
     {
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
             .withDescription("Scheduler Agent flow")

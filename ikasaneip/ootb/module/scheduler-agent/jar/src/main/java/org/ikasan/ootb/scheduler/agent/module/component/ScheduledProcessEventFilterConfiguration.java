@@ -47,6 +47,7 @@ package org.ikasan.ootb.scheduler.agent.module.component;
  */
 public class ScheduledProcessEventFilterConfiguration
 {
+    // whether to drop events within the blackout period - default is false
     boolean dropOnBlackout;
 
     public boolean isDropOnBlackout()

@@ -157,6 +157,10 @@ public class CallbackScheduledConsumerTest
                 // schedule the job
                 exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
                 will(returnValue(new Date()));
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
             }
         });
 

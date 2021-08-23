@@ -38,14 +38,29 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.component.endpoint.quartz.recovery.service;
+
+import org.ikasan.component.endpoint.quartz.recovery.dao.ScheduledJobRecoveryDao;
+import org.ikasan.component.endpoint.quartz.recovery.dao.ScheduledJobRecoveryDaoKryoImpl;
+
+import java.nio.file.FileSystems;
 
 /**
- * Interface representing a factory for flow creation.
+ * This generic Scheduler recovery Interface.
  *
  * @author Ikasan Development Team
  */
-public interface FlowFactory
+public interface ScheduledJobRecoveryServiceFactory
 {
-    Flow newInstance(String flowName);
+    String defaultPersistenceDirectory = "." + FileSystems.getDefault().getSeparator() + "scheduler-recovery";
+
+    static ScheduledJobRecoveryService getInstance()
+    {
+        return getInstance( new ScheduledJobRecoveryDaoKryoImpl(defaultPersistenceDirectory) );
+    }
+
+    static ScheduledJobRecoveryService getInstance(ScheduledJobRecoveryDao scheduledJobRecoveryDao)
+    {
+        return new ScheduledJobRecoveryServiceImpl(scheduledJobRecoveryDao);
+    }
 }

@@ -38,14 +38,91 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.flow;
+package org.ikasan.component.endpoint.quartz.recovery.model;
+
+import java.util.Date;
 
 /**
- * Interface representing a factory for flow creation.
+ * Model Implementation of a scheduled job recovery.
  *
  * @author Ikasan Development Team
  */
-public interface FlowFactory
+@SuppressWarnings("unchecked")
+public class ScheduledJobRecoveryModel
 {
-    Flow newInstance(String flowName);
+    String name;
+    String group;
+    Date fireTime;
+    Date nextFireTime;
+
+    public String getName()
+    {
+        return name;
+    }
+
+    public void setName(String name)
+    {
+        this.name = name;
+    }
+
+    public String getGroup()
+    {
+        return group;
+    }
+
+    public void setGroup(String group)
+    {
+        this.group = group;
+    }
+
+    public Date getFireTime()
+    {
+        return fireTime;
+    }
+
+    public void setFireTime(Date fireTime)
+    {
+        this.fireTime = fireTime;
+    }
+
+    public Date getNextFireTime()
+    {
+        return nextFireTime;
+    }
+
+    public void setNextFireTime(Date nextFireTime)
+    {
+        this.nextFireTime = nextFireTime;
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        ScheduledJobRecoveryModel that = (ScheduledJobRecoveryModel) o;
+
+        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        return group != null ? group.equals(that.group) : that.group == null;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (group != null ? group.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString()
+    {
+        return "ScheduledJobRecoveryModel{" +
+            "name='" + name + '\'' +
+            ", group='" + group + '\'' +
+            ", fireTime=" + fireTime +
+            ", nextFireTime=" + nextFireTime +
+            '}';
+    }
 }
