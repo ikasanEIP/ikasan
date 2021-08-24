@@ -139,7 +139,7 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                         StartupControl startupControl = new StartupControlImpl(module.getName(), flowname);
                         startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
                         this.startupControlDao.save(startupControl);
-                        module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().newInstance(flowname) );
+                        module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().create(flowname) );
                     }
                 }
             }

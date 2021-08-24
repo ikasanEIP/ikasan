@@ -47,5 +47,5 @@ package org.ikasan.spec.flow;
  */
 public interface FlowFactory
 {
-    Flow newInstance(String flowName);
+    Flow create(String flowName);
 }

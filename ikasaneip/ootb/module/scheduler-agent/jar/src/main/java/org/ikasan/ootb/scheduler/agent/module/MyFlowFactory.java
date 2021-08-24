@@ -65,7 +65,7 @@ public class MyFlowFactory implements FlowFactory
     }
 
     @Override
-    public Flow newInstance(String flowName)
+    public Flow create(String flowName)
     {
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
             .withDescription("Scheduler Agent flow")
