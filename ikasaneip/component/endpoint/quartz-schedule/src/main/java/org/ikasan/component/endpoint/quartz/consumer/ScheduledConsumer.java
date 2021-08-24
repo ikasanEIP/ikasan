@@ -41,6 +41,7 @@
 package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryServiceFactory;
 import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.management.ManagedLifecycle;
@@ -137,7 +138,7 @@ public class ScheduledConsumer<T>
     /** resubmission event factory */
     private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
-    private ScheduledJobRecoveryService scheduledJobRecoveryService;
+    private ScheduledJobRecoveryService scheduledJobRecoveryService = ScheduledJobRecoveryServiceFactory.getInstance();
 
     /**
      * Constructor
