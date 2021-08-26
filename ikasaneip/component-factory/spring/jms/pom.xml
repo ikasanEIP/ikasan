@@ -42,25 +42,34 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-build</artifactId>
+        <artifactId>ikasan-component-factory-spring</artifactId>
         <version>3.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-spec</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Specification Contracts</name>
+    <artifactId>ikasan-component-factory-spring-jms</artifactId>
 
-    <modules>
-        <module>component</module>
-        <module>component-factory</module>
-        <module>event</module>
-        <module>flow</module>
-        <module>module</module>
-        <module>recoveryManager</module>
-        <module>monitor</module>
-        <module>service</module>
-        <module>metadata</module>
-        <module>uber</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-factory-spring-common</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
 </project>
