@@ -37,81 +37,15 @@
  *
  */
 
-package org.ikasan.component.factory.jms.consumer;
+package org.ikasan.component.factory.spring.common;
 
-public class JmsConsumerConfiguration {
-
-    //by default it is single thread
-    private int numberOfThreads=1;
-
-    //not batching
-    private boolean batching=false;
-
-    //by default it is single thread
-    private boolean concurrent=false;
-
-    private int batchSize=1;
-
-    private String destination;
-
-    private String type;
-
-    private boolean autoConversion = true;
-
-    public String getDestination() {
-        return destination;
+public class IkasanComponentFactoryException extends RuntimeException
+{
+    public IkasanComponentFactoryException(String message){
+        super(message);
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public boolean isAutoConversion() {
-        return autoConversion;
-    }
-
-    public void setAutoConversion(boolean autoConversion) {
-        this.autoConversion = autoConversion;
-    }
-
-
-    public int getNumberOfThreads() {
-        return numberOfThreads;
-    }
-
-    public void setNumberOfThreads(int numberOfThreads) {
-        this.numberOfThreads = numberOfThreads;
-    }
-
-    public boolean isBatching() {
-        return batching;
-    }
-
-    public void setBatching(boolean batching) {
-        this.batching = batching;
-    }
-
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    public void setBatchSize(int batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    public boolean isConcurrent() {
-        return concurrent;
-    }
-
-    public void setConcurrent(boolean concurrent) {
-        this.concurrent = concurrent;
+    public IkasanComponentFactoryException(String message, Exception exc){
+        super(message, exc);
     }
 }

@@ -1360,13 +1360,13 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-component-factory-common</artifactId>
+                <artifactId>ikasan-component-factory-spring-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-component-factory-jms</artifactId>
+                <artifactId>ikasan-component-factory-spring-jms</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

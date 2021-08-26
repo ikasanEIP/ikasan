@@ -37,15 +37,34 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.jms.producer;
 
-public class IkasanComponentFactoryException extends RuntimeException
-{
-    public IkasanComponentFactoryException(String message){
-        super(message);
-    }
 
-    public IkasanComponentFactoryException(String message, Exception exc){
-        super(message, exc);
+import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
+import org.ikasan.component.factory.spring.common.NonConfiguredResourceBaseComponentFactory;
+import org.ikasan.component.factory.spring.jms.JmsComponentFactory;
+import org.ikasan.component.factory.spring.jms.consumer.JmsConsumerComponentFactory;
+
+import javax.annotation.Resource;
+
+/**
+ * Easily create JmsProducer components.
+ *
+ * @see JmsConsumerComponentFactory
+ */
+public class JmsProducerComponentFactory extends NonConfiguredResourceBaseComponentFactory<JmsTemplateProducer,
+        JmsProducerConfiguration> {
+
+    @Resource
+    private JmsComponentFactory jmsComponentFactory;
+
+    @Override
+    public JmsTemplateProducer create(String nameSuffix, String configPrefix) {
+        JmsProducerConfiguration configuration=configuration(configPrefix,
+                JmsProducerConfiguration.class);
+        return (JmsTemplateProducer)jmsComponentFactory.getJMSProducer(
+                appendClassToNameSuffix(nameSuffix, JmsTemplateProducer.class.getSimpleName()),
+                configuration.getDestination(),
+                configuration.getType());
     }
 }

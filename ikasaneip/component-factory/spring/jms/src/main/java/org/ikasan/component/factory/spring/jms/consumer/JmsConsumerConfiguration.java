@@ -37,60 +37,81 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.jms.consumer;
 
-import org.ikasan.spec.component.factory.ComponentFactory;
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
+public class JmsConsumerConfiguration {
 
-public abstract class NonConfiguredResourceBaseComponentFactory<T,C> implements ComponentFactory<T> {
-    @Autowired
-    protected Environment env;
+    //by default it is single thread
+    private int numberOfThreads=1;
 
-    @Value("${module.name}") private String moduleName;
+    //not batching
+    private boolean batching=false;
 
-    private ConfigurationHandler<C> configurationHandler;
+    //by default it is single thread
+    private boolean concurrent=false;
 
+    private int batchSize=1;
 
-    protected C configuration(String configPrefix, Class<C> clazz)
-    {
-        return configurationHandler().configuration(configPrefix, clazz);
+    private String destination;
+
+    private String type;
+
+    private boolean autoConversion = true;
+
+    public String getDestination() {
+        return destination;
     }
 
-    private static Logger logger = LoggerFactory.getLogger(NonConfiguredResourceBaseComponentFactory.class);
-
-    protected C configuration(String configPrefix, String sharedConfigPrefix, Class<C> clazz)
-    {
-       return configurationHandler().configuration(configPrefix, sharedConfigPrefix, clazz);
+    public void setDestination(String destination) {
+        this.destination = destination;
     }
 
-    protected String configuredResourceId(String nameSuffix, Class<T> clazz)
-
-    {
-        return moduleName + "-" +appendClassToNameSuffix(nameSuffix, clazz.getSimpleName());
+    public String getType() {
+        return type;
     }
 
-    protected String configuredResourceId(String nameSuffix, String componentName)
-    {
-        return moduleName + "-" +appendClassToNameSuffix(nameSuffix, componentName);
+    public void setType(String type) {
+        this.type = type;
     }
 
-    protected String appendClassToNameSuffix(String nameSuffix, String simpleClassName)
-    {
-        if(StringUtils.isNotEmpty(nameSuffix)){
-            return  nameSuffix + simpleClassName;
-        }
-        return  StringUtils.uncapitalize(simpleClassName);
+    public boolean isAutoConversion() {
+        return autoConversion;
     }
 
-    public ConfigurationHandler<C> configurationHandler(){
-        if (configurationHandler == null) {
-            configurationHandler = new ConfigurationHandler<>(env);
-        }
-        return configurationHandler;
+    public void setAutoConversion(boolean autoConversion) {
+        this.autoConversion = autoConversion;
+    }
+
+
+    public int getNumberOfThreads() {
+        return numberOfThreads;
+    }
+
+    public void setNumberOfThreads(int numberOfThreads) {
+        this.numberOfThreads = numberOfThreads;
+    }
+
+    public boolean isBatching() {
+        return batching;
+    }
+
+    public void setBatching(boolean batching) {
+        this.batching = batching;
+    }
+
+    public int getBatchSize() {
+        return batchSize;
+    }
+
+    public void setBatchSize(int batchSize) {
+        this.batchSize = batchSize;
+    }
+
+    public boolean isConcurrent() {
+        return concurrent;
+    }
+
+    public void setConcurrent(boolean concurrent) {
+        this.concurrent = concurrent;
     }
 }

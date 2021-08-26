@@ -37,70 +37,28 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.ikasan.component.factory.spring.common.PropertyNameHelper;
+import org.junit.Test;
 
-import java.util.List;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
-public class BeanConfiguration {
+public class PropertyNameHelperTest {
 
-    private String stringProp;
-
-    private Boolean authenticated = Boolean.FALSE;
-
-    private List<String> listProp;
-
-    private Map<String,String> mapProp;
-
-    public String getStringProp() {
-        return stringProp;
+    @Test
+    public void test() {
+        Class clazz = JmsConsumerConfiguration.class;
+        assertEquals("jms.consumer", PropertyNameHelper.classNameToPropertyPrefix(clazz));
+        clazz = AmazonS3FileProducerConfiguration.class;
+        assertEquals("amazon.s3.file.producer", PropertyNameHelper.classNameToPropertyPrefix(clazz));
     }
 
-    public void setStringProp(String stringProp) {
-        this.stringProp = stringProp;
+    public static class JmsConsumerConfiguration {
+
     }
 
-    public List<String> getListProp() {
-        return listProp;
-    }
+    public static class AmazonS3FileProducerConfiguration {
 
-    public void setListProp(List<String> listProp) {
-        this.listProp = listProp;
-    }
-
-    public Map<String, String> getMapProp() {
-        return mapProp;
-    }
-
-    public void setMapProp(Map<String, String> mapProp) {
-        this.mapProp = mapProp;
-    }
-
-    public Boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    public Boolean getAuthenticated() {
-        return authenticated;
-    }
-
-    public void setAuthenticated(Boolean authenticated) {
-        this.authenticated = authenticated;
-    }
-
-    public BeanConfiguration(){
-       this.authenticated = null;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("stringProp", stringProp)
-                .append("listProp", listProp)
-                .append("mapProp", mapProp)
-                .append("authenticated", authenticated)
-                .toString();
     }
 }

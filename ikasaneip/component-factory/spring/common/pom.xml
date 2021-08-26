@@ -46,7 +46,7 @@
         <version>3.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-component-factory-common</artifactId>
+    <artifactId>ikasan-component-factory-spring-common</artifactId>
 
     <dependencies>
 

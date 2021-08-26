@@ -37,7 +37,7 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
 import org.junit.Test;
 import org.slf4j.Logger;

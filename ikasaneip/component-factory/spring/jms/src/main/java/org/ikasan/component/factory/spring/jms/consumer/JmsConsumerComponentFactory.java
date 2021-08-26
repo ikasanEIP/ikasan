@@ -37,12 +37,12 @@
  *
  */
 
-package org.ikasan.component.factory.jms.consumer;
+package org.ikasan.component.factory.spring.jms.consumer;
 
 
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.factory.common.NonConfiguredResourceBaseComponentFactory;
-import org.ikasan.component.factory.jms.JmsComponentFactory;
+import org.ikasan.component.factory.spring.common.NonConfiguredResourceBaseComponentFactory;
+import org.ikasan.component.factory.spring.jms.JmsComponentFactory;
 
 import javax.annotation.Resource;
 

@@ -37,27 +37,70 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
-public class PropertyNameHelper {
+import org.apache.commons.lang3.builder.ToStringBuilder;
 
-    /**
-     * Converts className to a dot notation property prefix e.g JmsConsumer becomes jms.consumer
-     *
-     * @param clazz - the class name to use of the clazz
-     * @return the property prefix in dot notation
-     */
-    public static String classNameToPropertyPrefix(Class<?>clazz){
-        StringBuilder prefix = new StringBuilder();
-        String classWithoutConfiguration = clazz.getSimpleName().split("Configuration")[0];
-        String[] parts = classWithoutConfiguration.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
-        for (int i = 0; i< parts.length ; i++) {
-            prefix.append(parts[i].toLowerCase());
-            if (i != (parts.length-1)){
-                prefix.append(".");
-            }
-        }
-        return prefix.toString();
+import java.util.List;
+import java.util.Map;
+
+public class BeanConfiguration {
+
+    private String stringProp;
+
+    private Boolean authenticated = Boolean.FALSE;
+
+    private List<String> listProp;
+
+    private Map<String,String> mapProp;
+
+    public String getStringProp() {
+        return stringProp;
     }
 
+    public void setStringProp(String stringProp) {
+        this.stringProp = stringProp;
+    }
+
+    public List<String> getListProp() {
+        return listProp;
+    }
+
+    public void setListProp(List<String> listProp) {
+        this.listProp = listProp;
+    }
+
+    public Map<String, String> getMapProp() {
+        return mapProp;
+    }
+
+    public void setMapProp(Map<String, String> mapProp) {
+        this.mapProp = mapProp;
+    }
+
+    public Boolean isAuthenticated() {
+        return authenticated;
+    }
+
+    public Boolean getAuthenticated() {
+        return authenticated;
+    }
+
+    public void setAuthenticated(Boolean authenticated) {
+        this.authenticated = authenticated;
+    }
+
+    public BeanConfiguration(){
+       this.authenticated = null;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this)
+                .append("stringProp", stringProp)
+                .append("listProp", listProp)
+                .append("mapProp", mapProp)
+                .append("authenticated", authenticated)
+                .toString();
+    }
 }

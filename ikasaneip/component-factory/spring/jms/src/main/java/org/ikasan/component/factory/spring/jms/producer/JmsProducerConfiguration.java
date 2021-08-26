@@ -37,24 +37,27 @@
  *
  */
 
-package org.ikasan.component.factory.jms;
+package org.ikasan.component.factory.spring.jms.producer;
 
+public class JmsProducerConfiguration {
 
-import org.ikasan.component.factory.jms.consumer.JmsConsumerComponentFactory;
-import org.ikasan.component.factory.jms.producer.JmsProducerComponentFactory;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+    private String destination;
 
-@Configuration
-public class JmsComponentFactoryAutoConfiguration {
+    private String type;
 
-    @Bean
-    public JmsConsumerComponentFactory jmsConsumerComponentFactory(){
-        return new JmsConsumerComponentFactory();
+    public String getDestination() {
+        return destination;
     }
 
-    @Bean
-    public JmsProducerComponentFactory jmsProducerComponentFactory(){
-        return new JmsProducerComponentFactory();
+    public void setDestination(String destination) {
+        this.destination = destination;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }

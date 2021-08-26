@@ -37,52 +37,66 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
+import org.ikasan.spec.component.factory.ComponentFactory;
+import org.apache.commons.lang3.StringUtils;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
 
-import java.lang.reflect.InvocationTargetException;
+/**
+ * For simple components this will look up both the component and factory configuration and set the configured
+ * resource id correctly.
+ *
+ * @param <T>
+ */
+@Component
+public abstract class BaseComponentFactory<T extends ConfiguredResource<C>, C> implements ComponentFactory<T>
+{
+    @Autowired
+    protected Environment env;
 
-public class ConfigurationHandler<C> {
+    @Value("${module.name}") private String moduleName;
 
-    private final Environment env;
+    private static Logger logger = LoggerFactory.getLogger(BaseComponentFactory.class);
 
-    public ConfigurationHandler(Environment env) {
-        this.env = env;
-    }
+    private ConfigurationHandler<C> configurationHandler;
 
     protected C configuration(String configPrefix, Class<C> clazz)
     {
-        return BindConfigurationHelper.createConfigWithPrefixAndClassName(configPrefix, clazz, env);
+     return configurationHandler().configuration(configPrefix, clazz);
     }
-
-    private static Logger logger = LoggerFactory.getLogger(NonConfiguredResourceBaseComponentFactory.class);
 
     protected C configuration(String configPrefix, String sharedConfigPrefix, Class<C> clazz)
     {
-        C configuration = null;
-        try {
-            configuration = BindConfigurationHelper.createConfigWithPrefixAndClassName(configPrefix, clazz, env);
-        } catch (IkasanComponentFactoryException icfe){
-            logger.warn("Could not find properties with config prefix [{}] assuming all properties are shared with " +
-                    "prefix [{}]",configPrefix, sharedConfigPrefix);
-        }
-        C sharedConfiguration = BindConfigurationHelper.createConfigWithPrefix(clazz,env, sharedConfigPrefix);
-        try {
-            if (configuration == null){
-                configuration = clazz.getDeclaredConstructor().newInstance();
-            }
-            BeanMergeUtil.mergeSourceIntoTargetBean(configuration,sharedConfiguration);
-        } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException | InstantiationException e) {
-            throw new
-                    IkasanComponentFactoryException("Unable to merge properties with prefix [" + configPrefix
-                    + "] and sharedConfigPrefix [" + sharedConfigPrefix
-                    + "]  for configuration "
-                    + " of type " + clazz.getSimpleName());
-        }
-        configuration = null;
-        return sharedConfiguration;
+        return configurationHandler().configuration(configPrefix, sharedConfigPrefix, clazz);
     }
+
+    protected String configuredResourceId(String nameSuffix, Class<?> clazz)
+    {
+        return moduleName + "-" +appendClassToNameSuffix(nameSuffix, clazz);
+    }
+
+    protected String appendClassToNameSuffix(String nameSuffix, Class<?> clazz)
+    {
+        if(StringUtils.isNotEmpty(nameSuffix)){
+            return  nameSuffix + clazz.getSimpleName();
+        }
+        return  StringUtils.uncapitalize(clazz.getSimpleName());
+    }
+
+
+    public ConfigurationHandler<C> configurationHandler(){
+        if (configurationHandler == null) {
+            configurationHandler = new ConfigurationHandler<>(env);
+        }
+        return configurationHandler;
+    }
+
+
 }

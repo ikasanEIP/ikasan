@@ -37,59 +37,55 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
 import org.ikasan.spec.component.factory.ComponentFactory;
 import org.apache.commons.lang3.StringUtils;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 
-/**
- * For simple components this will look up both the component and factory configuration and set the configured
- * resource id correctly.
- *
- * @param <T>
- */
-@Component
-public abstract class BaseComponentFactory<T extends ConfiguredResource<C>, C> implements ComponentFactory<T>
-{
+public abstract class NonConfiguredResourceBaseComponentFactory<T,C> implements ComponentFactory<T> {
     @Autowired
     protected Environment env;
 
     @Value("${module.name}") private String moduleName;
 
-    private static Logger logger = LoggerFactory.getLogger(BaseComponentFactory.class);
-
     private ConfigurationHandler<C> configurationHandler;
+
 
     protected C configuration(String configPrefix, Class<C> clazz)
     {
-     return configurationHandler().configuration(configPrefix, clazz);
+        return configurationHandler().configuration(configPrefix, clazz);
     }
+
+    private static Logger logger = LoggerFactory.getLogger(NonConfiguredResourceBaseComponentFactory.class);
 
     protected C configuration(String configPrefix, String sharedConfigPrefix, Class<C> clazz)
     {
-        return configurationHandler().configuration(configPrefix, sharedConfigPrefix, clazz);
+       return configurationHandler().configuration(configPrefix, sharedConfigPrefix, clazz);
     }
 
-    protected String configuredResourceId(String nameSuffix, Class<?> clazz)
+    protected String configuredResourceId(String nameSuffix, Class<T> clazz)
+
     {
-        return moduleName + "-" +appendClassToNameSuffix(nameSuffix, clazz);
+        return moduleName + "-" +appendClassToNameSuffix(nameSuffix, clazz.getSimpleName());
     }
 
-    protected String appendClassToNameSuffix(String nameSuffix, Class<?> clazz)
+    protected String configuredResourceId(String nameSuffix, String componentName)
+    {
+        return moduleName + "-" +appendClassToNameSuffix(nameSuffix, componentName);
+    }
+
+    protected String appendClassToNameSuffix(String nameSuffix, String simpleClassName)
     {
         if(StringUtils.isNotEmpty(nameSuffix)){
-            return  nameSuffix + clazz.getSimpleName();
+            return  nameSuffix + simpleClassName;
         }
-        return  StringUtils.uncapitalize(clazz.getSimpleName());
+        return  StringUtils.uncapitalize(simpleClassName);
     }
-
 
     public ConfigurationHandler<C> configurationHandler(){
         if (configurationHandler == null) {
@@ -97,6 +93,4 @@ public abstract class BaseComponentFactory<T extends ConfiguredResource<C>, C> i
         }
         return configurationHandler;
     }
-
-
 }

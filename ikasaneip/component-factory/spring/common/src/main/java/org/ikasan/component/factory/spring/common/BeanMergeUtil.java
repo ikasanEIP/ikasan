@@ -37,27 +37,50 @@
  *
  */
 
-package org.ikasan.component.factory.jms.producer;
+package org.ikasan.component.factory.spring.common;
 
-public class JmsProducerConfiguration {
 
-    private String destination;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.BeanWrapper;
+import org.springframework.beans.BeanWrapperImpl;
 
-    private String type;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
-    public String getDestination() {
-        return destination;
+/**
+ * Util class to Merge One Beans Properties into another. Used by shared properties.
+ */
+public class BeanMergeUtil {
+
+
+    public static <T> T mergeSourceIntoTargetBean(T source, T target) throws InvocationTargetException, IllegalAccessException {
+        BeanUtils.copyProperties(source, target, getNullPropertyNames(source));
+        return target;
     }
 
-    public void setDestination(String destination) {
-        this.destination = destination;
-    }
+    public static String[] getNullPropertyNames (Object source) {
+        final BeanWrapper src = new BeanWrapperImpl(source);
+        java.beans.PropertyDescriptor[] pds = src.getPropertyDescriptors();
 
-    public String getType() {
-        return type;
-    }
+        Set<String> emptyNames = new HashSet<String>();
+        for(java.beans.PropertyDescriptor pd : pds) {
+            Object srcValue = src.getPropertyValue(pd.getName());
+            if (srcValue == null) emptyNames.add(pd.getName());
+            else if (srcValue instanceof Collection && CollectionUtils.isEmpty((Collection)srcValue)){
+                emptyNames.add(pd.getName());
+            }
+            else if (srcValue instanceof Map && MapUtils.isEmpty((Map)srcValue)){
+                emptyNames.add(pd.getName());
+            }
 
-    public void setType(String type) {
-        this.type = type;
+        }
+
+        String[] result = new String[emptyNames.size()];
+        return emptyNames.toArray(result);
     }
 }

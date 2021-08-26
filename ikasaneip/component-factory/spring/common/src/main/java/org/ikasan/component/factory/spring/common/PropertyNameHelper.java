@@ -37,27 +37,27 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
-import org.junit.Test;
+public class PropertyNameHelper {
 
-import static org.junit.Assert.assertEquals;
-
-public class PropertyNameHelperTest {
-
-    @Test
-    public void test() {
-        Class clazz = JmsConsumerConfiguration.class;
-        assertEquals("jms.consumer", PropertyNameHelper.classNameToPropertyPrefix(clazz));
-        clazz = AmazonS3FileProducerConfiguration.class;
-        assertEquals("amazon.s3.file.producer", PropertyNameHelper.classNameToPropertyPrefix(clazz));
+    /**
+     * Converts className to a dot notation property prefix e.g JmsConsumer becomes jms.consumer
+     *
+     * @param clazz - the class name to use of the clazz
+     * @return the property prefix in dot notation
+     */
+    public static String classNameToPropertyPrefix(Class<?>clazz){
+        StringBuilder prefix = new StringBuilder();
+        String classWithoutConfiguration = clazz.getSimpleName().split("Configuration")[0];
+        String[] parts = classWithoutConfiguration.split("(?<!(^|[A-Z]))(?=[A-Z])|(?<!^)(?=[A-Z][a-z])");
+        for (int i = 0; i< parts.length ; i++) {
+            prefix.append(parts[i].toLowerCase());
+            if (i != (parts.length-1)){
+                prefix.append(".");
+            }
+        }
+        return prefix.toString();
     }
 
-    public static class JmsConsumerConfiguration {
-
-    }
-
-    public static class AmazonS3FileProducerConfiguration {
-
-    }
 }

@@ -46,12 +46,12 @@
         <version>3.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-component-factory-jms</artifactId>
+    <artifactId>ikasan-component-factory-spring-jms</artifactId>
 
     <dependencies>
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-component-factory-common</artifactId>
+            <artifactId>ikasan-component-factory-spring-common</artifactId>
         </dependency>
 
         <dependency>

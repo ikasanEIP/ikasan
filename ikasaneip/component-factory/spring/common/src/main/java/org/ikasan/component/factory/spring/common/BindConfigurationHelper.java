@@ -37,7 +37,7 @@
  *
  */
 
-package org.ikasan.component.factory.common;
+package org.ikasan.component.factory.spring.common;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ import org.springframework.core.env.Environment;
 
 import java.lang.reflect.InvocationTargetException;
 
-import static org.ikasan.component.factory.common.PropertyNameHelper.classNameToPropertyPrefix;
+import static org.ikasan.component.factory.spring.common.PropertyNameHelper.classNameToPropertyPrefix;
 
 
 /**

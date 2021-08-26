@@ -37,7 +37,7 @@
  *
  */
 
-package org.ikasan.component.factory.jms;
+package org.ikasan.component.factory.spring.jms;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
