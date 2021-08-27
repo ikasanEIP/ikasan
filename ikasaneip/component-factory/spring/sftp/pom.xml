@@ -42,17 +42,39 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-component-factory</artifactId>
+        <artifactId>ikasan-component-factory-spring</artifactId>
         <version>3.2.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-component-factory-spring</artifactId>
-    <packaging>pom</packaging>
+    <artifactId>ikasan-component-factory-spring-sftp</artifactId>
 
-    <modules>
-        <module>common</module>
-        <module>jms</module>
-        <module>sftp</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-factory-spring-common</artifactId>
+        </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-sftp-endpoint</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
+    </dependencies>
 </project>
