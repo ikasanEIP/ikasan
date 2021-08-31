@@ -22,6 +22,8 @@
         <property name="username" value="${datasource.username}" />
         <property name="password" value="${datasource.password}" />
         <property name="validationQuery" value="${datasource.validationQuery}" />
+        <property name="initialSize" value="${datasource.min.pool.size:0}" />
+        <property name="maxTotal" value="${datasource.max.pool.size:8}" />
     </bean>
 
     <bean id="ikasanXADatasource" name="ikasan.xads" primary="true" class="org.apache.commons.dbcp2.managed.BasicManagedDataSource">
@@ -31,6 +33,8 @@
         <property name="password" value="${datasource.password}" />
         <property name="xaDataSourceInstance" ref="ikasanXaDataSourceInstance" />
         <property name="validationQuery" value="${datasource.validationQuery}" />
+        <property name="initialSize" value="${datasource.min.pool.size:0}" />
+        <property name="maxTotal" value="${datasource.max.pool.size:8}" />
         <property name="defaultAutoCommit" value="false" />
         <property name="transactionManager">
             <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
