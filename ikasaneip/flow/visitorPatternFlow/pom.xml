@@ -114,7 +114,7 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
@@ -134,7 +134,7 @@
 
         <!-- trial a cloning library -->
         <dependency>
-            <groupId>uk.com.robust-it</groupId>
+            <groupId>io.github.kostaskougios</groupId>
             <artifactId>cloning</artifactId>
         </dependency>
 
