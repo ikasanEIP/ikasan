@@ -11,12 +11,6 @@ import java.util.concurrent.ExecutorService;
 
 public class DefaultJobMonitorImpl<T> extends AbstractMonitorBase<T> implements JobMonitor<T> {
 
-    /** logger instance */
-    private static Logger logger = LoggerFactory.getLogger(DefaultFlowMonitorImpl.class);
-
-    /** list of notifiers to be informed */
-    protected List<Notifier> notifiers = new ArrayList<>();
-
     /** the jobName we are monitoring */
     private String jobName;
 
