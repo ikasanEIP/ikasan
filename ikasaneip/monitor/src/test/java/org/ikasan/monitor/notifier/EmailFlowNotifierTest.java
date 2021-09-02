@@ -64,7 +64,7 @@ import java.util.*;
  * 
  * @author Ikasan Development Team
  */
-public class EmailNotifierTest
+public class EmailFlowNotifierTest
 {
     String sender = "ikasanUnitTest@ikasan.org";
     String ccReceiver = "ccRecipient1@ikasan.org";
@@ -72,7 +72,7 @@ public class EmailNotifierTest
     String bccReceiver = "bccRecipient1@ikasan.org";
     
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(EmailNotifierTest.class);
+    private static Logger logger = LoggerFactory.getLogger(EmailFlowNotifierTest.class);
     
     /** in memory SMTP server */
     Wiser wiser;
@@ -110,7 +110,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = new EmailNotifierConfiguration();
         emailNotifierConfiguration.setActive(false);
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -126,7 +126,7 @@ public class EmailNotifierTest
     public void test_successful_notifier_when_active() throws MessagingException, IOException {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -154,7 +154,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setToRecipients(new ArrayList<String>());
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -184,7 +184,7 @@ public class EmailNotifierTest
         emailNotifierConfiguration.getBccRecipients().add("sixth@email.com , seventh@email.com; ;, ; ");
         emailNotifierConfiguration.getCcRecipients().add(" eigth@email.com ");
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -212,7 +212,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setToRecipients(null);
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -241,7 +241,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setCcRecipients(new ArrayList<String>());
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -256,7 +256,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setCcRecipients(null);
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -271,7 +271,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setBccRecipients(new ArrayList<String>());
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");
@@ -286,7 +286,7 @@ public class EmailNotifierTest
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setBccRecipients(null);
 
-        Notifier<String> notifier = new EmailNotifier();
+        Notifier<String> notifier = new EmailFlowNotifier();
         ((Configured)notifier).setConfiguration(emailNotifierConfiguration);
 
         notifier.invoke("env", "moduleName", "flowName", "stopped");

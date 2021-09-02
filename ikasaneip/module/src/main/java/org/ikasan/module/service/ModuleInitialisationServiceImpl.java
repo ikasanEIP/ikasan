@@ -41,7 +41,6 @@
 package org.ikasan.module.service;
 
 import org.ikasan.scheduler.SchedulerFactory;
-import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -51,7 +50,7 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleInitialisationService;
-import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.slf4j.Logger;
@@ -318,10 +317,10 @@ public class ModuleInitialisationServiceImpl
 
     private void shutdownMonitors(ApplicationContext context)
     {
-        Map<String, Monitor> monitors = context.getBeansOfType(Monitor.class);
+        Map<String, FlowMonitor> monitors = context.getBeansOfType(FlowMonitor.class);
         if (monitors != null)
         {
-            for (Map.Entry<String, Monitor> entry : monitors.entrySet())
+            for (Map.Entry<String, FlowMonitor> entry : monitors.entrySet())
             {
                 logger.info("Shutting down Monitor with bean name: " + entry.getKey());
                 entry.getValue().destroy();

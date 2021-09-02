@@ -42,7 +42,6 @@ package org.ikasan.monitor.notifier;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.apache.http.HttpHeaders;
 import org.ikasan.dashboard.DashboardRestServiceImpl;
 import org.junit.Before;
 import org.junit.Rule;
@@ -60,9 +59,9 @@ import static org.ikasan.spec.dashboard.DashboardRestService.DASHBOARD_EXTRACT_E
  *
  * @author Ikasan Development Team
  */
-public class DashboardNotifierTest
+public class DashboardFlowNotifierTest
 {
-    DashboardNotifier uut;
+    DashboardFlowNotifier uut;
 
     @Rule public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
 
@@ -79,7 +78,7 @@ public class DashboardNotifierTest
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port() ;
         environment.setProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "true");
         environment.setProperty(DASHBOARD_BASE_URL_PROPERTY, dashboardBaseUrl);
-        uut = new DashboardNotifier(new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), FLOW_STATES_CACHE_PATH));
+        uut = new DashboardFlowNotifier(new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), FLOW_STATES_CACHE_PATH));
     }
 
     @Test

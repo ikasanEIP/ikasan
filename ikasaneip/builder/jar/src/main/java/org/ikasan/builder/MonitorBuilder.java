@@ -41,13 +41,12 @@
 package org.ikasan.builder;
 
 import org.ikasan.monitor.MonitorFactory;
-import org.ikasan.monitor.notifier.DashboardNotifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 
@@ -68,7 +67,7 @@ public class MonitorBuilder
     NotifierFactory notifierFactory;
 
     // allow override of default monitor
-    Monitor monitor;
+    FlowMonitor monitor;
 
     DashboardRestService flowCacheStateRestService;
 
@@ -106,7 +105,7 @@ public class MonitorBuilder
      * @param monitor
      * @return
      */
-    public NotifierBuilder withMonitor(Monitor monitor)
+    public NotifierBuilder withMonitor(FlowMonitor monitor)
     {
         this.monitor = monitor;
         return new NotifierBuilder();
@@ -118,7 +117,7 @@ public class MonitorBuilder
      */
     public NotifierBuilder withFlowStateChangeMonitor()
     {
-        this.monitor = this.monitorFactory.getMonitor();
+        this.monitor = this.monitorFactory.getFlowMonitor();
         return new NotifierBuilder();
     }
 
@@ -162,7 +161,7 @@ public class MonitorBuilder
          */
         public NotifierBuilder withEmailNotifier(EmailNotifierConfiguration emailNotifierConfiguration)
         {
-            Notifier notifier = notifierFactory.getEmailNotifier();
+            Notifier notifier = notifierFactory.getEmailFlowNotifier();
             if(notifier instanceof ConfiguredResource)
             {
                 ((Configured<EmailNotifierConfiguration>)notifier).setConfiguration(emailNotifierConfiguration);
@@ -177,7 +176,7 @@ public class MonitorBuilder
          */
         public NotifierBuilder withDashboardNotifier()
         {
-            Notifier notifier = notifierFactory.getDashboardNotifier(flowCacheStateRestService);
+            Notifier notifier = notifierFactory.getDashboardFlowNotifier(flowCacheStateRestService);
             return withNotifier(notifier);
         }
 
@@ -185,11 +184,11 @@ public class MonitorBuilder
          * Build an instance of the monitor with associated notifiers.
          * @return
          */
-        public Monitor build()
+        public FlowMonitor build()
         {
             if(monitor == null)
             {
-                monitor = monitorFactory.getMonitor();
+                monitor = monitorFactory.getFlowMonitor();
             }
 
             monitor.setNotifiers(notifiers);

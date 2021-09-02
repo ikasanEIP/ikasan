@@ -40,59 +40,22 @@
  */
 package org.ikasan.spec.monitor;
 
-import java.util.List;
-
 /**
- * Monitor contract for the subject notification to the monitor
+ * Flow monitor contract for the subject notification to the monitor
  * 
  * @author Ikasan Development Team
  */
-    public interface Monitor<NOTIFICATION>
+public interface FlowMonitor<NOTIFICATION> extends Monitor<NOTIFICATION>
 {
     /**
-     * Invoke the monitor with the given notification
-     * @param notification
+     * Set the flow name of this monitor
+     * @param flowName
      */
-    void invoke(NOTIFICATION notification);
+    void setFlowName(String flowName);
 
     /**
-     * Set the module name of this monitor
-     * @param moduleName
-     */
-    void setModuleName(String moduleName);
-
-    /**
-     * Get the module name of this monitor
+     * Get the flow name of this monitor
      * @return
      */
-    String getModuleName();
-
-    /**
-     * Set the runtime environment name this monitor is associated with
-     * @param environmentName
-     */
-    void setEnvironment(String environmentName);
-
-    /**
-     * Get the runtime environment name this monitor is associated with
-     * @return
-     */
-    String getEnvironment();
-
-    /**
-     * Set the notifiers to which the monitor brokers notifications
-     * @param notifiers
-     */
-    void setNotifiers(List<Notifier> notifiers);
-
-    /**
-     * Get the notifiers registered with this monitor
-     * @return
-     */
-    List<Notifier> getNotifiers();
-
-    /**
-     * Destroys the monitor internal, rendering this Monitor defunct.
-     */
-    void destroy();
+    String getFlowName();
 }

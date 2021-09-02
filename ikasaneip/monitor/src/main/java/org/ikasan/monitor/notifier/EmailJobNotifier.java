@@ -38,18 +38,25 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.monitor;
+package org.ikasan.monitor.notifier;
 
-import org.ikasan.spec.monitor.FlowMonitor;
-import org.ikasan.spec.monitor.JobMonitor;
+import org.ikasan.spec.monitor.JobNotifier;
 
 /**
- * Monitor instance factory.
- * @author Ikasan Development Team.
+ * Ikasan default email notifier implementation.
+ *
+ * @author Ikasan Development Team
  */
-public interface MonitorFactory
+public class EmailJobNotifier extends AbstractEmailNotifierBase implements JobNotifier<String>
 {
-    public FlowMonitor getFlowMonitor();
-
-    public JobMonitor getJobMonitor();
+    @Override
+    public void invoke(String environment, String moduleName, String context, String state)
+    {
+        if(super.configuration.isActive())
+        {
+        	final String name = "Module[" + moduleName + "] Job[" + context + "]";
+        	
+            notify(environment, name, state);
+        }
+    }
 }

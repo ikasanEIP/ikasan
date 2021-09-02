@@ -40,9 +40,10 @@
  */
 package org.ikasan.monitor;
 
+import org.ikasan.spec.monitor.JobMonitor;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configured;
-import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.FlowMonitor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -63,13 +64,28 @@ public class MonitorFactoryImpl implements MonitorFactory
      * Get an instance of a monitor
      * @return
      */
-    public Monitor getMonitor()
+    public FlowMonitor getFlowMonitor()
     {
         if (executorService == null || executorService.isShutdown())
         {
-            throw new RuntimeException("Cannot get new Monitor after destroy method called");
+            throw new RuntimeException("Cannot get new Flow Monitor after destroy method called");
         }
-        Monitor monitor = new DefaultMonitorImpl(executorService);
+        FlowMonitor monitor = new DefaultFlowMonitorImpl(executorService);
+        if(monitor instanceof Configured)
+        {
+            ((Configured)monitor).setConfiguration(new MonitorConfiguration());
+        }
+
+        return monitor;
+    }
+
+    @Override
+    public JobMonitor getJobMonitor() {
+        if (executorService == null || executorService.isShutdown())
+        {
+            throw new RuntimeException("Cannot get new Job Monitor after destroy method called");
+        }
+        JobMonitor monitor = new DefaultJobMonitorImpl(executorService);
         if(monitor instanceof Configured)
         {
             ((Configured)monitor).setConfiguration(new MonitorConfiguration());

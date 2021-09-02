@@ -54,7 +54,7 @@ import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.history.MessageHistoryService;
-import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
@@ -68,7 +68,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.annotation.ImportResource;
 
 import java.util.List;
 
@@ -129,7 +128,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     List<FlowInvocationContextListener> flowInvocationContextListeners;
 
     /** flow monitor */
-    Monitor monitor;
+    FlowMonitor monitor;
 
     /** consumer is the only flow element we need a handle on */
     FlowElement<Consumer> consumer;
@@ -244,7 +243,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
      * Setter for monitor
      * @param monitor
      */
-    public void setMonitor(Monitor monitor)
+    public void setMonitor(FlowMonitor monitor)
     {
         this.monitor = monitor;
     }
@@ -324,7 +323,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     }
 
     /**
-     * Deteming if a message history context listener is already set.
+     * Determine if a message history context listener is already set.
      * @return
      */
     private boolean messageHistoryContextListenerExist()

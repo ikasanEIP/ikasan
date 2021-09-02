@@ -6,6 +6,7 @@ import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
+import org.ikasan.spec.monitor.JobMonitor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -20,52 +21,75 @@ public class HarvestingAutoConfiguration
     @Bean
     public HarvestingSchedulerService harvestingSchedulerService(List<HarvestingJob> harvestingJobs)
     {
-        return
-            new HarvestingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
+        return new HarvestingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
                 CachingScheduledJobFactory.getInstance(), harvestingJobs);
     }
 
     @Bean
-    public HarvestingJob replyHarvestingJob(HarvestService replayManagementService, Environment environment,DashboardRestService replyDashboardRestService)
+    public HarvestingJob replyHarvestingJob(HarvestService replayManagementService, Environment environment, DashboardRestService replyDashboardRestService,
+                                            JobMonitor jobMonitor)
     {
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("replayHarvestingJob", replayManagementService, environment, replyDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
 
-        return new HarvestingJobImpl("replayHarvestingJob", replayManagementService, environment, replyDashboardRestService);
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
     }
 
     @Bean
     public HarvestingJob wiretapHarvestingJob(HarvestService wiretapService, Environment environment,
-        DashboardRestService wiretapDashboardRestService )
+        DashboardRestService wiretapDashboardRestService, JobMonitor jobMonitor)
     {
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("wiretapHarvestingJob", wiretapService, environment, wiretapDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
 
-        return new HarvestingJobImpl("wiretapHarvestingJob", wiretapService, environment, wiretapDashboardRestService);
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
     }
 
     @Bean
     public HarvestingJob errorReportingHarvestingJob(HarvestService errorReportingManagementService,
-        Environment environment, DashboardRestService errorReportingDashboardRestService)
+        Environment environment, DashboardRestService errorReportingDashboardRestService, JobMonitor jobMonitor)
     {
-
-        return new HarvestingJobImpl("errorReportingHarvestingJob", errorReportingManagementService, environment,
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("errorReportingHarvestingJob", errorReportingManagementService, environment,
             errorReportingDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
     }
 
     @Bean
-    public HarvestingJob exclusionHarvestingJob(HarvestService exclusionManagementService, Environment environment,DashboardRestService exclusionDashboardRestService)
+    public HarvestingJob exclusionHarvestingJob(HarvestService exclusionManagementService, Environment environment,DashboardRestService exclusionDashboardRestService,
+                                                JobMonitor jobMonitor)
     {
-        return new HarvestingJobImpl("exclusionHarvestingJob", exclusionManagementService, environment, exclusionDashboardRestService);
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("exclusionHarvestingJob", exclusionManagementService, environment, exclusionDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
     }
 
 
     @Bean
-    public HarvestingJob messageHistoryJob(HarvestService messageHistoryService, Environment environment, DashboardRestService metricsDashboardRestService)
+    public HarvestingJob messageHistoryJob(HarvestService messageHistoryService, Environment environment, DashboardRestService metricsDashboardRestService,
+                                           JobMonitor jobMonitor)
     {
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("messageHistoryHarvestingJob", messageHistoryService, environment,metricsDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
 
-        return new HarvestingJobImpl("messageHistoryHarvestingJob", messageHistoryService, environment,metricsDashboardRestService);
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
     }
 
     @Bean
-    public HarvestingJob systemEventJob(HarvestService systemEventService, Environment environment, DashboardRestService systemEventsDashboardRestService)
+    public HarvestingJob systemEventJob(HarvestService systemEventService, Environment environment, DashboardRestService systemEventsDashboardRestService,
+                                        JobMonitor jobMonitor)
     {
-        return new HarvestingJobImpl("systemEventHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("systemEventHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
     }
 }

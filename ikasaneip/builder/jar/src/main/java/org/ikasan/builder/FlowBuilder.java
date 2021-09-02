@@ -78,6 +78,7 @@ import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.*;
 import org.ikasan.spec.history.MessageHistoryService;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.MonitorSubject;
 import org.ikasan.spec.recovery.RecoveryManager;
@@ -175,7 +176,7 @@ public class FlowBuilder implements ApplicationContextAware
     MessageHistoryService messageHistoryService;
 
     /** flow monitor */
-    Monitor monitor;
+    FlowMonitor monitor;
 
     /** default event factory */
     EventFactory eventFactory;
@@ -448,7 +449,7 @@ public class FlowBuilder implements ApplicationContextAware
      * Setter for monitor
      * @param monitor
      */
-    public FlowBuilder withMonitor(Monitor monitor)
+    public FlowBuilder withMonitor(FlowMonitor monitor)
     {
         this.monitor = monitor;
         return this;
@@ -972,7 +973,7 @@ public class FlowBuilder implements ApplicationContextAware
 
         if(monitor == null)
         {
-            monitor = context.getBean(Monitor.class);
+            monitor = context.getBean(FlowMonitor.class);
         }
 
         if(monitor != null && flow instanceof MonitorSubject)

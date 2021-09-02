@@ -1,10 +1,11 @@
 package org.ikasan.monitor;
 
-import org.ikasan.monitor.notifier.DashboardNotifier;
-import org.ikasan.monitor.notifier.EmailNotifier;
+import org.ikasan.monitor.notifier.DashboardFlowNotifier;
+import org.ikasan.monitor.notifier.EmailFlowNotifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.FlowMonitor;
+import org.ikasan.spec.monitor.JobMonitor;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -20,12 +21,12 @@ public class IkasanMonitorAutoConfigurationTest
         .withConfiguration(AutoConfigurations.of(IkasanMonitorAutoConfiguration.class));
 
     @Test
-    public void testMonitorWithEmailNotifierWhenPropertiesSet(){
+    public void testFlowMonitorWithEmailNotifierWhenPropertiesSet(){
         contextRunner.withPropertyValues("environment=TEST")
                      .withUserConfiguration(TestIkasanConfig.class)
                      .run(context -> {
-                         assertThat(context).hasSingleBean(Monitor.class);
-                         Monitor monitor = context.getBean(Monitor.class);
+                         assertThat(context).hasSingleBean(FlowMonitor.class);
+                         FlowMonitor monitor = context.getBean(FlowMonitor.class);
                          assertThat(monitor.getEnvironment()).isEqualTo("TEST");
                          assertThat(monitor.getNotifiers()).isEmpty();
                      });
@@ -33,16 +34,29 @@ public class IkasanMonitorAutoConfigurationTest
     }
 
     @Test
-    public void testMonitorWithNoNotifiers(){
+    public void testJobMonitorWithEmailNotifierWhenPropertiesSet(){
+        contextRunner.withPropertyValues("environment=TEST")
+            .withUserConfiguration(TestIkasanConfig.class)
+            .run(context -> {
+                assertThat(context).hasSingleBean(JobMonitor.class);
+                JobMonitor monitor = context.getBean(JobMonitor.class);
+                assertThat(monitor.getEnvironment()).isEqualTo("TEST");
+                assertThat(monitor.getNotifiers()).isEmpty();
+            });
+
+    }
+
+    @Test
+    public void testFlowMonitorWithNoNotifiers(){
         contextRunner.withPropertyValues(
             "ikasan.monitor.notifier.mail.enabled=true",
             "ikasan.monitor.notifier.mail.mail-host=testhost"
                                         )
                      .withUserConfiguration(TestIkasanConfig.class)
                      .run(context -> {
-                         assertThat(context).hasSingleBean(Monitor.class);
-                         assertThat(context).hasSingleBean(EmailNotifier.class);
-                         Monitor monitor = context.getBean(Monitor.class);
+                         assertThat(context).hasSingleBean(FlowMonitor.class);
+                         assertThat(context).hasSingleBean(EmailFlowNotifier.class);
+                         FlowMonitor monitor = context.getBean(FlowMonitor.class);
                          assertThat(monitor.getNotifiers()).hasSize(1);
                          EmailNotifierConfiguration c = context.getBean(EmailNotifierConfiguration.class);
                          assertThat(c.getMailHost()).isEqualTo("testhost");
@@ -51,13 +65,31 @@ public class IkasanMonitorAutoConfigurationTest
     }
 
     @Test
-    public void testMonitorWithDashboardNotifiers(){
+    public void testJobMonitorWithNoNotifiers(){
+        contextRunner.withPropertyValues(
+            "ikasan.monitor.notifier.mail.enabled=true",
+            "ikasan.monitor.notifier.mail.mail-host=testhost"
+        )
+            .withUserConfiguration(TestIkasanConfig.class)
+            .run(context -> {
+                assertThat(context).hasSingleBean(FlowMonitor.class);
+                assertThat(context).hasSingleBean(EmailFlowNotifier.class);
+                JobMonitor monitor = context.getBean(JobMonitor.class);
+                assertThat(monitor.getNotifiers()).hasSize(1);
+                EmailNotifierConfiguration c = context.getBean(EmailNotifierConfiguration.class);
+                assertThat(c.getMailHost()).isEqualTo("testhost");
+            });
+
+    }
+
+    @Test
+    public void testFlowMonitorWithDashboardNotifiers(){
         contextRunner.withPropertyValues("ikasan.dashboard.extract.enabled=true")
                      .withUserConfiguration(TestIkasanConfig.class)
                      .run(context -> {
-                         assertThat(context).hasSingleBean(Monitor.class);
-                         assertThat(context).hasSingleBean(DashboardNotifier.class);
-                         Monitor monitor = context.getBean(Monitor.class);
+                         assertThat(context).hasSingleBean(FlowMonitor.class);
+                         assertThat(context).hasSingleBean(DashboardFlowNotifier.class);
+                         FlowMonitor monitor = context.getBean(FlowMonitor.class);
                          assertThat(monitor.getNotifiers()).hasSize(1);
                      });
 

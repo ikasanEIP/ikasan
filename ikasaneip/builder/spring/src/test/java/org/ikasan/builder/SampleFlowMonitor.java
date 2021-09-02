@@ -41,7 +41,7 @@
 package org.ikasan.builder;
 
 import org.ikasan.spec.management.ManagedService;
-import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.ikasan.spec.monitor.Notifier;
 
 import java.util.List;
@@ -51,7 +51,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public class SampleMonitor implements Monitor, ManagedService
+public class SampleFlowMonitor implements FlowMonitor, ManagedService
 {
 
     /* (non-Javadoc)
