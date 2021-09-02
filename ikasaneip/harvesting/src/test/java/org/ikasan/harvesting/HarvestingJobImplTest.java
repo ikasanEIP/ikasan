@@ -104,7 +104,7 @@ public class HarvestingJobImplTest
     }
 
     @Test
-    public void executeWhenHarvestableRecordsExistIsTrueButNothignToHarvest() throws JobExecutionException
+    public void executeWhenHarvestableRecordsExistIsTrueButNothingToHarvest() throws JobExecutionException
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);
