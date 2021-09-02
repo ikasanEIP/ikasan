@@ -42,6 +42,8 @@ package org.ikasan.monitor.notifier;
 
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.monitor.FlowNotifier;
+import org.ikasan.spec.monitor.JobNotifier;
 import org.ikasan.spec.monitor.Notifier;
 
 /**
@@ -56,9 +58,9 @@ public class NotifierFactoryImpl implements NotifierFactory
      * Get an instance of a monitor
      * @return
      */
-    public Notifier getEmailNotifier()
+    public FlowNotifier getEmailFlowNotifier()
     {
-        Notifier notifier = new EmailNotifier();
+        FlowNotifier notifier = new EmailFlowNotifier();
         if(notifier instanceof Configured)
         {
             ((Configured)notifier).setConfiguration(new EmailNotifierConfiguration());
@@ -66,13 +68,23 @@ public class NotifierFactoryImpl implements NotifierFactory
         return notifier;
     }
 
-	/* (non-Javadoc)
+    @Override
+    public JobNotifier getEmailJobNotifier() {
+        JobNotifier notifier = new EmailJobNotifier();
+        if(notifier instanceof Configured)
+        {
+            ((Configured)notifier).setConfiguration(new EmailNotifierConfiguration());
+        }
+        return notifier;
+    }
+
+    /* (non-Javadoc)
 	 * @see org.ikasan.monitor.notifier.NotifierFactory#getDashboardNotifier()
 	 */
 	@Override
-	public Notifier getDashboardNotifier(DashboardRestService flowCacheStateRestService)
+	public FlowNotifier getDashboardFlowNotifier(DashboardRestService flowCacheStateRestService)
 	{
-		return new DashboardNotifier(flowCacheStateRestService);
+		return new DashboardFlowNotifier(flowCacheStateRestService);
 	}
 
 }

@@ -41,7 +41,10 @@
 package org.ikasan.monitor.notifier;
 
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.monitor.FlowNotifier;
+import org.ikasan.spec.monitor.JobNotifier;
 import org.ikasan.spec.monitor.Notifier;
+import org.quartz.Job;
 
 /**
  * Notifier factory contract.
@@ -54,11 +57,17 @@ public interface NotifierFactory
      * Get an instance of an email notifier
      * @return
      */
-    public Notifier getEmailNotifier();
+    public FlowNotifier getEmailFlowNotifier();
+
+    /**
+     * Get an instance of an email notifier
+     * @return
+     */
+    public JobNotifier getEmailJobNotifier();
     
     /**
     * Get an instance of a dashboard notifier
     * @return
     */
-    public Notifier getDashboardNotifier(DashboardRestService flowCacheStateRestService);
+    public FlowNotifier getDashboardFlowNotifier(DashboardRestService flowCacheStateRestService);
 }

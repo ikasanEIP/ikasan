@@ -42,31 +42,22 @@ package org.ikasan.monitor.notifier;
 
 import org.ikasan.monitor.notifier.model.FlowStateImpl;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.springframework.http.*;
+import org.ikasan.spec.monitor.FlowNotifier;
+import org.ikasan.spec.monitor.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.monitor.Notifier;
-import org.springframework.http.converter.ByteArrayHttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
-
-import java.net.URI;
-import java.util.Arrays;
-import java.util.Base64;
 
 /**
  * Ikasan default dashboard notifier implementation.
  *
  * @author Ikasan Development Team
  */
-public class DashboardNotifier implements Notifier<String>
+public class DashboardFlowNotifier implements FlowNotifier<String>
 {
     /**
      * logger instance
      */
-    private static Logger logger = LoggerFactory.getLogger(DashboardNotifier.class);
+    private static Logger logger = LoggerFactory.getLogger(DashboardFlowNotifier.class);
 
     /**
      * only interested in state changes
@@ -79,7 +70,7 @@ public class DashboardNotifier implements Notifier<String>
     private DashboardRestService dashboardRestService;
 
 
-    public DashboardNotifier(DashboardRestService dashboardRestService)
+    public DashboardFlowNotifier(DashboardRestService dashboardRestService)
     {
         this.dashboardRestService = dashboardRestService;
         if(this.dashboardRestService == null)
@@ -88,9 +79,9 @@ public class DashboardNotifier implements Notifier<String>
         }
     }
 
-    @Override public void invoke(String environment, String moduleName, String flowName, String state)
+    @Override public void invoke(String environment, String moduleName, String context, String state)
     {
-        notify(environment, moduleName, flowName, state);
+        notify(environment, moduleName, context, state);
     }
 
     @Override public void setNotifyStateChangesOnly(boolean notifyStateChangesOnly)

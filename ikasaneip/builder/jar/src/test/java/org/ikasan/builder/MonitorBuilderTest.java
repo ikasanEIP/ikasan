@@ -41,11 +41,11 @@
 package org.ikasan.builder;
 
 import org.ikasan.monitor.MonitorFactory;
-import org.ikasan.monitor.notifier.DashboardNotifier;
+import org.ikasan.monitor.notifier.DashboardFlowNotifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.monitor.notifier.NotifierFactory;
-import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
@@ -82,7 +82,7 @@ public class MonitorBuilderTest
     final MonitorFactory monitorFactory = mockery.mock(MonitorFactory.class, "mockMonitorFactory");
 
     /** Mock Monitor */
-    final Monitor monitor = mockery.mock(Monitor.class, "mockMonitor");
+    final FlowMonitor monitor = mockery.mock(FlowMonitor.class, "mockMonitor");
 
     /** Mock NotifierFactory */
     final NotifierFactory notifierFactory = mockery.mock(NotifierFactory.class, "mockNotifierFactory");
@@ -94,7 +94,7 @@ public class MonitorBuilderTest
     final Notifier notifier = mockery.mock(Notifier.class, "mockNotifier");
 
     /** DashboardNotifier */
-    final DashboardNotifier dashboardNotifier = mockery.mock(DashboardNotifier.class, "mockDashboardNotifier");
+    final DashboardFlowNotifier dashboardNotifier = mockery.mock(DashboardFlowNotifier.class, "mockDashboardNotifier");
 
     /**
      * Test failed constructor.
@@ -143,9 +143,9 @@ public class MonitorBuilderTest
                 exactly(1).of(applicationContext).getBean("flowCacheStateRestService", DashboardRestService.class);
                 will(returnValue(flowCacheStateRestService));
 
-                exactly(1).of(monitorFactory).getMonitor();
+                exactly(1).of(monitorFactory).getFlowMonitor();
                 will(returnValue(monitor));
-                exactly(1).of(notifierFactory).getDashboardNotifier(flowCacheStateRestService);
+                exactly(1).of(notifierFactory).getDashboardFlowNotifier(flowCacheStateRestService);
                 will(returnValue(dashboardNotifier));
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }
@@ -180,9 +180,9 @@ public class MonitorBuilderTest
                 exactly(1).of(applicationContext).getBean("flowCacheStateRestService", DashboardRestService.class);
                 will(returnValue(flowCacheStateRestService));
 
-                exactly(1).of(monitorFactory).getMonitor();
+                exactly(1).of(monitorFactory).getFlowMonitor();
                 will(returnValue(monitor));
-                exactly(1).of(notifierFactory).getEmailNotifier();
+                exactly(1).of(notifierFactory).getEmailFlowNotifier();
                 will(returnValue(notifier));
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }
@@ -220,11 +220,11 @@ public class MonitorBuilderTest
                 exactly(1).of(applicationContext).getBean("flowCacheStateRestService", DashboardRestService.class);
                 will(returnValue(flowCacheStateRestService));
 
-                exactly(1).of(monitorFactory).getMonitor();
+                exactly(1).of(monitorFactory).getFlowMonitor();
                 will(returnValue(monitor));
-                exactly(1).of(notifierFactory).getEmailNotifier();
+                exactly(1).of(notifierFactory).getEmailFlowNotifier();
                 will(returnValue(notifier));
-                exactly(1).of(notifierFactory).getDashboardNotifier(flowCacheStateRestService);
+                exactly(1).of(notifierFactory).getDashboardFlowNotifier(flowCacheStateRestService);
                 will(returnValue(dashboardNotifier));
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }
@@ -261,7 +261,7 @@ public class MonitorBuilderTest
                 exactly(1).of(applicationContext).getBean("flowCacheStateRestService", DashboardRestService.class);
                 will(returnValue(flowCacheStateRestService));
 
-                exactly(1).of(monitorFactory).getMonitor();
+                exactly(1).of(monitorFactory).getFlowMonitor();
                 will(returnValue(monitor));
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }
@@ -296,7 +296,7 @@ public class MonitorBuilderTest
                 exactly(1).of(applicationContext).getBean("flowCacheStateRestService", DashboardRestService.class);
                 will(returnValue(flowCacheStateRestService));
 
-                exactly(1).of(monitorFactory).getMonitor();
+                exactly(1).of(monitorFactory).getFlowMonitor();
                 will(returnValue(monitor));
                 exactly(1).of(monitor).setNotifiers(notifiers);
             }

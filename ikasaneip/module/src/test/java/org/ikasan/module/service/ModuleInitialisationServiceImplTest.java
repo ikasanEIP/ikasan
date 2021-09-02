@@ -40,11 +40,6 @@
  */
 package org.ikasan.module.service;
 
-import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
-import org.ikasan.module.SimpleModule;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
@@ -52,9 +47,7 @@ import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.recovery.RecoveryManager;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.spec.monitor.FlowMonitor;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -160,7 +153,7 @@ public class ModuleInitialisationServiceImplTest {
             oneOf(platformContext).getBeansOfType(Scheduler.class);
             will(returnValue(null));
 
-            oneOf(platformContext).getBeansOfType(Monitor.class);
+            oneOf(platformContext).getBeansOfType(FlowMonitor.class);
             will(returnValue(null));
 
         }});

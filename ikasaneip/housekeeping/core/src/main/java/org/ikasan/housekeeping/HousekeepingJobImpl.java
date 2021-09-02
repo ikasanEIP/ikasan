@@ -2,6 +2,9 @@ package org.ikasan.housekeeping;
 
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
+import org.ikasan.spec.housekeeping.HousekeepingJobState;
+import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.MonitorSubject;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -13,7 +16,7 @@ import org.springframework.core.env.Environment;
  * Created by Ikasan Development Team on 09/07/2019.
  */
 @DisallowConcurrentExecution
-public class HousekeepingJobImpl implements HousekeepingJob
+public class HousekeepingJobImpl implements HousekeepingJob, MonitorSubject
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(HousekeepingJobImpl.class);
@@ -28,6 +31,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
     private Boolean lastExecutionSuccessful = true;
     private String executionErrorMessage;
     private Boolean initialised = false;
+    private Monitor monitor;
 
     public HousekeepingJobImpl(String jobName, HousekeepService houseKeepService,
         Environment environment)
@@ -144,6 +148,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
             if (houseKeepService.housekeepablesExist())
             {
                 this.houseKeepService.housekeep();
+                if(this.monitor!=null)this.monitor.invoke(HousekeepingJobState.HEALTHY);
             }
         }
         catch(Exception e)
@@ -151,6 +156,7 @@ public class HousekeepingJobImpl implements HousekeepingJob
             this.executionErrorMessage = e.getMessage();
             this.lastExecutionSuccessful = false;
             logger.error(String.format("Could not execute housekeeping job[%s]. Error message[%s].", this.jobName, this.executionErrorMessage));
+            if(this.monitor!=null)this.monitor.invoke(HousekeepingJobState.ERROR);
         }
 
         this.lastExecutionSuccessful = true;
@@ -173,6 +179,11 @@ public class HousekeepingJobImpl implements HousekeepingJob
         }
 
         return cronExpression;
+    }
+
+    @Override
+    public void setMonitor(Monitor monitor) {
+        this.monitor = monitor;
     }
 
     public Environment getEnvironment()

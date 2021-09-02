@@ -2,8 +2,11 @@ package org.ikasan.harvesting;
 
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.harvest.HarvestJobState;
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
+import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.MonitorSubject;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
@@ -17,7 +20,7 @@ import java.util.List;
  * Created by Ikasan Development Team on 09/08/2016.
  */
 @DisallowConcurrentExecution
-public class HarvestingJobImpl implements HarvestingJob
+public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(HarvestingJobImpl.class);
@@ -33,6 +36,7 @@ public class HarvestingJobImpl implements HarvestingJob
     private String executionErrorMessage;
     private Boolean initialised = false;
 
+    private Monitor monitor;
 
     public HarvestingJobImpl(String jobName, HarvestService harvestService,
         Environment environment,
@@ -134,11 +138,13 @@ public class HarvestingJobImpl implements HarvestingJob
                 }
             }
 
+            if(this.monitor!=null)this.monitor.invoke(HarvestJobState.HEALTHY);
         }
         catch(Exception e)
         {
             this.executionErrorMessage = e.getMessage();
             this.lastExecutionSuccessful = false;
+            if(this.monitor!=null)this.monitor.invoke(HarvestJobState.ERROR);
             throw new JobExecutionException("Could not execute housekeeping job: " + this.jobName, e);
         }
 
@@ -169,6 +175,10 @@ public class HarvestingJobImpl implements HarvestingJob
         return cronExpression;
     }
 
+    @Override
+    public void setMonitor(Monitor monitor) {
+        this.monitor = monitor;
+    }
 
     public Environment getEnvironment()
     {

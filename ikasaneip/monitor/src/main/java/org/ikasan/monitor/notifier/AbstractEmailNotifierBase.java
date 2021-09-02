@@ -40,26 +40,30 @@
  */
 package org.ikasan.monitor.notifier;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.monitor.Notifier;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.mail.*;
 import javax.mail.internet.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Properties;
 
 /**
  * Ikasan default email notifier implementation.
  *
  * @author Ikasan Development Team
  */
-public class EmailNotifier implements Notifier<String>, ConfiguredResource<EmailNotifierConfiguration>
+public abstract class AbstractEmailNotifierBase implements Notifier<String>, ConfiguredResource<EmailNotifierConfiguration>
 {
     /** logger instance */
-    private static Logger logger = LoggerFactory.getLogger(EmailNotifier.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractEmailNotifierBase.class);
 
     /** regular expression for splitting grouped email addresses in a single String separated by comma, semi-colon, or space */
     private static String EMAIL_ADDRESS_SPLIT_REGEXP = ",| |;";
@@ -71,7 +75,7 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
     private String configuredResourceId;
 
     /** configuration */
-    private EmailNotifierConfiguration configuration;
+    protected EmailNotifierConfiguration configuration;
 
     /** mail session */
     private Session session;
@@ -86,12 +90,12 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
     StringBuilder pendingContent = new StringBuilder();
 
     @Override
-    public void invoke(String environment, String moduleName, String flowName, String state)
+    public void invoke(String environment, String moduleName, String context, String state)
     {
         if(configuration.isActive())
         {
-        	final String name = "Module[" + moduleName + "] Flow[" + flowName + "]";
-        	
+        	final String name = "Module[" + moduleName + "] Flow[" + context + "]";
+
             notify(environment, name, state);
         }
     }
@@ -332,7 +336,7 @@ public class EmailNotifier implements Notifier<String>, ConfiguredResource<Email
 
         mailProperties.putAll(configuration.getExtendedMailSessionProperties());
 
-        session = javax.mail.Session.getInstance(mailProperties);
+        session = Session.getInstance(mailProperties);
 
         // reset states to default on configuration change
         this.lastUpdateDateTime = 0;

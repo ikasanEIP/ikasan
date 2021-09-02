@@ -60,7 +60,7 @@ import java.util.concurrent.ExecutorService;
  * 
  * @author Ikasan Development Team
  */
-public class DefaultMonitorImplTest
+public class DefaultFlowMonitorImplTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -92,7 +92,7 @@ public class DefaultMonitorImplTest
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(false);
 
-        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        Monitor<String> monitor = new DefaultFlowMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
 
         monitor.invoke("stopped");
@@ -122,7 +122,7 @@ public class DefaultMonitorImplTest
         notifier.setNotifyStateChangesOnly(false);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        Monitor<String> monitor = new DefaultFlowMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
         ((Monitor)monitor).destroy();
@@ -149,7 +149,7 @@ public class DefaultMonitorImplTest
         MonitorConfiguration monitorConfiguration = new MonitorConfiguration();
         monitorConfiguration.setActive(true);
 
-        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        Monitor<String> monitor = new DefaultFlowMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
 
         monitor.invoke("stopped");
@@ -179,7 +179,7 @@ public class DefaultMonitorImplTest
         notifier.setNotifyStateChangesOnly(false);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        Monitor<String> monitor = new DefaultFlowMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 
@@ -210,7 +210,7 @@ public class DefaultMonitorImplTest
         notifier.setNotifyStateChangesOnly(true);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        Monitor<String> monitor = new DefaultFlowMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 
@@ -241,7 +241,7 @@ public class DefaultMonitorImplTest
         notifier.setNotifyStateChangesOnly(true);
         notifiers.add(notifier);
 
-        Monitor<String> monitor = new DefaultMonitorImpl<>(executorService);
+        Monitor<String> monitor = new DefaultFlowMonitorImpl<>(executorService);
         ((Configured)monitor).setConfiguration(monitorConfiguration);
         monitor.setNotifiers(notifiers);
 

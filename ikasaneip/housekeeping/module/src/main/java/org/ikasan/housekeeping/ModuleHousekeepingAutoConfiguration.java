@@ -5,6 +5,7 @@ import org.ikasan.scheduler.SchedulerFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
+import org.ikasan.spec.monitor.JobMonitor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -27,38 +28,68 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob replyHousekeepingJob(HousekeepService replayManagementService, Environment environment)
+    public HousekeepingJob replyHousekeepingJob(HousekeepService replayManagementService, Environment environment,
+                                                JobMonitor jobMonitor)
     {
-        return new HousekeepingJobImpl("replayHousekeepingJob", replayManagementService, environment);
+        HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("replayHousekeepingJob", replayManagementService, environment);
+        jobMonitor.setJobName(housekeepingJob.getJobName());
+
+        housekeepingJob.setMonitor(jobMonitor);
+        return housekeepingJob;
     }
 
     @Bean
-    public HousekeepingJob wiretapHousekeepingJob(HousekeepService wiretapService, Environment environment)
+    public HousekeepingJob wiretapHousekeepingJob(HousekeepService wiretapService, Environment environment,
+                                                  JobMonitor jobMonitor)
     {
-        return new HousekeepingJobImpl("wiretapHousekeepingJob", wiretapService, environment);
+        HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("wiretapHousekeepingJob", wiretapService, environment);
+        jobMonitor.setJobName(housekeepingJob.getJobName());
+
+        housekeepingJob.setMonitor(jobMonitor);
+        return housekeepingJob;
     }
 
     @Bean
-    public HousekeepingJob errorReportingHousekeepingJob(HousekeepService errorReportingManagementService, Environment environment)
+    public HousekeepingJob errorReportingHousekeepingJob(HousekeepService errorReportingManagementService, Environment environment,
+                                                         JobMonitor jobMonitor)
     {
-        return new HousekeepingJobImpl("errorReportingHousekeepingJob", errorReportingManagementService, environment);
+        HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("errorReportingHousekeepingJob", errorReportingManagementService, environment);
+        jobMonitor.setJobName(housekeepingJob.getJobName());
+
+        housekeepingJob.setMonitor(jobMonitor);
+        return housekeepingJob;
     }
 
     @Bean
-    public HousekeepingJob systemEventServiceHousekeepingJob(HousekeepService systemEventService, Environment environment)
+    public HousekeepingJob systemEventServiceHousekeepingJob(HousekeepService systemEventService, Environment environment,
+                                                             JobMonitor jobMonitor)
     {
-        return new HousekeepingJobImpl("systemEventServiceHousekeepingJob", systemEventService, environment);
+        HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("systemEventServiceHousekeepingJob", systemEventService, environment);
+        jobMonitor.setJobName(housekeepingJob.getJobName());
+
+        housekeepingJob.setMonitor(jobMonitor);
+        return housekeepingJob;
     }
 
     @Bean
-    public HousekeepingJob duplicateFilterHousekeepingJob(HousekeepService managementFilterService, Environment environment)
+    public HousekeepingJob duplicateFilterHousekeepingJob(HousekeepService managementFilterService, Environment environment,
+                                                          JobMonitor jobMonitor)
     {
-        return new HousekeepingJobImpl("duplicateFilterHousekeepingJob", managementFilterService, environment);
+        HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("duplicateFilterHousekeepingJob", managementFilterService, environment);
+        jobMonitor.setJobName(housekeepingJob.getJobName());
+
+        housekeepingJob.setMonitor(jobMonitor);
+        return housekeepingJob;
     }
 
     @Bean
-    public HousekeepingJob messageHistoryHousekeepingJob(HousekeepService messageHistoryService, Environment environment)
+    public HousekeepingJob messageHistoryHousekeepingJob(HousekeepService messageHistoryService, Environment environment,
+                                                         JobMonitor jobMonitor)
     {
-        return new HousekeepingJobImpl("messageHistoryHousekeepingJob", messageHistoryService, environment);
+        HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("messageHistoryHousekeepingJob", messageHistoryService, environment);
+        jobMonitor.setJobName(housekeepingJob.getJobName());
+
+        housekeepingJob.setMonitor(jobMonitor);
+        return housekeepingJob;
     }
 }
