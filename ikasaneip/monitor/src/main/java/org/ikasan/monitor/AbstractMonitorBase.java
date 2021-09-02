@@ -15,7 +15,7 @@ import java.util.concurrent.ExecutorService;
 public abstract class AbstractMonitorBase<T> implements Monitor<T>,  ConfiguredResource<MonitorConfiguration> {
 
     /** logger instance */
-    private static Logger logger = LoggerFactory.getLogger(DefaultFlowMonitorImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(AbstractMonitorBase.class);
 
     // executor service for thread dispatching
     protected final ExecutorService executorService;
@@ -68,7 +68,9 @@ public abstract class AbstractMonitorBase<T> implements Monitor<T>,  ConfiguredR
             String monitorName = (configuration.getMonitorName() != null ? configuration.getMonitorName()
                 : "Module[" + moduleName + "] Context[" + context + "]");
 
-            if(this.notifiers == null || this.notifiers.size() == 0)
+            boolean stateChanged = hasStateChanged(environment + monitorName, status);
+
+            if((this.notifiers == null || this.notifiers.size() == 0) && stateChanged   )
             {
                 logger.info("Monitor [" + monitorName + "] has no registered notifiers");
                 return;
@@ -79,8 +81,6 @@ public abstract class AbstractMonitorBase<T> implements Monitor<T>,  ConfiguredR
                 logger.warn("Cannot invoke Monitor after destroy has been called - executorService is null or shutdown");
                 return;
             }
-
-            boolean stateChanged = hasStateChanged(environment + monitorName, status);
 
             for(final Notifier notifier: notifiers)
             {

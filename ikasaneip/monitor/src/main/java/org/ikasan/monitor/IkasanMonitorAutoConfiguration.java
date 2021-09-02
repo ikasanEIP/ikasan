@@ -63,6 +63,10 @@ public class IkasanMonitorAutoConfiguration
         if ( environmentName!=null && !environmentName.isEmpty() ) {
             monitor.setEnvironment(environmentName);
         }
+        String moduleName = environment.getProperty("module.name");
+        if ( moduleName!=null && !moduleName.isEmpty() ) {
+            monitor.setModuleName(moduleName);
+        }
         return monitor;
     }
 
