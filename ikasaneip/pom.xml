@@ -280,7 +280,7 @@
         <version.org.hamcrest.hamcrest-library>2.2</version.org.hamcrest.hamcrest-library>
         <version.cglib.cglib-nodep>3.2.6</version.cglib.cglib-nodep>
         <version.org.objenesis>1.2</version.org.objenesis>
-        <version.uk.com.robust-it.cloning>1.9.0</version.uk.com.robust-it.cloning>
+        <version.io.github.kostaskougios.cloning>1.10.3</version.io.github.kostaskougios.cloning>
         <version.org.mockito>3.1.0</version.org.mockito>
         <version.powermock>2.0.2</version.powermock>
         <version.joda-time>2.10.5</version.joda-time>
@@ -1743,9 +1743,9 @@
             </dependency>
 
             <dependency>
-                <groupId>uk.com.robust-it</groupId>
+                <groupId>io.github.kostaskougios</groupId>
                 <artifactId>cloning</artifactId>
-                <version>${version.uk.com.robust-it.cloning}</version>
+                <version>${version.io.github.kostaskougios.cloning}</version>
             </dependency>
 
             <dependency>
