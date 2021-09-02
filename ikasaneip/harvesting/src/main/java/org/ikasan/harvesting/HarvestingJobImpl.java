@@ -132,9 +132,16 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
             {
                 List<HarvestEvent> events = this.harvestService.harvest(this.harvestSize);
 
-                if(events.size() > 0 && dashboardRestService.publish(events))
+                if(events.size() > 0)
                 {
-                    harvestService.updateAsHarvested(events);
+                    if(dashboardRestService.publish(events))
+                    {
+                        harvestService.updateAsHarvested(events);
+                    }
+                    else if(this.monitor!=null)
+                    {
+                        this.monitor.invoke(HarvestJobState.ERROR);
+                    }
                 }
             }
 

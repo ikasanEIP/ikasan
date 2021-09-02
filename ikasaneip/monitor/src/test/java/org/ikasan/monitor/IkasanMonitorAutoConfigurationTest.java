@@ -2,6 +2,7 @@ package org.ikasan.monitor;
 
 import org.ikasan.monitor.notifier.DashboardFlowNotifier;
 import org.ikasan.monitor.notifier.EmailFlowNotifier;
+import org.ikasan.monitor.notifier.EmailJobNotifier;
 import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.FlowMonitor;
@@ -50,7 +51,8 @@ public class IkasanMonitorAutoConfigurationTest
     public void testFlowMonitorWithNoNotifiers(){
         contextRunner.withPropertyValues(
             "ikasan.monitor.notifier.mail.enabled=true",
-            "ikasan.monitor.notifier.mail.mail-host=testhost"
+            "ikasan.monitor.notifier.mail.mail-host=testhost",
+            "ikasan.job.monitor.notifier.mail.enabled=true"
                                         )
                      .withUserConfiguration(TestIkasanConfig.class)
                      .run(context -> {
@@ -67,13 +69,13 @@ public class IkasanMonitorAutoConfigurationTest
     @Test
     public void testJobMonitorWithNoNotifiers(){
         contextRunner.withPropertyValues(
-            "ikasan.monitor.notifier.mail.enabled=true",
-            "ikasan.monitor.notifier.mail.mail-host=testhost"
+            "ikasan.monitor.notifier.mail.mail-host=testhost",
+            "ikasan.job.monitor.notifier.mail.enabled=true"
         )
             .withUserConfiguration(TestIkasanConfig.class)
             .run(context -> {
                 assertThat(context).hasSingleBean(FlowMonitor.class);
-                assertThat(context).hasSingleBean(EmailFlowNotifier.class);
+                assertThat(context).hasSingleBean(EmailJobNotifier.class);
                 JobMonitor monitor = context.getBean(JobMonitor.class);
                 assertThat(monitor.getNotifiers()).hasSize(1);
                 EmailNotifierConfiguration c = context.getBean(EmailNotifierConfiguration.class);

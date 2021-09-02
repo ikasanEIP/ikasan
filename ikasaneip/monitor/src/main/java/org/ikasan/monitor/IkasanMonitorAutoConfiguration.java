@@ -88,7 +88,7 @@ public class IkasanMonitorAutoConfiguration
 
     @Bean
     @ConditionalOnBean({NotifierFactory.class})
-    @ConditionalOnProperty(prefix = "ikasan.monitor.notifier.mail", name = "enabled", havingValue = "true")
+    @ConditionalOnProperty(prefix = "ikasan.job.monitor.notifier.mail", name = "enabled", havingValue = "true")
     public JobNotifier emailJobNotifier(NotifierFactory notifierFactory, EmailNotifierConfiguration emailNotifierConfiguration){
         EmailJobNotifier emailNotifier = (EmailJobNotifier) notifierFactory.getEmailJobNotifier();
         emailNotifier.setConfiguration(emailNotifierConfiguration);

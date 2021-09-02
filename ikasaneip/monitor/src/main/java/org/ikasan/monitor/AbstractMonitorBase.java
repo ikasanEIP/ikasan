@@ -70,7 +70,7 @@ public abstract class AbstractMonitorBase<T> implements Monitor<T>,  ConfiguredR
 
             boolean stateChanged = hasStateChanged(environment + monitorName, status);
 
-            if((this.notifiers == null || this.notifiers.size() == 0) && stateChanged   )
+            if((this.notifiers == null || this.notifiers.size() == 0) && stateChanged)
             {
                 logger.info("Monitor [" + monitorName + "] has no registered notifiers");
                 return;
