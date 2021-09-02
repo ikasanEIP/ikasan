@@ -46,6 +46,7 @@ import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.monitor.notifier.NotifierFactory;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.FlowMonitor;
+import org.ikasan.spec.monitor.FlowNotifier;
 import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
@@ -91,7 +92,7 @@ public class MonitorBuilderTest
     final DashboardRestService flowCacheStateRestService = mockery.mock(DashboardRestService.class, "mockDashboardRestService");
 
     /** Mock Notifier */
-    final Notifier notifier = mockery.mock(Notifier.class, "mockNotifier");
+    final FlowNotifier notifier = mockery.mock(FlowNotifier.class, "mockNotifier");
 
     /** DashboardNotifier */
     final DashboardFlowNotifier dashboardNotifier = mockery.mock(DashboardFlowNotifier.class, "mockDashboardNotifier");
