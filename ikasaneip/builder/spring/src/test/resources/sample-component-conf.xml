@@ -63,7 +63,7 @@
     <!--  ================================================================== -->
     <!--  Sample monitor implementation for testing                          -->
     <!--  ================================================================== -->
-    <bean id="monitor"              class="org.ikasan.builder.SampleMonitor" />
+    <bean id="monitor"              class="org.ikasan.builder.SampleFlowMonitor" />
 
     <!--  ================================================================== -->
     <!--  Sample context listeners implementation for testing                -->

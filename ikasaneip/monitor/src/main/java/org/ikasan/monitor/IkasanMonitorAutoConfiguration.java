@@ -2,8 +2,7 @@ package org.ikasan.monitor;
 
 import org.ikasan.monitor.notifier.*;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.monitor.Monitor;
-import org.ikasan.spec.monitor.Notifier;
+import org.ikasan.spec.monitor.*;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,10 +42,23 @@ public class IkasanMonitorAutoConfiguration
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     @ConditionalOnBean({MonitorFactory.class})
     @ConditionalOnMissingBean
-    public Monitor monitor(MonitorFactory monitorFactory, Optional<List<Notifier>> notifiers){
+    public FlowMonitor flowMonitor(MonitorFactory monitorFactory, Optional<List<FlowNotifier>> notifiers){
+        FlowMonitor monitor = monitorFactory.getFlowMonitor();
+        notifiers.ifPresent(n -> monitor.setNotifiers(n));
+        String environmentName = environment.getProperty("environment");
+        if ( environmentName!=null && !environmentName.isEmpty() ) {
+            monitor.setEnvironment(environmentName);
+        }
+        return monitor;
+    }
 
-        Monitor monitor = monitorFactory.getMonitor();
-        notifiers.ifPresent(monitor::setNotifiers);
+    @Bean
+    @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+    @ConditionalOnBean({MonitorFactory.class})
+    @ConditionalOnMissingBean
+    public JobMonitor jobMonitor(MonitorFactory monitorFactory, Optional<List<JobNotifier>> notifiers){
+        JobMonitor monitor = monitorFactory.getJobMonitor();
+        notifiers.ifPresent(n -> monitor.setNotifiers(n));
         String environmentName = environment.getProperty("environment");
         if ( environmentName!=null && !environmentName.isEmpty() ) {
             monitor.setEnvironment(environmentName);
@@ -57,15 +69,24 @@ public class IkasanMonitorAutoConfiguration
     @Bean
     @ConditionalOnBean({NotifierFactory.class})
     @ConditionalOnProperty(prefix = "ikasan.dashboard.extract", name = "enabled", havingValue = "true")
-    public Notifier dashboardNotifier(NotifierFactory notifierFactory, DashboardRestService flowCacheStateRestService){
-        return notifierFactory.getDashboardNotifier(flowCacheStateRestService);
+    public FlowNotifier dashboardFlowNotifier(NotifierFactory notifierFactory, DashboardRestService flowCacheStateRestService){
+        return notifierFactory.getDashboardFlowNotifier(flowCacheStateRestService);
     }
 
     @Bean
     @ConditionalOnBean({NotifierFactory.class})
     @ConditionalOnProperty(prefix = "ikasan.monitor.notifier.mail", name = "enabled", havingValue = "true")
-    public Notifier emailNotifier(NotifierFactory notifierFactory, EmailNotifierConfiguration emailNotifierConfiguration){
-        EmailNotifier emailNotifier = (EmailNotifier) notifierFactory.getEmailNotifier();
+    public FlowNotifier emailFlowNotifier(NotifierFactory notifierFactory, EmailNotifierConfiguration emailNotifierConfiguration){
+        EmailFlowNotifier emailNotifier = (EmailFlowNotifier) notifierFactory.getEmailFlowNotifier();
+        emailNotifier.setConfiguration(emailNotifierConfiguration);
+        return emailNotifier;
+    }
+
+    @Bean
+    @ConditionalOnBean({NotifierFactory.class})
+    @ConditionalOnProperty(prefix = "ikasan.monitor.notifier.mail", name = "enabled", havingValue = "true")
+    public JobNotifier emailJobNotifier(NotifierFactory notifierFactory, EmailNotifierConfiguration emailNotifierConfiguration){
+        EmailJobNotifier emailNotifier = (EmailJobNotifier) notifierFactory.getEmailJobNotifier();
         emailNotifier.setConfiguration(emailNotifierConfiguration);
         return emailNotifier;
     }

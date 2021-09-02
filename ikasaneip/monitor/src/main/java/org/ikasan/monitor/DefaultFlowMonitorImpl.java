@@ -41,15 +41,44 @@
 package org.ikasan.monitor;
 
 import org.ikasan.spec.monitor.FlowMonitor;
-import org.ikasan.spec.monitor.JobMonitor;
+
+import java.util.concurrent.ExecutorService;
 
 /**
- * Monitor instance factory.
- * @author Ikasan Development Team.
+ * Ikasan default monitor implementation.
+ *
+ * @author Ikasan Development Team
  */
-public interface MonitorFactory
+public class DefaultFlowMonitorImpl<T> extends AbstractMonitorBase<T> implements FlowMonitor<T>
 {
-    public FlowMonitor getFlowMonitor();
+    /** flow name */
+    private String flowName;
 
-    public JobMonitor getJobMonitor();
+    /**
+     * Constructor
+     * @param executorService
+     */
+    public DefaultFlowMonitorImpl(ExecutorService executorService) {
+        super(executorService);
+    }
+
+
+    @Override
+    public void invoke(final T status) {
+        super.invoke(status, flowName);
+    }
+
+	/**
+	 * @return the flowName
+	 */
+	public String getFlowName() {
+		return flowName;
+	}
+
+	/**
+	 * @param flowName the flowName to set
+	 */
+	public void setFlowName(String flowName) {
+		this.flowName = flowName;
+	}
 }
