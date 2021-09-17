@@ -232,9 +232,9 @@ public class JmsSampleFlowTest {
     }
 
     private void resetExceptionGeneratingBroker() {
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule
             .getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.reset();
+        exceptionGeneratingBroker.reset();
     }
 
     public void resetDelayGeneratingBroker(){
@@ -252,8 +252,8 @@ public class JmsSampleFlowTest {
         jmsTemplate.convertAndSend("source", message);
 
         // update broker config to force exception throwing
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowExclusionException(true);
 
         //Setup component expectations
 
@@ -295,8 +295,8 @@ public class JmsSampleFlowTest {
         jmsTemplate.convertAndSend("source", message);
 
         // update broker config to force exception throwing
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowExclusionException(true);
 
         //Setup component expectations
 
@@ -332,7 +332,7 @@ public class JmsSampleFlowTest {
         ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment, new HttpComponentsClientHttpRequestFactory());
 
         // Prevent the exclusion from being thrown when resubmitting and restart the flow.
-        exceptionGenerationgBroker.setShouldThrowExclusionException(false);
+        exceptionGeneratingBroker.setShouldThrowExclusionException(false);
         this.flowTestRule.stopFlow();
         this.flowTestRule.startFlow();
 
@@ -372,8 +372,8 @@ public class JmsSampleFlowTest {
         jmsTemplate.convertAndSend("source", message);
 
         // update broker config to force exception throwing
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.setShouldThrowExclusionException(true);
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowExclusionException(true);
 
         //Setup component expectations
 
@@ -410,7 +410,7 @@ public class JmsSampleFlowTest {
         ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment, new HttpComponentsClientHttpRequestFactory());
 
         // Prevent the exclusion from being thrown when resubmitting and restart the flow.
-        exceptionGenerationgBroker.setShouldThrowExclusionException(false);
+        exceptionGeneratingBroker.setShouldThrowExclusionException(false);
         this.flowTestRule.stopFlow();
         this.flowTestRule.startFlow();
 
@@ -434,8 +434,8 @@ public class JmsSampleFlowTest {
         jmsTemplate.convertAndSend("source", message);
 
         // setup custom broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.setShouldThrowRecoveryException(true);
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowRecoveryException(true);
 
         //Setup component expectations
 
@@ -481,8 +481,8 @@ public class JmsSampleFlowTest {
         jmsTemplate.convertAndSend("source", message);
 
         // setup custom broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.setShouldThrowScheduledRecoveryException(true);
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowScheduledRecoveryException(true);
 
         //Setup component expectations
 
@@ -515,7 +515,7 @@ public class JmsSampleFlowTest {
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
 
-        exceptionGenerationgBroker.setShouldThrowScheduledRecoveryException(false);
+        exceptionGeneratingBroker.setShouldThrowScheduledRecoveryException(false);
 
         // Decrease this time
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
@@ -533,8 +533,8 @@ public class JmsSampleFlowTest {
 
 
         // setup custom broker to throw an exception
-        ExceptionGenerationgBroker exceptionGenerationgBroker = (ExceptionGenerationgBroker) flowTestRule.getComponent("Exception Generating Broker");
-        exceptionGenerationgBroker.setShouldThrowStoppedInErrorException(true);
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowStoppedInErrorException(true);
 
         //Setup component expectations
 

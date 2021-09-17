@@ -96,7 +96,7 @@ public class ModuleConfig
         Flow flow = fb
                 .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
                 .consumer("JMS Consumer", jmsConsumer)
-                .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
+                .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
                 .broker( "Delay Generating Broker", new DelayGenerationBroker())
                 .producer("JMS Producer", jmsProducer)
                 .build();
