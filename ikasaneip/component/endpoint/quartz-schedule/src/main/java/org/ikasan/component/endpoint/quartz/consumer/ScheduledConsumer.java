@@ -318,6 +318,20 @@ public class ScheduledConsumer<T>
                 }
             }
         }
+        catch (ForceTransactionRollbackForEventExclusionException thrownByRecoveryManager)
+        {
+            // reschedule immediately to allow the event to be excluded
+            // assumes we will get the same event again
+            try
+            {
+                scheduleAsEagerTrigger(context.getTrigger(), 0);
+                throw thrownByRecoveryManager;
+            }
+            catch (SchedulerException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)
         {
             throw thrownByRecoveryManager;
