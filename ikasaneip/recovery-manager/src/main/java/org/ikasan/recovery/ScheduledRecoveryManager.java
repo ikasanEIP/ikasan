@@ -50,6 +50,7 @@ import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.event.ForceTransactionRollbackForEventExclusionException;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FinalAction;
@@ -378,7 +379,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         if(action instanceof ExcludeEventAction)
         {
             this.exclusionService.addBlacklisted(identifier, errorUri, flowInvocationContext);
-            throw new ForceTransactionRollbackException(action.toString(), throwable);
+            throw new ForceTransactionRollbackForEventExclusionException(action.toString(), throwable);
         }
 
         this.recover(action, lastComponentName, throwable, identifier, true);
