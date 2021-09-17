@@ -46,6 +46,7 @@ import org.ikasan.nonfunctional.test.util.TransactionTestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.xa.XAException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,8 +99,7 @@ public class TransactionAspect
     }
 
     @Before("execution(* org.apache.activemq.TransactionContext.prepare(javax.transaction.xa.Xid)) && args(xid)")
-    public void beforeAmqPrepare(javax.transaction.xa.Xid xid)
-    {
+    public void beforeAmqPrepare(javax.transaction.xa.Xid xid) throws XAException {
         ++amq_prepare_callCount;
         String transactionId = TransactionTestUtil.getTransactionId(xid);
         String branchQualifier = TransactionTestUtil.getTransactionBranchId(xid);
@@ -114,7 +114,7 @@ public class TransactionAspect
         transactions.put(branchQualifier, transactionId);
         if(amq_prepare_callCount == 2)
         {
-            throw new RuntimeException("Transaction Fail Exception " + msg);
+            throw new XAException(XAException.XA_RBINTEGRITY);
         }
     }
 

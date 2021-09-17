@@ -318,7 +318,7 @@
         <version.org.aspectjrt>1.9.5</version.org.aspectjrt>
         <version.javax.servlet>4.0.1</version.javax.servlet>
         <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
-        <version.activemq>5.16.2</version.activemq>
+        <version.activemq>5.16.3</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
