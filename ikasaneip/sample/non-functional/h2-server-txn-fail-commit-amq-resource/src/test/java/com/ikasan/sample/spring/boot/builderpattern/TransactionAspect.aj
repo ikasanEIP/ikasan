@@ -40,12 +40,14 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.ikasan.nonfunctional.test.util.TransactionTestUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.xa.XAException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -119,8 +121,7 @@ public class TransactionAspect
     }
 
     @Before("execution(* org.apache.activemq.TransactionContext.commit(javax.transaction.xa.Xid, boolean)) && args(xid, onePhase)")
-    public void beforeAmqCommit(javax.transaction.xa.Xid xid, boolean onePhase)
-    {
+    public void beforeAmqCommit(javax.transaction.xa.Xid xid, boolean onePhase) throws XAException {
         String transactionId = TransactionTestUtil.getTransactionId(xid);
         String branchQualifier = TransactionTestUtil.getTransactionBranchId(xid);
 
@@ -141,9 +142,8 @@ public class TransactionAspect
 
         // first callback is for message 1 which we want to let through successfully
         // then cause a failure for message 2 which is callback 2.
-        if(amq_commit_callCount == 2)
-        {
-            throw new RuntimeException("Transaction Fail Exception " + msg);
+        if(amq_commit_callCount == 2) {
+            throw new XAException(107);
         }
     }
 
