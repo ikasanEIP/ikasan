@@ -46,7 +46,7 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 /**
  * Created by majean on 09/10/2017.
  */
-public class ExceptionGenerationgBroker implements Broker
+public class ExceptionGeneratingBroker implements Broker
 {
     private boolean shouldThrowExclusionException = false;
 

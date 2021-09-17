@@ -47,7 +47,7 @@ package org.ikasan.spec.event;
  * 
  * @author Ikasan Development Team
  */
-public final class ForceTransactionRollbackException extends RuntimeException
+public class ForceTransactionRollbackException extends RuntimeException
 {
     /** serialVersionUID */
     private static final long serialVersionUID = 5643215546008399313L;
