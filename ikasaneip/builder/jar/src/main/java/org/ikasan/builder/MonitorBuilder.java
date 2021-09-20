@@ -47,7 +47,6 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.FlowMonitor;
-import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 
 import java.util.ArrayList;

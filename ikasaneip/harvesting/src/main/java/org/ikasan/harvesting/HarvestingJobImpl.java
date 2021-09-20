@@ -137,6 +137,7 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
                     if(dashboardRestService.publish(events))
                     {
                         harvestService.updateAsHarvested(events);
+                        if(this.monitor!=null)this.monitor.invoke(HarvestJobState.HEALTHY);
                     }
                     else if(this.monitor!=null)
                     {
@@ -144,8 +145,6 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
                     }
                 }
             }
-
-            if(this.monitor!=null)this.monitor.invoke(HarvestJobState.HEALTHY);
         }
         catch(Exception e)
         {
