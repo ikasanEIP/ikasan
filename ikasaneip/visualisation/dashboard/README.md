@@ -4,155 +4,21 @@
 
 - [Dashboard](./dashboard.md)
 - [Search](./search.md)
+- [Module, Flow and Business Stream Visualisation](./visualisation-screens.md)
 - [Scheduled Jobs](./scheduler.md)
 - [Security](./security.md)
 - [Notifications](./notifications.md)
+- [Business stream designer](./notifications.md)
 
-Import the project to the IDE of your choosing as a Maven project. 
+## Getting started
 
-Run application using `mvn spring-boot:run` or directly running Application class from your IDE.
+1. Download the Ikasan Visualisation Dashboard distribution from [Maven Central](https://search.maven.org/search?q=org.ikasan). Search for the distribution `org.ikasan:ikasan-dashboard-distrbution:<version>`. 
+2. Unzip the distribution to the desired installation location.
+3. Run `ikasan.sh start` to start the dashboard. Note the dashboard required JDK11+. This will start the solr index and H2 database.
+4. Open http://localhost:9090/ in browser
+5. In order to stop the dashboard `ikasan.sh stop`
 
-Open http://localhost:9080/ in browser
-
-In the slider in the right hands side of the the screen titled Tools, there are controls
-to change the state of each node, which in turn is reflected by the pulsing colour behind 
-the node. It is also possible to upload JSON businessStream files to this application which are
-then reflected on the businessStream visualisation screen.
-
-There are 2 example files bundled with the application:
-- [Bond Flows](src/test/resources/data/businessStream/bondFlowsGraph.json)
-- [Reference Data Flows](src/test/resources/data/businessStream/referenceDataGraph.json)
-
-```json
-{
-  "flows": [
-    {
-      "id": "brokertec-trade",
-      "name": "brokertec-trade",
-      "x": 200,
-      "y": 0
-    },
-    {
-      "id": "espeed-trade",
-      "name": "espeed-trade",
-      "x": 200,
-      "y": 200
-    },
-    {
-      "id": "tradeweb-trade",
-      "name": "tradeweb-trade",
-      "x": 200,
-      "y": 400
-    },
-    {
-      "id": "ion-trade",
-      "name": "ion-trade",
-      "x": 0,
-      "y": 600
-    },
-    {
-      "id": "ion-derivativeTrade",
-      "name": "ion-derivativeTrade",
-      "x": 200,
-      "y": 500
-    },
-    {
-      "id": "ion-debtTrade",
-      "name": "ion-debtTrade",
-      "x": 200,
-      "y": 700
-    },
-    {
-      "id": "blbgToms-mhiTrade",
-      "name": "blbgToms-mhiTrade",
-      "x": 800,
-      "y": 300
-    }
-  ],
-  "integratedSystems": [
-    {
-      "id": "Brokertec",
-      "name": "Brokertec",
-      "x": 0,
-      "y": 0
-    },
-    {
-      "id": "Espeed",
-      "name": "Espeed",
-      "x": 0,
-      "y": 200
-    },
-    {
-      "id": "Tradeweb",
-      "name": "TradeWeb",
-      "x": 0,
-      "y": 400
-    },
-    {
-      "id": "ION",
-      "name": "ION",
-      "x": -200,
-      "y": 600
-    },
-    {
-      "id": "Bloomberg",
-      "name": "Bloomberg TOMS",
-      "x": 600,
-      "y": 300
-    }
-  ],
-  "edges": [
-    {
-      "from": "Brokertec",
-      "to": "brokertec-trade"
-    },
-    {
-      "from": "Tradeweb",
-      "to": "tradeweb-trade"
-    },
-    {
-      "from": "Espeed",
-      "to": "espeed-trade"
-    },
-    {
-      "from": "ION",
-      "to": "ion-trade"
-    },
-    {
-      "from": "brokertec-trade",
-      "to": "Bloomberg"
-    },
-    {
-      "from": "espeed-trade",
-      "to": "Bloomberg"
-    },
-    {
-      "from": "tradeweb-trade",
-      "to": "Bloomberg"
-    },
-    {
-      "from": "ion-trade",
-      "to": "ion-debtTrade"
-    },
-    {
-      "from": "ion-trade",
-      "to": "ion-derivativeTrade"
-    },
-    {
-      "from": "ion-derivativeTrade",
-      "to": "Bloomberg"
-    },
-    {
-      "from": "ion-debtTrade",
-      "to": "Bloomberg"
-    },
-    {
-      "from": "Bloomberg",
-      "to": "blbgToms-mhiTrade"
-    }
-  ]
-}
-```
+It is possible to control H2 and Solr individually using commands `ikasan.sh start-h2`, `ikasan.sh stop-h2`, `ikasan.sh start-solr` and `ikasan.sh stop-solr`. It is also possible to get details of the running processes `ikasan.sh ps`.
 
 Unit tests are written with the assistance of (Karibu)(https://github.com/mvysny/karibu-testing/tree/master/karibu-testing-v10). This framework 
 allows UI components to be tested without the need for browser of and related drivers.
