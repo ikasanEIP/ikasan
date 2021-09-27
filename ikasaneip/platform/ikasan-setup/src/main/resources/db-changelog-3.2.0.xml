@@ -39,6 +39,7 @@
     <include file="db/drop/db-changeLog-dropErrorCategorisation.xml" relativeToChangelogFile="true" />
 
     <!-- 3.2.x table modify -->
+    <include file="db/modify/db-changeLog-modifySystemEventExtendSubjectLength2.xml" relativeToChangelogFile="true" />
 
 
 

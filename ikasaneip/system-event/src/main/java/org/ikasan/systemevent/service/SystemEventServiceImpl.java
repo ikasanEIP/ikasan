@@ -123,6 +123,9 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
         {
             expiry = new Date(now.getTime() + (60000 * eventExpiryMinutes));
         }
+        if(subject.length() > 1024) {
+            subject = subject.substring(0, 1024);
+        }
         systemEventDao.save(new SystemEventImpl(subject, action, now, actor, expiry));
     }
 
@@ -134,6 +137,11 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
         {
             expiry = new Date(now.getTime() + (60000 * eventExpiryMinutes));
         }
+
+        if(subject.length() > 1024) {
+            subject = subject.substring(0, 1024);
+        }
+
         SystemEventImpl systemEvent = new SystemEventImpl(subject, action, now, actor, expiry);
         systemEvent.setModuleName(moduleName);
         systemEventDao.save(systemEvent);

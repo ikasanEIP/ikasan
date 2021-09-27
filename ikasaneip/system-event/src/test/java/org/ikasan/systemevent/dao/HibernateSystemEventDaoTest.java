@@ -47,13 +47,11 @@ import javax.annotation.Resource;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEventImpl;
-import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import static org.junit.Assert.assertEquals;
@@ -67,6 +65,8 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
         "/systemevent-service-conf.xml", "/test-conf.xml"
 })
+@Sql(scripts = "classpath:drop-system-event-table.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
+@Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class HibernateSystemEventDaoTest
 {
     /** Object being tested */
