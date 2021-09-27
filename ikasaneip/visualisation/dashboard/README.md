@@ -8,7 +8,7 @@
 - [Scheduled Jobs](./scheduler.md)
 - [Security](./security.md)
 - [Notifications](./notifications.md)
-- [Business stream designer](./business-stream-designer.md)
+- [Business Stream Designer](./business-stream-designer.md)
 
 ## Getting started
 
