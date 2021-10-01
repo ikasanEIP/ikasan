@@ -42,7 +42,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin 
-    \-DarchetypeVersion=3.1.1    
+    \-DarchetypeVersion=3.1.2    
     \-DgroupId=com.sample     
     \-DartifactId=sftp-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
