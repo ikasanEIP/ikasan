@@ -964,11 +964,6 @@
                 <artifactId>ikasan-housekeeping-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-housekeeping-dashboard</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
@@ -1190,33 +1185,10 @@
                 <artifactId>ikasan-rest-module</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-rest-module-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-rest-dashboard</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-rest-dashboard-client</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-dashboard</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-vis.js</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

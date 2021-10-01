@@ -80,7 +80,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.rest.client.ResubmissionRestServiceImpl;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -88,8 +87,8 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.client.ResubmissionService;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
@@ -147,6 +146,9 @@ public class JmsSampleFlowTest {
 
     @Resource
     private ErrorReportingServiceFactory errorReportingServiceFactory;
+
+    @Resource
+    private HospitalService hospitalService;
 
     private ErrorReportingService errorReportingService;
 
@@ -329,17 +331,14 @@ public class JmsSampleFlowTest {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
         mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
-        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment, new HttpComponentsClientHttpRequestFactory());
 
         // Prevent the exclusion from being thrown when resubmitting and restart the flow.
         exceptionGeneratingBroker.setShouldThrowExclusionException(false);
         this.flowTestRule.stopFlow();
         this.flowTestRule.startFlow();
 
-        boolean result = resubmissionRestService.resubmit("http://localhost:" + this.randomServerPort + this.moduleUnderTest.getName(), this.moduleUnderTest.getName(),
-            "Jms Sample Flow", "resubmit", exclusionEvent.getErrorUri());
-
-        assertEquals(true, result);
+        hospitalService.resubmit(this.moduleUnderTest.getName(),
+            "Jms Sample Flow", exclusionEvent.getErrorUri(), "username");
 
         exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
@@ -407,17 +406,14 @@ public class JmsSampleFlowTest {
         MockEnvironment mockEnvironment = new MockEnvironment();
         mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
         mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
-        ResubmissionService resubmissionRestService = new ResubmissionRestServiceImpl(mockEnvironment, new HttpComponentsClientHttpRequestFactory());
 
         // Prevent the exclusion from being thrown when resubmitting and restart the flow.
         exceptionGeneratingBroker.setShouldThrowExclusionException(false);
         this.flowTestRule.stopFlow();
         this.flowTestRule.startFlow();
 
-        boolean result = resubmissionRestService.resubmit("http://localhost:" + this.randomServerPort + this.moduleUnderTest.getName(), this.moduleUnderTest.getName(),
-            "Jms Sample Flow", "ignore", exclusionEvent.getErrorUri());
-
-        assertEquals(true, result);
+        hospitalService.ignore(this.moduleUnderTest.getName(),
+            "Jms Sample Flow", exclusionEvent.getErrorUri(), "username");
 
         exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
