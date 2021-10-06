@@ -5,7 +5,7 @@
 The matrix below shows for a given policy, what is functionally allowed for users how are assigned a role with that policy.
 
 
-| Functionality  | Read  | Write  | Admin  | Description  |
+| Functionality  | Admin  | Write  |  Read | Description  |
 |---|:---:|:---:|:---:|---|
 |**Wiretaps**|**wiretap-admin**|**wiretap-write**|**wiretap-read**|   |
 |Search/View Wiretap|:white_check_mark:|:white_check_mark:|:white_check_mark:|Search/View Wiretap|
