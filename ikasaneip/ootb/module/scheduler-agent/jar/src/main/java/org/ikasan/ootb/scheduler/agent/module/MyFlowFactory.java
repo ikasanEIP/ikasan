@@ -80,8 +80,7 @@ public class MyFlowFactory implements FlowFactory
                 .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
             .otherwise(builderFactory.getRouteBuilder()
                 .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
-                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
-            .build();
+                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()));
     }
 }
 
