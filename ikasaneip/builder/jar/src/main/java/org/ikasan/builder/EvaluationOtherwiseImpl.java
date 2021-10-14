@@ -76,13 +76,13 @@ public class EvaluationOtherwiseImpl implements EvaluationOtherwise<Route>
 		return new EvaluationOtherwiseImpl(route);
 	}
 
-	public EvaluationOtherwise<Route> otherwise(Route evaluatedRoute)
+	public Route otherwise(Route evaluatedRoute)
 	{
 		// create shallow copy of Route before adding Otherwise joining
         Route shallowCopy = new RouteImpl(evaluatedRoute);
         shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
         this.route.addNestedRoute(shallowCopy);
-		return new EvaluationOtherwiseImpl(route);
+		return this.build();
 	}
 
     /**
