@@ -18,6 +18,7 @@
     - [Developer Guide](ikasaneip/developer/docs/DeveloperGuide.md) 
     - [Component Guide](ikasaneip/component/Readme.md)
     - [Dashboard Guide](ikasaneip/visualisation/dashboard/README.md)
+    - [Upgrade Path](./UpgradePath.md) - steps required to upgrade from the previous Ikasan version
     
  - Samples overview
     - [spring-boot-builder-pattern](ikasaneip/sample/spring-boot/builder-pattern/README.md)

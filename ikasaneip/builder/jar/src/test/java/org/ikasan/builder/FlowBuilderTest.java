@@ -1206,7 +1206,7 @@ public class FlowBuilderTest
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", builderFactory.getRouteBuilder().producer("route1Publisher", producer))
                 .when("route2", builderFactory.getRouteBuilder().splitter("route2Splitter", splitter).producer("route2Publisher", producer))
-                .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1273,7 +1273,7 @@ public class FlowBuilderTest
             .singleRecipientRouter("router", singleRecipientRouter)
             .when("route1", builderFactory.getRouteBuilder().producer("route1Publisher", producer))
             .when("route2", builderFactory.getRouteBuilder().concurrentSplitter("route2Splitter", splitter).producer("route2Publisher", producer))
-            .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+            .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1344,8 +1344,7 @@ public class FlowBuilderTest
             .singleRecipientRouter("router", singleRecipientRouter)
             .when("route1", r1)
             .when("route1a", r1)
-            .otherwise(r2)
-            .build();
+            .otherwise(r2);
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1405,7 +1404,7 @@ public class FlowBuilderTest
         Route route2 = builderFactory.getRouteBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
                 .when("nestedRoute1", nestedRoute1)
                 .when("nestedRoute2", nestedRoute2)
-                .otherwise(nestedRoute3).build();
+                .otherwise(nestedRoute3);
 
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
@@ -1416,7 +1415,7 @@ public class FlowBuilderTest
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", builderFactory.getRouteBuilder().producer("whenPublisher1", producer))
                 .when("route2", route2)
-                .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1481,7 +1480,7 @@ public class FlowBuilderTest
         Route route2 = builderFactory.getRouteBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
             .when("nestedRoute1", nestedRoute1)
             .when("nestedRoute2", nestedRoute1)
-            .otherwise(nestedRoute1).build();
+            .otherwise(nestedRoute1);
 
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .withDescription("flowDescription")
@@ -1492,7 +1491,7 @@ public class FlowBuilderTest
             .singleRecipientRouter("router", singleRecipientRouter)
             .when("route1", builderFactory.getRouteBuilder().producer("whenPublisher1", producer))
             .when("route2", route2)
-            .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer)).build();
+            .otherwise(builderFactory.getRouteBuilder().translator("otherwiseTranslator", translator).producer("otherwisePublisher", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1568,7 +1567,7 @@ public class FlowBuilderTest
         Route route2 = builderFactory.getRouteBuilder().singleRecipientRouter("nestedSRR", singleRecipientRouter)
                 .when("nestedRoute1", nestedRoute1)
                 .when("nestedRoute2", nestedRoute2)
-                .otherwise(nestedRoute3).build();
+                .otherwise(nestedRoute3);
 
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")
@@ -1579,7 +1578,7 @@ public class FlowBuilderTest
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", route1)
                 .when("route2", route2)
-                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1680,7 +1679,7 @@ public class FlowBuilderTest
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", route1)
                 .when("route2", route2)
-                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
@@ -1778,7 +1777,7 @@ public class FlowBuilderTest
                 .singleRecipientRouter("router", singleRecipientRouter)
                 .when("route1", route1)
                 .when("route2", route2)
-                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer)).build();
+                .otherwise(builderFactory.getRouteBuilder().translator("name4", translator).producer("publisher4", producer));
 
         Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));

@@ -60,5 +60,5 @@ public interface EvaluationOtherwise<T> extends Endpoint<T>
      * @param route
      * @return
      */
-    EvaluationOtherwise<T> otherwise(Route route);
+    T otherwise(Route route);
 }

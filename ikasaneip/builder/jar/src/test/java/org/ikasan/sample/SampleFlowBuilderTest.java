@@ -236,8 +236,7 @@ public class SampleFlowBuilderTest
 				.singleRecipientRouter("routerName", singleRecipientRouter)
 					.when("a", builderFactory.getRouteBuilder().producer("end1",producer) )
 					.when("b", builderFactory.getRouteBuilder().producer("end2",producer) )
-					.otherwise(builderFactory.getRouteBuilder().producer("end3",producer) )
-    	    	.build();
+					.otherwise(builderFactory.getRouteBuilder().producer("end3",producer) );
 
     	Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
     	Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));

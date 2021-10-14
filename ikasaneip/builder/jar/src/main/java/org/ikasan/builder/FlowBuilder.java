@@ -1467,13 +1467,13 @@ public class FlowBuilder implements ApplicationContextAware
             return new PrimaryEvaluationOtherwiseImpl(route);
         }
 
-        public EvaluationOtherwise<Flow> otherwise(Route evaluatedRoute)
+        public Flow otherwise(Route evaluatedRoute)
         {
             // create shallow copy of Route before adding Otherwise joining
             Route shallowCopy = new RouteImpl(evaluatedRoute);
             shallowCopy.addFlowElementAsFirst(new FlowElementImpl(this.getClass().getName(), new Otherwise(), null));
             this.route.addNestedRoute(shallowCopy);
-            return new PrimaryEvaluationOtherwiseImpl(route);
+            return this.build();
         }
 
         public Flow build()
