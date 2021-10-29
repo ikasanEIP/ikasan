@@ -100,7 +100,7 @@ public class DefaultOperationImpl implements Operation
         {
             File outputLog = new File(processType.getOutputLog());
             FileUtil.createMissingParentDirectories(outputLog);
-            processBuilder.redirectOutput(outputLog);
+            processBuilder.redirectOutput(ProcessBuilder.Redirect.appendTo(outputLog));
         }
         if(processType.getErrorLog() == null || processType.getErrorLog().isEmpty())
         {
@@ -118,7 +118,7 @@ public class DefaultOperationImpl implements Operation
             {
                 File errorLog = new File(processType.getErrorLog());
                 FileUtil.createMissingParentDirectories(errorLog);
-                processBuilder.redirectError(errorLog);
+                processBuilder.redirectError(ProcessBuilder.Redirect.appendTo(errorLog));
             }
         }
 
