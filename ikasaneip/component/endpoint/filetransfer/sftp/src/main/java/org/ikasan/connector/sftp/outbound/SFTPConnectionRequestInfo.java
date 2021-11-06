@@ -77,6 +77,9 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     /** The private key file name (fully qualified path) */
     private String privateKeyFilename = null;
 
+    /** SFTP private key passphrase */
+    private String privateKeyPassphrase;
+
     /** The username */
     private String username = null;
 
@@ -285,6 +288,20 @@ public class SFTPConnectionRequestInfo extends EISConnectionRequestInfo
     public void setPrivateKeyFilename(String privateKeyFilename)
     {
         this.privateKeyFilename = privateKeyFilename;
+    }
+
+    /**
+     * @return the privateKeyPassphrase
+     */
+    public String getPrivateKeyPassphrase() {
+        return privateKeyPassphrase;
+    }
+
+    /**
+     * @param privateKeyPassphrase the privateKeyPassphrase to set
+     */
+    public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
+        this.privateKeyPassphrase = privateKeyPassphrase;
     }
 
     /**

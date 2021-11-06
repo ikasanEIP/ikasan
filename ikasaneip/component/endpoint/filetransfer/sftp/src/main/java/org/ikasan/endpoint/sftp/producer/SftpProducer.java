@@ -259,6 +259,7 @@ public class SftpProducer implements Producer<Payload>,
         spec.setMaxRetryAttempts(sftpProducerConfiguration.getMaxRetryAttempts());
         spec.setRemotePort(sftpProducerConfiguration.getRemotePort());
         spec.setPrivateKeyFilename(sftpProducerConfiguration.getPrivateKeyFilename());
+        spec.setPrivateKeyPassphrase(sftpProducerConfiguration.getPrivateKeyPassphrase());
         spec.setConnectionTimeout(sftpProducerConfiguration.getConnectionTimeout());
         spec.setUsername(sftpProducerConfiguration.getUsername());
         spec.setPassword(sftpProducerConfiguration.getPassword());
@@ -280,6 +281,7 @@ public class SftpProducer implements Producer<Payload>,
             alternateSpec.setMaxRetryAttempts(alternateConfig.getAlternateMaxRetryAttempts());
             alternateSpec.setRemotePort(alternateConfig.getAlternateRemotePort());
             alternateSpec.setPrivateKeyFilename(alternateConfig.getAlternatePrivateKeyFilename());
+            alternateSpec.setPrivateKeyPassphrase(sftpProducerConfiguration.getPrivateKeyPassphrase());
             alternateSpec.setConnectionTimeout(alternateConfig.getAlternateConnectionTimeout());
             alternateSpec.setUsername(alternateConfig.getAlternateUsername());
             alternateSpec.setPassword(alternateConfig.getAlternatePassword());

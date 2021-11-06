@@ -307,7 +307,8 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
                                          maxRetryAttempts,
                                          preferredAuthentications,
                                          connectionTimeout,
-                                         preferredKeyExchangeAlgorithm);
+                                         preferredKeyExchangeAlgorithm,
+                                         scri.getPrivateKeyPassphrase());
 
         try
         {

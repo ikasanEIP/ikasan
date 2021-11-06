@@ -314,6 +314,7 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
         spec.setMaxRetryAttempts(sftpConsumerConfiguration.getMaxRetryAttempts());
         spec.setRemotePort(sftpConsumerConfiguration.getRemotePort());
         spec.setPrivateKeyFilename(sftpConsumerConfiguration.getPrivateKeyFilename());
+        spec.setPrivateKeyPassphrase(sftpConsumerConfiguration.getPrivateKeyPassphrase());
         spec.setConnectionTimeout(sftpConsumerConfiguration.getConnectionTimeout());
         spec.setUsername(sftpConsumerConfiguration.getUsername());
         spec.setPassword(sftpConsumerConfiguration.getPassword());
@@ -336,6 +337,7 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
             alternateSpec.setMaxRetryAttempts(alternateCofnig.getAlternateMaxRetryAttempts());
             alternateSpec.setRemotePort(alternateCofnig.getAlternateRemotePort());
             alternateSpec.setPrivateKeyFilename(alternateCofnig.getAlternatePrivateKeyFilename());
+            alternateSpec.setPrivateKeyPassphrase(sftpConsumerConfiguration.getPrivateKeyPassphrase());
             alternateSpec.setConnectionTimeout(alternateCofnig.getAlternateConnectionTimeout());
             alternateSpec.setUsername(alternateCofnig.getAlternateUsername());
             alternateSpec.setPassword(alternateCofnig.getAlternatePassword());

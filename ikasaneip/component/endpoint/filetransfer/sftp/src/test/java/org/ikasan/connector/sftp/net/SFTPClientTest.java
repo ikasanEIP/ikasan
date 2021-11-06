@@ -36,7 +36,10 @@ public class SFTPClientTest
         dataFile = Paths.get("src/test/resources/data/test-data.xml");
         server = new SftpServerWithPasswordAuthenticator(passwordSftpServerPort, tempDir);
         server.start();
-        uut = new SFTPClient(null, null, "testUser", "testPassword", "127.0.0.1", passwordSftpServerPort, "127.0.0.1", 3, "", 20000, null);
+        uut = new SFTPClient(null, null, "testUser",
+            "testPassword", "127.0.0.1", passwordSftpServerPort,
+            "127.0.0.1", 3, "", 20000,
+            null, null);
 
         uut.connect();
 
