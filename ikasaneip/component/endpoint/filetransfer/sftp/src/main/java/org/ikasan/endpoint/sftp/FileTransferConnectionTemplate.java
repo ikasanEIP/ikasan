@@ -368,6 +368,7 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
             scri.setMaxRetryAttempts(sftpConnectionSpec.getMaxRetryAttempts());
             scri.setRemotePort(sftpConnectionSpec.getRemotePort());
             scri.setPrivateKeyFilename(sftpConnectionSpec.getPrivateKeyFilename());
+            scri.setPrivateKeyPassphrase(sftpConnectionSpec.getPrivateKeyFilename());
             scri.setUsername(sftpConnectionSpec.getUsername());
             scri.setPassword(sftpConnectionSpec.getPassword());
             scri.setRemoteHostname(sftpConnectionSpec.getRemoteHostname());
