@@ -67,6 +67,9 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     /** The private key file name (fully qualified path) */
     private String privateKeyFilename = null;
 
+    /** SFTP private key passphrase */
+    private String privateKeyPassphrase;
+
     /** Connection timeout in milliseconds (0 default means no timeout) */
     private Integer connectionTimeout = 0;
 
@@ -216,6 +219,20 @@ public class SFTPConnectionSpec extends EISConnectionSpec
     public void setPrivateKeyFilename(String privateKeyFilename)
     {
         this.privateKeyFilename = privateKeyFilename;
+    }
+
+    /**
+     * @return the privateKeyPassphrase
+     */
+    public String getPrivateKeyPassphrase() {
+        return privateKeyPassphrase;
+    }
+
+    /**
+     * @param privateKeyPassphrase the privateKeyPassphrase to set
+     */
+    public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
+        this.privateKeyPassphrase = privateKeyPassphrase;
     }
 
     /**

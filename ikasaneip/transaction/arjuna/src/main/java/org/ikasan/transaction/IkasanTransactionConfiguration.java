@@ -193,7 +193,7 @@ public class IkasanTransactionConfiguration
      * JMS connection factory wrapper configuration.
      */
     @Configuration
-    @ConditionalOnClass(Message.class)
+                    @ConditionalOnClass(Message.class)
     static class NarayanaJmsConfiguration {
 
         @Bean

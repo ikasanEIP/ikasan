@@ -61,6 +61,10 @@ public class SftpProducerConfiguration
     /** SFTP private key hosts */
     protected String privateKeyFilename;
 
+    /** SFTP private key passphrase */
+    @Masked
+    private String privateKeyPassphrase;
+
     /** SFTP max retry attempts */
     protected Integer maxRetryAttempts = Integer.valueOf(3);
 
@@ -167,6 +171,20 @@ public class SftpProducerConfiguration
     public void setPrivateKeyFilename(String privateKeyFilename)
     {
         this.privateKeyFilename = privateKeyFilename;
+    }
+
+    /**
+     * @return the privateKeyPassphrase
+     */
+    public String getPrivateKeyPassphrase() {
+        return privateKeyPassphrase;
+    }
+
+    /**
+     * @param privateKeyPassphrase the privateKeyPassphrase to set
+     */
+    public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
+        this.privateKeyPassphrase = privateKeyPassphrase;
     }
 
     /**

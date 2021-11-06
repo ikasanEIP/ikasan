@@ -119,6 +119,10 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration im
     /** SFTP private key hosts */
     private String privateKeyFilename;
 
+    /** SFTP private key passphrase */
+    @Masked
+    private String privateKeyPassphrase;
+
     /** SFTP max retry attempts */
     private Integer maxRetryAttempts = Integer.valueOf(3);
 
@@ -550,6 +554,19 @@ public class SftpConsumerConfiguration extends ScheduledConsumerConfiguration im
         this.privateKeyFilename = privateKeyFilename;
     }
 
+    /**
+     * @return the privateKeyPassphrase
+     */
+    public String getPrivateKeyPassphrase() {
+        return privateKeyPassphrase;
+    }
+
+    /**
+     * @param privateKeyPassphrase the privateKeyPassphrase to set
+     */
+    public void setPrivateKeyPassphrase(String privateKeyPassphrase) {
+        this.privateKeyPassphrase = privateKeyPassphrase;
+    }
 
     /**
      * @return the maxRetryAttempts

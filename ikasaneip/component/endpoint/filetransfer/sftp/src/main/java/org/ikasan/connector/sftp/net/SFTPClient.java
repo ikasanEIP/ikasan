@@ -92,6 +92,9 @@ public class SFTPClient implements FileTransferClient
     /** Private key file name */
     private File prvKey;
 
+    /** The private key passphrase */
+    private String privateKeyPassphrase;
+
     /** Known hosts file name */
     private File knownHosts;
 
@@ -140,6 +143,7 @@ public class SFTPClient implements FileTransferClient
 
     private String preferredKeyExchangeAlgorithm;
 
+
     /**
      * SFTPClient constructor where all parameters are provided by the user
      *
@@ -162,7 +166,7 @@ public class SFTPClient implements FileTransferClient
     public SFTPClient(File prvKey, File knownHosts, String username, String password, String remoteHostname,
             int remotePort, String localHostname,
             Integer maxRetryAttempts, String preferredAuthentications, Integer connectionTimeout,
-            String preferredKeyExchangeAlgorithm )
+            String preferredKeyExchangeAlgorithm, String privateKeyPassphrase)
     {
         super();
         this.prvKey = prvKey;
@@ -177,6 +181,7 @@ public class SFTPClient implements FileTransferClient
         this.tfs = new String("/");
         this.maxRetryAttempts = maxRetryAttempts;
         this.preferredKeyExchangeAlgorithm = preferredKeyExchangeAlgorithm;
+        this.privateKeyPassphrase = privateKeyPassphrase;
 
         if (localHostname != null && localHostname.length() > 0)
         {
@@ -375,7 +380,12 @@ public class SFTPClient implements FileTransferClient
                 JSch.setConfig("PreferredAuthentications", this.preferredAuthentications);
                 msg = new String("Adding private key to identity..."); //$NON-NLS-1$
                 logger.debug(msg);
-                this.jsch.addIdentity(this.prvKey.getAbsolutePath());
+                if(this.privateKeyPassphrase != null && !this.privateKeyPassphrase.isEmpty()) {
+                    this.jsch.addIdentity(this.prvKey.getAbsolutePath(), this.privateKeyPassphrase);
+                }
+                else {
+                    this.jsch.addIdentity(this.prvKey.getAbsolutePath());
+                }
                 msg = new String("Setting the known hosts..."); //$NON-NLS-1$
                 logger.debug(msg);
                 this.jsch.setKnownHosts(this.knownHosts.getAbsolutePath());
