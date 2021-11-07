@@ -50,7 +50,7 @@ import java.util.List;
  * Sample component for test only.
  * @author Ikasan Development Team.
  */
-public class    SampleMultiRecipientRouter implements MultiRecipientRouter<String>
+public class SampleMultiRecipientRouter implements MultiRecipientRouter<String>
 {
     @Override
     public List<String> route(String messageToRoute) throws RouterException {
