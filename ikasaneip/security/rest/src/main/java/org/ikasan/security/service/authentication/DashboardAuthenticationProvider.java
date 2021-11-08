@@ -64,11 +64,13 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
     private static Logger logger = LoggerFactory.getLogger(DashboardAuthenticationProvider.class);
 
     private UserService dashboardUserService;
+    private UserService alternateUserService;
 
     /**
      * @param dashboardUserService
      */
-    public DashboardAuthenticationProvider(UserService dashboardUserService)
+    public DashboardAuthenticationProvider(UserService dashboardUserService,
+                                           UserService alternateUserService)
     {
         super();
         this.dashboardUserService = dashboardUserService;
@@ -77,6 +79,8 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
             throw new IllegalArgumentException("dashboardUserService cannot be null!");
         }
 
+        // The alternate user can be null!
+        this.alternateUserService = alternateUserService;
     }
 
     /* (non-Javadoc)
@@ -86,16 +90,30 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
     public Authentication authenticate(Authentication authentication)
         throws AuthenticationException
     {
+        Authentication ikasanAuthentication = this.authenticate(authentication, this.dashboardUserService);
+
+        if(!ikasanAuthentication.isAuthenticated() && this.alternateUserService != null) {
+
+            /** Let's try the alternate user service if we were unable to authenticate against the dashboard */
+            ikasanAuthentication = this.authenticate(authentication, this.alternateUserService);
+        }
+
+        return ikasanAuthentication;
+    }
+
+    private Authentication authenticate(Authentication authentication, UserService userService)
+        throws AuthenticationException
+    {
         String userName = authentication.getName();
         String password = ((String)authentication.getCredentials());
-        if(dashboardUserService.authenticate(userName,password)){
+        if(userService.authenticate(userName,password)){
 
-            User user = dashboardUserService.loadUserByUsername(userName);
+            User user = userService.loadUserByUsername(userName);
             List<GrantedAuthority> authorities = user.getPrincipals().stream()
-                        .flatMap(principal -> principal.getRoles().stream())
-                        .flatMap(r -> r.getPolicies().stream())
-                        .distinct().
-                        collect(Collectors.toList());
+                .flatMap(principal -> principal.getRoles().stream())
+                .flatMap(r -> r.getPolicies().stream())
+                .distinct().
+                    collect(Collectors.toList());
 
             IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials()
                 , user.getPreviousAccessTimestamp());
@@ -105,7 +123,7 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
         else
         {
             return new IkasanAuthentication(false, null, null, (String)authentication.getCredentials()
-            , 1l);
+                , 1l);
 
         }
     }
