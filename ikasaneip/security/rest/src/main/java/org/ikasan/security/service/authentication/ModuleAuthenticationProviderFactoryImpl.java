@@ -172,7 +172,7 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
      */
     private DashboardAuthenticationProvider createDashboardAuthenticationProvider()
     {
-        return new DashboardAuthenticationProvider(this.dashboardUserService);
+        return new DashboardAuthenticationProvider(this.dashboardUserService, this.userService);
     }
 
     /**
