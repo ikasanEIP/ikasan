@@ -76,13 +76,12 @@ The constituents of all Scheduler Agents are always the same - same flows, compo
 ![image](https://user-images.githubusercontent.com/2506979/140798223-c6986a71-38fe-4b0c-a25c-fd3ca732776f.png)
 
 #### Components
-1. Scheduled Consumer - consumer invoked from the Quartz scheduler callback
-2. JobExecution to Scheduled Status Event - converter from the Quartz scheduled context to the Ikasan Scheduled Execution Event
-3. Blackout Router - router to determine whether the scheduled callback has occurred within a black out window
-3.0 Outside Blackout Period Route
-   3.1 Process Execution Broker - execute the scheduled targeted job
-   3.2 Scheduled Status Producer - publish the update Scheduled Execution Event
-
-4.0 Default Route
-   4.1 Publish Scheduled Status - filter (true/false) as to whether to continue to publish the Scheduled Execution Event when in a blackout period. Default is true.
-   4.2 Blackout Scheduled Status Producer - publish the update Scheduled Execution Event
+|Route|Component|Description|
+|----|---------|-----------|
+|Main Route|Scheduled Consumer|consumer invoked from the Quartz scheduler callback|
+|Main Route|JobExecution to Scheduled Status Event|converter from the Quartz scheduled context to the Ikasan Scheduled Execution Event|
+|Main Route|Blackout Router|router to determine whether the scheduled callback has occurred within a black out window|
+|Outside Blackout Period Route|Process Execution Broker|execute the scheduled targeted job|
+|Outside Blackout Period Route|Scheduled Status Producer|publish the update Scheduled Execution Event|
+|Default Route|Publish Scheduled Status|filter (true/false) as to whether to continue to publish the Scheduled Execution Event when in a blackout period. Default is true|
+|Default Route|Blackout Scheduled Status Producer|publish the update Scheduled Execution Event|
