@@ -12,6 +12,12 @@
         <outputDirectory>scheduler-agent-${version.ikasan}</outputDirectory>
     </fileSet>
     <fileSet>
+        <directory>../service</directory>
+        <filtered>true</filtered>
+        <fileMode>755</fileMode>
+        <outputDirectory>scheduler-agent-${version.ikasan}</outputDirectory>
+    </fileSet>
+    <fileSet>
         <directory>../jar/src/main/resources</directory>
         <filtered>true</filtered>
         <includes>

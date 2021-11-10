@@ -1,0 +1,8 @@
+[Unit]
+Description=Ikasan Scheduler Agent {INSTANCE NAME}
+
+[Service]
+Type=forking
+User={APPLICATION ADMIN USER}
+ExecStart={FULLY QUALIFIED PATH}/bin/ikasan-simple.sh start
+ExecStop={FULLY QUALIFIED PATH}/bin/ikasan-simple.sh stop
