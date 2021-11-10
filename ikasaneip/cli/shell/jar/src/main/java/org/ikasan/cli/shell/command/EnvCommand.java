@@ -56,6 +56,24 @@ public class EnvCommand extends AbstractCommand
     @Value("${module.name:null}")
     String moduleName;
 
+    @Value("${module.jar.name:null}")
+    String moduleJarName;
+
+    @Value("${h2.jar.name:null}")
+    String h2JarName;
+
+    @Value("${h2.xms:null}")
+    String h2Xms;
+
+    @Value("${h2.xmx:null}")
+    String h2Xmx;
+
+    @Value("${module.xms:null}")
+    String moduleXms;
+
+    @Value("${module.xmx:null}")
+    String moduleXmx;
+
     @Value("${h2.java.command:null}")
     String h2JavaCommand;
 
@@ -66,11 +84,20 @@ public class EnvCommand extends AbstractCommand
     public String env()
     {
         StringBuilder sb = new StringBuilder();
-        sb.append("Module Name [" + moduleName + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append(ProcessType.H2.getName() + " Command String     [" + h2JavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append(ProcessType.H2.getName() + " Command List       " + ProcessUtils.getCommands(h2JavaCommand) + ProcessUtils.LINE_SEPARATOR);
-        sb.append(ProcessType.MODULE.getName() + " Command String [" + moduleJavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append(ProcessType.MODULE.getName() + " Command List   " + ProcessUtils.getCommands(moduleJavaCommand) + ProcessUtils.LINE_SEPARATOR);
+        sb.append("Environment Properties" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\th2.xms [" + h2Xms + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\th2.xmx [" + h2Xmx + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\th2.jar.name [" + h2JarName + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.xms [" + moduleXms + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.xmx [" + moduleXmx + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.name [" + moduleName + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.jar.name [" + moduleJarName + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\th2.java.command [" + h2JavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.java.command [" + moduleJavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append(ProcessUtils.LINE_SEPARATOR);
+        sb.append("Processed Properties" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\th2.java.command Command List [" + ProcessUtils.getCommands(h2JavaCommand) + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.java.command Command List [" + ProcessUtils.getCommands(moduleJavaCommand) + "]"  + ProcessUtils.LINE_SEPARATOR);
         return sb.toString();
     }
 }
