@@ -61,9 +61,6 @@ public class ModuleCommand extends ActionCommand
     @Value("${module.java.command:null}")
     String moduleJavaCommand;
 
-//    @Value("${module.logging.file:logs/application.log}")
-//    String moduleLog;
-
     /**
      * Start Integration Module.
      * @param altModuleName
@@ -90,9 +87,6 @@ public class ModuleCommand extends ActionCommand
         {
             command = altCommand;
         }
-
-//        this.processType.setOutputLog(this.moduleLog);
-//        this.processType.setErrorLog(this.moduleLog);
 
         return this.start(this.processType, name, command);
     }
