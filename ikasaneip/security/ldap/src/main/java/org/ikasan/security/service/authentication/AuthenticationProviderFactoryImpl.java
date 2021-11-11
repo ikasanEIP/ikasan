@@ -229,6 +229,6 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 */
 	private LocalAuthenticationProvider createLocalAuthenticationProvider()
 	{
-		return new LocalAuthenticationProvider(this.securityService, this.userService);
+		return new LocalAuthenticationProvider(this.userService);
 	}
 }

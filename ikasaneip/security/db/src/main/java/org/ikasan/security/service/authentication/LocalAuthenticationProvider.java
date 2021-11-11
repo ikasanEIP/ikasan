@@ -72,21 +72,15 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
 {
     private static Logger logger = LoggerFactory.getLogger(LocalAuthenticationProvider.class);
 
-    private SecurityService securityService;
     private UserService userService;
     private PasswordEncoder encoder;
 
     /**
      * @param userService
      */
-    public LocalAuthenticationProvider(SecurityService securityService, UserService userService)
+    public LocalAuthenticationProvider(UserService userService)
     {
         super();
-        this.securityService = securityService;
-        if(this.securityService == null)
-        {
-            throw new IllegalArgumentException("securityService cannot be null!");
-        }
         this.userService = userService;
         if(this.userService == null)
         {

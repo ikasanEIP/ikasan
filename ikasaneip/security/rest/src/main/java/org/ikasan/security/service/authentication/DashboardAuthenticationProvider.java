@@ -40,18 +40,24 @@
  */
 package org.ikasan.security.service.authentication;
 
+import org.ikasan.security.model.IkasanPrincipal;
+import org.ikasan.security.model.Policy;
+import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.DashboardUserServiceImpl;
 import org.ikasan.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -65,6 +71,8 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
 
     private UserService dashboardUserService;
     private UserService alternateUserService;
+
+    private LocalAuthenticationProvider localAuthenticationProvider;
 
     /**
      * @param dashboardUserService
@@ -81,6 +89,10 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
 
         // The alternate user can be null!
         this.alternateUserService = alternateUserService;
+
+        if(this.alternateUserService != null) {
+            this.localAuthenticationProvider = new LocalAuthenticationProvider(this.alternateUserService);
+        }
     }
 
     /* (non-Javadoc)
@@ -90,13 +102,22 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
     public Authentication authenticate(Authentication authentication)
         throws AuthenticationException
     {
-        Authentication ikasanAuthentication = this.authenticate(authentication, this.dashboardUserService);
+        Authentication ikasanAuthentication = null;
 
-        if(!ikasanAuthentication.isAuthenticated() && this.alternateUserService != null) {
-
-            /** Let's try the alternate user service if we were unable to authenticate against the dashboard */
-            ikasanAuthentication = this.authenticate(authentication, this.alternateUserService);
+        try {
+            ikasanAuthentication = this.authenticate(authentication, this.dashboardUserService);
         }
+        catch (Exception e) {
+            if(this.localAuthenticationProvider != null) {
+
+                /** Let's try the alternate user service if we were unable to authenticate against the dashboard */
+                ikasanAuthentication = this.authenticateLocal(authentication);
+            }
+            else {
+                throw e;
+            }
+        }
+
 
         return ikasanAuthentication;
     }
@@ -125,6 +146,22 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
             return new IkasanAuthentication(false, null, null, (String)authentication.getCredentials()
                 , 1l);
 
+        }
+    }
+
+    public Authentication authenticateLocal(Authentication authentication)
+        throws AuthenticationException
+    {
+        LocalAuthenticationProvider localAuthenticationProvider = new LocalAuthenticationProvider(alternateUserService);
+
+        Authentication authenticationLocal = localAuthenticationProvider.authenticate(authentication);
+
+        if(authenticationLocal != null) {
+            return authenticationLocal;
+        }
+        else {
+            return new IkasanAuthentication(false, null, null, (String)authentication.getCredentials()
+                , 1l);
         }
     }
 
