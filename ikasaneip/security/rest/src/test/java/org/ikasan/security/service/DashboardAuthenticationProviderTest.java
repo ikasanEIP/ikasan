@@ -26,6 +26,7 @@ public class DashboardAuthenticationProviderTest
 
     private DashboardUserServiceImpl dashboardUserService = Mockito.mock(DashboardUserServiceImpl.class);
     private UserServiceImpl alternateUserService = Mockito.mock(UserServiceImpl.class);
+    private User user = Mockito.mock(User.class);
 
     @Before
     public void setup()
@@ -83,17 +84,15 @@ public class DashboardAuthenticationProviderTest
     {
         uut = new DashboardAuthenticationProvider(dashboardUserService, this.alternateUserService);
 
-        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenReturn(false);
-        User user = setupUser("testUser");
-        Mockito.when(alternateUserService.authenticate("admin", "admin")).thenReturn(true);
-        Mockito.when(alternateUserService.loadUserByUsername("admin")).thenReturn(user);
+        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenThrow(new RuntimeException());
+        Mockito.when(alternateUserService.loadUserByUsername("admin")).thenReturn(this.user);
+        Mockito.when(this.user.getPassword()).thenReturn("{SHA-1}d033e22ae348aeb5660fc2140aec35850c4da997");
 
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
         assertEquals(true, result.isAuthenticated());
         Mockito.verify(dashboardUserService).authenticate("admin", "admin");
         Mockito.verifyNoMoreInteractions(dashboardUserService);
-        Mockito.verify(alternateUserService).authenticate("admin", "admin");
         Mockito.verify(alternateUserService).loadUserByUsername("admin");
         Mockito.verifyNoMoreInteractions(alternateUserService);
     }
@@ -103,15 +102,16 @@ public class DashboardAuthenticationProviderTest
     {
         uut = new DashboardAuthenticationProvider(dashboardUserService, this.alternateUserService);
 
-        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenReturn(false);
-        Mockito.when(alternateUserService.authenticate("admin", "admin")).thenReturn(false);
+        Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenThrow(new RuntimeException());
+        Mockito.when(alternateUserService.loadUserByUsername("admin")).thenReturn(this.user);
+        Mockito.when(this.user.getPassword()).thenReturn("{SHA-1}d033e22ae348aeb5660fc2140aec35850c4da999");
 
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
         assertEquals(false, result.isAuthenticated());
         Mockito.verify(dashboardUserService).authenticate("admin", "admin");
         Mockito.verifyNoMoreInteractions(dashboardUserService);
-        Mockito.verify(alternateUserService).authenticate("admin", "admin");
+        Mockito.verify(alternateUserService).loadUserByUsername("admin");
         Mockito.verifyNoMoreInteractions(alternateUserService);
     }
 

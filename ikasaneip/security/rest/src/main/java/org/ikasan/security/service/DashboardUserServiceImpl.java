@@ -345,8 +345,14 @@ public class DashboardUserServiceImpl implements UserService
             {
                 ResponseEntity<JwtResponse> response = restTemplate
                     .exchange(authenticateUrl, HttpMethod.POST, entity, JwtResponse.class);
-                this.token = response.getBody().getToken();
-                return true;
+
+                if(response.getStatusCode().is2xxSuccessful()) {
+                    this.token = response.getBody().getToken();
+                    return true;
+                }
+                else {
+                    return false;
+                }
             }
             return false;
         }
