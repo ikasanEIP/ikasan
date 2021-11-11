@@ -180,6 +180,6 @@ public class ModuleAuthenticationProviderFactoryImpl implements AuthenticationPr
      */
     private LocalAuthenticationProvider createLocalAuthenticationProvider()
     {
-        return new LocalAuthenticationProvider(this.securityService, this.userService);
+        return new LocalAuthenticationProvider(this.userService);
     }
 }
