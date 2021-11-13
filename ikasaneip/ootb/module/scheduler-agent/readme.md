@@ -29,9 +29,9 @@ The contents of the zip file is as follows.
 | ikasan-simple.sh  | Shell script that allows the agent to be started and stopped in a Unix/Linux environment |
 | config/logback-spring.xml | Logging configuration file |
 | config/application.properties | Scheduler agent properties file |
-| lib/scheduler-agent-3.2.0.jar | Uber jar containing all libraries required by the scheduler agent | 
+| lib/scheduler-agent-3.2.1.jar | Uber jar containing all libraries required by the scheduler agent | 
 | lib/h2-1.4.200.jar | H2 database libraries used by the agent |
-| lib/ikasan-shell-3.2.0.jar | The [Ikasan cli shell library](../../../cli/shell/jar/Readme.md) |
+| lib/ikasan-shell-3.2.1.jar | The [Ikasan cli shell library](../../../cli/shell/jar/Readme.md) |
 
 2. Add the JAVA_HOME to the relevant environment file. Please note JDK11 is required.
 ```properties
