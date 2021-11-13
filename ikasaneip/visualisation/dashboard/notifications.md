@@ -35,6 +35,32 @@ dashboard.notification[0].resultSize=100
 dashboard.notification[0].isNewExclusionsOnlyNotification=true
 ```
 
+### Configuring scheduler notifications
+| Name      | Description |
+| ----------- | ----------- |
+| jobName      | Each individual notification must provide a job name to be registered with the scheduler.       |
+| emailBodyTemplate   | A [Thymeleaf](https://www.thymeleaf.org/) template used to render the email notification content. This can be either a text or html format.       |
+| emailSubjectTemplate   | A [Thymeleaf](https://www.thymeleaf.org/) template used to render the email notification subject. This can be a text format ONLY.        |
+| schedulerAgentName      | The name of the scheduler agent for which we are raising the notification for.       |
+| recipientList   | A list of email addresses to whom the emails will be sent.        |
+| cronExpression      | The [quartz cron expression](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) used by the scheduler to fire the notification events.       |
+| isHtml   | A boolean flag to indicate if the email body contains html content or text content.        |
+| resultSize      | The maximum number of failed jobs to search for.       |
+
+It is possible to configure any number of notifications and the email content supports the rendering of any UTF-8 character set.
+
+### Example scheduler notification configuration block
+```text
+scheduler.notification[0].jobName=notification-1
+scheduler.notification[0].emailBodyTemplate=<path-to-template>/notification-email-jp.html
+scheduler.notification[0].emailSubject=<path-to-template>/notification-email-subject-jp.html
+scheduler.notification[0].schedulerAgentName=Scheduler-Agent
+scheduler.notification[0].recipientList=ikasan@there.com, ikasan2@there.com
+scheduler.notification[0].cronExpression=0/5 * * * * ?
+scheduler.notification[0].isHtml=true
+scheduler.notification[0].resultSize=100
+```
+
 ### Example html notification template
 ```html
 <!DOCTYPE html>
