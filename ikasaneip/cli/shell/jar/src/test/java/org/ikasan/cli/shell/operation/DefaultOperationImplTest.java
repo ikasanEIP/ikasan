@@ -174,7 +174,7 @@ class DefaultOperationImplTest
                 will(returnValue(null));
 
                 exactly(1).of(persistenceService).persist(with(any(String.class)), with(any(String.class)), with(any(Process.class)));
-                will(throwException(new Exception("failed to persist")));
+                will(throwException(new RuntimeException("failed to persist")));
             }
         });
 
