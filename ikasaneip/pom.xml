@@ -352,6 +352,7 @@
         <version.commons-io>2.8.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
+        <version.big.queue>0.7.2</version.big.queue>
     </properties>
 
     <!-- Distribution for releases -->
@@ -368,6 +369,14 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
+
+    <repositories>
+        <repository>
+            <id>Big Queue Repo</id>
+            <url>https://raw.github.com/bulldog2011/bulldog-repo/master/repo/releases/</url>
+        </repository>
+    </repositories>
+
     <build>
         <pluginManagement>
             <plugins>
@@ -1631,6 +1640,12 @@
                 <groupId>javax.mail</groupId>
                 <artifactId>mail</artifactId>
                 <version>${version.javax.mail}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.leansoft</groupId>
+                <artifactId>bigqueue</artifactId>
+                <version>${version.big.queue}</version>
             </dependency>
 
             <dependency>
