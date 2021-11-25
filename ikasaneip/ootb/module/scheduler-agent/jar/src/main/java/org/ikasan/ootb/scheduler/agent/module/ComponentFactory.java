@@ -80,18 +80,30 @@
  */
 package org.ikasan.ootb.scheduler.agent.module;
 
+import com.leansoft.bigqueue.BigQueueImpl;
+import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.*;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.consumer.BigQueueConsumer;
 import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.spi.DocumentationType;
+import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
+
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * Scheduler Agent component factory.
@@ -102,6 +114,7 @@ import javax.annotation.Resource;
 @ImportResource( {
     "classpath:h2-datasource-conf.xml"
 } )
+@EnableSwagger2
 public class ComponentFactory
 {
     @Value( "${module.name}" )
@@ -115,6 +128,14 @@ public class ComponentFactory
 
     @Resource
     ScheduledProcessService scheduledProcessService;
+
+    @Value( "${big.queue.consumer.configuration.queueDir}" )
+    private String queueDir = "/sandbox/mick/bigquque";
+
+    @Value( "${big.queue.consumer.configuration.inboundQueueName}" )
+    private String inboundQueueName = "module-inbound-context-queue";
+
+    private String outboundQueueName = "module-outbound-context-queue";
 
     SingleRecipientRouter getBlackoutRouter()
     {
@@ -143,4 +164,31 @@ public class ComponentFactory
 
     Converter getJobExecutionConverter() { return new JobExecutionConverter(moduleName); }
 
+    @Bean
+    public Consumer bigQueueConsumer(IBigQueue inboundQueue) {
+        BigQueueConsumer consumer = new BigQueueConsumer(inboundQueue);
+        return consumer;
+    }
+
+
+    @Bean
+    public IBigQueue inboundQueue() throws IOException {
+        return new BigQueueImpl(this.queueDir, this.inboundQueueName);
+    }
+
+    @Bean
+    public IBigQueue outboundQueue() throws IOException {
+        return new BigQueueImpl(this.queueDir, this.outboundQueueName);
+    }
+
+    @Bean
+    public Docket scheeduleaApi() {
+        return new Docket(DocumentationType.SWAGGER_2)
+            .select()
+            .apis(RequestHandlerSelectors.basePackage("org.ikasan.ootb.scheduler.agent.module.rest"))
+            .paths(PathSelectors.any())
+            .build()
+            .groupName("scheduler-agent");
+    }
 }
+
