@@ -41,10 +41,13 @@
 package org.ikasan.ootb.scheduler.agent.module;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.builder.OnException;
+import org.ikasan.component.endpoint.util.producer.DevNull;
+import org.ikasan.ootb.scheduler.agent.module.ComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.component.BlackoutRouter;
+import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleType;
+import org.ikasan.spec.flow.FlowFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,37 +55,30 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 
 /**
- * Module implementation.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
-@Configuration("ModuleFactory")
-public class MyModule
+@Configuration
+public class SchedulerJobInitiationEventFlowFactory
 {
     @Value( "${module.name}" )
-    String moduleName;
+    private String moduleName;
 
     @Resource
-    BuilderFactory builderFactory;
+    private BuilderFactory builderFactory;
 
     @Resource
-    ComponentFactory componentFactory;
-
-    @Resource
-    Flow schedulerJobInitiationEventFlow;
+    private Consumer bigQueueConsumer;
 
     @Bean
-    public Module myModule()
+    public Flow schedulerJobInitiationEventFlow()
     {
-        ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
-
-        // get the module builder
-        return builderFactory.getModuleBuilder(moduleName)
-                .withDescription("Scheduler Agent Integration Module.")
-                .withType(ModuleType.SCHEDULER_AGENT)
-//                .withFlowFactory( new MyFlowFactory(moduleName, builderFactory, componentFactory) )
-                .addFlow(schedulerJobInitiationEventFlow)
-                .setConfiguration(configuration)
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder("Scheduler Job Initiation Event Flow")
+            .withDescription("Scheduler Job Initiation Event Flow")
+            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
+            .consumer("Scheduler Job Initiation Event Consumer", this.bigQueueConsumer)
+            .producer("Dev Null", new DevNull<>())
             .build();
     }
 }
