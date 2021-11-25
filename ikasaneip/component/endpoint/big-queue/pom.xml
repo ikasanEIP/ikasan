@@ -43,30 +43,68 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-component</artifactId>
+        <artifactId>ikasan-endpoint-parent</artifactId>
         <version>3.3.0-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-endpoint-parent</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Endpoints</name>
+    <artifactId>ikasan-big-queue</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration big queue endpoints</name>
 
-    <modules>
-        <module>amazon-s3-endpoint</module>
-        <module>utility-endpoint</module>
-        <module>big-queue</module>
-        <module>jms-client</module>
-        <module>jms-spring</module>
-        <module>jms-spring-arjuna</module>
-        <module>quartz-schedule</module>
-        <module>mongo-endpoint</module>
-        <module>mongo4-endpoint</module>
-        <module>mongo-endpoint-test</module>
-        <module>email-endpoint</module>
-        <module>filetransfer</module>
-        <module>test-endpoint</module>
-    </modules>
+    <dependencies>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.leansoft</groupId>
+            <artifactId>bigqueue</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 </project>
