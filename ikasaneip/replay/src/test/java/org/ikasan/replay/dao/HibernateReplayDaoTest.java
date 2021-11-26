@@ -162,8 +162,8 @@ public class HibernateReplayDaoTest
 
         events = this.replayDao.getHarvestableRecords(3);
 
-        Assert.assertEquals("Id equals!",Long.valueOf(2L), Long.valueOf(events.get(0).getId() - events.get(1).getId()));
-        Assert.assertEquals("Id equals!",Long.valueOf(1L), Long.valueOf(events.get(2).getId() - events.get(3).getId()));
+        Assert.assertEquals("Id equals!",Long.valueOf(2L), Long.valueOf(events.get(1).getId() - events.get(2).getId()));
+        Assert.assertEquals("Id equals!",Long.valueOf(1L), Long.valueOf(events.get(3).getId() - events.get(3).getId()));
     }
 
     @Test
