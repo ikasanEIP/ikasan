@@ -41,7 +41,7 @@ public class BigQueueConsumerTest {
     @Test
     public void test_message_consumed_successfully() throws IOException, InterruptedException {
         Mockito.doNothing().when(eventListener).invoke(any(FlowEvent.class));
-        when(flowEventFactory.newEvent(anyInt(), anyInt(), anyString())).thenReturn(flowEvent);
+        when(flowEventFactory.newEvent(anyString(), anyString(), anyString())).thenReturn(flowEvent);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
@@ -67,7 +67,7 @@ public class BigQueueConsumerTest {
     @Test
     public void test_exception_invoke() throws IOException, InterruptedException {
         doThrow(new RuntimeException("test exceeption")).when(eventListener).invoke(any(FlowEvent.class));
-        when(flowEventFactory.newEvent(anyInt(), anyInt(), anyString())).thenReturn(flowEvent);
+        when(flowEventFactory.newEvent(anyString(), anyString(), anyString())).thenReturn(flowEvent);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
@@ -94,7 +94,7 @@ public class BigQueueConsumerTest {
     @Test
     public void test_exception_invoke_null_event_listener() throws IOException, InterruptedException {
         doThrow(new RuntimeException("test exceeption")).when(eventListener).invoke(any(FlowEvent.class));
-        when(flowEventFactory.newEvent(anyInt(), anyInt(), anyString())).thenReturn(flowEvent);
+        when(flowEventFactory.newEvent(anyString(), anyString(), anyString())).thenReturn(flowEvent);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
