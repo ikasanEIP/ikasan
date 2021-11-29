@@ -50,9 +50,10 @@
     <groupId>org.ikasan</groupId>
     <artifactId>scheduled-process-service</artifactId>
     <packaging>jar</packaging>
-    <name>Scheduled process service POM</name>
+    <name>Scheduled Process Event Service Module</name>
 
     <dependencies>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-standalone</artifactId>
