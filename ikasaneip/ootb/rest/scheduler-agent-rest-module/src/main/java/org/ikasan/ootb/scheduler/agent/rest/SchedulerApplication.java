@@ -1,7 +1,7 @@
-package org.ikasan.rest.module;
+package org.ikasan.ootb.scheduler.agent.rest;
 
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.rest.module.dto.ErrorDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;
@@ -88,7 +88,7 @@ public class SchedulerApplication
     }
 
     /**
-     * Allows to trigger a scheduled flow with imediate effect rather than waiting for next cron.
+     * Allows to trigger a scheduled flow with immediate effect rather than waiting for next cron.
      *
      * @return
      */
