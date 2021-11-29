@@ -157,7 +157,7 @@ public class BigQueueConsumer<T>
                     , managedRelatedEventIdentifierService.getRelatedEventIdentifier(event), event);
             }
             else {
-                flowEvent = flowEventFactory.newEvent(event.hashCode(), event.hashCode(), event);
+                flowEvent = flowEventFactory.newEvent(String.valueOf(event.hashCode()), String.valueOf(event.hashCode()), event);
             }
             invoke(flowEvent);
         }
@@ -217,12 +217,10 @@ public class BigQueueConsumer<T>
 
                 inboundQueue.dequeue();
                 inboundQueue.gc();
+                addInboundListener();
             }
             catch (Exception e) {
                 onException(e);
-            }
-            finally {
-                addInboundListener();
             }
         }
     }
