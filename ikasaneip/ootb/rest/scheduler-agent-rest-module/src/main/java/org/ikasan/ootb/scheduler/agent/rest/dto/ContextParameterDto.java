@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.rest.dto;
+package org.ikasan.ootb.scheduler.agent.rest.dto;
 
 import org.ikasan.spec.scheduled.ContextParameter;
 
