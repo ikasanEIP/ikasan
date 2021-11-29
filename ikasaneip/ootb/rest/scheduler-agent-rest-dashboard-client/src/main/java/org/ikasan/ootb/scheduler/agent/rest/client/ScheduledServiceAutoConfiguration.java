@@ -52,6 +52,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 public class ScheduledServiceAutoConfiguration
 {
     public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";
+    public static final String SCHEDULED_PROCESS_EVENT_PATH = "/rest/harvest/scheduled/event";
 
 
     @Bean
@@ -59,6 +60,13 @@ public class ScheduledServiceAutoConfiguration
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SCHEDULED_PROCESS_EVENTS_PATH);
+    }
+
+    @Bean
+    public DashboardRestService scheduleProcessEventDashboardRestService(Environment environment
+        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    {
+        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SCHEDULED_PROCESS_EVENT_PATH);
     }
 
 }
