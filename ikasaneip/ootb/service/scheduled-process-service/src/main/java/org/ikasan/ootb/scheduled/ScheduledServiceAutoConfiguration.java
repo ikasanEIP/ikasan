@@ -84,13 +84,6 @@ public class ScheduledServiceAutoConfiguration
     }
 
     @Bean
-    public DashboardRestService scheduleProcessEventsDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
-    {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SCHEDULED_PROCESS_EVENTS_PATH);
-    }
-
-    @Bean
     public ScheduledProcessService scheduledProcessService(ScheduledProcessEventDao scheduledProcessEventDao) {
         return new ScheduledProcessServiceImpl(scheduledProcessEventDao);
     }
