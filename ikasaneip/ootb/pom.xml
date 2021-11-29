@@ -54,6 +54,7 @@
     <modules>
         <module>service</module>
         <module>module</module>
+        <module>rest</module>
     </modules>
 
 </project>

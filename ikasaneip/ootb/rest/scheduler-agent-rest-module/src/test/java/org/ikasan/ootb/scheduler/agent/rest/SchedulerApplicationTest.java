@@ -1,11 +1,10 @@
-package org.ikasan.rest.module;
+package org.ikasan.ootb.scheduler.agent.rest;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.module.SimpleModule;
-import org.ikasan.rest.module.model.TestFlow;
+import org.ikasan.ootb.scheduler.agent.rest.model.TestFlow;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
@@ -20,7 +19,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
@@ -110,12 +108,11 @@ public class SchedulerApplicationTest
     @WithMockUser(authorities = "WebServiceAdmin")
     public void search() throws Exception
     {
-
         Trigger trigger = new SimpleTriggerImpl();
         ((SimpleTriggerImpl) trigger).setGroup("Group");
         ((SimpleTriggerImpl) trigger).setJobName("Name");
-        TriggerKey triggerKey = Mockito.mock(TriggerKey.class);
-        Set<TriggerKey> set= new HashSet();
+        TriggerKey triggerKey = new TriggerKey("key");
+        Set<TriggerKey> set = new HashSet();
         set.add(triggerKey);
 
         Mockito
@@ -224,7 +221,6 @@ public class SchedulerApplicationTest
     @WithMockUser(authorities = "WebServiceAdmin")
     public void triggerNowWhenFlowNotFound() throws Exception
     {
-
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
 

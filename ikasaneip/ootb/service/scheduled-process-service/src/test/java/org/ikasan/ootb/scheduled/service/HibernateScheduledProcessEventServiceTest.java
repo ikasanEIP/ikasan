@@ -56,7 +56,7 @@ import java.util.stream.IntStream;
 @ContextConfiguration(locations={ "/h2-config.xml",
     "/substitute-components.xml",
 })
-public class HibernateScheduledProcessEventDaoTest {
+public class HibernateScheduledProcessEventServiceTest {
 
     @Resource
     private ScheduledProcessServiceImpl scheduledProcessService;

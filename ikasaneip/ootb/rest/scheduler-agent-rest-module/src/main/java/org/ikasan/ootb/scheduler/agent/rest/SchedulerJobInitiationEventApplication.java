@@ -1,17 +1,19 @@
-package org.ikasan.ootb.scheduler.agent.module.rest;
+package org.ikasan.ootb.scheduler.agent.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
-import org.ikasan.ootb.scheduler.agent.module.rest.dto.SchedulerJobInitiationEventDto;
-import org.ikasan.rest.module.dto.ErrorDto;
-import org.ikasan.spec.scheduled.SchedulerJobInitiationEvent;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Module application implementing the REST contract
