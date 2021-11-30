@@ -1,16 +1,19 @@
 package org.ikasan.spec.scheduled;
 
 public interface SchedulerJob {
+    String getContextId();
 
-    public String getJobIdentifier();
+    void setContextId(String contextId);
 
-    public void setJobIdentifier(String jobIdentifier);
+    String getJobIdentifier();
 
-    public String getAgentName();
+    void setJobIdentifier(String jobIdentifier);
 
-    public void setAgentName(String agentName);
+    String getAgentName();
 
-    public String getJobName();
+    void setAgentName(String agentName);
 
-    public void setJobName(String jobName);
+    String getJobName();
+
+    void setJobName(String jobName);
 }
