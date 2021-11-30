@@ -2,11 +2,11 @@ package org.ikasan.spec.scheduled;
 
 public interface ContextParameter {
 
-    public String getName();
+    String getName();
 
-    public void setName(String name);
+    void setName(String name);
 
-    public String getType();
+    String getType();
 
-    public void setType(String type);
+    void setType(String type);
 }
