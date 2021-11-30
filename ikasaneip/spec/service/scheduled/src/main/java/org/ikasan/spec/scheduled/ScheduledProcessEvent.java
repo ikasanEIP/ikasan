@@ -238,5 +238,4 @@ public interface ScheduledProcessEvent<OUTCOME>
      * @param completionTime
      */
     void setCompletionTime(long completionTime);
-
 }
