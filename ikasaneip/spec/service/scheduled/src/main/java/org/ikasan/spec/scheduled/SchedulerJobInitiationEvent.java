@@ -2,21 +2,29 @@ package org.ikasan.spec.scheduled;
 
 import java.util.List;
 
-public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParameter, JOB extends InternalEventDrivenJob> {
+public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParameterInstance, JOB extends InternalEventDrivenJob> {
 
-    public String getAgentName();
+    JOB getInternalEventDrivenJob();
 
-    public String getJobName();
+    void setInternalEventDrivenJob(JOB internalEventDrivenJob);
 
-    public JOB getInternalEventDrivenJob();
+    void setContextParameters(List<CONTEXT_PARAM> contextParameters);
 
-    public void setAgentName(String agentName);
+    List<CONTEXT_PARAM> getContextParameters();
 
-    public void setJobName(String jobName);
+    String getAgentName();
 
-    public void setInternalEventDrivenJob(JOB internalEventDrivenJob);
+    void setAgentName(String agentName);
 
-    public void setContextParameters(List<CONTEXT_PARAM> contextParameters);
+    String getJobName();
 
-    public List<CONTEXT_PARAM> getContextParameters();
+    void setJobName(String jobName);
+
+    String getContextId();
+
+    void setContextId(String contextId);
+
+    String getContextInstanceId();
+
+    void setContextInstanceId(String contextInstanceId);
 }
