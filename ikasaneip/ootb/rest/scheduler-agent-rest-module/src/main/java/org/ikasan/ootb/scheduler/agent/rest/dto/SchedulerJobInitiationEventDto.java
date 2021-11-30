@@ -46,4 +46,23 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
         return null;
     }
 
+    @Override
+    public String getContextId() {
+        return null;
+    }
+
+    @Override
+    public void setContextId(String contextId) {
+
+    }
+
+    @Override
+    public String getContextInstanceId() {
+        return null;
+    }
+
+    @Override
+    public void setContextInstanceId(String contextInstanceId) {
+
+    }
 }

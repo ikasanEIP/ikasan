@@ -52,7 +52,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 public class ScheduledServiceAutoConfiguration
 {
     public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";
-    public static final String SCHEDULED_PROCESS_EVENT_PATH = "/rest/harvest/scheduled/event";
+    public static final String SCHEDULED_PROCESS_EVENT_PATH = "/rest/event/scheduled";
 
 
     @Bean
