@@ -33,4 +33,14 @@ public class InternalEventDrivenJobDto implements InternalEventDrivenJob {
     public void setJobName(String jobName) {
 
     }
+
+    @Override
+    public String getContextId() {
+        return null;
+    }
+
+    @Override
+    public void setContextId(String contextId) {
+
+    }
 }
