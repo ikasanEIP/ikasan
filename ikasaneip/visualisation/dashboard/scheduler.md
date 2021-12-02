@@ -68,3 +68,10 @@ The scheduled jobs tab contains details of running and recently completed jobs a
 ### Scheduled Job Statistics
 ![Wiretap View](../../developer/docs/quickstart-images/scheduled-job-statistics-dialog.png)
 
+### Scheduler Agents
+The constituents of all Scheduler Agents are always the same - same flows, components, and configuration options.
+
+Full details of the Scheduler Agents can be found in the out-of-the-box [Scheduler Agent Documentation](../../ootb/module/scheduler-agent/docs/readme.md).
+
+
+
