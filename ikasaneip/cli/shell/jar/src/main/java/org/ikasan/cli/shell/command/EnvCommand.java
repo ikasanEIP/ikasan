@@ -45,6 +45,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 
+import java.util.stream.Collectors;
+
 /**
  * Environment command.
  *
@@ -96,8 +98,10 @@ public class EnvCommand extends AbstractCommand
         sb.append("\tmodule.java.command [" + moduleJavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
         sb.append(ProcessUtils.LINE_SEPARATOR);
         sb.append("Processed Properties" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\th2.java.command Command List [" + ProcessUtils.getCommands(h2JavaCommand) + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.java.command Command List [" + ProcessUtils.getCommands(moduleJavaCommand) + "]"  + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\th2.java.command Command List [" +
+            ProcessUtils.getCommands(h2JavaCommand).stream().collect(Collectors.joining(" ")) + "]" + ProcessUtils.LINE_SEPARATOR);
+        sb.append("\tmodule.java.command Command List [" +
+            ProcessUtils.getCommands(moduleJavaCommand).stream().collect(Collectors.joining(" ")) + "]"  + ProcessUtils.LINE_SEPARATOR);
         return sb.toString();
     }
 }
