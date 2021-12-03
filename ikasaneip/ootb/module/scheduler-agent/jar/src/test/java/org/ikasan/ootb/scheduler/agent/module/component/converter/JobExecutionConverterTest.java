@@ -38,22 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.component.transformation.Converter;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
+import org.quartz.*;
+
+import java.util.Date;
 
 /**
- * This test class supports the <code>ScheduledProcessEventProducer</code>.
+ * This test class supports the <code>JobExecutionConverter</code>.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventProducerTest
+public class JobExecutionConverterTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -63,25 +67,54 @@ public class ScheduledProcessEventProducerTest
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
-    ScheduledProcessService scheduledProcessService = mockery.mock(ScheduledProcessService.class,"mockScheduledProcessService");
+    JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class,"mockJobExecutionContext");
+    Trigger trigger = mockery.mock(Trigger.class,"trigger");
+    TriggerKey triggerKey = new TriggerKey("name", "group");
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_publish()
+    public void test_successful_converter()
     {
-        ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessService);
-        ScheduledProcessEvent event = new ScheduledProcessEventImpl();
+        Converter<JobExecutionContext, ScheduledProcessEvent> converter = new JobExecutionConverter("moduleName", false);
+        Date currentFireDate = new Date();
+        Date nextFireDate = new Date();
 
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledProcessService).save(event);
+                exactly(1).of(jobExecutionContext).getFireTime();
+                will(returnValue(currentFireDate));
+
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(1).of(trigger).getDescription();
+                will(returnValue("job description"));
+
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
+
+
+                exactly(2).of(jobExecutionContext).getNextFireTime();
+                will(returnValue(nextFireDate));
             }
         });
 
-        producer.invoke(event);
+        ScheduledProcessEvent scheduledProcessEvent = converter.convert(jobExecutionContext);
+
+        Assert.assertEquals(scheduledProcessEvent.getFireTime(),currentFireDate.getTime());
+        Assert.assertEquals("moduleName", scheduledProcessEvent.getAgentName());
+        Assert.assertEquals("job description", scheduledProcessEvent.getJobDescription());
+        Assert.assertEquals("name", scheduledProcessEvent.getJobName());
+        Assert.assertEquals("group", scheduledProcessEvent.getJobGroup());
+        Assert.assertEquals(scheduledProcessEvent.getNextFireTime(),nextFireDate.getTime());
+        Assert.assertNull(scheduledProcessEvent.getCommandLine());
+        Assert.assertTrue(scheduledProcessEvent.getPid() == 0);
+        Assert.assertNull(scheduledProcessEvent.getCommandLine());
+        Assert.assertNull(scheduledProcessEvent.getUser());
+
         mockery.assertIsSatisfied();
     }
 }

@@ -153,8 +153,11 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                             startupControls.put(flowname,startupControl);
                         }
 
-                        Flow flow = ( getFlowFactoryCapable(module) ).getFlowFactory().create(flowname);
-                        module.getFlows().add(flow);
+                        String profile = configuration.getFlowDefinitionProfiles().get(flowname);
+
+                        (getFlowFactoryCapable(module)).getFlowFactory().create(flowname, profile).forEach(flow -> {
+                            module.getFlows().add(flow);
+                        });
                     }
                 }
             }
