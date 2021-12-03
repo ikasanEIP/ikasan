@@ -4,15 +4,7 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
-import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
-import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.event.EventFactory;
-import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
-import org.ikasan.spec.event.Resubmission;
-import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
+import org.ikasan.spec.event.*;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
@@ -31,7 +23,7 @@ import java.util.concurrent.Executors;
  */
 public class BigQueueConsumer<T>
     implements Consumer<EventListener<?>,EventFactory>,
-    ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<T, Throwable>,
+    ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<T, Throwable>, MessageListener<T>,
     ResubmissionService<T> {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(BigQueueConsumer.class);
@@ -139,10 +131,14 @@ public class BigQueueConsumer<T>
     @Override
     public void stop() {
         this.isRunning = false;
-        this.listenableFuture.cancel(false);
-        this.listenableFuture = null;
-        this.bigQueueListenerExecutor.shutdownNow();
-        this.bigQueueListenerExecutor = null;
+        if(this.listenableFuture != null) {
+            this.listenableFuture.cancel(false);
+            this.listenableFuture = null;
+        }
+        if(this.bigQueueListenerExecutor != null) {
+            this.bigQueueListenerExecutor.shutdownNow();
+            this.bigQueueListenerExecutor = null;
+        }
         this.isRunning = false;
     }
 

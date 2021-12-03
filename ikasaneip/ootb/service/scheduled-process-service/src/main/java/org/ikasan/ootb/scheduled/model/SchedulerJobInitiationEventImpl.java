@@ -1,52 +1,49 @@
-package org.ikasan.ootb.scheduler.agent.rest.dto;
+package org.ikasan.ootb.scheduled.model;
 
+import org.ikasan.spec.scheduled.InternalEventDrivenJob;
 import org.ikasan.spec.scheduled.SchedulerJobInitiationEvent;
 
 import java.util.List;
 
-public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEvent<ContextParameterDto, InternalEventDrivenJobDto> {
-
-    private String agentName;
-    private String jobName;
-
+public class SchedulerJobInitiationEventImpl implements SchedulerJobInitiationEvent {
     @Override
-    public InternalEventDrivenJobDto getInternalEventDrivenJob() {
+    public InternalEventDrivenJob getInternalEventDrivenJob() {
         return null;
     }
 
     @Override
-    public void setInternalEventDrivenJob(InternalEventDrivenJobDto internalEventDrivenJob) {
+    public void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob) {
 
     }
 
     @Override
-    public void setContextParameters(List<ContextParameterDto> contextParameters) {
+    public void setContextParameters(List contextParameters) {
 
     }
 
     @Override
-    public List<ContextParameterDto> getContextParameters() {
+    public List getContextParameters() {
         return null;
     }
 
     @Override
     public String getAgentName() {
-        return this.agentName;
+        return null;
     }
 
     @Override
     public void setAgentName(String agentName) {
-        this.agentName = agentName;
+
     }
 
     @Override
     public String getJobName() {
-        return this.jobName;
+        return null;
     }
 
     @Override
     public void setJobName(String jobName) {
-        this.jobName = jobName;
+
     }
 
     @Override
