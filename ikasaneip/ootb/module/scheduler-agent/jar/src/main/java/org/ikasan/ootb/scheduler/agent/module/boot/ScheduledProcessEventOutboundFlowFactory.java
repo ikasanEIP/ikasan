@@ -38,36 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.ootb.scheduler.agent.module.boot;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.ScheduledProcessEventOutboundFlowComponentFactory;
+import org.ikasan.spec.flow.Flow;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
- * Configuration for a module where flows are configured at runtime.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
-public class ConfiguredModuleConfiguration
+@Configuration
+public class ScheduledProcessEventOutboundFlowFactory
 {
-    Map<String,String> flowDefinitions = new HashMap();
-    Map<String,String> flowDefinitionProfiles = new HashMap();
+    @Value( "${module.name}" )
+    String moduleName;
 
-    public Map<String, String> getFlowDefinitions()
-    {
-        return flowDefinitions;
-    }
+    @Resource
+    BuilderFactory builderFactory;
 
-    public void setFlowDefinitions(Map<String,String> flowDefinitions)
-    {
-        this.flowDefinitions = flowDefinitions;
-    }
+    @Resource
+    ScheduledProcessEventOutboundFlowComponentFactory componentFactory;
 
-    public Map<String, String> getFlowDefinitionProfiles() {
-        return flowDefinitionProfiles;
-    }
 
-    public void setFlowDefinitionProfiles(Map<String, String> flowDefinitionProfiles) {
-        this.flowDefinitionProfiles = flowDefinitionProfiles;
+    public Flow create() throws IOException {
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder("Scheduled Process Event Outbound Flow")
+            .withDescription("Scheduled Process Event Outbound Flow")
+            .consumer("Scheduled Consumer", componentFactory.getOutboundBigQueueConsumer())
+            .producer("Dashboard Producer", componentFactory.getScheduledStatusProducer())
+            .build();
     }
 }
+
+

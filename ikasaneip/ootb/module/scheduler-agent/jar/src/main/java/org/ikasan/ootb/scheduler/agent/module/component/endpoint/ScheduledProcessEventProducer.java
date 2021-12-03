@@ -38,40 +38,39 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Blackout Router configuration.
+ * Scheduled process event publisher.
  *
  * @author Ikasan Development Team
  */
-public class BlackoutRouterConfiguration
+public class ScheduledProcessEventProducer implements Producer<ScheduledProcessEvent>
 {
-    List<String> cronExpressions = new ArrayList<>();
-    Map<String,String> dateTimeRanges = new HashMap<>();
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventProducer.class);
 
-    public List<String> getCronExpressions()
+    ScheduledProcessService scheduledProcessService;
+
+    public ScheduledProcessEventProducer(ScheduledProcessService scheduledProcessService)
     {
-        return cronExpressions;
+        this.scheduledProcessService = scheduledProcessService;
+        if(scheduledProcessService == null)
+        {
+            throw new IllegalArgumentException("ScheduledProcessService cannot be 'null");
+        }
     }
 
-    public void setCronExpressions(List<String> cronExpressions)
+    @Override
+    public void invoke(ScheduledProcessEvent scheduledStatusEvent) throws EndpointException
     {
-        this.cronExpressions = cronExpressions;
-    }
-
-    public Map<String,String> getDateTimeRanges()
-    {
-        return dateTimeRanges;
-    }
-
-    public void setDateTimeRanges(Map<String,String> dateTimeRanges)
-    {
-        this.dateTimeRanges = dateTimeRanges;
+        this.scheduledProcessService.save(scheduledStatusEvent);
     }
 }
