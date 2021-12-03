@@ -56,6 +56,8 @@ public class DashboardRestServiceTest
             will(returnValue(null));
             oneOf(environment).getProperty(DashboardRestService.MODULE_NAME_PROPERTY);
             will(returnValue("testModule"));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false");
+            will(returnValue("false"));
         }});
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/wiretaps");
 
@@ -97,6 +99,8 @@ public class DashboardRestServiceTest
             will(returnValue("admin"));
             oneOf(environment).getProperty(DashboardRestService.MODULE_NAME_PROPERTY);
             will(returnValue("testModule"));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false");
+            will(returnValue("false"));
         }});
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/wiretaps");
         stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))

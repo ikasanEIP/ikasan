@@ -38,9 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.router;
 
 import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.routing.RouterException;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
@@ -74,9 +75,9 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
     public String route(ScheduledProcessEvent messageToRoute) throws RouterException
     {
         Date now = new Date();
-        if(configuration.cronExpressions != null && configuration.cronExpressions.size() > 0)
+        if(configuration.getCronExpressions() != null && configuration.getCronExpressions().size() > 0)
         {
-            for(String cronExpression : configuration.cronExpressions)
+            for(String cronExpression : configuration.getCronExpressions())
             {
                 try
                 {
@@ -94,9 +95,9 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
             }
         }
 
-        if(configuration.dateTimeRanges != null && configuration.dateTimeRanges.size() > 0)
+        if(configuration.getDateTimeRanges() != null && configuration.getDateTimeRanges().size() > 0)
         {
-            for(Map.Entry<String,String> dateRangeEntry : configuration.dateTimeRanges.entrySet())
+            for(Map.Entry<String,String> dateRangeEntry : configuration.getDateTimeRanges().entrySet())
             {
                 long from = Long.parseLong(dateRangeEntry.getKey());
                 long to = Long.parseLong(dateRangeEntry.getValue());
