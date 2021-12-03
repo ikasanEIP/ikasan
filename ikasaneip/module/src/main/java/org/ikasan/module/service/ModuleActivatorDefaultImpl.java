@@ -136,10 +136,16 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                     for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
                     {
                         String flowname = flowDefinition.getKey();
-                        StartupControl startupControl = new StartupControlImpl(module.getName(), flowname);
-                        startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
-                        this.startupControlDao.save(startupControl);
-                        module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().create(flowname) );
+
+                        String profile = configuration.getFlowDefinitionProfiles().get(flowname);
+
+                        ((FlowFactoryCapable)module).getFlowFactory().create(flowname, profile).forEach(flow -> {
+                            StartupControl startupControl = new StartupControlImpl(module.getName(), flow.getName());
+                            startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
+                            this.startupControlDao.save(startupControl);
+
+                            module.getFlows().add(flow);
+                        });
                     }
                 }
             }

@@ -38,25 +38,57 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.filter;
+
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.filter.FilterException;
+import org.ikasan.spec.configuration.ConfiguredResource;
 
 /**
- * Filter configuration for the Scheduled Process Event Filter.
+ * Filter configured to ignore scheduled process events that are within the blackout period route.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventFilterConfiguration
+public class ScheduledProcessEventFilter implements Filter<ScheduledProcessEvent>,
+    ConfiguredResource<ScheduledProcessEventFilterConfiguration>
 {
-    // whether to drop events within the blackout period - default is false
-    boolean dropOnBlackout;
+    String configuredResourceId;
+    ScheduledProcessEventFilterConfiguration configuration;
 
-    public boolean isDropOnBlackout()
+    @Override
+    public ScheduledProcessEvent filter(ScheduledProcessEvent scheduledProcessEvent) throws FilterException
     {
-        return dropOnBlackout;
+        if(configuration.isDropOnBlackout())
+        {
+            return null;
+        }
+
+        return scheduledProcessEvent;
     }
 
-    public void setDropOnBlackout(boolean dropOnBlackout)
+    @Override
+    public String getConfiguredResourceId()
     {
-        this.dropOnBlackout = dropOnBlackout;
+        return configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId)
+    {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public ScheduledProcessEventFilterConfiguration getConfiguration()
+    {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(ScheduledProcessEventFilterConfiguration configuration)
+    {
+        this.configuration = configuration;
     }
 }
