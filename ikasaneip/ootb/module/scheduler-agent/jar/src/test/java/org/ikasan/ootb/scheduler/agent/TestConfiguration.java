@@ -42,8 +42,8 @@ package org.ikasan.ootb.scheduler.agent;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.module.ConfiguredModuleConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.ComponentFactory;
-import org.ikasan.ootb.scheduler.agent.module.MyFlowFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.SchedulerJobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.SchedulerAgentFlowFactory;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
 import org.springframework.beans.factory.annotation.Value;
@@ -62,7 +62,11 @@ public class TestConfiguration {
     BuilderFactory builderFactory;
 
     @Resource
-    ComponentFactory componentFactory;
+    SchedulerJobProcessingFlowComponentFactory componentFactory;
+
+    @Resource
+    SchedulerAgentFlowFactory schedulerAgentFlowFactory;
+
 
     @Bean
     @Primary
@@ -70,12 +74,21 @@ public class TestConfiguration {
     {
         ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
         configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");
+            configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
+        configuration.getFlowDefinitions().put("Scheduler Flow 2", "MANUAL");
+        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 2", "FILE");
+        configuration.getFlowDefinitions().put("Scheduler Flow 3", "MANUAL");
+        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 3", "LEGACY");
+        configuration.getFlowDefinitions().put("Scheduler Flow 4", "MANUAL");
+        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 4", "QUARTZ");
+        configuration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "MANUAL");
+        configuration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
 
         // get the module builder
         return builderFactory.getModuleBuilder(moduleName)
             .withDescription("Scheduler Agent Integration Module.")
             .withType(ModuleType.SCHEDULER_AGENT)
-            .withFlowFactory( new MyFlowFactory(moduleName, builderFactory, componentFactory) )
+            .withFlowFactory(schedulerAgentFlowFactory)
             .setConfiguration(configuration)
             .build();
     }

@@ -38,26 +38,25 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module;
+package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.builder.OnException;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.LegacyJobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleType;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 
 /**
- * Module implementation.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
-@Configuration("ModuleFactory")
-public class MyModule
+@Configuration
+public class LegacyJobProcessingFlowFactory
 {
     @Value( "${module.name}" )
     String moduleName;
@@ -66,24 +65,22 @@ public class MyModule
     BuilderFactory builderFactory;
 
     @Resource
-    ComponentFactory componentFactory;
+    LegacyJobProcessingFlowComponentFactory componentFactory;
 
-    @Resource
-    Flow schedulerJobInitiationEventFlow;
 
-    @Bean
-    public Module myModule()
+    public Flow create(String flowName)
     {
-        ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
-
-        // get the module builder
-        return builderFactory.getModuleBuilder(moduleName)
-                .withDescription("Scheduler Agent Integration Module.")
-                .withType(ModuleType.SCHEDULER_AGENT)
-//                .withFlowFactory( new MyFlowFactory(moduleName, builderFactory, componentFactory) )
-                .addFlow(schedulerJobInitiationEventFlow)
-                .setConfiguration(configuration)
-            .build();
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
+            .withDescription(flowName)
+            .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
+            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
+            .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
+                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
+                .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
+            .otherwise(builderFactory.getRouteBuilder()
+                .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
+                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()));
     }
 }
 

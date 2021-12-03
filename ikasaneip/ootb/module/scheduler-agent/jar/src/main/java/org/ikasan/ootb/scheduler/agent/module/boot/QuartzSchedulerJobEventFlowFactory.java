@@ -38,36 +38,44 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.ootb.scheduler.agent.module.boot;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.OnException;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.QuartzSchedulerJobEventFlowComponentFactory;
+import org.ikasan.spec.flow.Flow;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
- * Configuration for a module where flows are configured at runtime.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
-public class ConfiguredModuleConfiguration
+@Configuration
+public class QuartzSchedulerJobEventFlowFactory
 {
-    Map<String,String> flowDefinitions = new HashMap();
-    Map<String,String> flowDefinitionProfiles = new HashMap();
+    @Value( "${module.name}" )
+    private String moduleName;
 
-    public Map<String, String> getFlowDefinitions()
+    @Resource
+    private BuilderFactory builderFactory;
+
+    @Resource
+    QuartzSchedulerJobEventFlowComponentFactory componentFactory;
+
+
+    public Flow create(String flowName)
     {
-        return flowDefinitions;
-    }
-
-    public void setFlowDefinitions(Map<String,String> flowDefinitions)
-    {
-        this.flowDefinitions = flowDefinitions;
-    }
-
-    public Map<String, String> getFlowDefinitionProfiles() {
-        return flowDefinitionProfiles;
-    }
-
-    public void setFlowDefinitionProfiles(Map<String, String> flowDefinitionProfiles) {
-        this.flowDefinitionProfiles = flowDefinitionProfiles;
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName )
+            .withDescription("The " + flowName + " Quartz Schedule Flow is responsible for kicking off jobs on a scheduled basis based on the configured cron expression.")
+            .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
+            .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
+            .build();
     }
 }
+
+
