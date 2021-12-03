@@ -38,36 +38,40 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.ootb.scheduler.agent.module.component.router.configuration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
- * Configuration for a module where flows are configured at runtime.
+ * Blackout Router configuration.
  *
  * @author Ikasan Development Team
  */
-public class ConfiguredModuleConfiguration
+public class BlackoutRouterConfiguration
 {
-    Map<String,String> flowDefinitions = new HashMap();
-    Map<String,String> flowDefinitionProfiles = new HashMap();
+    List<String> cronExpressions = new ArrayList<>();
+    Map<String,String> dateTimeRanges = new HashMap<>();
 
-    public Map<String, String> getFlowDefinitions()
+    public List<String> getCronExpressions()
     {
-        return flowDefinitions;
+        return cronExpressions;
     }
 
-    public void setFlowDefinitions(Map<String,String> flowDefinitions)
+    public void setCronExpressions(List<String> cronExpressions)
     {
-        this.flowDefinitions = flowDefinitions;
+        this.cronExpressions = cronExpressions;
     }
 
-    public Map<String, String> getFlowDefinitionProfiles() {
-        return flowDefinitionProfiles;
+    public Map<String,String> getDateTimeRanges()
+    {
+        return dateTimeRanges;
     }
 
-    public void setFlowDefinitionProfiles(Map<String, String> flowDefinitionProfiles) {
-        this.flowDefinitionProfiles = flowDefinitionProfiles;
+    public void setDateTimeRanges(Map<String,String> dateTimeRanges)
+    {
+        this.dateTimeRanges = dateTimeRanges;
     }
 }

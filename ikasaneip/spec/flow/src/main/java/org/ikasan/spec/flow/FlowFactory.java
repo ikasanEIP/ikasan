@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.flow;
 
+import java.util.List;
+
 /**
  * Interface representing a factory for flow creation.
  *
@@ -47,5 +49,5 @@ package org.ikasan.spec.flow;
  */
 public interface FlowFactory
 {
-    Flow create(String flowName);
+    List<Flow> create(String flowName, String profile);
 }
