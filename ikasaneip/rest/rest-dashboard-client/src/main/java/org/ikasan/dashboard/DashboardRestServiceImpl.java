@@ -30,6 +30,8 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
 
     private boolean isEnabled;
 
+    private boolean bubbleExceptionsUpToCaller;
+
     public DashboardRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
                                     String path, Converter converter)
     {
@@ -40,11 +42,11 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
     public DashboardRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
                                     String path)
     {
-        restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
+        this.restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-        isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
+        this.restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
+        this.isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
         if ( isEnabled )
         {
             this.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
@@ -52,6 +54,7 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
             this.moduleName = environment.getProperty(MODULE_NAME_PROPERTY);
             this.username = environment.getProperty(DASHBOARD_USERNAME_PROPERTY);
             this.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
+            this.bubbleExceptionsUpToCaller = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false"));
         }
     }
 
@@ -95,12 +98,23 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
             }
             logger.warn("Issue while publishing events to dashboard [{}] with response [{}] [{}]", url,
                 e.getRawStatusCode(), e.getResponseBodyAsString());
+
+            if(bubbleExceptionsUpToCaller) {
+                throw new RuntimeException(String.format("Issue while publishing events to dashboard [%s] with response [%s] [%s]", url,
+                    e.getRawStatusCode(), e.getResponseBodyAsString()), e);
+            }
+
             return false;
         }
         catch (RestClientException e)
         {
             logger.warn("Issue while publishing events to dashboard [{}] with response [{}]", url,
                  e.getLocalizedMessage());
+
+            if(bubbleExceptionsUpToCaller) {
+                throw new RuntimeException(String.format("Issue while publishing events to dashboard [%s] with response [%s]", url,
+                    e.getLocalizedMessage()), e);
+            }
 
             return false;
         }

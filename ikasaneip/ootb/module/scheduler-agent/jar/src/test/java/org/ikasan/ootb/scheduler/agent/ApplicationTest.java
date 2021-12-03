@@ -40,11 +40,19 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.ootb.scheduled.model.SchedulerJobInitiationEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.Before;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -52,6 +60,12 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.assertEquals;
 
@@ -69,24 +83,146 @@ public class ApplicationTest
     @Resource
     private Module<Flow> moduleUnderTest;
 
+    @Resource
+    private IBigQueue outboundQueue;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
+
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
     @Before
-    public void setup()
-    {
-        // pre-test setup
+    public void setup() throws IOException {
+        outboundQueue.removeAll();
     }
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_createModule_start_and_stop_flow() throws Exception
-    {
-        Flow flow = moduleUnderTest.getFlow("Scheduler Flow 1");
+    public void test_create_module_start_and_stop_flow() throws Exception {
+        Flow flow = moduleUnderTest.getFlow("Scheduler Flow 3");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 
         flow.stop();
         assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("Scheduler Flow 1");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("Scheduler Flow 4");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("Scheduler Flow 2");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("Scheduled Process Event Outbound Flow");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
+    }
+
+    @Test
+    public void test_job_processing_flow_success() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
+        flowTestRule.consumer("Scheduled Consumer")
+            .converter("JobInitiationEvent to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .broker("Process Execution Broker")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        IBigQueue bigQueue = InboundJobQueueCache.instance().get("Scheduler Flow 1");
+        SchedulerJobInitiationEventImpl schedulerJobInitiationEvent = new SchedulerJobInitiationEventImpl();
+
+        bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
+
+        flowTestRule.sleep(1000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    public void test_quartz_flow_success() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+        flowTestRule.consumer("Scheduled Consumer")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumer();
+
+        flowTestRule.sleep(1000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    public void test_file_flow_success() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+
+        flowTestRule.consumer("File Consumer")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumer();
+
+        flowTestRule.sleep(1000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+
+    @Test
+    @Ignore
+    public void test() throws JsonProcessingException {
+        HashMap<String, String> map = new HashMap<>();
+
+        IntStream.range(0, 2000)
+            .forEach(a-> map.put("Scheduler Flow " + a, "AUTOMATIC"));
+
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
     }
 
     @After

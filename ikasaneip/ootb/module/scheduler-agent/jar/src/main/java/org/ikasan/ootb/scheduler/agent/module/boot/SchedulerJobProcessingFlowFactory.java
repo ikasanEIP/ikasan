@@ -38,56 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.boot;
 
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.component.filter.Filter;
-import org.ikasan.spec.component.filter.FilterException;
-import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.SchedulerJobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
+import org.ikasan.spec.flow.Flow;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
- * Filter configured to ignore scheduled process events that are within the blackout period route.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventFilter implements Filter<ScheduledProcessEvent>,
-    ConfiguredResource<ScheduledProcessEventFilterConfiguration>
+@Configuration
+public class SchedulerJobProcessingFlowFactory
 {
-    String configuredResourceId;
-    ScheduledProcessEventFilterConfiguration configuration;
+    @Value( "${module.name}" )
+    String moduleName;
 
-    @Override
-    public ScheduledProcessEvent filter(ScheduledProcessEvent scheduledProcessEvent) throws FilterException
-    {
-        if(configuration.isDropOnBlackout())
-        {
-            return null;
-        }
+    @Resource
+    BuilderFactory builderFactory;
 
-        return scheduledProcessEvent;
-    }
+    @Resource
+    SchedulerJobProcessingFlowComponentFactory componentFactory;
 
-    @Override
-    public String getConfiguredResourceId()
-    {
-        return configuredResourceId;
-    }
 
-    @Override
-    public void setConfiguredResourceId(String configuredResourceId)
-    {
-        this.configuredResourceId = configuredResourceId;
-    }
-
-    @Override
-    public ScheduledProcessEventFilterConfiguration getConfiguration()
-    {
-        return configuration;
-    }
-
-    @Override
-    public void setConfiguration(ScheduledProcessEventFilterConfiguration configuration)
-    {
-        this.configuration = configuration;
+    public Flow create(String jobName) throws IOException {
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
+            .withDescription(jobName +" Job Processing Flow")
+            .consumer("Scheduled Consumer", componentFactory.bigQueueConsumer(jobName))
+            .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
+            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
+            .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
+                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
+                .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
+            .otherwise(builderFactory.getRouteBuilder()
+                .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
+                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()));
     }
 }
+
+

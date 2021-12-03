@@ -38,60 +38,69 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.quartz.*;
+import org.quartz.JobExecutionContext;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 /**
  * Quartz Job Execution Context converter to Scheduled Process Event.
  *
  * @author Ikasan Development Team
  */
-public class JobExecutionConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>
+public class JobInitiationToScheduledProcessEventConverter implements Converter<String, ScheduledProcessEvent>
 {
     String moduleName;
+    boolean markAsSuccessful;
 
     /**
      * Constructor
      * @param moduleName
      */
-    public JobExecutionConverter(String moduleName)
+    public JobInitiationToScheduledProcessEventConverter(String moduleName)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
+
+        this.markAsSuccessful = markAsSuccessful;
     }
 
     @Override
-    public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException
+    public ScheduledProcessEvent convert(String event) throws TransformationException
     {
         ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
-        scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setAgentName(moduleName);
 
-        Trigger jobTrigger = jobExecutionContext.getTrigger();
-        if(jobTrigger != null)
-        {
-            scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
-
-            TriggerKey triggerKey = jobTrigger.getKey();
-            if(triggerKey != null)
-            {
-                scheduledProcessEvent.setJobName(triggerKey.getName());
-                scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
-            }
+        if(this.markAsSuccessful) {
+            scheduledProcessEvent.setSuccessful(true);
         }
 
-        if(jobExecutionContext.getNextFireTime() != null)
-        {
-            scheduledProcessEvent.setNextFireTime( jobExecutionContext.getNextFireTime().getTime() );
-        }
+//        Trigger jobTrigger = jobExecutionContext.getTrigger();
+//        if(jobTrigger != null)
+//        {
+//            scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
+//
+//            TriggerKey triggerKey = jobTrigger.getKey();
+//            if(triggerKey != null)
+//            {
+//                scheduledProcessEvent.setJobName(triggerKey.getName());
+//                scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
+//            }
+//        }
+//
+//        if(jobExecutionContext.getNextFireTime() != null)
+//        {
+//            scheduledProcessEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
+//        }
 
         return scheduledProcessEvent;
     }

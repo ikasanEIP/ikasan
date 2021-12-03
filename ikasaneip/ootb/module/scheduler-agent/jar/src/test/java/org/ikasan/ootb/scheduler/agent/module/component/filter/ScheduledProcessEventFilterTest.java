@@ -38,36 +38,48 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
+package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
- * Configuration for a module where flows are configured at runtime.
+ * This test class supports the <code>ScheduledProcessEventFilter</code>.
  *
  * @author Ikasan Development Team
  */
-public class ConfiguredModuleConfiguration
+public class ScheduledProcessEventFilterTest
 {
-    Map<String,String> flowDefinitions = new HashMap();
-    Map<String,String> flowDefinitionProfiles = new HashMap();
-
-    public Map<String, String> getFlowDefinitions()
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_no_drop_on_blackout()
     {
-        return flowDefinitions;
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
+        ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
+        configuration.setDropOnBlackout(false);
+
+        ScheduledProcessEventFilter filter  = new ScheduledProcessEventFilter();
+        ((ConfiguredResource)filter).setConfiguration(configuration);
+        Assert.assertNotNull( filter.filter(scheduledProcessEvent) );
     }
 
-    public void setFlowDefinitions(Map<String,String> flowDefinitions)
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_drop_on_blackout()
     {
-        this.flowDefinitions = flowDefinitions;
-    }
+        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
+        ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
+        configuration.setDropOnBlackout(true);
 
-    public Map<String, String> getFlowDefinitionProfiles() {
-        return flowDefinitionProfiles;
-    }
-
-    public void setFlowDefinitionProfiles(Map<String, String> flowDefinitionProfiles) {
-        this.flowDefinitionProfiles = flowDefinitionProfiles;
-    }
-}
+        ScheduledProcessEventFilter filter  = new ScheduledProcessEventFilter();
+        ((ConfiguredResource)filter).setConfiguration(configuration);
+        Assert.assertNull( filter.filter(scheduledProcessEvent) );
+    }}

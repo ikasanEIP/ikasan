@@ -38,36 +38,25 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.module;
-
-import java.util.HashMap;
-import java.util.Map;
+package org.ikasan.ootb.scheduler.agent.module.component.filter.configuration;
 
 /**
- * Configuration for a module where flows are configured at runtime.
+ * Filter configuration for the Scheduled Process Event Filter.
  *
  * @author Ikasan Development Team
  */
-public class ConfiguredModuleConfiguration
+public class ScheduledProcessEventFilterConfiguration
 {
-    Map<String,String> flowDefinitions = new HashMap();
-    Map<String,String> flowDefinitionProfiles = new HashMap();
+    // whether to drop events within the blackout period - default is false
+    boolean dropOnBlackout;
 
-    public Map<String, String> getFlowDefinitions()
+    public boolean isDropOnBlackout()
     {
-        return flowDefinitions;
+        return dropOnBlackout;
     }
 
-    public void setFlowDefinitions(Map<String,String> flowDefinitions)
+    public void setDropOnBlackout(boolean dropOnBlackout)
     {
-        this.flowDefinitions = flowDefinitions;
-    }
-
-    public Map<String, String> getFlowDefinitionProfiles() {
-        return flowDefinitionProfiles;
-    }
-
-    public void setFlowDefinitionProfiles(Map<String, String> flowDefinitionProfiles) {
-        this.flowDefinitionProfiles = flowDefinitionProfiles;
+        this.dropOnBlackout = dropOnBlackout;
     }
 }

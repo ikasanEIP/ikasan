@@ -38,10 +38,11 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
 import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
