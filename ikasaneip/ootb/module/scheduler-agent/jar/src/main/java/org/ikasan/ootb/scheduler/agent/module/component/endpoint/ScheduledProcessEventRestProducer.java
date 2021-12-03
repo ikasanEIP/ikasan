@@ -38,47 +38,48 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * This test class supports the <code>ScheduledProcessEventFilter</code>.
+ * Scheduled process event publisher.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventFilterTest
+public class ScheduledProcessEventRestProducer implements Producer<ScheduledProcessEvent>
 {
-    /**
-     * Test simple invocation.
-     */
-    @Test
-    public void test_no_drop_on_blackout()
-    {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
-        ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
-        configuration.dropOnBlackout = false;
+    /** logger */
+    private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventRestProducer.class);
 
-        ScheduledProcessEventFilter filter  = new ScheduledProcessEventFilter();
-        ((ConfiguredResource)filter).setConfiguration(configuration);
-        Assert.assertNotNull( filter.filter(scheduledProcessEvent) );
+    DashboardRestService scheduleProcessEventDashboardRestService;
+
+    public ScheduledProcessEventRestProducer(DashboardRestService scheduleProcessEventDashboardRestService)
+    {
+        this.scheduleProcessEventDashboardRestService = scheduleProcessEventDashboardRestService;
+        if(scheduleProcessEventDashboardRestService == null) {
+            throw new IllegalArgumentException("ScheduledProcessService cannot be 'null");
+        }
     }
 
-    /**
-     * Test simple invocation.
-     */
-    @Test
-    public void test_drop_on_blackout()
+    @Override
+    public void invoke(ScheduledProcessEvent scheduledStatusEvent) throws EndpointException
     {
-        ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
-        ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
-        configuration.dropOnBlackout = true;
+        try {
+            boolean success = this.scheduleProcessEventDashboardRestService.publish(scheduledStatusEvent);
 
-        ScheduledProcessEventFilter filter  = new ScheduledProcessEventFilter();
-        ((ConfiguredResource)filter).setConfiguration(configuration);
-        Assert.assertNull( filter.filter(scheduledProcessEvent) );
-    }}
+            if(!success) {
+                throw new EndpointException("Could not publish an event to the dashboard. Please confirm that dashboard extract is enabled!");
+            }
+        }
+        catch (RuntimeException e) {
+            throw new EndpointException(e);
+        }
+    }
+}

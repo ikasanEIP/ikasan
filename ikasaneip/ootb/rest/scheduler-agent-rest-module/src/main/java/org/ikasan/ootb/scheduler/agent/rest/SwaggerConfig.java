@@ -15,7 +15,7 @@ public class SwaggerConfig {
     public Docket schedulerAgentSwaggerApi() {
         return new Docket(DocumentationType.SWAGGER_2)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("org.ikasan.ootb.scheduler.agent.module.rest"))
+            .apis(RequestHandlerSelectors.basePackage("org.ikasan.ootb.scheduler.agent.rest"))
             .paths(PathSelectors.any())
             .build()
             .groupName("scheduler-agent");

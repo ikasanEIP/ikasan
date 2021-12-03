@@ -40,6 +40,18 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>scheduler-agent-ikasan-rest-module</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-scheduler-agent-rest-dashboard-client</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.leansoft</groupId>
             <artifactId>bigqueue</artifactId>
         </dependency>

@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.component.broker.configuration;
 
 import java.util.ArrayList;
 import java.util.List;

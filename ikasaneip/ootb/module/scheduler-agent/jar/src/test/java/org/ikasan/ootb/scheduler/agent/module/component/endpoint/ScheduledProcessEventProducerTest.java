@@ -38,49 +38,50 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
-import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.OnException;
-import org.ikasan.component.endpoint.util.producer.DevNull;
-import org.ikasan.ootb.scheduler.agent.module.ComponentFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.BlackoutRouter;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Test;
 
 /**
- * Flow factory implementation.
+ * This test class supports the <code>ScheduledProcessEventProducer</code>.
  *
  * @author Ikasan Development Team
  */
-@Configuration
-public class SchedulerJobInitiationEventFlowFactory
+public class ScheduledProcessEventProducerTest
 {
-    @Value( "${module.name}" )
-    private String moduleName;
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+    }};
 
-    @Resource
-    private BuilderFactory builderFactory;
+    ScheduledProcessService scheduledProcessService = mockery.mock(ScheduledProcessService.class,"mockScheduledProcessService");
 
-    @Resource
-    private Consumer bigQueueConsumer;
-
-    @Bean
-    public Flow schedulerJobInitiationEventFlow()
+    /**
+     * Test simple invocation.
+     */
+    @Test
+    public void test_publish()
     {
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder("Scheduler Job Initiation Event Flow")
-            .withDescription("Scheduler Job Initiation Event Flow")
-            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
-            .consumer("Scheduler Job Initiation Event Consumer", this.bigQueueConsumer)
-            .producer("Dev Null", new DevNull<>())
-            .build();
+        ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessService);
+        ScheduledProcessEvent event = new ScheduledProcessEventImpl();
+
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(scheduledProcessService).save(event);
+            }
+        });
+
+        producer.invoke(event);
+        mockery.assertIsSatisfied();
     }
 }
-
-

@@ -38,39 +38,43 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component;
+package org.ikasan.ootb.scheduler.agent.module.boot;
 
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.FileEventSchedulerJobFlowComponentFactory;
+import org.ikasan.spec.flow.Flow;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+
+import javax.annotation.Resource;
 
 /**
- * Scheduled process event publisher.
+ * Flow factory implementation.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventProducer implements Producer<ScheduledProcessEvent>
+@Configuration
+public class FileEventSchedulerJobFlowFactory
 {
-    /** logger */
-    private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventProducer.class);
+    @Value( "${module.name}" )
+    private String moduleName;
 
-    ScheduledProcessService scheduledProcessService;
+    @Resource
+    private BuilderFactory builderFactory;
 
-    public ScheduledProcessEventProducer(ScheduledProcessService scheduledProcessService)
+    @Resource
+    FileEventSchedulerJobFlowComponentFactory componentFactory;
+
+
+    public Flow create(String flowName)
     {
-        this.scheduledProcessService = scheduledProcessService;
-        if(scheduledProcessService == null)
-        {
-            throw new IllegalArgumentException("ScheduledProcessService cannot be 'null");
-        }
-    }
-
-    @Override
-    public void invoke(ScheduledProcessEvent scheduledStatusEvent) throws EndpointException
-    {
-        this.scheduledProcessService.save(scheduledStatusEvent);
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
+            .withDescription("The " + flowName + " File Event Flow is responsible for kicking off jobs when an expected file arrives.")
+            .consumer("File Consumer", componentFactory.getFileConsumer())
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter())
+            .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
+            .build();
     }
 }
+
+
