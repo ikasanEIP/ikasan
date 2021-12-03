@@ -41,46 +41,50 @@
 package org.ikasan.ootb.scheduler.agent.module;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.OnException;
-import org.ikasan.ootb.scheduler.agent.module.component.BlackoutRouter;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowFactory;
+import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.SchedulerJobProcessingFlowComponentFactory;
+import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleType;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
+
+import javax.annotation.Resource;
 
 /**
- * Flow factory implementation.
+ * Module implementation.
  *
  * @author Ikasan Development Team
  */
-public class MyFlowFactory implements FlowFactory
+@Configuration("ModuleFactory")
+@ImportResource( {
+    "classpath:h2-datasource-conf.xml",
+    "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml"
+} )
+public class SchedulerAgentModuleFactory
 {
+    @Value( "${module.name}" )
     String moduleName;
+
+    @Resource
     BuilderFactory builderFactory;
-    ComponentFactory componentFactory;
 
-    public MyFlowFactory(String moduleName, BuilderFactory builderFactory, ComponentFactory componentFactory)
-    {
-        this.moduleName = moduleName;
-        this.builderFactory = builderFactory;
-        this.componentFactory = componentFactory;
-    }
+    @Resource
+    SchedulerAgentFlowFactory schedulerAgentFlowFactory;
 
-    @Override
-    public Flow create(String flowName)
+    @Bean
+    public Module myModule()
     {
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
-            .withDescription("Scheduler Agent flow")
-            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
-            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor().withDashboardNotifier())
-            .consumer("Scheduled Consumer", builderFactory.getComponentBuilder().scheduledConsumer()
-                .setCronExpression("*/5 * * * * ?"))
-            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
-            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
-            .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
-                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
-                .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
-            .otherwise(builderFactory.getRouteBuilder()
-                .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
-                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()));
+        ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
+
+        // get the module builder
+        return builderFactory.getModuleBuilder(moduleName)
+                .withDescription("Scheduler Agent Integration Module.")
+                .withType(ModuleType.SCHEDULER_AGENT)
+                .withFlowFactory(schedulerAgentFlowFactory)
+                .setConfiguration(configuration)
+            .build();
     }
 }
 

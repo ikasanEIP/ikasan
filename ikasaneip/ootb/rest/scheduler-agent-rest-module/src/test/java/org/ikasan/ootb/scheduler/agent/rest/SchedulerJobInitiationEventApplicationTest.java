@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.ikasan.ootb.scheduler.agent.rest.cache.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -65,6 +66,8 @@ public class SchedulerJobInitiationEventApplicationTest
 
         Mockito.doNothing().when(this.inboundQueue).enqueue(any(byte[].class));
 
+        InboundJobQueueCache.instance().put("TEST", this.inboundQueue);
+
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         Mockito.verify(this.inboundQueue, times(1)).enqueue(any(byte[].class));
@@ -83,6 +86,8 @@ public class SchedulerJobInitiationEventApplicationTest
 
         Mockito.doThrow(new RuntimeException("test exception")).when(this.inboundQueue).enqueue(any(byte[].class));
 
+        InboundJobQueueCache.instance().put("TEST", this.inboundQueue);
+
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         Mockito.verify(this.inboundQueue, times(1)).enqueue(any(byte[].class));
@@ -94,6 +99,7 @@ public class SchedulerJobInitiationEventApplicationTest
     private String createSchedulerJobInitiationEventDto(String event) throws JsonProcessingException
     {
         SchedulerJobInitiationEventDto dto = new SchedulerJobInitiationEventDto();
+        dto.setJobName(event);
         return mapper.writeValueAsString(dto);
     }
 }

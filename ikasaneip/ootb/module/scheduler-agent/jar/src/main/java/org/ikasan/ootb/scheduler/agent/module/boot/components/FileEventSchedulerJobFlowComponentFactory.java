@@ -78,117 +78,73 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module;
+package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
-import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.*;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.consumer.BigQueueConsumer;
-import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
+import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.FIleListToScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.filter.Filter;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
-import springfox.documentation.builders.PathSelectors;
-import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.spi.DocumentationType;
-import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.Resource;
-import java.io.IOException;
+import java.util.List;
 
 /**
- * Scheduler Agent component factory.
+ * File Scheduler Job Event Flow Component Factory.
  *
  * @author Ikasan Development Team
  */
 @Configuration
-@ImportResource( {
-    "classpath:h2-datasource-conf.xml"
-} )
-@EnableSwagger2
-public class ComponentFactory
+public class FileEventSchedulerJobFlowComponentFactory
 {
     @Value( "${module.name}" )
     String moduleName;
-
-    @Value( "${server.address}" )
-    String serverAddress;
 
     @Resource
     BuilderFactory builderFactory;
 
     @Resource
-    ScheduledProcessService scheduledProcessService;
+    IBigQueue outboundQueue;
 
-    @Value( "${big.queue.consumer.configuration.queueDir}" )
-    private String queueDir = "/sandbox/mick/bigquque";
-
-    @Value( "${big.queue.consumer.configuration.inboundQueueName}" )
-    private String inboundQueueName = "module-inbound-context-queue";
-
-    private String outboundQueueName = "module-outbound-context-queue";
-
-    SingleRecipientRouter getBlackoutRouter()
+    /**
+     * Return an instance of a configured file consumer
+     * @return
+     */
+    public Consumer getFileConsumer()
     {
-        return new BlackoutRouter();
+        FileConsumerConfiguration fileConsumerConfiguration = new FileConsumerConfiguration();
+        fileConsumerConfiguration.setFilenames(List.of("set me"));
+        fileConsumerConfiguration.setCronExpression("0 0 0 * * ?");
+        return builderFactory.getComponentBuilder().fileConsumer()
+            .setConfiguration(fileConsumerConfiguration)
+            .build();
     }
 
-    Broker getProcessExecutionBroker()
+
+    /**
+     * Get the converter that converts messages from a JobExecution to a ScheduledProcessEvent.
+     *
+     * @return the converter
+     */
+    public Converter getFileEventToScheduledProcessEventConverter() { return new FIleListToScheduledProcessEventConverter(moduleName); }
+
+    /**
+     * Get the producer that publishes ScheduledProcessEvents.
+     *
+     * @return
+     */
+    public Producer getScheduledStatusProducer()
     {
-        ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
-        configuration.setCommandLine("pwd");// default safe command across all platforms
-
-        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker(this.serverAddress);
-        processExecutionBroker.setConfiguration(configuration);
-        return processExecutionBroker;
+        return new BigQueueProducer(this.outboundQueue, new SchedulerProcessorEventSerialiser());
     }
 
-    Producer getScheduledStatusProducer()
-    {
-        return new ScheduledProcessEventProducer(scheduledProcessService);
-    }
-
-    Filter getScheduledStatusFilter()
-    {
-        return new ScheduledProcessEventFilter();
-    }
-
-    Converter getJobExecutionConverter() { return new JobExecutionConverter(moduleName); }
-
-    @Bean
-    public Consumer bigQueueConsumer(IBigQueue inboundQueue) {
-        BigQueueConsumer consumer = new BigQueueConsumer(inboundQueue);
-        return consumer;
-    }
-
-
-    @Bean
-    public IBigQueue inboundQueue() throws IOException {
-        return new BigQueueImpl(this.queueDir, this.inboundQueueName);
-    }
-
-    @Bean
-    public IBigQueue outboundQueue() throws IOException {
-        return new BigQueueImpl(this.queueDir, this.outboundQueueName);
-    }
-
-    @Bean
-    public Docket scheeduleaApi() {
-        return new Docket(DocumentationType.SWAGGER_2)
-            .select()
-            .apis(RequestHandlerSelectors.basePackage("org.ikasan.ootb.scheduler.agent.module.rest"))
-            .paths(PathSelectors.any())
-            .build()
-            .groupName("scheduler-agent");
-    }
 }
 
