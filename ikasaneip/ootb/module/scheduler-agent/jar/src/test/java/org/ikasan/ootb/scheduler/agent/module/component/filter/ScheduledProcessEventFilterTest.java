@@ -42,7 +42,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Assert;
 import org.junit.Test;

@@ -80,26 +80,13 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
-import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventProducer;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventRestProducer;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
-import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
-import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
-import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.filter.Filter;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
-import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 

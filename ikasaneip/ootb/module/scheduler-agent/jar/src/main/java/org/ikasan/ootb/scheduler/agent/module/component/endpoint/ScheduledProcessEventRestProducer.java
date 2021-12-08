@@ -43,8 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,7 +52,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventRestProducer implements Producer<ScheduledProcessEvent>
+public class ScheduledProcessEventRestProducer implements Producer<String>
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventRestProducer.class);
@@ -69,7 +68,7 @@ public class ScheduledProcessEventRestProducer implements Producer<ScheduledProc
     }
 
     @Override
-    public void invoke(ScheduledProcessEvent scheduledStatusEvent) throws EndpointException
+    public void invoke(String scheduledStatusEvent) throws EndpointException
     {
         try {
             boolean success = this.scheduleProcessEventDashboardRestService.publish(scheduledStatusEvent);
