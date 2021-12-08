@@ -41,9 +41,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.router;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Assert;

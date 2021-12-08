@@ -40,8 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
-import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -77,7 +76,7 @@ public class JobExecutionConverterTest
     @Test
     public void test_successful_converter()
     {
-        Converter<JobExecutionContext, ScheduledProcessEvent> converter = new JobExecutionConverter("moduleName", false);
+        Converter<JobExecutionContext, ScheduledProcessEvent> converter = new JobExecutionConverter("moduleName", "jobName", false);
         Date currentFireDate = new Date();
         Date nextFireDate = new Date();
 

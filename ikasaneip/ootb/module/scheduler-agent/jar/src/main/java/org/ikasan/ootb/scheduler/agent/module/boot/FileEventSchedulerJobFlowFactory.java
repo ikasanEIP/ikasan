@@ -66,12 +66,12 @@ public class FileEventSchedulerJobFlowFactory
     FileEventSchedulerJobFlowComponentFactory componentFactory;
 
 
-    public Flow create(String flowName)
+    public Flow create(String jobName)
     {
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
-            .withDescription("The " + flowName + " File Event Flow is responsible for kicking off jobs when an expected file arrives.")
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
+            .withDescription("The " + jobName + " File Event Flow is responsible for kicking off jobs when an expected file arrives.")
             .consumer("File Consumer", componentFactory.getFileConsumer())
-            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter())
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter(jobName))
             .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
             .build();
     }

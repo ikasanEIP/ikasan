@@ -121,7 +121,7 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobExecutionConverter() { return new JobExecutionConverter(moduleName, true); }
+    public Converter getJobExecutionConverter(String jobName) { return new JobExecutionConverter(moduleName, jobName, true); }
 
     /**
      * Get the producer that publishes ScheduledProcessEvents.

@@ -42,7 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.module.ConfiguredModuleConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.boot.components.SchedulerJobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
 import org.ikasan.ootb.scheduler.agent.module.SchedulerAgentFlowFactory;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
@@ -62,7 +62,7 @@ public class TestConfiguration {
     BuilderFactory builderFactory;
 
     @Resource
-    SchedulerJobProcessingFlowComponentFactory componentFactory;
+    JobProcessingFlowComponentFactory componentFactory;
 
     @Resource
     SchedulerAgentFlowFactory schedulerAgentFlowFactory;
