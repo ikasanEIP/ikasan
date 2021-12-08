@@ -41,7 +41,7 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.ootb.scheduler.agent.module.boot.components.SchedulerJobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
@@ -56,7 +56,7 @@ import java.io.IOException;
  * @author Ikasan Development Team
  */
 @Configuration
-public class SchedulerJobProcessingFlowFactory
+public class JobProcessingFlowFactory
 {
     @Value( "${module.name}" )
     String moduleName;
@@ -65,21 +65,18 @@ public class SchedulerJobProcessingFlowFactory
     BuilderFactory builderFactory;
 
     @Resource
-    SchedulerJobProcessingFlowComponentFactory componentFactory;
+    JobProcessingFlowComponentFactory componentFactory;
 
 
     public Flow create(String jobName) throws IOException {
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
             .withDescription(jobName +" Job Processing Flow")
-            .consumer("Scheduled Consumer", componentFactory.bigQueueConsumer(jobName))
+            .consumer("Job Consumer", componentFactory.bigQueueConsumer(jobName))
             .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
-            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
-            .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
-                .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
-                .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
-            .otherwise(builderFactory.getRouteBuilder()
-                .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
-                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()));
+            .broker("Job Started Broker", this.componentFactory.getScheduledProcessEventJobStartBroker())
+            .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
+            .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
+            .build();
     }
 }
 

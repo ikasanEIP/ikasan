@@ -41,8 +41,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
@@ -63,7 +63,7 @@ public class ScheduledProcessEventProducerTest
         setImposteriser(ClassImposteriser.INSTANCE);
     }};
 
-    ScheduledProcessService scheduledProcessService = mockery.mock(ScheduledProcessService.class,"mockScheduledProcessService");
+    ScheduledProcessEventService scheduledProcessEventService = mockery.mock(ScheduledProcessEventService.class,"mockScheduledProcessService");
 
     /**
      * Test simple invocation.
@@ -71,13 +71,13 @@ public class ScheduledProcessEventProducerTest
     @Test
     public void test_publish()
     {
-        ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessService);
+        ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessEventService);
         ScheduledProcessEvent event = new ScheduledProcessEventImpl();
 
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(scheduledProcessService).save(event);
+                exactly(1).of(scheduledProcessEventService).save(event);
             }
         });
 

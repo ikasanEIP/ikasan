@@ -40,13 +40,13 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.quartz.JobExecutionContext;
-import org.quartz.Trigger;
-import org.quartz.TriggerKey;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 /**
  * Quartz Job Execution Context converter to Scheduled Process Event.
@@ -56,7 +56,7 @@ import org.quartz.TriggerKey;
 public class JobInitiationToScheduledProcessEventConverter implements Converter<String, ScheduledProcessEvent>
 {
     String moduleName;
-    boolean markAsSuccessful;
+    ObjectMapper objectMapper;
 
     /**
      * Constructor
@@ -69,40 +69,30 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
-
-        this.markAsSuccessful = markAsSuccessful;
+        this.objectMapper = new ObjectMapper();
     }
 
     @Override
     public ScheduledProcessEvent convert(String event) throws TransformationException
     {
-        ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
-        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
-        scheduledProcessEvent.setAgentName(moduleName);
+        try {
+            SchedulerJobInitiationEvent schedulerJobInitiationEvent = this.objectMapper.readValue(event, SchedulerJobInitiationEventDto.class);
 
-        if(this.markAsSuccessful) {
-            scheduledProcessEvent.setSuccessful(true);
+            ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+            scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+            scheduledProcessEvent.setAgentName(moduleName);
+            scheduledProcessEvent.setJobName(schedulerJobInitiationEvent.getJobName());
+            scheduledProcessEvent.setContextId(schedulerJobInitiationEvent.getContextId());
+            scheduledProcessEvent.setContextInstanceId(schedulerJobInitiationEvent.getContextInstanceId());
+            scheduledProcessEvent.setJobStarting(true);
+            scheduledProcessEvent.setSuccessful(false);
+            scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+            return scheduledProcessEvent;
         }
-
-//        Trigger jobTrigger = jobExecutionContext.getTrigger();
-//        if(jobTrigger != null)
-//        {
-//            scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
-//
-//            TriggerKey triggerKey = jobTrigger.getKey();
-//            if(triggerKey != null)
-//            {
-//                scheduledProcessEvent.setJobName(triggerKey.getName());
-//                scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
-//            }
-//        }
-//
-//        if(jobExecutionContext.getNextFireTime() != null)
-//        {
-//            scheduledProcessEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
-//        }
-
-        return scheduledProcessEvent;
+        catch (Exception e) {
+            throw new TransformationException("An error has occurred converting SchedulerJobInitiationEvent to SchedulerJobInitiationEvent!", e);
+        }
     }
 
     /**
