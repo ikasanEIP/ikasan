@@ -83,10 +83,8 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
-import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.FIleListToScheduledProcessEventConverter;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -134,7 +132,7 @@ public class FileEventSchedulerJobFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getFileEventToScheduledProcessEventConverter() { return new FIleListToScheduledProcessEventConverter(moduleName); }
+    public Converter getFileEventToScheduledProcessEventConverter(String jobName) { return new FileListToScheduledProcessEventConverter(moduleName, jobName); }
 
     /**
      * Get the producer that publishes ScheduledProcessEvents.

@@ -41,7 +41,7 @@
 package org.ikasan.ootb.scheduled.service;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

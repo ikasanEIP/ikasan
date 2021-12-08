@@ -38,15 +38,14 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.scheduled;
+package org.ikasan.spec.scheduled.event.service;
 
-import java.util.List;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 /**
- * Contract for the Scheduled process event DAO.
- *
+ * Contract for the Scheduled Process Service.
  */
-public interface ScheduledProcessEventDao {
+public interface ScheduledProcessEventService {
 
     /**
      * Save the event.
@@ -54,39 +53,4 @@ public interface ScheduledProcessEventDao {
      * @param scheduledProcessEvent
      */
     void save(ScheduledProcessEvent scheduledProcessEvent);
-
-    /**
-     * Harvest the records.
-     *
-     * @param transactionBatchSize
-     * @return
-     */
-    List<ScheduledProcessEvent> harvest(int transactionBatchSize);
-
-    /**
-     * Are there any records to harvest?
-     *
-     * @return
-     */
-    boolean harvestableRecordsExist();
-
-    /**
-     * Save the harvested record.
-     *
-     * @param harvestedRecord
-     */
-    void saveHarvestedRecord(ScheduledProcessEvent harvestedRecord);
-
-    /**
-     * Update entities as being harvested.
-     *
-     * @param events
-     */
-    void updateAsHarvested(List<ScheduledProcessEvent> events);
-
-    /**
-     * Housekeep all harvested records
-     */
-    void housekeep();
-
 }
