@@ -43,7 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 import java.io.File;
 import java.util.List;
@@ -53,24 +53,28 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public class FIleListToScheduledProcessEventConverter implements Converter<List<File>, ScheduledProcessEvent>
+public class FileListToScheduledProcessEventConverter implements Converter<List<File>, ScheduledProcessEvent>
 {
-    String moduleName;
+    String agentName;
+    String jobName;
     boolean markAsSuccessful;
 
     /**
      * Constructor
-     * @param moduleName
+     * @param agentName
      */
-    public FIleListToScheduledProcessEventConverter(String moduleName)
+    public FileListToScheduledProcessEventConverter(String agentName, String jobName)
     {
-        this.moduleName = moduleName;
-        if(moduleName == null)
+        this.agentName = agentName;
+        if(agentName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
-
-        this.markAsSuccessful = markAsSuccessful;
+        this.jobName = jobName;
+        if(jobName == null)
+        {
+            throw new IllegalArgumentException("jobName cannot be 'null'");
+        }
     }
 
     @Override
@@ -78,11 +82,11 @@ public class FIleListToScheduledProcessEventConverter implements Converter<List<
     {
         ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
-        scheduledProcessEvent.setAgentName(moduleName);
+        scheduledProcessEvent.setAgentName(this.agentName);
+        scheduledProcessEvent.setJobName(this.jobName);
+        scheduledProcessEvent.setSuccessful(true);
+        scheduledProcessEvent.setContextId("test");
 
-        if(this.markAsSuccessful) {
-            scheduledProcessEvent.setSuccessful(true);
-        }
 
 //        Trigger jobTrigger = jobExecutionContext.getTrigger();
 //        if(jobTrigger != null)

@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.scheduled;
+package org.ikasan.spec.scheduled.event.model;
 
 /**
  * Model contract for a Scheduled Process Event for OOTB Scheduler Agents.
@@ -238,4 +238,60 @@ public interface ScheduledProcessEvent<OUTCOME>
      * @param completionTime
      */
     void setCompletionTime(long completionTime);
+
+    /**
+     * Boolean flag to indicate if the job was a dry run.
+     *
+     * @return
+     */
+    boolean isJobStarting();
+
+    /**
+     * Set the boolean flag to indicate if the job was a dry run.
+     *
+     * @return
+     */
+    void setJobStarting(boolean jobStarting);
+
+    /**
+     * Boolean flag to indicate if the job was a dry run.
+     *
+     * @return
+     */
+    boolean isDryRun();
+
+    /**
+     * Set the boolean flag to indicate if the job was a dry run.
+     *
+     * @return
+     */
+    void setDryRun(boolean dryRun);
+
+    /**
+     * Get the id of the context that this event's job belongs.
+     *
+     * @return
+     */
+    String getContextId();
+
+    /**
+     * Set the id of the context that this event's job belongs.
+     *
+     * @param contextId
+     */
+    void setContextId(String contextId);
+
+    /**
+     * Get the id of the context instance that this event's job belongs.
+     *
+     * @return
+     */
+    String getContextInstanceId();
+
+    /**
+     * Set the id of the context instance that this event's job belongs.
+     *
+     * @param contextInstanceId
+     */
+    void setContextInstanceId(String contextInstanceId);
 }

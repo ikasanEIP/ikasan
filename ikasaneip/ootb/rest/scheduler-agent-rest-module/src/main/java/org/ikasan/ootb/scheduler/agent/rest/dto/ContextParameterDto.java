@@ -1,7 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.rest.dto;
 
-import org.ikasan.spec.scheduled.ContextParameter;
-import org.ikasan.spec.scheduled.ContextParameterInstance;
+import org.ikasan.spec.scheduled.context.model.ContextParameterInstance;
 
 public class ContextParameterDto implements ContextParameterInstance {
 

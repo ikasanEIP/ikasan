@@ -2,7 +2,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.serialiser.Serialiser;
 
 import java.io.IOException;
