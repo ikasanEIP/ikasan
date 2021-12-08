@@ -158,7 +158,8 @@ public class BigQueueConsumer<T>
             invoke(flowEvent);
         }
         catch (Exception e) {
-            this.onException(e);
+            // Just log this error as the recovery manager is dealing with the exception case.
+            logger.error(e.getMessage());
         }
     }
 
