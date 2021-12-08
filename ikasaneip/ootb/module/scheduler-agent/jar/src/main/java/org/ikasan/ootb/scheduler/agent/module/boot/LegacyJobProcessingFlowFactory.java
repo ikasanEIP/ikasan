@@ -41,7 +41,6 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.OnException;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.LegacyJobProcessingFlowComponentFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
@@ -68,12 +67,12 @@ public class LegacyJobProcessingFlowFactory
     LegacyJobProcessingFlowComponentFactory componentFactory;
 
 
-    public Flow create(String flowName)
+    public Flow create(String jobName)
     {
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName)
-            .withDescription(flowName)
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
+            .withDescription(jobName)
             .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
-            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter(jobName))
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
             .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
                 .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())

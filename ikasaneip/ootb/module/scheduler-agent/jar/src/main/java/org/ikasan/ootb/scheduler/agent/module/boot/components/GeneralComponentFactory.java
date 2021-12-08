@@ -83,11 +83,10 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import javax.annotation.Resource;
@@ -109,7 +108,7 @@ public class GeneralComponentFactory
     BuilderFactory builderFactory;
 
     @Resource
-    ScheduledProcessService scheduledProcessService;
+    ScheduledProcessEventService scheduledProcessEventService;
 
     @Value( "${big.queue.consumer.configuration.queueDir}" )
     private String queueDir = "/sandbox/mick/bigquque";

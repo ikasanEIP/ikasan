@@ -1,4 +1,7 @@
-package org.ikasan.spec.scheduled;
+package org.ikasan.spec.scheduled.event.model;
+
+import org.ikasan.spec.scheduled.context.model.ContextParameterInstance;
+import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
 
@@ -27,4 +30,8 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
     String getContextInstanceId();
 
     void setContextInstanceId(String contextInstanceId);
+
+    boolean isDryRun();
+
+    void setDryRun(boolean dryRun);
 }
