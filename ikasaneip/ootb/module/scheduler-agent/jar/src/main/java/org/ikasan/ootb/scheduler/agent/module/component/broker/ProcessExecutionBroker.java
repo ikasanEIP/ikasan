@@ -43,7 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 import ch.qos.logback.core.util.FileUtil;
 import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -82,6 +82,7 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
     public ScheduledProcessEvent invoke(ScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
+        scheduledProcessEvent.setJobStarting(false);
         scheduledProcessEvent.setAgentHostname(this.hostname);
 
         String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());

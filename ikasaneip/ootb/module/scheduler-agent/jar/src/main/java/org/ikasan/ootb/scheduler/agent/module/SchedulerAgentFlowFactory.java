@@ -41,7 +41,6 @@
 package org.ikasan.ootb.scheduler.agent.module;
 
 import org.ikasan.ootb.scheduler.agent.module.boot.*;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventProducer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowFactory;
 import org.slf4j.Logger;
@@ -67,7 +66,7 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     String moduleName;
 
     @Resource
-    SchedulerJobProcessingFlowFactory schedulerJobProcessingFlowFactory;
+    JobProcessingFlowFactory schedulerJobProcessingFlowFactory;
 
     @Resource
     QuartzSchedulerJobEventFlowFactory quartzSchedulerJobEventFlowFactory;

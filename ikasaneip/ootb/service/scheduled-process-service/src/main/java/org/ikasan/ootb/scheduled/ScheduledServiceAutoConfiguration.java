@@ -41,7 +41,6 @@
 package org.ikasan.ootb.scheduled;
 
 import org.hibernate.SessionFactory;
-import org.ikasan.dashboard.DashboardRestServiceImpl;
 import org.ikasan.harvesting.HarvestingJobImpl;
 import org.ikasan.housekeeping.HousekeepingJobImpl;
 import org.ikasan.ootb.scheduled.dao.HibernateScheduledProcessEventDao;
@@ -51,12 +50,11 @@ import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
-import org.ikasan.spec.scheduled.ScheduledProcessEventDao;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
+import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
 import javax.sql.DataSource;
@@ -84,7 +82,7 @@ public class ScheduledServiceAutoConfiguration
     }
 
     @Bean
-    public ScheduledProcessService scheduledProcessService(ScheduledProcessEventDao scheduledProcessEventDao) {
+    public ScheduledProcessEventService scheduledProcessService(ScheduledProcessEventDao scheduledProcessEventDao) {
         return new ScheduledProcessServiceImpl(scheduledProcessEventDao);
     }
 

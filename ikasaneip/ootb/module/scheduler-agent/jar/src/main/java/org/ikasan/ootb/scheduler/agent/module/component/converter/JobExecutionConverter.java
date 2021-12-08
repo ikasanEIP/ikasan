@@ -43,7 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.quartz.*;
 
 /**
@@ -54,18 +54,24 @@ import org.quartz.*;
 public class JobExecutionConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>
 {
     String moduleName;
+    String jobName;
     boolean markAsSuccessful;
 
     /**
      * Constructor
      * @param moduleName
      */
-    public JobExecutionConverter(String moduleName, boolean markAsSuccessful)
+    public JobExecutionConverter(String moduleName, String jobName, boolean markAsSuccessful)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
+        }
+        this.jobName = jobName;
+        if(jobName == null)
+        {
+            throw new IllegalArgumentException("jobName cannot be 'null'");
         }
 
         this.markAsSuccessful = markAsSuccessful;
@@ -77,6 +83,8 @@ public class JobExecutionConverter implements Converter<JobExecutionContext, Sch
         ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
         scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
         scheduledProcessEvent.setAgentName(moduleName);
+        scheduledProcessEvent.setContextId("test");
+        scheduledProcessEvent.setJobName(this.jobName);
 
         if(this.markAsSuccessful) {
             scheduledProcessEvent.setSuccessful(true);
