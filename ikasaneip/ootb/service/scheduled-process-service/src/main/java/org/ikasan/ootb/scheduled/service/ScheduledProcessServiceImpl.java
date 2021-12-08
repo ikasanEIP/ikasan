@@ -42,9 +42,9 @@ package org.ikasan.ootb.scheduled.service;
 
 import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessEventDao;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
+import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ import java.util.List;
  *
  * @author Ikasan Developmnent Team
  */
-public class ScheduledProcessServiceImpl implements ScheduledProcessService, HarvestService<ScheduledProcessEvent>, HousekeepService
+public class ScheduledProcessServiceImpl implements ScheduledProcessEventService, HarvestService<ScheduledProcessEvent>, HousekeepService
 {
     /** handle to the DAO for this service */
     private ScheduledProcessEventDao scheduledProcessEventDao;
