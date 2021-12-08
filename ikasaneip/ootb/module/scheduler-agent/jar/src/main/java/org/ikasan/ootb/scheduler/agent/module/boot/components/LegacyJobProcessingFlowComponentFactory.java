@@ -93,7 +93,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -114,7 +114,7 @@ public class LegacyJobProcessingFlowComponentFactory
     BuilderFactory builderFactory;
 
     @Resource
-    ScheduledProcessService scheduledProcessService;
+    ScheduledProcessEventService scheduledProcessEventService;
 
     public Consumer getScheduledConsumer() {
         return builderFactory.getComponentBuilder().scheduledConsumer()
@@ -126,7 +126,7 @@ public class LegacyJobProcessingFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobExecutionConverter() { return new JobExecutionConverter(moduleName, false); }
+    public Converter getJobExecutionConverter(String jobName) { return new JobExecutionConverter(moduleName, jobName,false); }
 
     /**
      * Get the router responsible for determining if a job has been run in a blackout window.
@@ -170,7 +170,7 @@ public class LegacyJobProcessingFlowComponentFactory
      */
     public Producer getScheduledStatusProducer()
     {
-        return new ScheduledProcessEventProducer(scheduledProcessService);
+        return new ScheduledProcessEventProducer(scheduledProcessEventService);
     }
 
 }
