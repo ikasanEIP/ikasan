@@ -1,4 +1,6 @@
-package org.ikasan.spec.scheduled;
+package org.ikasan.spec.scheduled.event.model;
+
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 public interface ContextualisedScheduledProcessEvent<OUTCOME> extends ScheduledProcessEvent<OUTCOME> {
 

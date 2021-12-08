@@ -1,6 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.rest.dto;
 
-import org.ikasan.spec.scheduled.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.List;
 
@@ -66,6 +66,16 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public void setContextInstanceId(String contextInstanceId) {
+
+    }
+
+    @Override
+    public boolean isDryRun() {
+        return false;
+    }
+
+    @Override
+    public void setDryRun(boolean dryRun) {
 
     }
 }

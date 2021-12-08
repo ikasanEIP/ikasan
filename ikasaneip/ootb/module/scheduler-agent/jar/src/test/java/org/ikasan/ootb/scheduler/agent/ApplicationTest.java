@@ -44,11 +44,13 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.SchedulerJobInitiationEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.Before;
 import org.junit.After;
@@ -61,7 +63,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -139,9 +140,9 @@ public class ApplicationTest
     @Test
     public void test_job_processing_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
-        flowTestRule.consumer("Scheduled Consumer")
+        flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
-            .router("Blackout Router")
+            .broker("Job Started Broker")
             .broker("Process Execution Broker")
             .producer("Scheduled Status Producer");
 
@@ -159,7 +160,15 @@ public class ApplicationTest
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        assertEquals(2, outboundQueue.size());
+
+        ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ScheduledProcessEventImpl.class);
+        assertEquals(true, event.isJobStarting());
+        assertEquals(false, event.isSuccessful());
+
+        event = objectMapper.readValue(outboundQueue.dequeue(), ScheduledProcessEventImpl.class);
+        assertEquals(false, event.isJobStarting());
+        assertEquals(true, event.isSuccessful());
 
         flowTestRule.stopFlow();
     }

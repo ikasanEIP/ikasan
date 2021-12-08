@@ -41,7 +41,6 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.OnException;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.QuartzSchedulerJobEventFlowComponentFactory;
 import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
@@ -67,12 +66,12 @@ public class QuartzSchedulerJobEventFlowFactory
     QuartzSchedulerJobEventFlowComponentFactory componentFactory;
 
 
-    public Flow create(String flowName)
+    public Flow create(String jobName)
     {
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(flowName )
-            .withDescription("The " + flowName + " Quartz Schedule Flow is responsible for kicking off jobs on a scheduled basis based on the configured cron expression.")
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
+            .withDescription("The " + jobName + " Quartz Schedule Flow is responsible for kicking off jobs on a scheduled basis based on the configured cron expression.")
             .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
-            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter(jobName))
             .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
             .build();
     }

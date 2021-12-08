@@ -86,22 +86,17 @@ import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.ScheduledProcessEventJobStartBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToScheduledProcessEventConverter;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventProducer;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
-import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.ootb.scheduler.agent.rest.cache.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.component.filter.Filter;
-import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessService;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -114,7 +109,7 @@ import java.io.IOException;
  * @author Ikasan Development Team
  */
 @Configuration
-public class SchedulerJobProcessingFlowComponentFactory
+public class JobProcessingFlowComponentFactory
 {
     @Value( "${module.name}" )
     String moduleName;
@@ -126,7 +121,7 @@ public class SchedulerJobProcessingFlowComponentFactory
     private IBigQueue outboundQueue;
 
     @Resource
-    ScheduledProcessService scheduledProcessService;
+    ScheduledProcessEventService scheduledProcessEventService;
 
     public Consumer bigQueueConsumer(String jobName) throws IOException {
         IBigQueue inboundQueue = new BigQueueImpl(queueDir, jobName+"-inbound-queue");
@@ -147,13 +142,12 @@ public class SchedulerJobProcessingFlowComponentFactory
     public Converter getJobInitiationEventConverter() { return new JobInitiationToScheduledProcessEventConverter(moduleName); }
 
     /**
-     * Get the router responsible for determining if a job has been run in a blackout window.
+     * Get the broker that tells the dashboard that a job has started.
      *
      * @return
      */
-    public SingleRecipientRouter getBlackoutRouter()
-    {
-        return new BlackoutRouter();
+    public Broker getScheduledProcessEventJobStartBroker() {
+        return new ScheduledProcessEventJobStartBroker(this.outboundQueue);
     }
 
     /**
@@ -169,16 +163,6 @@ public class SchedulerJobProcessingFlowComponentFactory
         ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
         processExecutionBroker.setConfiguration(configuration);
         return processExecutionBroker;
-    }
-
-    /**
-     * Get the filter that drops ScheduledProcessEvents that should not be published back to the dashboard.
-     *
-     * @return
-     */
-    public Filter getScheduledStatusFilter()
-    {
-        return new ScheduledProcessEventFilter();
     }
 
     /**

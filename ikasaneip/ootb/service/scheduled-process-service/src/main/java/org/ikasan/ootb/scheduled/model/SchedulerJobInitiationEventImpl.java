@@ -1,7 +1,7 @@
 package org.ikasan.ootb.scheduled.model;
 
-import org.ikasan.spec.scheduled.InternalEventDrivenJob;
-import org.ikasan.spec.scheduled.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
+import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.List;
 
@@ -63,6 +63,16 @@ public class SchedulerJobInitiationEventImpl implements SchedulerJobInitiationEv
 
     @Override
     public void setContextInstanceId(String contextInstanceId) {
+
+    }
+
+    @Override
+    public boolean isDryRun() {
+        return false;
+    }
+
+    @Override
+    public void setDryRun(boolean dryRun) {
 
     }
 }

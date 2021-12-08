@@ -41,7 +41,7 @@
 package org.ikasan.ootb.scheduled.model;
 
 import org.ikasan.harvest.HarvestEvent;
-import org.ikasan.spec.scheduled.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 /**
  * Scheduled Process Event defines the core event managed by the Scheduler Agent
@@ -71,6 +71,11 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
     private long completionTime;
     private boolean harvested;
     private long harvestedDateTime;
+    private boolean dryRun = false;
+    private String contextId;
+    private String contextInstanceId;
+    private boolean jobStarting = false;
+
 
     public Long getId()
     {
@@ -269,27 +274,71 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
     }
 
     @Override
-    public String toString()
-    {
-        return "ScheduledProcessEventImpl{" +
-            "id=" + id +
-            ", agentName='" + agentName + '\'' +
-            ", jobName='" + jobName + '\'' +
-            ", jobGroup='" + jobGroup + '\'' +
-            ", jobDescription='" + jobDescription + '\'' +
-            ", commandLine='" + commandLine + '\'' +
-            ", returnCode=" + returnCode +
-            ", successful=" + successful +
-            ", outcome=" + outcome.name() +
-            ", resultOutput='" + resultOutput + '\'' +
-            ", resultError='" + resultError + '\'' +
-            ", pid=" + pid +
-            ", user='" + user + '\'' +
-            ", fireTime=" + fireTime +
-            ", nextFireTime=" + nextFireTime +
-            ", completionTime=" + completionTime +
-            ", harvested=" + harvested +
-            ", harvestedDateTime=" + harvestedDateTime +
-            '}';
+    public boolean isDryRun() {
+        return this.dryRun;
+    }
+
+    @Override
+    public void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun;
+    }
+
+    @Override
+    public String getContextId() {
+        return this.contextId;
+    }
+
+    @Override
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
+
+    @Override
+    public String getContextInstanceId() {
+        return this.contextInstanceId;
+    }
+
+    @Override
+    public void setContextInstanceId(String contextInstanceId) {
+        this.contextInstanceId = contextInstanceId;
+    }
+
+    @Override
+    public boolean isJobStarting() {
+        return this.jobStarting;
+    }
+
+    @Override
+    public void setJobStarting(boolean jobStarting) {
+        this.jobStarting = jobStarting;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("ScheduledProcessEventImpl{");
+        sb.append("id=").append(id);
+        sb.append(", agentName='").append(agentName).append('\'');
+        sb.append(", jobName='").append(jobName).append('\'');
+        sb.append(", jobGroup='").append(jobGroup).append('\'');
+        sb.append(", jobDescription='").append(jobDescription).append('\'');
+        sb.append(", commandLine='").append(commandLine).append('\'');
+        sb.append(", returnCode=").append(returnCode);
+        sb.append(", successful=").append(successful);
+        sb.append(", outcome=").append(outcome);
+        sb.append(", resultOutput='").append(resultOutput).append('\'');
+        sb.append(", resultError='").append(resultError).append('\'');
+        sb.append(", pid=").append(pid);
+        sb.append(", user='").append(user).append('\'');
+        sb.append(", fireTime=").append(fireTime);
+        sb.append(", nextFireTime=").append(nextFireTime);
+        sb.append(", completionTime=").append(completionTime);
+        sb.append(", harvested=").append(harvested);
+        sb.append(", harvestedDateTime=").append(harvestedDateTime);
+        sb.append(", dryRun=").append(dryRun);
+        sb.append(", contextId='").append(contextId).append('\'');
+        sb.append(", contextInstanceId='").append(contextInstanceId).append('\'');
+        sb.append(", jobStarting=").append(jobStarting);
+        sb.append('}');
+        return sb.toString();
     }
 }

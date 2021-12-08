@@ -42,7 +42,6 @@ package org.ikasan.ootb.scheduler.agent.module;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.module.ConfiguredModuleConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.boot.components.SchedulerJobProcessingFlowComponentFactory;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
 import org.springframework.beans.factory.annotation.Value;
