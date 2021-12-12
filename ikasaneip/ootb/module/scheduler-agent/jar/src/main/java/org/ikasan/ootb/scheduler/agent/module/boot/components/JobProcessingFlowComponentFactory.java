@@ -85,12 +85,12 @@ import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.ContextualisedProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ScheduledProcessEventJobStartBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
-import org.ikasan.ootb.scheduler.agent.rest.cache.*;
+import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -130,7 +130,7 @@ public class JobProcessingFlowComponentFactory
         InboundJobQueueCache.instance().put(jobName, inboundQueue);
 
 
-        BigQueueConsumer consumer = new BigQueueConsumer(inboundQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(inboundQueue, new SimpleStringSerialiser(), false);
         return consumer;
     }
 
@@ -160,7 +160,7 @@ public class JobProcessingFlowComponentFactory
         ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
         configuration.setCommandLine("pwd");    // default safe command across all platforms
 
-        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
+        ContextualisedProcessExecutionBroker processExecutionBroker = new ContextualisedProcessExecutionBroker();
         processExecutionBroker.setConfiguration(configuration);
         return processExecutionBroker;
     }

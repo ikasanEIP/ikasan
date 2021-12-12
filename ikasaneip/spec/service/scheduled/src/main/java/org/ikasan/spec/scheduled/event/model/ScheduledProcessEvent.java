@@ -45,7 +45,7 @@ package org.ikasan.spec.scheduled.event.model;
  *
  * @param <OUTCOME>
  */
-public interface ScheduledProcessEvent<OUTCOME>
+public interface ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMS extends DryRunParameters>
 {
     /**
      * Get descriptive outcome of the scheduled process flow
@@ -268,30 +268,16 @@ public interface ScheduledProcessEvent<OUTCOME>
     void setDryRun(boolean dryRun);
 
     /**
-     * Get the id of the context that this event's job belongs.
+     * Set the parameters that will determine the dry run behaviour.
+     *
+     * @param dryRunParameters
+     */
+    void setDryRunParameters(DRY_RUN_PARAMS dryRunParameters);
+
+    /**
+     * Get the parameters that will determine the dry run behaviour.
      *
      * @return
      */
-    String getContextId();
-
-    /**
-     * Set the id of the context that this event's job belongs.
-     *
-     * @param contextId
-     */
-    void setContextId(String contextId);
-
-    /**
-     * Get the id of the context instance that this event's job belongs.
-     *
-     * @return
-     */
-    String getContextInstanceId();
-
-    /**
-     * Set the id of the context instance that this event's job belongs.
-     *
-     * @param contextInstanceId
-     */
-    void setContextInstanceId(String contextInstanceId);
+    DRY_RUN_PARAMS getDryRunParameters();
 }
