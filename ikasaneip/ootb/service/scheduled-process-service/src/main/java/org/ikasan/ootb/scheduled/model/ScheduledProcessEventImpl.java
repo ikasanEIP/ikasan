@@ -41,7 +41,8 @@
 package org.ikasan.ootb.scheduled.model;
 
 import org.ikasan.harvest.HarvestEvent;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 
 /**
  * Scheduled Process Event defines the core event managed by the Scheduler Agent
@@ -50,7 +51,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
  * @author Ikasan Development Team
  *
  */
-public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>, HarvestEvent
+public class ScheduledProcessEventImpl implements ContextualisedScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
 {
     private Long id;
     private String agentName;
@@ -75,6 +76,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
     private String contextId;
     private String contextInstanceId;
     private boolean jobStarting = false;
+    private DryRunParameters dryRunParameters;
 
 
     public Long getId()
@@ -299,6 +301,16 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
     }
 
     @Override
+    public void setDryRunParameters(DryRunParameters dryRunParameters) {
+        this.dryRunParameters = dryRunParameters;
+    }
+
+    @Override
+    public DryRunParameters getDryRunParameters() {
+        return this.dryRunParameters;
+    }
+
+    @Override
     public void setContextInstanceId(String contextInstanceId) {
         this.contextInstanceId = contextInstanceId;
     }
@@ -312,6 +324,8 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
     public void setJobStarting(boolean jobStarting) {
         this.jobStarting = jobStarting;
     }
+
+
 
     @Override
     public String toString() {
@@ -338,6 +352,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
         sb.append(", contextId='").append(contextId).append('\'');
         sb.append(", contextInstanceId='").append(contextInstanceId).append('\'');
         sb.append(", jobStarting=").append(jobStarting);
+        sb.append(", dryRunParameters=").append(dryRunParameters);
         sb.append('}');
         return sb.toString();
     }

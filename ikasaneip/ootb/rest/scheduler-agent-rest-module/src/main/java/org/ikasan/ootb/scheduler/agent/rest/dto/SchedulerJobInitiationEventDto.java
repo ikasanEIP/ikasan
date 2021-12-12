@@ -4,10 +4,16 @@ import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.List;
 
-public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEvent<ContextParameterDto, InternalEventDrivenJobDto> {
+public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEvent<ContextParameterDto, InternalEventDrivenJobDto, DryRunParametersDto> {
 
     private String agentName;
     private String jobName;
+    private List<ContextParameterDto> contextParameters;
+    private InternalEventDrivenJobDto internalEventDrivenJob;
+    private String contextId;
+    private String contextInstanceId;
+    private boolean dryRun;
+    private DryRunParametersDto dryRunParametersDto;
 
     @Override
     public InternalEventDrivenJobDto getInternalEventDrivenJob() {
@@ -16,17 +22,17 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public void setInternalEventDrivenJob(InternalEventDrivenJobDto internalEventDrivenJob) {
-
+        this.internalEventDrivenJob = internalEventDrivenJob;
     }
 
     @Override
     public void setContextParameters(List<ContextParameterDto> contextParameters) {
-
+        this.contextParameters = contextParameters;
     }
 
     @Override
     public List<ContextParameterDto> getContextParameters() {
-        return null;
+        return this.contextParameters;
     }
 
     @Override
@@ -51,31 +57,41 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public String getContextId() {
-        return null;
+        return this.contextId;
     }
 
     @Override
     public void setContextId(String contextId) {
-
+        this.contextId = contextId;
     }
 
     @Override
     public String getContextInstanceId() {
-        return null;
+        return contextInstanceId;
     }
 
     @Override
     public void setContextInstanceId(String contextInstanceId) {
-
+        this.contextInstanceId = contextInstanceId;
     }
 
     @Override
     public boolean isDryRun() {
-        return false;
+        return this.dryRun;
     }
 
     @Override
     public void setDryRun(boolean dryRun) {
+        this.dryRun = dryRun;
+    }
 
+    @Override
+    public void setDryRunParameters(DryRunParametersDto dryRunParametersDto) {
+        this.dryRunParametersDto = dryRunParametersDto;
+    }
+
+    @Override
+    public DryRunParametersDto getDryRunParameters() {
+        return this.dryRunParametersDto;
     }
 }
