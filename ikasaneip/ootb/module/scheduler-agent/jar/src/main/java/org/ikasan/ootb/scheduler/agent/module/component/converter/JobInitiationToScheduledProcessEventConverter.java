@@ -41,10 +41,12 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
@@ -53,7 +55,7 @@ import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
  *
  * @author Ikasan Development Team
  */
-public class JobInitiationToScheduledProcessEventConverter implements Converter<String, ScheduledProcessEvent>
+public class JobInitiationToScheduledProcessEventConverter implements Converter<String, ContextualisedScheduledProcessEvent>
 {
     String moduleName;
     ObjectMapper objectMapper;
@@ -73,12 +75,12 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
     }
 
     @Override
-    public ScheduledProcessEvent convert(String event) throws TransformationException
+    public ContextualisedScheduledProcessEvent convert(String event) throws TransformationException
     {
         try {
             SchedulerJobInitiationEvent schedulerJobInitiationEvent = this.objectMapper.readValue(event, SchedulerJobInitiationEventDto.class);
 
-            ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+            ContextualisedScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
             scheduledProcessEvent.setAgentName(moduleName);
             scheduledProcessEvent.setJobName(schedulerJobInitiationEvent.getJobName());
@@ -87,6 +89,8 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
             scheduledProcessEvent.setJobStarting(true);
             scheduledProcessEvent.setSuccessful(false);
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+            scheduledProcessEvent.setDryRun(schedulerJobInitiationEvent.isDryRun());
+            scheduledProcessEvent.setDryRunParameters(schedulerJobInitiationEvent.getDryRunParameters());
 
             return scheduledProcessEvent;
         }
@@ -100,8 +104,8 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
      *
      * @return
      */
-    protected ScheduledProcessEvent getScheduledProcessEvent()
+    protected ContextualisedScheduledProcessEvent getScheduledProcessEvent()
     {
-        return new ScheduledProcessEventImpl();
+        return new ContextualisedScheduledProcessEventImpl();
     }
 }

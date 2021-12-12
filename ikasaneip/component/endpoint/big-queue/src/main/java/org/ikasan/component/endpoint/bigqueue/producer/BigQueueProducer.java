@@ -7,6 +7,11 @@ import org.ikasan.spec.serialiser.Serialiser;
 
 import java.io.IOException;
 
+/**
+ * Implementation of a BigQueue producer.
+ *
+ * @author Ikasan Development Team
+ */
 public class BigQueueProducer<T> implements Producer<T> {
 
     protected IBigQueue inboundQueue;
