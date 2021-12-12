@@ -40,9 +40,11 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.quartz.*;
 
@@ -80,7 +82,7 @@ public class JobExecutionConverter implements Converter<JobExecutionContext, Sch
     @Override
     public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException
     {
-        ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+        ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
         scheduledProcessEvent.setAgentName(moduleName);
         scheduledProcessEvent.setContextId("test");
