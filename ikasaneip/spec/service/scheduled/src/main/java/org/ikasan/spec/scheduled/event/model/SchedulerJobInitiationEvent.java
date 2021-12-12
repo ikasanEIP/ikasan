@@ -5,33 +5,118 @@ import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
 
-public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParameterInstance, JOB extends InternalEventDrivenJob> {
+public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParameterInstance
+    , JOB extends InternalEventDrivenJob, DRY_RUN_PARAMS extends DryRunParameters> {
 
+    /**
+     * Get the job
+     *
+     * @return
+     */
     JOB getInternalEventDrivenJob();
 
+    /**
+     * Set the job.
+     *
+     * @param internalEventDrivenJob
+     */
     void setInternalEventDrivenJob(JOB internalEventDrivenJob);
 
+    /**
+     * Set the context parameters.
+     *
+     * @param contextParameters
+     */
     void setContextParameters(List<CONTEXT_PARAM> contextParameters);
 
+    /**
+     * Set the context parameters.
+     *
+     * @return
+     */
     List<CONTEXT_PARAM> getContextParameters();
 
+    /**
+     * Get the agent name that will execute the job.
+     *
+     * @return
+     */
     String getAgentName();
 
+    /**
+     * Set the agent name that will execute the job.
+     *
+     * @param agentName
+     */
     void setAgentName(String agentName);
 
+    /**
+     * Get the name of the job being executed.
+     *
+     * @return
+     */
     String getJobName();
 
+    /**
+     * Set the name of the job being executed.
+     *
+     * @param jobName
+     */
     void setJobName(String jobName);
 
+    /**
+     * Get the context id that this job belongs to.
+     *
+     * @return
+     */
     String getContextId();
 
+    /**
+     * Set the context id that this job belongs to.
+     *
+     * @param contextId
+     */
     void setContextId(String contextId);
 
+    /**
+     * Get the context instance id that this job belongs to.
+     *
+     * @return
+     */
     String getContextInstanceId();
 
+    /**
+     * Set the context instance id that this job belongs to.
+     *
+     * @param contextInstanceId
+     */
     void setContextInstanceId(String contextInstanceId);
 
+    /**
+     * Flag to determine if the job is a dry run.
+     *
+     * @return
+     */
     boolean isDryRun();
 
+    /**
+     * Set the flag to indicate that the jobs is a dry run.
+     *
+     * @param dryRun
+     */
     void setDryRun(boolean dryRun);
+
+    /**
+     * Set the parameters that will determine the dry run behaviour.
+     *
+     * @param dryRunParameters
+     */
+    void setDryRunParameters(DRY_RUN_PARAMS dryRunParameters);
+
+    /**
+     * Get the parameters that will determine the dry run behaviour.
+     *
+     * @return
+     */
+    DRY_RUN_PARAMS getDryRunParameters();
 }

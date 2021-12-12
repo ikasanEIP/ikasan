@@ -40,9 +40,11 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 import java.io.File;
@@ -80,7 +82,7 @@ public class FileListToScheduledProcessEventConverter implements Converter<List<
     @Override
     public ScheduledProcessEvent convert(List<File> event) throws TransformationException
     {
-        ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+        ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setAgentName(this.agentName);
         scheduledProcessEvent.setJobName(this.jobName);
