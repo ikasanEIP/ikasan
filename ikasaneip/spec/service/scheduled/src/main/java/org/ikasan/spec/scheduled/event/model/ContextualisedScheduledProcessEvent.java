@@ -1,8 +1,7 @@
 package org.ikasan.spec.scheduled.event.model;
 
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-
-public interface ContextualisedScheduledProcessEvent<OUTCOME> extends ScheduledProcessEvent<OUTCOME> {
+public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
+    extends DryRunParameters> extends ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS> {
 
     /**
      * Get the parent context id that this job belongs to.

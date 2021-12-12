@@ -46,6 +46,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Pro
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +55,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -61,29 +63,26 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Ikasan Development Team
  */
-public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, ScheduledProcessEvent>,
+public class ContextualisedProcessExecutionBroker implements Broker<ContextualisedScheduledProcessEvent, ContextualisedScheduledProcessEvent>,
     ConfiguredResource<ProcessExecutionBrokerConfiguration>
 {
     /** logger */
-    private static Logger logger = LoggerFactory.getLogger(ProcessExecutionBroker.class);
+    private static Logger logger = LoggerFactory.getLogger(ContextualisedProcessExecutionBroker.class);
 
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     String configuredResourceId;
     ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
 
-    String hostname;
-
-    public ProcessExecutionBroker(String hostname) {
-        this.hostname = hostname;
-    }
-
     @Override
-    public ScheduledProcessEvent invoke(ScheduledProcessEvent scheduledProcessEvent) throws EndpointException
+    public ContextualisedScheduledProcessEvent invoke(ContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
-        scheduledProcessEvent.setJobStarting(false);
-        scheduledProcessEvent.setAgentHostname(this.hostname);
+
+        if(scheduledProcessEvent.isDryRun()) {
+            this.manageDryRun(scheduledProcessEvent);
+            return scheduledProcessEvent;
+        }
 
         String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
@@ -210,7 +209,58 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
             throw new EndpointException(e);
         }
 
+        scheduledProcessEvent.setJobStarting(false);
         return scheduledProcessEvent;
+    }
+
+    /**
+     * Determine the outcome of the dry run based on the dry run parameters.
+     *
+     * @param scheduledProcessEvent
+     */
+    private void manageDryRun(ScheduledProcessEvent scheduledProcessEvent) {
+        scheduledProcessEvent.setJobStarting(false);
+        scheduledProcessEvent.setSuccessful(true);
+
+        if(scheduledProcessEvent.getDryRunParameters().isError()) {
+            // Specific executions can be configured to result in an error.
+            scheduledProcessEvent.setSuccessful(false);
+        }
+        else {
+            // otherwise determine error based on percentage probability.
+            int percentUpperBound = (int) (100 / scheduledProcessEvent.getDryRunParameters().getJobErrorPercentage());
+
+            int randomInt = new Random().nextInt(percentUpperBound);
+
+            if(randomInt == 0) {
+                scheduledProcessEvent.setSuccessful(false);
+            }
+        }
+
+        long sleepTime;
+
+        if(scheduledProcessEvent.getDryRunParameters().getFixedExecutionTimeMillis() > 0) {
+            // Job execution time is configured as a fixed value.
+            sleepTime = scheduledProcessEvent.getDryRunParameters().getFixedExecutionTimeMillis();
+        }
+        else {
+            // Job execution time is configured as a random number within fixed boundaries.
+            sleepTime = scheduledProcessEvent.getDryRunParameters().getMinExecutionTimeMillis()
+                + (long) (Math.random() * (scheduledProcessEvent.getDryRunParameters().getMaxExecutionTimeMillis()
+                - scheduledProcessEvent.getDryRunParameters().getMinExecutionTimeMillis()));
+        }
+
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+        try {
+            Thread.sleep(sleepTime);
+        }
+        catch (InterruptedException e) {
+            // Not that much of a concern if we get an exception here.
+            logger.error("Error attempting to put thread to sleep when executing a dry run!", e);
+        }
+
+        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
     }
 
     String[] getCommandLineArgs(String commandLine)

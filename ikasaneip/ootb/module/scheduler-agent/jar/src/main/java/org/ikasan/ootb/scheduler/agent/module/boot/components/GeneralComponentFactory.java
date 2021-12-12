@@ -116,6 +116,7 @@ public class GeneralComponentFactory
     @Value( "${big.queue.consumer.configuration.inboundQueueName}" )
     private String inboundQueueName = "module-inbound-context-queue";
 
+    @Value( "${big.queue.consumer.configuration.outboundQueueName}" )
     private String outboundQueueName = "module-outbound-context-queue";
 
 
