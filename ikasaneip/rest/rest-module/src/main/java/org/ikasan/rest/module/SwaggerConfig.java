@@ -17,6 +17,7 @@ public class SwaggerConfig {
             .select()
             .apis(RequestHandlerSelectors.basePackage("org.ikasan.rest.module"))
             .paths(PathSelectors.any())
-            .build();
+            .build()
+            .groupName("module");
     }
 }

@@ -45,15 +45,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduled.model.SchedulerJobInitiationEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.Before;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -62,7 +62,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -150,7 +149,7 @@ public class ApplicationTest
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("Scheduler Flow 1");
-        SchedulerJobInitiationEventImpl schedulerJobInitiationEvent = new SchedulerJobInitiationEventImpl();
+        SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
