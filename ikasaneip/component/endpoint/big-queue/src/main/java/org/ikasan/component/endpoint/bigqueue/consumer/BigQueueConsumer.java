@@ -13,11 +13,12 @@ import org.ikasan.spec.serialiser.Serialiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- * Implementation of a Kafka client consumer.
+ * Implementation of a BigQueue consumer.
  *
  * @author Ikasan Development Team
  */
@@ -49,12 +50,15 @@ public class BigQueueConsumer<T>
 
     protected Serialiser<T,byte[]> serialiser;
 
+    protected boolean putErrorsToBackOfQueue;
+
     /**
      * Constructor
      *
      * @param inboundQueue
      */
-    public BigQueueConsumer(IBigQueue inboundQueue, Serialiser<T,byte[]> serialiser) {
+    public BigQueueConsumer(IBigQueue inboundQueue, Serialiser<T,byte[]> serialiser,
+                            boolean putErrorsToBackOfQueue) {
         this.inboundQueue = inboundQueue;
         if(this.inboundQueue == null) {
             throw new IllegalArgumentException("inboundQueue cannot bee null!");
@@ -63,6 +67,8 @@ public class BigQueueConsumer<T>
         if(this.serialiser == null) {
             throw new IllegalArgumentException("serialiser cannot bee null!");
         }
+
+        this.putErrorsToBackOfQueue = putErrorsToBackOfQueue;
     }
 
 
@@ -146,6 +152,7 @@ public class BigQueueConsumer<T>
     public void onMessage(T event) {
         logger.info("Received message " + event);
 
+        boolean exception = false;
         try {
             FlowEvent<?, ?> flowEvent;
             if(this.managedRelatedEventIdentifierService != null) {
@@ -160,6 +167,23 @@ public class BigQueueConsumer<T>
         catch (Exception e) {
             // Just log this error as the recovery manager is dealing with the exception case.
             logger.error(e.getMessage());
+            exception = true;
+        }
+        finally {
+            try {
+                if(!exception) {
+                    inboundQueue.dequeue();
+                    inboundQueue.gc();
+                    addInboundListener();
+                }
+                else if(exception && this.putErrorsToBackOfQueue) {
+                    inboundQueue.enqueue(inboundQueue.dequeue());
+                }
+
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -211,10 +235,6 @@ public class BigQueueConsumer<T>
                 }
 
                 onMessage(serialiser.deserialise(event));
-
-                inboundQueue.dequeue();
-                inboundQueue.gc();
-                addInboundListener();
             }
             catch (Exception e) {
                 onException(e);
