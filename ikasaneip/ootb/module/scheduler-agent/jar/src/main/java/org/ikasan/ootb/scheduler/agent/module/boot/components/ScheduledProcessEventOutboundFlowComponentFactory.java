@@ -114,7 +114,7 @@ public class ScheduledProcessEventOutboundFlowComponentFactory
     DashboardRestService scheduleProcessEventDashboardRestService;
 
     public Consumer getOutboundBigQueueConsumer() throws IOException {
-        BigQueueConsumer consumer = new BigQueueConsumer(outboundQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(outboundQueue, new SimpleStringSerialiser(), true);
         return consumer;
     }
 

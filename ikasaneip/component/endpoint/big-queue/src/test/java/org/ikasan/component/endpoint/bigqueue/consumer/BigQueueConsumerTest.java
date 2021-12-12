@@ -46,7 +46,7 @@ public class BigQueueConsumerTest {
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), false);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -60,19 +60,21 @@ public class BigQueueConsumerTest {
 
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
+        Assert.assertEquals(0, bigQueue.size());
+        bigQueue.close();
 
         verify(eventListener, times(1)).invoke(any(FlowEvent.class));
     }
 
     @Test
     public void test_exception_invoke() throws IOException, InterruptedException {
-        doThrow(new RuntimeException("test exceeption")).when(eventListener).invoke(any(FlowEvent.class));
+        doThrow(new RuntimeException("test exception")).when(eventListener).invoke(any(FlowEvent.class));
         when(flowEventFactory.newEvent(anyString(), anyString(), anyString())).thenReturn(flowEvent);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), false);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -87,19 +89,55 @@ public class BigQueueConsumerTest {
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
 
+        Assert.assertEquals(1, bigQueue.size());
+        bigQueue.close();
+
         verify(eventListener, times(1)).invoke(any(FlowEvent.class));
-        verify(eventListener, times(1)).invoke(any(RuntimeException.class));
     }
 
     @Test
-    public void test_exception_invoke_null_event_listener() throws IOException, InterruptedException {
-        doThrow(new RuntimeException("test exceeption")).when(eventListener).invoke(any(FlowEvent.class));
+    public void test_exception_invoke_messagee_moved_to_back_of_queue() throws IOException, InterruptedException {
+        doThrow(new RuntimeException("test exception")).when(eventListener).invoke(any(FlowEvent.class));
         when(flowEventFactory.newEvent(anyString(), anyString(), anyString())).thenReturn(flowEvent);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), true);
+        consumer.setEventFactory(this.flowEventFactory);
+        consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
+        consumer.setListener(this.eventListener);
+
+        consumer.start();
+        Assert.assertTrue(consumer.isRunning());
+
+        bigQueue.enqueue("test message 1".getBytes());
+        bigQueue.enqueue("test message 2".getBytes());
+
+        Thread.sleep(1000);
+
+        consumer.stop();
+        Assert.assertFalse(consumer.isRunning());
+
+        Assert.assertEquals(2, bigQueue.size());
+
+        Assert.assertEquals("test message 2", new String(bigQueue.dequeue()));
+        Assert.assertEquals("test message 1", new String(bigQueue.dequeue()));
+
+        bigQueue.close();
+
+        verify(eventListener, times(1)).invoke(any(FlowEvent.class));
+    }
+
+    @Test
+    public void test_exception_invoke_null_event_listener() throws IOException, InterruptedException {
+        doThrow(new RuntimeException("test exception")).when(eventListener).invoke(any(FlowEvent.class));
+        when(flowEventFactory.newEvent(anyString(), anyString(), anyString())).thenReturn(flowEvent);
+
+        BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
+        bigQueue.removeAll();
+
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), false);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
 
@@ -112,6 +150,9 @@ public class BigQueueConsumerTest {
 
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
+
+        Assert.assertEquals(1, bigQueue.size());
+        bigQueue.close();
 
         verify(eventListener, times(0)).invoke(any(FlowEvent.class));
         verify(eventListener, times(0)).invoke(any(RuntimeException.class));
@@ -125,7 +166,7 @@ public class BigQueueConsumerTest {
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), false);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -141,6 +182,9 @@ public class BigQueueConsumerTest {
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
 
+        Assert.assertEquals(0, bigQueue.size());
+        bigQueue.close();
+
         verify(eventListener, times(1)).invoke(any(Resubmission.class));
     }
 
@@ -152,7 +196,7 @@ public class BigQueueConsumerTest {
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), false);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -171,7 +215,7 @@ public class BigQueueConsumerTest {
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, new SimpleStringSerialiser(), false);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
 
@@ -183,11 +227,11 @@ public class BigQueueConsumerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_exception_null_big_queue_constructor() {
-        new BigQueueConsumer(null, new SimpleStringSerialiser());
+        new BigQueueConsumer(null, new SimpleStringSerialiser(), false);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_exception_null_seerialiser_queue_constructor() throws IOException {
-        new BigQueueConsumer(new BigQueueImpl("./target", "test"), null);
+        new BigQueueConsumer(new BigQueueImpl("./target", "test"), null, false);
     }
 }
