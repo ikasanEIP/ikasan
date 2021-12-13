@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduled.model;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 /**
  * Scheduled Process Event defines the core event managed by the Scheduler Agent
@@ -51,7 +52,7 @@ import org.ikasan.spec.scheduled.event.model.DryRunParameters;
  * @author Ikasan Development Team
  *
  */
-public class ScheduledProcessEventImpl implements ContextualisedScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
+public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
 {
     private Long id;
     private String agentName;
@@ -73,8 +74,6 @@ public class ScheduledProcessEventImpl implements ContextualisedScheduledProcess
     private boolean harvested;
     private long harvestedDateTime;
     private boolean dryRun = false;
-    private String contextId;
-    private String contextInstanceId;
     private boolean jobStarting = false;
     private DryRunParameters dryRunParameters;
 
@@ -286,21 +285,6 @@ public class ScheduledProcessEventImpl implements ContextualisedScheduledProcess
     }
 
     @Override
-    public String getContextId() {
-        return this.contextId;
-    }
-
-    @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
-
-    @Override
-    public String getContextInstanceId() {
-        return this.contextInstanceId;
-    }
-
-    @Override
     public void setDryRunParameters(DryRunParameters dryRunParameters) {
         this.dryRunParameters = dryRunParameters;
     }
@@ -308,11 +292,6 @@ public class ScheduledProcessEventImpl implements ContextualisedScheduledProcess
     @Override
     public DryRunParameters getDryRunParameters() {
         return this.dryRunParameters;
-    }
-
-    @Override
-    public void setContextInstanceId(String contextInstanceId) {
-        this.contextInstanceId = contextInstanceId;
     }
 
     @Override
@@ -349,8 +328,6 @@ public class ScheduledProcessEventImpl implements ContextualisedScheduledProcess
         sb.append(", harvested=").append(harvested);
         sb.append(", harvestedDateTime=").append(harvestedDateTime);
         sb.append(", dryRun=").append(dryRun);
-        sb.append(", contextId='").append(contextId).append('\'');
-        sb.append(", contextInstanceId='").append(contextInstanceId).append('\'');
         sb.append(", jobStarting=").append(jobStarting);
         sb.append(", dryRunParameters=").append(dryRunParameters);
         sb.append('}');

@@ -91,6 +91,7 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
             scheduledProcessEvent.setDryRun(schedulerJobInitiationEvent.isDryRun());
             scheduledProcessEvent.setDryRunParameters(schedulerJobInitiationEvent.getDryRunParameters());
+            scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
 
             return scheduledProcessEvent;
         }

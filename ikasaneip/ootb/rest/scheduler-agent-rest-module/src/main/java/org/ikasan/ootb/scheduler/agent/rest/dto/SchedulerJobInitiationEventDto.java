@@ -14,6 +14,7 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     private String contextInstanceId;
     private boolean dryRun;
     private DryRunParametersDto dryRunParametersDto;
+    private boolean skipped;
 
     @Override
     public InternalEventDrivenJobDto getInternalEventDrivenJob() {
@@ -93,5 +94,15 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     @Override
     public DryRunParametersDto getDryRunParameters() {
         return this.dryRunParametersDto;
+    }
+
+    @Override
+    public void setSkipped(boolean skipped) {
+        this.skipped = skipped;
+    }
+
+    @Override
+    public boolean isSkipped() {
+        return this.skipped;
     }
 }
