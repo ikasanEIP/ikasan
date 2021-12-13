@@ -84,6 +84,7 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
             return scheduledProcessEvent;
         }
 
+
         String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
 
