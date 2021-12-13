@@ -119,4 +119,18 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
      * @return
      */
     DRY_RUN_PARAMS getDryRunParameters();
+
+    /**
+     * Set flag to indicate that the job is skipped.
+     *
+     * @param skipped
+     */
+    void setSkipped(boolean skipped);
+
+    /**
+     * Flag to indicate if the job is skipped.
+     *
+     * @return
+     */
+    boolean isSkipped();
 }
