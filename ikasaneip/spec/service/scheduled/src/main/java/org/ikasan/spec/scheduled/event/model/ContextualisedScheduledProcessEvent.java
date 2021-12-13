@@ -29,4 +29,18 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      * @param contextInstanceId
      */
      void setContextInstanceId(String contextInstanceId);
+
+    /**
+     * Set flag to indicate that the job is skipped.
+     *
+     * @param skipped
+     */
+    void setSkipped(boolean skipped);
+
+    /**
+     * Flag to indicate if the job is skipped.
+     *
+     * @return
+     */
+    boolean isSkipped();
 }
