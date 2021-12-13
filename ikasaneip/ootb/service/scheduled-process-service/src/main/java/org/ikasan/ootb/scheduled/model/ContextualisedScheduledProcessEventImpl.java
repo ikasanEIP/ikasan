@@ -55,6 +55,7 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
 {
     private String contextId;
     private String contextInstanceId;
+    private boolean skipped;
 
     @Override
     public String getContextId() {
@@ -74,6 +75,16 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     @Override
     public void setContextInstanceId(String contextInstanceId) {
         this.contextInstanceId = contextInstanceId;
+    }
+
+    @Override
+    public void setSkipped(boolean skipped) {
+        this.skipped = skipped;
+    }
+
+    @Override
+    public boolean isSkipped() {
+        return this.skipped;
     }
 
     @Override
