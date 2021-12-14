@@ -33,6 +33,14 @@ public interface ModuleMetaDataService
     public ModuleMetadataSearchResults find(List<String> modulesNames, Integer startOffset, Integer resultSize);
 
     /**
+     * Find using module names.
+     *
+     * @param modulesNames
+     * @return
+     */
+    public ModuleMetadataSearchResults find(List<String> modulesNames);
+
+    /**
      * Find using module names, module type and offset.
      *
      * @param modulesNames
