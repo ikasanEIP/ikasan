@@ -54,11 +54,19 @@ public interface  BusinessStreamMetaDataService<T>
      */
     public List<BusinessStreamMetaData> findBusinessStreamsContainingFlow(String moduleName, String flowName, int offset, int limit);
 
+//    /**
+//     * Method to find a business stream containing specific modules.
+//     *
+//     * @param moduleName
+//     * @return
+//     */
+//    public BusinessStreamMetadataSearchResults findBusinessStreamsForModules(String filter,  List<String> moduleName, int offset, int limit);
+
     /**
      * Method to find a business stream containing specific modules.
      *
      * @param moduleName
      * @return
      */
-    public BusinessStreamMetadataSearchResults findBusinessStreamsForModules(String filter,  List<String> moduleName, int offset, int limit);
+    public BusinessStreamMetadataSearchResults findBusinessStreamsForModules(String filter,  List<ModuleMetaData> moduleName, int offset, int limit);
 }
