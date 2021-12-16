@@ -43,12 +43,11 @@ package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Scheduled process event publisher.
+ * Scheduled process event rest publisher.
  *
  * @author Ikasan Development Team
  */

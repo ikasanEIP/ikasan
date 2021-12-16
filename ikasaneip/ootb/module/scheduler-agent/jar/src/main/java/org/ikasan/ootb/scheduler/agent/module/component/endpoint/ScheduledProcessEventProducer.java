@@ -48,7 +48,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Scheduled process event publisher.
+ * Scheduled process event publisher. This producer delegates to the ScheduledProcessEventService
+ * that writes to the underlying persistent store and then leverages the module harvesting
+ * mechanism to write the scheduled process events to the dashboard.
  *
  * @author Ikasan Development Team
  */
