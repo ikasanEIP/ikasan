@@ -51,7 +51,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 /**
- * Quartz Job Execution Context converter to Scheduled Process Event.
+ * Convert a job initiation event to a scheduled process event.
  *
  * @author Ikasan Development Team
  */
@@ -92,6 +92,16 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
             scheduledProcessEvent.setDryRun(schedulerJobInitiationEvent.isDryRun());
             scheduledProcessEvent.setDryRunParameters(schedulerJobInitiationEvent.getDryRunParameters());
             scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
+
+            // We are going to use a file naming convention for the log files used by the proceess to write
+            // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-suffix.log.
+            scheduledProcessEvent.setResultOutput(schedulerJobInitiationEvent.getContextId() + "-" +
+                schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
+                + schedulerJobInitiationEvent.getJobName() + "-" + "out.log");
+
+            scheduledProcessEvent.setResultError(schedulerJobInitiationEvent.getContextId() + "-" +
+                schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
+                + schedulerJobInitiationEvent.getJobName() + "-" + "err.log");
 
             return scheduledProcessEvent;
         }

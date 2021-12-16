@@ -41,31 +41,34 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 import java.io.File;
 import java.util.List;
 
 /**
- * Quartz Job Execution Context converter to Scheduled Process Event.
+ * File list to contextualised scheduled process event converter.
  *
  * @author Ikasan Development Team
  */
-public class FileListToScheduledProcessEventConverter implements Converter<List<File>, ScheduledProcessEvent>
+public class FileListToContextualisedScheduledProcessEventConverter implements Converter<List<File>, ContextualisedScheduledProcessEvent>
+    , ConfiguredResource<ContextualisedConverterConfiguration>
 {
-    String agentName;
-    String jobName;
-    boolean markAsSuccessful;
+    private String agentName;
+    private String jobName;
+    private String configurationId;
+    private ContextualisedConverterConfiguration configuration;
+
 
     /**
      * Constructor
      * @param agentName
      */
-    public FileListToScheduledProcessEventConverter(String agentName, String jobName)
+    public FileListToContextualisedScheduledProcessEventConverter(String agentName, String jobName)
     {
         this.agentName = agentName;
         if(agentName == null)
@@ -80,44 +83,38 @@ public class FileListToScheduledProcessEventConverter implements Converter<List<
     }
 
     @Override
-    public ScheduledProcessEvent convert(List<File> event) throws TransformationException
+    public ContextualisedScheduledProcessEvent convert(List<File> event) throws TransformationException
     {
         ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setAgentName(this.agentName);
         scheduledProcessEvent.setJobName(this.jobName);
         scheduledProcessEvent.setSuccessful(true);
-        scheduledProcessEvent.setContextId("test");
 
-
-//        Trigger jobTrigger = jobExecutionContext.getTrigger();
-//        if(jobTrigger != null)
-//        {
-//            scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
-//
-//            TriggerKey triggerKey = jobTrigger.getKey();
-//            if(triggerKey != null)
-//            {
-//                scheduledProcessEvent.setJobName(triggerKey.getName());
-//                scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
-//            }
-//        }
-//
-//        if(jobExecutionContext.getNextFireTime() != null)
-//        {
-//            scheduledProcessEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
-//        }
+        // Need to work out how to seed the context. Do these jobs only
+        // exist in a context?
+        scheduledProcessEvent.setContextId(this.configuration.getContextId());
 
         return scheduledProcessEvent;
     }
 
-    /**
-     * Factory method to aid testing.
-     *
-     * @return
-     */
-    protected ScheduledProcessEvent getScheduledProcessEvent()
-    {
-        return new ScheduledProcessEventImpl();
+    @Override
+    public String getConfiguredResourceId() {
+        return this.configurationId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String id) {
+        this.configurationId = id;
+    }
+
+    @Override
+    public ContextualisedConverterConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(ContextualisedConverterConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
