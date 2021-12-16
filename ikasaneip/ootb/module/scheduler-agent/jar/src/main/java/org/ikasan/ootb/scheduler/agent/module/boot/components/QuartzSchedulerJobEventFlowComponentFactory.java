@@ -85,6 +85,8 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionToContextualisedScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -95,7 +97,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 
 /**
- * Quartz Scheduler Job Event Flow Component Factory.
+ * Quartz scheduler job event flow component factory.
  *
  * @author Ikasan Development Team
  */
@@ -121,7 +123,14 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobExecutionConverter(String jobName) { return new JobExecutionConverter(moduleName, jobName, true); }
+    public Converter getJobExecutionConverter(String jobName) {
+        ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
+        JobExecutionToContextualisedScheduledProcessEventConverter converter
+            = new JobExecutionToContextualisedScheduledProcessEventConverter(moduleName, jobName);
+        converter.setConfiguration(configuration);
+
+        return converter;
+    }
 
     /**
      * Get the producer that publishes ScheduledProcessEvents.

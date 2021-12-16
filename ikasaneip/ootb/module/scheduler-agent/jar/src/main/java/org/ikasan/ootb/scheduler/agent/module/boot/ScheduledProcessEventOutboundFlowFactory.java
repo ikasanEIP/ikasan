@@ -50,7 +50,8 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
- * Flow factory implementation.
+ * Scheduled process event outbound flow factory. Consumes events from the outbound BigQueue
+ * and writes them to a res endpoint exposed in the dashboard.
  *
  * @author Ikasan Development Team
  */

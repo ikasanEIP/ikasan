@@ -42,7 +42,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
 import org.ikasan.ootb.scheduled.model.Outcome;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ContextualisedProcessExecutionBrokerConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -56,36 +56,37 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
- * Process Execution Broker implementation for the execution of the command line process.
+ * Contextualised Process Execution Broker implementation for the execution of the command line process.
  *
  * @author Ikasan Development Team
  */
 public class ContextualisedProcessExecutionBroker implements Broker<ContextualisedScheduledProcessEvent, ContextualisedScheduledProcessEvent>,
-    ConfiguredResource<ProcessExecutionBrokerConfiguration>
+    ConfiguredResource<ContextualisedProcessExecutionBrokerConfiguration>
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ContextualisedProcessExecutionBroker.class);
 
-    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
-    String configuredResourceId;
-    ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
+    private String configuredResourceId;
+    private ContextualisedProcessExecutionBrokerConfiguration configuration;
 
     @Override
     public ContextualisedScheduledProcessEvent invoke(ContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
+        scheduledProcessEvent.setJobStarting(false);
 
-        if(scheduledProcessEvent.isDryRun()) {
-            this.manageDryRun(scheduledProcessEvent);
+        // Skipping a job is as simple as marking the job as successful
+        if(scheduledProcessEvent.isSkipped()) {
+            this.manageSkipped(scheduledProcessEvent);
             return scheduledProcessEvent;
         }
 
-        if(scheduledProcessEvent.isSkipped()) {
-            scheduledProcessEvent.setSuccessful(true);
+        if(scheduledProcessEvent.isDryRun()) {
+            this.manageDryRun(scheduledProcessEvent);
             return scheduledProcessEvent;
         }
 
@@ -93,128 +94,83 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
 
         // allow change of the new process working directory
-        if(configuration.getWorkingDirectory() != null && configuration.getWorkingDirectory().length() > 0)
-        {
+        if(configuration.getWorkingDirectory() != null && configuration.getWorkingDirectory().length() > 0) {
             File workingDirectory = new File(configuration.getWorkingDirectory());
             processBuilder.directory(workingDirectory);
         }
 
         String formattedDate = formatter.format(LocalDateTime.now());
-        if(configuration.getStdOut() != null && configuration.getStdOut().length() > 0)
-        {
-            File outputLog = new File(configuration.getStdOut());
-            if(outputLog.exists())
-            {
-                outputLog.renameTo(new File(configuration.getStdOut() + "." + formattedDate));
-            }
-
-            FileUtil.createMissingParentDirectories(outputLog);
-            processBuilder.redirectOutput(outputLog);
-            scheduledProcessEvent.setResultOutput(outputLog.getAbsolutePath());
-
-            if(configuration.getStdOut().equals(configuration.getStdErr()))
-            {
-                processBuilder.redirectError(outputLog);
-                scheduledProcessEvent.setResultError(outputLog.getAbsolutePath());
-            }
-        }
-        else
-        {
-            processBuilder.redirectOutput();
+        File outputLog = new File(scheduledProcessEvent.getResultOutput());
+        if(outputLog.exists()) {
+            outputLog.renameTo(new File(scheduledProcessEvent.getResultOutput() + "." + formattedDate));
         }
 
-        if(configuration.getStdErr() != null && configuration.getStdErr().length() > 0)
-        {
-            if(configuration.getStdErr() != configuration.getStdOut())
-            {
-                File errorLog = new File(configuration.getStdErr());
-                if(errorLog.exists())
-                {
-                    errorLog.renameTo(new File(configuration.getStdErr() + "." + formattedDate));
-                }
+        FileUtil.createMissingParentDirectories(outputLog);
+        processBuilder.redirectOutput(outputLog);
+        scheduledProcessEvent.setResultOutput(outputLog.getAbsolutePath());
 
-                FileUtil.createMissingParentDirectories(errorLog);
-                processBuilder.redirectError(errorLog);
-                scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
-            }
-        }
-        else
-        {
-            processBuilder.redirectError();
+        File errorLog = new File(scheduledProcessEvent.getResultError());
+        if(errorLog.exists()) {
+            errorLog.renameTo(new File(scheduledProcessEvent.getResultError() + "." + formattedDate));
         }
 
-        try
-        {
+        FileUtil.createMissingParentDirectories(errorLog);
+        processBuilder.redirectError(errorLog);
+        scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
+
+        try {
             Process process = processBuilder.start();
 
-            try
-            {
-                boolean processFinished = process.waitFor(configuration.getSecondsToWaitForProcessStart(), TimeUnit.SECONDS);
-                if(processFinished)
-                {
-                    scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
-                    scheduledProcessEvent.setReturnCode(process.exitValue());
-                    if( (configuration.getSuccessfulReturnCodes() == null || configuration.getSuccessfulReturnCodes().size() == 0))
-                    {
-                        if(scheduledProcessEvent.getReturnCode() == 0)
-                        {
-                            scheduledProcessEvent.setSuccessful(true);
-                        }
-                        else
-                        {
-                            scheduledProcessEvent.setSuccessful(false);
-                        }
+            try {
+                // We wait indefinitely until the process is finished.
+                process.waitFor();
+
+                scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+                scheduledProcessEvent.setReturnCode(process.exitValue());
+                if( (configuration.getSuccessfulReturnCodes() == null || configuration.getSuccessfulReturnCodes().size() == 0)) {
+                    if(scheduledProcessEvent.getReturnCode() == 0) {
+                        scheduledProcessEvent.setSuccessful(true);
                     }
-                    else
-                    {
+                    else {
                         scheduledProcessEvent.setSuccessful(false);
-                        for(String returnCode:configuration.getSuccessfulReturnCodes())
-                        {
-                            if(Integer.parseInt(returnCode) == scheduledProcessEvent.getReturnCode())
-                            {
-                                scheduledProcessEvent.setSuccessful(true);
-                                break;
-                            }
-                        }
                     }
                 }
                 else
                 {
                     scheduledProcessEvent.setSuccessful(false);
-                    if(process.isAlive())
-                    {
-                        scheduledProcessEvent.setSuccessful(true);
+                    for(String returnCode:configuration.getSuccessfulReturnCodes()) {
+                        if(Integer.parseInt(returnCode) == scheduledProcessEvent.getReturnCode()) {
+                            scheduledProcessEvent.setSuccessful(true);
+                            break;
+                        }
                     }
                 }
             }
-            catch(InterruptedException e)
-            {
+            catch(InterruptedException e) {
+                // need to think about what we do here. If a job has failed
+                // we do not want to notify the orchestration that we have
+                // been successful.
                 logger.debug("process.waitFor interrupted", e);
             }
 
             ProcessHandle.Info info = process.info();
-            if(info != null && !info.user().isEmpty())
-            {
+            if(info != null && !info.user().isEmpty()) {
                 scheduledProcessEvent.setUser( info.user().get() );
             }
 
-            if(info != null && !info.commandLine().isEmpty())
-            {
+            if(info != null && !info.commandLine().isEmpty()) {
                 scheduledProcessEvent.setCommandLine( info.commandLine().get() );
             }
-            else
-            {
+            else {
                 scheduledProcessEvent.setCommandLine( configuration.getCommandLine() );
             }
 
             scheduledProcessEvent.setPid( process.pid() );
         }
-        catch (IOException e)
-        {
+        catch (IOException e) {
             throw new EndpointException(e);
         }
 
-        scheduledProcessEvent.setJobStarting(false);
         return scheduledProcessEvent;
     }
 
@@ -224,7 +180,6 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
      * @param scheduledProcessEvent
      */
     private void manageDryRun(ScheduledProcessEvent scheduledProcessEvent) {
-        scheduledProcessEvent.setJobStarting(false);
         scheduledProcessEvent.setSuccessful(true);
 
         if(scheduledProcessEvent.getDryRunParameters().isError()) {
@@ -268,10 +223,20 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
         scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
     }
 
+    /**
+     * Update the event with details of the job beeing skipped.
+     *
+     * @param scheduledProcessEvent
+     */
+    private void manageSkipped(ScheduledProcessEvent scheduledProcessEvent) {
+        scheduledProcessEvent.setSuccessful(true);
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+    }
+
     String[] getCommandLineArgs(String commandLine)
     {
-        if(commandLine != null && commandLine.length() > 0)
-        {
+        if(commandLine != null && commandLine.length() > 0) {
             return commandLine.split(" ");
         }
 
@@ -279,26 +244,22 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
     }
 
     @Override
-    public String getConfiguredResourceId()
-    {
+    public String getConfiguredResourceId() {
         return configuredResourceId;
     }
 
     @Override
-    public void setConfiguredResourceId(String configuredResourceId)
-    {
+    public void setConfiguredResourceId(String configuredResourceId) {
         this.configuredResourceId = configuredResourceId;
     }
 
     @Override
-    public ProcessExecutionBrokerConfiguration getConfiguration()
-    {
+    public ContextualisedProcessExecutionBrokerConfiguration getConfiguration() {
         return configuration;
     }
 
     @Override
-    public void setConfiguration(ProcessExecutionBrokerConfiguration configuration)
-    {
+    public void setConfiguration(ContextualisedProcessExecutionBrokerConfiguration configuration) {
         this.configuration = configuration;
     }
 

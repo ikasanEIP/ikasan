@@ -8,6 +8,12 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 
 import java.io.IOException;
 
+/**
+ * This class is responsible for notify the dashboard that a scheduler job is starting. It does this by publishing
+ * an event to the outbound queue which is subsequently published to the dashboard via the outbound flow.
+ *
+ * @author Ikasan Development Team
+ */
 public class ScheduledProcessEventJobStartBroker implements Broker<ScheduledProcessEvent, ScheduledProcessEvent> {
     private IBigQueue outboundQueue;
     private ObjectMapper objectMapper;
