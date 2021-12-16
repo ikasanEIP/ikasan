@@ -7,6 +7,11 @@ import org.ikasan.spec.serialiser.Serialiser;
 
 import java.io.IOException;
 
+/**
+ * Serializer implementation to serialise ScheduledProcessEvents
+ *
+ * @author Ikasan Development Team
+ */
 public class SchedulerProcessorEventSerialiser implements Serialiser<ScheduledProcessEvent, byte[]> {
     ObjectMapper objectMapper = new ObjectMapper();
 

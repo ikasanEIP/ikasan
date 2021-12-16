@@ -38,46 +38,65 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.boot;
+package org.ikasan.ootb.scheduler.agent.module.component.broker.configuration;
 
-import org.ikasan.builder.BuilderFactory;
-import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
-import org.ikasan.spec.flow.Flow;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Job processing flow factory.
+ * Process Execution Broker Configuration.
  *
  * @author Ikasan Development Team
  */
-@Configuration
-public class JobProcessingFlowFactory
+public class ContextualisedProcessExecutionBrokerConfiguration
 {
-    @Value( "${module.name}" )
-    String moduleName;
+    // command line to be executed
+    String commandLine;
 
-    @Resource
-    BuilderFactory builderFactory;
+    // working directory from which to execute the command line
+    String workingDirectory;
 
-    @Resource
-    JobProcessingFlowComponentFactory componentFactory;
+    // allow the return codes that represent success be defined by the user
+    List<String> successfulReturnCodes = new ArrayList<String>();
+
+    public List<String> getSuccessfulReturnCodes()
+    {
+        return successfulReturnCodes;
+    }
+
+    public void setSuccessfulReturnCodes(List<String> successfulReturnCodes)
+    {
+        this.successfulReturnCodes = successfulReturnCodes;
+    }
+
+    public String getWorkingDirectory()
+    {
+        return workingDirectory;
+    }
+
+    public void setWorkingDirectory(String workingDirectory)
+    {
+        this.workingDirectory = workingDirectory;
+    }
+
+    public String getCommandLine()
+    {
+        return commandLine;
+    }
+
+    public void setCommandLine(String commandLine)
+    {
+        this.commandLine = commandLine;
+    }
 
 
-    public Flow create(String jobName) throws IOException {
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
-            .withDescription(jobName +" Job Processing Flow")
-            .consumer("Job Consumer", componentFactory.bigQueueConsumer(jobName))
-            .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
-            .broker("Job Started Broker", this.componentFactory.getScheduledProcessEventJobStartBroker())
-            .broker("Process Execution Broker", componentFactory.getProcessExecutionBroker())
-            .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
-            .build();
+    @Override
+    public String toString()
+    {
+        return "ProcessExecutionBrokerConfiguration{" +
+            "commandLine='" + commandLine + '\'' +
+            ", workingDirectory='" + workingDirectory + '\'' +
+            ", successfulReturnCodes=" + successfulReturnCodes +
+            '}';
     }
 }
-
-

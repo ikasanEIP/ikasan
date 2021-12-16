@@ -49,7 +49,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 
 /**
- * Flow factory implementation.
+ * File event scheduler job flow factory.
  *
  * @author Ikasan Development Team
  */

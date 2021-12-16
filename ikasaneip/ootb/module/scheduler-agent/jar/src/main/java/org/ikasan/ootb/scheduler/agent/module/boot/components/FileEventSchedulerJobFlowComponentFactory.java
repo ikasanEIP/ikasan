@@ -84,7 +84,8 @@ import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -96,7 +97,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 /**
- * File Scheduler Job Event Flow Component Factory.
+ * File scheduler job event flow component factory.
  *
  * @author Ikasan Development Team
  */
@@ -132,7 +133,14 @@ public class FileEventSchedulerJobFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getFileEventToScheduledProcessEventConverter(String jobName) { return new FileListToScheduledProcessEventConverter(moduleName, jobName); }
+    public Converter getFileEventToScheduledProcessEventConverter(String jobName) {
+        ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
+        FileListToContextualisedScheduledProcessEventConverter converter
+            = new FileListToContextualisedScheduledProcessEventConverter(moduleName, jobName);
+        converter.setConfiguration(configuration);
+
+        return converter;
+    }
 
     /**
      * Get the producer that publishes ScheduledProcessEvents.
