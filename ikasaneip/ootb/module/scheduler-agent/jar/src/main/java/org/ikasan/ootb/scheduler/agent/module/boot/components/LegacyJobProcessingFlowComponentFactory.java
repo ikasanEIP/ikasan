@@ -100,7 +100,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 
 /**
- * Scheduler Agent component factory.
+ * Legacy job processing flow component factory.
  *
  * @author Ikasan Development Team
  */
@@ -129,7 +129,7 @@ public class LegacyJobProcessingFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobExecutionConverter(String jobName) { return new JobExecutionConverter(moduleName, jobName,false); }
+    public Converter getJobExecutionConverter(String jobName) { return new JobExecutionConverter(moduleName); }
 
     /**
      * Get the router responsible for determining if a job has been run in a blackout window.

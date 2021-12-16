@@ -44,6 +44,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
@@ -161,11 +162,11 @@ public class ApplicationTest
 
         assertEquals(2, outboundQueue.size());
 
-        ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ScheduledProcessEventImpl.class);
+        ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
         assertEquals(true, event.isJobStarting());
         assertEquals(false, event.isSuccessful());
 
-        event = objectMapper.readValue(outboundQueue.dequeue(), ScheduledProcessEventImpl.class);
+        event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
         assertEquals(false, event.isJobStarting());
         assertEquals(true, event.isSuccessful());
 
