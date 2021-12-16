@@ -40,40 +40,56 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-import org.quartz.*;
+import org.quartz.JobExecutionContext;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 /**
- * Quartz Job Execution Context converter to Scheduled Process Event.
+ * Quartz Job Execution Context converter to Contextualised Scheduled Process Event.
  *
  * @author Ikasan Development Team
  */
-public class JobExecutionConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>
+public class JobExecutionToContextualisedScheduledProcessEventConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>,
+    ConfiguredResource<ContextualisedConverterConfiguration>
 {
-    String moduleName;
+    private String moduleName;
+    private String jobName;
+    private String configurationId;
+    private ContextualisedConverterConfiguration configuration;
 
     /**
      * Constructor
      * @param moduleName
      */
-    public JobExecutionConverter(String moduleName)
+    public JobExecutionToContextualisedScheduledProcessEventConverter(String moduleName, String jobName)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
+        this.jobName = jobName;
+        if(jobName == null)
+        {
+            throw new IllegalArgumentException("jobName cannot be 'null'");
+        }
     }
 
     @Override
-    public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException
-    {
-        ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+    public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException {
+        ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
         scheduledProcessEvent.setAgentName(moduleName);
+        scheduledProcessEvent.setJobName(this.jobName);
+        scheduledProcessEvent.setContextId(this.configuration.getContextId());
 
         Trigger jobTrigger = jobExecutionContext.getTrigger();
         if(jobTrigger != null)
@@ -90,19 +106,29 @@ public class JobExecutionConverter implements Converter<JobExecutionContext, Sch
 
         if(jobExecutionContext.getNextFireTime() != null)
         {
-            scheduledProcessEvent.setNextFireTime( jobExecutionContext.getNextFireTime().getTime() );
+            scheduledProcessEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
         }
 
         return scheduledProcessEvent;
     }
 
-    /**
-     * Factory method to aid testing.
-     *
-     * @return
-     */
-    protected ScheduledProcessEvent getScheduledProcessEvent()
-    {
-        return new ScheduledProcessEventImpl();
+    @Override
+    public String getConfiguredResourceId() {
+        return this.configurationId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String id) {
+        this.configurationId = id;
+    }
+
+    @Override
+    public ContextualisedConverterConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(ContextualisedConverterConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
