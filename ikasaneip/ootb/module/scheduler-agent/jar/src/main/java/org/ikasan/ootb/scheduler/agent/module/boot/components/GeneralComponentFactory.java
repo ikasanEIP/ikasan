@@ -93,7 +93,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
- * Scheduler Agent component factory.
+ * A place to configure general components that are used across multiple flows.
  *
  * @author Ikasan Development Team
  */
@@ -104,20 +104,14 @@ public class GeneralComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Resource
-    BuilderFactory builderFactory;
+    @Value( "${big.queue.consumer.queueDir}" )
+    private String queueDir;
 
-    @Resource
-    ScheduledProcessEventService scheduledProcessEventService;
+    @Value( "${big.queue.consumer.inboundQueueName}" )
+    private String inboundQueueName;
 
-    @Value( "${big.queue.consumer.configuration.queueDir}" )
-    private String queueDir = "/sandbox/mick/bigquque";
-
-    @Value( "${big.queue.consumer.configuration.inboundQueueName}" )
-    private String inboundQueueName = "module-inbound-context-queue";
-
-    @Value( "${big.queue.consumer.configuration.outboundQueueName}" )
-    private String outboundQueueName = "module-outbound-context-queue";
+    @Value( "${big.queue.consumer.outboundQueueName}" )
+    private String outboundQueueName;
 
 
     @Bean

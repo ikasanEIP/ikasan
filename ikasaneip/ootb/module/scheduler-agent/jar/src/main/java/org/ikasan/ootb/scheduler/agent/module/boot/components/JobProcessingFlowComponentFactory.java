@@ -87,7 +87,7 @@ import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ContextualisedProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ScheduledProcessEventJobStartBroker;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ContextualisedProcessExecutionBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
@@ -114,14 +114,12 @@ public class JobProcessingFlowComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Value( "${big.queue.consumer.configuration.queueDir}" )
+    @Value( "${big.queue.consumer.queueDir}" )
     private String queueDir;
 
     @Resource
     private IBigQueue outboundQueue;
 
-    @Resource
-    ScheduledProcessEventService scheduledProcessEventService;
 
     public Consumer bigQueueConsumer(String jobName) throws IOException {
         IBigQueue inboundQueue = new BigQueueImpl(queueDir, jobName+"-inbound-queue");
@@ -157,7 +155,7 @@ public class JobProcessingFlowComponentFactory
      */
     public Broker getProcessExecutionBroker()
     {
-        ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
+        ContextualisedProcessExecutionBrokerConfiguration configuration = new ContextualisedProcessExecutionBrokerConfiguration();
         configuration.setCommandLine("pwd");    // default safe command across all platforms
 
         ContextualisedProcessExecutionBroker processExecutionBroker = new ContextualisedProcessExecutionBroker();

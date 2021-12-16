@@ -94,7 +94,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 
 /**
- * Scheduler Agent component factory.
+ * Scheduled process event outbound flow component factory.
  *
  * @author Ikasan Development Team
  */
@@ -103,9 +103,6 @@ public class ScheduledProcessEventOutboundFlowComponentFactory
 {
     @Value( "${module.name}" )
     String moduleName;
-
-    @Value( "${big.queue.consumer.configuration.queueDir}" )
-    private String queueDir;
 
     @Resource
     IBigQueue outboundQueue;
