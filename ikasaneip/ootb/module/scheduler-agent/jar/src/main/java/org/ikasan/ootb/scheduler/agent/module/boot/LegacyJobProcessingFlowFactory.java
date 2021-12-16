@@ -50,7 +50,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 
 /**
- * Flow factory implementation.
+ * Legacy job processing flow factory.
  *
  * @author Ikasan Development Team
  */
