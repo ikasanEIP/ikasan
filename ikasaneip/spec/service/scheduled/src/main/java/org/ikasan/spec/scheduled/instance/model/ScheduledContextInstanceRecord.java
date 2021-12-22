@@ -1,4 +1,4 @@
-package org.ikasan.spec.scheduled.context.model;
+package org.ikasan.spec.scheduled.instance.model;
 
 public interface ScheduledContextInstanceRecord {
 
