@@ -1,6 +1,6 @@
 package org.ikasan.spec.scheduled.event.model;
 
-import org.ikasan.spec.scheduled.context.model.ContextParameterInstance;
+import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;

@@ -1,6 +1,6 @@
-package org.ikasan.spec.scheduled.context.dao;
+package org.ikasan.spec.scheduled.instance.dao;
 
-import org.ikasan.spec.scheduled.context.model.ScheduledContextInstanceRecord;
+import org.ikasan.spec.scheduled.instance.model.ScheduledContextInstanceRecord;
 
 public interface ScheduledContextInstanceDao {
     ScheduledContextInstanceRecord findById(String id);
