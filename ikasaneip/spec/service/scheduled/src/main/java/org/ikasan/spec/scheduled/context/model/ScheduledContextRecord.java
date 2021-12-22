@@ -4,10 +4,17 @@ public interface ScheduledContextRecord {
 
     String getId();
 
+    void setId(String id);
+
     String getContextName();
 
-    String getContext();
+    void setContextName(String contextName);
+
+    ContextTemplate getContext();
+
+    void setContext(ContextTemplate context);
 
     long getTimestamp();
 
+    void setTimestamp(long timestamp);
 }
