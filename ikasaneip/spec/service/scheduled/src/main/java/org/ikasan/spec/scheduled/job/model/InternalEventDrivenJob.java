@@ -7,10 +7,6 @@ public interface InternalEventDrivenJob extends SchedulerJob {
 
     void setSuccessfulReturnCodes(List<String> successfulReturnCodes);
 
-    long getSecondsToWaitForProcessStart();
-
-    void setSecondsToWaitForProcessStart(long secondsToWaitForProcessStart);
-
     String getWorkingDirectory();
 
     void setWorkingDirectory(String workingDirectory);
@@ -18,16 +14,4 @@ public interface InternalEventDrivenJob extends SchedulerJob {
     String getCommandLine();
 
     void setCommandLine(String commandLine);
-
-    String getStdErr();
-
-    void setStdErr(String stdErr);
-
-    String getStdOut();
-
-    void setStdOut(String stdOut);
-
-    boolean isRetryOnFail();
-
-    void setRetryOnFail(boolean retryOnFail);
 }
