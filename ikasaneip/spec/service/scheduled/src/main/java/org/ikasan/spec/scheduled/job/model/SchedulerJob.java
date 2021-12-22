@@ -16,4 +16,8 @@ public interface SchedulerJob {
     String getJobName();
 
     void setJobName(String jobName);
+
+    String getJobDescription();
+
+    void setJobDescription(String jobDescription);
 }

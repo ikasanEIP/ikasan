@@ -2,7 +2,15 @@ package org.ikasan.spec.scheduled.job.model;
 
 public interface QuartzScheduleDrivenJob extends SchedulerJob {
 
-     String getCronExpression();
+    String getJobGroup();
 
-     void setCronExpression(String cronExpression);
+    void setJobGroup(String jobGroup);
+
+    String getCronExpression();
+
+    void setCronExpression(String cronExpression);
+
+    String getTimeZone();
+
+    void setTimeZone(String timeZone);
 }
