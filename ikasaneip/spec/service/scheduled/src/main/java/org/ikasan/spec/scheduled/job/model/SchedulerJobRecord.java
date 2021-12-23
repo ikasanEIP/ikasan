@@ -1,7 +1,5 @@
 package org.ikasan.spec.scheduled.job.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public interface SchedulerJobRecord<T extends SchedulerJob> {
     String getId();
 
@@ -13,7 +11,7 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
 
     String getContextId();
 
-    T getJob() throws JsonProcessingException;
+    T getJob();
 
     long getTimestamp();
 }

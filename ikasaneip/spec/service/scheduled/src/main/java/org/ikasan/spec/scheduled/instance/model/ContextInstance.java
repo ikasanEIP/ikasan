@@ -2,7 +2,7 @@ package org.ikasan.spec.scheduled.instance.model;
 
 import org.ikasan.spec.scheduled.context.model.Context;
 
-interface ContextInstance extends Context<ContextInstance, ContextParameterInstance, SchedulerJobInstance> {
+public interface ContextInstance extends Context<ContextInstance, ContextParameterInstance, SchedulerJobInstance>, StatefulEntity {
     
     String getId();
 
@@ -27,8 +27,4 @@ interface ContextInstance extends Context<ContextInstance, ContextParameterInsta
     String getTimezone();
 
     void setTimezone(String timezone);
-
-    InstanceStatus getStatus();
-
-    void setStatus(InstanceStatus status);
 }
