@@ -89,7 +89,7 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
                 
                 if (!results.isEmpty())
                 {
-                    return (StartupControl) results.get(0);
+                    return results.get(0);
                 }
                 return new StartupControlImpl(moduleName, flowName);
             }
@@ -103,9 +103,15 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
      * org.ikasan.framework.flow.initiator.dao.FlowStartupControlDao#save
      * (org.ikasan.framework.initiator.FlowStartupControl)
      */
-    public void save(StartupControl flowStartupControl)
+    public void save(StartupControl startupControl)
     {
-        getHibernateTemplate().saveOrUpdate(flowStartupControl);
+        getHibernateTemplate().saveOrUpdate(startupControl);
+    }
+
+    @Override
+    public void delete(StartupControl startupControl)
+    {
+        getHibernateTemplate().delete(startupControl);
     }
 
 }

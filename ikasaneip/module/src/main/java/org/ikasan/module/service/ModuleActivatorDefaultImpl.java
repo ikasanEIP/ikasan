@@ -55,6 +55,7 @@ import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -122,25 +123,45 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     public void activate(Module<Flow> module)
     {
         // load module configuration
-        if(module instanceof ConfiguredResource)
+        if( isConfiguredResource(module) )
         {
-            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = (ConfiguredResource)module;
+            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
             configurationService.configure(configuredModule);
 
-            if(module instanceof FlowFactoryCapable)
+            if( isFlowFactoryCapable(module) )
             {
                 ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
+
+                // do not leave any orphaned start up controls, so get a handle to each per flow
+                Map<String,StartupControl> startupControls = new HashMap<String,StartupControl>();
+                for(Flow flow:module.getFlows())
+                {
+                    startupControls.put(flow.getName(), this.startupControlDao.getStartupControl(module.getName(), flow.getName()));
+                }
+
                 module.getFlows().clear();
                 if(configuration.getFlowDefinitions() != null)
                 {
                     for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
                     {
                         String flowname = flowDefinition.getKey();
-                        StartupControl startupControl = new StartupControlImpl(module.getName(), flowname);
-                        startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
-                        this.startupControlDao.save(startupControl);
-                        module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().create(flowname) );
+                        StartupControl startupControl = startupControls.get(flowname);
+                        if(startupControl == null)
+                        {
+                            startupControl = new StartupControlImpl(module.getName(), flowname);
+                            startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
+                            this.startupControlDao.save(startupControl);
+                        }
+
+                        module.getFlows().add( ( getFlowFactoryCapable(module) ).getFlowFactory().create(flowname) );
+                        startupControls.remove(flowname);
                     }
+                }
+
+                // remove any startup controls which are now orphaned as the flows no longer exist
+                for(Map.Entry<String, StartupControl> startupControlEntry : startupControls.entrySet())
+                {
+                    this.startupControlDao.delete(startupControlEntry.getValue());
                 }
             }
         }
@@ -169,6 +190,26 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         this.activatedModuleNames.add(module);
 
         this.initialiseModuleMetaData(module);
+    }
+
+    protected boolean isConfiguredResource(Module<Flow> module)
+    {
+        return (module instanceof ConfiguredResource);
+    }
+
+    protected ConfiguredResource<ConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module)
+    {
+        return (ConfiguredResource<ConfiguredModuleConfiguration>)module;
+    }
+
+    protected boolean isFlowFactoryCapable(Module<Flow> module)
+    {
+        return (module instanceof FlowFactoryCapable);
+    }
+
+    protected FlowFactoryCapable getFlowFactoryCapable(Module<Flow> module)
+    {
+        return (FlowFactoryCapable)module;
     }
 
     /* (non-Javadoc)
