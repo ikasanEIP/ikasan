@@ -1,12 +1,8 @@
 package org.ikasan.spec.scheduled.job.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public interface QuartzScheduleDrivenJobRecord {
 
     public String getId();
-
-    public void setId(String id);
 
     public String getAgentName();
 
@@ -20,9 +16,9 @@ public interface QuartzScheduleDrivenJobRecord {
 
     void setContextId(String contextId);
 
-    public QuartzScheduleDrivenJob getQuartzScheduleDrivenJob() throws JsonProcessingException;
+    public QuartzScheduleDrivenJob getQuartzScheduleDrivenJob();
 
-    public void setQuartzScheduleDrivenJob(QuartzScheduleDrivenJob quartzScheduleDrivenJob) throws JsonProcessingException;
+    public void setQuartzScheduleDrivenJob(QuartzScheduleDrivenJob quartzScheduleDrivenJob);
 
     public long getTimestamp();
 
