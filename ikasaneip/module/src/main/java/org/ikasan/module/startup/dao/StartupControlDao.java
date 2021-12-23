@@ -59,12 +59,18 @@ public interface StartupControlDao
      * 
      * @return the <code>FlowStartupControl</code> for the specified <code>Flow</code>
      */
-    public StartupControl getStartupControl(String moduleName, String flowName);
+    StartupControl getStartupControl(String moduleName, String flowName);
     
     /**
      * Persists the <code>FlowStartupControl</code>
      * 
-     * @param FlowStartupControl to persist
+     * @param startupControl to persist
      */
-    public void save(StartupControl startupControl);
+    void save(StartupControl startupControl);
+
+    /**
+     * Remove the given startup control.
+     * @param startupControl
+     */
+    void delete(StartupControl startupControl);
 }
