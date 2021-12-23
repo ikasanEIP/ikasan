@@ -1,12 +1,8 @@
 package org.ikasan.spec.scheduled.job.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public interface FileEventDrivenJobRecord {
 
     public String getId();
-
-    public void setId(String id);
 
     public String getAgentName();
 
@@ -20,9 +16,9 @@ public interface FileEventDrivenJobRecord {
 
     void setContextId(String contextId);
 
-    public FileEventDrivenJob getFileEventDrivenJob() throws JsonProcessingException;
+    public FileEventDrivenJob getFileEventDrivenJob();
 
-    public void setFileEventDrivenJob(FileEventDrivenJob fileEventDrivenJob) throws JsonProcessingException;
+    public void setFileEventDrivenJob(FileEventDrivenJob fileEventDrivenJob);
 
     public long getTimestamp();
 
