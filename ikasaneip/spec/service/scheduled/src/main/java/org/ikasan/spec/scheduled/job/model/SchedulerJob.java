@@ -5,9 +5,9 @@ public interface SchedulerJob {
 
     void setContextId(String contextId);
 
-    String getJobIdentifier();
+    String getIdentifier();
 
-    void setJobIdentifier(String jobIdentifier);
+    void setIdentifier(String jobIdentifier);
 
     String getAgentName();
 

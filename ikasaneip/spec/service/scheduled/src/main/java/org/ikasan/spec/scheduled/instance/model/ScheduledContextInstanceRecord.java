@@ -6,11 +6,17 @@ public interface ScheduledContextInstanceRecord {
 
     String getContextName();
 
-    String getContextInstance();
+    void setContextName(String contextName);
+
+    ContextInstance getContextInstance();
+
+    void setContextInstance(ContextInstance context);
 
     String getStatus();
 
     void setStatus(String status);
 
     long getTimestamp();
+
+    void setTimestamp(long timestamp);
 }

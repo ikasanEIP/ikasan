@@ -3,7 +3,7 @@ package org.ikasan.spec.scheduled.instance.model;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
-interface SchedulerJobInstance extends SchedulerJob {
+public interface SchedulerJobInstance extends SchedulerJob, StatefulEntity {
 
     boolean isHeld();
 
