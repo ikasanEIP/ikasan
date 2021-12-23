@@ -4,8 +4,6 @@ public interface ScheduledContextRecord {
 
     String getId();
 
-    void setId(String id);
-
     String getContextName();
 
     void setContextName(String contextName);
