@@ -1,12 +1,8 @@
 package org.ikasan.spec.scheduled.job.model;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-
 public interface InternalEventDrivenJobRecord {
 
     public String getId();
-
-    public void setId(String id);
 
     public String getAgentName();
 
@@ -20,9 +16,9 @@ public interface InternalEventDrivenJobRecord {
 
     void setContextId(String contextId);
 
-    public InternalEventDrivenJob getInternalEventDrivenJob() throws JsonProcessingException;
+    public InternalEventDrivenJob getInternalEventDrivenJob();
 
-    public void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob) throws JsonProcessingException;
+    public void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob);
 
     public long getTimestamp();
 
