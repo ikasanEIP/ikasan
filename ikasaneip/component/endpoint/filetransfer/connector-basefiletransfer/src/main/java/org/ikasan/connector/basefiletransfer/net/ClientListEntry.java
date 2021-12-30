@@ -1,42 +1,40 @@
 /*
- * $Id:$
- * $URL:$
+ *  ====================================================================
+ *  Ikasan Enterprise Integration Platform
  *
- * ====================================================================
- * Ikasan Enterprise Integration Platform
+ *  Distributed under the Modified BSD License.
+ *  Copyright notice: The copyright for this software and a full listing
+ *  of individual contributors are as shown in the packaged copyright.txt
+ *  file.
  *
- * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing
- * of individual contributors are as shown in the packaged copyright.txt
- * file.
+ *  All rights reserved.
  *
- * All rights reserved.
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ *   - Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
  *
- *  - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ *   - Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ *   - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *     be used to endorse or promote products derived from this software without
+ *     specific prior written permission.
  *
- *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ *  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  ====================================================================
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
  */
 package org.ikasan.connector.basefiletransfer.net;
 
@@ -54,6 +52,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.sshd.client.subsystem.sftp.SftpPath;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 import org.ikasan.filetransfer.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <code>ClientListEntry</code> class holds information reflecting a
@@ -604,6 +604,8 @@ public class ClientListEntry
         return sb.toString();
     }
 
+    private static Logger logger = LoggerFactory.getLogger(ClientListEntry.class);
+
     /**
      * Get the relativePath of the base directory to the directory containing the target file
      *
@@ -613,7 +615,14 @@ public class ClientListEntry
      * @return the relativePath from the base directory to the directory containing the file
      */
     public String evalRelativePath(String baseDirectory){
-        String parent = convertToUnix(Paths.get(fullPath).getParent().toString());
+        String parentPath = fullPath;
+        if (fullPath.startsWith("//")){
+            logger.debug("FullPath [{}] begins with two slashes for purposes of eval relative path will remove one",
+                fullPath);
+            parentPath = fullPath.substring(1);
+        }
+        String parent = convertToUnix(Paths.get(parentPath).getParent().toString());
+
         return convertToUnix(Path.of(convertToUnix(baseDirectory)).relativize(Path.of(parent)).toString());
     }
 
