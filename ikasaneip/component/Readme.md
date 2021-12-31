@@ -314,6 +314,7 @@ This producer allows delivery of a file to remote (S)FTP server. The producer is
 | privateKeyFilename | String | Optional only available on SFTP producer. Allows authentication to remote server with private/public key set given the exchange of the keys and connectivity setup were performed upfront. |
 | knownHostsFilename | String | Optional only available on SFTP producer. Works in combination with private/public key set. |
 | preferredKeyExchangeAlgorithm | String | Optional only available on SFTP producer. Allowing to explicitly provide KeyExchange Algorithm used by the remote server. |
+| dontUseFileRename | Boolean | Optional only available on SFTP producer. Default(false) if true will not do a file rename on commit from a .tmp file but will write the file directly. |
 | active | boolean | Optional only available on FTP producer. Default(False) Flag indicating whether the FTP connection is active or passive | 
 | dataTimeout | integer | Optional only available on FTP producer. Default(300000) expressed in milliseconds. Internal FTP connector data connection timeout value. |
 | socketTimeout | integer | Optional only available on FTP producer. Default(300000) expressed in milliseconds. Internal FTP connector socket connection timeout value. |
