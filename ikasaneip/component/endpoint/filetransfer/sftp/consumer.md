@@ -104,6 +104,7 @@ public class ModuleConfig {
 | ftpsIsImplicit | booleans | Optional only available on FTP consumer. Default(false) only applicable when FTPS=true. |
 | ftpsKeyStoreFilePath | String | Optional only available on FTP consumer. Only applicable when FTPS=true. |
 | ftpsKeyStoreFilePassword | String | Optional only available on FTP consumer. Only applicable when FTPS=true. |
+| provideRelativePath | String | Optional. Default(false) will add as an attribute the relative path of the file from the base sftp directory to the payload. |
 
 ###### Sample Usage - Ikasan Java FluentAPI
 ```java
