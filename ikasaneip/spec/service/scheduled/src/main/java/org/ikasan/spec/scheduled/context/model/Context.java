@@ -11,6 +11,14 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
 
     void setName(String name);
 
+    String getDescription();
+
+    void setDescription(String description);
+
+    String getTimezone();
+
+    void setTimezone(String timezone);
+
     List<CONTEXT_PARAM> getContextParameters();
 
     void setContextParameters(List<CONTEXT_PARAM> contextParameters) ;
