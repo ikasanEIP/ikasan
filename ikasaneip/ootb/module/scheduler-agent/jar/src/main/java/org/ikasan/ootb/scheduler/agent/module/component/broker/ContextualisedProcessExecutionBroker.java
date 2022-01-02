@@ -262,5 +262,4 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
     public void setConfiguration(ContextualisedProcessExecutionBrokerConfiguration configuration) {
         this.configuration = configuration;
     }
-
 }
