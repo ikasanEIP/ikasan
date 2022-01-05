@@ -147,12 +147,14 @@ public class IkasanFlowTestRule implements TestRule
                 base.evaluate();
                 if (flow != null && flowTestHarness != null)
                 {
+                    System.out.println("Calling stop in IkasanFlowTestRule");
                     flow.stop();
                     assertEquals("in rule apply - flow should be stopped", errorEndState ?
                             "stoppedInError" :
                             "stopped", flow.getState());
                     flowTestHarness.assertIsSatisfied();
                 }
+                System.out.println("In evaluate of IkasanFlowTestRule - end");
             }
         };
     }
@@ -457,7 +459,8 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.addFlowListener(testHarnessFlowEventListener);
         flow.start();
-        Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState());
+       // Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState());
+        Assert.assertEquals("In startFlow() - flow should be running", "Bob", flow.getState());
     }
 
     /**
@@ -544,12 +547,12 @@ public class IkasanFlowTestRule implements TestRule
                 if (!isStopped){
                     System.out.println("In test " + testName + " attempted to stop flow but is now not in one of" +
                         " accepted stop states " +
-                        ArrayUtils.toString(stopStates));
+                        ArrayUtils.toString(stopStates) + " its state is " + stopState);
                     flow.stop();
                 } else {
                     System.out.println("In test " + testName + " stopped flow successfully is in allowed stop states" +
-                        " :- " +
-                        ArrayUtils.toString(stopStates));
+                        " " +
+                        ArrayUtils.toString(stopStates) + " its state is " + stopState);
                 }
                 assertEquals("Flow is stopped as expected", true, isStopped);
 

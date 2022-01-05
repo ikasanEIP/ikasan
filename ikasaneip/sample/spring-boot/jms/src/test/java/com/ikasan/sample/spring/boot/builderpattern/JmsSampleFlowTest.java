@@ -447,8 +447,7 @@ public class JmsSampleFlowTest {
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        logger.info("Sending a JMS message.[" + message + "]");
-        jmsTemplate.convertAndSend("source", message);
+
 
         // setup custom broker to throw an exception
         ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
@@ -461,6 +460,9 @@ public class JmsSampleFlowTest {
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
+
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.convertAndSend("source", message);
 
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals("recovering", flowTestRule.getFlowState()));
