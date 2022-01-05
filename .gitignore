@@ -13,12 +13,6 @@ target
 **/ObjectStore
 
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/org.ikasan.dashboard.ui.AppWidgetSet/
-ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/gwt-unitCache-e5070b9c4fbf0d0244bc4158f6bcfd674417fbc9-0000014CAEC9193E
-ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/gwt-unitCache-e5070b9c4fbf0d0244bc4158f6bcfd674417fbc9-0000014CAEC95A88
-ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/gwt-unitCache-e5070b9c4fbf0d0244bc4158f6bcfd674417fbc9-0000014CB1B73448
-ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/gwt-unitCache-e5070b9c4fbf0d0244bc4158f6bcfd674417fbc9-0000014CB1B785A6
-ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/gwt-unitCache-e5070b9c4fbf0d0244bc4158f6bcfd674417fbc9-0000014CB25D2524
-ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/gwt-unitCache-e5070b9c4fbf0d0244bc4158f6bcfd674417fbc9-0000014CB25D7DA4
 ikasaneip/dashboard/war/src/main/webapp/VAADIN/gwt-unitCache/
 ikasaneip/dashboard/docs/~$$ER-diagram.~vsd
 ikasaneip/mapping/src/main/resources/mappingConfigurationService-context.xml.BACKUP.11832.xml
@@ -35,3 +29,12 @@ ikasaneip/dashboard/war/src/main/webapp/VAADIN/widgetsets/
 ikasaneip/visualisation/dashboard/node_modules
 **/KahaDB/
 esb.mv.db
+/ikasaneip/sample/spring-boot/scheduled/scheduler-recovery/
+/ikasaneip/cli/shell/jar/pid/
+/ikasaneip/component/endpoint/quartz-schedule/scheduler-recovery/
+/ikasaneip/sample/spring-boot/ftp-jms/scheduler-recovery/
+/ikasaneip/sample/spring-boot/file/scheduler-recovery/
+/ikasaneip/sample/spring-boot/file/transaction-logs/
+/ikasaneip/component/endpoint/quartz-schedule/tmp-1640956192819/
+/ikasaneip/cli/shell/jar/persistence/
+/ikasaneip/sample/spring-boot/sftp-jms/scheduler-recovery/
