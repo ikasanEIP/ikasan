@@ -148,7 +148,7 @@ public class IkasanFlowTestRule implements TestRule
                 if (flow != null && flowTestHarness != null)
                 {
                     flow.stop();
-                    assertEquals("flow should be stopped", errorEndState ?
+                    assertEquals("in rule apply - flow should be stopped", errorEndState ?
                             "stoppedInError" :
                             "stopped", flow.getState());
                     flowTestHarness.assertIsSatisfied();
@@ -435,7 +435,7 @@ public class IkasanFlowTestRule implements TestRule
             configuration.setEager(false); // do not callback on the provider once complete
         }
         flow.start();
-        Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState());
+        Assert.assertEquals("In startFlow with flowSubject - flow should be running", Flow.RUNNING, flow.getState());
     }
 
     /**
@@ -457,7 +457,7 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.addFlowListener(testHarnessFlowEventListener);
         flow.start();
-        Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState());
+        Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState());
     }
 
     /**
@@ -522,7 +522,7 @@ public class IkasanFlowTestRule implements TestRule
     {
         flow.stop();
         flow.removeFlowListener(testHarnessFlowEventListener);
-        assertEquals("flow should be stopped", errorEndState ?
+        assertEquals("in stopFlow() - flow should be stopped", errorEndState ?
             "stoppedInError" :
             "stopped", flow.getState());
     }
