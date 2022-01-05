@@ -134,7 +134,6 @@ public class JmsSampleFlowTest {
     @Before
     public void setup() throws JMSException {
         flowTestRule = new IkasanFlowTestRule();
-
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
         browseMessagesOnQueueVerifier = new BrowseMessagesOnQueueVerifier(brokerUrl, "target" );
@@ -143,6 +142,7 @@ public class JmsSampleFlowTest {
 
     @After
     public void teardown() throws Exception {
+        System.out.println("In teardown method for test " + name.getMethodName());
         browseMessagesOnQueueVerifier.stop();
         removeAllMessages();
         clearDatabase();
@@ -198,7 +198,6 @@ public class JmsSampleFlowTest {
      * @throws JMSException
      */
     private void removeAllMessages() throws Exception {
-        flowTestRule.stopFlow();
         new ActiveMqHelper().removeAllMessages();
     }
 
