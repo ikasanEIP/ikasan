@@ -52,10 +52,8 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +93,10 @@ public class JmsSampleFlowTest {
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     private Logger logger = LoggerFactory.getLogger(JmsSampleFlowTest.class);
+
+    @Rule
+    public TestName name = new TestName();
+
     @Resource
     private Module<Flow> moduleUnderTest;
 
@@ -127,9 +129,12 @@ public class JmsSampleFlowTest {
 
     private BrowseMessagesOnQueueVerifier browseMessagesOnQueueVerifier;
 
+
+
     @Before
     public void setup() throws JMSException {
         flowTestRule = new IkasanFlowTestRule();
+
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
         browseMessagesOnQueueVerifier = new BrowseMessagesOnQueueVerifier(brokerUrl, "target" );
@@ -143,8 +148,11 @@ public class JmsSampleFlowTest {
         clearDatabase();
         resetExceptionGeneratingBroker();
         resetDelayGeneratingBroker();
-        flowTestRule.stopFlow();
+        flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError"});
+
     }
+
+
 
     @AfterClass
     public static void shutdownBroker(){
@@ -155,7 +163,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_Jms_Sample_Flow() throws Exception {
-
+        System.out.println("test_Jms_Sample_Flow");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -212,6 +220,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_exclusion() {
+        System.out.println("test_exclusion");
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -255,6 +264,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_exclusion_followed_by_resubmission() {
+        System.out.println("test_exclusion_followed_by_resubmission");
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -329,7 +339,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_exclusion_followed_by_ignore() {
-
+        System.out.println("test_exclusion_followed_by_ignore");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -387,7 +397,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_flow_in_recovery() {
-
+        System.out.println("test_flow_in_recovery");
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -434,7 +444,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_flow_in_scheduled_recovery() {
-
+        System.out.println("test_flow_in_scheduled_recovery");
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -491,7 +501,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_flow_stopped_in_error() {
-
+        System.out.println("test_flow_stopped_in_error");
 
         // setup custom broker to throw an exception
         ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
@@ -539,7 +549,7 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_transaction_timeout_stopped_in_error() {
-
+        System.out.println("test_transaction_timeout_stopped_in_error");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
