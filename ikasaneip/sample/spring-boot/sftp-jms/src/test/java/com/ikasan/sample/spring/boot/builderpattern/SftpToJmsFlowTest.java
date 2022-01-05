@@ -46,6 +46,7 @@ import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -112,6 +113,11 @@ public class SftpToJmsFlowTest
             flowTestRule.stopFlow();
         }
         new ActiveMqHelper().removeAllMessages();
+    }
+
+    @AfterClass
+    public static void shutdownBroker(){
+        new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
