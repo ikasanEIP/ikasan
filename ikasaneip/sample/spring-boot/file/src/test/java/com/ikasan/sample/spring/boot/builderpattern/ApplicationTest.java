@@ -48,6 +48,7 @@ import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
@@ -165,6 +166,11 @@ public class ApplicationTest
     public void after(){
             flowTestRule.stopFlow();
             new ActiveMqHelper().removeAllMessages();
+    }
+
+    @AfterClass
+    public static void shutdownBroker(){
+        new ActiveMqHelper().shutdownBroker();
     }
 
     @Test

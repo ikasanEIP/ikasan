@@ -48,10 +48,7 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -277,6 +274,11 @@ public class ScheduledToJmsFlowTest
                 List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
                 assertEquals(expectedNumberOfExclusions, exclusions.size());
             });
+    }
+
+    @AfterClass
+    public static void shutdownBroker(){
+        new ActiveMqHelper().shutdownBroker();
     }
 
 }
