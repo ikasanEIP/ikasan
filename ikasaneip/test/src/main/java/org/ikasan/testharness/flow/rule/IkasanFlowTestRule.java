@@ -459,8 +459,7 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.addFlowListener(testHarnessFlowEventListener);
         flow.start();
-       // Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState());
-        Assert.assertEquals("In startFlow() - flow should be running", "Bob", flow.getState());
+        Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState());
     }
 
     /**
