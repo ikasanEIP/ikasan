@@ -44,6 +44,7 @@ import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -86,7 +87,7 @@ public class JmsFlowTest
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    private static String SAMPLE_MESSAGE = "Hello world!";
+    private static String SAMPLE_MESSAGE = "Hello world from JmsFlowTest !";
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
@@ -104,10 +105,13 @@ public class JmsFlowTest
     @After
     public void shutdown(){
         flowTestRule.stopFlow();
+        new ActiveMqHelper().removeAllMessages();
         messageListenerVerifier.stop();
         flowTestRule.sleep(500L);
-        new ActiveMqHelper().removeAllMessages();
+
     }
+
+
 
     @Test
     public void test_Jms_Flow()
@@ -140,6 +144,11 @@ public class JmsFlowTest
 
         flowTestRule.assertIsSatisfied();
 
+    }
+
+    @AfterClass
+    public static void shutdownBroker(){
+        new ActiveMqHelper().shutdownBroker();
     }
 
 }
