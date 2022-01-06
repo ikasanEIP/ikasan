@@ -42,6 +42,8 @@ package org.ikasan.module.startup.dao;
 
 import org.ikasan.spec.module.StartupControl;
 
+import java.util.List;
+
 /**
  * Data Access interface for the persistence of <code>StartupControl</code>s
  * 
@@ -60,7 +62,14 @@ public interface StartupControlDao
      * @return the <code>FlowStartupControl</code> for the specified <code>Flow</code>
      */
     StartupControl getStartupControl(String moduleName, String flowName);
-    
+
+    /**
+     * Return all startupControls for a given module.
+     * @param moduleName
+     * @return
+     */
+    List<StartupControl> getStartupControls(String moduleName);
+
     /**
      * Persists the <code>FlowStartupControl</code>
      * 

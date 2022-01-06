@@ -126,35 +126,30 @@ public class ModuleActivatorDefaultImplTest
     @Test
     public void test_successful_activate_existing_startupControl()
     {
-        List flows = new ArrayList();
-        flows.add(flow1);
+        List flowsEmpty = new ArrayList();
+
+        final List flowsPopulated = new ArrayList();
+        flowsPopulated.add(flow1);
+
+        final List startupControls = new ArrayList();
+        startupControls.add(flowStartupControl);
 
         moduleActivator =
             new ExtendedModuleActivator(configurationService, startupControlDao, dashboardRestService, dashboardRestService);
 
         String moduleName = "moduleName";
-        StartupControl startupControl = new StartupControlImpl("moduleName", "flowname1");
 
         mockery.checking(new Expectations()
         {
             {
-                oneOf(configurationService).configure(configuredModuleConfiguration);
-                ignoring(configuredResource);
+                exactly(1).of(startupControlDao).getStartupControls(moduleName);
+                will(returnValue(startupControls));
 
-                oneOf(module).getFlows();
-                will(returnValue(flows));
-
-                exactly(1).of(flow1).getName();
+                exactly(1).of(flowStartupControl).getFlowName();
                 will(returnValue("flowname1"));
 
-                oneOf(module).getName();
-                will(returnValue(moduleName));
-
-                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
-                will(returnValue(startupControl));
-
-                oneOf(module).getFlows();
-                will(returnValue(flows));
+                oneOf(configurationService).configure(configuredModuleConfiguration);
+                ignoring(configuredResource);
 
                 oneOf(flowFactoryCapable).getFlowFactory();
                 will(returnValue(flowFactory));
@@ -163,20 +158,17 @@ public class ModuleActivatorDefaultImplTest
                 will(returnValue(flow1));
 
                 exactly(1).of(module).getFlows();
-                will(returnValue(flows));
+                will(returnValue(flowsEmpty));
 
                 // start flows
                 exactly(1).of(module).getFlows();
-                will(returnValue(flows));
+                will(returnValue(flowsPopulated));
 
                 exactly(1).of(module).getName();
                 will(returnValue(moduleName));
 
-                exactly(2).of(flow1).getName();
+                exactly(1).of(flow1).getName();
                 will(returnValue("flowname1"));
-
-                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
-                will(returnValue(flowStartupControl));
 
                 exactly(1).of(flowStartupControl).getStartupType();
                 will(returnValue(StartupType.AUTOMATIC));
@@ -194,8 +186,12 @@ public class ModuleActivatorDefaultImplTest
     @Test
     public void test_successful_activate_no_existing_startupControl()
     {
-        List flows = new ArrayList();
-        flows.add(flow1);
+        List flowsEmpty = new ArrayList();
+
+        final List flowsPopulated = new ArrayList();
+        flowsPopulated.add(flow1);
+
+        final List startupControls = new ArrayList();
 
         moduleActivator =
             new ExtendedModuleActivator(configurationService, startupControlDao, dashboardRestService, dashboardRestService);
@@ -205,23 +201,16 @@ public class ModuleActivatorDefaultImplTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(startupControlDao).getStartupControls(moduleName);
+                will(returnValue(startupControls));
+
                 oneOf(configurationService).configure(configuredModuleConfiguration);
                 ignoring(configuredResource);
-
-                oneOf(module).getFlows();
-                will(returnValue(flows));
-
-                exactly(1).of(flow1).getName();
-                will(returnValue("flowname1"));
 
                 oneOf(module).getName();
                 will(returnValue(moduleName));
 
-                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
-                will(returnValue(null));
-
-                oneOf(module).getFlows();
-                will(returnValue(flows));
+                oneOf(startupControlDao).save(with(any(StartupControl.class)));
 
                 oneOf(flowFactoryCapable).getFlowFactory();
                 will(returnValue(flowFactory));
@@ -229,29 +218,18 @@ public class ModuleActivatorDefaultImplTest
                 oneOf(flowFactory).create("flowname1");
                 will(returnValue(flow1));
 
-                exactly(1).of(module).getName();
-                will(returnValue(moduleName));
-
-                exactly(1).of(startupControlDao).save(with(any(StartupControl.class)));
-
                 exactly(1).of(module).getFlows();
-                will(returnValue(flows));
+                will(returnValue(flowsEmpty));
 
                 // start flows
                 exactly(1).of(module).getFlows();
-                will(returnValue(flows));
+                will(returnValue(flowsPopulated));
 
                 exactly(1).of(module).getName();
                 will(returnValue(moduleName));
 
-                exactly(2).of(flow1).getName();
+                exactly(1).of(flow1).getName();
                 will(returnValue("flowname1"));
-
-                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
-                will(returnValue(flowStartupControl));
-
-                exactly(1).of(flowStartupControl).getStartupType();
-                will(returnValue(StartupType.AUTOMATIC));
 
                 oneOf(flow1).start();
 

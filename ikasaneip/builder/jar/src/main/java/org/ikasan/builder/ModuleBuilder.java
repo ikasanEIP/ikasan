@@ -206,7 +206,7 @@ public class ModuleBuilder
         Module module;
 	    if(flowFactory != null)
         {
-            module = new ConfiguredModuleImpl(this.name, this.version, this.flowFactory, getUrl());
+            module = new ConfiguredModuleImpl(this.name, this.version, this.flows, this.flowFactory, getUrl());
             if(module instanceof ConfiguredResource)
             {
                 ((ConfiguredResource)module).setConfiguredResourceId(this.name);

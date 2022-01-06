@@ -41,8 +41,11 @@
 package org.ikasan.module;
 
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowFactory;
 import org.ikasan.spec.module.Module;
+
+import java.util.List;
 
 /**
  * A configured resource representation of a Module
@@ -95,14 +98,15 @@ public class ConfiguredModuleImpl extends AbstractModule implements Module, Flow
 
     /**
      * Constructor
-     *
-     * @param name The name of the module
-     * @param version version of the module
-     * @param flowFactory factory for the generation of flow instances
+     * @param name
+     * @param version
+     * @param flows
+     * @param flowFactory
+     * @param url
      */
-    public ConfiguredModuleImpl(String name, String version, FlowFactory flowFactory, String url)
+    public ConfiguredModuleImpl(String name, String version, List<Flow> flows, FlowFactory flowFactory, String url)
     {
-        super(name, version, url);
+        super(name, flows, version, url);
         this.flowFactory = flowFactory;
         if(flowFactory == null)
         {
