@@ -1,11 +1,11 @@
-package org.ikasan.ootb.scheduler.agent.rest.dto;
+package org.ikasan.ootb.scheduled.model;
 
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
 
-public class InternalEventDrivenJobDto implements InternalEventDrivenJob {
+public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
 
     private List<String> successfulReturnCodes;
     private String workingDirectory;
