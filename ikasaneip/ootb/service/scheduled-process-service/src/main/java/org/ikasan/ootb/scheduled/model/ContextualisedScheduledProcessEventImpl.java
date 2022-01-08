@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduled.model;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
+import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 /**
  * Contextualised Scheduled Process Event defines the core event managed by the Scheduler Agent that runs within a context
@@ -56,6 +57,7 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     private String contextId;
     private String contextInstanceId;
     private boolean skipped;
+    private InternalEventDrivenJob internalEventDrivenJob;
 
     @Override
     public String getContextId() {
@@ -85,6 +87,16 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     @Override
     public boolean isSkipped() {
         return this.skipped;
+    }
+
+    @Override
+    public void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob) {
+        this.internalEventDrivenJob = internalEventDrivenJob;
+    }
+
+    @Override
+    public InternalEventDrivenJob getInternalEventDrivenJob() {
+        return this.internalEventDrivenJob;
     }
 
     @Override
