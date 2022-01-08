@@ -1,5 +1,7 @@
 package org.ikasan.spec.scheduled.event.model;
 
+import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
+
 public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
     extends DryRunParameters> extends ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS> {
 
@@ -43,4 +45,16 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      * @return
      */
     boolean isSkipped();
+
+    /**
+     * Set the InternalEventDrivenJob
+     * @param internalEventDrivenJob
+     */
+    void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob);
+
+    /**
+     * Get the InternalEventDrivenJob
+     * @return
+     */
+    InternalEventDrivenJob getInternalEventDrivenJob();
 }

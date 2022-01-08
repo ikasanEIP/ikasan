@@ -88,7 +88,7 @@ import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ContextualisedProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ScheduledProcessEventJobStartBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ContextualisedProcessExecutionBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -96,7 +96,6 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -137,7 +136,7 @@ public class JobProcessingFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobInitiationEventConverter() { return new JobInitiationToScheduledProcessEventConverter(moduleName); }
+    public Converter getJobInitiationEventConverter() { return new JobInitiationToContextualisedScheduledProcessEventConverter(moduleName); }
 
     /**
      * Get the broker that tells the dashboard that a job has started.
@@ -155,11 +154,7 @@ public class JobProcessingFlowComponentFactory
      */
     public Broker getProcessExecutionBroker()
     {
-        ContextualisedProcessExecutionBrokerConfiguration configuration = new ContextualisedProcessExecutionBrokerConfiguration();
-        configuration.setCommandLine("pwd");    // default safe command across all platforms
-
         ContextualisedProcessExecutionBroker processExecutionBroker = new ContextualisedProcessExecutionBroker();
-        processExecutionBroker.setConfiguration(configuration);
         return processExecutionBroker;
     }
 
