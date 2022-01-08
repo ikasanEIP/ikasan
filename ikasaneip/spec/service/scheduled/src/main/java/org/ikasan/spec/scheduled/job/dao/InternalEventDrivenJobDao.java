@@ -5,7 +5,7 @@ import org.ikasan.spec.search.SearchResults;
 
 import java.util.List;
 
-public interface InternalEventDrivenJobRecordDao<T extends InternalEventDrivenJobRecord> {
+public interface InternalEventDrivenJobDao<T extends InternalEventDrivenJobRecord> {
 
     SearchResults<? extends T> findAll(int limit, int offset);
 

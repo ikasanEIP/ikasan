@@ -1,11 +1,9 @@
 package org.ikasan.spec.scheduled.job.dao;
 
-import org.ikasan.spec.scheduled.job.model.QuartzScheduleDrivenJobRecord;
+import org.ikasan.spec.scheduled.job.model.SchedulerJobRecord;
 import org.ikasan.spec.search.SearchResults;
 
-import java.util.List;
-
-public interface QuartzScheduleDrivenJobRecordDao<T extends QuartzScheduleDrivenJobRecord> {
+public interface SchedulerJobDao<T extends SchedulerJobRecord> {
 
     SearchResults<? extends T> findAll(int limit, int offset);
 

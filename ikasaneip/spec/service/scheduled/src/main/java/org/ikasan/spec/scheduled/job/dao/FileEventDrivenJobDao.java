@@ -1,9 +1,11 @@
 package org.ikasan.spec.scheduled.job.dao;
 
-import org.ikasan.spec.scheduled.job.model.SchedulerJobRecord;
+import org.ikasan.spec.scheduled.job.model.FileEventDrivenJobRecord;
 import org.ikasan.spec.search.SearchResults;
 
-public interface SchedulerJobRecordDao<T extends SchedulerJobRecord> {
+import java.util.List;
+
+public interface FileEventDrivenJobDao<T extends FileEventDrivenJobRecord> {
 
     SearchResults<? extends T> findAll(int limit, int offset);
 
