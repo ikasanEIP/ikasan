@@ -16,7 +16,7 @@ public interface ContextDependency {
 
     void setLogicalGrouping(LogicalGrouping logicalGrouping);
 
-    List<ContextDependency> getContextDependencies();
-
-    void setContextDependencies(List<ContextDependency> contextDependencies);
+//    List<ContextDependency> getContextDependencies();
+//
+//    void setContextDependencies(List<ContextDependency> contextDependencies);
 }

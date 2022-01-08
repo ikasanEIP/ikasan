@@ -18,7 +18,7 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public InternalEventDrivenJobDto getInternalEventDrivenJob() {
-        return null;
+        return this.internalEventDrivenJob;
     }
 
     @Override

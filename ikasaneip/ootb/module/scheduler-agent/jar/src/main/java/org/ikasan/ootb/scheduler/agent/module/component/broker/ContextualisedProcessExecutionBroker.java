@@ -42,10 +42,8 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
 import org.ikasan.ootb.scheduled.model.Outcome;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ContextualisedProcessExecutionBrokerConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
@@ -62,16 +60,12 @@ import java.util.Random;
  *
  * @author Ikasan Development Team
  */
-public class ContextualisedProcessExecutionBroker implements Broker<ContextualisedScheduledProcessEvent, ContextualisedScheduledProcessEvent>,
-    ConfiguredResource<ContextualisedProcessExecutionBrokerConfiguration>
+public class ContextualisedProcessExecutionBroker implements Broker<ContextualisedScheduledProcessEvent, ContextualisedScheduledProcessEvent>
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ContextualisedProcessExecutionBroker.class);
 
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-
-    private String configuredResourceId;
-    private ContextualisedProcessExecutionBrokerConfiguration configuration;
 
     @Override
     public ContextualisedScheduledProcessEvent invoke(ContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
@@ -90,12 +84,13 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
             return scheduledProcessEvent;
         }
 
-        String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
+        String[] commandLineArgs = getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
 
         // allow change of the new process working directory
-        if(configuration.getWorkingDirectory() != null && configuration.getWorkingDirectory().length() > 0) {
-            File workingDirectory = new File(configuration.getWorkingDirectory());
+        if(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory() != null
+            && scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory().length() > 0) {
+            File workingDirectory = new File(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory());
             processBuilder.directory(workingDirectory);
         }
 
@@ -127,7 +122,8 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
 
                 scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
                 scheduledProcessEvent.setReturnCode(process.exitValue());
-                if( (configuration.getSuccessfulReturnCodes() == null || configuration.getSuccessfulReturnCodes().size() == 0)) {
+                if( (scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes() == null
+                    || scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes().size() == 0)) {
                     if(scheduledProcessEvent.getReturnCode() == 0) {
                         scheduledProcessEvent.setSuccessful(true);
                     }
@@ -138,7 +134,7 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
                 else
                 {
                     scheduledProcessEvent.setSuccessful(false);
-                    for(String returnCode:configuration.getSuccessfulReturnCodes()) {
+                    for(String returnCode:scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes()) {
                         if(Integer.parseInt(returnCode) == scheduledProcessEvent.getReturnCode()) {
                             scheduledProcessEvent.setSuccessful(true);
                             break;
@@ -162,7 +158,7 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
                 scheduledProcessEvent.setCommandLine( info.commandLine().get() );
             }
             else {
-                scheduledProcessEvent.setCommandLine( configuration.getCommandLine() );
+                scheduledProcessEvent.setCommandLine(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
             }
 
             scheduledProcessEvent.setPid( process.pid() );
@@ -241,25 +237,5 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
         }
 
         throw new EndpointException("Invalid commandLine [" + commandLine + "]");
-    }
-
-    @Override
-    public String getConfiguredResourceId() {
-        return configuredResourceId;
-    }
-
-    @Override
-    public void setConfiguredResourceId(String configuredResourceId) {
-        this.configuredResourceId = configuredResourceId;
-    }
-
-    @Override
-    public ContextualisedProcessExecutionBrokerConfiguration getConfiguration() {
-        return configuration;
-    }
-
-    @Override
-    public void setConfiguration(ContextualisedProcessExecutionBrokerConfiguration configuration) {
-        this.configuration = configuration;
     }
 }
