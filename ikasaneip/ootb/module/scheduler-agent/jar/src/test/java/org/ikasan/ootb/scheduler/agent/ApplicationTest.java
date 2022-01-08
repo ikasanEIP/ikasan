@@ -42,21 +42,23 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.scheduled.context.model.And;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
@@ -87,9 +89,17 @@ public class ApplicationTest
     @Resource
     private IBigQueue outboundQueue;
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+
+    @BeforeClass
+    public static void setupObjectMapper(){
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class);
+
+        objectMapper.registerModule(simpleModule);
+    }
 
     @Before
     public void setup() throws IOException {
@@ -151,6 +161,15 @@ public class ApplicationTest
 
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("Scheduler Flow 1");
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        internalEventDrivenJobDto.setAgentName("agent name");
+        internalEventDrivenJobDto.setCommandLine("pwd");
+        internalEventDrivenJobDto.setContextId("contextId");
+        internalEventDrivenJobDto.setIdentifier("identifier");
+        internalEventDrivenJobDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobDto.setWorkingDirectory(".");
+        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
