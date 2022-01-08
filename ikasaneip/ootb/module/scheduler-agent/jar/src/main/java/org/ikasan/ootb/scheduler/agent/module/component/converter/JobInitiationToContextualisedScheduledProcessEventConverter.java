@@ -55,7 +55,7 @@ import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
  *
  * @author Ikasan Development Team
  */
-public class JobInitiationToScheduledProcessEventConverter implements Converter<String, ContextualisedScheduledProcessEvent>
+public class JobInitiationToContextualisedScheduledProcessEventConverter implements Converter<String, ContextualisedScheduledProcessEvent>
 {
     String moduleName;
     ObjectMapper objectMapper;
@@ -64,7 +64,7 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
      * Constructor
      * @param moduleName
      */
-    public JobInitiationToScheduledProcessEventConverter(String moduleName)
+    public JobInitiationToContextualisedScheduledProcessEventConverter(String moduleName)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -92,6 +92,7 @@ public class JobInitiationToScheduledProcessEventConverter implements Converter<
             scheduledProcessEvent.setDryRun(schedulerJobInitiationEvent.isDryRun());
             scheduledProcessEvent.setDryRunParameters(schedulerJobInitiationEvent.getDryRunParameters());
             scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
+            scheduledProcessEvent.setInternalEventDrivenJob(schedulerJobInitiationEvent.getInternalEventDrivenJob());
 
             // We are going to use a file naming convention for the log files used by the proceess to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-suffix.log.
