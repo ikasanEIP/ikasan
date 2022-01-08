@@ -352,7 +352,7 @@
         <version.glassfish.javax.el>3.0.0</version.glassfish.javax.el>
         <version.commons-io>2.8.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
-        <version.thymeleaf>3.0.11.RELEASE</version.thymeleaf>
+        <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
     </properties>
 
     <!-- Distribution for releases -->
