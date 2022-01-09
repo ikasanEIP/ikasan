@@ -15,7 +15,7 @@ import javax.annotation.Resource;
 import javax.jms.ConnectionFactory;
 
 @Configuration
-public class JmsToSftpFlowComponentFactory
+public class JmsToSftpChunkingFlowComponentFactory
 {
     @Resource
     private BuilderFactory builderFactory;
@@ -24,40 +24,41 @@ public class JmsToSftpFlowComponentFactory
     private String brokerUrl;
 
     @Bean
-    @ConfigurationProperties(prefix = "jms.to.sftp.flow.jms.consumer")
+    @ConfigurationProperties(prefix = "jms.to.sftp.chunking.flow.jms.consumer")
 
-    public SpringMessageConsumerConfiguration jmsSftpConsumerConfiguration()
+    public SpringMessageConsumerConfiguration jmsSftpChunkingConsumerConfiguration()
     {
         return new SpringMessageConsumerConfiguration();
     }
 
     @Bean
-    public Consumer jmsSftpConsumer(SpringMessageConsumerConfiguration jmsSftpConsumerConfiguration)
+    public Consumer jmsSftpChunkingConsumer(SpringMessageConsumerConfiguration jmsSftpChunkingConsumerConfiguration)
     {
 
         ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
         return builderFactory.getComponentBuilder().jmsConsumer()
                              .setConnectionFactory(consumerConnectionFactory)
-                             .setConfiguration(jmsSftpConsumerConfiguration)
-                             .setConfiguredResourceId("sftpJmsConsumer")
+                             .setConfiguration(jmsSftpChunkingConsumerConfiguration)
+                             .setConfiguredResourceId("sftpChunkingJmsConsumer")
                              .build();
 
     }
 
     @Bean
-    @ConfigurationProperties(prefix = "jms.to.sftp.flow.sftp.producer")
-    public SftpProducerConfiguration sftpProducerConfiguration()
+    @ConfigurationProperties(prefix = "jms.to.sftp.chunking.flow.sftp.producer")
+    public SftpProducerConfiguration sftpChunkingProducerConfiguration()
     {
         return new SftpProducerConfiguration();
     }
 
     @Bean
-    public Producer sftpProducer(SftpProducerConfiguration sftpProducerConfiguration)
+    public Producer sftpChunkingProducer(SftpProducerConfiguration sftpChunkingProducerConfiguration)
     {
 
         return builderFactory.getComponentBuilder().sftpProducer()
-                             .setConfiguration(sftpProducerConfiguration)
-                             .setConfiguredResourceId("sftpProducerConfiguration").build();
+                             .setConfiguration(sftpChunkingProducerConfiguration)
+                             .setConfiguredResourceId("sftpChunkingProducerConfiguration")
+                             .build();
 
     }
 
