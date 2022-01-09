@@ -28,6 +28,8 @@ public class ModuleConfig
 
     @Resource
     private Flow sftpChunkingToJmsFlow;
+    @Resource
+    private Flow jmsToSftpChunkingFlow;
 
     @Bean
     public Module getModule()
@@ -38,6 +40,7 @@ public class ModuleConfig
                              .addFlow(sftpToJmsFlow)
                              .addFlow(jmsToSftpFlow)
                              .addFlow(sftpChunkingToJmsFlow)
+                             .addFlow(jmsToSftpChunkingFlow)
                              .build();
 
     }
