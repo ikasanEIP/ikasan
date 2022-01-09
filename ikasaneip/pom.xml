@@ -306,7 +306,6 @@
         <version.com.unboundid>2.3.4</version.com.unboundid>
         <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
         <version.com.h2database>1.4.200</version.com.h2database>
-        <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
         <version.org.liquibase>3.8.5</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.28</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
@@ -2083,13 +2082,7 @@
                 <artifactId>h2</artifactId>
                 <version>${version.com.h2database}</version>
             </dependency>
-
-            <dependency>
-                <groupId>mysql</groupId>
-                <artifactId>mysql-connector-java</artifactId>
-                <version>${version.com.mysqldriver}</version>
-            </dependency>
-
+            
             <dependency>
                 <groupId>org.liquibase</groupId>
                 <artifactId>liquibase-core</artifactId>
