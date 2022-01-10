@@ -98,14 +98,6 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- XML serialisation/deserialisation, used for testing -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>${version.com.thoughtworks.xstream}</version>
-            <scope>test</scope>
-        </dependency>
-
 		<dependency>
 			<groupId>joda-time</groupId>
 			<artifactId>joda-time</artifactId>

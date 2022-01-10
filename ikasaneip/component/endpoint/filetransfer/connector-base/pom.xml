@@ -103,13 +103,6 @@
             <artifactId>spring-orm</artifactId>
         </dependency>
 
-		<!-- XML serialisation/deserialisation, used for testing -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>${version.com.thoughtworks.xstream}</version>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Test Dependencies -->
 		<dependency>
