@@ -56,14 +56,7 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <!-- Needed for XML to Object serialisiation -->
-        <dependency>
-            <groupId>com.thoughtworks.xstream</groupId>
-            <artifactId>xstream</artifactId>
-            <version>${version.com.thoughtworks.xstream}</version>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Needed for XML parsing -->
+       <!-- Needed for XML parsing -->
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>

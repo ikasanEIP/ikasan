@@ -41,11 +41,16 @@
 package org.ikasan.connector.basefiletransfer.outbound;
 
 import java.io.InputStream;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import javax.resource.NotSupportedException;
 import javax.resource.ResourceException;
 import javax.resource.cci.*;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +84,23 @@ public abstract class BaseFileTransferConnectionImpl implements BaseFileTransfer
 
 	protected List<TransactionCommitFailureListener> listeners = new ArrayList<TransactionCommitFailureListener>();
 
+	protected JAXBContext jaxbContext;
+	protected Unmarshaller unmarshaller;
+	protected Marshaller marshaller;
+
+	public BaseFileTransferConnectionImpl(){
+
+        try
+        {
+            jaxbContext = JAXBContext.newInstance(FileChunkHeader.class);
+            unmarshaller = jaxbContext.createUnmarshaller();
+            marshaller = jaxbContext.createMarshaller();
+        }
+        catch (JAXBException e)
+        {
+            throw new RuntimeException("Unable to Create jaxbContext for FileChunkHeader", e);
+        }
+    }
     /**
      * Deliver the InputStream
      * 
@@ -147,7 +169,23 @@ public abstract class BaseFileTransferConnectionImpl implements BaseFileTransfer
     {    	
     	String paylaodId = ""+header.getFileName().hashCode();
 
-    	Payload payload = payloadFactory.newPayload(paylaodId,  header.toXml().getBytes());
+        //Print XML String to Console
+        StringWriter sw = new StringWriter();
+
+        //Write XML to StringWriter
+        try
+        {
+            marshaller.marshal(header, sw);
+        }
+        catch (JAXBException e)
+        {
+            throw new RuntimeException("Unable to create XML From FileChunk Header"+ header,e);
+        }
+
+        //Verify XML Content
+        String xmlHeader = sw.toString();
+
+    	Payload payload = payloadFactory.newPayload(paylaodId,  xmlHeader.getBytes());
         
         payload.setAttribute(REFERENCE_PAYLOAD_ATTRIBUTE, Boolean.TRUE.toString());
         payload.setAttribute(FilePayloadAttributeNames.FILE_NAME, header.getFileName());
