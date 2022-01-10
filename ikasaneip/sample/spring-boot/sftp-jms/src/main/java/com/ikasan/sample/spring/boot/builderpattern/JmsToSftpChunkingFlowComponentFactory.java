@@ -55,7 +55,7 @@ public class JmsToSftpChunkingFlowComponentFactory
     public Producer sftpChunkingProducer(SftpProducerConfiguration sftpChunkingProducerConfiguration)
     {
 
-        return builderFactory.getComponentBuilder().sftpProducer()
+        return builderFactory.getComponentBuilder().chunkSftpProducer()
                              .setConfiguration(sftpChunkingProducerConfiguration)
                              .setConfiguredResourceId("sftpChunkingProducerConfiguration")
                              .build();

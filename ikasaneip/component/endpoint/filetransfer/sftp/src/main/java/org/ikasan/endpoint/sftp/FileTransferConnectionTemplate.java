@@ -41,8 +41,6 @@
 package org.ikasan.endpoint.sftp;
 
 import com.google.common.cache.Cache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.client.ConnectionCallback;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -57,12 +55,15 @@ import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.connector.sftp.outbound.SFTPManagedConnection;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.filetransfer.Payload;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionSpec;
-import javax.transaction.*;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -137,6 +138,31 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
         sftpManagedConnection.openSession();
         // Return the managed connection (with an open session)
 
+    }
+
+    /**
+     *  Delivering a payload For chunked Payload
+     *
+     * @param payload - The payload to deliver
+     * @param outputDir - The directory to place the file in
+     * @param outputTargets - The Map of targets to deliver the file to
+     * @param overwrite - Overwrite existing files flag
+     * @param renameExtension - The extension for the temp file rename
+     * @param checksumDelivered - Flag for whether we perform checksumming
+     * @param unzip - Flag for whether we unzip the delivered file
+     * @param cleanup - Cleanup txn journal flag
+     * @throws ResourceException - Exception if JCA connector fails
+     */
+    public void deliverPayload(final Payload payload, final String outputDir, final Map<String, String> outputTargets, final boolean overwrite,
+                               final String renameExtension, final boolean checksumDelivered, final boolean unzip, final boolean cleanup) throws ResourceException
+    {
+        execute(connection -> {
+            addListenersToConnection((BaseFileTransferConnection) connection);
+
+            ((BaseFileTransferConnection) connection).deliverPayload(payload, outputDir, outputTargets, overwrite, renameExtension, checksumDelivered,
+                    unzip, cleanup);
+            return null;
+        });
     }
 
     /**
