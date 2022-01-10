@@ -68,8 +68,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.resource.ResourceException;
+import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -296,7 +298,17 @@ public class FTPConnectionImpl extends BaseFileTransferConnectionImpl
         String outputTarget = selector.getTargetDirectory(payload, outputDir);
         if(isChunkReference(payload))
         {
-            FileChunkHeader reconstitutedFileChunkHeader = FileChunkHeader.fromXml(new String(payload.getContent()));
+            String xml= new String(payload.getContent());
+            FileChunkHeader reconstitutedFileChunkHeader = null;
+            try
+            {
+                reconstitutedFileChunkHeader = (FileChunkHeader)unmarshaller.unmarshal(new StringReader(xml));
+            }
+            catch (JAXBException e)
+            {
+                throw new ConnectorException("Could not deserialize payload content ",e);
+            }
+
             if(reconstitutedFileChunkHeader == null)
             {
                 throw new ConnectorException("Could not deserialize payload content"); //$NON-NLS-1$
