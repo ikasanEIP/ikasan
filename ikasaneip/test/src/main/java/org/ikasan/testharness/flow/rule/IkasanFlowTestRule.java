@@ -621,7 +621,7 @@ public class IkasanFlowTestRule implements TestRule
         try
         {
 
-            Method method = c.getDeclaredMethod ("getConfiguration", null);
+            Method method = c.getMethod ("getConfiguration", null);
             return (T) method.invoke (component, null);
         }
         catch (IllegalAccessException|InvocationTargetException |NoSuchMethodException e)
