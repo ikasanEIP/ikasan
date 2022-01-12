@@ -25,16 +25,21 @@ install:
 #  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
 
 deploy:
-  # deploy develop 3.1.x to oss
-  - provider: script
-    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 3.2.x
   # deploy develop 3.2.x to oss
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
+      branch: 3.2.x
+  # deploy develop 3.3.x to oss
+  - provider: script
+    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
       branch: 3.3.x
+  # deploy scheduler development to oss
+  - provider: script
+    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
+      branch: IKASAN-1912-module-dashboard-scheduler
   # Push release to oss
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
