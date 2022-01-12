@@ -57,8 +57,17 @@
                       expression="execution(* org.ikasan.connector.base.command.TransactionalResourceCommandDAO.*(..))
 
 						" />
+
+        <aop:pointcut id="fileChunkDAOMethods"
+                      expression="execution(* org.ikasan.connector.util.chunking.model.dao.FileChunkDao.*(..))
+
+						" />
+
         <aop:advisor id="transactionalResourceCommandDAOPointcutAdvice" advice-ref="requiresNew-TransactionAdvice"
                      pointcut-ref="transactionalResourceCommandDAOMethods" />
+
+        <aop:advisor id="fileChunkDAOPointcutAdvice" advice-ref="requiresNew-TransactionAdvice"
+                     pointcut-ref="fileChunkDAOMethods" />
 
     </aop:config>
 

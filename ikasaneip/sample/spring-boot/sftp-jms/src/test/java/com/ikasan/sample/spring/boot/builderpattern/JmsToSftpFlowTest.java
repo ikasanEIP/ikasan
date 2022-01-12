@@ -38,20 +38,22 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
+import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
@@ -64,9 +66,16 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 import javax.jms.Session;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
+import static org.ikasan.spec.flow.Flow.RECOVERING;
+import static org.ikasan.spec.flow.Flow.RUNNING;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -80,34 +89,48 @@ import static org.junit.Assert.assertNotNull;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsToSftpFlowTest
 {
+    private Logger logger = LoggerFactory.getLogger(JmsToSftpFlowTest.class);
+
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    private Logger logger = LoggerFactory.getLogger(JmsToSftpFlowTest.class);
+    String objectStoreDir = "./transaction-logs";
 
     @Resource
     public Module<Flow> moduleUnderTest;
+
+    @Resource
+    @Autowired
+    @Qualifier("ikasan.xads")
+    private DataSource ikasanxads;
 
     @Resource
     public JmsTemplate jmsTemplate;
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    public SftpRule sftp;
+    @Rule
+    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
 
     @Before
-    public void setup(){
-        sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
-        sftp.start();
-
+    public void setup() throws IOException
+    {
+        FileTestUtil.deleteFile(new File(objectStoreDir));
+        sftp.createDirectories("/source");
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Flow"));
     }
 
     @After
-    public void teardown()
+    public void teardown() throws InterruptedException, SQLException, IOException
     {
-        flowTestRule.stopFlow();
+        sftp.deleteAllFilesAndDirectories();
+        String currentState = flowTestRule.getFlowState();
+        if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
+            flowTestRule.stopFlow();
+        }
         new ActiveMqHelper().removeAllMessages();
-        sftp.stop();
+        new DatabaseHelper(ikasanxads).clearExtendedDatabaseTables();
+
+        Thread.sleep(250);
     }
 
     @AfterClass
@@ -122,7 +145,7 @@ public class JmsToSftpFlowTest
         //Update Sftp Consumer config
         SftpProducerConfiguration consumerConfiguration = flowTestRule
             .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
-        consumerConfiguration.setOutputDirectory(sftp.getBaseDir());
+        consumerConfiguration.setOutputDirectory("/source");
         consumerConfiguration.setRemotePort(sftp.getPort());
         consumerConfiguration.setOverwrite(true);
 
@@ -151,7 +174,7 @@ public class JmsToSftpFlowTest
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
               .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
-        assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
+        assertNotNull(sftp.getFileContent("/source/generatedSftpProducertest.out", Charset.defaultCharset()));
 
 
     }
