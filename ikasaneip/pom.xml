@@ -42,7 +42,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>3.3.0-SNAPSHOT</version>
+    <version>3.3.0-scheduler-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
@@ -579,14 +579,14 @@
                         </goals>
                         <configuration>
                             <rules>
-                                <dependencyConvergence/>
+                                <dependencyConvergence />
                             </rules>
                         </configuration>
                     </execution>
                 </executions>
                 <configuration>
                     <rules>
-                        <dependencyConvergence/>
+                        <dependencyConvergence />
                     </rules>
                 </configuration>
 
@@ -684,7 +684,7 @@
                             <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                             <!-- The server "id" element from settings to use authentication from -->
                             <serverId>ikasaneip-releases</serverId>
-                            <autoReleaseAfterClose></autoReleaseAfterClose>
+                            <autoReleaseAfterClose />
                         </configuration>
                     </plugin>
 

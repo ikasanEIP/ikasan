@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-ootb-module</artifactId>
-        <version>3.3.0-SNAPSHOT</version>
+        <version>3.3.0-scheduler-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
