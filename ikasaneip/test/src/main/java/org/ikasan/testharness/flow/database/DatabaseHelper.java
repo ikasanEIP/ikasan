@@ -1,7 +1,5 @@
 package org.ikasan.testharness.flow.database;
 
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StopWatch;
@@ -33,12 +31,29 @@ public class DatabaseHelper {
         "ERROROCCURRENCE", "EXCLUSIONEVENT", "MESSAGEFILTER", "IKASANWIRETAP"
     };
 
+    public static final String[] EXTENDED_TABLES_TO_CLEAR_BETWEEN_TESTS = new String[]{
+        "CONFPARAMMAPSTRING", "CONFPARAMSTRING",
+        "CONFPARAMMASKEDSTRING", "CONFPARAMMAP",
+        "CONFPARAMMAP", "CONFPARAMLONG", "CONFPARAMLISTSTRING", "CONFPARAMLIST", "CONFPARAMINTEGER", "CONFPARAMBOOLEAN",
+        "CONFIGURATIONPARAMETER", "CONFIGURATION",
+        "ERROROCCURRENCE", "EXCLUSIONEVENT", "MESSAGEFILTER", "IKASANWIRETAP","FTFileChunk","FTFileChunkHeader"
+    };
+
+
     /**
      * Clears all data from tables that may have been added between tests
      */
     public void clearDatabase() throws SQLException {
         clearDatabase(Arrays.asList(MAIN_TABLES_TO_CLEAR_BETWEEN_TESTS));
     }
+
+    /**
+     * Clears all data from tables that may have been added between tests
+     */
+    public void clearExtendedDatabaseTables() throws SQLException {
+        clearDatabase(Arrays.asList(EXTENDED_TABLES_TO_CLEAR_BETWEEN_TESTS));
+    }
+
 
     public void clearDatabase(List<String> tablesToClear) throws SQLException {
         StopWatch clearDbStopWatch = new StopWatch("Clear database timer");

@@ -38,19 +38,24 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
+import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
@@ -59,6 +64,10 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -85,6 +94,11 @@ public class SftpChunkingToJmsFlowTest
     public Module<Flow> moduleUnderTest;
 
     @Resource
+    @Autowired
+    @Qualifier("ikasan.xads")
+    private DataSource ikasanxads;
+
+    @Resource
     public JmsListenerEndpointRegistry registry;
 
     @Resource
@@ -93,31 +107,36 @@ public class SftpChunkingToJmsFlowTest
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
+    String objectStoreDir = "./transaction-logs";
+
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    public SftpRule sftp;
+    @Rule
+    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
 
     public MessageListenerVerifier messageListenerVerifier;
 
     @Before
-    public void setup(){
-        sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
-        sftp.start();
+    public void setup() throws IOException
+    {
+        FileTestUtil.deleteFile(new File(objectStoreDir));
+        sftp.createDirectories("/source","/");
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.chunking.private.jms.queue", registry);
         messageListenerVerifier.start();
-
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp Chunking To Jms Flow"));
     }
 
-    @After public void teardown()
+    @After public void teardown() throws  SQLException, IOException
     {
+        sftp.deleteAllFilesAndDirectories();
         messageListenerVerifier.stop();
-        sftp.stop();
         String currentState = flowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
             flowTestRule.stopFlow();
         }
         new ActiveMqHelper().removeAllMessages();
+        new DatabaseHelper(ikasanxads).clearExtendedDatabaseTables();
+
     }
 
     @AfterClass
@@ -131,12 +150,12 @@ public class SftpChunkingToJmsFlowTest
 
         // Upload data to fake SFTP
 
-        sftp.putFile("bigTextFile.txt",generateMassiveString());
+        sftp.putFile("/source/bigTextFile.txt",generateMassiveString());
 
         //Update Sftp Consumer config
         SftpConsumerConfiguration consumerConfiguration = flowTestRule
             .getComponentConfig("Sftp Chunking Consumer",SftpConsumerConfiguration.class);
-        consumerConfiguration.setSourceDirectory(sftp.getBaseDir());
+        consumerConfiguration.setSourceDirectory("/source");
         consumerConfiguration.setRemotePort(sftp.getPort());
 
         //Setup component expectations
@@ -152,13 +171,14 @@ public class SftpChunkingToJmsFlowTest
 
         flowTestRule.fireScheduledConsumer();
 
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() ->  flowTestRule.assertIsSatisfied());
 
-
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and()
+              .pollDelay(3,TimeUnit.SECONDS)
+              .await().atMost(60, TimeUnit.SECONDS)
               .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
-        ;
+
+        flowTestRule.assertIsSatisfied();
+
         ActiveMQMapMessage mapMessage = (ActiveMQMapMessage) messageListenerVerifier.getCaptureResults().get(0);
         Object content = mapMessage.getContentMap().get("content");
         Assert.assertTrue((content.toString()).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" "
