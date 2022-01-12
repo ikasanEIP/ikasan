@@ -38,18 +38,20 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
+import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
@@ -58,6 +60,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
@@ -83,36 +90,46 @@ public class SftpToJmsFlowTest
     public Module<Flow> moduleUnderTest;
 
     @Resource
+    @Autowired
+    @Qualifier("ikasan.xads")
+    private DataSource ikasanxads;
+
+    @Resource
     public JmsListenerEndpointRegistry registry;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
+    String objectStoreDir = "./transaction-logs";
+
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    public SftpRule sftp;
+    @Rule
+    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
 
     public MessageListenerVerifier messageListenerVerifier;
 
     @Before
-    public void setup(){
-        sftp = new SftpRule("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 21000));
-        sftp.start();
+    public void setup() throws IOException
+    {
+        FileTestUtil.deleteFile(new File(objectStoreDir));
+        sftp.createDirectories("/source");
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
         messageListenerVerifier.start();
-
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
 
-    @After public void teardown()
+    @After public void teardown() throws  SQLException, IOException
     {
         messageListenerVerifier.stop();
-        sftp.stop();
+        sftp.deleteAllFilesAndDirectories();
         String currentState = flowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
             flowTestRule.stopFlow();
         }
         new ActiveMqHelper().removeAllMessages();
+        new DatabaseHelper(ikasanxads).clearExtendedDatabaseTables();
+
     }
 
     @AfterClass
@@ -125,11 +142,11 @@ public class SftpToJmsFlowTest
     {
 
         // Upload data to fake SFTP
-        sftp.putFile("testDownload.txt",SAMPLE_MESSAGE);
+        sftp.putFile("/source/testDownload.txt",SAMPLE_MESSAGE, Charset.defaultCharset());
 
         //Update Sftp Consumer config
         SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer",SftpConsumerConfiguration.class);
-        consumerConfiguration.setSourceDirectory(sftp.getBaseDir());
+        consumerConfiguration.setSourceDirectory("/source");
         consumerConfiguration.setRemotePort(sftp.getPort());
 
         //Setup component expectations
