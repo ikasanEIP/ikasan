@@ -153,8 +153,8 @@ public class ModuleActivatorDefaultImplTest
                 oneOf(flowFactoryCapable).getFlowFactory();
                 will(returnValue(flowFactory));
 
-                oneOf(flowFactory).create("flowname1");
-                will(returnValue(flow1));
+                oneOf(flowFactory).create("flowname1", "profile");
+                will(returnValue(List.of(flow1)));
 
                 exactly(1).of(module).getFlows();
                 will(returnValue(flowsEmpty));
@@ -220,8 +220,8 @@ public class ModuleActivatorDefaultImplTest
                 oneOf(flowFactoryCapable).getFlowFactory();
                 will(returnValue(flowFactory));
 
-                oneOf(flowFactory).create("flowname1");
-                will(returnValue(flow1));
+                oneOf(flowFactory).create("flowname1", "profile");
+                will(returnValue(List.of(flow1)));
 
                 exactly(1).of(module).getFlows();
                 will(returnValue(flowsEmpty));
@@ -500,6 +500,7 @@ public class ModuleActivatorDefaultImplTest
     class ExtendedConfiguredResource implements ConfiguredResource<ConfiguredModuleConfiguration>
     {
         Map<String,String> flowDefinitions = new HashMap<String,String>();
+        Map<String,String> flowDefinitionProfiles = new HashMap();
         ConfiguredModuleConfiguration configuredModuleConfiguration = new ConfiguredModuleConfiguration();
 
         String configuredResourceId = "configuredResourceId";
@@ -508,7 +509,10 @@ public class ModuleActivatorDefaultImplTest
         public ConfiguredModuleConfiguration getConfiguration()
         {
             flowDefinitions.put("flowname1", StartupType.AUTOMATIC.name());
-            configuredModuleConfiguration.setFlowDefinitions(flowDefinitions);
+            flowDefinitionProfiles.put("flowname1", "profile");
+
+            configuredModuleConfiguration.setFlowDefinitions(this.flowDefinitions);
+            configuredModuleConfiguration.setFlowDefinitionProfiles(this.flowDefinitionProfiles);
             return configuredModuleConfiguration;
         }
 
