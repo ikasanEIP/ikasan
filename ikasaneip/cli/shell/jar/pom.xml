@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-shell-parent</artifactId>
-        <version>3.3.0-SNAPSHOT</version>
+        <version>3.3.0-scheduler-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-shell</artifactId>
