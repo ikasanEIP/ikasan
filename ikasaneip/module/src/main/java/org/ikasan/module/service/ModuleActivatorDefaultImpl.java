@@ -42,7 +42,6 @@ package org.ikasan.module.service;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.FlowFactoryCapable;
-import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -146,9 +145,8 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                         StartupControl startupControl = startupControls.get(flowname);
                         if(startupControl == null)
                         {
-                            startupControl = new StartupControlImpl(module.getName(), flowname);
+                            startupControl = this.startupControlDao.getStartupControl(module.getName(), flowname);
                             startupControl.setStartupType( StartupType.valueOf( flowDefinition.getValue()) );
-                            this.startupControlDao.save(startupControl);
                             startupControls.put(flowname,startupControl);
                         }
 
@@ -164,6 +162,11 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         {
             // remove them as they are accounted for
             StartupControl flowStartupControl = startupControls.remove(flow.getName());
+            if(flowStartupControl == null)
+            {
+                flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
+            }
+
             if(StartupType.AUTOMATIC.equals(flowStartupControl.getStartupType()))
             {
                 try
