@@ -42,7 +42,6 @@ package org.ikasan.module.service;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.FlowFactoryCapable;
-import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -135,7 +134,7 @@ public class ModuleActivatorDefaultImplTest
         startupControls.add(flowStartupControl);
 
         moduleActivator =
-            new ExtendedModuleActivator(configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(true, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
 
         String moduleName = "moduleName";
 
@@ -194,7 +193,7 @@ public class ModuleActivatorDefaultImplTest
         final List startupControls = new ArrayList();
 
         moduleActivator =
-            new ExtendedModuleActivator(configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(true, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
 
         String moduleName = "moduleName";
 
@@ -210,7 +209,10 @@ public class ModuleActivatorDefaultImplTest
                 oneOf(module).getName();
                 will(returnValue(moduleName));
 
-                oneOf(startupControlDao).save(with(any(StartupControl.class)));
+                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
+                will(returnValue(flowStartupControl));
+
+                oneOf(flowStartupControl).setStartupType(StartupType.AUTOMATIC);
 
                 oneOf(flowFactoryCapable).getFlowFactory();
                 will(returnValue(flowFactory));
@@ -231,6 +233,9 @@ public class ModuleActivatorDefaultImplTest
                 exactly(1).of(flow1).getName();
                 will(returnValue("flowname1"));
 
+                oneOf(flowStartupControl).getStartupType();
+                will(returnValue(StartupType.AUTOMATIC));
+
                 oneOf(flow1).start();
 
                 exactly(2).of(dashboardRestService).publish(module);
@@ -241,8 +246,61 @@ public class ModuleActivatorDefaultImplTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_successful_activate_no_existing_startupControl_not_configured_resource()
+    {
+        List flowsEmpty = new ArrayList();
+
+        final List flowsPopulated = new ArrayList();
+        flowsPopulated.add(flow1);
+
+        final List startupControls = new ArrayList();
+
+        moduleActivator =
+            new ExtendedModuleActivator(false, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+
+        String moduleName = "moduleName";
+
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(startupControlDao).getStartupControls(moduleName);
+                will(returnValue(startupControls));
+
+                oneOf(module).getName();
+                will(returnValue(moduleName));
+
+                // start flows
+                exactly(1).of(module).getFlows();
+                will(returnValue(flowsPopulated));
+
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+
+                exactly(2).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
+                will(returnValue(flowStartupControl));
+
+                oneOf(flowStartupControl).getStartupType();
+                will(returnValue(StartupType.AUTOMATIC));
+
+                oneOf(flow1).start();
+
+                exactly(2).of(dashboardRestService).publish(module);
+            }});
+
+        moduleActivator.activate(module);
+        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        mockery.assertIsSatisfied();
+    }
+
+
     private class ExtendedModuleActivator extends ModuleActivatorDefaultImpl
     {
+        boolean configuredModule;
+
         /**
          * Constructor
          *
@@ -251,15 +309,16 @@ public class ModuleActivatorDefaultImplTest
          * @param moduleMetadataDashboardRestService
          * @param configurationMetadataDashboardRestService
          */
-        public ExtendedModuleActivator(ConfigurationService configurationService, StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService, DashboardRestService configurationMetadataDashboardRestService)
+        public ExtendedModuleActivator(boolean configuredModule, ConfigurationService configurationService, StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService, DashboardRestService configurationMetadataDashboardRestService)
         {
             super(configurationService, startupControlDao, moduleMetadataDashboardRestService, configurationMetadataDashboardRestService);
+            this.configuredModule = configuredModule;
         }
 
         @Override
         protected boolean isConfiguredResource(Module<Flow> module)
         {
-            return true;
+            return configuredModule;
         }
 
         @Override
