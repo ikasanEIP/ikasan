@@ -50,4 +50,8 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     String getTimeWindowEnd();
 
     void setTimeWindowEnd(String timeWindowEnd);
+
+    Map<String, List<JOB>> getJobLocks();
+
+    void setJobLocks(Map<String, List<JOB>> jobLocks);
 }
