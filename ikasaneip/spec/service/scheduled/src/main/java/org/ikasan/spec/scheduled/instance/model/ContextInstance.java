@@ -33,4 +33,8 @@ public interface ContextInstance extends Context<ContextInstance, ContextParamet
     Map<String, String> getLockHolders();
 
     void setLockHolders(Map<String, String> lockHolders);
+
+    Map<String, String> getHeldJobs();
+
+    void setHeldJobs(Map<String, String> heldJobs);
 }
