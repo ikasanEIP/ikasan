@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.instance.model;
 
 import org.ikasan.spec.scheduled.context.model.Context;
+import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.Map;
 
@@ -34,7 +35,7 @@ public interface ContextInstance extends Context<ContextInstance, ContextParamet
 
     void setLockHolders(Map<String, String> lockHolders);
 
-    Map<String, String> getHeldJobs();
+    Map<String, SchedulerJobInitiationEvent> getHeldJobs();
 
-    void setHeldJobs(Map<String, String> heldJobs);
+    void setHeldJobs(Map<String, SchedulerJobInitiationEvent> heldJobs);
 }
