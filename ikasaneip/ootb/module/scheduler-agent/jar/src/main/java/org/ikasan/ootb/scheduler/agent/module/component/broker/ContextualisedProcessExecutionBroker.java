@@ -220,7 +220,7 @@ public class ContextualisedProcessExecutionBroker implements Broker<Contextualis
     }
 
     /**
-     * Update the event with details of the job beeing skipped.
+     * Update the event with details of the job being skipped.
      *
      * @param scheduledProcessEvent
      */
