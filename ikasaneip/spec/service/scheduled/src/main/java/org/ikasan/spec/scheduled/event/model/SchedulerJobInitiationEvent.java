@@ -51,6 +51,21 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
     void setAgentName(String agentName);
 
     /**
+     * Get the agent url that will execute the job.
+     *
+     * @return
+     */
+    String getAgentUrl();
+
+    /**
+     * Set the agent name that will execute the job.
+     *
+     * @param agentUrl
+     */
+    void setAgentUrl(String agentUrl);
+
+
+    /**
      * Get the name of the job being executed.
      *
      * @return
