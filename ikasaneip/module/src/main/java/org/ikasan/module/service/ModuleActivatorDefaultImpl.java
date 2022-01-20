@@ -83,6 +83,9 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     /** internal list of modules activated */
     private List<Module> activatedModuleNames = new ArrayList<Module>();
 
+    /** keep a handle to the state (running or stopped) of each flow when deactivated for reference on activation */
+    List<String> flowsInStoppedState = new ArrayList<String>();
+
     /**
      * Constructor
      * @param configurationService
@@ -171,7 +174,15 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             {
                 try
                 {
-                    flow.start();
+                    if( this.flowsInStoppedState.contains( flow.getName()) )
+                    {
+                        logger.info("Module [" + module.getName() + "] Flow [" + flow.getName()
+                            + "] was previously stopped. Leaving flow in a stopped state.");
+                    }
+                    else
+                    {
+                        flow.start();
+                    }
                 }
                 catch(RuntimeException e)
                 {
@@ -222,6 +233,12 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         // stop flows
         for(Flow flow:module.getFlows())
         {
+            // get a handle to the flows currently stopped
+            if(!flow.isRunning())
+            {
+                this.flowsInStoppedState.add(flow.getName());
+            }
+
             // stop flow and associated components
             flow.stop();
         }
