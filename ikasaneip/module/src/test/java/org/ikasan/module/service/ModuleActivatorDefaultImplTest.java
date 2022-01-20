@@ -172,6 +172,9 @@ public class ModuleActivatorDefaultImplTest
                 exactly(1).of(flowStartupControl).getStartupType();
                 will(returnValue(StartupType.AUTOMATIC));
 
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
                 oneOf(flow1).start();
 
                 exactly(2).of(dashboardRestService).publish(module);
@@ -236,6 +239,9 @@ public class ModuleActivatorDefaultImplTest
                 oneOf(flowStartupControl).getStartupType();
                 will(returnValue(StartupType.AUTOMATIC));
 
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
                 oneOf(flow1).start();
 
                 exactly(2).of(dashboardRestService).publish(module);
@@ -286,6 +292,9 @@ public class ModuleActivatorDefaultImplTest
                 oneOf(flowStartupControl).getStartupType();
                 will(returnValue(StartupType.AUTOMATIC));
 
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
                 oneOf(flow1).start();
 
                 exactly(2).of(dashboardRestService).publish(module);
@@ -296,6 +305,154 @@ public class ModuleActivatorDefaultImplTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_successful_deactivate_activate_with_stopped_flow()
+    {
+        List flowsEmpty = new ArrayList();
+
+        final List flowsPopulated = new ArrayList();
+        flowsPopulated.add(flow1);
+
+        final List startupControls = new ArrayList();
+
+        moduleActivator =
+            new ExtendedModuleActivator(false, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+
+        String moduleName = "moduleName";
+
+        mockery.checking(new Expectations()
+        {
+            {
+                //
+                // deactivate
+
+                // stop flows
+                exactly(1).of(module).getFlows();
+                will(returnValue(flowsPopulated));
+
+                exactly(1).of(flow1).isRunning();
+                will(returnValue(false));
+
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                oneOf(flow1).stop();
+
+                //
+                // activate
+
+                exactly(1).of(startupControlDao).getStartupControls(moduleName);
+                will(returnValue(startupControls));
+
+                oneOf(module).getName();
+                will(returnValue(moduleName));
+
+                // start flows
+                exactly(1).of(module).getFlows();
+                will(returnValue(flowsPopulated));
+
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+
+                exactly(2).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
+                will(returnValue(flowStartupControl));
+
+                oneOf(flowStartupControl).getStartupType();
+                will(returnValue(StartupType.AUTOMATIC));
+
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                exactly(2).of(dashboardRestService).publish(module);
+
+            }
+        });
+
+        moduleActivator.deactivate(module);
+        moduleActivator.activate(module);
+        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_deactivate_activate_with_running_flow()
+    {
+        List flowsEmpty = new ArrayList();
+
+        final List flowsPopulated = new ArrayList();
+        flowsPopulated.add(flow1);
+
+        final List startupControls = new ArrayList();
+
+        moduleActivator =
+            new ExtendedModuleActivator(false, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+
+        String moduleName = "moduleName";
+
+        mockery.checking(new Expectations()
+        {
+            {
+                //
+                // deactivate
+
+                // stop flows
+                exactly(1).of(module).getFlows();
+                will(returnValue(flowsPopulated));
+
+                exactly(1).of(flow1).isRunning();
+                will(returnValue(true));
+
+                oneOf(flow1).stop();
+
+                //
+                // activate
+
+                exactly(1).of(startupControlDao).getStartupControls(moduleName);
+                will(returnValue(startupControls));
+
+                oneOf(module).getName();
+                will(returnValue(moduleName));
+
+                // start flows
+                exactly(1).of(module).getFlows();
+                will(returnValue(flowsPopulated));
+
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+
+                exactly(2).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                oneOf(startupControlDao).getStartupControl(moduleName, "flowname1");
+                will(returnValue(flowStartupControl));
+
+                oneOf(flowStartupControl).getStartupType();
+                will(returnValue(StartupType.AUTOMATIC));
+
+                exactly(1).of(flow1).getName();
+                will(returnValue("flowname1"));
+
+                exactly(1).of(flow1).start();
+
+                exactly(2).of(dashboardRestService).publish(module);
+
+            }
+        });
+
+        moduleActivator.deactivate(module);
+        moduleActivator.activate(module);
+        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        mockery.assertIsSatisfied();
+    }
 
     private class ExtendedModuleActivator extends ModuleActivatorDefaultImpl
     {
