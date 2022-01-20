@@ -7,6 +7,7 @@ import java.util.List;
 public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEvent<ContextParameterDto, InternalEventDrivenJobDto, DryRunParametersDto> {
 
     private String agentName;
+    private String agentUrl;
     private String jobName;
     private List<ContextParameterDto> contextParameters;
     private InternalEventDrivenJobDto internalEventDrivenJob;
@@ -44,6 +45,16 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     @Override
     public void setAgentName(String agentName) {
         this.agentName = agentName;
+    }
+
+    @Override
+    public String getAgentUrl() {
+        return agentUrl;
+    }
+
+    @Override
+    public void setAgentUrl(String agentUrl) {
+        this.agentUrl = agentUrl;
     }
 
     @Override
