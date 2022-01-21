@@ -40,10 +40,12 @@
  */
 package org.ikasan.component.endpoint.mongo;
 
-import com.mongodb.*;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import org.bson.Document;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.bson.BSON;
 import org.bson.Transformer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
@@ -53,7 +55,7 @@ import java.util.*;
 
 /**
  * Abstract Mongo component which can be managed and configured.
- * 
+ *
  * @author Ikasan Development Team
  */
 public abstract class MongoComponent implements ManagedResource, ConfiguredResource<MongoClientConfiguration>
@@ -77,10 +79,10 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     protected MongoClientProxy mongoClientProxy;
 
     /** handle to all referenced collections */
-    protected Map<String, DBCollection> collections;
+    protected Map<String, MongoCollection<Document>> collections;
 
     /** handle to mongoDB instance */
-    protected DB mongoDatabase;
+    protected MongoDatabase mongoDatabase;
 
     /** set if the setter on MongoClient is used (so we don't close it) */
     protected boolean mongoClientSet = false;
@@ -95,12 +97,12 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
         MongoComponent.logger = logger;
     }
 
-    public void setCollections(Map<String, DBCollection> collections)
+    public void setCollections(Map<String, MongoCollection<Document>> collections)
     {
         this.collections = collections;
     }
 
-    public void setMongoDatabase(DB mongoDatabase)
+    public void setMongoDatabase(MongoDatabase mongoDatabase)
     {
         this.mongoDatabase = mongoDatabase;
     }
@@ -129,19 +131,19 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
             mongoClient = MongoClientFactory.getMongoClient(configuration);
         }
 
-        mongoDatabase = mongoClient.getDB(configuration.getDatabaseName());
+        mongoDatabase = mongoClient.getDatabase(configuration.getDatabaseName());
         collections = new HashMap<>();
         for (Map.Entry<String, String> entry : configuration.getCollectionNames().entrySet())
         {
-            DBCollection dbCollection = mongoDatabase.getCollection(entry.getValue());
+            MongoCollection<Document> dbCollection = mongoDatabase.getCollection(entry.getValue());
             if (dbCollection == null)
             {
                 throw new RuntimeException("DBCollection[" + entry.getValue() + "] not found in database["
-                        + configuration.getDatabaseName() + "]");
+                    + configuration.getDatabaseName() + "]");
             }
             collections.put(entry.getKey(), dbCollection);
         }
-        addEncodingHooks();
+        //addEncodingHooks();
     }
 
     @Override
@@ -162,25 +164,6 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
             }
         }
     }
-
-    /**
-     * Customise java to BSON encoding.
-     */
-    private void addEncodingHooks()
-    {
-        if (bsonEncodingTransformerMap != null)
-        {
-            for (Class<?> c : bsonEncodingTransformerMap.keySet())
-            {
-                List<Transformer> transformers = bsonEncodingTransformerMap.get(c);
-                for(Transformer transformer : transformers){
-                    logger.debug(String.format("Adding bsonEncodingTransfomer [%1$s] for class [%2$s]", transformer, c));
-                    BSON.addEncodingHook(c, transformer);
-                }
-            }
-        }
-    }
-
 
     @Override
     public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
