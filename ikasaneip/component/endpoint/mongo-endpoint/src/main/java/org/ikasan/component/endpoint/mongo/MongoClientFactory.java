@@ -2,10 +2,8 @@ package org.ikasan.component.endpoint.mongo;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
+import com.mongodb.MongoClientURI;
 
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,32 +26,58 @@ public class MongoClientFactory
      */
     public static MongoClient getMongoClient(MongoClientConfiguration configuration)
     {
-        MongoClient mongoClient;
         configuration.validate();
-        List<ServerAddress> addresses = configuration.getServerAddresses();
-        if (addresses.size() == 0)
+
+        String url = buildUrl(configuration);
+
+        MongoClientOptions.Builder mongoClientOptionsBuilder = mongoClientOptionsBuilder(configuration);
+
+        return new MongoClient(new MongoClientURI(url, mongoClientOptionsBuilder));
+    }
+
+    private static String buildUrl(MongoClientConfiguration configuration)
+    {
+        List<String> connectionUrls = configuration.getConnectionUrls();
+        if (connectionUrls.size() == 0)
         {
             throw new RuntimeException("No Mongo server addresses specified!");
         }
-        MongoClientOptions mongoClientOptions = buildMongoClientOptions(configuration);
-        if (configuration.isAuthenticated())
+
+        String url = "mongodb";
+
+        if (configuration.getSrvRecord() != null && configuration.getSrvRecord())
         {
-            MongoCredential mongoCredential = MongoCredential.createCredential(configuration.getUsername(),
-                configuration.getDatabaseName(), (configuration.getPassword() != null) ? configuration.getPassword()
-                        .toCharArray() : null);
-            mongoClient = new MongoClient(addresses, Arrays.asList(mongoCredential), mongoClientOptions);
+            url += "+srv";
         }
-        else
+
+        url += "://";
+
+        if (configuration.isAuthenticated() != null && configuration.isAuthenticated())
         {
-            mongoClient = new MongoClient(addresses, mongoClientOptions);
+            url += configuration.getUsername() + ":" + configuration.getPassword() + "@";
         }
-        return mongoClient;
+
+        url += String.join(",", connectionUrls) + "/" + configuration.getDatabaseName();
+
+        if (configuration.isAuthenticated() != null && configuration.isAuthenticated())
+        {
+            url += "?authSource=" + getAuthDatabase(configuration);
+        }
+
+        return url;
+    }
+
+    private static String getAuthDatabase(MongoClientConfiguration configuration)
+    {
+        return configuration.getAuthDatabaseName() != null ?
+                configuration.getAuthDatabaseName() :
+                configuration.getDatabaseName();
     }
 
     /**
      * Mongo option builder method
      */
-    private static MongoClientOptions buildMongoClientOptions(MongoClientConfiguration configuration)
+    private static MongoClientOptions.Builder mongoClientOptionsBuilder(MongoClientConfiguration configuration)
     {
         MongoClientOptions.Builder builder = MongoClientOptions.builder();
         if (configuration.getLocalThreshold() != null)
@@ -141,7 +165,15 @@ public class MongoClientFactory
         {
             builder.writeConcern(configuration.getWriteConcern());
         }
-        return builder.build();
-    }
+        if (configuration.getSslEnabled() != null)
+        {
+            builder.sslEnabled(configuration.getSslEnabled());
+        }
+        if (configuration.getSslInvalidHostNameAllowed() != null)
+        {
+            builder.sslInvalidHostNameAllowed(configuration.getSslInvalidHostNameAllowed());
+        }
 
+        return builder;
+    }
 }
