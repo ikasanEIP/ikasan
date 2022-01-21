@@ -44,9 +44,9 @@ import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import org.ikasan.spec.configuration.Masked;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,13 +79,16 @@ public class MongoClientConfiguration
     /** database name */
     protected String databaseName;
 
+    /** database name */
+    protected String authDatabaseName;
+
     /** collection key name and actual name */
     protected Map<String,String> collectionNames = new HashMap<String,String>();
 
     /** represents preferred replica set members to which a query or command can be sent */
     protected ReadPreference readPreference = ReadPreference.primary();
 
-     /** Controls the acknowledgment of write operations */
+    /** Controls the acknowledgment of write operations */
     protected WriteConcern writeConcern = WriteConcern.ACKNOWLEDGED;
 
     /** Sets the localThreshold - overrides default driver options if specified */
@@ -145,7 +148,15 @@ public class MongoClientConfiguration
     /** Sets the multiplier for number of threads allowed to block waiting for a connection - overrides default driver options if specified */
     protected Integer threadsAllowedToBlockForConnectionMultiplier;
 
-    
+    /** Does it use SSL **/
+    protected Boolean sslEnabled = false;
+
+    /** Does it validate the server hostname to match the certificate **/
+    protected Boolean sslInvalidHostNameAllowed = false;
+
+    /** Does it use '+srv' to connect to the mongo endpoint **/
+    protected Boolean srvRecord = false;
+
     public List<String> getConnectionUrls() {
         return connectionUrls;
     }
@@ -366,6 +377,14 @@ public class MongoClientConfiguration
         this.threadsAllowedToBlockForConnectionMultiplier = threadsAllowedToBlockForConnectionMultiplier;
     }
 
+    public String getAuthDatabaseName() {
+        return authDatabaseName;
+    }
+
+    public void setAuthDatabaseName(String authDatabaseName) {
+        this.authDatabaseName = authDatabaseName;
+    }
+
     /**
      * Utility method for translating the list of connectionUrls (host:port) to host and port
      * into ServerAddress(es)
@@ -435,5 +454,29 @@ public class MongoClientConfiguration
                 + requiredReplicaSetName + ", socketKeepAlive=" + socketKeepAlive + ", socketTimeout=" + socketTimeout
                 + ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier
                 + "]";
+    }
+
+    public Boolean getSslEnabled() {
+        return this.sslEnabled;
+    }
+
+    public void setSslEnabled(Boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
+    public Boolean getSslInvalidHostNameAllowed() {
+        return this.sslInvalidHostNameAllowed;
+    }
+
+    public void setSslInvalidHostNameAllowed(Boolean sslInvalidHostNameAllowed) {
+        this.sslInvalidHostNameAllowed = sslInvalidHostNameAllowed;
+    }
+
+    public Boolean getSrvRecord() {
+        return srvRecord;
+    }
+
+    public void setSrvRecord(Boolean srvRecord) {
+        this.srvRecord = srvRecord;
     }
 }
