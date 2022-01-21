@@ -313,6 +313,7 @@
         <version.org.eclipse.jetty>9.4.41.v20210516</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-10</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.12.10</version.org.mongodb.mongo-java-driver>
+        <version.org.mongodb4.mongo-java-driver>4.4.1</version.org.mongodb4.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
         <version.org.aspectj>1.9.5</version.org.aspectj>
         <version.org.aspectjrt>1.9.5</version.org.aspectjrt>
@@ -2165,6 +2166,12 @@
                 <groupId>org.mongodb</groupId>
                 <artifactId>mongo-java-driver</artifactId>
                 <version>${version.org.mongodb.mongo-java-driver}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.mongodb</groupId>
+                <artifactId>mongodb-driver-sync</artifactId>
+                <version>${version.org.mongodb4.mongo-java-driver}</version>
             </dependency>
 
             <dependency>
