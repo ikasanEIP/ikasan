@@ -72,6 +72,18 @@ public interface ScheduledProcessEvent<OUTCOME>
     void setAgentName(String agentName);
 
     /**
+     * Get the name of the agent host
+     * @return
+     */
+    String getAgentHostname();
+
+    /**
+     * Set the name of the agent host.
+     * @param agentHostname
+     */
+    void setAgentHostname(String agentHostname);
+
+    /**
      * Get scheduled job name
      * @return
      */

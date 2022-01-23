@@ -49,6 +49,10 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             moduleMetaData.setDescription(module.getDescription());
             moduleMetaData.setVersion(module.getVersion());
             moduleMetaData.setType(module.getType());
+            moduleMetaData.setPort(module.getPort());
+            moduleMetaData.setProtocol(module.getProtocol());
+            moduleMetaData.setContext(module.getContext());
+            moduleMetaData.setHost(module.getHost());
 
             if(module instanceof ConfiguredResource) {
                 moduleMetaData.setConfiguredResourceId(((ConfiguredResource)module).getConfiguredResourceId());
