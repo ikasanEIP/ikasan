@@ -60,6 +60,18 @@ public abstract class AbstractModule implements Module
     /** The url of the module */
     private String url;
 
+    /** The host of the module */
+    private String host;
+
+    /** The port number of the module */
+    private Integer port;
+
+    /** The root context of the module */
+    private String context;
+
+    /** The protocol context of the module */
+    private String protocol;
+
     /** Module name */
     protected String name;
 
@@ -251,5 +263,45 @@ public abstract class AbstractModule implements Module
     public void setUrl(String url)
     {
         this.url = url;
+    }
+
+    @Override
+    public String getHost() {
+        return host;
+    }
+
+    @Override
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    @Override
+    public Integer getPort() {
+        return port;
+    }
+
+    @Override
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    @Override
+    public String getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    @Override
+    public String getProtocol() {
+        return protocol;
+    }
+
+    @Override
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 }

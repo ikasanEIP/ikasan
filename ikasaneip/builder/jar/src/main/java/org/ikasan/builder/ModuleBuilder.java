@@ -226,6 +226,10 @@ public class ModuleBuilder
         }
 
         module.setDescription(this.description);
+	    module.setHost(this.getHost());
+	    module.setContext(this.context.getApplicationName());
+	    module.setPort(this.getPort());
+	    module.setProtocol(this.getProtocol());
 
 	    if(this.moduleType != null) {
 	        module.setType(this.moduleType);
