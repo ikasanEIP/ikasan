@@ -60,7 +60,7 @@ public class JsonModuleMetaDataProviderTest
 
         String json = jsonModuleMetaDataProvider.describeModule(testModule, new HashMap<>());
 
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON), json, JSONCompareMode.LENIENT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON), json, JSONCompareMode.STRICT);
     }
 
 
@@ -83,6 +83,10 @@ public class JsonModuleMetaDataProviderTest
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
         Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
+        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
+        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
+        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
         Assert.assertEquals("Module type equals!", ModuleType.SCHEDULER_AGENT, moduleMetaData.getType());
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
@@ -108,6 +112,10 @@ public class JsonModuleMetaDataProviderTest
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
         Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
+        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
+        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
+        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
         Assert.assertEquals("Module type equals!", ModuleType.SCHEDULER_AGENT, moduleMetaData.getType());
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
@@ -189,6 +197,10 @@ public class JsonModuleMetaDataProviderTest
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
         Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
+        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
+        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
+        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
         Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
@@ -272,6 +284,10 @@ public class JsonModuleMetaDataProviderTest
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
         Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
+        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
+        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
+        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
         Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
@@ -355,6 +371,10 @@ public class JsonModuleMetaDataProviderTest
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
         Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
+        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
+        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
+        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
+        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
         Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());

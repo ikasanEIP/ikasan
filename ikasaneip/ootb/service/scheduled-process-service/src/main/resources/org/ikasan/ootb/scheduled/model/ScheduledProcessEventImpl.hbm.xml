@@ -65,6 +65,10 @@
                   type="java.lang.String"
                   column="AgentName"
                   not-null="true" />
+        <property name="agentHostname"
+                  type="java.lang.String"
+                  column="AgentHostName"
+                  not-null="false" />
         <property name="jobName"
                   type="java.lang.String"
                   column="JobName"
