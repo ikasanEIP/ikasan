@@ -254,7 +254,10 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
                 {
                     for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
                     {
-                        module.getFlows().remove(flowDefinition.getKey());
+                        Flow flow = module.getFlow(flowDefinition.getKey());
+                        if(flow != null) {
+                            module.getFlows().remove(flow);
+                        }
                     }
                 }
             }
