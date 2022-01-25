@@ -87,7 +87,6 @@ import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ContextualisedProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ScheduledProcessEventJobStartBroker;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ContextualisedProcessExecutionBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
