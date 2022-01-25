@@ -39,7 +39,7 @@ deploy:
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
-      branch: IKASAN-1912-module-dashboard-scheduler
+      branch: IKASAN-1912-module-dashboard-scheduler-v2
   # Push release to oss
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
