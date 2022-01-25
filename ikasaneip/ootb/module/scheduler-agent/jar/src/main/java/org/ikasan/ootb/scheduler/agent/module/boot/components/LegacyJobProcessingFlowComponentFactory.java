@@ -81,7 +81,7 @@
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.ProcessExecutionBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventProducer;
