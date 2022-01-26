@@ -67,6 +67,7 @@
 		<aop:pointcut id="moduleServiceServiceMethods"
 			expression="execution(* org.ikasan.module.startup.dao.StartupControlDao.save(..)) ||
                         execution(* org.ikasan.module.startup.dao.StartupControlDao.delete(..))" />
+
 		<aop:pointcut id="hospitalServiceMethods"
 			expression="execution(* org.ikasan.spec.hospital.service.HospitalService.resubmit(..)) ||
 						execution(* org.ikasan.spec.hospital.service.HospitalService.ignore(..))" />
