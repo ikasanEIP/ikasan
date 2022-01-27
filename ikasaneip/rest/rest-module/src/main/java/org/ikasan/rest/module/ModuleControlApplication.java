@@ -168,6 +168,42 @@ public class ModuleControlApplication
         }
     }
 
+    @RequestMapping(method = RequestMethod.PUT,
+        value = "/startupMode/allFlows")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity changeAllFlowStartupMode(
+        @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
+    {
+        String user = UserUtil.getUser();
+
+        String startupType = changeFlowStartupModeDto.getStartupType();
+        String moduleName = changeFlowStartupModeDto.getModuleName();
+        String startupComment = changeFlowStartupModeDto.getComment();
+
+        if ("manual".equalsIgnoreCase(startupType)
+            || "automatic".equalsIgnoreCase(startupType)
+            || "disabled".equalsIgnoreCase(startupType))
+        {
+            //crude check to ensure comment is supplied when disabling
+            if (startupType.equalsIgnoreCase("disabled") && (startupComment == null || ""
+                .equals(startupComment.trim())))
+            {
+                return new ResponseEntity(new ErrorDto("Comment must be provided when disabling Flow startup"), HttpStatus.BAD_REQUEST);
+            }
+            this.moduleService.getModule(moduleName).getFlows().forEach(flow -> {
+                moduleService.setStartupType(moduleName, ((Flow)flow).getName()
+                    , StartupType.valueOf(startupType.toUpperCase()), startupComment, user);
+            });
+
+            moduleMetadataDashboardRestService.publish(this.moduleService.getModule(moduleName));
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else{
+            return new ResponseEntity(new ErrorDto("Invalid startupType["+startupType+"]."), HttpStatus.BAD_REQUEST);
+
+        }
+    }
+
     @RequestMapping(method = RequestMethod.GET,
         value = "/startupMode/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
