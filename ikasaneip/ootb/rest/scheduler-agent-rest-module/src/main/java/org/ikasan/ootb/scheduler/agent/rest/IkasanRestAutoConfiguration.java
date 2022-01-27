@@ -58,4 +58,9 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
         return new SchedulerApplication();
     }
 
+    @Bean
+    public JobProvisionApplication jobProvisionApplication() {
+        return new JobProvisionApplication();
+    }
+
 }
