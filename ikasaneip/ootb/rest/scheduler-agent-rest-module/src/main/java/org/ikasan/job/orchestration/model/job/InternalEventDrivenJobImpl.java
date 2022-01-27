@@ -1,24 +1,20 @@
-package org.ikasan.ootb.scheduled.model;
+package org.ikasan.job.orchestration.model.job;
 
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
+public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements InternalEventDrivenJob {
 
     private List<String> successfulReturnCodes;
     private String workingDirectory;
     private String commandLine;
     private long minExecutionTime;
     private long maxExecutionTime;
-    private List<ContextParameter> contextParameters;
-    private String contextId;
-    private String identifier;
-    private String agentName;
-    private String jobName;
-    private String jobDescription;
-    private String startupControlType;
+    private List<ContextParameter> contextParameters = new ArrayList<>();
+
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -52,7 +48,7 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
 
     @Override
     public long getMinExecutionTime() {
-        return this.minExecutionTime;
+        return minExecutionTime;
     }
 
     @Override
@@ -62,7 +58,7 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
 
     @Override
     public long getMaxExecutionTime() {
-        return this.maxExecutionTime;
+        return maxExecutionTime;
     }
 
     @Override
@@ -72,7 +68,7 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
 
     @Override
     public List<ContextParameter> getContextParameters() {
-        return this.contextParameters;
+        return contextParameters;
     }
 
     @Override
@@ -81,62 +77,17 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
     }
 
     @Override
-    public String getContextId() {
-        return this.contextId;
-    }
-
-    @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
-    }
-
-    @Override
-    public String getIdentifier() {
-        return this.identifier;
-    }
-
-    @Override
-    public void setIdentifier(String jobIdentifier) {
-        this.identifier = identifier;
-    }
-
-    @Override
-    public String getAgentName() {
-        return this.agentName;
-    }
-
-    @Override
-    public void setAgentName(String agentName) {
-        this.agentName = agentName;
-    }
-
-    @Override
-    public String getJobName() {
-        return this.jobName;
-    }
-
-    @Override
-    public void setJobName(String jobName) {
-        this.jobName = jobName;
-    }
-
-    @Override
-    public String getJobDescription() {
-        return this.jobDescription;
-    }
-
-    @Override
-    public void setJobDescription(String jobDescription) {
-        this.jobDescription = jobDescription;
-    }
-
-    @Override
-    public String getStartupControlType() {
-        return null;
-    }
-
-    @Override
-    public void setStartupControlType(String startupControlType) {
-
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
+        sb.append("successfulReturnCodes=").append(successfulReturnCodes);
+        sb.append(", workingDirectory='").append(workingDirectory).append('\'');
+        sb.append(", commandLine='").append(commandLine).append('\'');
+        sb.append(", jobIdentifier='").append(jobIdentifier).append('\'');
+        sb.append(", agentName='").append(agentName).append('\'');
+        sb.append(", jobName='").append(jobName).append('\'');
+        sb.append(", contextId='").append(contextId).append('\'');
+        sb.append(", description='").append(description).append('\'');
+        sb.append('}');
+        return sb.toString();
     }
 }

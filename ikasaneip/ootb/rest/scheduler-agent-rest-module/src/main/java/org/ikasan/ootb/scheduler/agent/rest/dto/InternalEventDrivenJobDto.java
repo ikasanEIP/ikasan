@@ -18,6 +18,7 @@ public class InternalEventDrivenJobDto implements InternalEventDrivenJob {
     private String agentName;
     private String jobName;
     private String jobDescription;
+    private String startupControlType;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -127,5 +128,15 @@ public class InternalEventDrivenJobDto implements InternalEventDrivenJob {
     @Override
     public void setJobDescription(String jobDescription) {
         this.jobDescription = jobDescription;
+    }
+
+    @Override
+    public String getStartupControlType() {
+        return startupControlType;
+    }
+
+    @Override
+    public void setStartupControlType(String startupControlType) {
+        this.startupControlType = startupControlType;
     }
 }
