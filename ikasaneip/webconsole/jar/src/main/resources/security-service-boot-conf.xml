@@ -60,9 +60,11 @@
 						" />
 		<aop:pointcut id="systemEventServiceMethods"
 			expression="execution(* org.ikasan.systemevent.service.SystemEventServiceImpl.logSystemEvent(..))" />
-		<aop:pointcut id="configurationServiceServiceMethods"
+		<aop:pointcut id="configurationManagementServiceMethods"
 			expression="execution(* org.ikasan.spec.configuration.ConfigurationManagement.saveConfiguration(..)) ||
 						execution(* org.ikasan.spec.configuration.ConfigurationManagement.deleteConfiguration(..))" />
+        <aop:pointcut id="configurationServiceServiceMethods"
+                      expression="execution(* org.ikasan.spec.configuration.ConfigurationService.update(..))" />
 
 		<aop:pointcut id="moduleServiceServiceMethods"
 			expression="execution(* org.ikasan.module.startup.dao.StartupControlDao.save(..)) ||
@@ -97,6 +99,8 @@
 			pointcut-ref="systemEventServiceMethods" />
 	    <aop:advisor id="configurationServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="configurationServiceServiceMethods" />
+        <aop:advisor id="configurationManagementPointcutAdvice" advice-ref="required-TransactionAdvice"
+                     pointcut-ref="configurationManagementServiceMethods" />
 		<aop:advisor id="moduleServicePointcutAdvice" advice-ref="required-TransactionAdvice"
 			pointcut-ref="moduleServiceServiceMethods" />
 		<aop:advisor id="hospitalServicePointcutAdvice" advice-ref="required-TransactionAdvice"
