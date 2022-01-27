@@ -20,4 +20,8 @@ public interface SchedulerJob {
     String getJobDescription();
 
     void setJobDescription(String jobDescription);
+
+    String getStartupControlType();
+
+    void setStartupControlType(String startupControlType);
 }
