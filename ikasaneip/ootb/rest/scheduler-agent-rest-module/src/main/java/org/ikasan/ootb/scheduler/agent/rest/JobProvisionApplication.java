@@ -1,9 +1,11 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.job.SchedulerJobWrapperImpl;
@@ -29,7 +31,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RequestMapping("/rest/jobProvision")
 @RestController
@@ -62,6 +67,12 @@ public class JobProvisionApplication {
             .allowIfSubType("org.ikasan.job.orchestration.model.context")
             .allowIfSubType("java.util.ArrayList")
             .build();
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class);
+
+        this.mapper.registerModule(simpleModule);
+        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         this.mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -202,6 +213,12 @@ public class JobProvisionApplication {
         scheduledConsumerConfiguration.setDescription(job.getJobDescription());
         scheduledConsumerConfiguration.setCronExpression(job.getCronExpression());
         scheduledConsumerConfiguration.setTimezone(job.getTimeZone());
+        scheduledConsumerConfiguration.setEager(job.isEager());
+        scheduledConsumerConfiguration.setIgnoreMisfire(job.isIgnoreMisfire());
+        scheduledConsumerConfiguration.setMaxEagerCallbacks(job.getMaxEagerCallbacks());
+        scheduledConsumerConfiguration.setPassthroughProperties(job.getPassthroughProperties());
+        scheduledConsumerConfiguration.setPersistentRecovery(job.isPersistentRecovery());
+        scheduledConsumerConfiguration.setRecoveryTolerance(job.getRecoveryTolerance());
     }
 
     /**
@@ -211,12 +228,26 @@ public class JobProvisionApplication {
      * @param fileConsumerConfiguration
      */
     private void updateFileConsumerConfiguration(FileEventDrivenJob job, FileConsumerConfiguration fileConsumerConfiguration) {
-        fileConsumerConfiguration.setFilenames(List.of(job.getFilePath()));
+        fileConsumerConfiguration.setFilenames(job.getFilenames());
         fileConsumerConfiguration.setJobName(job.getJobName());
         fileConsumerConfiguration.setJobGroupName(job.getJobGroup());
         fileConsumerConfiguration.setDescription(job.getJobDescription());
         fileConsumerConfiguration.setCronExpression(job.getCronExpression());
         fileConsumerConfiguration.setTimezone(job.getTimeZone());
+        fileConsumerConfiguration.setEager(job.isEager());
+        fileConsumerConfiguration.setIgnoreMisfire(job.isIgnoreMisfire());
+        fileConsumerConfiguration.setMaxEagerCallbacks(job.getMaxEagerCallbacks());
+        fileConsumerConfiguration.setPassthroughProperties(job.getPassthroughProperties());
+        fileConsumerConfiguration.setPersistentRecovery(job.isPersistentRecovery());
+        fileConsumerConfiguration.setRecoveryTolerance(job.getRecoveryTolerance());
+        fileConsumerConfiguration.setDirectoryDepth(job.getDirectoryDepth());
+        fileConsumerConfiguration.setEncoding(job.getEncoding());
+        fileConsumerConfiguration.setIgnoreFileRenameWhilstScanning(job.isIgnoreFileRenameWhilstScanning());
+        fileConsumerConfiguration.setIncludeHeader(job.isIncludeHeader());
+        fileConsumerConfiguration.setLogMatchedFilenames(job.isLogMatchedFilenames());
+        fileConsumerConfiguration.setIncludeTrailer(job.isIncludeTrailer());
+        fileConsumerConfiguration.setSortAscending(job.isSortAscending());
+        fileConsumerConfiguration.setSortByModifiedDateTime(job.isSortByModifiedDateTime());
     }
 
     /**
