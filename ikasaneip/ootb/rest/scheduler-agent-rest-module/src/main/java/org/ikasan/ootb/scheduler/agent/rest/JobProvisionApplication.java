@@ -66,6 +66,7 @@ public class JobProvisionApplication {
             .allowIfSubType("org.ikasan.job.orchestration.model.job")
             .allowIfSubType("org.ikasan.job.orchestration.model.context")
             .allowIfSubType("java.util.ArrayList")
+            .allowIfSubType("java.util.HashMap")
             .build();
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
