@@ -16,7 +16,7 @@ before_install:
   - export PATH=$M2_HOME/bin:$PATH
 
 install:
-  - mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
+  - mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
 #  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
 
 ## Build and release to maven central
