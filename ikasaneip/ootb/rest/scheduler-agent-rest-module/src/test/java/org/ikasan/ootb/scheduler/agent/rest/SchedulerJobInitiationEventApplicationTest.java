@@ -3,6 +3,8 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.junit.Before;
 import org.junit.Rule;
@@ -25,6 +27,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.ikasan.ootb.scheduler.agent.rest.cache.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -61,12 +66,12 @@ public class SchedulerJobInitiationEventApplicationTest
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/schedulerJobInitiation")
                                                               .content(createSchedulerJobInitiationEventDto("TEST"))
-                                                              .accept(MediaType.APPLICATION_JSON_VALUE)
-                                                              .contentType(MediaType.APPLICATION_JSON_VALUE);
+                                                              .accept(MediaType.APPLICATION_JSON)
+                                                              .contentType(MediaType.APPLICATION_JSON);
 
         Mockito.doNothing().when(this.inboundQueue).enqueue(any(byte[].class));
 
-        InboundJobQueueCache.instance().put("TEST", this.inboundQueue);
+        InboundJobQueueCache.instance().put("agentName-TEST-inbound-queue", this.inboundQueue);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -86,7 +91,7 @@ public class SchedulerJobInitiationEventApplicationTest
 
         Mockito.doThrow(new RuntimeException("test exception")).when(this.inboundQueue).enqueue(any(byte[].class));
 
-        InboundJobQueueCache.instance().put("TEST", this.inboundQueue);
+        InboundJobQueueCache.instance().put("agentName-TEST-inbound-queue", this.inboundQueue);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -99,7 +104,17 @@ public class SchedulerJobInitiationEventApplicationTest
     private String createSchedulerJobInitiationEventDto(String event) throws JsonProcessingException
     {
         SchedulerJobInitiationEventDto dto = new SchedulerJobInitiationEventDto();
+        dto.setAgentName("agentName");
         dto.setJobName(event);
+
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        ContextParameterDto contextParameterDto = new ContextParameterDto();
+        contextParameterDto.setName("name");
+        contextParameterDto.setValue("value");
+        internalEventDrivenJobDto.setContextParameters(List.of(contextParameterDto));
+
+        dto.setInternalEventDrivenJob(internalEventDrivenJobDto);
+
         return mapper.writeValueAsString(dto);
     }
 }
