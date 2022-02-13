@@ -41,14 +41,22 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Convert a job initiation event to a scheduled process event.
@@ -72,6 +80,11 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
         this.objectMapper = new ObjectMapper();
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+        objectMapper.registerModule(simpleModule);
     }
 
     @Override
@@ -94,7 +107,7 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
             scheduledProcessEvent.setInternalEventDrivenJob(schedulerJobInitiationEvent.getInternalEventDrivenJob());
 
-            // We are going to use a file naming convention for the log files used by the proceess to write
+            // We are going to use a file naming convention for the log files used by the process to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-suffix.log.
             scheduledProcessEvent.setResultOutput(schedulerJobInitiationEvent.getContextId() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
