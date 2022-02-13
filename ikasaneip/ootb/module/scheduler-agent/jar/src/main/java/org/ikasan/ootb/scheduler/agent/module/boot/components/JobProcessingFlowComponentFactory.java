@@ -120,10 +120,11 @@ public class JobProcessingFlowComponentFactory
 
 
     public Consumer bigQueueConsumer(String jobName) throws IOException {
-        IBigQueue inboundQueue = new BigQueueImpl(queueDir, jobName+"-inbound-queue");
+        String queueName = moduleName+"-"+jobName+"-inbound-queue";
+        IBigQueue inboundQueue = new BigQueueImpl(queueDir, queueName);
 
         // Add the inbound queue to the cache.
-        InboundJobQueueCache.instance().put(jobName, inboundQueue);
+        InboundJobQueueCache.instance().put(queueName, inboundQueue);
 
 
         BigQueueConsumer consumer = new BigQueueConsumer(inboundQueue, new SimpleStringSerialiser(), false);

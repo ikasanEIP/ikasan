@@ -3,6 +3,8 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -16,8 +18,7 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @TestConfiguration
 @EnableWebSecurity
@@ -43,13 +44,15 @@ public class MockedUserServiceTestConfig implements WebMvcConfigurer
 
 
     @Override
-    public void configureMessageConverters(
-        List<HttpMessageConverter<?>> converters) {
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
 
-        SimpleModule m = new SimpleModule();
-        converter.getObjectMapper().registerModule(m);
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+        converter.getObjectMapper().registerModule(simpleModule);
         converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         converter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
         converters.add(converter);
