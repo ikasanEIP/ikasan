@@ -1,9 +1,15 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
+import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -13,7 +19,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Module application implementing the REST contract
@@ -24,16 +34,31 @@ public class SchedulerJobInitiationEventApplication
 {
     private static Logger logger = LoggerFactory.getLogger(SchedulerJobInitiationEventApplication.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private ObjectMapper mapper;
 
+    public SchedulerJobInitiationEventApplication() {
+        this.mapper = new ObjectMapper();
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+
+        this.mapper.registerModule(simpleModule);
+        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
 
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity raiseSchedulerJobInitiationEvent(@RequestBody SchedulerJobInitiationEventDto schedulerJobInitiationEvent)
     {
         try {
-            IBigQueue inboundQueue = InboundJobQueueCache.instance().get(schedulerJobInitiationEvent.getJobName());
-            inboundQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
+//            SchedulerJobInitiationEvent schedulerJobInitiationEvent = mapper.readValue(schedulerJobInitiationEventPayload
+//                , SchedulerJobInitiationEventDto.class);
+
+            String queueName = schedulerJobInitiationEvent.getAgentName()+"-"+schedulerJobInitiationEvent.getJobName()+"-inbound-queue";
+            IBigQueue inboundQueue = InboundJobQueueCache.instance().get(queueName);
+            inboundQueue.enqueue(mapper.writeValueAsBytes(schedulerJobInitiationEvent));
         }
         catch (Exception e) {
             e.printStackTrace();
