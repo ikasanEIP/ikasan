@@ -39,6 +39,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
+
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
@@ -47,7 +48,6 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +57,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -81,8 +80,7 @@ import static org.junit.Assert.assertEquals;
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class SftpToJmsFlowTest
-{
+public class SftpToJmsFlowTest {
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
@@ -102,7 +100,7 @@ public class SftpToJmsFlowTest
 
     String objectStoreDir = "./transaction-logs";
 
-    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
+    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
     @Rule
     public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
@@ -110,8 +108,7 @@ public class SftpToJmsFlowTest
     public MessageListenerVerifier messageListenerVerifier;
 
     @Before
-    public void setup() throws IOException
-    {
+    public void setup() throws IOException {
         FileTestUtil.deleteFile(new File(objectStoreDir));
         sftp.createDirectories("/source");
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
@@ -119,12 +116,12 @@ public class SftpToJmsFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
 
-    @After public void teardown() throws  SQLException, IOException
-    {
+    @After
+    public void teardown() throws SQLException, IOException {
         messageListenerVerifier.stop();
         sftp.deleteAllFilesAndDirectories();
         String currentState = flowTestRule.getFlowState();
-        if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
+        if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)) {
             flowTestRule.stopFlow();
         }
         new ActiveMqHelper().removeAllMessages();
@@ -133,39 +130,33 @@ public class SftpToJmsFlowTest
     }
 
     @AfterClass
-    public static void shutdownBroker(){
+    public static void shutdownBroker() {
         new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
-    public void test_file_download() throws Exception
-    {
+    public void test_file_download() throws Exception {
 
         // Upload data to fake SFTP
-        sftp.putFile("/source/testDownload.txt",SAMPLE_MESSAGE, Charset.defaultCharset());
+        sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());
 
-        //Update Sftp Consumer config
-        SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer",SftpConsumerConfiguration.class);
+        // Update Sftp Consumer config
+        SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer", SftpConsumerConfiguration.class);
         consumerConfiguration.setSourceDirectory("/source");
         consumerConfiguration.setRemotePort(sftp.getPort());
 
-        //Setup component expectations
-
+        // Setup component expectations
         flowTestRule.consumer("Sftp Consumer")
             .converter("Sftp Payload to Map Converter")
             .producer("Sftp Jms Producer");
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
         flowTestRule.fireScheduledConsumer();
 
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
         flowTestRule.assertIsSatisfied();
-
     }
-
 }
