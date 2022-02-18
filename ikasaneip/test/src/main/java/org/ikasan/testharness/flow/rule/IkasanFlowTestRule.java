@@ -397,11 +397,9 @@ public class IkasanFlowTestRule implements TestRule
         {
             JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
             Trigger trigger = newTrigger().withIdentity("name", "group").forJob(jobDetail).build();
-            // adding a sleep in test to give quartz a chance to see a new scheduled time in consumer.scheduleAsEagerTrigger
-            Thread.sleep(1000);
             consumer.scheduleAsEagerTrigger(trigger, 0);
         }
-        catch (SchedulerException | InterruptedException se)
+        catch (SchedulerException se)
         {
             throw new RuntimeException(se);
         }

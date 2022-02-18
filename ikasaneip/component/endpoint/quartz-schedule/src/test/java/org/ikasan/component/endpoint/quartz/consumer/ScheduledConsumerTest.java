@@ -530,7 +530,6 @@ public class ScheduledConsumerTest
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final String identifier = "testId";
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
         final JobDataMap jobDataMap = new JobDataMap();
@@ -566,9 +565,9 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", 1);
                 will(returnValue(triggerBuilder));
-                exactly(1).of(triggerBuilder).startNow();
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
@@ -633,9 +632,9 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", 1);
                 will(returnValue(triggerBuilder));
-                exactly(1).of(triggerBuilder).startNow();
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
