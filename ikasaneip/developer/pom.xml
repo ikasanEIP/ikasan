@@ -52,6 +52,7 @@
     <name>Ikasan Enterprise Integration Platform Developer Tools</name>
 
     <modules>
+        <module>mvn-util</module>
         <module>mvn-archetype</module>
     </modules>
 
