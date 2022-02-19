@@ -2,16 +2,17 @@
 # Ikasan Maven Util
 Provision of Maven projects and associated goals that are executable from within Java code.
 
-The ```MavenCommandFactory``` is used to create Maven instance objects.
+The ```MavenFactory``` is used to create Maven instance objects.
 
 | Instance | Description | Example |
 | ----------- | ----------- | ----------- |
-| Clean | Configured instance of the mvn 'clean' which can be invoked against a MavenProject | ```MavenCommandFactory.getCleanCommand()``` |
-| Build | Configured instance of the mvn 'build' which can be invoked against a MavenProject | ```MavenCommandFactory.getBuildCommand()``` |
-| Test | Configured instance of the mvn 'test' which can be invoked against a MavenProject | ```MavenCommandFactory.getTestCommand()``` |
-| Generate Archetype | Configured instance of the mvn 'generate:archetype' which creates a MavenProject | ```MavenCommandFactory.getArchetypeCommand()``` |
-| Generic goal | Generic instance against which any mvn goals can be specified | ```MavenCommandFactory.getGenericCommand()``` |
-| MavenProject | An instance of a Maven Project on the filesystem (based on the workingDir) against which Maven goals can be executed. | ```MavenCommandFactory.getMavenProject(workingDir)``` |
+| Clean | Configured instance of the mvn 'clean' which can be invoked against a MavenProject | ```MavenFactory.getCleanCommand()``` |
+| Build | Configured instance of the mvn 'build' which can be invoked against a MavenProject | ```MavenFactory.getBuildCommand()``` |
+| Test | Configured instance of the mvn 'test' which can be invoked against a MavenProject | ```MavenFactory.getTestCommand()``` |
+| Generate Archetype | Configured instance of the mvn 'generate:archetype' which creates a MavenProject | ```MavenFactory.getArchetypeCommand()``` |
+| Generic goal | Generic instance against which any mvn goals can be specified | ```MavenFactory.getGenericCommand()``` |
+| MavenProject | An instance of a Maven Project on the filesystem (based on the workingDir) against which Maven goals can be executed. | ```MavenFactory.getMavenProject(workingDir)``` |
+| Maven POM Model | An instance of the Maven pom.xml as a Java POJO. | ```MavenFactory.getMavenModel(pomPath)``` |
 
 ## Maven Goal Configuration
 ### archetype:generate
@@ -33,7 +34,7 @@ Create a new Maven project based on an archetype.
 
 #### Usage
 ```java
-        MavenArchetypeCommand mavenArchetypeCommand = MavenCommandFactory.getArchetypeCommand();
+        MavenArchetypeCommand mavenArchetypeCommand = MavenFactory.getArchetypeCommand();
         mavenArchetypeCommand.setArchetypeArtifactId("ikasan-standalone-db-jms-im-maven-plugin");
         mavenArchetypeCommand.setArchetypeGroupId("org.ikasan");
         mavenArchetypeCommand.setArchetypeVersion("3.2.2");
@@ -68,7 +69,7 @@ Run a Maven 'clean' command against the project.
 
 #### Usage
 ```java
-    mavenProject.invoke( MavenCommandFactory.getCleanCommand() );
+    mavenProject.invoke( MavenFactory.getCleanCommand() );
 ```
 
 ### build
@@ -82,7 +83,7 @@ Run a Maven 'build' command against the project.
 
 #### Usage
 ```java
-    mavenProject.invoke( MavenCommandFactory.getBuildCommand() );
+    mavenProject.invoke( MavenFactory.getBuildCommand() );
 ```
 
 ### test
@@ -96,5 +97,5 @@ Run a Maven 'test' command against the project.
 
 #### Usage
 ```java
-    mavenProject.invoke( MavenCommandFactory.getTestCommand() );
+    mavenProject.invoke( MavenFactory.getTestCommand() );
 ```
