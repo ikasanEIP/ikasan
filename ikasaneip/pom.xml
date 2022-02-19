@@ -352,6 +352,8 @@
         <version.commons-io>2.8.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
+        <version.maven-invoker>3.1.0</version.maven-invoker>
+        <version.maven-model>3.3.9</version.maven-model>
     </properties>
 
     <!-- Distribution for releases -->
@@ -1273,6 +1275,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-mvn-util</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-builder</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1365,6 +1373,18 @@
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-core</artifactId>
                 <version>${version.logback.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven.shared</groupId>
+                <artifactId>maven-invoker</artifactId>
+                <version>${version.maven-invoker}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.maven</groupId>
+                <artifactId>maven-model</artifactId>
+                <version>${version.maven-model}</version>
             </dependency>
 
             <!-- used in component filter to support XML -->
