@@ -49,5 +49,3 @@ deploy:
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
     on:
       tags: true
-
-
