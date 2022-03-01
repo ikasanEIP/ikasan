@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
+import org.ikasan.rest.module.sse.MonitoringFileService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.springframework.context.annotation.Bean;
@@ -103,6 +104,16 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     @Bean
     public FilterApplication filterApplication(){
         return new FilterApplication();
+    }
+
+    @Bean
+    public MonitoringFileService monitoringFileService() {
+        return new MonitoringFileService();
+    }
+
+    @Bean
+    public LogFileStreamApplication logFileStreamApplication() {
+        return new LogFileStreamApplication();
     }
 
     @Override
