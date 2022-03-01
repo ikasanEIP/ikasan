@@ -83,11 +83,6 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>scheduled-process-service</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-utility-endpoint</artifactId>
         </dependency>
 
@@ -243,22 +238,6 @@
         <dependency>
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.junit.vintage</groupId>
-                    <artifactId>junit-vintage-engine</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.junit.jupiter</groupId>
-                    <artifactId>junit-jupiter</artifactId>
-                </exclusion>
-            </exclusions>
             <scope>test</scope>
         </dependency>
 
