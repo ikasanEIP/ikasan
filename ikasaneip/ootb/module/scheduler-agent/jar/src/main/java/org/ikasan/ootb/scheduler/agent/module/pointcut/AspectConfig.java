@@ -42,9 +42,6 @@
 package org.ikasan.ootb.scheduler.agent.module.pointcut;
 
 import org.aspectj.lang.Aspects;
-import org.ikasan.spec.module.ModuleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -53,17 +50,8 @@ import org.springframework.context.annotation.ImportResource;
 @ImportResource(locations = "classpath:/META-INF/aop.xml")
 public class AspectConfig {
 
-    @Value("${module.name}")
-    private String moduleName;
-
-    @Autowired
-    private ModuleService moduleService;
-
     @Bean
     public FileMessageProviderAspect fileMessageProviderAspect() {
-        FileMessageProviderAspect fileMessageProviderAspect = Aspects.aspectOf(FileMessageProviderAspect.class);
-        fileMessageProviderAspect.setModuleName(moduleName);
-        fileMessageProviderAspect.setModuleService(moduleService);
-        return fileMessageProviderAspect;
+        return Aspects.aspectOf(FileMessageProviderAspect.class);
     }
 }

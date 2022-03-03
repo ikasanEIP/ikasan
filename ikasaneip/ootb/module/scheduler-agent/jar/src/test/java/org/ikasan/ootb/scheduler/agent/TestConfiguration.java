@@ -70,7 +70,7 @@ public class TestConfiguration {
 
     @Bean
     @Primary
-    public Module myTestModule()
+    public Module myModule()
     {
         SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
         configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");
