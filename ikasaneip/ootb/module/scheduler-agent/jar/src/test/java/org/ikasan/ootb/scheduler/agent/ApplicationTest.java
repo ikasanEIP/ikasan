@@ -57,7 +57,6 @@ import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.pointcut.FileMessageProviderAspect;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
@@ -72,7 +71,7 @@ import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -87,8 +86,9 @@ import com.leansoft.bigqueue.IBigQueue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
+    properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@Import({TestConfiguration.class})
+@ContextConfiguration(classes = {TestConfiguration.class})
 public class ApplicationTest {
     @Resource
     private Module<Flow> moduleUnderTest;
@@ -231,13 +231,6 @@ public class ApplicationTest {
     public void test_file_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredResource = (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) moduleUnderTest;
-        configuredResource.getConfiguration().setDryRunMode(true);
-
-        moduleActivator.deactivate(moduleUnderTest);
-        configurationService.configure(configuredResource);
-        moduleActivator.activate(moduleUnderTest);
-
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
             , FileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
@@ -262,7 +255,6 @@ public class ApplicationTest {
     }
 
     @Test
-    @Ignore
     public void test_file_aspect() {
         // will get an error as the file message provider has nothing wired in etc
         FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -294,8 +286,9 @@ public class ApplicationTest {
     }
 
     private ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module) {
-          return (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
-      }
+        return (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
+    }
+
     @After
     public void teardown() {
         // post-test teardown
