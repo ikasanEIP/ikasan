@@ -74,7 +74,7 @@ public class TestConfiguration {
     {
         ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
         configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");
-            configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
+        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
         configuration.getFlowDefinitions().put("Scheduler Flow 2", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 2", "FILE");
         configuration.getFlowDefinitions().put("Scheduler Flow 3", "MANUAL");
