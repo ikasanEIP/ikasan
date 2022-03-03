@@ -41,7 +41,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
@@ -90,6 +89,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
         scheduledProcessEvent.setAgentName(moduleName);
         scheduledProcessEvent.setJobName(this.jobName);
         scheduledProcessEvent.setContextId(this.configuration.getContextId());
+        scheduledProcessEvent.setChildContextId(this.configuration.getChildContextId());
         scheduledProcessEvent.setSuccessful(true);
 
         Trigger jobTrigger = jobExecutionContext.getTrigger();

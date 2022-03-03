@@ -55,6 +55,7 @@ import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEventImpl implements ContextualisedScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
 {
     private String contextId;
+    private String childContextId;
     private String contextInstanceId;
     private boolean skipped;
     private InternalEventDrivenJob internalEventDrivenJob;
@@ -67,6 +68,16 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     @Override
     public void setContextId(String contextId) {
         this.contextId = contextId;
+    }
+
+    @Override
+    public String getChildContextId() {
+        return childContextId;
+    }
+
+    @Override
+    public void setChildContextId(String childContextId) {
+        this.childContextId = childContextId;
     }
 
     @Override
