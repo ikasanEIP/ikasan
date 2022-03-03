@@ -40,17 +40,17 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
+import javax.annotation.Resource;
+
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.module.ConfiguredModuleConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
 import org.ikasan.ootb.scheduler.agent.module.SchedulerAgentFlowFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-
-import javax.annotation.Resource;
 
 @org.springframework.boot.test.context.TestConfiguration
 public class TestConfiguration {
@@ -72,7 +72,7 @@ public class TestConfiguration {
     @Primary
     public Module myTestModule()
     {
-        ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
+        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
         configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
         configuration.getFlowDefinitions().put("Scheduler Flow 2", "MANUAL");
@@ -83,6 +83,8 @@ public class TestConfiguration {
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 4", "QUARTZ");
         configuration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
+
+        configuration.setDryRunMode(false);
 
         // get the module builder
         return builderFactory.getModuleBuilder(moduleName)
