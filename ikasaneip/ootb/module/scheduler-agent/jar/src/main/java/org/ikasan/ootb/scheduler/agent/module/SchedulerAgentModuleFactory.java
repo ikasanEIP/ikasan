@@ -40,16 +40,16 @@
  */
 package org.ikasan.ootb.scheduler.agent.module;
 
+import javax.annotation.Resource;
+
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-
-import javax.annotation.Resource;
 
 /**
  * Module implementation.
@@ -75,7 +75,7 @@ public class SchedulerAgentModuleFactory
     @Bean
     public Module myModule()
     {
-        ConfiguredModuleConfiguration configuration = new ConfiguredModuleConfiguration();
+        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
 
         // get the module builder
         return builderFactory.getModuleBuilder(moduleName)

@@ -46,32 +46,48 @@ import java.util.List;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.ikasan.spec.configuration.ConfigurationService;
+import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.ModuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Aspect
 public class FileMessageProviderAspect {
 
     private static Logger LOGGER = LoggerFactory.getLogger(FileMessageProviderAspect.class);
 
-    // used for testing at the moment
-    private boolean dryRunMode = false;
-
-    @Autowired
-    private ConfigurationService configurationService;
+    private String moduleName;
+    private ModuleService moduleService;
 
     @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.invoke(..))")
     public Object fileMessageProviderInvoke(ProceedingJoinPoint joinPoint) throws Throwable {
-        // todo get dry run mode from configuration
-        if (dryRunMode) {
-            // todo fill in this section from configuration
+        Module module = moduleService.getModule(moduleName);
+
+        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
+        SchedulerAgentConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
+
+        if (configuration.isDryRunMode()) {
             // System.out.println("joinPoint cutting ");
             LOGGER.info("In dry run mode joint point cutting FileMessageProvider.invoke");
+            // todo fill in this section from configuration
             return List.of("some file name");
         } else {
             return joinPoint.proceed();
         }
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public void setModuleService(ModuleService moduleService) {
+        this.moduleService = moduleService;
+    }
+
+    protected ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module) {
+        return (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
     }
 }
