@@ -40,21 +40,28 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.leansoft.bigqueue.IBigQueue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.stream.IntStream;
+
+import javax.annotation.Resource;
+
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.module.pointcut.FileMessageProviderAspect;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.scheduled.context.model.And;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
@@ -63,14 +70,12 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.stream.IntStream;
-
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.leansoft.bigqueue.IBigQueue;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -79,22 +84,24 @@ import static org.junit.Assert.assertEquals;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import({TestConfiguration.class})
-public class ApplicationTest
-{
+public class ApplicationTest {
     @Resource
     private Module<Flow> moduleUnderTest;
 
     @Resource
     private IBigQueue outboundQueue;
 
+    @Resource
+    private FileMessageProviderAspect fileMessageProviderAspect;
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
     @BeforeClass
-    public static void setupObjectMapper(){
+    public static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class);
 
@@ -240,6 +247,23 @@ public class ApplicationTest
         flowTestRule.stopFlow();
     }
 
+    @Test
+    public void test_file_aspect() {
+        // will get an error as the file message provider has nothing wired in etc
+        FileMessageProvider fileMessageProvider = new FileMessageProvider();
+
+        try {
+            fileMessageProvider.invoke(null);
+            fail("should not get here");
+        } catch (Exception e) {}
+
+        ReflectionTestUtils.setField(fileMessageProviderAspect, "dryRunMode", true);
+
+        List<File> files = fileMessageProvider.invoke(null);
+        assertEquals(1, files.size());
+
+        ReflectionTestUtils.setField(fileMessageProviderAspect, "dryRunMode", false);
+    }
 
     @Test
     @Ignore
@@ -247,15 +271,14 @@ public class ApplicationTest
         HashMap<String, String> map = new HashMap<>();
 
         IntStream.range(0, 2000)
-            .forEach(a-> map.put("Scheduler Flow " + a, "AUTOMATIC"));
+            .forEach(a -> map.put("Scheduler Flow " + a, "AUTOMATIC"));
 
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
     }
 
     @After
-    public void teardown()
-    {
+    public void teardown() {
         // post-test teardown
     }
 
