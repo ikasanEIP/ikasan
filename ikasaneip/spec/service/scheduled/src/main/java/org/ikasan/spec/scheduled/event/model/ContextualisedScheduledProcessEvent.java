@@ -19,6 +19,20 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      void setContextId(String contextId);
 
     /**
+     * Get the child context id that this job belongs to. Contexts can appear within contexts.
+     *
+     * @return
+     */
+    String getChildContextId();
+
+    /**
+     * Set the child context id that this job belongs to. Contexts can appear within contexts.
+     *
+     * @param contextId
+     */
+    void setChildContextId(String contextId);
+
+    /**
      * Get the context instance id that this event is associated with.
      *
      * @return
