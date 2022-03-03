@@ -53,20 +53,26 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 @Aspect
 public class FileMessageProviderAspect {
 
     private static Logger LOGGER = LoggerFactory.getLogger(FileMessageProviderAspect.class);
 
+    @Value("${module.name}")
     private String moduleName;
+
+    @Autowired
     private ModuleService moduleService;
 
     @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.invoke(..))")
     public Object fileMessageProviderInvoke(ProceedingJoinPoint joinPoint) throws Throwable {
-        Module module = moduleService.getModule(moduleName);
 
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
+        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule =
+            (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) (Module<Flow>) moduleService.getModule(moduleName);
+
         SchedulerAgentConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
 
         if (configuration.isDryRunMode()) {
@@ -77,17 +83,5 @@ public class FileMessageProviderAspect {
         } else {
             return joinPoint.proceed();
         }
-    }
-
-    public void setModuleName(String moduleName) {
-        this.moduleName = moduleName;
-    }
-
-    public void setModuleService(ModuleService moduleService) {
-        this.moduleService = moduleService;
-    }
-
-    protected ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module) {
-        return (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
     }
 }
