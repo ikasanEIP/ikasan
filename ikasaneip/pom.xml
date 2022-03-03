@@ -255,7 +255,7 @@
         <version.logback.core>1.2.10</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
-        <version.org.hibernate>5.4.21.Final</version.org.hibernate>
+        <version.org.hibernate>5.4.24.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
         <version.org.springframework>5.3.14</version.org.springframework>
         <version.org.springframework.security>5.3.10.RELEASE</version.org.springframework.security>
