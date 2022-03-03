@@ -90,10 +90,8 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
         scheduledProcessEvent.setAgentName(this.agentName);
         scheduledProcessEvent.setJobName(this.jobName);
         scheduledProcessEvent.setSuccessful(true);
-
-        // Need to work out how to seed the context. Do these jobs only
-        // exist in a context?
         scheduledProcessEvent.setContextId(this.configuration.getContextId());
+        scheduledProcessEvent.setChildContextId(this.configuration.getChildContextId());
 
         return scheduledProcessEvent;
     }

@@ -43,14 +43,12 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.ArrayList;
@@ -99,6 +97,7 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setJobName(schedulerJobInitiationEvent.getJobName());
             scheduledProcessEvent.setContextId(schedulerJobInitiationEvent.getContextId());
             scheduledProcessEvent.setContextInstanceId(schedulerJobInitiationEvent.getContextInstanceId());
+            scheduledProcessEvent.setChildContextId(schedulerJobInitiationEvent.getChildContextId());
             scheduledProcessEvent.setJobStarting(true);
             scheduledProcessEvent.setSuccessful(false);
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
