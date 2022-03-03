@@ -1,0 +1,11 @@
+<!DOCTYPE aspectj PUBLIC
+        "-//AspectJ//DTD//EN" "http://www.eclipse.org/aspectj/dtd/aspectj.dtd">
+<aspectj>
+    <weaver options="-Xset:weaveJavaxPackages=true">
+        <!-- only weave classes in our application-specific packages -->
+        <include within="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.*"/>
+    </weaver>
+    <aspects>
+        <aspect name="org.ikasan.ootb.scheduler.agent.module.pointcut.FileMessageProviderAspect"/>
+    </aspects>
+</aspectj>
