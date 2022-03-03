@@ -38,32 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
+package org.ikasan.ootb.scheduler.agent.module.configuration;
 
-package org.ikasan.ootb.scheduler.agent.module.pointcut;
+import org.ikasan.module.ConfiguredModuleConfiguration;
 
-import org.aspectj.lang.Aspects;
-import org.ikasan.spec.module.ModuleService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+public class SchedulerAgentConfiguredModuleConfiguration extends ConfiguredModuleConfiguration {
+    private boolean dryRunMode = false;
 
-@Configuration
-@ImportResource(locations = "classpath:/META-INF/aop.xml")
-public class AspectConfig {
+    public boolean isDryRunMode() {
+        return dryRunMode;
+    }
 
-    @Value("${module.name}")
-    private String moduleName;
-
-    @Autowired
-    private ModuleService moduleService;
-
-    @Bean
-    public FileMessageProviderAspect fileMessageProviderAspect() {
-        FileMessageProviderAspect fileMessageProviderAspect = Aspects.aspectOf(FileMessageProviderAspect.class);
-        fileMessageProviderAspect.setModuleName(moduleName);
-        fileMessageProviderAspect.setModuleService(moduleService);
-        return fileMessageProviderAspect;
+    public void setDryRunMode(boolean dryRunMode) {
+        this.dryRunMode = dryRunMode;
     }
 }
