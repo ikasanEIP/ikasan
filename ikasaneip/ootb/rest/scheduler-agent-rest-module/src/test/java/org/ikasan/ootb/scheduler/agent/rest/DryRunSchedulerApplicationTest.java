@@ -1,5 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.List;
@@ -7,7 +10,8 @@ import java.util.List;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListParameterDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunModeDto;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,6 +20,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -37,6 +42,9 @@ public class DryRunSchedulerApplicationTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
+    @MockBean
+    protected DryRunModeService dryRunModeService;
+
     protected MockMvc mockMvc;
 
     @Autowired
@@ -53,7 +61,7 @@ public class DryRunSchedulerApplicationTest {
     @WithMockUser(authorities = "readonly")
     public void dryRunModeWithReadOnlyUser() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
-        DryRunParameterDto dryRunParameterDto = new DryRunParameterDto();
+        DryRunModeDto dryRunParameterDto = new DryRunModeDto();
         dryRunParameterDto.setDryRunMode(true);
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/dryRun/mode")
@@ -62,13 +70,15 @@ public class DryRunSchedulerApplicationTest {
             .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andReturn();
+
+        verifyNoInteractions(dryRunModeService);
     }
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
     public void shouldAcceptDryRunMode() throws Exception {
 
-        DryRunParameterDto dryRunParameterDto = new DryRunParameterDto();
+        DryRunModeDto dryRunParameterDto = new DryRunModeDto();
         dryRunParameterDto.setDryRunMode(true);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/rest/dryRun/mode")
@@ -76,6 +86,8 @@ public class DryRunSchedulerApplicationTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
+
+        verify(dryRunModeService).setDryRunMode(true);
     }
 
     @Test
@@ -90,6 +102,8 @@ public class DryRunSchedulerApplicationTest {
             .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andReturn();
+
+        verifyNoInteractions(dryRunModeService);
     }
 
     @Test
@@ -97,19 +111,22 @@ public class DryRunSchedulerApplicationTest {
     public void shouldAcceptDryRunFileList() throws Exception {
 
         DryRunFileListParameterDto dto = new DryRunFileListParameterDto();
-        dto.setFileList(
-            List.of(
-                createFileListJob("jobName1", "fileName1"),
-                createFileListJob("jobName2", "fileName2"),
-                createFileListJob("jobName3", "fileName3")
-            )
+
+        List<DryRunFileListJobParameterDto> jobFileList = List.of(
+            createFileListJob("jobName1", "fileName1"),
+            createFileListJob("jobName2", "fileName2"),
+            createFileListJob("jobName3", "fileName3")
         );
+
+        dto.setFileList(jobFileList);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/rest/dryRun/fileList")
                 .content(mapper.writeValueAsString(dto))
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
+
+        verify(dryRunModeService).addDryRunFileList(any());
     }
 
     private DryRunFileListJobParameterDto createFileListJob(String jobName, String fileName) {

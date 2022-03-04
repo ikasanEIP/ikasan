@@ -72,8 +72,8 @@ public class SchedulerAgentModuleFactory
     @Resource
     SchedulerAgentFlowFactory schedulerAgentFlowFactory;
 
-    @Bean
-    public Module myModule()
+    @Bean(name = "scheduler-agent-module")
+    public Module createModule()
     {
         SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
 
