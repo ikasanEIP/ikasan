@@ -41,8 +41,10 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListParameterDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunModeDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -55,12 +57,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DryRunSchedulerApplication {
 
+    @Autowired
+    private DryRunModeService dryRunModeService;
+
     @RequestMapping(path = "/mode", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity setDryRunMode(@RequestBody DryRunParameterDto dryRunParameterDto) {
+    public ResponseEntity setDryRunMode(@RequestBody DryRunModeDto dryRunDto) {
         try {
-            System.out.println("dryRunParameter = " + dryRunParameterDto);
-            // todo link in service here
+            dryRunModeService.setDryRunMode(dryRunDto.getDryRunMode());
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(
@@ -74,9 +78,7 @@ public class DryRunSchedulerApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity exerciseDryRunModeWith(@RequestBody DryRunFileListParameterDto dryRunFileListParameterDto) {
         try {
-            System.out.println("dryRunFileListParameterDto = " + dryRunFileListParameterDto);
-            // todo link in service here
-
+            dryRunModeService.addDryRunFileList(dryRunFileListParameterDto.getFileList());
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(

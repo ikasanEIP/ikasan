@@ -46,42 +46,35 @@ import java.util.List;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 @Aspect
 public class FileMessageProviderAspect {
 
     private static Logger LOGGER = LoggerFactory.getLogger(FileMessageProviderAspect.class);
 
-    @Value("${module.name}")
-    private String moduleName;
-
     @Autowired
-    private ModuleService moduleService;
+    private DryRunModeService dryRunModeService;
 
     @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.invoke(..))")
     public Object fileMessageProviderInvoke(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule =
-            (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) (Module<Flow>) moduleService.getModule(moduleName);
-
-        SchedulerAgentConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
-
-        if (configuration.isDryRunMode()) {
-            // System.out.println("joinPoint cutting ");
-            LOGGER.info("In dry run mode joint point cutting FileMessageProvider.invoke");
-            // todo fill in this section from configuration
-            return List.of("some file name");
+        if (dryRunModeService.getDryRunMode()) {
+            String dryRunFileName = getDryRunFileName();
+            String message = "In dry run mode joint point cutting FileMessageProvider.invoke() for file name: " + dryRunFileName;
+            LOGGER.info(message);
+            // System.out.println(message);
+            return List.of(dryRunFileName);
         } else {
             return joinPoint.proceed();
         }
+    }
+
+    private String getDryRunFileName() {
+        String fileName = dryRunModeService.getDryRunFileName();
+        return fileName == null ? "no dry run file name set" : fileName;
     }
 }
