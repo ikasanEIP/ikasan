@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,15 +61,16 @@ import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
+import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
-import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -100,7 +102,7 @@ public class ApplicationTest {
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
-    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+    public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
     @BeforeClass
     public static void setupObjectMapper() {
@@ -210,7 +212,7 @@ public class ApplicationTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(2000);
 
@@ -237,7 +239,7 @@ public class ApplicationTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(2000);
 
@@ -272,7 +274,7 @@ public class ApplicationTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(1000);
 
@@ -289,20 +291,28 @@ public class ApplicationTest {
 
     @Test
     public void test_file_aspect() {
+        JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
+        Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
+        context.setTrigger(trigger);
+
         // will get an error as the file message provider has nothing wired in etc
         FileMessageProvider fileMessageProvider = new FileMessageProvider();
 
         try {
-            fileMessageProvider.invoke(null);
+            fileMessageProvider.invoke(context);
             fail("should not get here");
         } catch (Exception e) {
         }
 
         dryRunModeService.setDryRunMode(true);
+        DryRunFileListJobParameterDto dto = new DryRunFileListJobParameterDto();
+        dto.setJobName("Job Name");
+        dto.setFileName("/my/bogus/file.txt");
+        dryRunModeService.addDryRunFileList(List.of(dto));
 
-        List<File> files = fileMessageProvider.invoke(null);
+        List<File> files = fileMessageProvider.invoke(context);
         assertEquals(1, files.size());
-        assertEquals("no dry run file name set", files.get(0));
+        assertEquals("/my/bogus/file.txt", files.get(0));
 
         dryRunModeService.setDryRunMode(false);
     }
