@@ -1,4 +1,4 @@
-package org.ikasan.spec.scheduled.event.model;
+package org.ikasan.spec.scheduled.dryrun;
 
 import java.util.List;
 
