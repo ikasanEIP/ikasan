@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.ikasan.spec.scheduled.event.model.DryRunFileListParameter;
+import org.ikasan.spec.scheduled.dryrun.DryRunFileListParameter;
 
 public class DryRunFileListParameterDto implements DryRunFileListParameter<DryRunFileListJobParameterDto> {
 
