@@ -6,13 +6,10 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.PostConstruct;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
@@ -44,7 +41,6 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
 
     @PostConstruct
     public void init() {
-        // todo init from database
         jobNameFileMap = ExpiringMap.builder()
             .maxSize(maxMapSize)
             .expiration(expirationInMillis, TimeUnit.MILLISECONDS)
@@ -59,10 +55,7 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
 
         configurationService.update(configureModule);
 
-        //clear out the map when we turn dry run mode off
-        if (!dryRunMode) {
-            jobNameFileMap.clear();
-        }
+        clearOutMapIfDryRunModeIsFalse(dryRunMode);
     }
 
     @Override
@@ -76,27 +69,13 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
     }
 
     @Override
-    public String getDryRunFileName() {
-        Map<String, String> flowDefinitions = getSchedulerAgentConfiguredModuleConfiguration().getFlowDefinitions();
-        Module<Flow> module = moduleService.getModule(moduleName);
-        for (String key : flowDefinitions.keySet()) {
-            Flow flow = module.getFlow(key);
-            FlowElement<?> file_consumer = flow.getFlowElement("File Consumer");
-            if (file_consumer != null) {
-                ConfiguredResource<ScheduledConsumerConfiguration> consumer =
-                    (ConfiguredResource<ScheduledConsumerConfiguration>) file_consumer.getFlowComponent();
-                FileConsumerConfiguration fcc = (FileConsumerConfiguration) consumer.getConfiguration();
-                if (jobNameIsInMap(fcc)) {
-                    // TODO remove from map
-                    return jobNameFileMap.get(fcc.getJobName());
-                }
-            }
+    public String getJobFileName(String jobFileName) {
+        String fileName = null;
+        if (jobNameFileMap.containsKey(jobFileName)) {
+            fileName = jobNameFileMap.get(jobFileName);
+            jobNameFileMap.remove(jobFileName);
         }
-        return null;
-    }
-
-    private boolean jobNameIsInMap(FileConsumerConfiguration fc) {
-        return fc != null && jobNameFileMap.containsKey(fc.getJobName());
+        return fileName;
     }
 
     private SchedulerAgentConfiguredModuleConfiguration getSchedulerAgentConfiguredModuleConfiguration() {
@@ -109,5 +88,12 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
             (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
         return configuredModule;
     }
+
+    private void clearOutMapIfDryRunModeIsFalse(boolean dryRunMode) {
+        if (!dryRunMode) {
+            jobNameFileMap.clear();
+        }
+    }
+
 }
 

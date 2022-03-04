@@ -647,4 +647,8 @@ public class IkasanFlowTestRule implements TestRule
             Assert.fail("Sleep interrupted: " + e.getMessage());
         }
     }
+
+    public String getScheduledConsumerName() {
+        return scheduledConsumerName;
+    }
 }
