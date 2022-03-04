@@ -12,7 +12,7 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     private List<ContextParameterDto> contextParameters;
     private InternalEventDrivenJobDto internalEventDrivenJob;
     private String contextId;
-    private String childContextId;
+    private List<String> childContextId;
     private String contextInstanceId;
     private boolean dryRun;
     private DryRunParametersDto dryRunParametersDto;
@@ -89,12 +89,12 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     }
 
     @Override
-    public String getChildContextId() {
+    public List<String> getChildContextIds() {
         return childContextId;
     }
 
     @Override
-    public void setChildContextId(String childContextId) {
+    public void setChildContextIds(List<String> childContextId) {
         this.childContextId = childContextId;
     }
 
