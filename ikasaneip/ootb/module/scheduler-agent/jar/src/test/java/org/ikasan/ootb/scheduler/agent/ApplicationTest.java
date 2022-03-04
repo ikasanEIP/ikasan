@@ -56,15 +56,14 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvi
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
-import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
-import org.ikasan.spec.configuration.ConfigurationService;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleActivator;
+import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
@@ -97,10 +96,7 @@ public class ApplicationTest {
     private IBigQueue outboundQueue;
 
     @Resource
-    private ConfigurationService configurationService;
-
-    @Resource
-    private ModuleActivator moduleActivator;
+    private DryRunModeService dryRunModeService;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -228,7 +224,7 @@ public class ApplicationTest {
     }
 
     @Test
-    public void test_file_flow_success() throws IOException {
+    public void test_file_flow_success_without_aspect() {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
@@ -255,6 +251,43 @@ public class ApplicationTest {
     }
 
     @Test
+    public void test_file_flow_success_with_aspect() {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        dryRunModeService.setDryRunMode(true);
+
+        DryRunFileListJobParameter jobs = new DryRunFileListJobParameterDto();
+        jobs.setJobName("Flow 2 Job Name");
+        jobs.setFileName("/some/bogus/file/bogus.txt");
+        dryRunModeService.addDryRunFileList(List.of(jobs));
+
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setJobName("Flow 2 Job Name");
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+
+        flowTestRule.consumer("File Consumer")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumer();
+
+        flowTestRule.sleep(1000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+
+        dryRunModeService.setDryRunMode(false);
+    }
+
+    @Test
     public void test_file_aspect() {
         // will get an error as the file message provider has nothing wired in etc
         FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -262,15 +295,16 @@ public class ApplicationTest {
         try {
             fileMessageProvider.invoke(null);
             fail("should not get here");
-        } catch (Exception e) {}
+        } catch (Exception e) {
+        }
 
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredResource = this.getConfiguredResource(moduleUnderTest);
-        configuredResource.getConfiguration().setDryRunMode(true);
+        dryRunModeService.setDryRunMode(true);
 
         List<File> files = fileMessageProvider.invoke(null);
         assertEquals(1, files.size());
+        assertEquals("no dry run file name set", files.get(0));
 
-        configuredResource.getConfiguration().setDryRunMode(false);
+        dryRunModeService.setDryRunMode(false);
     }
 
     @Test
@@ -283,10 +317,6 @@ public class ApplicationTest {
 
         ObjectMapper mapper = new ObjectMapper();
         System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
-    }
-
-    private ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module) {
-        return (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
     }
 
     @After
