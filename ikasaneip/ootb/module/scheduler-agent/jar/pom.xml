@@ -67,6 +67,12 @@
         </dependency>
 
         <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+        </dependency>
+
+        <!-- Test dependencies -->
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test-endpoint</artifactId>
             <version>${version.ikasan}</version>

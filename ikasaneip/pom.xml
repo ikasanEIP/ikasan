@@ -353,6 +353,7 @@
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
         <version.big.queue>0.7.2</version.big.queue>
+        <version.expiring.map>0.5.10</version.expiring.map>
     </properties>
 
     <!-- Distribution for releases -->
@@ -1646,6 +1647,12 @@
                 <groupId>com.leansoft</groupId>
                 <artifactId>bigqueue</artifactId>
                 <version>${version.big.queue}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.jodah</groupId>
+                <artifactId>expiringmap</artifactId>
+                <version>${version.expiring.map}</version>
             </dependency>
 
             <dependency>
