@@ -1,9 +1,11 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter.configuration;
 
+import java.util.List;
+
 public class ContextualisedConverterConfiguration {
 
     private String contextId;
-    private String childContextId;
+    private List<String> childContextId;
 
     public String getContextId() {
         return contextId;
@@ -13,11 +15,11 @@ public class ContextualisedConverterConfiguration {
         this.contextId = contextId;
     }
 
-    public String getChildContextId() {
+    public List<String> getChildContextId() {
         return childContextId;
     }
 
-    public void setChildContextId(String childContextId) {
+    public void setChildContextId(List<String> childContextId) {
         this.childContextId = childContextId;
     }
 }
