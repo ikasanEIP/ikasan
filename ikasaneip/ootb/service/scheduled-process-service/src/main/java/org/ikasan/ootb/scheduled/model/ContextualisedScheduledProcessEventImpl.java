@@ -45,6 +45,8 @@ import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
+import java.util.List;
+
 /**
  * Contextualised Scheduled Process Event defines the core event managed by the Scheduler Agent that runs within a context
  * and reports schedule fire details and process execution details.
@@ -55,7 +57,7 @@ import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEventImpl implements ContextualisedScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
 {
     private String contextId;
-    private String childContextId;
+    private List<String> childContextIds;
     private String contextInstanceId;
     private boolean skipped;
     private InternalEventDrivenJob internalEventDrivenJob;
@@ -71,13 +73,13 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     }
 
     @Override
-    public String getChildContextId() {
-        return childContextId;
+    public List<String> getChildContextIds() {
+        return childContextIds;
     }
 
     @Override
-    public void setChildContextId(String childContextId) {
-        this.childContextId = childContextId;
+    public void setChildContextIds(List<String> childContextId) {
+        this.childContextIds = childContextId;
     }
 
     @Override
