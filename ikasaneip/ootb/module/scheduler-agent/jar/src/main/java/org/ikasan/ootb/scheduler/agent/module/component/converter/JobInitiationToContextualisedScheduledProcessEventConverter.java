@@ -97,7 +97,7 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setJobName(schedulerJobInitiationEvent.getJobName());
             scheduledProcessEvent.setContextId(schedulerJobInitiationEvent.getContextId());
             scheduledProcessEvent.setContextInstanceId(schedulerJobInitiationEvent.getContextInstanceId());
-            scheduledProcessEvent.setChildContextId(schedulerJobInitiationEvent.getChildContextId());
+            scheduledProcessEvent.setChildContextIds(schedulerJobInitiationEvent.getChildContextIds());
             scheduledProcessEvent.setJobStarting(true);
             scheduledProcessEvent.setSuccessful(false);
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
