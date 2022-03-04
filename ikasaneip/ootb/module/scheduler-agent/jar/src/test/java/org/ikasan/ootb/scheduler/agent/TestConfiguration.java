@@ -68,9 +68,9 @@ public class TestConfiguration {
     SchedulerAgentFlowFactory schedulerAgentFlowFactory;
 
 
-    @Bean
+    @Bean(name = "scheduler-agent-module")
     @Primary
-    public Module myModule()
+    public Module createTestBeanModule()
     {
         SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
         configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");

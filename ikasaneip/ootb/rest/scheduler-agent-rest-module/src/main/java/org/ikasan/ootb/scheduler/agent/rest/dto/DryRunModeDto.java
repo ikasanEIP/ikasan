@@ -2,9 +2,9 @@ package org.ikasan.ootb.scheduler.agent.rest.dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.ikasan.spec.scheduled.event.model.DryRunParameter;
+import org.ikasan.spec.scheduled.dryrun.DryRunMode;
 
-public class DryRunParameterDto implements DryRunParameter {
+public class DryRunModeDto implements DryRunMode {
 
     private boolean dryRunMode;
 
