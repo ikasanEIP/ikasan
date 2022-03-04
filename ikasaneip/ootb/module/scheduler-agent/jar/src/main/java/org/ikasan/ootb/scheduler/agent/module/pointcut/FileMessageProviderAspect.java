@@ -47,6 +47,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,20 +62,20 @@ public class FileMessageProviderAspect {
 
     @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.invoke(..))")
     public Object fileMessageProviderInvoke(ProceedingJoinPoint joinPoint) throws Throwable {
-
         if (dryRunModeService.getDryRunMode()) {
-            String dryRunFileName = getDryRunFileName();
-            String message = "In dry run mode joint point cutting FileMessageProvider.invoke() for file name: " + dryRunFileName;
-            LOGGER.info(message);
-            // System.out.println(message);
-            return List.of(dryRunFileName);
+            return intercept(joinPoint);
         } else {
             return joinPoint.proceed();
         }
     }
 
-    private String getDryRunFileName() {
-        String fileName = dryRunModeService.getDryRunFileName();
-        return fileName == null ? "no dry run file name set" : fileName;
+    private Object intercept(ProceedingJoinPoint joinPoint) {
+        JobExecutionContext jobExecutionContext = (JobExecutionContext) joinPoint.getArgs()[0];
+        String jobName = jobExecutionContext.getTrigger().getKey().getName();
+
+        String dryRunFileName = dryRunModeService.getJobFileName(jobName);
+        String message = "In dry run mode intercepting FileMessageProvider.invoke() for file name: " + dryRunFileName;
+        LOGGER.info(message);
+        return dryRunFileName == null ? null : List.of(dryRunFileName);
     }
 }
