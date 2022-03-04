@@ -94,18 +94,18 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
     void setContextId(String contextId);
 
     /**
-     * Get the child context id that this job belongs to. Contexts can appear within contexts.
+     * Get the child context ids that this job belongs to. Contexts can appear within contexts.
      *
      * @return
      */
-    String getChildContextId();
+    List<String> getChildContextIds();
 
     /**
-     * Set the child context id that this job belongs to. Contexts can appear within contexts.
+     * Set the child context ids that this job belongs to. Contexts can appear within contexts.
      *
-     * @param contextId
+     * @param contextIds
      */
-    void setChildContextId(String contextId);
+    void setChildContextIds(List<String> contextIds);
 
     /**
      * Get the context instance id that this job belongs to.
