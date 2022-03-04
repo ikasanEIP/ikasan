@@ -2,7 +2,7 @@ package org.ikasan.ootb.scheduler.agent.rest.dto;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.ikasan.spec.scheduled.event.model.DryRunFileListJobParameter;
+import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 
 public class DryRunFileListJobParameterDto implements DryRunFileListJobParameter {
     private String jobName;

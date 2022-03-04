@@ -357,6 +357,7 @@
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
         <version.big.queue>0.7.2</version.big.queue>
+        <version.expiring.map>0.5.10</version.expiring.map>
     </properties>
 
     <!-- Distribution for releases -->
@@ -1675,6 +1676,12 @@
                 <groupId>com.leansoft</groupId>
                 <artifactId>bigqueue</artifactId>
                 <version>${version.big.queue}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.jodah</groupId>
+                <artifactId>expiringmap</artifactId>
+                <version>${version.expiring.map}</version>
             </dependency>
 
             <dependency>
