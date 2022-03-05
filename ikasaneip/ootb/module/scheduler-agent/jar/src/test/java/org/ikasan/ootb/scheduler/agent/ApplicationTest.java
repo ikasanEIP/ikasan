@@ -203,7 +203,7 @@ public class ApplicationTest
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumer();
 
-        flowTestRule.sleep(1000);
+        flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
 
@@ -229,7 +229,7 @@ public class ApplicationTest
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumer();
 
-        flowTestRule.sleep(1000);
+        flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
 
