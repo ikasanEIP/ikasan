@@ -3,11 +3,14 @@ package org.ikasan.job.orchestration.model.job;
 
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
+import java.util.List;
+
 public class SchedulerJobImpl implements SchedulerJob {
     protected String jobIdentifier;
     protected String agentName;
     protected String jobName;
     protected String contextId;
+    protected List<String> childContextIds;
     protected String description;
     protected String startupControlType = "AUTOMATIC";
 
@@ -19,6 +22,16 @@ public class SchedulerJobImpl implements SchedulerJob {
     @Override
     public void setContextId(String contextId) {
         this.contextId = contextId;
+    }
+
+    @Override
+    public List<String> getChildContextIds() {
+        return childContextIds;
+    }
+
+    @Override
+    public void setChildContextIds(List<String> childContextIds) {
+        this.childContextIds = childContextIds;
     }
 
     @Override
