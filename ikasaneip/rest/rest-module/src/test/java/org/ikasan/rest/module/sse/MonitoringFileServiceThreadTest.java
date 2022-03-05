@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
@@ -45,6 +46,7 @@ public class MonitoringFileServiceThreadTest {
     }
 
     @Test
+    @Ignore
     public void test_monitoringService_monitorsForMessages_should_reset_atomic_count_if_file_deleted_and_send_new_messages() throws Exception {
         // create new file
         String pathname = "src/test/resources/data/log1.sample";
@@ -87,6 +89,7 @@ public class MonitoringFileServiceThreadTest {
     }
 
     @Test
+    @Ignore
     public void test_monitoringService_monitors_for_new_messages() throws IOException {
 
         MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);

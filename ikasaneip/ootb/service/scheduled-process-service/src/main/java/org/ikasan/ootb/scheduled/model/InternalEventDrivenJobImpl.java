@@ -14,6 +14,7 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
     private long maxExecutionTime;
     private List<ContextParameter> contextParameters;
     private String contextId;
+    protected List<String> childContextIds;
     private String identifier;
     private String agentName;
     private String jobName;
@@ -88,6 +89,16 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
     @Override
     public void setContextId(String contextId) {
         this.contextId = contextId;
+    }
+
+    @Override
+    public List<String> getChildContextIds() {
+        return childContextIds;
+    }
+
+    @Override
+    public void setChildContextIds(List<String> childContextIds) {
+        this.childContextIds = childContextIds;
     }
 
     @Override
