@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.quartz.recovery.dao;
 
-import ch.qos.logback.core.util.FileUtil;
 import org.ikasan.component.endpoint.quartz.recovery.model.ScheduledJobRecoveryModel;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -63,13 +62,18 @@ public class ScheduledJobRecoveryDaoKryoImplTest
     @BeforeClass
     public static void setup()
     {
-        FileUtil.createMissingParentDirectories(tmpTestDir);
+        tmpTestDir.mkdirs();
     }
 
     @AfterClass
     public static void teardown()
     {
-        tmpTestDir.deleteOnExit();
+        for(File file:tmpTestDir.listFiles())
+        {
+            Assert.assertTrue("Failed to clean up files after test", file.delete() );
+        }
+
+        Assert.assertTrue("Failed to clean up tmp dir after test", tmpTestDir.delete() );
     }
 
     /**
