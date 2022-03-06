@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.quartz.recovery.dao;
 
-import ch.qos.logback.core.util.FileUtil;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -63,6 +62,8 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
 
     /** persistence directory */
     String persistenceDir;
+
+    File persistenceDirFile;
 
     /**
      * Thread local instance of Kyro instance.
@@ -90,6 +91,12 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
         {
             throw new IllegalArgumentException("persistence directory cannot be 'null");
         }
+
+        this.persistenceDirFile = new File(persistenceDir);
+        if(!persistenceDirFile.exists())
+        {
+            persistenceDirFile.mkdirs();
+        }
     }
 
     @Override
@@ -115,7 +122,6 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
     {
         Kryo kryo = kryoThreadLocal.get();
         String path = getScheduledPersistence(scheduledJobRecoveryModel.getGroup(), scheduledJobRecoveryModel.getName());
-        FileUtil.createMissingParentDirectories(new File(path) );
 
         try
         {

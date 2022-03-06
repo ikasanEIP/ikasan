@@ -40,7 +40,6 @@
  */
 package org.ikasan.cli.shell.operation.dao;
 
-import ch.qos.logback.core.util.FileUtil;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
@@ -65,6 +64,8 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
 
     /** persistence directory */
     String persistenceDir;
+
+    File persistenceDirFile;
 
     /**
      * Thread local instance of Kyro instance.
@@ -92,6 +93,12 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         {
             throw new IllegalArgumentException("persistence directory cannot be 'null");
         }
+
+        this.persistenceDirFile = new File(persistenceDir);
+        if(!persistenceDirFile.exists())
+        {
+            persistenceDirFile.mkdirs();
+        }
     }
 
     @Override
@@ -99,7 +106,6 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     {
         Kryo kryo = kryoThreadLocal.get();
         String path = getPidFQN(ikasanProcess.getType(), ikasanProcess.getName());
-        FileUtil.createMissingParentDirectories(new File(path) );
 
         try
         {

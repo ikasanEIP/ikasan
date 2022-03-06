@@ -40,9 +40,6 @@
  */
 package org.ikasan.component.endpoint.quartz.recovery.service;
 
-import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
-import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryServiceFactory;
-
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
