@@ -3,15 +3,16 @@ package org.ikasan.rest.module;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.io.File;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.rest.module.sse.MonitoringFileService;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -44,12 +45,17 @@ public class LogFileStreamApplicationTest {
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
-    private final String sampleLogFileStr = "src/test/resources/data/log.sample";
+    private final String sampleLogFileStr = "target/tmp/data/log.sample";
 
     @Before
     public void setUp() throws IOException {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        FileChannel.open(Paths.get(sampleLogFileStr), StandardOpenOption.WRITE).truncate(0).close();
+        FileUtils.write(new File(sampleLogFileStr), "", StandardCharsets.UTF_8);
+    }
+
+    @After
+    public void tearDown() throws IOException {
+        FileUtils.forceDelete(new File(sampleLogFileStr));
     }
 
     @Test
@@ -82,8 +88,8 @@ public class LogFileStreamApplicationTest {
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
 
-        // encoded url must be provided!
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs?fullFilePath=src%2Ftest%2Fresources%2Fdata%2Flog.sample")
+        // encoded url must be provided! target/tmp/data/log.sample
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs?fullFilePath=target%2Ftmp%2Fdata%2Flog.sample")
             .accept(MediaType.TEXT_EVENT_STREAM_VALUE);
 
         mockMvc.perform(requestBuilder)
