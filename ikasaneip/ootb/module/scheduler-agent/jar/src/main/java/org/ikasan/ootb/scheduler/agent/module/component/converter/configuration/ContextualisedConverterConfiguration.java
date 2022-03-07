@@ -5,7 +5,7 @@ import java.util.List;
 public class ContextualisedConverterConfiguration {
 
     private String contextId;
-    private List<String> childContextId;
+    private List<String> childContextIds;
 
     public String getContextId() {
         return contextId;
@@ -15,11 +15,11 @@ public class ContextualisedConverterConfiguration {
         this.contextId = contextId;
     }
 
-    public List<String> getChildContextId() {
-        return childContextId;
+    public List<String> getChildContextIds() {
+        return childContextIds;
     }
 
     public void setChildContextIds(List<String> childContextId) {
-        this.childContextId = childContextId;
+        this.childContextIds = childContextId;
     }
 }
