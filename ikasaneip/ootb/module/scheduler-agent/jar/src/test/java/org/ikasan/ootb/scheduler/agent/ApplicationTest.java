@@ -184,7 +184,7 @@ public class ApplicationTest {
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
-        flowTestRule.sleep(1000);
+        flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
 
@@ -234,6 +234,7 @@ public class ApplicationTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
 
         flowTestRule.consumer("File Consumer")
+            .filter("Duplicate Message Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
