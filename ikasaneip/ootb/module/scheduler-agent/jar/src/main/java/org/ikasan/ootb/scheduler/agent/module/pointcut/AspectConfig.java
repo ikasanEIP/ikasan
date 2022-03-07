@@ -47,7 +47,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 @Configuration
-@ImportResource(locations = "classpath:/META-INF/aop.xml")
 public class AspectConfig {
 
     @Bean
