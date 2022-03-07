@@ -89,7 +89,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
         scheduledProcessEvent.setAgentName(moduleName);
         scheduledProcessEvent.setJobName(this.jobName);
         scheduledProcessEvent.setContextId(this.configuration.getContextId());
-        scheduledProcessEvent.setChildContextIds(this.configuration.getChildContextId());
+        scheduledProcessEvent.setChildContextIds(this.configuration.getChildContextIds());
         scheduledProcessEvent.setSuccessful(true);
 
         Trigger jobTrigger = jobExecutionContext.getTrigger();
