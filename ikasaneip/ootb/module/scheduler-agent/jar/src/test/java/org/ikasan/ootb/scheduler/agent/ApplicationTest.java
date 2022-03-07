@@ -410,6 +410,7 @@ public class ApplicationTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
 
         flowTestRule.consumer("File Consumer")
+            .filter("Duplicate Message Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
@@ -417,6 +418,39 @@ public class ApplicationTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    public void test_file_flow_with_filter() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+
+        flowTestRule.consumer("File Consumer")
+            .filter("Duplicate Message Filter")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer")
+            .consumer("File Consumer")
+            .filter("Duplicate Message Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        // file first time
+        flowTestRule.fireScheduledConsumer();
+
+        flowTestRule.sleep(2000);
+        // file second time
+        flowTestRule.fireScheduledConsumer();
         flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
