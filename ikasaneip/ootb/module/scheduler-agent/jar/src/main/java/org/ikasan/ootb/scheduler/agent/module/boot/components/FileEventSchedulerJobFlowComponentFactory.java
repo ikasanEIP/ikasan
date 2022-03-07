@@ -89,6 +89,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -127,6 +128,12 @@ public class FileEventSchedulerJobFlowComponentFactory
             .build();
     }
 
+    public Filter getDuplicateMessageFilter(String jobName) {
+        return builderFactory.getComponentBuilder().messageFilter()
+            .setObjectHashingFilterEntryConverter()
+            .setConfiguredResourceId("duplicate-message-filter-"+jobName)
+            .build();
+    }
 
     /**
      * Get the converter that converts messages from a JobExecution to a ScheduledProcessEvent.
