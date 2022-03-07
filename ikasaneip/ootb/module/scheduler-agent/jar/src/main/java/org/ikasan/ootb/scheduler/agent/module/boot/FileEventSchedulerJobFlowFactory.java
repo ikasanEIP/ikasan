@@ -71,6 +71,7 @@ public class FileEventSchedulerJobFlowFactory
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
             .withDescription("The " + jobName + " File Event Flow is responsible for kicking off jobs when an expected file arrives.")
             .consumer("File Consumer", componentFactory.getFileConsumer())
+            .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter(jobName))
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter(jobName))
             .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
             .build();
