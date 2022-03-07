@@ -8,10 +8,8 @@ import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.job.orchestration.model.job.SchedulerJobWrapperImpl;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -25,13 +23,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -175,6 +166,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
                 ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
                 converterConfiguration.setContextId(job.getContextId());
+                converterConfiguration.setChildContextIds(job.getChildContextIds());
 
                 this.configurationService.update(converter);
             }
@@ -193,6 +185,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
                 ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
                 converterConfiguration.setContextId(job.getContextId());
+                converterConfiguration.setChildContextIds(job.getChildContextIds());
 
                 this.configurationService.update(converter);
             }
