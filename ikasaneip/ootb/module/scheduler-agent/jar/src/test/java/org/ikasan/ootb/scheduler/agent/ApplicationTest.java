@@ -47,14 +47,12 @@ import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.scheduled.context.model.And;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
@@ -222,6 +220,7 @@ public class ApplicationTest
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
 
         flowTestRule.consumer("File Consumer")
+            .filter("Duplicate Message Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
@@ -230,6 +229,39 @@ public class ApplicationTest
         flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    public void test_file_flow_with_filter() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+
+        flowTestRule.consumer("File Consumer")
+            .filter("Duplicate Message Filter")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer")
+            .consumer("File Consumer")
+            .filter("Duplicate Message Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        // file first time
+        flowTestRule.fireScheduledConsumer();
+
+        flowTestRule.sleep(1000);
+        // file second time
+        flowTestRule.fireScheduledConsumer();
+        flowTestRule.sleep(1000);
 
         flowTestRule.assertIsSatisfied();
 
