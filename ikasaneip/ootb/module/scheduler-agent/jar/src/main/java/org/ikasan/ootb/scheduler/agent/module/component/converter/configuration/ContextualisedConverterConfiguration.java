@@ -19,7 +19,7 @@ public class ContextualisedConverterConfiguration {
         return childContextId;
     }
 
-    public void setChildContextId(List<String> childContextId) {
+    public void setChildContextIds(List<String> childContextId) {
         this.childContextId = childContextId;
     }
 }
