@@ -3,9 +3,12 @@ package org.ikasan.rest.module.sse;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import org.apache.commons.io.FileUtils;
 import org.ikasan.rest.module.exception.MaxThreadException;
 import org.junit.After;
 import org.junit.Before;
@@ -14,12 +17,13 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 public class MonitoringFileServiceTest {
 
-    private final String sampleLogFileStr = "src/test/resources/data/log.sample";
+    private final String sampleLogFileStr = "target/tmp/data/log.sample";
 
     private MonitoringFileService service;
 
     @Before
-    public void setUp() throws IOException {
+    public void setup() throws IOException {
+        FileUtils.write(new File(sampleLogFileStr), "", StandardCharsets.UTF_8);
         service = new MonitoringFileService();
         ReflectionTestUtils.setField(service, "maxStreamThreads", 1);
         ReflectionTestUtils.setField(service, "streamThreadWaitTime", 500);
@@ -29,6 +33,7 @@ public class MonitoringFileServiceTest {
 
     @After
     public void tearDown() throws IOException {
+        FileUtils.forceDelete(new File(sampleLogFileStr));
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) ReflectionTestUtils.getField(service, "executorService");
         tpe.shutdownNow();
     }
