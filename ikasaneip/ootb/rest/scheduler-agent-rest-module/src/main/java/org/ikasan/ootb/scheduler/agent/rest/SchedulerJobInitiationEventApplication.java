@@ -53,9 +53,6 @@ public class SchedulerJobInitiationEventApplication
     public ResponseEntity raiseSchedulerJobInitiationEvent(@RequestBody SchedulerJobInitiationEventDto schedulerJobInitiationEvent)
     {
         try {
-//            SchedulerJobInitiationEvent schedulerJobInitiationEvent = mapper.readValue(schedulerJobInitiationEventPayload
-//                , SchedulerJobInitiationEventDto.class);
-
             String queueName = schedulerJobInitiationEvent.getAgentName()+"-"+schedulerJobInitiationEvent.getJobName()+"-inbound-queue";
             IBigQueue inboundQueue = InboundJobQueueCache.instance().get(queueName);
             inboundQueue.enqueue(mapper.writeValueAsBytes(schedulerJobInitiationEvent));
