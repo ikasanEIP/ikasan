@@ -82,11 +82,17 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
         sb.append(", workingDirectory='").append(workingDirectory).append('\'');
         sb.append(", commandLine='").append(commandLine).append('\'');
+        sb.append(", minExecutionTime=").append(minExecutionTime);
+        sb.append(", maxExecutionTime=").append(maxExecutionTime);
+        sb.append(", contextParameters=").append(contextParameters);
         sb.append(", jobIdentifier='").append(jobIdentifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');
         sb.append(", jobName='").append(jobName).append('\'');
         sb.append(", contextId='").append(contextId).append('\'');
-        sb.append(", description='").append(description).append('\'');
+        sb.append(", childContextIds=[");
+        childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        sb.append("], description='").append(description).append('\'');
+        sb.append(", startupControlType='").append(startupControlType).append('\'');
         sb.append('}');
         return sb.toString();
     }
