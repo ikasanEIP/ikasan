@@ -1,12 +1,8 @@
-package org.ikasan.ootb.scheduler.agent.module.dryrun;
+package org.ikasan.ootb.scheduled.dryrun;
 
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.PostConstruct;
-
-import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import net.jodah.expiringmap.ExpirationPolicy;
+import net.jodah.expiringmap.ExpiringMap;
+import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -17,8 +13,10 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import net.jodah.expiringmap.ExpirationPolicy;
-import net.jodah.expiringmap.ExpiringMap;
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJobParameter> {
 
@@ -50,7 +48,7 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
 
     @Override
     public void setDryRunMode(boolean dryRunMode) {
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configureModule = getConfigureModule();
+        ConfiguredResource<DryRunConfiguredModuleConfiguration> configureModule = getConfigureModule();
         configureModule.getConfiguration().setDryRunMode(dryRunMode);
 
         configurationService.update(configureModule);
@@ -78,14 +76,14 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
         return fileName;
     }
 
-    private SchedulerAgentConfiguredModuleConfiguration getSchedulerAgentConfiguredModuleConfiguration() {
+    private DryRunConfiguredModuleConfiguration getSchedulerAgentConfiguredModuleConfiguration() {
         return getConfigureModule().getConfiguration();
     }
 
-    private ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> getConfigureModule() {
+    private ConfiguredResource<DryRunConfiguredModuleConfiguration> getConfigureModule() {
         Module<Flow> module = moduleService.getModule(moduleName);
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule =
-            (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>) module;
+        ConfiguredResource<DryRunConfiguredModuleConfiguration> configuredModule =
+            (ConfiguredResource<DryRunConfiguredModuleConfiguration>) module;
         return configuredModule;
     }
 
