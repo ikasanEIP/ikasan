@@ -35,6 +35,12 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>dry-run-service</artifactId>
+            <version>${version.ikasan}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-big-queue</artifactId>
             <version>${version.ikasan}</version>
         </dependency>

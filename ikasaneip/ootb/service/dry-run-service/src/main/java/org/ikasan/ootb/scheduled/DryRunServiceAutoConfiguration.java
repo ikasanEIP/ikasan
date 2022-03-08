@@ -38,9 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.configuration;
+package org.ikasan.ootb.scheduled;
 
-import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduled.dryrun.DryRunModeServiceImpl;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.springframework.context.annotation.Bean;
 
-public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration {
+/**
+ * Dry run service related configuration required by the scheduler ootb module.
+ */
+public class DryRunServiceAutoConfiguration {
+    @Bean
+    public DryRunModeService dryRunModeService() {
+        return new DryRunModeServiceImpl();
+    }
 }

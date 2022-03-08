@@ -24,7 +24,7 @@ import java.util.*;
 @EnableWebSecurity
 @EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class MockedUserServiceTestConfig implements WebMvcConfigurer
+public class MockedUserServiceTestConfigWithConverter implements WebMvcConfigurer
 {
     @Bean
     @Primary
@@ -40,6 +40,22 @@ public class MockedUserServiceTestConfig implements WebMvcConfigurer
                 .authorities("readonly")
                 .build()
         ));
+    }
+
+
+    @Override
+    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+        converter.getObjectMapper().registerModule(simpleModule);
+        converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        converter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        converters.add(converter);
     }
 
 }

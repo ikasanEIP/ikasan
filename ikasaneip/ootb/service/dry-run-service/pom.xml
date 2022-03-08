@@ -43,17 +43,78 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-ootb-parent</artifactId>
+        <artifactId>ikasan-ootb-service</artifactId>
         <version>3.3.0-scheduler-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-ootb-service</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Out of the Box Services</name>
+    <groupId>org.ikasan</groupId>
+    <artifactId>dry-run-service</artifactId>
+    <packaging>jar</packaging>
+    <name>Dry Run Service Module</name>
 
-    <modules>
-       <module>scheduled-process-service</module>
-       <module>dry-run-service</module>
-    </modules>
+    <dependencies>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip-standalone</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test-endpoint</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-scheduled</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>net.jodah</groupId>
+            <artifactId>expiringmap</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.junit.jupiter</groupId>
+                    <artifactId>junit-jupiter</artifactId>
+                </exclusion>
+            </exclusions>
+            <scope>test</scope>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>scheduler-agent-ikasan-rest-module</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
 
 </project>

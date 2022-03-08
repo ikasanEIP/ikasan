@@ -38,9 +38,18 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.configuration;
+package org.ikasan.ootb.scheduled.dryrun.configuration;
 
-import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
+import org.ikasan.module.ConfiguredModuleConfiguration;
 
-public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration {
+public class DryRunConfiguredModuleConfiguration extends ConfiguredModuleConfiguration {
+    private boolean dryRunMode = false;
+
+    public boolean isDryRunMode() {
+        return dryRunMode;
+    }
+
+    public void setDryRunMode(boolean dryRunMode) {
+        this.dryRunMode = dryRunMode;
+    }
 }

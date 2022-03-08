@@ -28,7 +28,6 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.ikasan.ootb.scheduler.agent.rest.cache.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -36,7 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { SchedulerJobInitiationEventApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = { SchedulerJobInitiationEventApplication.class, MockedUserServiceTestConfigWithConverter.class })
 @EnableWebMvc
 public class SchedulerJobInitiationEventApplicationTest
 {

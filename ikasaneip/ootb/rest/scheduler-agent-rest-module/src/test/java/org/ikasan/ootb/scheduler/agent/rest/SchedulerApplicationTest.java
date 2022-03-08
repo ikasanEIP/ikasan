@@ -49,7 +49,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { SchedulerApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = { SchedulerApplication.class, MockedUserServiceTestConfigWithConverter.class })
 public class SchedulerApplicationTest
 {
     @Rule

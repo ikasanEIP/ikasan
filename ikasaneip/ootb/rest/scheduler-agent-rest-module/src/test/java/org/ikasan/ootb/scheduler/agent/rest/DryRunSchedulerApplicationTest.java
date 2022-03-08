@@ -35,7 +35,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = {DryRunSchedulerApplication.class, MockedUserServiceTestConfig.class})
+@SpringBootTest(classes = {DryRunSchedulerApplication.class, MockedUserServiceTestConfigWithConverter.class})
 @EnableWebMvc
 public class DryRunSchedulerApplicationTest {
 
