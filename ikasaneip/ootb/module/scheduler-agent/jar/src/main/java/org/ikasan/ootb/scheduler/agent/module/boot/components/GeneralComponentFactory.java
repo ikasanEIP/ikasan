@@ -82,10 +82,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
-
-import org.ikasan.ootb.scheduler.agent.module.dryrun.DryRunModeServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.service.JobProvisionServiceImpl;
-import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -129,11 +126,6 @@ public class GeneralComponentFactory
     @Bean
     public JobProvisionService jobProvisionService() {
         return new JobProvisionServiceImpl();
-    }
-
-    @Bean
-    public DryRunModeService dryRunModeService() {
-        return new DryRunModeServiceImpl();
     }
 }
 

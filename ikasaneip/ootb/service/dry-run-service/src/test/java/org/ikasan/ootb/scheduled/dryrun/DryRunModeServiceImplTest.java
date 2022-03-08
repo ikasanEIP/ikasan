@@ -1,14 +1,7 @@
-package org.ikasan.ootb.scheduler.agent.module.dryrun;
-
-import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
-import java.util.List;
-import java.util.Map;
+package org.ikasan.ootb.scheduled.dryrun;
 
 import org.ikasan.module.ConfiguredModuleImpl;
-import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -22,6 +15,13 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.List;
+import java.util.Map;
+
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DryRunModeServiceImplTest {
 
@@ -32,7 +32,7 @@ public class DryRunModeServiceImplTest {
     private ConfiguredModuleImpl module;
 
     @Mock
-    private SchedulerAgentConfiguredModuleConfiguration configureModule;
+    private DryRunConfiguredModuleConfiguration configureModule;
 
     @Mock
     private ConfigurationService configurationService;
