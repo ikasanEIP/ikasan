@@ -12,7 +12,7 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     private List<ContextParameterDto> contextParameters;
     private InternalEventDrivenJobDto internalEventDrivenJob;
     private String contextId;
-    private List<String> childContextId;
+    private List<String> childContextIds;
     private String contextInstanceId;
     private boolean dryRun;
     private DryRunParametersDto dryRunParametersDto;
@@ -90,12 +90,12 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public List<String> getChildContextIds() {
-        return childContextId;
+        return childContextIds;
     }
 
     @Override
     public void setChildContextIds(List<String> childContextId) {
-        this.childContextId = childContextId;
+        this.childContextIds = childContextIds;
     }
 
     @Override
@@ -126,5 +126,24 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     @Override
     public boolean isSkipped() {
         return this.skipped;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("SchedulerJobInitiationEventDto{");
+        sb.append("agentName='").append(agentName).append('\'');
+        sb.append(", agentUrl='").append(agentUrl).append('\'');
+        sb.append(", jobName='").append(jobName).append('\'');
+        sb.append(", internalEventDrivenJob=").append(internalEventDrivenJob);
+        sb.append(", contextId='").append(contextId).append('\'');
+        sb.append(", childContextIds=[ ");
+        childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        sb.append("], contextInstanceId='").append(contextInstanceId).append('\'');
+        sb.append(", contextParameters=").append(contextParameters);
+        sb.append(", dryRun=").append(dryRun);
+        sb.append(", dryRunParameters=").append(dryRunParametersDto);
+        sb.append(", skipped=").append(skipped);
+        sb.append('}');
+        return sb.toString();
     }
 }

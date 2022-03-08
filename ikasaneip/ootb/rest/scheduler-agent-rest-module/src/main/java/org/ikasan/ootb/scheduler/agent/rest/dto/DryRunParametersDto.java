@@ -59,4 +59,16 @@ public class DryRunParametersDto implements DryRunParameters {
     public void setError(boolean error) {
         this.error = error;
     }
+
+    @Override
+    public String toString() {
+        final StringBuffer sb = new StringBuffer("DryRunParametersDto{");
+        sb.append("minExecutionTimeMillis=").append(minExecutionTimeMillis);
+        sb.append(", maxExecutionTimeMillis=").append(maxExecutionTimeMillis);
+        sb.append(", fixedExecutionTimeMillis=").append(fixedExecutionTimeMillis);
+        sb.append(", jobErrorPercentage=").append(jobErrorPercentage);
+        sb.append(", error=").append(error);
+        sb.append('}');
+        return sb.toString();
+    }
 }

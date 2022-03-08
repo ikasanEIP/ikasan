@@ -54,28 +54,28 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
  */
 public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
 {
-    private Long id;
-    private String agentName;
-    private String agentHostname;
-    private String jobName;
-    private String jobGroup;
-    private String jobDescription;
-    private String commandLine;
-    private int returnCode;
-    private boolean successful;
-    private Outcome outcome;
-    private String resultOutput;
-    private String resultError;
-    private long pid;
-    private String user;
-    private long fireTime;
-    private long nextFireTime;
-    private long completionTime;
-    private boolean harvested;
-    private long harvestedDateTime;
-    private boolean dryRun = false;
-    private boolean jobStarting = false;
-    private DryRunParameters dryRunParameters;
+    protected Long id;
+    protected String agentName;
+    protected String agentHostname;
+    protected String jobName;
+    protected String jobGroup;
+    protected String jobDescription;
+    protected String commandLine;
+    protected int returnCode;
+    protected boolean successful;
+    protected Outcome outcome;
+    protected String resultOutput;
+    protected String resultError;
+    protected long pid;
+    protected String user;
+    protected long fireTime;
+    protected long nextFireTime;
+    protected long completionTime;
+    protected boolean harvested;
+    protected long harvestedDateTime;
+    protected boolean dryRun = false;
+    protected boolean jobStarting = false;
+    protected DryRunParameters dryRunParameters;
 
 
     public Long getId()
