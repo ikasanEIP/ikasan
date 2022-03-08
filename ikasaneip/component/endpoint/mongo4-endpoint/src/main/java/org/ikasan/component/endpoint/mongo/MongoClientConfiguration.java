@@ -85,7 +85,7 @@ public class MongoClientConfiguration
     /** represents preferred replica set members to which a query or command can be sent */
     protected ReadPreference readPreference = ReadPreference.primary();
 
-     /** Controls the acknowledgment of write operations */
+    /** Controls the acknowledgment of write operations */
     protected WriteConcern writeConcern = WriteConcern.ACKNOWLEDGED;
 
     /** Sets the localThreshold - overrides default driver options if specified */
