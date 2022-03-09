@@ -89,12 +89,12 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     }
 
     @Override
-    public List<String> getChildContextIds() {
+    public List<String>     getChildContextIds() {
         return childContextIds;
     }
 
     @Override
-    public void setChildContextIds(List<String> childContextId) {
+    public void setChildContextIds(List<String> childContextIds) {
         this.childContextIds = childContextIds;
     }
 
