@@ -161,8 +161,13 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
         sb.append(", maxExecutionTime=").append(maxExecutionTime);
         sb.append(", contextParameters=").append(contextParameters);
         sb.append(", contextId='").append(contextId).append('\'');
-        sb.append(", childContextIds=[");
-        childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        if(childContextIds != null) {
+            sb.append(", childContextIds=[ ");
+            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        }
+        else {
+            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+        }
         sb.append("], identifier='").append(identifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');
         sb.append(", jobName='").append(jobName).append('\'');
