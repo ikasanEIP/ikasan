@@ -136,8 +136,13 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
         sb.append(", jobName='").append(jobName).append('\'');
         sb.append(", internalEventDrivenJob=").append(internalEventDrivenJob);
         sb.append(", contextId='").append(contextId).append('\'');
-        sb.append(", childContextIds=[ ");
-        childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        if(childContextIds != null) {
+            sb.append(", childContextIds=[ ");
+            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        }
+        else {
+            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+        }
         sb.append("], contextInstanceId='").append(contextInstanceId).append('\'');
         sb.append(", contextParameters=").append(contextParameters);
         sb.append(", dryRun=").append(dryRun);

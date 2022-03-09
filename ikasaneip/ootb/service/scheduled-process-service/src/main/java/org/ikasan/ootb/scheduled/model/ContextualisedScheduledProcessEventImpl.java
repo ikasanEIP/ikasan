@@ -116,8 +116,13 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     public String toString() {
         final StringBuffer sb = new StringBuffer("ContextualisedScheduledProcessEventImpl{");
         sb.append("contextId='").append(contextId).append('\'');
-        sb.append(", childContextIds=[");
-        childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        if(childContextIds != null) {
+            sb.append(", childContextIds=[ ");
+            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        }
+        else {
+            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+        }
         sb.append("], contextInstanceId='").append(contextInstanceId).append('\'');
         sb.append(", skipped=").append(skipped);
         sb.append(", internalEventDrivenJob=").append(internalEventDrivenJob);
