@@ -40,6 +40,10 @@ deploy:
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
       branch: 3.3.x-scheduler-working-branch
+  - provider: script
+    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
+      branch: IKASAN-2076-expose-job-status-end-points
   # Push release to oss
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
