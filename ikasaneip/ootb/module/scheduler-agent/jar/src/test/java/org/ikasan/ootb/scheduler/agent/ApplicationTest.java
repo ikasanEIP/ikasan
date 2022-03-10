@@ -156,6 +156,13 @@ public class ApplicationTest {
 
         flow.stop();
         assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("Housekeep Log Files Flow");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
     }
 
     @Test
