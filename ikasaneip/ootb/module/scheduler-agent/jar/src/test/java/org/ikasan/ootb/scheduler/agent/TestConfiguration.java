@@ -83,6 +83,8 @@ public class TestConfiguration {
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 4", "QUARTZ");
         configuration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
+        configuration.getFlowDefinitions().put("Housekeep Log Files Flow", "MANUAL");
+        configuration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", "HOUSEKEEP_LOG");
 
         configuration.setDryRunMode(false);
 

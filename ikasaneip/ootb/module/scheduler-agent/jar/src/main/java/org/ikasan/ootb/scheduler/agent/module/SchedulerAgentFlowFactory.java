@@ -80,6 +80,9 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     @Resource
     ScheduledProcessEventOutboundFlowFactory scheduledProcessEventOutboundFlowFactory;
 
+    @Resource
+    HousekeepLogFilesFlowFactory housekeepLogFilesFlowFactory;
+
     @Override
     public List<Flow> create(String jobName, String profile)
     {
@@ -104,6 +107,9 @@ public class SchedulerAgentFlowFactory implements FlowFactory
                 }
                 case "OUTBOUND": {
                     return this.createOutboundScheduledEventFlows();
+                }
+                case "HOUSEKEEP_LOG": {
+                    return this.createHousekeepLogFilesFlows();
                 }
                 default: {
                     throw new RuntimeException(String.format("Unknown profile[%s] encountered in flow factory!", profile));
@@ -163,6 +169,10 @@ public class SchedulerAgentFlowFactory implements FlowFactory
      */
     private List<Flow> createOutboundScheduledEventFlows() throws IOException {
         return List.of(this.scheduledProcessEventOutboundFlowFactory.create());
+    }
+
+    private List<Flow> createHousekeepLogFilesFlows() throws IOException {
+        return List.of(this.housekeepLogFilesFlowFactory.create());
     }
 }
 
