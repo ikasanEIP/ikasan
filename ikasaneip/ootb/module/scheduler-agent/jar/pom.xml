@@ -16,6 +16,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
+            <version>1.20</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-standalone</artifactId>
             <version>${version.ikasan}</version>
