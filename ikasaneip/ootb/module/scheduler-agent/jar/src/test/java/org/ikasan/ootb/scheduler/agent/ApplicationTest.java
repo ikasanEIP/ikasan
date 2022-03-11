@@ -325,6 +325,28 @@ public class ApplicationTest {
     }
 
     @Test
+    public void test_housekeep_flow_success() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Housekeep Log Files Flow"));
+        flowTestRule.consumer("Scheduled Consumer")
+            .producer("Log Files Process");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+
+    @Test
     @Ignore
     public void test() throws JsonProcessingException {
         HashMap<String, String> map = new HashMap<>();
