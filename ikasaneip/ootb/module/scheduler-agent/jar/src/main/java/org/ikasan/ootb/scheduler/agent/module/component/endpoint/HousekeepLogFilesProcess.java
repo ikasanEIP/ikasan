@@ -101,6 +101,9 @@ public class HousekeepLogFilesProcess<T> implements Producer<T>, ConfiguredResou
                 Files.copy(file.toPath(), tOut);
 
                 tOut.closeArchiveEntry();
+
+                // delete now after gzipped
+                FileUtils.deleteQuietly(file);
             }
             tOut.finish();
         }
