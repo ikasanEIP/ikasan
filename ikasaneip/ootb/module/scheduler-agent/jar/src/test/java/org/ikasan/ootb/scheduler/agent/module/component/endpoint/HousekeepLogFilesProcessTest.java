@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 public class HousekeepLogFilesProcessTest {
 
@@ -68,8 +69,72 @@ public class HousekeepLogFilesProcessTest {
 
         Assert.assertEquals(1, files.size());
         Assert.assertEquals("logFile-3.txt", files.stream().findFirst().get().getName() );
-
     }
 
+    @Test
+    public void test_housekeep_move() {
+
+        Assert.assertEquals(3, FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false).size());
+
+        configuration.setShouldMove(true);
+        housekeepLogFilesProcess.setConfiguration(configuration);
+
+        housekeepLogFilesProcess.invoke(null);
+
+        Collection<File> files = FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false);
+
+        Assert.assertEquals(1, files.size());
+
+        Collection<File> filesInArchive = FileUtils.listFiles(new File("src/test/resources/data/housekeep/archive"), null, false);
+
+        Assert.assertEquals(2, filesInArchive.size());
+
+        Assert.assertEquals("logFile-3.txt", files.stream().findFirst().get().getName() );
+    }
+
+    @Test
+    public void test_housekeep_archive() {
+
+        Assert.assertEquals(3, FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false).size());
+
+        configuration.setShouldArchive(true);
+        housekeepLogFilesProcess.setConfiguration(configuration);
+
+        housekeepLogFilesProcess.invoke(null);
+
+        Collection<File> files = FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false);
+
+        Assert.assertEquals(2, files.size());
+        Assert.assertEquals("logFile-3.txt", files.stream().collect(Collectors.toList()).get(0).getName() );
+        Assert.assertTrue(files.stream().collect(Collectors.toList()).get(1).getName().contains("logFiles-") );
+        Assert.assertTrue(files.stream().collect(Collectors.toList()).get(1).getName().contains(".tar.gz") );
+
+        Collection<File> filesInArchive = FileUtils.listFiles(new File("src/test/resources/data/housekeep/archive"), null, false);
+
+        Assert.assertEquals(0, filesInArchive.size());
+    }
+
+    @Test
+    public void test_housekeep_archive_and_move() {
+
+        Assert.assertEquals(3, FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false).size());
+
+        configuration.setShouldArchive(true);
+        configuration.setShouldMove(true);
+        housekeepLogFilesProcess.setConfiguration(configuration);
+
+        housekeepLogFilesProcess.invoke(null);
+
+        Collection<File> files = FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false);
+
+        Assert.assertEquals(1, files.size());
+        Assert.assertEquals("logFile-3.txt", files.stream().collect(Collectors.toList()).get(0).getName() );
+
+        Collection<File> filesInArchive = FileUtils.listFiles(new File("src/test/resources/data/housekeep/archive"), null, false);
+
+        Assert.assertEquals(1, filesInArchive.size());
+        Assert.assertTrue(filesInArchive.stream().collect(Collectors.toList()).get(0).getName().contains("logFiles-") );
+        Assert.assertTrue(filesInArchive.stream().collect(Collectors.toList()).get(0).getName().contains(".tar.gz") );
+    }
 
 }
