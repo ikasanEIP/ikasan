@@ -29,7 +29,7 @@ public class HousekeepLogFilesFlowComponentFactory
     public Consumer getScheduledConsumer()
     {
         ScheduledConsumerConfiguration configuration = new ScheduledConsumerConfiguration();
-        configuration.setCronExpression("0 0 0 * * ?");
+        configuration.setCronExpression("20 20 03 * * ?");
         return builderFactory.getComponentBuilder().scheduledConsumer()
             .setConfiguration(configuration)
             .setConfiguredResourceId(moduleName+"-scheduledConsumerConfiguration")
