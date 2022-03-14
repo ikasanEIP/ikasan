@@ -57,6 +57,7 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvi
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.module.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
@@ -330,9 +331,12 @@ public class ApplicationTest {
         flowTestRule.consumer("Scheduled Consumer")
             .producer("Log Files Process");
 
+        HousekeepLogFilesProcessConfiguration configuration = flowTestRule.getComponentConfig("Log Files Process", HousekeepLogFilesProcessConfiguration.class);
+        configuration.setLogFolder("./logs");
+
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
