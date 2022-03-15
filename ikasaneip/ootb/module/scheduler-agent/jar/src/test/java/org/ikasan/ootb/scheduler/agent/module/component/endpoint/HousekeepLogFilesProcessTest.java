@@ -27,6 +27,9 @@ public class HousekeepLogFilesProcessTest {
     @Before
     public void setup() throws IOException {
 
+        // clean any files from previous test classes
+        clean();
+
         configuration = new HousekeepLogFilesProcessConfiguration();
         configuration.setLogFolder("src/test/resources/data/housekeep");
         configuration.setFolderToMove("src/test/resources/data/housekeep/archive");
