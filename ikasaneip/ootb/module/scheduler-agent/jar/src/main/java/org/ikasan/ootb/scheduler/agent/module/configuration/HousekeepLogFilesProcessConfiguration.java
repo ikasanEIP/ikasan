@@ -8,7 +8,7 @@ public class HousekeepLogFilesProcessConfiguration {
 
     @Value( "${housekeep.log.files.process.log-folder}" )
     private String logFolder;
-    @Value( "${housekeep.log.files.process.ttl}" )
+    @Value( "${housekeep.log.files.process.ttl.days}" )
     private int timeToLive = 30;
     @Value( "${housekeep.log.files.process.should-archive}" )
     private boolean shouldArchive = false;
