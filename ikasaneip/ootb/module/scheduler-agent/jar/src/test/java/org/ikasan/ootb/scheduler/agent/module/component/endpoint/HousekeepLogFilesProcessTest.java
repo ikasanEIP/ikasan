@@ -108,9 +108,10 @@ public class HousekeepLogFilesProcessTest {
         Collection<File> files = FileUtils.listFiles(new File("src/test/resources/data/housekeep"), null, false);
 
         Assert.assertEquals(2, files.size());
-        Assert.assertEquals("logFile-3.txt", files.stream().collect(Collectors.toList()).get(0).getName() );
-        Assert.assertTrue(files.stream().collect(Collectors.toList()).get(1).getName().contains("logFiles-") );
-        Assert.assertTrue(files.stream().collect(Collectors.toList()).get(1).getName().contains(".tar.gz") );
+
+        for (File file : files.stream().collect(Collectors.toList())) {
+            Assert.assertTrue(file.getName().equals("logFile-3.txt") || (file.getName().contains("logFiles-") && file.getName().contains(".tar.gz")) );
+        }
 
         Collection<File> filesInArchive = FileUtils.listFiles(new File("src/test/resources/data/housekeep/archive"), null, false);
 
