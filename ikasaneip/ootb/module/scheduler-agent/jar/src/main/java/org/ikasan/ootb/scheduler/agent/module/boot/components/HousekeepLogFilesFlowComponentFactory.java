@@ -22,6 +22,9 @@ public class HousekeepLogFilesFlowComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
+    @Value( "${housekeep.scheduled.consumer.cron}" )
+    String cron;
+
     @Resource
     BuilderFactory builderFactory;
 
@@ -29,7 +32,7 @@ public class HousekeepLogFilesFlowComponentFactory
     public Consumer getScheduledConsumer()
     {
         ScheduledConsumerConfiguration configuration = new ScheduledConsumerConfiguration();
-        configuration.setCronExpression("20 20 03 * * ?");
+        configuration.setCronExpression(cron);
         return builderFactory.getComponentBuilder().scheduledConsumer()
             .setConfiguration(configuration)
             .setConfiguredResourceId(moduleName+"-scheduledConsumerConfiguration")
