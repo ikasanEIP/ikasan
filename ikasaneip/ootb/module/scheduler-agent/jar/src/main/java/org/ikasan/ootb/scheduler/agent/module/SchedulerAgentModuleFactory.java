@@ -83,7 +83,6 @@ public class SchedulerAgentModuleFactory
                 .withType(ModuleType.SCHEDULER_AGENT)
                 .withFlowFactory(schedulerAgentFlowFactory)
                 .setConfiguration(configuration)
-                .addFlow(schedulerAgentFlowFactory.create("", "HOUSEKEEP_LOG").get(0))
             .build();
     }
 }
