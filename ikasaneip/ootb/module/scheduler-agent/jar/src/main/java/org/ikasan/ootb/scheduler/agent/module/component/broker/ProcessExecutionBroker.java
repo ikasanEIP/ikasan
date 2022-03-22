@@ -98,10 +98,10 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
         String formattedDate = formatter.format(LocalDateTime.now());
         if(configuration.getStdOut() != null && configuration.getStdOut().length() > 0)
         {
-            File outputLog = new File(configuration.getStdOut());
+            File outputLog = new File(fixParenthesis(configuration.getLogParentFolder(), configuration.getStdOut(), configuration.getLogParentFolderParenthesis()));
             if(outputLog.exists())
             {
-                outputLog.renameTo(new File(configuration.getStdOut() + "." + formattedDate));
+                outputLog.renameTo(new File(fixParenthesis(configuration.getLogParentFolder(), configuration.getStdOut(), configuration.getLogParentFolderParenthesis()) + "." + formattedDate));
             }
 
             FileUtil.createMissingParentDirectories(outputLog);
@@ -123,10 +123,10 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
         {
             if(configuration.getStdErr() != configuration.getStdOut())
             {
-                File errorLog = new File(configuration.getStdErr());
+                File errorLog = new File(fixParenthesis(configuration.getLogParentFolder(), configuration.getStdErr(), configuration.getLogParentFolderParenthesis()));
                 if(errorLog.exists())
                 {
-                    errorLog.renameTo(new File(configuration.getStdErr() + "." + formattedDate));
+                    errorLog.renameTo(new File(fixParenthesis(configuration.getLogParentFolder(), configuration.getStdErr(), configuration.getLogParentFolderParenthesis()) + "." + formattedDate));
                 }
 
                 FileUtil.createMissingParentDirectories(errorLog);
@@ -211,6 +211,17 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
         }
 
         return scheduledProcessEvent;
+    }
+
+    private String fixParenthesis(String parentFolder, String fileName, String parenthesis) {
+        if (!parentFolder.endsWith(parenthesis)) {
+            parentFolder = parentFolder + parenthesis;
+        }
+        if (fileName.startsWith(parenthesis)) {
+            fileName = fileName.substring(1);
+        }
+
+        return parentFolder+fileName;
     }
 
     String[] getCommandLineArgs(String commandLine)
