@@ -115,6 +115,12 @@ public class JobProcessingFlowComponentFactory
     @Value( "${big.queue.consumer.queueDir}" )
     private String queueDir;
 
+    @Value( "${scheduler.agent.log.folder}" )
+    String logParentFolder;
+
+    @Value( "${scheduler.agent.log.folder.parenthesis}" )
+    String logParentFolderParenthesis;
+
     @Resource
     private IBigQueue outboundQueue;
 
@@ -136,7 +142,7 @@ public class JobProcessingFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobInitiationEventConverter() { return new JobInitiationToContextualisedScheduledProcessEventConverter(moduleName); }
+    public Converter getJobInitiationEventConverter() { return new JobInitiationToContextualisedScheduledProcessEventConverter(moduleName, logParentFolder, logParentFolderParenthesis); }
 
     /**
      * Get the broker that tells the dashboard that a job has started.

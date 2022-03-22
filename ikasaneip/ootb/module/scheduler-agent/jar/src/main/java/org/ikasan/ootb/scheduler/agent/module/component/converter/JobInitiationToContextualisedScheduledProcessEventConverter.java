@@ -50,6 +50,7 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -65,12 +66,14 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
 {
     String moduleName;
     ObjectMapper objectMapper;
+    String logParentFolder;
+    String logParentFolderParenthesis;
 
     /**
      * Constructor
      * @param moduleName
      */
-    public JobInitiationToContextualisedScheduledProcessEventConverter(String moduleName)
+    public JobInitiationToContextualisedScheduledProcessEventConverter(String moduleName, String logParentFolder, String logParentFolderParenthesis)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
@@ -83,6 +86,9 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             .addAbstractTypeMapping(Map.class, HashMap.class)
             .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
         objectMapper.registerModule(simpleModule);
+
+        this.logParentFolder = logParentFolder;
+        this.logParentFolderParenthesis = logParentFolderParenthesis;
     }
 
     @Override
@@ -108,11 +114,11 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
 
             // We are going to use a file naming convention for the log files used by the process to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-suffix.log.
-            scheduledProcessEvent.setResultOutput(schedulerJobInitiationEvent.getContextId() + "-" +
+            scheduledProcessEvent.setResultOutput(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
                 + schedulerJobInitiationEvent.getJobName() + "-" + "out.log");
 
-            scheduledProcessEvent.setResultError(schedulerJobInitiationEvent.getContextId() + "-" +
+            scheduledProcessEvent.setResultError(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
                 + schedulerJobInitiationEvent.getJobName() + "-" + "err.log");
 
@@ -121,6 +127,13 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
         catch (Exception e) {
             throw new TransformationException("An error has occurred converting SchedulerJobInitiationEvent to SchedulerJobInitiationEvent!", e);
         }
+    }
+
+    private String fixParenthesis() {
+        if (logParentFolder.endsWith(logParentFolderParenthesis)) {
+            return logParentFolder;
+        }
+        return logParentFolder+logParentFolderParenthesis;
     }
 
     /**
