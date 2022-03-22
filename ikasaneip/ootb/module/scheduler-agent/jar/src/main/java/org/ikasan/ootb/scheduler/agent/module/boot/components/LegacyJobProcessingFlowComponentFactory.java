@@ -113,6 +113,12 @@ public class LegacyJobProcessingFlowComponentFactory
     @Value( "${server.address}" )
     String serverAddress;
 
+    @Value( "${scheduler.agent.log.folder}" )
+    String logParentFolder;
+
+    @Value( "${scheduler.agent.log.folder.parenthesis}" )
+    String logParentFolderParenthesis;
+
     @Resource
     BuilderFactory builderFactory;
 
@@ -150,6 +156,8 @@ public class LegacyJobProcessingFlowComponentFactory
     {
         ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
         configuration.setCommandLine("pwd");// default safe command across all platforms
+        configuration.setLogParentFolder(logParentFolder);
+        configuration.setLogParentFolderParenthesis(logParentFolderParenthesis);
 
         ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker(this.serverAddress);
         processExecutionBroker.setConfiguration(configuration);

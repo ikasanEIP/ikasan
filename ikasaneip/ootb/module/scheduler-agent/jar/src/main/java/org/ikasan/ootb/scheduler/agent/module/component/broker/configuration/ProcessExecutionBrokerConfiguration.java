@@ -62,6 +62,9 @@ public class ProcessExecutionBrokerConfiguration
     // number of seconds to wait for the process to start before we report the status
     long secondsToWaitForProcessStart = 10L;
 
+    String logParentFolder;
+    String logParentFolderParenthesis;
+
     // standard error path
     String stdErr;
 
@@ -141,6 +144,22 @@ public class ProcessExecutionBrokerConfiguration
         this.retryOnFail = retryOnFail;
     }
 
+    public String getLogParentFolder() {
+        return logParentFolder;
+    }
+
+    public void setLogParentFolder(String logParentFolder) {
+        this.logParentFolder = logParentFolder;
+    }
+
+    public String getLogParentFolderParenthesis() {
+        return logParentFolderParenthesis;
+    }
+
+    public void setLogParentFolderParenthesis(String logParentFolderParenthesis) {
+        this.logParentFolderParenthesis = logParentFolderParenthesis;
+    }
+
     @Override
     public String toString()
     {
@@ -149,6 +168,7 @@ public class ProcessExecutionBrokerConfiguration
             ", workingDirectory='" + workingDirectory + '\'' +
             ", successfulReturnCodes=" + successfulReturnCodes +
             ", secondsToWaitForProcessStart=" + secondsToWaitForProcessStart +
+            ", logParentFolder='" + logParentFolder + '\'' +
             ", stdErr='" + stdErr + '\'' +
             ", stdOut='" + stdOut + '\'' +
             ", retryOnFail=" + retryOnFail +
