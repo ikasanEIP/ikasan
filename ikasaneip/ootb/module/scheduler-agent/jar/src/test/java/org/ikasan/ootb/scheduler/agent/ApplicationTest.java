@@ -52,6 +52,7 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
@@ -182,7 +183,12 @@ public class ApplicationTest {
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
         internalEventDrivenJobDto.setAgentName("agent name");
-        internalEventDrivenJobDto.setCommandLine("pwd");
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobDto.setCommandLine("cmd.exe dir");
+        }
+        else {
+            internalEventDrivenJobDto.setCommandLine("pwd");
+        }
         internalEventDrivenJobDto.setContextId("contextId");
         internalEventDrivenJobDto.setIdentifier("identifier");
         internalEventDrivenJobDto.setMinExecutionTime(1000L);
