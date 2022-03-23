@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.ikasan.spec.scheduled.context.model.Context;
 import org.ikasan.spec.scheduled.context.model.ContextDependency;
 import org.ikasan.spec.scheduled.context.model.JobDependency;
+import org.ikasan.spec.scheduled.job.model.JobLock;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import java.util.HashMap;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob> implements Context<CONTEXT, CONTEXT_PARAM, JOB> {
+public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob, JOB_LOCK extends JobLock> implements Context<CONTEXT, CONTEXT_PARAM, JOB, JOB_LOCK> {
     protected String name;
     protected String description;
     protected String timezone;
@@ -22,12 +23,14 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected List<JOB> scheduledJobs;
     protected String timeWindowStart;
     protected String timeWindowEnd;
-    protected Map<String, List<JOB>> jobLocks;
+    protected List<JOB_LOCK> jobLocks;
 
     @JsonIgnore
     protected Map<String, JOB> scheduledJobsMap = new HashMap<>();
     @JsonIgnore
     protected Map<String, CONTEXT> contextsMap = new HashMap<>();
+    @JsonIgnore
+    protected Map<String, JOB_LOCK> jobLocksMap = new HashMap<>();
 
     @Override
     public String getName() {
@@ -148,12 +151,21 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     }
 
     @Override
-    public Map<String, List<JOB>> getJobLocks() {
+    public void setJobLocks(List<JOB_LOCK> jobLocks) {
+        this.jobLocks = jobLocks;
+        if(this.jobLocks != null) {
+            this.jobLocksMap = this.jobLocks.stream()
+                .collect(Collectors.toMap(JobLock::getName, item -> item));
+        }
+    }
+
+    @Override
+    public List<JOB_LOCK> getJobLocks() {
         return jobLocks;
     }
 
     @Override
-    public void setJobLocks(Map<String, List<JOB>> jobLocks) {
-        this.jobLocks = jobLocks;
+    public Map<String, JOB_LOCK> getJobLocksMap() {
+        return jobLocksMap;
     }
 }
