@@ -5,7 +5,7 @@ import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.Map;
 
-public interface ContextInstance extends Context<ContextInstance, ContextParameterInstance, SchedulerJobInstance>, StatefulEntity {
+public interface ContextInstance extends Context<ContextInstance, ContextParameterInstance, SchedulerJobInstance, JobLockInstance>, StatefulEntity {
     
     String getId();
 
@@ -30,10 +30,6 @@ public interface ContextInstance extends Context<ContextInstance, ContextParamet
     String getTimezone();
 
     void setTimezone(String timezone);
-
-    Map<String, String> getLockHolders();
-
-    void setLockHolders(Map<String, String> lockHolders);
 
     Map<String, SchedulerJobInitiationEvent> getHeldJobs();
 
