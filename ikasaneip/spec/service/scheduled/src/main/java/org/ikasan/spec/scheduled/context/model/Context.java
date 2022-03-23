@@ -1,11 +1,12 @@
 package org.ikasan.spec.scheduled.context.model;
 
+import org.ikasan.spec.scheduled.job.model.JobLock;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import java.util.List;
 import java.util.Map;
 
-public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob> {
+public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob, JOB_LOCK extends JobLock> {
 
     String getName();
 
@@ -51,7 +52,9 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
 
     void setTimeWindowEnd(String timeWindowEnd);
 
-    Map<String, List<JOB>> getJobLocks();
+    void setJobLocks(List<JOB_LOCK> jobLocks);
 
-    void setJobLocks(Map<String, List<JOB>> jobLocks);
+    List<JOB_LOCK> getJobLocks();
+
+    Map<String, JOB_LOCK> getJobLocksMap();
 }
