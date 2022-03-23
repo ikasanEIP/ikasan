@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -48,6 +49,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
@@ -184,7 +186,7 @@ public class ApplicationTest {
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
         internalEventDrivenJobDto.setAgentName("agent name");
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("cmd.exe dir");
+            internalEventDrivenJobDto.setCommandLine("cmd.exe dir exit");
         }
         else {
             internalEventDrivenJobDto.setCommandLine("pwd");
@@ -198,13 +200,12 @@ public class ApplicationTest {
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
-        flowTestRule.sleep(1000);
-
-        flowTestRule.assertIsSatisfied();
+        flowTestRule.sleep(2000);
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(2, outboundQueue.size());
+        with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
         assertEquals(true, event.isJobStarting());
@@ -214,6 +215,7 @@ public class ApplicationTest {
         assertEquals(false, event.isJobStarting());
         assertEquals(true, event.isSuccessful());
 
+        flowTestRule.assertIsSatisfied();
         flowTestRule.stopFlow();
     }
 
