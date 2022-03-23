@@ -189,7 +189,7 @@ public class ApplicationTest {
             internalEventDrivenJobDto.setCommandLine("cmd.exe dir exit");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobDto.setCommandLine("pwd exit");
         }
         internalEventDrivenJobDto.setContextId("contextId");
         internalEventDrivenJobDto.setIdentifier("identifier");
