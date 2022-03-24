@@ -193,7 +193,7 @@ public class ApplicationTest {
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
         internalEventDrivenJobDto.setAgentName("agent name");
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("cmd.exe exit");
+            internalEventDrivenJobDto.setCommandLine("java -version");
         }
         else {
             internalEventDrivenJobDto.setCommandLine("pwd");
@@ -209,7 +209,7 @@ public class ApplicationTest {
 
         flowTestRule.sleep(3000);
 
-        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(5, TimeUnit.MINUTES)
+        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
