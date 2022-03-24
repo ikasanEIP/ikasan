@@ -47,8 +47,10 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
@@ -62,12 +64,14 @@ import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
@@ -111,6 +115,9 @@ public class ApplicationTest {
     @BeforeClass
     public static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class)
             .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class);
 
         objectMapper.registerModule(simpleModule);
@@ -186,10 +193,10 @@ public class ApplicationTest {
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
         internalEventDrivenJobDto.setAgentName("agent name");
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("cmd.exe dir exit");
+            internalEventDrivenJobDto.setCommandLine("cmd.exe exit");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd exit");
+            internalEventDrivenJobDto.setCommandLine("pwd");
         }
         internalEventDrivenJobDto.setContextId("contextId");
         internalEventDrivenJobDto.setIdentifier("identifier");
@@ -200,11 +207,12 @@ public class ApplicationTest {
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
-        flowTestRule.sleep(2000);
+        flowTestRule.sleep(3000);
 
-        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(5, TimeUnit.MINUTES)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
-        with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
@@ -215,7 +223,7 @@ public class ApplicationTest {
         assertEquals(false, event.isJobStarting());
         assertEquals(true, event.isSuccessful());
 
-        flowTestRule.assertIsSatisfied();
+
         flowTestRule.stopFlow();
     }
 
