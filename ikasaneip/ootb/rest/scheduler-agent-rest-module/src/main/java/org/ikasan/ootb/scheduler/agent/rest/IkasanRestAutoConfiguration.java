@@ -81,6 +81,11 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
         return new DryRunSchedulerApplication();
     }
 
+    @Bean
+    public JobUtilsApplication jobUtilsApplication() {
+        return new JobUtilsApplication();
+    }
+
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         final var simpleModule = new SimpleModule()
