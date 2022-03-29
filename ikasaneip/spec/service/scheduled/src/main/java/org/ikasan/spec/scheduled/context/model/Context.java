@@ -57,4 +57,6 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     List<JOB_LOCK> getJobLocks();
 
     Map<String, JOB_LOCK> getJobLocksMap();
+
+    List<JOB_LOCK> getAllNestedJobLocks();
 }

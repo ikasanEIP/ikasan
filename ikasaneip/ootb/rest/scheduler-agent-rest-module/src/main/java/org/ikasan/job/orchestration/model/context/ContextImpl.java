@@ -7,6 +7,7 @@ import org.ikasan.spec.scheduled.context.model.JobDependency;
 import org.ikasan.spec.scheduled.job.model.JobLock;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -167,5 +168,17 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public Map<String, JOB_LOCK> getJobLocksMap() {
         return jobLocksMap;
+    }
+
+    @Override
+    public List<JOB_LOCK> getAllNestedJobLocks() {
+        List<JOB_LOCK> jobLocks = new ArrayList<>();
+        if (this.getJobLocks() != null) {
+            jobLocks.addAll(this.getJobLocks());
+        }
+        if (this.getContexts() != null) {
+            this.getContexts().forEach(c -> jobLocks.addAll(c.getAllNestedJobLocks()));
+        }
+        return jobLocks;
     }
 }
