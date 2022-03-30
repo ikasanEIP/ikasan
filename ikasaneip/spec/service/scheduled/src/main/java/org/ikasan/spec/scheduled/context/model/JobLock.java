@@ -1,4 +1,6 @@
-package org.ikasan.spec.scheduled.job.model;
+package org.ikasan.spec.scheduled.context.model;
+
+import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import java.util.List;
 
