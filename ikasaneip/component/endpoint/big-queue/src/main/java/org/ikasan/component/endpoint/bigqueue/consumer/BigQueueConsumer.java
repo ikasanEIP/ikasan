@@ -57,7 +57,7 @@ public class BigQueueConsumer<T>
      *
      * @param inboundQueue
      */
-    public BigQueueConsumer(IBigQueue inboundQueue, Serialiser<T,byte[]> serialiser,
+    public BigQueueConsumer(IBigQueue inboundQueue, Serialiser<T, byte[]> serialiser,
                             boolean putErrorsToBackOfQueue) {
         this.inboundQueue = inboundQueue;
         if(this.inboundQueue == null) {

@@ -55,7 +55,7 @@
     <artifactId>ikasan-scheduler-agent-rest-dashboard-client</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Scheduler Agent Rest Dashboard Client</name>
-    <description>The scheeduler agent rest dashboard client library for the Ikasan Enterprise Integration Platform</description>
+    <description>The scheduler agent rest dashboard client library for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
 
