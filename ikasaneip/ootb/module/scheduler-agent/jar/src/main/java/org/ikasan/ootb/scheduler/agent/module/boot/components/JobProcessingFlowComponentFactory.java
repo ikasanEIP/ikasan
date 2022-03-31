@@ -85,14 +85,17 @@ import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.ContextualisedProcessExecutionBroker;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.ScheduledProcessEventJobStartBroker;
+import org.ikasan.component.router.multirecipient.RecipientListRouter;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,6 +103,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * Scheduler Agent component factory.
@@ -120,6 +124,9 @@ public class JobProcessingFlowComponentFactory
 
     @Value( "${scheduler.agent.log.folder.parenthesis}" )
     String logParentFolderParenthesis;
+
+    @Value( "${job.monitoring.broker.timeout.minutes}" )
+    long timeout;
 
     @Resource
     private IBigQueue outboundQueue;
@@ -145,12 +152,12 @@ public class JobProcessingFlowComponentFactory
     public Converter getJobInitiationEventConverter() { return new JobInitiationToContextualisedScheduledProcessEventConverter(moduleName, logParentFolder, logParentFolderParenthesis); }
 
     /**
-     * Get the broker that tells the dashboard that a job has started.
+     * Get the broker that starts the job.
      *
      * @return
      */
-    public Broker getScheduledProcessEventJobStartBroker() {
-        return new ScheduledProcessEventJobStartBroker(this.outboundQueue);
+    public Broker getJobStartingBroker() {
+        return new JobStartingBroker();
     }
 
     /**
@@ -158,10 +165,17 @@ public class JobProcessingFlowComponentFactory
      *
      * @return
      */
-    public Broker getProcessExecutionBroker()
+    public Broker getJobMonitoringBroker()
     {
-        ContextualisedProcessExecutionBroker processExecutionBroker = new ContextualisedProcessExecutionBroker();
-        return processExecutionBroker;
+        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker();
+
+        JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
+        configuration.setTimeout(timeout);
+
+        jobMonitoringBroker.setConfiguration(configuration);
+        jobMonitoringBroker.setConfiguredResourceId(moduleName+"-jobMonitoringBroker");
+
+        return jobMonitoringBroker;
     }
 
     /**
@@ -169,8 +183,12 @@ public class JobProcessingFlowComponentFactory
      *
      * @return
      */
-    public Producer getScheduledStatusProducer() {
+    public Producer getStatusProducer() {
         return new BigQueueProducer<ScheduledProcessEvent>(this.outboundQueue, new SchedulerProcessorEventSerialiser());
+    }
+
+    public MultiRecipientRouter getJobMRRouter() {
+        return new RecipientListRouter(Arrays.asList("dashboard","monitor"));
     }
 
 }
