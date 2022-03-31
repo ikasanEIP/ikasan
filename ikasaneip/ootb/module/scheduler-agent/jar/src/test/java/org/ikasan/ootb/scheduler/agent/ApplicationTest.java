@@ -181,9 +181,11 @@ public class ApplicationTest {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
-            .broker("Job Started Broker")
-            .broker("Process Execution Broker")
-            .producer("Scheduled Status Producer");
+            .broker("Job Starting Broker")
+            .multiRecipientRouter("Job MR Router")
+            .producer("Status Producer")
+            .broker("Job Monitoring Broker")
+            .producer("Status Producer");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
@@ -207,9 +209,9 @@ public class ApplicationTest {
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
-        flowTestRule.sleep(3000);
+        flowTestRule.sleep(5000);
 
-        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+        with().pollInterval(20, TimeUnit.SECONDS).and().await().atMost(2, TimeUnit.MINUTES)
             .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
