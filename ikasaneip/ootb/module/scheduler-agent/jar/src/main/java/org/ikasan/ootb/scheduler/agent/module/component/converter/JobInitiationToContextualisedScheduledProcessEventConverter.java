@@ -42,15 +42,13 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
+import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
-import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -62,7 +60,7 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class JobInitiationToContextualisedScheduledProcessEventConverter implements Converter<String, ContextualisedScheduledProcessEvent>
+public class JobInitiationToContextualisedScheduledProcessEventConverter implements Converter<String, EnrichedContextualisedScheduledProcessEvent>
 {
     String moduleName;
     ObjectMapper objectMapper;
@@ -92,12 +90,12 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
     }
 
     @Override
-    public ContextualisedScheduledProcessEvent convert(String event) throws TransformationException
+    public EnrichedContextualisedScheduledProcessEvent convert(String event) throws TransformationException
     {
         try {
             SchedulerJobInitiationEvent schedulerJobInitiationEvent = this.objectMapper.readValue(event, SchedulerJobInitiationEventDto.class);
 
-            ContextualisedScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
+            EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
             scheduledProcessEvent.setAgentName(moduleName);
             scheduledProcessEvent.setJobName(schedulerJobInitiationEvent.getJobName());
@@ -141,8 +139,8 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
      *
      * @return
      */
-    protected ContextualisedScheduledProcessEvent getScheduledProcessEvent()
+    protected EnrichedContextualisedScheduledProcessEvent getScheduledProcessEvent()
     {
-        return new ContextualisedScheduledProcessEventImpl();
+        return new EnrichedContextualisedScheduledProcessEvent();
     }
 }

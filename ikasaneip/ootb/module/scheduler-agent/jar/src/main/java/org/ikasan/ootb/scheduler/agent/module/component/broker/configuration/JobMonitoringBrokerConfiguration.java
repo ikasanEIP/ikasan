@@ -38,55 +38,17 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.boot;
+package org.ikasan.ootb.scheduler.agent.module.component.broker.configuration;
 
-import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.Route;
-import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
-import org.ikasan.spec.flow.Flow;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-
-/**
- * Job processing flow factory.
- *
- * @author Ikasan Development Team
- */
-@Configuration
-public class JobProcessingFlowFactory
+public class JobMonitoringBrokerConfiguration
 {
-    @Value( "${module.name}" )
-    String moduleName;
+    private long timeout;
 
-    @Resource
-    BuilderFactory builderFactory;
+    public long getTimeout() {
+        return timeout;
+    }
 
-    @Resource
-    JobProcessingFlowComponentFactory componentFactory;
-
-
-    public Flow create(String jobName) throws IOException {
-
-        Route dashboardRoute = builderFactory.getRouteBuilder()
-            .producer("Status Producer", componentFactory.getStatusProducer());
-
-        Route monitorRoute = builderFactory.getRouteBuilder()
-            .broker("Job Monitoring Broker", componentFactory.getJobMonitoringBroker())
-            .producer("Status Producer", componentFactory.getStatusProducer());
-
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
-            .withDescription(jobName +" Job Processing Flow")
-            .consumer("Job Consumer", componentFactory.bigQueueConsumer(jobName))
-            .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
-            .broker("Job Starting Broker", componentFactory.getJobStartingBroker())
-            .multiRecipientRouter("Job MR Router", componentFactory.getJobMRRouter())
-            .when("dashboard", dashboardRoute)
-            .when("monitor", monitorRoute)
-            .build();
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }
-
-
