@@ -257,7 +257,7 @@
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>5.4.21.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.3.14</version.org.springframework>
+        <version.org.springframework>5.3.18</version.org.springframework>
         <version.org.springframework.security>5.3.10.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.2.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
