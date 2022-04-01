@@ -1,6 +1,5 @@
 package org.ikasan.ootb.scheduler.agent.rest.util;
 
-import org.ikasan.ootb.scheduler.agent.rest.JobUtilsApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
