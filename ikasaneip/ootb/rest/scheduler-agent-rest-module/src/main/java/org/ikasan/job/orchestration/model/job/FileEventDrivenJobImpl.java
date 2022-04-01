@@ -136,6 +136,16 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
     }
 
     @Override
+    public int getMinFileAgeSeconds() {
+        return 0;
+    }
+
+    @Override
+    public void setMinFileAgeSeconds(int minFileAgeSeconds) {
+
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("FileEventDrivenJobImpl{");
         sb.append("filePath='").append(filePath).append('\'');
