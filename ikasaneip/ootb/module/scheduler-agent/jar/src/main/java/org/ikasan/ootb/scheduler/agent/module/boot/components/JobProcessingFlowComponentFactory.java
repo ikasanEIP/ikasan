@@ -133,6 +133,13 @@ public class JobProcessingFlowComponentFactory
     private IBigQueue outboundQueue;
 
 
+    /**
+     * Get the big queue consumer
+     *
+     * @param jobName
+     * @return
+     * @throws IOException
+     */
     public Consumer bigQueueConsumer(String jobName) throws IOException {
         String queueName = moduleName+"-"+jobName+"-inbound-queue";
         IBigQueue inboundQueue = new BigQueueImpl(queueDir, queueName);
@@ -150,7 +157,11 @@ public class JobProcessingFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobInitiationEventConverter() { return new JobInitiationToContextualisedScheduledProcessEventConverter(moduleName, logParentFolder, logParentFolderParenthesis); }
+    public Converter getJobInitiationEventConverter() {
+        return new JobInitiationToContextualisedScheduledProcessEventConverter
+        (moduleName, logParentFolder, logParentFolderParenthesis);
+    }
+
 
     /**
      * Get the broker that starts the job.
@@ -185,13 +196,24 @@ public class JobProcessingFlowComponentFactory
      * @return
      */
     public Producer getStatusProducer() {
-        return new BigQueueProducer<ScheduledProcessEvent>(this.outboundQueue, new SchedulerProcessorEventSerialiser());
+        return new BigQueueProducer<>(this.outboundQueue, new SchedulerProcessorEventSerialiser());
     }
 
+    /**
+     * Get the multi recipient router.
+     *
+     *
+     * @return
+     */
     public MultiRecipientRouter getJobMRRouter() {
         return new RecipientListRouter(Arrays.asList("dashboard","monitor"));
     }
 
+    /**
+     * Get the configuration for the multi recipient router.
+     *
+     * @return
+     */
     public MultiRecipientRouterInvokerConfiguration getMultiRecipientRouterInvokerConfiguration() {
         MultiRecipientRouterInvokerConfiguration configuration = new MultiRecipientRouterInvokerConfiguration();
         configuration.setCloneEventPerRoute(false);
