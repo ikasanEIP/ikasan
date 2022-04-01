@@ -28,4 +28,8 @@ public interface InternalEventDrivenJob extends SchedulerJob {
     List<ContextParameter> getContextParameters();
 
     void setContextParameters(List<ContextParameter> contextParameters);
+
+    List<Integer> getDaysOfWeekToRun();
+
+    void setDaysOfWeekToRun(List<Integer> daysOfWeekToRun);
 }

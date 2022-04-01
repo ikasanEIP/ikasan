@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -71,16 +72,9 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
-        //scheduledProcessEvent.setJobStarting(false);
 
         // Skipping a job is as simple as marking the job as successful
-        if(scheduledProcessEvent.isSkipped()) {
-            this.manageSkipped(scheduledProcessEvent);
-            return scheduledProcessEvent;
-        }
-
-        if(scheduledProcessEvent.isDryRun()) {
-            this.manageDryRun(scheduledProcessEvent);
+        if(scheduledProcessEvent.isSkipped() || scheduledProcessEvent.isDryRun() ) {
             return scheduledProcessEvent;
         }
 
@@ -113,6 +107,15 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         processBuilder.redirectError(errorLog);
         scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
 
+        // Add job context parameters to the process environment if there are any.
+        if(scheduledProcessEvent.getContextParameters() != null
+            && !scheduledProcessEvent.getContextParameters().isEmpty()) {
+            Map<String, String> env = processBuilder.environment();
+
+            scheduledProcessEvent.getContextParameters()
+                .forEach(contextParameter -> env.put(contextParameter.getName(), (String)contextParameter.getValue()));
+        }
+
         try {
             Process process = processBuilder.start();
 
@@ -124,66 +127,6 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         }
 
         return scheduledProcessEvent;
-    }
-
-    /**
-     * Determine the outcome of the dry run based on the dry run parameters.
-     *
-     * @param scheduledProcessEvent
-     */
-    private void manageDryRun(ScheduledProcessEvent scheduledProcessEvent) {
-        scheduledProcessEvent.setSuccessful(true);
-
-        if(scheduledProcessEvent.getDryRunParameters().isError()) {
-            // Specific executions can be configured to result in an error.
-            scheduledProcessEvent.setSuccessful(false);
-        }
-        else {
-            // otherwise determine error based on percentage probability.
-            int percentUpperBound = (int) (100 / scheduledProcessEvent.getDryRunParameters().getJobErrorPercentage());
-
-            int randomInt = new Random().nextInt(percentUpperBound);
-
-            if(randomInt == 0) {
-                scheduledProcessEvent.setSuccessful(false);
-            }
-        }
-
-        long sleepTime;
-
-        if(scheduledProcessEvent.getDryRunParameters().getFixedExecutionTimeMillis() > 0) {
-            // Job execution time is configured as a fixed value.
-            sleepTime = scheduledProcessEvent.getDryRunParameters().getFixedExecutionTimeMillis();
-        }
-        else {
-            // Job execution time is configured as a random number within fixed boundaries.
-            sleepTime = scheduledProcessEvent.getDryRunParameters().getMinExecutionTimeMillis()
-                + (long) (Math.random() * (scheduledProcessEvent.getDryRunParameters().getMaxExecutionTimeMillis()
-                - scheduledProcessEvent.getDryRunParameters().getMinExecutionTimeMillis()));
-        }
-
-        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
-
-        try {
-            Thread.sleep(sleepTime);
-        }
-        catch (InterruptedException e) {
-            // Not that much of a concern if we get an exception here.
-            logger.error("Error attempting to put thread to sleep when executing a dry run!", e);
-        }
-
-        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
-    }
-
-    /**
-     * Update the event with details of the job being skipped.
-     *
-     * @param scheduledProcessEvent
-     */
-    private void manageSkipped(ScheduledProcessEvent scheduledProcessEvent) {
-        scheduledProcessEvent.setSuccessful(true);
-        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
-        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
     }
 
     String[] getCommandLineArgs(String commandLine)

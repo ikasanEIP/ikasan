@@ -45,9 +45,11 @@ import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedSchedu
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -69,10 +71,15 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     {
         scheduledProcessEvent.setJobStarting(false);
 
-        // if it is skipped or dryRun, the event is already sent to Dashboard
-        // so we can stop the flow here for them
-        if(scheduledProcessEvent.isSkipped() || scheduledProcessEvent.isDryRun()) {
-            return null;
+        // Skipping a job is as simple as marking the job as successful
+        if(scheduledProcessEvent.isSkipped()) {
+            this.manageSkipped(scheduledProcessEvent);
+            return scheduledProcessEvent;
+        }
+
+        if(scheduledProcessEvent.isDryRun()) {
+            this.manageDryRun(scheduledProcessEvent);
+            return scheduledProcessEvent;
         }
 
         try {
@@ -129,6 +136,66 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
         }
 
         return scheduledProcessEvent;
+    }
+
+    /**
+     * Determine the outcome of the dry run based on the dry run parameters.
+     *
+     * @param scheduledProcessEvent
+     */
+    private void manageDryRun(ScheduledProcessEvent scheduledProcessEvent) {
+        scheduledProcessEvent.setSuccessful(true);
+
+        if(scheduledProcessEvent.getDryRunParameters().isError()) {
+            // Specific executions can be configured to result in an error.
+            scheduledProcessEvent.setSuccessful(false);
+        }
+        else {
+            // otherwise determine error based on percentage probability.
+            int percentUpperBound = (int) (100 / scheduledProcessEvent.getDryRunParameters().getJobErrorPercentage());
+
+            int randomInt = new Random().nextInt(percentUpperBound);
+
+            if(randomInt == 0) {
+                scheduledProcessEvent.setSuccessful(false);
+            }
+        }
+
+        long sleepTime;
+
+        if(scheduledProcessEvent.getDryRunParameters().getFixedExecutionTimeMillis() > 0) {
+            // Job execution time is configured as a fixed value.
+            sleepTime = scheduledProcessEvent.getDryRunParameters().getFixedExecutionTimeMillis();
+        }
+        else {
+            // Job execution time is configured as a random number within fixed boundaries.
+            sleepTime = scheduledProcessEvent.getDryRunParameters().getMinExecutionTimeMillis()
+                + (long) (Math.random() * (scheduledProcessEvent.getDryRunParameters().getMaxExecutionTimeMillis()
+                - scheduledProcessEvent.getDryRunParameters().getMinExecutionTimeMillis()));
+        }
+
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+
+        try {
+            Thread.sleep(sleepTime);
+        }
+        catch (InterruptedException e) {
+            // Not that much of a concern if we get an exception here.
+            logger.error("Error attempting to put thread to sleep when executing a dry run!", e);
+        }
+
+        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+    }
+
+    /**
+     * Update the event with details of the job being skipped.
+     *
+     * @param scheduledProcessEvent
+     */
+    private void manageSkipped(ScheduledProcessEvent scheduledProcessEvent) {
+        scheduledProcessEvent.setSuccessful(true);
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
     }
 
     @Override
