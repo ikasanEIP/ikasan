@@ -86,6 +86,7 @@ import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
 import org.ikasan.component.router.multirecipient.RecipientListRouter;
+import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
@@ -189,6 +190,12 @@ public class JobProcessingFlowComponentFactory
 
     public MultiRecipientRouter getJobMRRouter() {
         return new RecipientListRouter(Arrays.asList("dashboard","monitor"));
+    }
+
+    public MultiRecipientRouterInvokerConfiguration getMultiRecipientRouterInvokerConfiguration() {
+        MultiRecipientRouterInvokerConfiguration configuration = new MultiRecipientRouterInvokerConfiguration();
+        configuration.setCloneEventPerRoute(false);
+        return configuration;
     }
 
 }
