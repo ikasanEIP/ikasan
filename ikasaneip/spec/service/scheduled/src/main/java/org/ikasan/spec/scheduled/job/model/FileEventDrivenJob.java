@@ -53,4 +53,8 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
     boolean isIgnoreFileRenameWhilstScanning();
 
     void setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
+
+    int getMinFileAgeSeconds();
+
+    void setMinFileAgeSeconds(int minFileAgeSeconds);
 }
