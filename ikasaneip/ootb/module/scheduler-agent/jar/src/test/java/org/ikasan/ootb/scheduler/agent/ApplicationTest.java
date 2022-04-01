@@ -112,6 +112,7 @@ public class ApplicationTest {
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
+
     @BeforeClass
     public static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
@@ -194,6 +195,7 @@ public class ApplicationTest {
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
         internalEventDrivenJobDto.setAgentName("agent name");
+
         if (SystemUtils.OS_NAME.contains("Windows")) {
             internalEventDrivenJobDto.setCommandLine("java -version");
         }
@@ -209,9 +211,9 @@ public class ApplicationTest {
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
-        flowTestRule.sleep(5000);
+        flowTestRule.sleep(2000);
 
-        with().pollInterval(20, TimeUnit.SECONDS).and().await().atMost(2, TimeUnit.MINUTES)
+        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
@@ -384,5 +386,4 @@ public class ApplicationTest {
     public void teardown() {
         // post-test teardown
     }
-
 }

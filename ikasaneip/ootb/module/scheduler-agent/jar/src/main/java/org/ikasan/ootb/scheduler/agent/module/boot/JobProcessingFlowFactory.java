@@ -82,7 +82,7 @@ public class JobProcessingFlowFactory
             .consumer("Job Consumer", componentFactory.bigQueueConsumer(jobName))
             .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
             .broker("Job Starting Broker", componentFactory.getJobStartingBroker())
-            .multiRecipientRouter("Job MR Router", componentFactory.getJobMRRouter())
+            .multiRecipientRouter("Job MR Router", componentFactory.getJobMRRouter(), componentFactory.getMultiRecipientRouterInvokerConfiguration())
             .when("dashboard", dashboardRoute)
             .when("monitor", monitorRoute)
             .build();
