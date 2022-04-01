@@ -152,6 +152,16 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
     }
 
     @Override
+    public List<Integer> getDaysOfWeekToRun() {
+        return null;
+    }
+
+    @Override
+    public void setDaysOfWeekToRun(List<Integer> daysOfWeekToRun) {
+
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
