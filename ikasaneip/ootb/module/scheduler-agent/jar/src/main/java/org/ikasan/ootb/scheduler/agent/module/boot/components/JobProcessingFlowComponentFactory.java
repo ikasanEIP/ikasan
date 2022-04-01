@@ -126,7 +126,7 @@ public class JobProcessingFlowComponentFactory
     @Value( "${scheduler.agent.log.folder.parenthesis}" )
     String logParentFolderParenthesis;
 
-    @Value( "${job.monitoring.broker.timeout.minutes}" )
+    @Value( "${job.monitoring.broker.timeout.minutes:240}" )
     long timeout;
 
     @Resource
