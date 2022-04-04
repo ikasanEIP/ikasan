@@ -129,7 +129,8 @@ public class FileEventSchedulerJobFlowComponentFactory
     }
 
     public Filter getDuplicateMessageFilter(String jobName) {
-        return builderFactory.getComponentBuilder().messageFilter()
+        return builderFactory.getComponentBuilder()
+            .messageFilter()
             .setObjectHashingFilterEntryConverter()
             .setConfiguredResourceId("duplicate-message-filter-"+jobName)
             .build();
