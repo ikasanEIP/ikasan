@@ -56,7 +56,7 @@ public class ScheduledProcessEventRestProducer implements Producer<String>
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventRestProducer.class);
 
-    DashboardRestService scheduleProcessEventDashboardRestService;
+    private DashboardRestService scheduleProcessEventDashboardRestService;
 
     public ScheduledProcessEventRestProducer(DashboardRestService scheduleProcessEventDashboardRestService)
     {
