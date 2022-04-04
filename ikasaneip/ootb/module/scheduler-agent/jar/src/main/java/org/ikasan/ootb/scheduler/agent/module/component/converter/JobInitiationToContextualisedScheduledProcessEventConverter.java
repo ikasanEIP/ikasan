@@ -62,10 +62,10 @@ import java.util.Map;
  */
 public class JobInitiationToContextualisedScheduledProcessEventConverter implements Converter<String, EnrichedContextualisedScheduledProcessEvent>
 {
-    String moduleName;
-    ObjectMapper objectMapper;
-    String logParentFolder;
-    String logParentFolderParenthesis;
+    private String moduleName;
+    private ObjectMapper objectMapper;
+    private String logParentFolder;
+    private String logParentFolderParenthesis;
 
     /**
      * Constructor
@@ -78,15 +78,23 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
         }
+        this.logParentFolder = logParentFolder;
+        if(logParentFolder == null)
+        {
+            throw new IllegalArgumentException("logParentFolder cannot be 'null'");
+        }
+        this.logParentFolderParenthesis = logParentFolderParenthesis;
+        if(logParentFolderParenthesis == null)
+        {
+            throw new IllegalArgumentException("logParentFolderParenthesis cannot be 'null'");
+        }
+
         this.objectMapper = new ObjectMapper();
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
             .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
         objectMapper.registerModule(simpleModule);
-
-        this.logParentFolder = logParentFolder;
-        this.logParentFolderParenthesis = logParentFolderParenthesis;
     }
 
     @Override
