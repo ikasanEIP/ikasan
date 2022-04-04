@@ -78,6 +78,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -132,6 +133,7 @@ public class ApplicationTest {
      * Test simple invocation.
      */
     @Test
+    @DirtiesContext
     public void test_create_module_start_and_stop_flow() throws Exception {
         Flow flow = moduleUnderTest.getFlow("Scheduler Flow 3");
         flow.start();
@@ -177,6 +179,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_job_processing_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
@@ -232,6 +235,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_job_processing_flow_success_dry_run() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
@@ -289,6 +293,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_job_processing_flow_success_skipped() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
@@ -344,6 +349,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_quartz_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
         flowTestRule.consumer("Scheduled Consumer")
@@ -366,12 +372,13 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_file_flow_success_without_aspect() {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
             , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
 
         flowTestRule.consumer("File Consumer")
             .filter("Duplicate Message Filter")
@@ -382,7 +389,7 @@ public class ApplicationTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
-        flowTestRule.sleep(2000);
+        flowTestRule.sleep(5000);
 
         flowTestRule.assertIsSatisfied();
 
@@ -394,6 +401,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_file_flow_success_with_aspect() {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -401,7 +409,7 @@ public class ApplicationTest {
 
         DryRunFileListJobParameter jobs = new DryRunFileListJobParameterDto();
         jobs.setJobName("Flow 2 Job Name");
-        jobs.setFileName("/some/bogus/file/bogus.txt");
+        jobs.setFileName("/some/bogus/file/bogus1.txt");
         dryRunModeService.addDryRunFileList(List.of(jobs));
 
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
@@ -430,6 +438,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_file_flow_with_filter() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
@@ -465,6 +474,7 @@ public class ApplicationTest {
     }
 
     @Test
+    @DirtiesContext
     public void test_file_aspect() {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
@@ -482,23 +492,25 @@ public class ApplicationTest {
         dryRunModeService.setDryRunMode(true);
         DryRunFileListJobParameterDto dto = new DryRunFileListJobParameterDto();
         dto.setJobName("Job Name");
-        dto.setFileName("/my/bogus/file.txt");
+        dto.setFileName("/my/bogus/file3.txt");
         dryRunModeService.addDryRunFileList(List.of(dto));
 
         List<File> files = fileMessageProvider.invoke(context);
         assertEquals(1, files.size());
-        assertEquals("/my/bogus/file.txt", files.get(0));
+        assertEquals("/my/bogus/file3.txt", files.get(0));
 
         dryRunModeService.setDryRunMode(false);
     }
 
     @Test
+    @DirtiesContext
     public void test_housekeep_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Housekeep Log Files Flow"));
         flowTestRule.consumer("Scheduled Consumer")
             .producer("Log Files Process");
 
-        HousekeepLogFilesProcessConfiguration configuration = flowTestRule.getComponentConfig("Log Files Process", HousekeepLogFilesProcessConfiguration.class);
+        HousekeepLogFilesProcessConfiguration configuration = flowTestRule
+            .getComponentConfig("Log Files Process", HousekeepLogFilesProcessConfiguration.class);
         configuration.setLogFolder("./logs");
 
         flowTestRule.startFlow();
@@ -514,19 +526,6 @@ public class ApplicationTest {
         assertEquals(0, outboundQueue.size());
 
         flowTestRule.stopFlow();
-    }
-
-
-    @Test
-    @Ignore
-    public void test() throws JsonProcessingException {
-        HashMap<String, String> map = new HashMap<>();
-
-        IntStream.range(0, 2000)
-            .forEach(a -> map.put("Scheduler Flow " + a, "AUTOMATIC"));
-
-        ObjectMapper mapper = new ObjectMapper();
-        System.out.println(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(map));
     }
 
     @After
