@@ -30,7 +30,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false);
 
         event = broker.invoke(event);
 
@@ -51,7 +51,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false, true);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false);
         event.setProcess(process);
 
         event = broker.invoke(event);
@@ -65,18 +65,20 @@ public class JobMonitoringBrokerTest {
 
     @Test
     public void test_job_monitor_success_due_to_return_code() {
+        when(process.exitValue()).thenReturn(1);
+
         JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(240);
 
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false, true);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false);
         event.getInternalEventDrivenJob().setSuccessfulReturnCodes(List.of("1"));
+        event.setProcess(process);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(event.getProcess().pid(), event.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
         Assert.assertEquals(false, event.isJobStarting());
         Assert.assertEquals(false, event.isSkipped());
@@ -92,7 +94,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
 
         event = broker.invoke(event);
 
@@ -112,7 +114,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
         event.getDryRunParameters().setFixedExecutionTimeMillis(1000);
 
         event = broker.invoke(event);
@@ -134,7 +136,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
         event.getDryRunParameters().setError(true);
 
         event = broker.invoke(event);
@@ -155,7 +157,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
         event.getDryRunParameters().setJobErrorPercentage(100);
 
         event = broker.invoke(event);
@@ -176,7 +178,7 @@ public class JobMonitoringBrokerTest {
         JobMonitoringBroker broker = new JobMonitoringBroker();
         broker.setConfiguration(configuration);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, true, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, true);
 
         event = broker.invoke(event);
 
@@ -188,7 +190,7 @@ public class JobMonitoringBrokerTest {
         Assert.assertEquals(true, event.isSuccessful());
     }
 
-    private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip, boolean badCommand) {
+    private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip) {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
@@ -196,20 +198,10 @@ public class JobMonitoringBrokerTest {
 
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            if(badCommand) {
-                internalEventDrivenJobDto.setCommandLine("DIR BAD_COMMAND");
-            }
-            else {
-                internalEventDrivenJobDto.setCommandLine("java -version");
-            }
+            internalEventDrivenJobDto.setCommandLine("java -version");
         }
         else {
-            if(badCommand) {
-                internalEventDrivenJobDto.setCommandLine("ls -la ls -la ls -la");
-            }
-            else {
-                internalEventDrivenJobDto.setCommandLine("pwd");
-            }
+            internalEventDrivenJobDto.setCommandLine("pwd");
         }
         internalEventDrivenJobDto.setContextId("contextId");
         internalEventDrivenJobDto.setIdentifier("identifier");
