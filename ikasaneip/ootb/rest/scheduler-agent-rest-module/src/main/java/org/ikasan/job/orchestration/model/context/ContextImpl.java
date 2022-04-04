@@ -171,6 +171,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     }
 
     @Override
+    @JsonIgnore
     public List<JOB_LOCK> getAllNestedJobLocks() {
         List<JOB_LOCK> jobLocks = new ArrayList<>();
         if (this.getJobLocks() != null) {
