@@ -71,15 +71,18 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     @Override
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
+        scheduledProcessEvent.setJobStarting(true);
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
 
-        // Skipping a job is as simple as marking the job as successful
+        // Skipping a job is as simple as marking the job as successful.
         if(scheduledProcessEvent.isSkipped() || scheduledProcessEvent.isDryRun() ) {
             return scheduledProcessEvent;
         }
 
         String[] commandLineArgs = getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
-        ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
+        ProcessBuilder processBuilder = new ProcessBuilder();
+        processBuilder.command(commandLineArgs);
+
 
         // allow change of the new process working directory
         if(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory() != null
@@ -88,6 +91,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             processBuilder.directory(workingDirectory);
         }
 
+        // We set up the std out and error log files and set them on the process builder.
         String formattedDate = formatter.format(LocalDateTime.now());
         File outputLog = new File(scheduledProcessEvent.getResultOutput());
         if(outputLog.exists()) {
@@ -113,13 +117,14 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             Map<String, String> env = processBuilder.environment();
 
             scheduledProcessEvent.getContextParameters()
-                .forEach(contextParameter -> env.put(contextParameter.getName(), (String)contextParameter.getValue()));
+                .forEach(contextParameter -> env.put(contextParameter.getName()
+                    , (String)contextParameter.getValue()));
         }
 
         try {
+            // Start the process and enrich the payload.
             Process process = processBuilder.start();
-
-            scheduledProcessEvent.setPid( process.pid() );
+            scheduledProcessEvent.setPid(process.pid());
             scheduledProcessEvent.setProcess(process);
         }
         catch (IOException e) {
