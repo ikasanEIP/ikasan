@@ -71,12 +71,15 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     {
         scheduledProcessEvent.setJobStarting(false);
 
-        // Skipping a job is as simple as marking the job as successful
+        // If the process is skipped we do what is necessary to the payload
+        // and return it.
         if(scheduledProcessEvent.isSkipped()) {
             this.manageSkipped(scheduledProcessEvent);
             return scheduledProcessEvent;
         }
 
+        // If the process running in dry run mode, we do what is necessary to the payload
+        // and return it.
         if(scheduledProcessEvent.isDryRun()) {
             this.manageDryRun(scheduledProcessEvent);
             return scheduledProcessEvent;
@@ -86,7 +89,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
             Process process = scheduledProcessEvent.getProcess();
 
             try {
-                // We wait indefinitely until the process is finished.
+                // We wait indefinitely until the process is finished or it times out.
                 process.waitFor(configuration.getTimeout(), TimeUnit.MINUTES);
 
                 scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
