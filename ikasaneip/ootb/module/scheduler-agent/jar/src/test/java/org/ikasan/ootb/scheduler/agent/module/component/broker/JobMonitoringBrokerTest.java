@@ -8,10 +8,19 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.List;
 
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class JobMonitoringBrokerTest {
+
+    @Mock
+    private Process process;
 
     @Test
     public void test_job_monitor_success() {
@@ -35,6 +44,7 @@ public class JobMonitoringBrokerTest {
 
     @Test
     public void test_job_monitor_fail_bad_command() {
+        when(process.exitValue()).thenReturn(1);
         JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(240);
 
@@ -42,10 +52,10 @@ public class JobMonitoringBrokerTest {
         broker.setConfiguration(configuration);
 
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false, true);
+        event.setProcess(process);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(event.getProcess().pid(), event.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
         Assert.assertEquals(false, event.isJobStarting());
         Assert.assertEquals(false, event.isSkipped());
