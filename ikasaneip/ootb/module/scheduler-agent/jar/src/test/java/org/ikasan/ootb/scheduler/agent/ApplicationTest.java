@@ -428,11 +428,17 @@ public class ApplicationTest {
 
         flowTestRule.sleep(2000);
 
-        flowTestRule.assertIsSatisfied();
+        jobs = new DryRunFileListJobParameterDto();
+        jobs.setJobName("Flow 2 Job Name");
+        jobs.setFileName("/some/bogus/file/bogus1.txt");
+        dryRunModeService.addDryRunFileList(List.of(jobs));
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        assertEquals(2, outboundQueue.size());
 
         flowTestRule.stopFlow();
     }

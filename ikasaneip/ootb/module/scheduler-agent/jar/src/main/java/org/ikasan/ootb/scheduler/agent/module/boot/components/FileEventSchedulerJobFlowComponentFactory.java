@@ -84,13 +84,18 @@ import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
+import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -108,11 +113,20 @@ public class FileEventSchedulerJobFlowComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
+    @Value( "${scheduler.file.filter.days.ttl:30}" )
+    Integer filterTtl;
+
     @Resource
     BuilderFactory builderFactory;
 
     @Resource
     IBigQueue outboundQueue;
+
+    @Resource
+    DuplicateFilterService duplicateFilterService;
+
+    @Resource
+    DryRunModeService dryRunModeService;
 
     /**
      * Return an instance of a configured file consumer
@@ -129,11 +143,11 @@ public class FileEventSchedulerJobFlowComponentFactory
     }
 
     public Filter getDuplicateMessageFilter(String jobName) {
-        return builderFactory.getComponentBuilder()
-            .messageFilter()
-            .setObjectHashingFilterEntryConverter()
-            .setConfiguredResourceId("duplicate-message-filter-"+jobName)
-            .build();
+        SchedulerFilterEntryConverter converter = new SchedulerFilterEntryConverter("duplicate-message-filter-"+jobName,
+            filterTtl);
+        IsDuplicateFilterRule isDuplicateFilterRule = new IsDuplicateFilterRule(duplicateFilterService
+            , converter);
+        return new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
     }
 
     /**
