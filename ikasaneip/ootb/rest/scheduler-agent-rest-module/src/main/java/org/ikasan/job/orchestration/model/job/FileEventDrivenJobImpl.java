@@ -35,6 +35,8 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
 
     private boolean ignoreFileRenameWhilstScanning = true;
 
+    private int minFileAgeSeconds;
+
     @Override
     public String getFilePath() {
         return this.filePath;
@@ -137,12 +139,12 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
 
     @Override
     public int getMinFileAgeSeconds() {
-        return 0;
+        return this.minFileAgeSeconds;
     }
 
     @Override
     public void setMinFileAgeSeconds(int minFileAgeSeconds) {
-
+        this.minFileAgeSeconds = minFileAgeSeconds;
     }
 
     @Override

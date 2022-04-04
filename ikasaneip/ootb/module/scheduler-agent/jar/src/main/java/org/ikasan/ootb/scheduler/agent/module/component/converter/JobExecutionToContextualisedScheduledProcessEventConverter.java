@@ -56,7 +56,7 @@ import org.quartz.TriggerKey;
  *
  * @author Ikasan Development Team
  */
-public class JobExecutionToContextualisedScheduledProcessEventConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>,
+public class JobExecutionToContextualisedScheduledProcessEventConverter implements Converter<JobExecutionContext, ContextualisedScheduledProcessEvent>,
     ConfiguredResource<ContextualisedConverterConfiguration>
 {
     private String moduleName;
@@ -83,34 +83,36 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
     }
 
     @Override
-    public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException {
-        ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
-        scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
-        scheduledProcessEvent.setAgentName(moduleName);
-        scheduledProcessEvent.setJobName(this.jobName);
-        scheduledProcessEvent.setContextId(this.configuration.getContextId());
-        scheduledProcessEvent.setChildContextIds(this.configuration.getChildContextIds());
-        scheduledProcessEvent.setSuccessful(true);
+    public ContextualisedScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException {
+        try {
+            ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
+            scheduledProcessEvent.setFireTime(jobExecutionContext.getFireTime().getTime());
+            scheduledProcessEvent.setAgentName(moduleName);
+            scheduledProcessEvent.setJobName(this.jobName);
+            scheduledProcessEvent.setContextId(this.configuration.getContextId());
+            scheduledProcessEvent.setChildContextIds(this.configuration.getChildContextIds());
+            scheduledProcessEvent.setSuccessful(true);
 
-        Trigger jobTrigger = jobExecutionContext.getTrigger();
-        if(jobTrigger != null)
-        {
-            scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
+            Trigger jobTrigger = jobExecutionContext.getTrigger();
+            if (jobTrigger != null) {
+                scheduledProcessEvent.setJobDescription(jobTrigger.getDescription());
 
-            TriggerKey triggerKey = jobTrigger.getKey();
-            if(triggerKey != null)
-            {
-                scheduledProcessEvent.setJobName(triggerKey.getName());
-                scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
+                TriggerKey triggerKey = jobTrigger.getKey();
+                if (triggerKey != null) {
+                    scheduledProcessEvent.setJobName(triggerKey.getName());
+                    scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
+                }
             }
-        }
 
-        if(jobExecutionContext.getNextFireTime() != null)
-        {
-            scheduledProcessEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
-        }
+            if (jobExecutionContext.getNextFireTime() != null) {
+                scheduledProcessEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
+            }
 
-        return scheduledProcessEvent;
+            return scheduledProcessEvent;
+        }
+        catch (Exception e) {
+            throw new TransformationException("Error converting JobExecutionContext to ContextualisedScheduledProcessEvent", e);
+        }
     }
 
     @Override
