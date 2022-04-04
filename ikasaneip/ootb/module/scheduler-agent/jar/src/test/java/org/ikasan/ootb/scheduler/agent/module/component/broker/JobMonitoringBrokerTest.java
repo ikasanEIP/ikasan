@@ -195,7 +195,7 @@ public class JobMonitoringBrokerTest {
         }
         else {
             if(badCommand) {
-                internalEventDrivenJobDto.setCommandLine("ls -la /BAD_COMMAND");
+                internalEventDrivenJobDto.setCommandLine("ls -la ls -la ls -la");
             }
             else {
                 internalEventDrivenJobDto.setCommandLine("pwd");
