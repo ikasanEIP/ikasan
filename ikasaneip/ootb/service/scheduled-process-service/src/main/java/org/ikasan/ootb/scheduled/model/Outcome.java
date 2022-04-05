@@ -45,7 +45,9 @@ public enum Outcome
     /** Set the different route outcomes for this service */
     EXECUTION_IGNORED_INSIDE_BLACKOUT_WINDOW("Scheduled Process Execution Ignored within Blackout Window"),
     EXECUTION_IGNORED_BUSINESS_RULE_NOT_READY("Scheduled Process Execution Ignored as Business Rule is reporting not ready"),
-    EXECUTION_INVOKED("Scheduled Process Execution Invoked");
+    EXECUTION_INVOKED("Scheduled Process Execution Invoked"),
+    EXECUTION_INVOKED_IGNORED_DAY_OF_WEEK("Scheduled Process Execution Invoked - Ignored Day of Week");
+
 
     private String value;
 
