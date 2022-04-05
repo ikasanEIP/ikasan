@@ -300,6 +300,6 @@ public class JobMonitoringBrokerTest {
 
     private void invokeJobStarting(EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent) {
         JobStartingBroker jobStartingBroker = new JobStartingBroker();
-        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+        jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
     }
 }
