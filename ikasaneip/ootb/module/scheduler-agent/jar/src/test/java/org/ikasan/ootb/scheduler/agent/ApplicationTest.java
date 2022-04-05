@@ -381,6 +381,7 @@ public class ApplicationTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
 
         flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
@@ -418,6 +419,7 @@ public class ApplicationTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
 
         flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
@@ -452,10 +454,12 @@ public class ApplicationTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
 
         flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer")
             .consumer("File Consumer")
+            .filter("File Age Filter")
             .filter("Duplicate Message Filter");
 
         flowTestRule.startFlow();
