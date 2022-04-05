@@ -252,22 +252,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
-        <version.logback.core>1.2.10</version.logback.core>
+        <version.logback.core>1.2.11</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
-        <version.org.hibernate>5.4.21.Final</version.org.hibernate>
+        <version.org.hibernate>5.4.24.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
         <version.org.springframework>5.3.18</version.org.springframework>
-        <version.org.springframework.security>5.3.10.RELEASE</version.org.springframework.security>
+        <version.org.springframework.security>5.3.13.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.2.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
-        <version.spring.cloud.config.client>2.2.1.RELEASE</version.spring.cloud.config.client>
-        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
+        <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
+        <version.org.springboot>2.5.12</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
-        <version.org.slf4j>1.7.30</version.org.slf4j>
+        <version.org.slf4j>1.7.36</version.org.slf4j>
         <version.junit>4.13.1</version.junit>
         <version.org.awaitility>4.0.2</version.org.awaitility>
         <version.org.jmock>2.12.0</version.org.jmock>
@@ -281,7 +281,7 @@
         <version.cglib.cglib-nodep>3.2.6</version.cglib.cglib-nodep>
         <version.org.objenesis>1.2</version.org.objenesis>
         <version.io.github.kostaskougios.cloning>1.10.3</version.io.github.kostaskougios.cloning>
-        <version.org.mockito>3.1.0</version.org.mockito>
+        <version.org.mockito>3.12.4</version.org.mockito>
         <version.powermock>2.0.2</version.powermock>
         <version.joda-time>2.10.5</version.joda-time>
         <version.javax.mail>1.4.3</version.javax.mail>
@@ -307,7 +307,7 @@
         <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
         <version.com.h2database>1.4.200</version.com.h2database>
         <version.com.mysqldriver>5.1.44</version.com.mysqldriver>
-        <version.org.liquibase>3.8.5</version.org.liquibase>
+        <version.org.liquibase>3.8.9</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.28</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>9.4.41.v20210516</version.org.eclipse.jetty>
@@ -333,7 +333,8 @@
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
         <version.com.github.stefanbirkner.sftp>2.0.1</version.com.github.stefanbirkner.sftp>
-        <version.com.fasterxml.jackson.core>2.10.5</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core>2.13.2</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core.databind>2.13.2.2</version.com.fasterxml.jackson.core.databind>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>30.0-jre</version.com.google.guava>
         <version.tomcat>9.0.46</version.tomcat>
@@ -1522,6 +1523,14 @@
                         <artifactId>mockito-junit-jupiter</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-all</artifactId>
+                    </exclusion>
+                    <exclusion>
                         <groupId>org.junit.jupiter</groupId>
                         <artifactId>junit-jupiter-engine</artifactId>
                     </exclusion>
@@ -1912,7 +1921,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${version.com.fasterxml.jackson.core}</version>
+                <version>${version.com.fasterxml.jackson.core.databind}</version>
             </dependency>
 
             <dependency>
@@ -2097,6 +2106,10 @@
                     <exclusion>
                         <groupId>javax.xml.bind</groupId>
                         <artifactId>jaxb-api</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>ch.qos.logback</groupId>
+                        <artifactId>logback-classic</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
