@@ -89,8 +89,10 @@ import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
@@ -140,6 +142,15 @@ public class FileEventSchedulerJobFlowComponentFactory
         return builderFactory.getComponentBuilder().fileConsumer()
             .setConfiguration(fileConsumerConfiguration)
             .build();
+    }
+
+    public Filter getFileAgeFilter() {
+        FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
+        FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
+
+        fileAgeFilter.setConfiguration(configuration);
+
+        return fileAgeFilter;
     }
 
     public Filter getDuplicateMessageFilter(String jobName) {

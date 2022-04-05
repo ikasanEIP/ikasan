@@ -10,6 +10,7 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConf
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -160,6 +161,15 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 this.updateFileConsumerConfiguration((FileEventDrivenJob)job, configuration);
 
                 this.configurationService.update(consumer);
+
+                ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
+                    .getFlowElement("File Age Filter").getFlowComponent();
+
+                FileAgeFilterConfiguration filterConfiguration = filter.getConfiguration();
+                filterConfiguration.setFileAgeSeconds(((FileEventDrivenJob)job).getMinFileAgeSeconds());
+
+                this.configurationService.update(filter);
+
 
                 ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
                     .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
