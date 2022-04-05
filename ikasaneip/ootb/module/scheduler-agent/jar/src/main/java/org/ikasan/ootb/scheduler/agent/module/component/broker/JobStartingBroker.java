@@ -53,6 +53,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Random;
 
@@ -76,6 +77,15 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
 
         // Skipping a job is as simple as marking the job as successful.
         if(scheduledProcessEvent.isSkipped() || scheduledProcessEvent.isDryRun() ) {
+            return scheduledProcessEvent;
+        }
+
+        // If any day of weeks are defined, we only run the job on the day of the
+        // week that is defined.
+        if(scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun() != null
+            && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun().isEmpty()
+            && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun()
+            .contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) {
             return scheduledProcessEvent;
         }
 
