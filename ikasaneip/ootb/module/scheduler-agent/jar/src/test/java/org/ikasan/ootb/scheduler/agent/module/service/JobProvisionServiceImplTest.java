@@ -8,6 +8,7 @@ import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -77,6 +78,14 @@ public class JobProvisionServiceImplTest {
     @Mock ScheduledConsumerConfiguration scheduledConsumerConfiguration;
 
     @Mock
+    private FlowElement fileAgeFilterElement;
+
+    @Mock
+    private ConfiguredResource<FileAgeFilterConfiguration> fileAgeFilter;
+
+    @Mock FileAgeFilterConfiguration fileAgeFilterConfiguration;
+
+    @Mock
     IkasanAuthentication ikasanAuthentication;
 
     @InjectMocks
@@ -98,7 +107,11 @@ public class JobProvisionServiceImplTest {
         when(flow.getFlowElement("Scheduled Consumer")).thenReturn(scheduledConsumerElement);
         when(scheduledConsumerElement.getFlowComponent()).thenReturn(scheduledConsumer);
         when(scheduledConsumer.getConfiguration()).thenReturn(scheduledConsumerConfiguration);
+        when(flow.getFlowElement("File Age Filter")).thenReturn(fileAgeFilterElement);
+        when(fileAgeFilterElement.getFlowComponent()).thenReturn(fileAgeFilter);
+        when(fileAgeFilter.getConfiguration()).thenReturn(fileAgeFilterConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
+
 
 
         this.service.provisionJobs(this.getJobs());
@@ -126,6 +139,8 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setPassthroughProperties(anyMap());
         verify(fileConsumerConfiguration, times(1)).setPersistentRecovery(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setRecoveryTolerance(anyLong());
+
+        verify(fileAgeFilterConfiguration, times(1)).setFileAgeSeconds((anyInt()));
 
         verify(fileConsumerConfiguration, times(1)).setFilenames(anyList());
         verify(fileConsumerConfiguration, times(1)).setDirectoryDepth(anyInt());
@@ -180,6 +195,7 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setIncludeTrailer(true);
         fileEventDrivenJob.setSortAscending(true);
         fileEventDrivenJob.setSortByModifiedDateTime(true);
+        fileEventDrivenJob.setMinFileAgeSeconds(180);
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
         quartzScheduleDrivenJob.setAgentName("agentName");
