@@ -12,7 +12,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.stream.IntStream;
 
 import static org.mockito.Mockito.when;
 
@@ -190,7 +193,81 @@ public class JobMonitoringBrokerTest {
         Assert.assertEquals(true, event.isSuccessful());
     }
 
+    @Test
+    public void test_job_monitor_execute_due_to_day_of_week() {
+        JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
+        configuration.setTimeout(240);
+
+        JobMonitoringBroker broker = new JobMonitoringBroker();
+        broker.setConfiguration(configuration);
+
+        ArrayList<Integer> todayList = new ArrayList<>();
+        todayList.add(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
+
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent
+            (false, false, todayList);
+
+        event = broker.invoke(event);
+
+        Assert.assertEquals(event.getProcess().pid(), event.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        Assert.assertEquals(false, event.isJobStarting());
+        Assert.assertEquals(false, event.isSkipped());
+        Assert.assertEquals(false, event.isDryRun());
+        Assert.assertEquals(true, event.isSuccessful());
+    }
+
+    @Test
+    public void test_job_monitor_ignore_due_to_day_of_week() {
+        JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
+        configuration.setTimeout(240);
+
+        JobMonitoringBroker broker = new JobMonitoringBroker();
+        broker.setConfiguration(configuration);
+
+        ArrayList<Integer> daysOtherThanToday = new ArrayList<>();
+
+        IntStream.range(1, 8).forEach(i -> {
+            if(i != Calendar.getInstance().get(Calendar.DAY_OF_WEEK)) {
+                daysOtherThanToday.add(i);
+            }
+        });
+
+        EnrichedContextualisedScheduledProcessEvent event
+            = this.getEnrichedContextualisedScheduledProcessEvent(false, false, daysOtherThanToday);
+
+        event = broker.invoke(event);
+
+        Assert.assertEquals(0, event.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED_IGNORED_DAY_OF_WEEK, event.getOutcome());
+        Assert.assertEquals(false, event.isJobStarting());
+        Assert.assertEquals(false, event.isSkipped());
+        Assert.assertEquals(false, event.isDryRun());
+        Assert.assertEquals(true, event.isSuccessful());
+    }
+
+    private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip
+        , ArrayList<Integer> daysOfWeekToRun) {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent
+            = this.createEnrichedContextualisedScheduledProcessEvent(dryRun, skip);
+        enrichedContextualisedScheduledProcessEvent.getInternalEventDrivenJob().setDaysOfWeekToRun(daysOfWeekToRun);
+
+        this.invokeJobStarting(enrichedContextualisedScheduledProcessEvent);
+
+        return enrichedContextualisedScheduledProcessEvent;
+    }
+
+
     private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip) {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            this.createEnrichedContextualisedScheduledProcessEvent(dryRun, skip);
+
+        this.invokeJobStarting(enrichedContextualisedScheduledProcessEvent);
+
+        return enrichedContextualisedScheduledProcessEvent;
+    }
+
+    private EnrichedContextualisedScheduledProcessEvent createEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip) {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
@@ -217,9 +294,12 @@ public class JobMonitoringBrokerTest {
         }
         enrichedContextualisedScheduledProcessEvent.setSkipped(skip);
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
-        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         return enrichedContextualisedScheduledProcessEvent;
+    }
+
+    private void invokeJobStarting(EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent) {
+        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
     }
 }
