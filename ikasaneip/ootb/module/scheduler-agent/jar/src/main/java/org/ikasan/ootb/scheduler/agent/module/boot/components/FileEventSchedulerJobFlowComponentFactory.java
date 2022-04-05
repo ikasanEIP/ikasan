@@ -143,10 +143,12 @@ public class FileEventSchedulerJobFlowComponentFactory
     }
 
     public Filter getDuplicateMessageFilter(String jobName) {
-        SchedulerFilterEntryConverter converter = new SchedulerFilterEntryConverter("duplicate-message-filter-"+jobName,
-            filterTtl);
-        IsDuplicateFilterRule isDuplicateFilterRule = new IsDuplicateFilterRule(duplicateFilterService
-            , converter);
+        SchedulerFilterEntryConverter converter
+            = new SchedulerFilterEntryConverter("duplicate-message-filter-"+jobName, filterTtl);
+
+        IsDuplicateFilterRule isDuplicateFilterRule
+            = new IsDuplicateFilterRule(duplicateFilterService, converter);
+
         return new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
     }
 
