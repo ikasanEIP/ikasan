@@ -41,7 +41,7 @@
 package org.ikasan.rest.module;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.boot.web.error.ErrorAttributeOptions;
 import org.springframework.boot.web.servlet.error.ErrorAttributes;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
@@ -77,8 +77,8 @@ public class IkasanErrorController implements ErrorController
     public ModelAndView errorHtml(HttpServletRequest request, WebRequest webRequest,
             HttpServletResponse response) {
         HttpStatus status = getStatus(request);
-        Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
-            webRequest, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
+        Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(webRequest));
+
         response.setStatus(status.value());
 
         return  new ModelAndView("error", model);
@@ -98,35 +98,8 @@ public class IkasanErrorController implements ErrorController
         }
     }
 
-    protected Map<String, Object> getErrorAttributes(WebRequest request,
-            boolean includeStackTrace) {
-        return this.errorAttributes.getErrorAttributes(request,
-                includeStackTrace);
+    protected Map<String, Object> getErrorAttributes(WebRequest request)
+    {
+        return this.errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());
     }
-
-    /**
-     * Determine if the stacktrace attribute should be included.
-     * @param request the source request
-     * @param produces the media type produced (or {@code MediaType.ALL})
-     * @return if the stacktrace attribute should be included
-     */
-    protected boolean isIncludeStackTrace(HttpServletRequest request,
-            MediaType produces) {
-            return true;
-
-    }
-
-    protected boolean getTraceParameter(HttpServletRequest request) {
-        String parameter = request.getParameter("trace");
-        if (parameter == null) {
-            return false;
-        }
-        return !"false".equals(parameter.toLowerCase());
-    }
-
-    @Override
-    public String getErrorPath() {
-        return PATH;
-    }
-
 }
