@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
+import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -49,6 +50,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Calendar;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
@@ -82,6 +84,16 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
         // and return it.
         if(scheduledProcessEvent.isDryRun()) {
             this.manageDryRun(scheduledProcessEvent);
+            return scheduledProcessEvent;
+        }
+
+        // If any day of weeks are defined, we only run the job on the day of the
+        // week that is defined.
+        if(scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun() != null
+            && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun().isEmpty()
+            && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun()
+            .contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) {
+            this.manageDayOfWeekToRunIgnored(scheduledProcessEvent);
             return scheduledProcessEvent;
         }
 
@@ -196,6 +208,18 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
      * @param scheduledProcessEvent
      */
     private void manageSkipped(ScheduledProcessEvent scheduledProcessEvent) {
+        scheduledProcessEvent.setSuccessful(true);
+        scheduledProcessEvent.setFireTime(System.currentTimeMillis());
+        scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+    }
+
+    /**
+     * Update the event with details of the job being skipped.
+     *
+     * @param scheduledProcessEvent
+     */
+    private void manageDayOfWeekToRunIgnored(ScheduledProcessEvent scheduledProcessEvent) {
+        scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED_IGNORED_DAY_OF_WEEK);
         scheduledProcessEvent.setSuccessful(true);
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());

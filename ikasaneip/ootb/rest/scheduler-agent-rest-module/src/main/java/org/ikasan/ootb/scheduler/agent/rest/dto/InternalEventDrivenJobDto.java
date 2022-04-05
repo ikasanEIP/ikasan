@@ -20,6 +20,7 @@ public class InternalEventDrivenJobDto implements InternalEventDrivenJob {
     private String jobName;
     private String jobDescription;
     private String startupControlType;
+    private List<Integer> daysOfWeekToRun;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -153,12 +154,12 @@ public class InternalEventDrivenJobDto implements InternalEventDrivenJob {
 
     @Override
     public List<Integer> getDaysOfWeekToRun() {
-        return null;
+        return this.daysOfWeekToRun;
     }
 
     @Override
     public void setDaysOfWeekToRun(List<Integer> daysOfWeekToRun) {
-
+        this.daysOfWeekToRun = daysOfWeekToRun;
     }
 
     @Override
