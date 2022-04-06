@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
@@ -179,6 +180,14 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 converterConfiguration.setChildContextIds(job.getChildContextIds());
 
                 this.configurationService.update(converter);
+
+                ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
+                    .getFlowElement("File Move Broker").getFlowComponent();
+
+                MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
+                moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob)job).getMoveDirectory());
+
+                this.configurationService.update(filter);
             }
             else if(job instanceof QuartzScheduleDrivenJob) {
                 Flow flow = module.getFlow(job.getJobName());
