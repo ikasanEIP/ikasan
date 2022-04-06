@@ -17,7 +17,7 @@ NOTE: All options specified below will override any associated options in the dr
 | username | String | Principal for simple authentication |
 | password | Masked String | Password credential for simple authentication. |
 | databaseName | String | Name of the MongoDB database. |
-| collectionNames | Map<String,String> | Names of the MongoDB collections. sThis is represented as a key-name followed by the value of the actual collection name.  |
+| collectionNames | Map<String,String> | Names of the MongoDB collections. sThis is represented as a key-name followed by the value of the actual collection name.  |
 | readPreference | ReadPreference | Replicate set members to which any query may be sent. |
 | writeConcern | WriteConcern | Sets acknowledgement of write operations. |
 | localThreshold | Integer | Local threshold |
@@ -25,24 +25,23 @@ NOTE: All options specified below will override any associated options in the dr
 | connectionsPerHost | Integer | Sets the maximum allowed connections per host. |
 | connectionTimeout | Integer | Connection timeout. |
 | cursorFinalizerEnabled | Boolean | Sets whether cursor finalizers are enabled. |
-| description | String |   |
-| minHeartbeatFrequency | Integer |   |
-| heartbeatConnectTimeout | Integer |   |
-| heartbeatConnectFrequency | Integer |   |
-| heartbeatSocketTimeout | Integer |   |
-| legacyDefaults | Boolean |   |
-| maxConnectionIdleTime | Integer |   |
-| maxConnectionLifeTIme | Integer |   |
-| maxWaitTime | Integer |   |
-| minConnectionsPerHost | Integer |   |
-| requiredReplicaSetName | String |   |
-| keepSocketAlive | Boolean |   |
+| description | String |   |
+| minHeartbeatFrequency | Integer |   |
+| heartbeatConnectTimeout | Integer |   |
+| heartbeatConnectFrequency | Integer |   |
+| heartbeatSocketTimeout | Integer |   |
+| legacyDefaults | Boolean |   |
+| maxConnectionIdleTime | Integer |   |
+| maxConnectionLifeTIme | Integer |   |
+| maxWaitTime | Integer |   |
+| minConnectionsPerHost | Integer |   |
+| requiredReplicaSetName | String |   |
+| keepSocketAlive | Boolean |   |
 | socketTimeout | Integer | Socket timeout. |
 | threadsAllowedToBlockForConnectionMultiplier | Integer | multiplier for number of threads allowed to block waiting for a connection. |
 | authDatabaseName | String | database name for user authentication |
 | sslEnabled | Boolean | Does it use SSL |
 | sslInvalidHostNameAllowed | Boolean | Does it validate the server hostname to match the certificate |
 | srvRecord | Boolean | Does it use '+srv' to connect to the mongo endpoint |
-
 
 ##### Sample Usage
