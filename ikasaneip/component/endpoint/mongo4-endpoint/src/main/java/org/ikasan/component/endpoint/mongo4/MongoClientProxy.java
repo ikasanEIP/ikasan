@@ -1,4 +1,4 @@
-package org.ikasan.component.endpoint.mongo;
+package org.ikasan.component.endpoint.mongo4;
 
 
 import com.mongodb.client.MongoClient;

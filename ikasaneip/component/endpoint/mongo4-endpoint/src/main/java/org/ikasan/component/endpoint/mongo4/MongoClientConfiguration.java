@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.mongo;
+package org.ikasan.component.endpoint.mongo4;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
@@ -46,7 +46,6 @@ import com.mongodb.WriteConcern;
 import org.ikasan.spec.configuration.Masked;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
