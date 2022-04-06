@@ -12,6 +12,8 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
     /** filenames to be processed */
     private List<String> filenames = new ArrayList<String>();
 
+    private String moveDirectory;
+
     /** encoding of the files */
     private String encoding;
 
@@ -50,6 +52,16 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
     @Override
     public List<String> getFilenames() {
         return filenames;
+    }
+
+    @Override
+    public String getMoveDirectory() {
+        return this.moveDirectory;
+    }
+
+    @Override
+    public void setMoveDirectory(String moveDirectory) {
+        this.moveDirectory = moveDirectory;
     }
 
     @Override
