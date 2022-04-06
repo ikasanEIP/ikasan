@@ -22,7 +22,7 @@ public class FileAgeFilter implements Filter<List<File>>, ConfiguredResource<Fil
     public FileAgeFilter(DryRunModeService dryRunModeService) {
         this.dryRunModeService = dryRunModeService;
         if(this.dryRunModeService == null) {
-
+            throw new IllegalArgumentException("dryRunModeService cannot be null!");
         }
     }
 
