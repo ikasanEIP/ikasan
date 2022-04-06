@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.mongo;
+package org.ikasan.component.endpoint.mongo4;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
