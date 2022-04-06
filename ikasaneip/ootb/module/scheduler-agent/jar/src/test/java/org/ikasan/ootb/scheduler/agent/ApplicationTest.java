@@ -56,12 +56,14 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
@@ -373,16 +375,20 @@ public class ApplicationTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect() {
+    public void test_file_flow_success_without_aspect() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
             , FileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
@@ -391,6 +397,9 @@ public class ApplicationTest {
         flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(5000);
+
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
+            , new File("src/test/resources/data"), true);
 
         flowTestRule.assertIsSatisfied();
 
@@ -421,6 +430,7 @@ public class ApplicationTest {
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
@@ -452,10 +462,14 @@ public class ApplicationTest {
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
             , FileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer")
             .consumer("File Consumer")
@@ -468,9 +482,14 @@ public class ApplicationTest {
         flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
+
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+            , new File("src/test/resources/data"), true);
+
         // file second time
         flowTestRule.fireScheduledConsumer();
         flowTestRule.sleep(2000);
+
 
         flowTestRule.assertIsSatisfied();
 
