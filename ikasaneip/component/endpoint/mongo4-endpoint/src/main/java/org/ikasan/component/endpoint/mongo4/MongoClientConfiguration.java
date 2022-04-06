@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.mongo;
+package org.ikasan.component.endpoint.mongo4;
 
 import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
@@ -78,7 +78,6 @@ public class MongoClientConfiguration
 
     /** database name */
     protected String databaseName;
-
 
     /** collection key name and actual name */
     protected Map<String,String> collectionNames = new HashMap<String,String>();
@@ -466,19 +465,19 @@ public class MongoClientConfiguration
     public String toString()
     {
         return "MongoClientConfiguration [connectionUrls=" + connectionUrls + ", authenticated=" + authenticated
-                + ", username=" + username + ", password=" + password + ", databaseName=" + databaseName
-                + ", collectionNames=" + collectionNames + ", readPreference=" + readPreference + ", writeConcern="
-                + writeConcern + ", localThreshold=" + localThreshold + ", alwaysUseMBeans=" + alwaysUseMBeans
-                + ", connectionsPerHost=" + connectionsPerHost + ", connectionTimeout=" + connectionTimeout
-                + ", cursorFinalizerEnabled=" + cursorFinalizerEnabled + ", description=" + description
-                + ", minHeartbeatFrequency=" + minHeartbeatFrequency + ", heartbeatConnectTimeout="
-                + heartbeatConnectTimeout + ", heartbeatFrequency=" + heartbeatFrequency + ", heartbeatSocketTimeout="
-                + heartbeatSocketTimeout + ", legacyDefaults=" + legacyDefaults + ", maxConnectionIdleTime="
-                + maxConnectionIdleTime + ", maxConnectionLifeTime=" + maxConnectionLifeTime + ", maxWaitTime="
-                + maxWaitTime + ", minConnectionsPerHost=" + minConnectionsPerHost + ", requiredReplicaSetName="
-                + requiredReplicaSetName + ", socketKeepAlive=" + socketKeepAlive + ", socketTimeout=" + socketTimeout
-                + ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier
-                + ", authDatabaseName=" +authDatabaseName + ", sslEnabled="+sslEnabled+", sslInvalidHostNameAllowed="
-                +sslInvalidHostNameAllowed+", srvRecord="+srvRecord+"]";
+            + ", username=" + username + ", password=" + password + ", databaseName=" + databaseName
+            + ", collectionNames=" + collectionNames + ", readPreference=" + readPreference + ", writeConcern="
+            + writeConcern + ", localThreshold=" + localThreshold + ", alwaysUseMBeans=" + alwaysUseMBeans
+            + ", connectionsPerHost=" + connectionsPerHost + ", connectionTimeout=" + connectionTimeout
+            + ", cursorFinalizerEnabled=" + cursorFinalizerEnabled + ", description=" + description
+            + ", minHeartbeatFrequency=" + minHeartbeatFrequency + ", heartbeatConnectTimeout="
+            + heartbeatConnectTimeout + ", heartbeatFrequency=" + heartbeatFrequency + ", heartbeatSocketTimeout="
+            + heartbeatSocketTimeout + ", legacyDefaults=" + legacyDefaults + ", maxConnectionIdleTime="
+            + maxConnectionIdleTime + ", maxConnectionLifeTime=" + maxConnectionLifeTime + ", maxWaitTime="
+            + maxWaitTime + ", minConnectionsPerHost=" + minConnectionsPerHost + ", requiredReplicaSetName="
+            + requiredReplicaSetName + ", socketKeepAlive=" + socketKeepAlive + ", socketTimeout=" + socketTimeout
+            + ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier
+            + ", authDatabaseName=" +authDatabaseName + ", sslEnabled="+sslEnabled+", sslInvalidHostNameAllowed="
+            +sslInvalidHostNameAllowed+", srvRecord="+srvRecord+"]";
     }
 }

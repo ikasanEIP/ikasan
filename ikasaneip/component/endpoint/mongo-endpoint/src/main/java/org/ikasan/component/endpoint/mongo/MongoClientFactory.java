@@ -59,12 +59,22 @@ public class MongoClientFactory
 
         url += String.join(",", connectionUrls) + "/" + configuration.getDatabaseName();
 
+        url += "?ssl=" + falseIfNull(configuration.getSslEnabled());
+
         if (configuration.isAuthenticated() != null && configuration.isAuthenticated())
         {
             url += "?authSource=" + getAuthDatabase(configuration);
         }
 
         return url;
+    }
+
+    private static boolean falseIfNull(Boolean bool) {
+        if (bool == null) {
+            return false;
+        }
+
+        return bool;
     }
 
     private static String getAuthDatabase(MongoClientConfiguration configuration)
