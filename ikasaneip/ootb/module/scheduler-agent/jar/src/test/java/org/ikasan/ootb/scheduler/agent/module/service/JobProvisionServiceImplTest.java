@@ -7,6 +7,8 @@ import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.ConfiguredModuleImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
@@ -86,6 +88,15 @@ public class JobProvisionServiceImplTest {
     @Mock FileAgeFilterConfiguration fileAgeFilterConfiguration;
 
     @Mock
+    private FlowElement moveFileBrokerElement;
+
+    @Mock
+    private ConfiguredResource<MoveFileBrokerConfiguration> moveFileBroker;
+
+    @Mock
+    MoveFileBrokerConfiguration moveFileBrokerConfiguration;
+
+    @Mock
     IkasanAuthentication ikasanAuthentication;
 
     @InjectMocks
@@ -110,6 +121,9 @@ public class JobProvisionServiceImplTest {
         when(flow.getFlowElement("File Age Filter")).thenReturn(fileAgeFilterElement);
         when(fileAgeFilterElement.getFlowComponent()).thenReturn(fileAgeFilter);
         when(fileAgeFilter.getConfiguration()).thenReturn(fileAgeFilterConfiguration);
+        when(flow.getFlowElement("File Move Broker")).thenReturn(moveFileBrokerElement);
+        when(moveFileBrokerElement.getFlowComponent()).thenReturn(moveFileBroker);
+        when(moveFileBroker.getConfiguration()).thenReturn(moveFileBrokerConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
 
 
@@ -141,6 +155,7 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setRecoveryTolerance(anyLong());
 
         verify(fileAgeFilterConfiguration, times(1)).setFileAgeSeconds((anyInt()));
+        verify(moveFileBrokerConfiguration, times(1)).setMoveDirectory((anyString()));
 
         verify(fileConsumerConfiguration, times(1)).setFilenames(anyList());
         verify(fileConsumerConfiguration, times(1)).setDirectoryDepth(anyInt());
@@ -196,6 +211,7 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setSortAscending(true);
         fileEventDrivenJob.setSortByModifiedDateTime(true);
         fileEventDrivenJob.setMinFileAgeSeconds(180);
+        fileEventDrivenJob.setMoveDirectory("archive");
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
         quartzScheduleDrivenJob.setAgentName("agentName");
