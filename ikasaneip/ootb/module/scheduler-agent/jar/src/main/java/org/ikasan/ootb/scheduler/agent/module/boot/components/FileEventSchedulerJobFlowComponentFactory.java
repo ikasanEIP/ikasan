@@ -86,6 +86,8 @@ import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
@@ -93,6 +95,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
@@ -144,6 +147,11 @@ public class FileEventSchedulerJobFlowComponentFactory
             .build();
     }
 
+    /**
+     * Get the file age filter.
+     *
+     * @return
+     */
     public Filter getFileAgeFilter() {
         FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
@@ -153,6 +161,12 @@ public class FileEventSchedulerJobFlowComponentFactory
         return fileAgeFilter;
     }
 
+    /**
+     * Get the duplicate message filter.
+     *
+     * @param jobName
+     * @return
+     */
     public Filter getDuplicateMessageFilter(String jobName) {
         SchedulerFilterEntryConverter converter
             = new SchedulerFilterEntryConverter("duplicate-message-filter-"+jobName, filterTtl);
@@ -161,6 +175,14 @@ public class FileEventSchedulerJobFlowComponentFactory
             = new IsDuplicateFilterRule(duplicateFilterService, converter);
 
         return new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+    }
+
+    public Broker getMoveFileBroker() {
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = new MoveFileBrokerConfiguration();
+        MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
+        broker.setConfiguration(moveFileBrokerConfiguration);
+
+        return broker;
     }
 
     /**

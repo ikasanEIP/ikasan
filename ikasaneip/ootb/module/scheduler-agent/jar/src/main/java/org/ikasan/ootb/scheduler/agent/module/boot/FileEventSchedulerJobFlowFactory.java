@@ -73,6 +73,7 @@ public class FileEventSchedulerJobFlowFactory
             .consumer("File Consumer", componentFactory.getFileConsumer())
             .filter("File Age Filter", componentFactory.getFileAgeFilter())
             .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter(jobName))
+            .broker("File Move Broker", componentFactory.getMoveFileBroker())
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter(jobName))
             .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
             .build();
