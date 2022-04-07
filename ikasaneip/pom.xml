@@ -755,7 +755,6 @@
                 <module>exclusion</module>
                 <module>error-reporting</module>
                 <module>recovery-manager</module>
-                <module>recovery-manager</module>
                 <module>flow</module>
                 <module>configuration-service</module>
                 <module>wiretap</module>
