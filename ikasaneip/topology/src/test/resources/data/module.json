@@ -1,5 +1,9 @@
 {
   "url" : "url",
+  "host" : "host",
+  "port" : 8888,
+  "context" : "context",
+  "protocol" : "protocol",
   "name" : "module name",
   "description" : "module description",
   "version" : "module version",
@@ -680,5 +684,6 @@
     "flowStartupType" : "MANUAL",
     "flowStartupComment" : null
   } ],
+  "configuredResourceId" : null,
   "type" : "SCHEDULER_AGENT"
 }

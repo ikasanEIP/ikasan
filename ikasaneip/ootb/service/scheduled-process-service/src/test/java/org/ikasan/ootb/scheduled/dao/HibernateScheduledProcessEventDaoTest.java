@@ -126,6 +126,7 @@ public class HibernateScheduledProcessEventDaoTest {
     private ScheduledProcessEvent getEvent() {
         ScheduledProcessEventImpl scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setAgentName("agentName");
+        scheduledProcessEvent.setAgentHostname("hostname");
         scheduledProcessEvent.setCommandLine("commandLine");
         scheduledProcessEvent.setFireTime(1000L);
         scheduledProcessEvent.setNextFireTime(2000L);

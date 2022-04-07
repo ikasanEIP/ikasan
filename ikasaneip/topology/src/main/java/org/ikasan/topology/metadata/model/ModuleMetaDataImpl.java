@@ -11,6 +11,10 @@ public class ModuleMetaDataImpl implements ModuleMetaData
 {
     private ModuleType moduleType;
     private String url;
+    private String host;
+    private Integer port;
+    private String context;
+    private String protocol;
     private String name;
     private String description;
     private String version;
@@ -90,6 +94,46 @@ public class ModuleMetaDataImpl implements ModuleMetaData
     public void setUrl(String url)
     {
         this.url = url;
+    }
+
+    @Override
+    public String getHost() {
+        return host;
+    }
+
+    @Override
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    @Override
+    public Integer getPort() {
+        return port;
+    }
+
+    @Override
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
+    @Override
+    public String getContext() {
+        return context;
+    }
+
+    @Override
+    public void setContext(String context) {
+        this.context = context;
+    }
+
+    @Override
+    public String getProtocol() {
+        return protocol;
+    }
+
+    @Override
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     @Override

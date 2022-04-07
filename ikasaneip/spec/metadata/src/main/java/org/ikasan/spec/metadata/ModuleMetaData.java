@@ -103,4 +103,60 @@ public interface ModuleMetaData
      * @param id
      */
     public void setConfiguredResourceId(String id);
+
+    /**
+     * Get the host that the module is running on
+     *
+     * @return
+     */
+    public String getHost();
+
+    /**
+     * Set the host that the module is running on.
+     *
+     * @param host
+     */
+    public void setHost(String host);
+
+    /**
+     * Get the port that the module is bound to.
+     *
+     * @return
+     */
+    public Integer getPort();
+
+    /**
+     * Set the port that the module is bound to.
+     *
+     * @param port
+     */
+    public void setPort(Integer port);
+
+    /**
+     * Get the root context of the module.
+     *
+     * @return
+     */
+    public String getContext();
+
+    /**
+     * Set the root context of the module.
+     *
+     * @param context
+     */
+    public void setContext(String context);
+
+    /**
+     * Get the protocol under which the module is running.
+     *
+     * @return
+     */
+    public String getProtocol();
+
+    /**
+     * Set the protocol that the module will run under.
+     *
+     * @param protocol
+     */
+    public void setProtocol(String protocol);
 }

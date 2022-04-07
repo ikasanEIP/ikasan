@@ -21,6 +21,6 @@
     
     <!-- Baseline change log -->    
 	<include file="./db/db-changelog-createScheduledProcessEvent.xml" relativeToChangelogFile="true" />
-
+    <include file="./db/db-changelog-addAgentHostNameColumn.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>

@@ -54,6 +54,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
 {
     private Long id;
     private String agentName;
+    private String agentHostname;
     private String jobName;
     private String jobGroup;
     private String jobDescription;
@@ -90,6 +91,16 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome>
     @Override
     public void setAgentName(String agentName) {
         this.agentName = agentName;
+    }
+
+    @Override
+    public String getAgentHostname() {
+        return agentHostname;
+    }
+
+    @Override
+    public void setAgentHostname(String agentHostname) {
+        this.agentHostname = agentHostname;
     }
 
     @Override
