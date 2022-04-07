@@ -10,6 +10,4 @@ public interface JobLockCacheRecord {
     JobLockCache getJobLockCache();
 
     long getTimestamp();
-
-    void setTimestamp(long timestamp);
 }
