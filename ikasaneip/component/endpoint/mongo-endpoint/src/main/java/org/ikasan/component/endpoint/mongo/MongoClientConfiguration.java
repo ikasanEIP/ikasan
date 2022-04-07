@@ -44,9 +44,9 @@ import com.mongodb.ReadPreference;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
 import org.ikasan.spec.configuration.Masked;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -79,13 +79,14 @@ public class MongoClientConfiguration
     /** database name */
     protected String databaseName;
 
+
     /** collection key name and actual name */
     protected Map<String,String> collectionNames = new HashMap<String,String>();
 
     /** represents preferred replica set members to which a query or command can be sent */
     protected ReadPreference readPreference = ReadPreference.primary();
 
-     /** Controls the acknowledgment of write operations */
+    /** Controls the acknowledgment of write operations */
     protected WriteConcern writeConcern = WriteConcern.ACKNOWLEDGED;
 
     /** Sets the localThreshold - overrides default driver options if specified */
@@ -145,7 +146,18 @@ public class MongoClientConfiguration
     /** Sets the multiplier for number of threads allowed to block waiting for a connection - overrides default driver options if specified */
     protected Integer threadsAllowedToBlockForConnectionMultiplier;
 
-    
+    /** database name */
+    protected String authDatabaseName;
+
+    /** Does it use SSL **/
+    protected Boolean sslEnabled = false;
+
+    /** Does it validate the server hostname to match the certificate **/
+    protected Boolean sslInvalidHostNameAllowed = false;
+
+    /** Does it use '+srv' to connect to the mongo endpoint **/
+    protected Boolean srvRecord = false;
+
     public List<String> getConnectionUrls() {
         return connectionUrls;
     }
@@ -391,6 +403,38 @@ public class MongoClientConfiguration
         return serverAddresses;
     }
 
+    public String getAuthDatabaseName() {
+        return authDatabaseName;
+    }
+
+    public void setAuthDatabaseName(String authDatabaseName) {
+        this.authDatabaseName = authDatabaseName;
+    }
+
+    public Boolean getSslEnabled() {
+        return sslEnabled;
+    }
+
+    public void setSslEnabled(Boolean sslEnabled) {
+        this.sslEnabled = sslEnabled;
+    }
+
+    public Boolean getSslInvalidHostNameAllowed() {
+        return sslInvalidHostNameAllowed;
+    }
+
+    public void setSslInvalidHostNameAllowed(Boolean sslInvalidHostNameAllowed) {
+        this.sslInvalidHostNameAllowed = sslInvalidHostNameAllowed;
+    }
+
+    public Boolean getSrvRecord() {
+        return srvRecord;
+    }
+
+    public void setSrvRecord(Boolean srvRecord) {
+        this.srvRecord = srvRecord;
+    }
+
     /**
      * Basic validation of the configuration.
      */
@@ -434,6 +478,7 @@ public class MongoClientConfiguration
                 + maxWaitTime + ", minConnectionsPerHost=" + minConnectionsPerHost + ", requiredReplicaSetName="
                 + requiredReplicaSetName + ", socketKeepAlive=" + socketKeepAlive + ", socketTimeout=" + socketTimeout
                 + ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier
-                + "]";
+                + ", authDatabaseName=" +authDatabaseName + ", sslEnabled="+sslEnabled+", sslInvalidHostNameAllowed="
+                +sslInvalidHostNameAllowed+", srvRecord="+srvRecord+"]";
     }
 }

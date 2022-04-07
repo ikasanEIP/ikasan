@@ -73,4 +73,44 @@ public class TestModule implements Module<Flow>
     {
 
     }
+
+    @Override
+    public String getHost() {
+        return "host";
+    }
+
+    @Override
+    public void setHost(String host) {
+
+    }
+
+    @Override
+    public Integer getPort() {
+        return 8888;
+    }
+
+    @Override
+    public void setPort(Integer port) {
+
+    }
+
+    @Override
+    public String getContext() {
+        return "context";
+    }
+
+    @Override
+    public void setContext(String context) {
+
+    }
+
+    @Override
+    public String getProtocol() {
+        return "protocol";
+    }
+
+    @Override
+    public void setProtocol(String protocol) {
+
+    }
 }

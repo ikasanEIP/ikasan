@@ -107,6 +107,9 @@ public class ComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
+    @Value( "${server.address}" )
+    String serverAddress;
+
     @Resource
     BuilderFactory builderFactory;
 
@@ -121,9 +124,9 @@ public class ComponentFactory
     Broker getProcessExecutionBroker()
     {
         ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
-        configuration.setCommandLine("pwd");    // default safe command across all platforms
+        configuration.setCommandLine("pwd");// default safe command across all platforms
 
-        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker();
+        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker(this.serverAddress);
         processExecutionBroker.setConfiguration(configuration);
         return processExecutionBroker;
     }

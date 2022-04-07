@@ -454,10 +454,14 @@ public class ScheduledConsumer<T>
     {
         try
         {
+            Date triggerStartTime = new Date(System.currentTimeMillis() + 1000);
+
             TriggerBuilder oldTriggerBuilder = oldTrigger.getTriggerBuilder();
-            Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK_COUNT, eagerCallback).
-                    startNow().
-                    withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
+            Trigger newTrigger = oldTriggerBuilder.usingJobData(EAGER_CALLBACK_COUNT, eagerCallback)
+                .startAt(triggerStartTime)
+                .withSchedule(simpleSchedule()
+                    .withMisfireHandlingInstructionFireNow())
+                .build();
 
             Date scheduledDate;
             if(this.scheduler.checkExists(oldTrigger.getKey()))

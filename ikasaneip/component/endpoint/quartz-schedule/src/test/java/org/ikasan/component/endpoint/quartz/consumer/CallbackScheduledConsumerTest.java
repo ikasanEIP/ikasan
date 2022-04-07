@@ -410,9 +410,9 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(trigger).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", 1);
                 will(returnValue(triggerBuilder));
-                exactly(1).of(triggerBuilder).startNow();
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
@@ -476,9 +476,9 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(trigger).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", new Integer(1));
+                exactly(1).of(triggerBuilder).usingJobData("eagerCallbackCount", 1);
                 will(returnValue(triggerBuilder));
-                exactly(1).of(triggerBuilder).startNow();
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 

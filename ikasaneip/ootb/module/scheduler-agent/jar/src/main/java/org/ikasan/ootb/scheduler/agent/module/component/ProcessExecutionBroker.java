@@ -71,10 +71,17 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
     String configuredResourceId;
     ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
 
+    String hostname;
+
+    public ProcessExecutionBroker(String hostname) {
+        this.hostname = hostname;
+    }
+
     @Override
     public ScheduledProcessEvent invoke(ScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
+        scheduledProcessEvent.setAgentHostname(this.hostname);
 
         String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);

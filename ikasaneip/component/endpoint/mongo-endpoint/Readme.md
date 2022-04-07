@@ -39,5 +39,10 @@ NOTE: All options specified below will override any associated options in the dr
 | keepSocketAlive | Boolean |   |
 | socketTimeout | Integer | Socket timeout. |
 | threadsAllowedToBlockForConnectionMultiplier | Integer | multiplier for number of threads allowed to block waiting for a connection. |
+| authDatabaseName | String | database name for user authentication |
+| sslEnabled | Boolean | Does it use SSL |
+| sslInvalidHostNameAllowed | Boolean | Does it validate the server hostname to match the certificate |
+| srvRecord | Boolean | Does it use '+srv' to connect to the mongo endpoint |
+
 
 ##### Sample Usage
