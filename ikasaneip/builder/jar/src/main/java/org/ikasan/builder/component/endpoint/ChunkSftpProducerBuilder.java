@@ -1,10 +1,8 @@
-<!--
- *
- *
+/*
  * $Id$
  * $URL$
  *
- * =============================================================================
+ * ====================================================================
  * Ikasan Enterprise Integration Platform
  *
  * Distributed under the Modified BSD License.
@@ -38,49 +36,16 @@
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
  * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * =============================================================================
+ * ====================================================================
+ */
+package org.ikasan.builder.component.endpoint;
+
+/**
+ * Contract for a default sftpChunkProducerBuilder.
  *
- * Author:  Ikasan Development Team
- *
--->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+ * @author Ikasan Development Team.
+ */
+public interface ChunkSftpProducerBuilder extends SftpProducerBuilder
+{
+}
 
-    <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-filetransfer</artifactId>
-        <version>3.2.2-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>ikasan-filetransfer-common</artifactId>
-    <packaging>jar</packaging>
-
-    <dependencies>
-       <!-- Needed for XML parsing -->
-        <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Needed for encoding/decoding -->
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Needed for dealing with Files -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <!-- Needed for instantiating Spring Contexts -->
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-    </dependencies>
-
-</project>

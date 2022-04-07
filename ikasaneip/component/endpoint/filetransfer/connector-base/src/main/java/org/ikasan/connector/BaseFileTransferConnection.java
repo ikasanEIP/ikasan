@@ -46,6 +46,7 @@ import org.ikasan.filetransfer.Payload;
 
 import javax.resource.ResourceException;
 import java.io.InputStream;
+import java.util.Map;
 
 /**
  * An interface for File Transfer based connections
@@ -119,6 +120,29 @@ public interface
                                      long minAge, boolean destructive, boolean filterDuplicates,
                                      boolean filterOnFilename, boolean filterOnLastModifedDate,
                                      boolean chronological, boolean isRecursive, boolean provideRelativePath) throws ResourceException;
+
+
+    /**
+     * Delivers the content of this <code>Payload</code> using a File Transfer
+     * client for chunking use only
+     *
+     * @param payload <code>Payload</code> either containing, or refering to
+     *            the file content
+     * @param outputDir dir path on remote system to deliver the file or files
+     * @param outputTargets map of output subdirectories for file delivery keyed by regular expression matches on the delivered file name
+     * @param overwrite overwrite any existing files of the same name(s)
+     * @param renameExtension temporary extension to use whilst delivering
+     *            single file
+     * @param checksumDelivered if true, attempt to reload the delivered file to
+     *            compare the checksum value
+     * @param unzip if true, attempt to unzip the payload
+     * @param cleanup if true, cleans up any chunked data
+     *
+     * @throws javax.resource.ResourceException -
+     */
+    void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets, boolean overwrite,
+                               String renameExtension, boolean checksumDelivered, boolean unzip, boolean cleanup) throws ResourceException;
+
 
     /**
      * Housekeeping the file transfer based connectors

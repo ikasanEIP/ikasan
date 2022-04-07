@@ -40,11 +40,8 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.ikasan.filetransfer.xml.serializer.XMLSerializer;
-import org.ikasan.filetransfer.xml.serializer.XStreamXmlSerializerImpl;
+import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 /**
  * Model class that contains header information common to all related File
@@ -52,7 +49,8 @@ import org.ikasan.filetransfer.xml.serializer.XStreamXmlSerializerImpl;
  * 
  * @author Ikasan Development Team
  */
-public class FileChunkHeader
+@XmlRootElement
+public class FileChunkHeader implements Serializable
 {
 
     /**
@@ -92,18 +90,6 @@ public class FileChunkHeader
     private String clientId;
 
     /**
-     * serializer for serializing to and from XML
-     */
-    private static XMLSerializer xmlSerializer;
-
-    static
-    {
-        Map<String, Class<?>> aliases = new HashMap<String, Class<?>>();
-        aliases.put("fileChunkHeader", FileChunkHeader.class);
-        xmlSerializer = new XStreamXmlSerializerImpl(aliases);
-    }
-
-    /**
      * Constructor
      * 
      * @param sequenceLength
@@ -136,16 +122,6 @@ public class FileChunkHeader
         this(sequenceLength, externalMd5Hash, fileName, chunkTimeStamp, null);
     }
 
-    /**
-     * Reconstitutes an instance from XML
-     * 
-     * @param xmlString
-     * @return new FileChunkHeader
-     */
-    public static FileChunkHeader fromXml(String xmlString)
-    {
-        return (FileChunkHeader) xmlSerializer.toObject(xmlString);
-    }
 
     /**
      * Accessor method for Id
@@ -236,15 +212,6 @@ public class FileChunkHeader
 
     }
 
-    /**
-     * Generates an XML representation of this object
-     * 
-     * @return XML representation of this object
-     */
-    public String toXml()
-    {
-        return xmlSerializer.toXml(this);
-    }
 
     /**
      * Accessor for clientId
@@ -276,7 +243,7 @@ public class FileChunkHeader
      * @param id
      */
     @SuppressWarnings("unused")
-    private void setId(Long id)
+    public void setId(Long id)
     {
         this.id = id;
     }
@@ -286,7 +253,7 @@ public class FileChunkHeader
      * 
      * @param sequenceLength
      */
-    private void setSequenceLength(Long sequenceLength)
+    public void setSequenceLength(Long sequenceLength)
     {
         this.sequenceLength = sequenceLength;
     }
@@ -296,7 +263,7 @@ public class FileChunkHeader
      * 
      * @param externalMd5Hash
      */
-    private void setExternalMd5Hash(String externalMd5Hash)
+    public void setExternalMd5Hash(String externalMd5Hash)
     {
         this.externalMd5Hash = externalMd5Hash;
     }
@@ -306,7 +273,7 @@ public class FileChunkHeader
      * 
      * @param fileName
      */
-    private void setFileName(String fileName)
+    public void setFileName(String fileName)
     {
         this.fileName = fileName;
     }
@@ -316,7 +283,7 @@ public class FileChunkHeader
      * 
      * @param chunkTimeStamp
      */
-    private void setChunkTimeStamp(Long chunkTimeStamp)
+    public void setChunkTimeStamp(Long chunkTimeStamp)
     {
         this.chunkTimeStamp = chunkTimeStamp;
     }

@@ -39,7 +39,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
-import org.apache.activemq.command.ActiveMQMapMessage;
+import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
@@ -47,25 +47,15 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.Session;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -76,10 +66,10 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 /**
- * This test Sftp To Log Flow.
+ * This test Sftp To JMS Flow.
  *
  * @author Ikasan Development Team
  */
@@ -87,9 +77,8 @@ import static org.junit.Assert.assertNotNull;
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class JmsToSftpFlowTest
+public class JmsToSftpChunkingFlowTest
 {
-    private Logger logger = LoggerFactory.getLogger(JmsToSftpFlowTest.class);
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
@@ -103,34 +92,40 @@ public class JmsToSftpFlowTest
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;
 
-    @Resource
-    public JmsTemplate jmsTemplate;
-
-    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
+    public IkasanFlowTestRule sftpToJmsChunkingFlowTestRule = new IkasanFlowTestRule( );
+    public IkasanFlowTestRule jmsToSftpChunkingFlowTestRule = new IkasanFlowTestRule( );
 
     @Rule
     public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
+
+    String homeDir;
 
     @Before
     public void setup() throws IOException
     {
         FileTestUtil.deleteFile(new File(objectStoreDir));
-        sftp.createDirectories("/source");
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Flow"));
+        homeDir = "/home/" +System.getProperty("user.name");
+        sftp.createDirectories("/source","/target");
+        sftpToJmsChunkingFlowTestRule.withFlow(moduleUnderTest.getFlow("Sftp Chunking To Jms Flow"));
+        jmsToSftpChunkingFlowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Chunking Flow"));
     }
 
-    @After
-    public void teardown() throws InterruptedException, SQLException, IOException
+    @After public void teardown() throws InterruptedException, SQLException, IOException
     {
         sftp.deleteAllFilesAndDirectories();
-        String currentState = flowTestRule.getFlowState();
+
+        String currentState = sftpToJmsChunkingFlowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
-            flowTestRule.stopFlow();
+            sftpToJmsChunkingFlowTestRule.stopFlow();
+        }
+        String currentState2 = jmsToSftpChunkingFlowTestRule.getFlowState();
+        if (currentState2.equals(RECOVERING) || currentState2.equals(RUNNING)){
+            jmsToSftpChunkingFlowTestRule.stopFlow();
         }
         new ActiveMqHelper().removeAllMessages();
+        Thread.sleep(250);
         new DatabaseHelper(ikasanxads).clearExtendedDatabaseTables();
 
-        Thread.sleep(250);
     }
 
     @AfterClass
@@ -139,43 +134,66 @@ public class JmsToSftpFlowTest
     }
 
     @Test
-    public void test_file_upload() throws Exception
+    public void test_file_download() throws Exception
     {
 
+        // Upload data to fake SFTP
+        String bigFileStringContent = generateMassiveString();
+        sftp.putFile("/source/bigTextFile.txt", bigFileStringContent.getBytes());
         //Update Sftp Consumer config
-        SftpProducerConfiguration consumerConfiguration = flowTestRule
-            .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
-        consumerConfiguration.setOutputDirectory("/source");
+        SftpConsumerConfiguration consumerConfiguration = sftpToJmsChunkingFlowTestRule
+            .getComponentConfig("Sftp Chunking Consumer",SftpConsumerConfiguration.class);
+        consumerConfiguration.setSourceDirectory("/source");
         consumerConfiguration.setRemotePort(sftp.getPort());
-        consumerConfiguration.setOverwrite(true);
+
+        SftpProducerConfiguration producerConfiguration = jmsToSftpChunkingFlowTestRule
+            .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
+        producerConfiguration.setOutputDirectory(".");
+        producerConfiguration.setRemotePort(sftp.getPort());
 
         //Setup component expectations
-        flowTestRule
+
+        sftpToJmsChunkingFlowTestRule.consumer("Sftp Chunking Consumer")
+                    .converter("Sftp Payload to Map Converter")
+                    .producer("Sftp Chunking Jms Producer");
+
+
+        jmsToSftpChunkingFlowTestRule
             .consumer("Sftp Jms Consumer")
             .converter("MapMessage to SFTP Payload Converter")
             .producer("Sftp Producer");
 
+
         // start the flow and assert it runs
-        flowTestRule.startFlow();
-
-        // Prepare test data
-        logger.info("Sending a JMS message.[" + SAMPLE_MESSAGE + "]");
-        jmsTemplate.send("sftp.private.jms.queue", new MessageCreator()
-        {
-            @Override public Message createMessage(Session session) throws JMSException
-            {
-                MapMessage mapMessage = new ActiveMQMapMessage();
-                mapMessage.setString("content",SAMPLE_MESSAGE);
-                mapMessage.setString("fileName","generatedSftpProducertest.out");
-                return mapMessage;
-            }
-        });
-
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
-
-        assertNotNull(sftp.getFileContent("/source/generatedSftpProducertest.out", Charset.defaultCharset()));
+        jmsToSftpChunkingFlowTestRule.startFlow();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals("running", jmsToSftpChunkingFlowTestRule.getFlowState()));
 
 
+        sftpToJmsChunkingFlowTestRule.startFlow();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+              .untilAsserted(() -> assertEquals("running", sftpToJmsChunkingFlowTestRule.getFlowState()));
+
+        sftpToJmsChunkingFlowTestRule.fireScheduledConsumer();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS)
+              .pollDelay(5,TimeUnit.SECONDS)
+              .and().await().atMost(60, TimeUnit.SECONDS)
+              .untilAsserted(() ->  jmsToSftpChunkingFlowTestRule.assertIsSatisfied());
+
+        assertEquals(bigFileStringContent,sftp.getFileContent(homeDir+"/bigTextFile.txt", Charset.defaultCharset()));
     }
+
+    private String generateMassiveString()
+    {
+        StringBuffer bf = new StringBuffer();
+        for(int i=0;i<90000; i++)
+        {
+            bf.append(SAMPLE_MESSAGE);
+        }
+
+        return bf.toString();
+    }
+
+
 }

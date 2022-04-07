@@ -57,21 +57,21 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 public class SftpProducerBuilderImpl implements SftpProducerBuilder
 {
 
-    private TransactionalResourceCommandDAO transactionalResourceCommandDAO;
+    protected TransactionalResourceCommandDAO transactionalResourceCommandDAO;
 
-    private FileChunkDao fileChunkDao;
+    protected FileChunkDao fileChunkDao;
 
-    private BaseFileTransferDao baseFileTransferDao;
+    protected BaseFileTransferDao baseFileTransferDao;
 
-    private JtaTransactionManager transactionManager;
+    protected JtaTransactionManager transactionManager;
 
-    private SftpProducerConfiguration configuration;
+    protected SftpProducerConfiguration configuration;
 
-    private ManagedResourceRecoveryManager managedResourceRecoveryManager;
+    protected ManagedResourceRecoveryManager managedResourceRecoveryManager;
 
-    private String configuredResourceId;
+    protected String configuredResourceId;
 
-    private boolean criticalOnStartup;
+    protected boolean criticalOnStartup;
 
     /**
      *

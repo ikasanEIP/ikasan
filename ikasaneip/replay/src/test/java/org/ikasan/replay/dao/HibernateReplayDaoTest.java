@@ -100,10 +100,11 @@ public class HibernateReplayDaoTest
     {
         List<ReplayEvent> replayEvents = new ArrayList<>();
 
+        long currentTimestamp = System.currentTimeMillis();
         for(int i=0; i<100; i++)
         {
             HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
-
+            replayEvent.setTimestamp(currentTimestamp-100+i);
             replayEvents.add(replayEvent);
         }
 
@@ -119,13 +120,13 @@ public class HibernateReplayDaoTest
     public void test_harvest_success()
     {
         this.replayDao.setHarvestQueryOrdered(true);
-
+        long currentTimestamp = System.currentTimeMillis();
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
         {
             HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
-
+            replayEvent.setTimestamp(currentTimestamp-1000+i);
             this.replayDao.saveOrUpdate(replayEvent);
 
             replayEventList.add(replayEvent);
@@ -143,13 +144,13 @@ public class HibernateReplayDaoTest
     public void test_harvest_success_with_gap()
     {
         this.replayDao.setHarvestQueryOrdered(true);
-
+        long currentTimestamp = System.currentTimeMillis();
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
         {
             HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
-
+            replayEvent.setTimestamp(currentTimestamp-1000+i);
             this.replayDao.saveOrUpdate(replayEvent);
 
             replayEventList.add(replayEvent);
@@ -170,12 +171,14 @@ public class HibernateReplayDaoTest
     public void test_harvest_success_with_order_by()
     {
         this.replayDao.setHarvestQueryOrdered(true);
+        long currentTimestamp = System.currentTimeMillis();
+
         List<ReplayEvent> replayEventList = new ArrayList<>();
 
         for(int i=0; i<1000; i++)
         {
             HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
-
+            replayEvent.setTimestamp(currentTimestamp-1000+i);
             this.replayDao.saveOrUpdate(replayEvent);
 
             replayEventList.add(replayEvent);

@@ -42,7 +42,6 @@ package org.ikasan.module.service;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.FlowFactoryCapable;
-import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -55,6 +54,7 @@ import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +82,9 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
 
     /** internal list of modules activated */
     private List<Module> activatedModuleNames = new ArrayList<Module>();
+
+    /** keep a handle to the state (running or stopped) of each flow when deactivated for reference on activation */
+    List<String> flowsInStoppedState = new ArrayList<String>();
 
     /**
      * Constructor
@@ -121,25 +124,37 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
      */
     public void activate(Module<Flow> module)
     {
-        // load module configuration
-        if(module instanceof ConfiguredResource)
+        // get a full list of startup controls for this module
+        Map<String,StartupControl> startupControls = new HashMap<String,StartupControl>();
+        for(StartupControl startupControl:this.startupControlDao.getStartupControls(module.getName()))
         {
-            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = (ConfiguredResource)module;
+            startupControls.put(startupControl.getFlowName(), startupControl);
+        }
+
+        // load module configuration
+        if( isConfiguredResource(module) )
+        {
+            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
             configurationService.configure(configuredModule);
 
-            if(module instanceof FlowFactoryCapable)
+            if( isFlowFactoryCapable(module) )
             {
                 ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
-                module.getFlows().clear();
                 if(configuration.getFlowDefinitions() != null)
                 {
                     for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())
                     {
                         String flowname = flowDefinition.getKey();
-                        StartupControl startupControl = new StartupControlImpl(module.getName(), flowname);
-                        startupControl.setStartupType( StartupType.valueOf(flowDefinition.getValue()) );
-                        this.startupControlDao.save(startupControl);
-                        module.getFlows().add( ((FlowFactoryCapable)module).getFlowFactory().create(flowname) );
+                        StartupControl startupControl = startupControls.get(flowname);
+                        if(startupControl == null)
+                        {
+                            startupControl = this.startupControlDao.getStartupControl(module.getName(), flowname);
+                            startupControl.setStartupType( StartupType.valueOf( flowDefinition.getValue()) );
+                            startupControls.put(flowname,startupControl);
+                        }
+
+                        Flow flow = ( getFlowFactoryCapable(module) ).getFlowFactory().create(flowname);
+                        module.getFlows().add(flow);
                     }
                 }
             }
@@ -148,12 +163,26 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         // start flows
         for(Flow flow:module.getFlows())
         {
-            StartupControl flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
+            // remove them as they are accounted for
+            StartupControl flowStartupControl = startupControls.remove(flow.getName());
+            if(flowStartupControl == null)
+            {
+                flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
+            }
+
             if(StartupType.AUTOMATIC.equals(flowStartupControl.getStartupType()))
             {
                 try
                 {
-                    flow.start();
+                    if( this.flowsInStoppedState.contains( flow.getName()) )
+                    {
+                        logger.info("Module [" + module.getName() + "] Flow [" + flow.getName()
+                            + "] was previously stopped. Leaving flow in a stopped state.");
+                    }
+                    else
+                    {
+                        flow.start();
+                    }
                 }
                 catch(RuntimeException e)
                 {
@@ -166,9 +195,34 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
             }
         }
 
-        this.activatedModuleNames.add(module);
+        // clean up any orphan startupControls
+        for(Map.Entry<String,StartupControl> entry : startupControls.entrySet())
+        {
+            this.startupControlDao.delete(entry.getValue());
+        }
 
+        this.activatedModuleNames.add(module);
         this.initialiseModuleMetaData(module);
+    }
+
+    protected boolean isConfiguredResource(Module<Flow> module)
+    {
+        return (module instanceof ConfiguredResource);
+    }
+
+    protected ConfiguredResource<ConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module)
+    {
+        return (ConfiguredResource<ConfiguredModuleConfiguration>)module;
+    }
+
+    protected boolean isFlowFactoryCapable(Module<Flow> module)
+    {
+        return (module instanceof FlowFactoryCapable);
+    }
+
+    protected FlowFactoryCapable getFlowFactoryCapable(Module<Flow> module)
+    {
+        return (FlowFactoryCapable)module;
     }
 
     /* (non-Javadoc)
@@ -179,6 +233,12 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         // stop flows
         for(Flow flow:module.getFlows())
         {
+            // get a handle to the flows currently stopped
+            if(!flow.isRunning())
+            {
+                this.flowsInStoppedState.add(flow.getName());
+            }
+
             // stop flow and associated components
             flow.stop();
         }

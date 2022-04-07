@@ -40,6 +40,7 @@
  */
 package org.ikasan.module.startup.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ikasan.module.startup.StartupControlImpl;
@@ -65,9 +66,10 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
      */
 	private static final String MODULE_NAME = "moduleName";
     private static final String FLOW_NAME = "flowName";
-    private static final String startupControlQuery = "from StartupControlImpl i where i.moduleName =:" 
-    		+ MODULE_NAME + " and i.flowName =:" + FLOW_NAME;
-
+    private static final String startupControlQuery = "from StartupControlImpl i where i.moduleName =:"
+        + MODULE_NAME + " and i.flowName =:" + FLOW_NAME;
+    private static final String startupControlsQuery = "from StartupControlImpl i where i.moduleName =:"
+        + MODULE_NAME;
 
     /*
      * (non-Javadoc)
@@ -89,11 +91,32 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
                 
                 if (!results.isEmpty())
                 {
-                    return (StartupControl) results.get(0);
+                    return results.get(0);
                 }
                 return new StartupControlImpl(moduleName, flowName);
             }
         });        
+    }
+
+    @Override
+    public List<StartupControl> getStartupControls(String moduleName)
+    {
+        return (List<StartupControl>)this.getHibernateTemplate().execute(new HibernateCallback()
+        {
+            public Object doInHibernate(Session session) throws HibernateException
+            {
+                Query query = session.createQuery(startupControlsQuery);
+                query.setParameter(MODULE_NAME, moduleName);
+
+                List<StartupControl> results = (List<StartupControl>)query.list();
+                if(results == null)
+                {
+                    return new ArrayList<StartupControl>();
+                }
+
+                return results;
+            }
+        });
     }
 
     /*
@@ -103,9 +126,15 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
      * org.ikasan.framework.flow.initiator.dao.FlowStartupControlDao#save
      * (org.ikasan.framework.initiator.FlowStartupControl)
      */
-    public void save(StartupControl flowStartupControl)
+    public void save(StartupControl startupControl)
     {
-        getHibernateTemplate().saveOrUpdate(flowStartupControl);
+        getHibernateTemplate().saveOrUpdate(startupControl);
+    }
+
+    @Override
+    public void delete(StartupControl startupControl)
+    {
+        getHibernateTemplate().delete(startupControl);
     }
 
 }

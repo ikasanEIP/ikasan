@@ -159,6 +159,22 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan default Chunk SFTP Producer
+     * @return chunkSftpProducerBuilder
+     */
+    public ChunkSftpProducerBuilder chunkSftpProducer()
+    {
+        ChunkSftpProducerBuilder chunkSftpProducerBuilder = new ChunkSftpProducerBuilderImpl(
+                this.applicationContext.getBean("transactionManager", JtaTransactionManager.class)
+                ,this.applicationContext.getBean(BaseFileTransferDao.class)
+                ,this.applicationContext.getBean(FileChunkDao.class)
+                ,this.applicationContext.getBean(TransactionalResourceCommandDAO.class)
+
+        );
+        return chunkSftpProducerBuilder;
+    }
+
+    /**
      * Get an instance of an Ikasan default scheduledConsumer with FTP message Provider
      * @return FtpConsumerBuilder
      */
