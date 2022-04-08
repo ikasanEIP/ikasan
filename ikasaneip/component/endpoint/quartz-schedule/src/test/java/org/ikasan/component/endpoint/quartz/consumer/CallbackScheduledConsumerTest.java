@@ -54,6 +54,7 @@ import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * This test class supports the <code>ScheduledConsumer</code> class.
@@ -106,6 +107,7 @@ public class CallbackScheduledConsumerTest
 
     final ManagedEventIdentifierService  mockManagedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class);
 
+    private final Set<Trigger> triggers = mockery.mock(Set.class);
 
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
@@ -142,7 +144,14 @@ public class CallbackScheduledConsumerTest
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
-                // get configuration schediler description
+                // add the business trigger
+                exactly(1).of(triggers).add(trigger);
+
+                // call iterator the  triggers
+                exactly(1).of(triggers).iterator();
+                will(returnIterator(trigger));
+
+                // get configuration scheduler description
                 exactly(1).of(consumerConfiguration).getDescription();
                 will(returnValue("description"));
 
@@ -154,9 +163,12 @@ public class CallbackScheduledConsumerTest
                 exactly(1).of(trigger).getDescription();
                 will(returnValue("description"));
 
-                // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                // log the next fire time of the trigger
+                exactly(1).of(trigger).getNextFireTime();
                 will(returnValue(new Date()));
+
+                // schedule the job triggers
+                exactly(1).of(scheduler).scheduleJob(mockJobDetail, triggers, true);
 
                 // check if persistent recovery
                 exactly(1).of(consumerConfiguration).isPersistentRecovery();
@@ -569,6 +581,12 @@ public class CallbackScheduledConsumerTest
         protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
         {
             return trigger;
+        }
+
+        @Override
+        protected Set<Trigger> getTriggerSet(int size)
+        {
+            return triggers;
         }
     }
 
