@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
@@ -54,6 +55,8 @@ import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 
 /**
@@ -104,6 +107,8 @@ public class ScheduledConsumerTest
 
     private final ManagedEventIdentifierService  mockManagedEventIdentifierService = mockery.mock(ManagedEventIdentifierService.class);
 
+    private final ScheduledJobRecoveryService scheduledJobRecoveryService = mockery.mock(ScheduledJobRecoveryService.class, "mockScheduledJobRecoveryService");
+
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
      */
@@ -118,10 +123,11 @@ public class ScheduledConsumerTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_successful_start() throws SchedulerException
+    public void test_successful_start_no_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
-        
+        final Set<Trigger> triggers = new HashSet<>(1);
+
         // expectations
         mockery.checking(new Expectations()
         {
@@ -142,9 +148,13 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).getPassthroughProperties();
                 will(returnValue(null));
 
-                // log the description off the trigger
+                // log the description of the trigger
                 exactly(1).of(trigger).getDescription();
                 will(returnValue("description"));
+
+                // log the next fire time of the trigger
+                exactly(1).of(trigger).getNextFireTime();
+                will(returnValue(new Date()));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getCronExpression();
@@ -159,12 +169,14 @@ public class ScheduledConsumerTest
                 will(returnValue("UTC"));
 
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
+                will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).build();
                 will(returnValue(trigger));
 
-                // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
-                will(returnValue(new Date()));
+                // schedule the job triggers
+                exactly(1).of(scheduler).scheduleJob(mockJobDetail, triggers, true);
 
                 // check if persistent recovery
                 exactly(1).of(consumerConfiguration).isPersistentRecovery();
@@ -172,7 +184,98 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService, triggers);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.start();
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful consumer start.
+     * @throws SchedulerException
+     */
+    @Test
+    public void test_successful_start_with_recovery() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final Set<Trigger> triggers = new HashSet<>(2);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get flow and module name from the job
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+
+                // get configuration job name
+                exactly(2).of(consumerConfiguration).getJobName();
+                will(returnValue("jobName"));
+
+                // get configuration job group name
+                exactly(2).of(consumerConfiguration).getJobGroupName();
+                will(returnValue("jobGroupName"));
+
+                // get configuration scheduler pass-through properties
+                exactly(1).of(consumerConfiguration).getPassthroughProperties();
+                will(returnValue(null));
+
+                // log the description of the trigger
+                exactly(1).of(trigger).getDescription();
+                will(returnValue("description"));
+
+                // log the next fire time of the trigger
+                exactly(1).of(trigger).getNextFireTime();
+                will(returnValue(new Date()));
+
+                // access configuration for details
+                exactly(1).of(consumerConfiguration).getCronExpression();
+                will(returnValue("* * * * * ?"));
+
+                // access configuration for details
+                exactly(1).of(consumerConfiguration).isIgnoreMisfire();
+                will(returnValue(true));
+
+                // access configuration for details
+                exactly(3).of(consumerConfiguration).getTimezone();
+                will(returnValue("UTC"));
+
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).build();
+                will(returnValue(trigger));
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(true));
+
+                // is recovery required
+                exactly(1).of(scheduledJobRecoveryService).isRecoveryRequired("jobGroupName", "jobName", 1000L);
+                will(returnValue(true));
+
+                // get recovery tolerance
+                exactly(1).of(consumerConfiguration).getRecoveryTolerance();
+                will(returnValue(1000L));
+
+                // create recovery trigger
+                exactly(1).of(triggerBuilder).startNow();
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).build();
+                will(returnValue(trigger));
+
+                // schedule the job triggers
+                exactly(1).of(scheduler).scheduleJob(mockJobDetail, triggers, true);
+            }
+        });
+
+        triggers.add(trigger);
+        triggers.add(trigger);
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService, triggers);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
@@ -434,6 +537,9 @@ public class ScheduledConsumerTest
                 will(returnValue("UTC"));
 
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
+                will(returnValue(triggerBuilder));
+                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
+                will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).build();
                 will(returnValue(trigger));
 
@@ -685,15 +791,29 @@ public class ScheduledConsumerTest
      */
     private class StubbedScheduledConsumer extends ScheduledConsumer
     {
+        Set<Trigger> triggers;
+
         protected StubbedScheduledConsumer(Scheduler scheduler)
         {
             super(scheduler);
         }
-        
+
+        protected StubbedScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService, Set<Trigger> triggers)
+        {
+            super(scheduler, scheduledJobRecoveryService);
+            this.triggers = triggers;
+        }
+
         @Override
         protected TriggerBuilder newTriggerFor(String name, String group)
         {
             return triggerBuilder;
+        }
+
+        @Override
+        protected Set<Trigger> getTriggerSet(int size)
+        {
+            return this.triggers;
         }
     }
 
