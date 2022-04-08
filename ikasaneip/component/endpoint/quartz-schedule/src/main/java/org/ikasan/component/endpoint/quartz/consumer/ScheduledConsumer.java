@@ -43,6 +43,7 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryServiceFactory;
 import org.ikasan.scheduler.ScheduledComponent;
+import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.management.ManagedLifecycle;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
@@ -61,10 +62,7 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.quartz.*;
 
 import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
@@ -138,7 +136,7 @@ public class ScheduledConsumer<T>
     /** resubmission event factory */
     private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
-    private ScheduledJobRecoveryService scheduledJobRecoveryService = ScheduledJobRecoveryServiceFactory.getInstance();
+    private ScheduledJobRecoveryService scheduledJobRecoveryService;
 
     /**
      * Constructor
@@ -147,10 +145,26 @@ public class ScheduledConsumer<T>
      */
     public ScheduledConsumer(Scheduler scheduler)
     {
+        this(scheduler, ScheduledJobRecoveryServiceFactory.getInstance());
+    }
+
+    /**
+     * Constructor
+     * @param scheduler
+     * @param scheduledJobRecoveryService
+     */
+    public ScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
+    {
         this.scheduler = scheduler;
         if (scheduler == null)
         {
             throw new IllegalArgumentException("scheduler cannot be 'null'");
+        }
+
+        this.scheduledJobRecoveryService = scheduledJobRecoveryService;
+        if (scheduledJobRecoveryService == null)
+        {
+            throw new IllegalArgumentException("scheduledJobRecoveryService cannot be 'null'");
         }
     }
 
@@ -175,40 +189,53 @@ public class ScheduledConsumer<T>
             }
 
             TriggerBuilder triggerBuilder = newTriggerFor(jobName, jobGroupName);
-            Trigger trigger;
+            // initial hashset size to include business expression and recovery expression
+            Set<Trigger> triggers = getTriggerSet(2);
 
             // check if last invocation was successful
             if(consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService.isRecoveryRequired(jobGroupName, jobName, consumerConfiguration.getRecoveryTolerance()))
             {
                 // schedule a callback through recovery trigger
-                trigger = triggerBuilder
+                triggers.add( triggerBuilder
                     .startNow()
-                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
+                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build() );
             }
-            else
-            {
-                trigger = getBusinessTrigger(triggerBuilder);
-            }
+
+            // add business trigger
+            triggers.add( getBusinessTrigger(triggerBuilder) );
 
             if(getConfiguration().getPassthroughProperties() != null)
             {
-                for(Map.Entry<String,String> entry:getConfiguration().getPassthroughProperties().entrySet())
+                for(Trigger trigger: triggers)
                 {
-                    trigger.getJobDataMap().put(entry.getKey(), entry.getValue());
+                    for(Map.Entry<String,String> entry:getConfiguration().getPassthroughProperties().entrySet())
+                    {
+                        trigger.getJobDataMap().put(entry.getKey(), entry.getValue());
+                    }
                 }
             }
 
-            Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-            logger.info("Scheduled consumer for flow ["
-                    + jobkey.getName()
-                    + "] module [" + jobkey.getGroup()
-                    + "] starting at [" + scheduledDate
-                    + "] description [" + trigger.getDescription() + "]");
+            StringBuilder logStringBuilder = new StringBuilder();
+            for(Trigger trigger: triggers)
+            {
+                logStringBuilder.append(" with firetime " + trigger.getNextFireTime() + "] description [" + trigger.getDescription() + "]");
+            }
+
+            scheduler.scheduleJob(jobDetail, triggers, true);
+            logger.info("Started scheduled consumer for flow ["
+                + jobkey.getName()
+                + "] module [" + jobkey.getGroup()
+                + "]" + logStringBuilder);
         }
         catch (SchedulerException | ParseException e)
         {
             throw new RuntimeException(e);
         }
+    }
+
+    protected Set<Trigger> getTriggerSet(int size)
+    {
+        return new HashSet<>(size);
     }
 
     protected TriggerBuilder newTriggerFor(String name, String group)
@@ -634,10 +661,8 @@ public class ScheduledConsumer<T>
 
         // start the business schedule 1 second in the future to ensure we
         // do not immediately callback on submission to quartz
-        triggerBuilder.withSchedule(cronScheduleBuilder)
-                .startAt(new Date(System.currentTimeMillis() + 1000));
-
-        return triggerBuilder.build();
+        return triggerBuilder.withSchedule(cronScheduleBuilder)
+                .startAt(new Date(System.currentTimeMillis() + 1000)).build();
     }
 
     /* (non-Javadoc)
