@@ -42,7 +42,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-sftp-jms-im-maven-plugin 
-    \-DarchetypeVersion=3.2.3-SNAPSHOT    
+    \-DarchetypeVersion=3.2.3    
     \-DgroupId=com.sample     
     \-DartifactId=sftp-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -228,7 +228,7 @@ Windows
 
 Occasionally you might see similar issue when generating an artifact
 ``` 
- mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=3.2.3-SNAPSHOT
+ mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=3.2.3
 [INFO] Scanning for projects...
 [INFO]
 [INFO] ------------------------------------------------------------------------

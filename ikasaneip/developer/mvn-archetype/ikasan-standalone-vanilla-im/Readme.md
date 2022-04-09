@@ -36,7 +36,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-vanilla-im-maven-plugin 
-    \-DarchetypeVersion=3.2.3-SNAPSHOT    
+    \-DarchetypeVersion=3.2.3    
     \-DgroupId=com.sample     
     \-DartifactId=vanilla-im     
     \-Dversion=1.0.0-SNAPSHOT     
@@ -178,7 +178,7 @@ The following will check to see which processes are running.
 
 Occasionally you might see similar issue when generating an artifact
 ``` 
- mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=3.2.3-SNAPSHOT
+ mvn archetype:generate     -DarchetypeGroupId=org.ikasan     -DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin -DarchetypeVersion=3.2.3
 [INFO] Scanning for projects...
 [INFO]
 [INFO] ------------------------------------------------------------------------
