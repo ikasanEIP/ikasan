@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>non-functional</artifactId>
-        <version>3.2.3</version>
+        <version>3.2.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>component-performance</artifactId>
-    <version>3.2.3</version>
+    <version>3.2.4-SNAPSHOT</version>
     <name>Component Performance Stress Integration Module</name>
     <description>Stress components with soak tests.</description>
 
