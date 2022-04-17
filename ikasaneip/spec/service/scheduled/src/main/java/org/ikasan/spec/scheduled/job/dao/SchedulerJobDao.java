@@ -13,6 +13,8 @@ public interface SchedulerJobDao<T extends SchedulerJobRecord> {
 
     T findById(String id);
 
+    T findByContextIdAndJobName(String contextId, String jobName);
+
     void delete(T record);
 
     void deleteByAgentName(String agentName);
