@@ -1,0 +1,14 @@
+{
+  "context-instance-1": [
+          {
+            "name": "businessDate",
+            "type": "date",
+            "value": "19/04/2022"
+          },
+          {
+            "name": "localFilePath",
+            "type": "path",
+            "value": "/opt/data/files"
+          }
+      ]
+}
