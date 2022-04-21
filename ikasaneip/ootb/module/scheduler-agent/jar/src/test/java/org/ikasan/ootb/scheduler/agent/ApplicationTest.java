@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -56,14 +57,21 @@ import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
+import org.ikasan.dashboard.ContextParametersRestServiceImpl;
+import org.ikasan.dashboard.MetricsRestServiceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.cache.ContextParametersCache;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ImportContextParametersProcess;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
@@ -76,10 +84,18 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.lib.concurrent.Synchroniser;
+import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -173,6 +189,13 @@ public class ApplicationTest {
         assertEquals(Flow.STOPPED, flow.getState());
 
         flow = moduleUnderTest.getFlow("Housekeep Log Files Flow");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("Import Context Parameters Flow");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 
@@ -553,6 +576,69 @@ public class ApplicationTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    private Mockery mockery = new Mockery()
+    {{
+        setImposteriser(ClassImposteriser.INSTANCE);
+        setThreadingPolicy(new Synchroniser());
+    }};
+
+    @Rule
+    public WireMockRule wireMockRule = new WireMockRule(
+        WireMockConfiguration.options().dynamicPort());
+
+    @Test
+    @DirtiesContext
+    public void test_import_context_params_flow() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Import Context Parameters Flow"));
+        flowTestRule.consumer("Scheduled Consumer")
+            .producer("Import Context Parameters");
+
+        Environment environment = mockery.mock(Environment.class);
+
+        String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
+        mockery.checking(new Expectations()
+        {{
+            atLeast(2).of(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY);
+            will(returnValue(dashboardBaseUrl));
+            oneOf(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_USERNAME_PROPERTY);
+            will(returnValue(null));
+            oneOf(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_PASSWORD_PROPERTY);
+            will(returnValue(null));
+            oneOf(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_REST_USERAGENT);
+            will(returnValue("user agent"));
+        }});
+
+        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(IOUtils.toString(getClass().getResourceAsStream("/data/job-context-parameters-all.json"), "UTF-8") )
+                .withStatus(200)
+            ));
+
+        ContextParametersRestServiceImpl service = new ContextParametersRestServiceImpl(environment,
+                                                            new HttpComponentsClientHttpRequestFactory(),
+                                                            "/rest/jobContext/getAll");
+
+
+        ImportContextParametersProcess importContextParametersProcess = (ImportContextParametersProcess) flowTestRule.getComponent("Import Context Parameters");
+        importContextParametersProcess.setService(service);
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumer();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(2, ContextParametersCache.instance().contextNames().size());
 
         flowTestRule.stopFlow();
     }

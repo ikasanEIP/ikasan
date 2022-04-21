@@ -85,6 +85,8 @@ public class TestConfiguration {
         configuration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
         configuration.getFlowDefinitions().put("Housekeep Log Files Flow", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", "HOUSEKEEP_LOG");
+        configuration.getFlowDefinitions().put("Import Context Parameters Flow", "MANUAL");
+        configuration.getFlowDefinitionProfiles().put("Import Context Parameters Flow", "IMPORT_CONTEXT_PARAMS");
 
         configuration.setDryRunMode(false);
 

@@ -83,6 +83,9 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     @Resource
     HousekeepLogFilesFlowFactory housekeepLogFilesFlowFactory;
 
+    @Resource
+    ImportContextParametersFlowFactory importContextParametersFlowFactory;
+
     @Override
     public List<Flow> create(String jobName, String profile)
     {
@@ -110,6 +113,9 @@ public class SchedulerAgentFlowFactory implements FlowFactory
                 }
                 case "HOUSEKEEP_LOG": {
                     return this.createHousekeepLogFilesFlows();
+                }
+                case "IMPORT_CONTEXT_PARAMS": {
+                    return this.createImportContextParametersFlows();
                 }
                 default: {
                     throw new RuntimeException(String.format("Unknown profile[%s] encountered in flow factory!", profile));
@@ -173,6 +179,10 @@ public class SchedulerAgentFlowFactory implements FlowFactory
 
     private List<Flow> createHousekeepLogFilesFlows() throws IOException {
         return List.of(this.housekeepLogFilesFlowFactory.create());
+    }
+
+    private List<Flow> createImportContextParametersFlows() throws IOException {
+        return List.of(this.importContextParametersFlowFactory.create());
     }
 }
 
