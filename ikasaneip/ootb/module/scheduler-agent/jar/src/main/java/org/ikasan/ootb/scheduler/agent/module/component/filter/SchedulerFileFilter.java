@@ -1,15 +1,16 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
-import org.ikasan.filter.DefaultMessageFilter;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 
 import java.io.File;
 import java.util.List;
 
-public class SchedulerFileFilter extends DefaultMessageFilter<List<File>> {
+public class SchedulerFileFilter implements Filter<List<File>> {
 
     private DryRunModeService dryRunModeService;
+    private FilterRule filterRule;
 
     /**
      * Constructor
@@ -17,7 +18,10 @@ public class SchedulerFileFilter extends DefaultMessageFilter<List<File>> {
      * @param filterRule The {@link FilterRule} instance evaluating incoming message.
      */
     public SchedulerFileFilter(FilterRule filterRule, DryRunModeService dryRunModeService) {
-        super(filterRule);
+        this.filterRule = filterRule;
+        if(this.filterRule == null) {
+            throw new IllegalArgumentException("filterRule cannot be null!");
+        }
         this.dryRunModeService = dryRunModeService;
         if(this.dryRunModeService == null) {
             throw new IllegalArgumentException("dryRunModeService cannot be null!");
@@ -30,7 +34,12 @@ public class SchedulerFileFilter extends DefaultMessageFilter<List<File>> {
             return message;
         }
         else {
-            return super.filter(message);
+            if(this.filterRule.accept(message)) {
+                return message;
+            }
+            else {
+                return null;
+            }
         }
     }
 }
