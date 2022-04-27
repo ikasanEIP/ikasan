@@ -8,11 +8,9 @@ public class ContextParametersCacheUtil {
 
     public static Object findContextualPlaceholderParamValue(String contextName, String contextParameterName) {
         List<ContextParameterInstance> contextParameters = ContextParametersCache.instance().getByContextName(contextName);
-        if (contextParameters != null && contextParameters.size() > 0) {
-            for (ContextParameterInstance contextParameterInstance : contextParameters) {
-                if (contextParameterInstance.getName().equalsIgnoreCase(contextParameterName)) {
-                    return contextParameterInstance.getValue();
-                }
+        for (ContextParameterInstance contextParameterInstance : contextParameters) {
+            if (contextParameterInstance.getName().equalsIgnoreCase(contextParameterName)) {
+                return contextParameterInstance.getValue();
             }
         }
         return null;
@@ -20,11 +18,9 @@ public class ContextParametersCacheUtil {
 
     public static String resolveContextualPlaceholderParam(String contextName, String fullParameterValue) {
         List<ContextParameterInstance> contextParameters = ContextParametersCache.instance().getByContextName(contextName);
-        if (contextParameters != null && contextParameters.size() > 0) {
-            for (ContextParameterInstance contextParameterInstance : contextParameters) {
-                if (fullParameterValue.contains(contextParameterInstance.getName())) {
-                    return fullParameterValue.replace(contextParameterInstance.getName(), contextParameterInstance.getValue().toString());
-                }
+        for (ContextParameterInstance contextParameterInstance : contextParameters) {
+            if (fullParameterValue.contains(contextParameterInstance.getName())) {
+                return fullParameterValue.replace(contextParameterInstance.getName(), contextParameterInstance.getValue().toString());
             }
         }
         return fullParameterValue;
