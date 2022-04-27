@@ -83,6 +83,7 @@ public class JobProvisionApplication {
         catch (Exception e)
         {
             e.printStackTrace();
+            logger.error("An error has occurred attempting to provision scheduler jobs!", e);
             return new ResponseEntity(
                 new ErrorDto("An error has occurred attempting to provision scheduler jobs! Error message ["
                     + e.getMessage() + "]"), HttpStatus.BAD_REQUEST);
