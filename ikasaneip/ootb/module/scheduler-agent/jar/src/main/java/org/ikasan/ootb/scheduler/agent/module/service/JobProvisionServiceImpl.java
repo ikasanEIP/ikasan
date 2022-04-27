@@ -100,6 +100,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         }
         catch (Exception e)
         {
+            e.printStackTrace();
             throw new JobProvisionServiceException(e);
         }
     }
