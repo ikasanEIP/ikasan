@@ -83,18 +83,19 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ContextualisedFileMessageProvider;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -139,11 +140,12 @@ public class FileEventSchedulerJobFlowComponentFactory
      */
     public Consumer getFileConsumer()
     {
-        FileConsumerConfiguration fileConsumerConfiguration = new FileConsumerConfiguration();
+        ContextualisedFileConsumerConfiguration fileConsumerConfiguration = new ContextualisedFileConsumerConfiguration();
         fileConsumerConfiguration.setFilenames(List.of("set me"));
         fileConsumerConfiguration.setCronExpression("0 0 0 * * ?");
         return builderFactory.getComponentBuilder().fileConsumer()
             .setConfiguration(fileConsumerConfiguration)
+            .setMessageProvider(new ContextualisedFileMessageProvider())
             .build();
     }
 

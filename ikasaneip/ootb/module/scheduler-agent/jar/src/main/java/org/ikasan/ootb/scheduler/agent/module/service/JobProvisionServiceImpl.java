@@ -6,12 +6,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -158,8 +158,9 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
                     .getFlowElement("File Consumer").getFlowComponent();
 
-                FileConsumerConfiguration configuration = (FileConsumerConfiguration)consumer.getConfiguration();
+                ContextualisedFileConsumerConfiguration configuration = (ContextualisedFileConsumerConfiguration)consumer.getConfiguration();
                 this.updateFileConsumerConfiguration((FileEventDrivenJob)job, configuration);
+                configuration.setContextId(job.getContextId());
 
                 this.configurationService.update(consumer);
 
@@ -251,7 +252,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param job
      * @param fileConsumerConfiguration
      */
-    private void updateFileConsumerConfiguration(FileEventDrivenJob job, FileConsumerConfiguration fileConsumerConfiguration) {
+    private void updateFileConsumerConfiguration(FileEventDrivenJob job, ContextualisedFileConsumerConfiguration fileConsumerConfiguration) {
         fileConsumerConfiguration.setFilenames(job.getFilenames());
         fileConsumerConfiguration.setJobName(job.getJobName());
         fileConsumerConfiguration.setJobGroupName(job.getJobGroup());
