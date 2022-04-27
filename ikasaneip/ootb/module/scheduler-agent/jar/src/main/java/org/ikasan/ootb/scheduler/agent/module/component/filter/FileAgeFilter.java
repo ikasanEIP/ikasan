@@ -56,7 +56,7 @@ public class FileAgeFilter implements Filter<List<File>>, ConfiguredResource<Fil
     }
 
     @Override
-    public void setConfiguredResourceId(String id) {
+    public void setConfiguredResourceId(String configurationId) {
         this.configurationId = configurationId;
     }
 
