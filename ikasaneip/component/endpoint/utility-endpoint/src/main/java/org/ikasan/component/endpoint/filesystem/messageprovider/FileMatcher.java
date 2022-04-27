@@ -76,7 +76,7 @@ public class FileMatcher extends SimpleFileVisitor<Path>
      * @param pattern
      * @param endpointListener
      */
-    FileMatcher(boolean ignoreFileRenameWhilstScanning, String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
+    public FileMatcher(boolean ignoreFileRenameWhilstScanning, String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
     {
         this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
         this.parentPath = parentPath;
