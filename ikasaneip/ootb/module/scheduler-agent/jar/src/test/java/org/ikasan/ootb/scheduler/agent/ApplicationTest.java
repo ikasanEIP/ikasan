@@ -73,6 +73,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.cache.ContextParametersCache;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ImportContextParametersProcess;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
@@ -401,9 +402,11 @@ public class ApplicationTest {
     public void test_file_flow_success_without_aspect() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
+        ContextualisedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , ContextualisedFileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        fileConsumerConfiguration.setContextId("test");
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -445,10 +448,11 @@ public class ApplicationTest {
         jobs.setFileName("/some/bogus/file/bogus1.txt");
         dryRunModeService.addDryRunFileList(List.of(jobs));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
+        ContextualisedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , ContextualisedFileConsumerConfiguration.class);
         fileConsumerConfiguration.setJobName("Flow 2 Job Name");
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setContextId("test");
 
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
@@ -482,9 +486,11 @@ public class ApplicationTest {
     @DirtiesContext
     public void test_file_flow_with_filter() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
+        ContextualisedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , ContextualisedFileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setContextId("test");
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
