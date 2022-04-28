@@ -1,16 +1,15 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.ConfiguredModuleImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -60,7 +59,7 @@ public class JobProvisionServiceImplTest {
     private ConfiguredResource<ScheduledConsumerConfiguration> fileConsumer;
 
     @Mock
-    private FileConsumerConfiguration fileConsumerConfiguration;
+    private ContextualisedFileConsumerConfiguration fileConsumerConfiguration;
 
     @Mock
     private FlowElement converterElement;
@@ -127,7 +126,6 @@ public class JobProvisionServiceImplTest {
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
 
 
-
         this.service.provisionJobs(this.getJobs());
 
         verify(scheduledConsumerConfiguration, times(1)).setJobName(anyString());
@@ -167,6 +165,7 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setIncludeTrailer(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortAscending(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
+        verify(fileConsumerConfiguration, times(1)).setContextId(anyString());
 
         verify(converterConfiguration, times(2)).setContextId(anyString());
         verify(converterConfiguration, times(2)).setChildContextIds(anyList());
