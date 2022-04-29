@@ -18,6 +18,23 @@ import java.util.List;
 public class JobStartingBrokerTest {
 
     @Test
+    public void get_command_line_args()  {
+        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        String cmd = "source $HOME/.bash_profile;\necho \"some_cmd(\\\"code = 'code'\\\");\" | do_some_something - | blah.sh -\t\t\nblah1.sh -c some_param -i\n";
+        String[] commandLineArgs = jobStartingBroker.getCommandLineArgs(cmd);
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            Assert.assertEquals("cmd.exe", commandLineArgs[0]);
+            Assert.assertEquals("/c", commandLineArgs[1]);
+        } else {
+            // unix flavour
+            Assert.assertEquals("/bin/bash", commandLineArgs[0]);
+            Assert.assertEquals("-c", commandLineArgs[1]);
+        }
+
+        Assert.assertEquals(cmd, commandLineArgs[2]);
+    }
+
+    @Test
     public void test_job_start_skipped_success() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
@@ -126,7 +143,8 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setType("java.lang.String");
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
-        internalEventDrivenJobDto.setCommandLine("/bin/bash -c $cmd");
+        String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
+        internalEventDrivenJobDto.setCommandLine(cmd);
 
         internalEventDrivenJobDto.setContextId("contextId");
         internalEventDrivenJobDto.setIdentifier("identifier");
@@ -146,7 +164,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
 
-        Assert.assertEquals("test", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
+        Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
     }
 
     @Test(expected = EndpointException.class)
