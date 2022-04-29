@@ -41,6 +41,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
+
+import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -147,7 +149,12 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     String[] getCommandLineArgs(String commandLine)
     {
         if(commandLine != null && commandLine.length() > 0) {
-            return commandLine.split(" ");
+            if (SystemUtils.OS_NAME.contains("Windows")) {
+                return new String[]{"cmd.exe", "/c", commandLine};
+            } else {
+                // assume unix flavour
+                return new String[]{"/bin/bash", "-c", commandLine};
+            }
         }
 
         throw new EndpointException("Invalid commandLine [" + commandLine + "]");
