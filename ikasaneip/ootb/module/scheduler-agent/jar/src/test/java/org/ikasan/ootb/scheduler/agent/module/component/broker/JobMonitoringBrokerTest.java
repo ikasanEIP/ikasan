@@ -3,6 +3,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.cli.CommandLinesArgConverter;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
@@ -299,7 +300,7 @@ public class JobMonitoringBrokerTest {
     }
 
     private void invokeJobStarting(EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent) {
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
         jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
     }
 }

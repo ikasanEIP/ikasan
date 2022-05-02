@@ -3,6 +3,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.ootb.scheduler.agent.module.component.cli.CommandLinesArgConverter;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -16,23 +17,6 @@ import java.io.InputStream;
 import java.util.List;
 
 public class JobStartingBrokerTest {
-
-    @Test
-    public void get_command_line_args()  {
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
-        String cmd = "source $HOME/.bash_profile;\necho \"some_cmd(\\\"code = 'code'\\\");\" | do_some_something - | blah.sh -\t\t\nblah1.sh -c some_param -i\n";
-        String[] commandLineArgs = jobStartingBroker.getCommandLineArgs(cmd);
-        if (SystemUtils.OS_NAME.contains("Windows")) {
-            Assert.assertEquals("cmd.exe", commandLineArgs[0]);
-            Assert.assertEquals("/c", commandLineArgs[1]);
-        } else {
-            // unix flavour
-            Assert.assertEquals("/bin/bash", commandLineArgs[0]);
-            Assert.assertEquals("-c", commandLineArgs[1]);
-        }
-
-        Assert.assertEquals(cmd, commandLineArgs[2]);
-    }
 
     @Test
     public void test_job_start_skipped_success() {
@@ -55,7 +39,7 @@ public class JobStartingBrokerTest {
         internalEventDrivenJobDto.setWorkingDirectory(".");
         enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
@@ -88,7 +72,7 @@ public class JobStartingBrokerTest {
         internalEventDrivenJobDto.setWorkingDirectory(".");
         enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
@@ -121,7 +105,7 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
@@ -132,7 +116,7 @@ public class JobStartingBrokerTest {
     }
 
     @Test
-    public void test_job_start_success_with_context_parameters() throws IOException {
+    public void test_job_start_success_with_context_parameters() throws IOException, InterruptedException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
@@ -155,7 +139,7 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(List.of("/bin/bash", "-c")));
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
@@ -164,6 +148,8 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
 
+        // give the file a chance to get written to
+        Thread.sleep(250);
         Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
     }
 
@@ -189,7 +175,7 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
         jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
     }
 

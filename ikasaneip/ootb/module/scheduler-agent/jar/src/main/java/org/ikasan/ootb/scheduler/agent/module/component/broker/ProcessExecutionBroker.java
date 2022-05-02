@@ -42,9 +42,9 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.cli.CommandLinesArgConverter;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -75,9 +75,11 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
     ProcessExecutionBrokerConfiguration configuration = new ProcessExecutionBrokerConfiguration();
 
     String hostname;
+    private CommandLinesArgConverter commandLinesArgConverter;
 
-    public ProcessExecutionBroker(String hostname) {
+    public ProcessExecutionBroker(String hostname, CommandLinesArgConverter commandLinesArgConverter) {
         this.hostname = hostname;
+        this.commandLinesArgConverter = commandLinesArgConverter;
     }
 
     @Override
@@ -87,7 +89,7 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
         scheduledProcessEvent.setJobStarting(false);
         scheduledProcessEvent.setAgentHostname(this.hostname);
 
-        String[] commandLineArgs = getCommandLineArgs(configuration.getCommandLine());
+        String[] commandLineArgs = commandLinesArgConverter.getCommandLineArgs(configuration.getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder(commandLineArgs);
 
         // allow change of the new process working directory
@@ -224,20 +226,6 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
         }
 
         return parentFolder+fileName;
-    }
-
-    String[] getCommandLineArgs(String commandLine)
-    {
-        if(commandLine != null && commandLine.length() > 0) {
-            if (SystemUtils.OS_NAME.contains("Windows")) {
-                return new String[]{"cmd.exe", "/c", commandLine};
-            } else {
-                // assume unix flavour
-                return new String[]{"/bin/bash", "-c", commandLine};
-            }
-        }
-
-        throw new EndpointException("Invalid commandLine [" + commandLine + "]");
     }
 
     @Override

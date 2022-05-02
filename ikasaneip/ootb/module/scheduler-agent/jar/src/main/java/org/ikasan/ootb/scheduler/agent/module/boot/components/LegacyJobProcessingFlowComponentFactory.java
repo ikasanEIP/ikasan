@@ -83,6 +83,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.cli.CommandLinesArgConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventProducer;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
@@ -125,6 +126,9 @@ public class LegacyJobProcessingFlowComponentFactory
     @Resource
     ScheduledProcessEventService scheduledProcessEventService;
 
+    @Resource
+    private CommandLinesArgConverter commandLinesArgConverter;
+
     public Consumer getScheduledConsumer() {
         return builderFactory.getComponentBuilder().scheduledConsumer()
             .setCronExpression("0 0 0 * * ?").build();
@@ -159,7 +163,7 @@ public class LegacyJobProcessingFlowComponentFactory
         configuration.setLogParentFolder(logParentFolder);
         configuration.setLogParentFolderParenthesis(logParentFolderParenthesis);
 
-        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker(this.serverAddress);
+        ProcessExecutionBroker processExecutionBroker = new ProcessExecutionBroker(this.serverAddress, this.commandLinesArgConverter);
         processExecutionBroker.setConfiguration(configuration);
         return processExecutionBroker;
     }

@@ -90,6 +90,7 @@ import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfigu
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.cli.CommandLinesArgConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
@@ -132,6 +133,8 @@ public class JobProcessingFlowComponentFactory
     @Resource
     private IBigQueue outboundQueue;
 
+    @Resource
+    private CommandLinesArgConverter commandLinesArgConverter;
 
     /**
      * Get the big queue consumer
@@ -169,7 +172,7 @@ public class JobProcessingFlowComponentFactory
      * @return
      */
     public Broker getJobStartingBroker() {
-        return new JobStartingBroker();
+        return new JobStartingBroker(commandLinesArgConverter);
     }
 
     /**

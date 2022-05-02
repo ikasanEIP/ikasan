@@ -42,12 +42,11 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
 
-import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.ootb.scheduler.agent.module.component.cli.CommandLinesArgConverter;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -57,7 +56,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Job Starting Broker implementation for the execution of the command line process.
@@ -70,6 +68,11 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     private static Logger logger = LoggerFactory.getLogger(JobStartingBroker.class);
 
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private CommandLinesArgConverter commandLinesArgConverter;
+
+    public JobStartingBroker(CommandLinesArgConverter commandLinesArgConverter) {
+        this.commandLinesArgConverter = commandLinesArgConverter;
+    }
 
     @Override
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
@@ -91,7 +94,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             return scheduledProcessEvent;
         }
 
-        String[] commandLineArgs = getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
+        String[] commandLineArgs = commandLinesArgConverter.getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(commandLineArgs);
 
@@ -144,19 +147,5 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         }
 
         return scheduledProcessEvent;
-    }
-
-    String[] getCommandLineArgs(String commandLine)
-    {
-        if(commandLine != null && commandLine.length() > 0) {
-            if (SystemUtils.OS_NAME.contains("Windows")) {
-                return new String[]{"cmd.exe", "/c", commandLine};
-            } else {
-                // assume unix flavour
-                return new String[]{"/bin/bash", "-c", commandLine};
-            }
-        }
-
-        throw new EndpointException("Invalid commandLine [" + commandLine + "]");
     }
 }
