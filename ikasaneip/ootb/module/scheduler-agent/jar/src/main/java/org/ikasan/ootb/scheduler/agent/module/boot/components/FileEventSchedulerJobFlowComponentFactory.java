@@ -95,7 +95,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;

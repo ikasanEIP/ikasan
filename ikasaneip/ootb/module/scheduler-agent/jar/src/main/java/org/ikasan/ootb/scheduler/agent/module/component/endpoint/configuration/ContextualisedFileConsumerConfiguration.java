@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.configuration;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration;
 
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 

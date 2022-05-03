@@ -11,7 +11,7 @@ import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;

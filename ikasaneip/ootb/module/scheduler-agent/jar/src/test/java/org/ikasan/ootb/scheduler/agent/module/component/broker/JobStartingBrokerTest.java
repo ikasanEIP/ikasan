@@ -132,7 +132,7 @@ public class JobStartingBrokerTest {
     }
 
     @Test
-    public void test_job_start_success_with_context_parameters() throws IOException {
+    public void test_job_start_success_with_context_parameters() throws IOException, InterruptedException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
@@ -163,6 +163,9 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+
+        // Wait for the file contents to be written by the process.
+        Thread.sleep(250);
 
         Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
     }

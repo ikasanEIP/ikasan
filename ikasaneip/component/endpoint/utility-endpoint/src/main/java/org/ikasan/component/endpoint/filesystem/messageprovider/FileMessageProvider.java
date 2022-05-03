@@ -71,10 +71,10 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
     private static final String FQN_PATH_SEPARATOR = "/";
 
     /** file consumer configuration */
-    private FileConsumerConfiguration fileConsumerConfiguration;
+    protected FileConsumerConfiguration fileConsumerConfiguration;
 
     /** list of file matchers to be invoked */
-    List<FileMatcher> fileMatchers = new ArrayList<>();
+    protected List<FileMatcher> fileMatchers = new ArrayList<>();
 
     /** criticality for this resource */
     boolean criticalOnStartup;

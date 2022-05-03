@@ -41,7 +41,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextParametersCache;
-import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
@@ -108,16 +108,16 @@ public class ContextualisedFileMessageProviderTest
         // set test expectations
         mockery.checking(new Expectations() {
             {
-                exactly(1).of(configuration).getFilenames();
+                exactly(3).of(configuration).getFilenames();
                 will(returnValue(filenames));
                 exactly(2).of(configuration).getContextId();
                 will(returnValue("test-context"));
-                exactly(2).of(configuration).getDirectoryDepth();
+                exactly(4).of(configuration).getDirectoryDepth();
                 // ensure we don't walk the subdirectory
                 will(returnValue(1));
                 exactly(1).of(configuration).isLogMatchedFilenames();
                 will(returnValue(true));
-                exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
+                exactly(4).of(configuration).isIgnoreFileRenameWhilstScanning();
                 will(returnValue(true));
             }
         });
@@ -140,7 +140,7 @@ public class ContextualisedFileMessageProviderTest
         // set test expectations
         mockery.checking(new Expectations() {
             {
-                exactly(2).of(configuration).getFilenames();
+                exactly(4).of(configuration).getFilenames();
                 will(returnValue(filenames));
                 exactly(1).of(configuration).isLogMatchedFilenames();
                 will(returnValue(true));

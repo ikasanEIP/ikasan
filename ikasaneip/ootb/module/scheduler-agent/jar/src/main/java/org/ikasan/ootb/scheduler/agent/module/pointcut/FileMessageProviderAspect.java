@@ -62,7 +62,7 @@ public class FileMessageProviderAspect {
 
     @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.invoke(..))")
     public Object fileMessageProviderInvoke(ProceedingJoinPoint joinPoint) throws Throwable {
-        if (dryRunModeService.getDryRunMode()) {
+        if (dryRunModeService != null && dryRunModeService.getDryRunMode()) {
             return intercept(joinPoint);
         } else {
             return joinPoint.proceed();
