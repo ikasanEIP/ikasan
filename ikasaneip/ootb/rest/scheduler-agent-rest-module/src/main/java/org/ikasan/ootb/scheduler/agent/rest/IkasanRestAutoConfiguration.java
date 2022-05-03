@@ -44,7 +44,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
+import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -95,7 +97,8 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
-            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class)
+            .addAbstractTypeMapping(ContextParameterInstance.class, ContextParameterInstanceDto.class);
 
         converters.forEach(converter -> {
             if(converter instanceof MappingJackson2HttpMessageConverter) {

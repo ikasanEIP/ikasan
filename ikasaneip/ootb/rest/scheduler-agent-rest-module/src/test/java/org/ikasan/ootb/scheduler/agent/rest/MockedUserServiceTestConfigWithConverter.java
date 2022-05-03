@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
+import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -51,7 +53,9 @@ public class MockedUserServiceTestConfigWithConverter implements WebMvcConfigure
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
-            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class)
+            .addAbstractTypeMapping(ContextParameterInstance.class, ContextParameterInstanceDto.class);
+
         converter.getObjectMapper().registerModule(simpleModule);
         converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         converter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);

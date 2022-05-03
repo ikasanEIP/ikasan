@@ -46,12 +46,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
-import org.ikasan.job.orchestration.model.job.SchedulerJobWrapperImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextParametersCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
-import org.ikasan.spec.scheduled.job.model.SchedulerJobWrapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -91,12 +88,9 @@ public class ContextParametersApplication {
 
     @RequestMapping(path = "/save", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity save(@RequestBody String body) {
+    public ResponseEntity save(@RequestBody Map<String, List<ContextParameterInstance>> body) {
         try {
-            Map<String, List<ContextParameterInstance>> contextParameters = this.mapper.readValue(body, Map.class);
-
-            ContextParametersCache.instance().put(contextParameters);
-
+            ContextParametersCache.instance().put(body);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(

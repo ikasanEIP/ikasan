@@ -16,10 +16,7 @@ import org.ikasan.spec.scheduled.context.model.*;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
@@ -30,6 +27,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -98,8 +96,10 @@ public class ContextParametersApplicationTest {
         Map<String, List<ContextParameterInstance>> contextParameters = new HashMap<>();
         contextParameters.put("test-context", Arrays.asList(contextParameterInstance1));
 
-        mockMvc.perform(MockMvcRequestBuilders.put("/rest/contextParameters/save")
-                .content(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contextParameters))
+        String params = mapper.writerWithDefaultPrettyPrinter().writeValueAsString(contextParameters);
+
+       mockMvc.perform(MockMvcRequestBuilders.put("/rest/contextParameters/save")
+                .content(params)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
