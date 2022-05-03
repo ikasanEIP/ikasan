@@ -3,7 +3,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMatcher;
 import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.ootb.scheduler.agent.module.component.cache.ContextParametersCacheUtil;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextParametersCacheUtil;
 import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.Configured;

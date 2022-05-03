@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.cache;
+package org.ikasan.ootb.scheduler.agent.rest.cache;
 
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.slf4j.Logger;

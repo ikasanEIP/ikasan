@@ -40,9 +40,9 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
-import org.ikasan.ootb.scheduler.agent.module.component.cache.ContextParametersCache;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextParametersCache;
 import org.ikasan.ootb.scheduler.agent.module.configuration.ContextualisedFileConsumerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.model.ContextParameterInstanceImpl;
+import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.jmock.Expectations;
