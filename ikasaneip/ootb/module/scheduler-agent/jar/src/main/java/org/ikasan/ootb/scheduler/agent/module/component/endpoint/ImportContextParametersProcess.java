@@ -1,7 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
 import org.ikasan.dashboard.ContextParametersRestServiceImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.cache.ContextParametersCache;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextParametersCache;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.management.ManagedResource;

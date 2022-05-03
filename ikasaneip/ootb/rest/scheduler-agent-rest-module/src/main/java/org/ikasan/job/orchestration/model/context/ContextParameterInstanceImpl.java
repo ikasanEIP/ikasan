@@ -1,6 +1,5 @@
-package org.ikasan.ootb.scheduler.agent.module.model;
+package org.ikasan.job.orchestration.model.context;
 
-import org.ikasan.job.orchestration.model.context.ContextParameterImpl;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 
 public class ContextParameterInstanceImpl extends ContextParameterImpl implements ContextParameterInstance {
