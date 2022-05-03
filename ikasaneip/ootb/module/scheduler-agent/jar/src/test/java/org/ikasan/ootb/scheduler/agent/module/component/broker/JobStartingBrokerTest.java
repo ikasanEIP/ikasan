@@ -14,6 +14,8 @@ import org.junit.Test;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
+import java.util.Collections;
 import java.util.List;
 
 public class JobStartingBrokerTest {
@@ -177,6 +179,141 @@ public class JobStartingBrokerTest {
 
         JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
         jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+    }
+
+    @Test
+    public void test_job_start_not_skipped_days_of_week_not_today() {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        internalEventDrivenJobDto.setAgentName("agent name");
+        int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        internalEventDrivenJobDto.setDaysOfWeekToRun(List.of(dayOfWeek == 1 ? dayOfWeek + 1 : dayOfWeek -1));
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobDto.setCommandLine("java -version");
+        }
+        else {
+            internalEventDrivenJobDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobDto.setContextId("contextId");
+        internalEventDrivenJobDto.setIdentifier("identifier");
+        internalEventDrivenJobDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+
+        Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getProcess());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+    }
+
+    @Test
+    public void test_job_start_not_skipped_days_of_week_today() {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        internalEventDrivenJobDto.setAgentName("agent name");
+        internalEventDrivenJobDto.setDaysOfWeekToRun(List.of(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)));
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobDto.setCommandLine("java -version");
+        }
+        else {
+            internalEventDrivenJobDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobDto.setContextId("contextId");
+        internalEventDrivenJobDto.setIdentifier("identifier");
+        internalEventDrivenJobDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+    }
+
+    @Test
+    public void test_job_start_not_skipped_days_of_week_empty() {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        internalEventDrivenJobDto.setAgentName("agent name");
+        internalEventDrivenJobDto.setDaysOfWeekToRun(Collections.emptyList());
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobDto.setCommandLine("java -version");
+        }
+        else {
+            internalEventDrivenJobDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobDto.setContextId("contextId");
+        internalEventDrivenJobDto.setIdentifier("identifier");
+        internalEventDrivenJobDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+    }
+
+    @Test
+    public void test_job_start_not_skipped_days_of_week_null() {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        internalEventDrivenJobDto.setAgentName("agent name");
+        internalEventDrivenJobDto.setDaysOfWeekToRun(null);
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobDto.setCommandLine("java -version");
+        }
+        else {
+            internalEventDrivenJobDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobDto.setContextId("contextId");
+        internalEventDrivenJobDto.setIdentifier("identifier");
+        internalEventDrivenJobDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new CommandLinesArgConverter(null));
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
     }
 
     private class ContextParameterInstanceImpl implements ContextParameterInstance {
