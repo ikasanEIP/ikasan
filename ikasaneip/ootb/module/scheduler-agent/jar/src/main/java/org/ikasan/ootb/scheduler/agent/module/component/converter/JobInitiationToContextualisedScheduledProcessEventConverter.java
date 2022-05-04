@@ -112,7 +112,6 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setChildContextIds(schedulerJobInitiationEvent.getChildContextIds());
             scheduledProcessEvent.setJobStarting(true);
             scheduledProcessEvent.setSuccessful(false);
-            scheduledProcessEvent.setFireTime(System.currentTimeMillis());
             scheduledProcessEvent.setDryRun(schedulerJobInitiationEvent.isDryRun());
             scheduledProcessEvent.setDryRunParameters(schedulerJobInitiationEvent.getDryRunParameters());
             scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
@@ -120,14 +119,15 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setContextParameters(schedulerJobInitiationEvent.getContextParameters());
 
             // We are going to use a file naming convention for the log files used by the process to write
-            // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-suffix.log.
+            // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log.
+            long currentTimeMillis = System.currentTimeMillis();
             scheduledProcessEvent.setResultOutput(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
-                + schedulerJobInitiationEvent.getJobName() + "-" + "out.log");
+                + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis + "-" + "out.log");
 
             scheduledProcessEvent.setResultError(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
-                + schedulerJobInitiationEvent.getJobName() + "-" + "err.log");
+                + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis + "-" + "err.log");
 
             return scheduledProcessEvent;
         }
