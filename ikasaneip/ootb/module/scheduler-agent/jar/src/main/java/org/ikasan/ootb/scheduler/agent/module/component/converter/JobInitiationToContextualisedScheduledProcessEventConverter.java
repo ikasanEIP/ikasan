@@ -119,7 +119,7 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setContextParameters(schedulerJobInitiationEvent.getContextParameters());
 
             // We are going to use a file naming convention for the log files used by the process to write
-            // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log.
+            // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log
             long currentTimeMillis = System.currentTimeMillis();
             scheduledProcessEvent.setResultOutput(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
