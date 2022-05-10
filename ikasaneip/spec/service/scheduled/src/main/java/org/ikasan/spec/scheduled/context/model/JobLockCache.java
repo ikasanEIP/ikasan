@@ -7,23 +7,15 @@ import org.ikasan.spec.scheduled.joblock.service.JobLockCacheService;
 
 public interface JobLockCache {
 
-    void addLock(JobLock jobLock);
-
     void addLocks(List<JobLock> jobLocks);
 
-    boolean lock(String jobIdentifier);
+    boolean lock(String jobIdentifier, String contextId);
 
-    boolean release(String jobIdentifier);
+    boolean release(String jobIdentifier, String contextId);
 
     boolean locked(String jobIdentifier);
 
-    boolean hasLock(String jobIdentifier);
-
-    boolean existsByIdentifier(String jobIdentifier);
-
-    boolean existsByJobLockName(String jobLockName);
-
-    List<SchedulerJob> getJobsForIdentifier(String jobIdentifier);
+    boolean hasLock(String jobIdentifier, String contextId);
 
     void reset();
 
