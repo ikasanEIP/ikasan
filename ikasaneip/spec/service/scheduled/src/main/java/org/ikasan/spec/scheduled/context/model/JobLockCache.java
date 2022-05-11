@@ -22,4 +22,6 @@ public interface JobLockCache {
     boolean resetLock(String lockName);
 
     void setJobLockCacheService(JobLockCacheService jobLockCacheService);
+
+    List<SchedulerJob> getJobsForIdentifier(String jobIdentifier);
 }
