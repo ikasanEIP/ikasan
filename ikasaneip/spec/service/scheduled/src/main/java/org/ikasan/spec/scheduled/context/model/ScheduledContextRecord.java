@@ -15,4 +15,12 @@ public interface ScheduledContextRecord {
     long getTimestamp();
 
     void setTimestamp(long timestamp);
+
+    long getModifiedTimestamp();
+
+    void setModifiedTimestamp(long timestamp);
+
+    String getModifiedBy();
+
+    void setModifiedBy(String modifiedBy);
 }

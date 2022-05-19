@@ -14,4 +14,12 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
     T getJob();
 
     long getTimestamp();
+
+    long getModifiedTimestamp();
+
+    void setModifiedTimestamp(long timestamp);
+
+    String getModifiedBy();
+
+    void setModifiedBy(String modifiedBy);
 }
