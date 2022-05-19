@@ -23,4 +23,12 @@ public interface FileEventDrivenJobRecord {
     public long getTimestamp();
 
     public void setTimestamp(long timestamp);
+
+    long getModifiedTimestamp();
+
+    void setModifiedTimestamp(long timestamp);
+
+    String getModifiedBy();
+
+    void setModifiedBy(String modifiedBy);
 }
