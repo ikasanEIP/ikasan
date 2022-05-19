@@ -8,6 +8,10 @@ public interface ScheduledContextInstanceRecord {
 
     void setContextName(String contextName);
 
+    String getContextInstanceId();
+
+    void setContextInstanceId(String contextInstanceId);
+
     ContextInstance getContextInstance();
 
     void setContextInstance(ContextInstance context);
@@ -19,4 +23,12 @@ public interface ScheduledContextInstanceRecord {
     long getTimestamp();
 
     void setTimestamp(long timestamp);
+
+    long getModifiedTimestamp();
+
+    void setModifiedTimestamp(long timestamp);
+
+    String getModifiedBy();
+
+    void setModifiedBy(String modifiedBy);
 }
