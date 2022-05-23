@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.context.dao;
 
 import org.ikasan.spec.scheduled.context.model.ScheduledContextRecord;
+import org.ikasan.spec.scheduled.context.model.ScheduledContextSearchFilter;
 import org.ikasan.spec.search.SearchResults;
 
 import java.util.List;
@@ -35,13 +36,15 @@ public interface ScheduledContextDao {
     /**
      * Find all ScheduledContextRecords containing keyword with limit and offset. Used for result paging.
      *
-     * @param keyword
+     * @param filter
      * @param limit
      * @param offset
+     * @param sortColumn
+     * @param sortOrder
      *
      * @return SearchResults containing a List of ScheduledContextRecord and associated meta data.
      */
-    SearchResults<ScheduledContextRecord> findByKeyword(String keyword, int limit, int offset);
+    SearchResults<ScheduledContextRecord> findByFilter(ScheduledContextSearchFilter filter, int limit, int offset, String sortColumn, String sortOrder);
 
 
     /**
