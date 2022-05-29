@@ -5,6 +5,10 @@ public interface SchedulerJobInstanceSearchFilter {
 
     public void setJobName(String jobName);
 
+    String getJobType();
+
+    public void setJobType(String jobType);
+
     String getContextName();
 
     public void setContextName(String contextName);
