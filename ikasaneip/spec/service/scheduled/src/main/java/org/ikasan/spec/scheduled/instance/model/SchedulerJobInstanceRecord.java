@@ -4,6 +4,8 @@ public interface SchedulerJobInstanceRecord {
 
     String getId();
 
+    String getType();
+
     String getJobName();
 
     void setJobName(String jobName);
