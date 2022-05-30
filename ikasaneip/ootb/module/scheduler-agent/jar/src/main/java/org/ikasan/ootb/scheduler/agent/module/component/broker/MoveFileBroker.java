@@ -6,11 +6,15 @@ import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 
 public class MoveFileBroker implements Broker<List<File>, List<File>>, ConfiguredResource<MoveFileBrokerConfiguration> {
+
+    private static Logger logger = LoggerFactory.getLogger(MoveFileBroker.class);
 
     private DryRunModeService dryRunModeService;
     private String configurationId;
@@ -31,6 +35,7 @@ public class MoveFileBroker implements Broker<List<File>, List<File>>, Configure
 
         try {
             for (File file : files) {
+                logger.info(String.format("Moving file[%s] to directory[%s]", file.getAbsolutePath(), configuration.getMoveDirectory()));
                 FileUtils.moveFileToDirectory(file, new File(configuration.getMoveDirectory()), true);
             }
         }
