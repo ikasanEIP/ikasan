@@ -49,7 +49,7 @@ public class MoveFileBrokerTest {
     }
 
     @Test
-    public void test_move_file_dry_run_success() throws IOException {
+    public void test_move_file_dry_run_success() {
         when(dryRunModeService.getDryRunMode()).thenReturn(true);
 
         List<File> files = List.of(new File("src/test/resources/data/test.txt"));
