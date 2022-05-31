@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.event.model;
 
-public interface DryRunParameters {
+import java.io.Serializable;
+
+public interface DryRunParameters extends Serializable {
 
     /**
      * Get the minimum time the execution thread will sleep for.
