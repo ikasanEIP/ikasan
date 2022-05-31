@@ -14,6 +14,10 @@ public interface SchedulerJobInstanceRecord {
 
     void setContextName(String contextName);
 
+    String getChildContextName();
+
+    void setChildContextName(String childContextName);
+
     String getContextInstanceId();
 
     void setContextInstanceId(String contextInstanceId);

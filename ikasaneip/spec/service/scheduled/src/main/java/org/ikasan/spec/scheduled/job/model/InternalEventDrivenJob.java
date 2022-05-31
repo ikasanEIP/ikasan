@@ -2,9 +2,10 @@ package org.ikasan.spec.scheduled.job.model;
 
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface InternalEventDrivenJob extends SchedulerJob {
+public interface InternalEventDrivenJob extends SchedulerJob, Serializable {
     List<String> getSuccessfulReturnCodes();
 
     void setSuccessfulReturnCodes(List<String> successfulReturnCodes);

@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.instance.model;
 
-public interface StatefulEntity {
+import java.io.Serializable;
+
+public interface StatefulEntity extends Serializable {
 
     InstanceStatus getStatus();
 
