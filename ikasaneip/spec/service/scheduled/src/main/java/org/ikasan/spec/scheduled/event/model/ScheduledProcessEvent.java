@@ -40,12 +40,14 @@
  */
 package org.ikasan.spec.scheduled.event.model;
 
+import java.io.Serializable;
+
 /**
  * Model contract for a Scheduled Process Event for OOTB Scheduler Agents.
  *
  * @param <OUTCOME>
  */
-public interface ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMS extends DryRunParameters>
+public interface ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMS extends DryRunParameters> extends Serializable
 {
     /**
      * Get descriptive outcome of the scheduled process flow
