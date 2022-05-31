@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.context.model;
 
-public interface LogicalOperator {
+import java.io.Serializable;
+
+public interface LogicalOperator extends Serializable {
 
     public String getIdentifier();
 

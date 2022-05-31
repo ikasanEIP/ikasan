@@ -1,8 +1,9 @@
 package org.ikasan.spec.scheduled.context.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface LogicalGrouping {
+public interface LogicalGrouping extends Serializable {
 
     public LogicalGrouping getLogicalGrouping();
 

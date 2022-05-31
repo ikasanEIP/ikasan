@@ -1,12 +1,13 @@
 package org.ikasan.spec.scheduled.context.model;
 
+import java.io.Serializable;
 import java.util.List;
 
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.joblock.service.JobLockCacheService;
 
-public interface JobLockCache {
+public interface JobLockCache extends Serializable {
 
     void addLocks(List<JobLock> jobLocks);
 
