@@ -2,7 +2,9 @@ package org.ikasan.spec.scheduled.event.model;
 
 import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
 
-public interface StateChangeEvent {
+import java.io.Serializable;
+
+public interface StateChangeEvent extends Serializable {
 
     InstanceStatus getPreviousStatus();
 
