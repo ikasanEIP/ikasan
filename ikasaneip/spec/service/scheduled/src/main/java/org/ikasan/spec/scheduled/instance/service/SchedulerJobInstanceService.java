@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.instance.service;
 
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstance;
 import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstanceRecord;
 import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstanceSearchFilter;
@@ -24,6 +25,13 @@ public interface SchedulerJobInstanceService {
      * @param scheduledContextInstanceRecord
      */
     void save(SchedulerJobInstanceRecord scheduledContextInstanceRecord);
+
+    /**
+     * Method to update an existing schedulerJobInstance.
+     *
+     * @param schedulerJobInstance
+     */
+    void update(SchedulerJobInstance schedulerJobInstance);
 
     /**
      * Get scheduler job instances by context instance id
@@ -64,12 +72,11 @@ public interface SchedulerJobInstanceService {
 
 
     /**
-     * Initialise scheduler job instances for a given context. This method will initialise the instances and persist them before returning the new instances.
+     * Initialise scheduler job instances for a given context instances. This method will initialise the instances and persist them before returning the new instances.
      *
-     * @param contextName
-     * @param contextInstanceId
+     * @param contextInstance
      * @return
      */
-    List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(String contextName, String contextInstanceId) throws SchedulerJobInstanceInitialisationException;
+    List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(ContextInstance contextInstance) throws SchedulerJobInstanceInitialisationException;
 
 }
