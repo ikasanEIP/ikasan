@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.context.model;
 
-public interface ScheduledContextSearchFilter {
+import java.io.Serializable;
+
+public interface ScheduledContextSearchFilter extends Serializable {
 
     public String getContextName();
 

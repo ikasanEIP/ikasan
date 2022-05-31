@@ -1,8 +1,9 @@
 package org.ikasan.spec.scheduled.context.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface ContextDependency {
+public interface ContextDependency extends Serializable {
 
     String getContextIdentifier();
 

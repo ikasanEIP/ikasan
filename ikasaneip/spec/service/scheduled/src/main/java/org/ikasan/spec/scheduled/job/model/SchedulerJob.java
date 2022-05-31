@@ -1,8 +1,9 @@
 package org.ikasan.spec.scheduled.job.model;
 
+import java.io.Serializable;
 import java.util.List;
 
-public interface SchedulerJob {
+public interface SchedulerJob extends Serializable {
 
     /**
      * Get the parent context id that this job belongs to.
