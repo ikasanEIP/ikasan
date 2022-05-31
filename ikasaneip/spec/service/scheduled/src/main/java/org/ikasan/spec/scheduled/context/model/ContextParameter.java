@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.context.model;
 
-public interface ContextParameter {
+import java.io.Serializable;
+
+public interface ContextParameter extends Serializable {
 
     String getName();
 

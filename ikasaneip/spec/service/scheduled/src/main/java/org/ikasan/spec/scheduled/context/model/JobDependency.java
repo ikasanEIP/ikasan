@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.context.model;
 
-public interface JobDependency {
+import java.io.Serializable;
+
+public interface JobDependency extends Serializable {
 
     public String getJobIdentifier();
 

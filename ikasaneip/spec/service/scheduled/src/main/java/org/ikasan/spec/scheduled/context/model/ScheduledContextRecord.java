@@ -1,6 +1,8 @@
 package org.ikasan.spec.scheduled.context.model;
 
-public interface ScheduledContextRecord {
+import java.io.Serializable;
+
+public interface ScheduledContextRecord extends Serializable {
 
     String getId();
 

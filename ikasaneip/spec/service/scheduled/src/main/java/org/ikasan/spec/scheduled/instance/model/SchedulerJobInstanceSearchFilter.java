@@ -3,21 +3,25 @@ package org.ikasan.spec.scheduled.instance.model;
 public interface SchedulerJobInstanceSearchFilter {
     String getJobName();
 
-    public void setJobName(String jobName);
+    void setJobName(String jobName);
 
     String getJobType();
 
-    public void setJobType(String jobType);
+    void setJobType(String jobType);
 
     String getContextName();
 
-    public void setContextName(String contextName);
+    void setContextName(String contextName);
 
-    public String getContextInstanceId();
+    String getContextInstanceId();
 
-    public void setContextInstanceId(String contextInstanceId);
+    void setContextInstanceId(String contextInstanceId);
 
-    public String getStatus();
+    String getChildContextName();
 
-    public void setStatus(String status);
+    void setChildContextName(String childContextName);
+
+    String getStatus();
+
+    void setStatus(String status);
 }

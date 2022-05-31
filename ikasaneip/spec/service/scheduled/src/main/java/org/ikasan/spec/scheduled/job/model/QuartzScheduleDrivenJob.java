@@ -1,8 +1,9 @@
 package org.ikasan.spec.scheduled.job.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public interface QuartzScheduleDrivenJob extends SchedulerJob {
+public interface QuartzScheduleDrivenJob extends SchedulerJob, Serializable {
 
     String getJobGroup();
 

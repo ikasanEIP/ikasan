@@ -2,10 +2,11 @@ package org.ikasan.spec.scheduled.context.model;
 
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
-public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob, JOB_LOCK extends JobLock> {
+public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob, JOB_LOCK extends JobLock> extends Serializable {
 
     String getName();
 
