@@ -7,5 +7,6 @@ public enum InstanceStatus {
     ERROR,
     SKIPPED,
     ON_HOLD,
-    RELEASED;
+    RELEASED,
+    ENDED;
 }
