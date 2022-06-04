@@ -1,13 +1,13 @@
 package org.ikasan.spec.scheduled.joblock.model;
 
-import org.ikasan.spec.scheduled.context.model.JobLockCache;
-
 public interface JobLockCacheRecord {
     String getId();
 
-    void setJobLockCache(JobLockCache jobLockCache);
+    void setJobLockCache(JobLockCacheData jobLockCache);
 
-    JobLockCache getJobLockCache();
+    JobLockCacheData getJobLockCache();
 
     long getTimestamp();
+
+    long getModifiedTimestamp();
 }
