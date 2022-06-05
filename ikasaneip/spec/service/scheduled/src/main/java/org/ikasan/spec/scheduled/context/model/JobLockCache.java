@@ -7,6 +7,7 @@ import org.ikasan.spec.scheduled.event.model.ContextualisedSchedulerJobInitiatio
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.joblock.model.JobLockCacheData;
+import org.ikasan.spec.scheduled.joblock.model.JobLockCacheRecord;
 import org.ikasan.spec.scheduled.joblock.service.JobLockCacheService;
 
 public interface JobLockCache extends Serializable {
@@ -88,4 +89,11 @@ public interface JobLockCache extends Serializable {
      * @return
      */
     ContextualisedSchedulerJobInitiationEvent pollSchedulerJobInitiationEventWaitQueue(String jobIdentifier, String contextName);
+
+    /**
+     * Set the cache record if there is one.
+     *
+     * @param jobLockCacheRecord
+     */
+    void setJobLockCacheRecord(JobLockCacheRecord jobLockCacheRecord);
 }
