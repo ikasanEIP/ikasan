@@ -3,6 +3,7 @@ package org.ikasan.spec.scheduled.context.model;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.ikasan.spec.scheduled.event.model.ContextualisedSchedulerJobInitiationEvent;
@@ -29,7 +30,7 @@ public interface JobLockHolder extends Serializable {
 
     boolean removeLockHolder(String jobIdentifier);
 
-    ContextualisedSchedulerJobInitiationEvent pollSchedulerJobInitiationEventWaitQueue();
+    Queue<ContextualisedSchedulerJobInitiationEvent> getSchedulerJobInitiationEventWaitQueue();
 
-    void addQueuedSchedulerJobInitiationEvent(ContextualisedSchedulerJobInitiationEvent event);
+    void setSchedulerJobInitiationEventWaitQueue(Queue<ContextualisedSchedulerJobInitiationEvent> contextualisedSchedulerJobInitiationEventQueue);
 }
