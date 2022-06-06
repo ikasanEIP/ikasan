@@ -20,6 +20,16 @@ public interface SchedulerJobInstanceService {
     SchedulerJobInstanceRecord findById(String id);
 
     /**
+     * Find by context id, job name, and child context name. There can only be one job with these coordinates.
+     *
+     * @param uuid
+     * @param jobName
+     * @param childContextName
+     * @return
+     */
+    SchedulerJobInstanceRecord findByContextIdJobNameChildContextName(String uuid, String jobName, String childContextName);
+
+    /**
      * Save a scheduled context instance record.
      *
      * @param scheduledContextInstanceRecord
