@@ -6,11 +6,31 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public interface JobLockCacheData {
 
+    /**
+     * Get the collection that holds the lock holders by name.
+     *
+     * @return
+     */
     ConcurrentHashMap<String, JobLockHolder> getJobLocksByLockName();
 
+    /**
+     * Set the collection that holds the lock holders by name.
+     *
+     * @param jobLocksByLockName
+     */
     void setJobLocksByLockName(ConcurrentHashMap<String, JobLockHolder> jobLocksByLockName);
 
-    ConcurrentHashMap<String, JobLockHolder> getJobLocksByIdentifier();
+    /**
+     * Get the collection that reference lock by the job identifier that they participate in.
+     *
+     * @return
+     */
+    ConcurrentHashMap<String, String> getJobLocksByIdentifier();
 
-    void setJobLocksByIdentifier(ConcurrentHashMap<String, JobLockHolder> jobLocksByIdentifier);
+    /**
+     * Set the collection that reference lock by the job identifier that they participate in.
+     *
+     * @param jobLocksByIdentifier
+     */
+    void setJobLocksByIdentifier(ConcurrentHashMap<String, String> jobLocksByIdentifier);
 }
