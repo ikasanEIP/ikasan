@@ -171,6 +171,44 @@ public class JobStartingBrokerTest {
         Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
     }
 
+    @Test
+    public void test_job_start_success_with_null_context_parameters() throws IOException, InterruptedException {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
+        internalEventDrivenJobDto.setAgentName("agent name");
+
+        ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
+        contextParameterInstance.setName("cmd");
+        contextParameterInstance.setType("java.lang.String");
+        contextParameterInstance.setValue(null);
+        enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
+        String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
+        internalEventDrivenJobDto.setCommandLine(cmd);
+
+        internalEventDrivenJobDto.setContextId("contextId");
+        internalEventDrivenJobDto.setIdentifier("identifier");
+        internalEventDrivenJobDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+
+        // give the file a chance to get written to
+        Thread.sleep(250);
+        Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
+    }
+
     @Test(expected = EndpointException.class)
     public void test_exception_bad_command_line() throws IOException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
