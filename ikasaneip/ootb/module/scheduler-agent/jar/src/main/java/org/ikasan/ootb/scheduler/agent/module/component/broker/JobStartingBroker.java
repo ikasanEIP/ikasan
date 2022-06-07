@@ -129,8 +129,16 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             Map<String, String> env = processBuilder.environment();
 
             scheduledProcessEvent.getContextParameters()
-                .forEach(contextParameter -> env.put(contextParameter.getName()
-                    , (String)contextParameter.getValue()));
+                .forEach(contextParameter -> {
+                    if(contextParameter.getValue() != null) {
+                        env.put(contextParameter.getName()
+                            , (String) contextParameter.getValue());
+                    }
+                    else {
+                        logger.warn("Context parameter[{}] could not be initialised on process as its value was NULL!"
+                            , contextParameter.getName());
+                    }
+                });
         }
 
         try {
