@@ -2,10 +2,7 @@ package org.ikasan.spec.scheduled.instance.service;
 
 import java.util.List;
 
-import org.ikasan.spec.scheduled.instance.model.ContextInstanceSearchFilter;
-import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
-import org.ikasan.spec.scheduled.instance.model.ScheduledContextInstanceAuditRecord;
-import org.ikasan.spec.scheduled.instance.model.ScheduledContextInstanceRecord;
+import org.ikasan.spec.scheduled.instance.model.*;
 import org.ikasan.spec.search.SearchResults;
 
 public interface ScheduledContextInstanceService {
@@ -36,28 +33,44 @@ public interface ScheduledContextInstanceService {
     /**
      * Save a scheduled context instance audit record.
      *
-     * @param scheduledContextInstanceAuditRecord
+     * @param scheduledContextInstanceAuditAggregateRecord
+     * @param previousContextInstance
+     * @param updatedContextInstance
      */
-    void saveAudit(ScheduledContextInstanceAuditRecord scheduledContextInstanceAuditRecord);
+    void saveAudit(ScheduledContextInstanceAuditAggregateRecord scheduledContextInstanceAuditAggregateRecord, ContextInstance previousContextInstance,
+                   ContextInstance updatedContextInstance);
+
+    /**
+     * Find a context instance audit record by id.
+     *
+     * @param id
+     * @return
+     */
+    ScheduledContextInstanceRecord findAuditRecordById(String id);
 
     /**
      * Get scheduled context instance audit records.
      *
      * @param limit
      * @param offset
+     * @param sortField
+     * @param sortDirection
      * @return
      */
-    SearchResults<ScheduledContextInstanceAuditRecord> findAllAuditRecords(int limit, int offset);
+    SearchResults<ScheduledContextInstanceAuditAggregateRecord> findAllAuditRecords(int limit, int offset, String sortField, String sortDirection);
 
     /**
      * Get all scheduled context instance audit records for a context id.
      *
-     * @param contextId
+     * @param filter
      * @param limit
      * @param offset
+     * @param sortField
+     * @param sortDirection
      * @return
      */
-    SearchResults<ScheduledContextInstanceAuditRecord> findAllAuditRecordsByContextId(String contextId, int limit, int offset);
+    SearchResults<ScheduledContextInstanceAuditAggregateRecord> findAllAuditRecordsByFilter(ScheduledContextInstanceAuditAggregateSearchFilter filter
+        , int limit, int offset, String sortField, String sortDirection);
 
     /**
      * Get scheduled context instance records by statuses with limit and offset.

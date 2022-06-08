@@ -1,6 +1,6 @@
 package org.ikasan.spec.scheduled.instance.dao;
 
-import org.ikasan.spec.scheduled.instance.model.ScheduledContextInstanceAuditRecord;
+import org.ikasan.spec.scheduled.instance.model.ScheduledContextInstanceRecord;
 import org.ikasan.spec.search.SearchResults;
 
 public interface ScheduledContextInstanceAuditDao {
@@ -8,26 +8,16 @@ public interface ScheduledContextInstanceAuditDao {
     /**
      * Save a scheduled context instance audit record.
      *
-     * @param scheduledContextInstanceAuditRecord
+     * @param scheduledContextInstanceRecord
      */
-    void save(ScheduledContextInstanceAuditRecord scheduledContextInstanceAuditRecord);
+    void save(ScheduledContextInstanceRecord scheduledContextInstanceRecord);
 
     /**
-     * Get scheduled context instance audit records.
+     * Find a context instance audit record.
      *
-     * @param limit
-     * @param offset
+     * @param id
      * @return
      */
-    SearchResults<ScheduledContextInstanceAuditRecord> findAll(int limit, int offset);
+    ScheduledContextInstanceRecord findById(String id);
 
-    /**
-     * Get all scheduled context instance audit records for a context id.
-     *
-     * @param contextId
-     * @param limit
-     * @param offset
-     * @return
-     */
-    SearchResults<ScheduledContextInstanceAuditRecord> findAllAuditRecordsByContextId(String contextId, int limit, int offset);
 }
