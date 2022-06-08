@@ -6,7 +6,7 @@ import java.util.List;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
-public interface ScheduledContextInstanceAudit extends Serializable {
+public interface ScheduledContextInstanceAuditAggregate extends Serializable {
     ContextualisedScheduledProcessEvent getProcessEvent();
 
     void setProcessEvent(ContextualisedScheduledProcessEvent contextualisedScheduledProcessEvent);
@@ -15,11 +15,11 @@ public interface ScheduledContextInstanceAudit extends Serializable {
 
     void setSchedulerJobInitiationEvents(List<SchedulerJobInitiationEvent> schedulerJobInitiationEvents);
 
-    ContextInstance getPreviousContextInstance();
+    String getPreviousContextInstanceAuditId();
 
-    void setPreviousContextInstance(ContextInstance previousContext);
+    void setPreviousContextInstanceAuditId(String previousContextInstanceAuditId);
 
-    ContextInstance getUpdatedContextInstance();
+    String getUpdatedContextInstanceAuditId();
 
-    void setUpdatedContextInstance(ContextInstance updatedContext);
+    void setUpdatedContextInstanceAuditId(String updatedContextInstanceAuditId);
 }
