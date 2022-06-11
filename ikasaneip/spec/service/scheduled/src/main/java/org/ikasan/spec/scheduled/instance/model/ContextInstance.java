@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.instance.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apache.commons.lang3.SerializationUtils;
 import org.ikasan.spec.scheduled.context.model.Context;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
@@ -114,6 +115,7 @@ public interface ContextInstance extends Context<ContextInstance, ContextParamet
      *
      * @return
      */
+    @JsonIgnore
     default List<SchedulerJobInstance> getAllSchedulerJobInstances() {
         ArrayList<SchedulerJobInstance> results = new ArrayList<>();
 
