@@ -1,13 +1,14 @@
 package org.ikasan.spec.scheduled.event.model;
 
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.io.Serializable;
 import java.util.List;
 
 public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParameterInstance
-    , JOB extends InternalEventDrivenJob, DRY_RUN_PARAMS extends DryRunParameters> extends Serializable {
+    , JOB extends InternalEventDrivenJobInstance, DRY_RUN_PARAMS extends DryRunParameters> extends Serializable {
 
     /**
      * Get the job
