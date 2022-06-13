@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.event.model;
 
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.io.Serializable;
@@ -67,11 +68,11 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      * Set the InternalEventDrivenJob
      * @param internalEventDrivenJob
      */
-    void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob);
+    void setInternalEventDrivenJob(InternalEventDrivenJobInstance internalEventDrivenJob);
 
     /**
      * Get the InternalEventDrivenJob
      * @return
      */
-    InternalEventDrivenJob getInternalEventDrivenJob();
+    InternalEventDrivenJobInstance getInternalEventDrivenJob();
 }
