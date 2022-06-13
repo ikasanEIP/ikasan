@@ -1,11 +1,14 @@
 package org.ikasan.ootb.scheduled.model;
 
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
 
-public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
+public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJobInstance {
 
     private List<String> successfulReturnCodes;
     private String workingDirectory;
@@ -20,6 +23,14 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
     private String jobName;
     private String jobDescription;
     private String startupControlType;
+    private List<Integer> daysOfWeekToRun;
+    private String contextInstanceId;
+    private String childContextName;
+    private boolean held = false;
+    private boolean skip = false;
+    private boolean initiationEventRaised = false;
+    private InstanceStatus status;
+    private ScheduledProcessEvent scheduledProcessEvent;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -153,12 +164,82 @@ public class InternalEventDrivenJobImpl implements InternalEventDrivenJob {
 
     @Override
     public List<Integer> getDaysOfWeekToRun() {
-        return null;
+        return daysOfWeekToRun;
     }
 
     @Override
     public void setDaysOfWeekToRun(List<Integer> daysOfWeekToRun) {
+        this.daysOfWeekToRun = daysOfWeekToRun;
+    }
 
+    @Override
+    public String getContextInstanceId() {
+        return contextInstanceId;
+    }
+
+    @Override
+    public void setContextInstanceId(String contextInstanceId) {
+        this.contextInstanceId = contextInstanceId;
+    }
+
+    @Override
+    public String getChildContextName() {
+        return childContextName;
+    }
+
+    @Override
+    public void setChildContextName(String childContextName) {
+        this.childContextName = childContextName;
+    }
+
+    @Override
+    public boolean isHeld() {
+        return held;
+    }
+
+    @Override
+    public void setHeld(boolean held) {
+        this.held = held;
+    }
+
+    @Override
+    public boolean isSkip() {
+        return skip;
+    }
+
+    @Override
+    public void setSkip(boolean skip) {
+        this.skip = skip;
+    }
+
+    @Override
+    public boolean isInitiationEventRaised() {
+        return initiationEventRaised;
+    }
+
+    @Override
+    public void setInitiationEventRaised(boolean initiationEventRaised) {
+        this.initiationEventRaised = initiationEventRaised;
+    }
+
+    @Override
+    public InstanceStatus getStatus() {
+        return status;
+    }
+
+    @Override
+    public void setStatus(InstanceStatus status) {
+        this.status = status;
+    }
+
+    @Override
+    public ScheduledProcessEvent getScheduledProcessEvent() {
+        return scheduledProcessEvent;
+    }
+
+    @Override
+    public void setScheduledProcessEvent(ScheduledProcessEvent scheduledProcessEvent) {
+        this.scheduledProcessEvent = scheduledProcessEvent;
     }
 
     @Override

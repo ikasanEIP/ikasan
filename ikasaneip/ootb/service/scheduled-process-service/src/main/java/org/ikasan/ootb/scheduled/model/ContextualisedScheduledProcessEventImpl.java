@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduled.model;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     private List<String> childContextIds;
     private String contextInstanceId;
     private boolean skipped;
-    private InternalEventDrivenJob internalEventDrivenJob;
+    private InternalEventDrivenJobInstance internalEventDrivenJob;
 
     @Override
     public String getContextId() {
@@ -103,12 +104,12 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     }
 
     @Override
-    public void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob) {
+    public void setInternalEventDrivenJob(InternalEventDrivenJobInstance internalEventDrivenJob) {
         this.internalEventDrivenJob = internalEventDrivenJob;
     }
 
     @Override
-    public InternalEventDrivenJob getInternalEventDrivenJob() {
+    public InternalEventDrivenJobInstance getInternalEventDrivenJob() {
         return this.internalEventDrivenJob;
     }
 

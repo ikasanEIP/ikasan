@@ -2,6 +2,7 @@ package org.ikasan.ootb.scheduler.agent.rest.client.model;
 
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     private boolean jobStarting = false;
     private DryRunParameters dryRunParameters;
     private boolean skipped;
-    private InternalEventDrivenJob internalEventDrivenJob;
+    private InternalEventDrivenJobInstance internalEventDrivenJob;
 
 
     public Long getId()
@@ -283,12 +284,12 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     }
 
     @Override
-    public void setInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob) {
+    public void setInternalEventDrivenJob(InternalEventDrivenJobInstance internalEventDrivenJob) {
         this.internalEventDrivenJob = internalEventDrivenJob;
     }
 
     @Override
-    public InternalEventDrivenJob getInternalEventDrivenJob() {
+    public InternalEventDrivenJobInstance getInternalEventDrivenJob() {
         return this.internalEventDrivenJob;
     }
 
