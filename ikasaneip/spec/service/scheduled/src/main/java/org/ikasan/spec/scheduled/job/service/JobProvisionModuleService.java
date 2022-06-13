@@ -1,9 +1,9 @@
-package org.ikasan.spec.scheduled.rest.agent.client;
+package org.ikasan.spec.scheduled.job.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobWrapper;
 
-public interface JobProvisionService {
+public interface JobProvisionModuleService {
 
     /**
      * This method it responsible for provisioning jobs on an agent.

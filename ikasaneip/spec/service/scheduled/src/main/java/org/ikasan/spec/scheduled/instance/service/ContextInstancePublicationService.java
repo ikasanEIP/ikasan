@@ -1,4 +1,4 @@
-package org.ikasan.spec.scheduled.rest.agent.client;
+package org.ikasan.spec.scheduled.instance.service;
 
 public interface ContextInstancePublicationService<CONTEXT_INSTANCE> {
 
