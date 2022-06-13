@@ -52,7 +52,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 import javax.annotation.Resource;
 
@@ -61,7 +60,7 @@ import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobImpl;
+import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
@@ -75,7 +74,7 @@ import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
@@ -84,7 +83,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
@@ -121,7 +119,7 @@ public class ApplicationTest {
             .addAbstractTypeMapping(Map.class, HashMap.class)
             .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class)
             .addAbstractTypeMapping(DryRunParameters.class, DryRunParametersDto.class)
-            .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class);
+            .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceImpl.class);
 
         objectMapper.registerModule(simpleModule);
     }
