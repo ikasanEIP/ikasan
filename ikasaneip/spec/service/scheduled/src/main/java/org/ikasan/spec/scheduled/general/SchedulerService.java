@@ -1,6 +1,5 @@
-package org.ikasan.spec.scheduled;
+package org.ikasan.spec.scheduled.general;
 
-import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.quartz.Trigger;
 
 import java.util.List;
@@ -25,12 +24,4 @@ public interface SchedulerService {
      * @return
      */
     boolean triggerFlowNow(String contextUrl, String moduleName, String flowName);
-
-    /**
-     * Raise a SchedulerJobInitiationEvent with the relevant agent.
-     * @param contextUrl
-     * @param event
-     * @return
-     */
-    void raiseSchedulerJobInitiationEvent(String contextUrl, SchedulerJobInitiationEvent event);
 }
