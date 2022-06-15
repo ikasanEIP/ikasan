@@ -3,9 +3,9 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextualisedScheduledProcessEventDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.junit.Before;
 import org.junit.Rule;
@@ -107,14 +107,17 @@ public class SchedulerJobInitiationEventApplicationTest
         dto.setAgentName("agentName");
         dto.setJobName(event);
 
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        ContextParameterDto contextParameterDto = new ContextParameterDto();
-        contextParameterDto.setName("name");
-        contextParameterDto.setValue("value");
-        internalEventDrivenJobDto.setContextParameters(List.of(contextParameterDto));
-        internalEventDrivenJobDto.setScheduledProcessEvent(new ContextualisedScheduledProcessEventDto());
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        ContextParameterInstanceDto contextParameterInstanceDto = new ContextParameterInstanceDto();
+        contextParameterInstanceDto.setName("name");
+        contextParameterInstanceDto.setValue("value");
+        internalEventDrivenJobInstanceDto.setContextParameters(List.of(contextParameterInstanceDto));
+        ContextualisedScheduledProcessEventDto contextualisedScheduledProcessEventDto = new ContextualisedScheduledProcessEventDto();
+        contextualisedScheduledProcessEventDto.setInternalEventDrivenJob(new InternalEventDrivenJobInstanceDto());
+        internalEventDrivenJobInstanceDto.setScheduledProcessEvent(contextualisedScheduledProcessEventDto);
 
-        dto.setInternalEventDrivenJob(internalEventDrivenJobDto);
+
+        dto.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
         return mapper.writeValueAsString(dto);
     }

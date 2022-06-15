@@ -3,12 +3,14 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextualisedScheduledProcessEventDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
@@ -57,7 +59,8 @@ public class MockedUserServiceTestConfigWithConverter implements WebMvcConfigure
             .addAbstractTypeMapping(Map.class, HashMap.class)
             .addAbstractTypeMapping(ScheduledProcessEvent.class, ContextualisedScheduledProcessEventDto.class)
             .addAbstractTypeMapping(SchedulerJobInitiationEvent.class, SchedulerJobInitiationEventDto.class)
-            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+            .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceDto.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterInstanceDto.class);
         converter.getObjectMapper().registerModule(simpleModule);
         converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         converter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);

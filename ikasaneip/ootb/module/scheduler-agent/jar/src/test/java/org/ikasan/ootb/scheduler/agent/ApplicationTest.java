@@ -117,7 +117,7 @@ public class ApplicationTest {
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
-            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterInstanceDto.class)
             .addAbstractTypeMapping(DryRunParameters.class, DryRunParametersDto.class)
             .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceImpl.class);
 
@@ -195,21 +195,21 @@ public class ApplicationTest {
 
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
@@ -253,21 +253,21 @@ public class ApplicationTest {
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEvent.setDryRun(true);
         schedulerJobInitiationEvent.setDryRunParameters(new DryRunParametersDto());
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
@@ -310,21 +310,21 @@ public class ApplicationTest {
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEvent.setSkipped(true);
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
         bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
 
