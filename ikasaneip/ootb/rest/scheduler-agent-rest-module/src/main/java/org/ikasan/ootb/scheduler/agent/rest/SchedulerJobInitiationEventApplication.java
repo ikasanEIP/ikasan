@@ -7,9 +7,12 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextualisedScheduledProcessEventDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -41,6 +44,8 @@ public class SchedulerJobInitiationEventApplication
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
+            .addAbstractTypeMapping(SchedulerJobInitiationEvent.class, SchedulerJobInitiationEventDto.class)
+            .addAbstractTypeMapping(ScheduledProcessEvent.class, ContextualisedScheduledProcessEventDto.class)
             .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
 
         this.mapper.registerModule(simpleModule);

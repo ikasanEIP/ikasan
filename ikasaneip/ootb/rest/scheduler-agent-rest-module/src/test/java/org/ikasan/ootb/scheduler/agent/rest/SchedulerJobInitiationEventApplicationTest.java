@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextualisedScheduledProcessEventDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.junit.Before;
@@ -111,6 +112,7 @@ public class SchedulerJobInitiationEventApplicationTest
         contextParameterDto.setName("name");
         contextParameterDto.setValue("value");
         internalEventDrivenJobDto.setContextParameters(List.of(contextParameterDto));
+        internalEventDrivenJobDto.setScheduledProcessEvent(new ContextualisedScheduledProcessEventDto());
 
         dto.setInternalEventDrivenJob(internalEventDrivenJobDto);
 
