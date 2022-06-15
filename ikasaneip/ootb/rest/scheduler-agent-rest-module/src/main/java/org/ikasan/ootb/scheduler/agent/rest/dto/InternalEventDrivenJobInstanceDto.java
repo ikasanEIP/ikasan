@@ -7,7 +7,7 @@ import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.util.List;
 
-public class InternalEventDrivenJobDto implements InternalEventDrivenJobInstance {
+public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJobInstance {
 
     private List<String> successfulReturnCodes;
     private String workingDirectory;
