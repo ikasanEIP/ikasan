@@ -83,14 +83,16 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
-import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -112,6 +114,9 @@ public class QuartzSchedulerJobEventFlowComponentFactory
 
     @Resource
     IBigQueue outboundQueue;
+
+    @Resource
+    DryRunModeService dryRunModeService;
 
     public Consumer getScheduledConsumer() {
         return builderFactory.getComponentBuilder().scheduledConsumer()
@@ -142,5 +147,19 @@ public class QuartzSchedulerJobEventFlowComponentFactory
         return new BigQueueProducer(this.outboundQueue, new SchedulerProcessorEventSerialiser());
     }
 
+
+    /**
+     * Get the context instance filter.
+     *
+     * @return
+     */
+    public Filter getContextInstanceFilter() {
+        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
+        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService);
+
+        contextInstanceFilter.setConfiguration(configuration);
+
+        return contextInstanceFilter;
+    }
 }
 

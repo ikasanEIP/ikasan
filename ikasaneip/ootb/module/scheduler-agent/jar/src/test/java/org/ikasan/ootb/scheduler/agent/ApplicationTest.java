@@ -56,14 +56,18 @@ import java.util.concurrent.TimeUnit;
 import javax.annotation.Resource;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
+import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
@@ -351,8 +355,16 @@ public class ApplicationTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_success() throws IOException {
+        String contextName = createContextAndPutInCache();
+
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
         flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
@@ -373,7 +385,39 @@ public class ApplicationTest {
 
     @Test
     @DirtiesContext
+    public void test_quartz_flow_recovery_context_instance_not_found() {
+        // do not put context instance in cache
+        String contextName = RandomStringUtils.randomAlphabetic(10);
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
     public void test_file_flow_success_without_aspect() throws IOException {
+        String contextName = createContextAndPutInCache();
+
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
@@ -382,8 +426,12 @@ public class ApplicationTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
 
         flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -410,7 +458,45 @@ public class ApplicationTest {
 
     @Test
     @DirtiesContext
+    public void test_file_flow_recovery_no_instance_in_cache() {
+        // do not put it in the cache
+        String contextName = RandomStringUtils.randomAlphabetic(11);
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
     public void test_file_flow_success_with_aspect() {
+        String contextName = createContextAndPutInCache();
+
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         dryRunModeService.setDryRunMode(true);
@@ -424,8 +510,12 @@ public class ApplicationTest {
             , FileConsumerConfiguration.class);
         fileConsumerConfiguration.setJobName("Flow 2 Job Name");
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
 
         flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -456,7 +546,13 @@ public class ApplicationTest {
     @Test
     @DirtiesContext
     public void test_file_flow_with_filter() throws IOException {
+        String contextName = createContextAndPutInCache();
+
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
         FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
             , FileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
@@ -465,12 +561,14 @@ public class ApplicationTest {
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
             .converter("JobExecution to ScheduledStatusEvent")
             .producer("Scheduled Status Producer")
             .consumer("File Consumer")
+            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter");
 
@@ -558,5 +656,13 @@ public class ApplicationTest {
     @After
     public void teardown() {
         // post-test teardown
+    }
+
+    private String createContextAndPutInCache() {
+        String contextName = RandomStringUtils.randomAlphabetic(15);
+        ContextInstanceImpl instance = new ContextInstanceImpl();
+        instance.setName(contextName);
+        ContextInstanceCache.instance().put(contextName, instance);
+        return contextName;
     }
 }

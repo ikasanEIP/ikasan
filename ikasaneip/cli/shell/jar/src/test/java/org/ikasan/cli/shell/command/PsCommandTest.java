@@ -91,6 +91,9 @@ class PsCommandTest
         process = processBuilder.start();
         processes.add(process);
 
+        // give process time to start
+        pause(1000);
+
         PsCommand command = new PsCommand();
 
         // test all match
@@ -227,6 +230,9 @@ class PsCommandTest
         processBuilder = new ProcessBuilder(secondProcess);
         process = processBuilder.start();
         processes.add(process);
+
+        // give process time to start
+        pause(1000);
 
         PsCommand command = new PsCommand();
 
