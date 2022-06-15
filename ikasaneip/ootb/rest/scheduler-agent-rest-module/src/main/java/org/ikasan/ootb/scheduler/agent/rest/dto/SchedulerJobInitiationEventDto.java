@@ -4,13 +4,13 @@ import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.List;
 
-public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEvent<ContextParameterDto, InternalEventDrivenJobDto, DryRunParametersDto> {
+public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEvent<ContextParameterInstanceDto, InternalEventDrivenJobInstanceDto, DryRunParametersDto> {
 
     private String agentName;
     private String agentUrl;
     private String jobName;
-    private List<ContextParameterDto> contextParameters;
-    private InternalEventDrivenJobDto internalEventDrivenJob;
+    private List<ContextParameterInstanceDto> contextParameters;
+    private InternalEventDrivenJobInstanceDto internalEventDrivenJob;
     private String contextId;
     private List<String> childContextIds;
     private String contextInstanceId;
@@ -19,22 +19,22 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     private boolean skipped;
 
     @Override
-    public InternalEventDrivenJobDto getInternalEventDrivenJob() {
+    public InternalEventDrivenJobInstanceDto getInternalEventDrivenJob() {
         return this.internalEventDrivenJob;
     }
 
     @Override
-    public void setInternalEventDrivenJob(InternalEventDrivenJobDto internalEventDrivenJob) {
+    public void setInternalEventDrivenJob(InternalEventDrivenJobInstanceDto internalEventDrivenJob) {
         this.internalEventDrivenJob = internalEventDrivenJob;
     }
 
     @Override
-    public void setContextParameters(List<ContextParameterDto> contextParameters) {
+    public void setContextParameters(List<ContextParameterInstanceDto> contextParameters) {
         this.contextParameters = contextParameters;
     }
 
     @Override
-    public List<ContextParameterDto> getContextParameters() {
+    public List<ContextParameterInstanceDto> getContextParameters() {
         return this.contextParameters;
     }
 
