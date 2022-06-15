@@ -11,6 +11,7 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -155,61 +156,85 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     private void configureComponents(List<SchedulerJob> jobs, Module<Flow> module) {
         jobs.forEach(job -> {
             if(job instanceof FileEventDrivenJob) {
-                Flow flow = module.getFlow(job.getJobName());
-                ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
-                    .getFlowElement("File Consumer").getFlowComponent();
-
-                FileConsumerConfiguration configuration = (FileConsumerConfiguration)consumer.getConfiguration();
-                this.updateFileConsumerConfiguration((FileEventDrivenJob)job, configuration);
-
-                this.configurationService.update(consumer);
-
-                ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
-                    .getFlowElement("File Age Filter").getFlowComponent();
-
-                FileAgeFilterConfiguration filterConfiguration = filter.getConfiguration();
-                filterConfiguration.setFileAgeSeconds(((FileEventDrivenJob)job).getMinFileAgeSeconds());
-
-                this.configurationService.update(filter);
-
-
-                ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
-                    .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
-
-                ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-                converterConfiguration.setContextId(job.getContextId());
-                converterConfiguration.setChildContextIds(job.getChildContextIds());
-
-                this.configurationService.update(converter);
-
-                ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
-                    .getFlowElement("File Move Broker").getFlowComponent();
-
-                MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
-                moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob)job).getMoveDirectory());
-
-                this.configurationService.update(filter);
+                configureFileEventDrivenFlowComponents(module, job);
             }
             else if(job instanceof QuartzScheduleDrivenJob) {
-                Flow flow = module.getFlow(job.getJobName());
-                ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
-                    .getFlowElement("Scheduled Consumer").getFlowComponent();
-
-                ScheduledConsumerConfiguration configuration = consumer.getConfiguration();
-                this.updateScheduleConsumerConfiguration((QuartzScheduleDrivenJob)job, configuration);
-
-                this.configurationService.update(consumer);
-
-                ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
-                    .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
-
-                ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-                converterConfiguration.setContextId(job.getContextId());
-                converterConfiguration.setChildContextIds(job.getChildContextIds());
-
-                this.configurationService.update(converter);
+                configureQuartzScheduledFlowComponents(module, job);
             }
         });
+    }
+
+    private void configureQuartzScheduledFlowComponents(Module<Flow> module, SchedulerJob job) {
+        Flow flow = module.getFlow(job.getJobName());
+        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
+            .getFlowElement("Scheduled Consumer").getFlowComponent();
+
+        ScheduledConsumerConfiguration configuration = consumer.getConfiguration();
+        this.updateScheduleConsumerConfiguration((QuartzScheduleDrivenJob) job, configuration);
+
+        this.configurationService.update(consumer);
+
+        ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
+            .getFlowElement("Context Instance Active Filter").getFlowComponent();
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = contextFilter.getConfiguration();
+        contextInstanceFilterConfiguration.setContextName(job.getContextId());
+
+        this.configurationService.update(contextFilter);
+
+        ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
+            .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
+
+        ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
+        converterConfiguration.setContextId(job.getContextId());
+        converterConfiguration.setChildContextIds(job.getChildContextIds());
+
+        this.configurationService.update(converter);
+    }
+
+    private void configureFileEventDrivenFlowComponents(Module<Flow> module, SchedulerJob job) {
+        Flow flow = module.getFlow(job.getJobName());
+        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
+            .getFlowElement("File Consumer").getFlowComponent();
+
+        FileConsumerConfiguration configuration = (FileConsumerConfiguration)consumer.getConfiguration();
+        this.updateFileConsumerConfiguration((FileEventDrivenJob) job, configuration);
+
+        this.configurationService.update(consumer);
+
+        ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
+            .getFlowElement("Context Instance Active Filter").getFlowComponent();
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = contextFilter.getConfiguration();
+        contextInstanceFilterConfiguration.setContextName(job.getContextId());
+
+        this.configurationService.update(contextFilter);
+
+        ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
+            .getFlowElement("File Age Filter").getFlowComponent();
+
+        FileAgeFilterConfiguration filterConfiguration = filter.getConfiguration();
+        filterConfiguration.setFileAgeSeconds(((FileEventDrivenJob) job).getMinFileAgeSeconds());
+
+        this.configurationService.update(filter);
+
+
+        ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
+            .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
+
+        ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
+        converterConfiguration.setContextId(job.getContextId());
+        converterConfiguration.setChildContextIds(job.getChildContextIds());
+
+        this.configurationService.update(converter);
+
+        ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
+            .getFlowElement("File Move Broker").getFlowComponent();
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
+        moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob) job).getMoveDirectory());
+
+        this.configurationService.update(filter);
     }
 
     /**
