@@ -8,15 +8,13 @@ import java.util.Map;
 import org.ikasan.job.orchestration.model.context.*;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.SchedulerJobImpl;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.scheduled.context.model.*;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
-import org.ikasan.spec.scheduled.instance.model.ContextInstance;
-import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
-import org.ikasan.spec.scheduled.instance.model.JobLockInstance;
-import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstance;
+import org.ikasan.spec.scheduled.instance.model.*;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
@@ -55,7 +53,7 @@ public class ObjectMapperFactory {
             .addAbstractTypeMapping(Not.class, NotImpl.class)
             .addAbstractTypeMapping(ContextTemplate.class, ContextTemplateImpl.class)
             .addAbstractTypeMapping(Context.class, ContextImpl.class)
-            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterInstanceDto.class)
             .addAbstractTypeMapping(SchedulerJob.class, SchedulerJobImpl.class)
             .addAbstractTypeMapping(JobDependency.class, JobDependencyImpl.class)
             .addAbstractTypeMapping(ContextDependency.class, ContextDependencyImpl.class)
@@ -70,6 +68,7 @@ public class ObjectMapperFactory {
             .addAbstractTypeMapping(ContextualisedScheduledProcessEvent.class, ContextualisedScheduledProcessEventImpl.class)
             .addAbstractTypeMapping(SchedulerJobInitiationEvent.class, SchedulerJobInitiationEventImpl.class)
             .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class)
+            .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceDto.class)
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class);
     }
