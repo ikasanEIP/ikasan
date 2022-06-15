@@ -2,9 +2,9 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
@@ -43,9 +43,9 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
         schedulerJobInitiationEventDto.setContextInstanceId("contextInstanceId");
         schedulerJobInitiationEventDto.setJobName("jobName");
 
-        InternalEventDrivenJobDto internalEventDrivenJob = new InternalEventDrivenJobDto();
+        InternalEventDrivenJobInstanceDto internalEventDrivenJob = new InternalEventDrivenJobInstanceDto();
         internalEventDrivenJob.setAgentName("agentName");
-        internalEventDrivenJob.setContextParameters(List.of(new ContextParameterDto(), new ContextParameterDto()));
+        internalEventDrivenJob.setContextParameters(List.of(new ContextParameterInstanceDto(), new ContextParameterInstanceDto()));
 
         schedulerJobInitiationEventDto.setInternalEventDrivenJob(internalEventDrivenJob);
 
