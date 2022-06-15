@@ -41,7 +41,9 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.OnException;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.FileEventSchedulerJobFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilterException;
 import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -59,6 +61,13 @@ public class FileEventSchedulerJobFlowFactory
     @Value( "${module.name}" )
     private String moduleName;
 
+    @Value("${agent.recovery.instance.exception.retry.delay.millis:5000}")
+    private long agentRecoveryRetryDelay;
+
+    // -1 means retry indefinitely
+    @Value("${agent.recovery.instance.exception.max.retries:-1}")
+    private int agentRecoveryMaxRetries;
+
     @Resource
     private BuilderFactory builderFactory;
 
@@ -70,7 +79,13 @@ public class FileEventSchedulerJobFlowFactory
     {
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
             .withDescription("The " + jobName + " File Event Flow is responsible for kicking off jobs when an expected file arrives.")
+            .withExceptionResolver(
+                builderFactory
+                    .getExceptionResolverBuilder()
+                    .addExceptionToAction(ContextInstanceFilterException.class, OnException.retry(agentRecoveryRetryDelay, agentRecoveryMaxRetries))
+            )
             .consumer("File Consumer", componentFactory.getFileConsumer())
+            .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
             .filter("File Age Filter", componentFactory.getFileAgeFilter())
             .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter(jobName))
             .broker("File Move Broker", componentFactory.getMoveFileBroker())

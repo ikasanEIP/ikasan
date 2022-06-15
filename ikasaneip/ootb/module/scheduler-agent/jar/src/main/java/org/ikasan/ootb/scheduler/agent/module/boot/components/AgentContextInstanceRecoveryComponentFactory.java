@@ -38,63 +38,32 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.rest;
+package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import javax.annotation.Resource;
 
-import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
+import org.ikasan.spec.dashboard.ContextInstanceRestService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import java.util.List;
-
+/**
+ * Agent context instances recovery component factory.
+ *
+ * @author Ikasan Development Team
+ */
 @Configuration
-public class IkasanRestAutoConfiguration implements WebMvcConfigurer
-{
+public class AgentContextInstanceRecoveryComponentFactory {
+
+    @Value("${agent.recovery.instance.minutes.to.retry:120}")
+    private long minutesToKeepRetrying;
+
+    @Resource
+    private ContextInstanceRestService contextInstanceRestService;
 
     @Bean
-    public SchedulerJobInitiationEventApplication schedulerJobInitiationEventApplication(){
-        return new SchedulerJobInitiationEventApplication();
+    public AgentInstanceRecoveryManager agentInstanceRecoveryManager() {
+        return new AgentInstanceRecoveryManager(this.contextInstanceRestService, this.minutesToKeepRetrying);
     }
-
-    @Bean
-    public SchedulerApplication schedulerApplication(){
-        return new SchedulerApplication();
-    }
-
-    @Bean
-    public JobProvisionApplication jobProvisionApplication() {
-        return new JobProvisionApplication();
-    }
-
-    @Bean
-    public DryRunSchedulerApplication dryRunSchedulerApplication() {
-        return new DryRunSchedulerApplication();
-    }
-
-    @Bean
-    public JobUtilsApplication jobUtilsApplication() {
-        return new JobUtilsApplication();
-    }
-
-    @Bean
-    public ContextInstanceApplication contextParametersApplication() {
-        return new ContextInstanceApplication();
-    }
-
-    @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.forEach(converter -> {
-            if(converter instanceof MappingJackson2HttpMessageConverter) {
-                ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().registerModule(ObjectMapperFactory.newSimpleModule());
-                ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            }
-        });
-    }
-
 }
