@@ -9,6 +9,7 @@ import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -98,6 +99,15 @@ public class JobProvisionServiceImplTest {
     @Mock
     IkasanAuthentication ikasanAuthentication;
 
+    @Mock
+    private FlowElement contextFilterElement;
+
+    @Mock
+    private ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter;
+
+    @Mock
+    ContextInstanceFilterConfiguration contextFilterConfiguration;
+
     @InjectMocks
     private JobProvisionServiceImpl service;
 
@@ -123,6 +133,9 @@ public class JobProvisionServiceImplTest {
         when(flow.getFlowElement("File Move Broker")).thenReturn(moveFileBrokerElement);
         when(moveFileBrokerElement.getFlowComponent()).thenReturn(moveFileBroker);
         when(moveFileBroker.getConfiguration()).thenReturn(moveFileBrokerConfiguration);
+        when(flow.getFlowElement("Context Instance Active Filter")).thenReturn(contextFilterElement);
+        when(contextFilterElement.getFlowComponent()).thenReturn(contextFilter);
+        when(contextFilter.getConfiguration()).thenReturn(contextFilterConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
 
 
@@ -167,12 +180,15 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setSortAscending(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
 
+        verify(contextFilterConfiguration, times(2)).setContextName(anyString());
+
         verify(converterConfiguration, times(2)).setContextId(anyString());
         verify(converterConfiguration, times(2)).setChildContextIds(anyList());
 
         verifyNoMoreInteractions(fileConsumerConfiguration);
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
+        verifyNoMoreInteractions(contextFilterConfiguration);
     }
 
     private List<SchedulerJob> getJobs() {

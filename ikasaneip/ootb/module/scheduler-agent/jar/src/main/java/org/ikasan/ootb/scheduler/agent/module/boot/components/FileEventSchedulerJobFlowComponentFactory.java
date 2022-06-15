@@ -91,9 +91,11 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -207,6 +209,20 @@ public class FileEventSchedulerJobFlowComponentFactory
     public Producer getScheduledStatusProducer()
     {
         return new BigQueueProducer(this.outboundQueue, new SchedulerProcessorEventSerialiser());
+    }
+
+    /**
+     * Get the context instance filter.
+     *
+     * @return
+     */
+    public Filter getContextInstanceFilter() {
+        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
+        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService);
+
+        contextInstanceFilter.setConfiguration(configuration);
+
+        return contextInstanceFilter;
     }
 
 }
