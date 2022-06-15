@@ -5,7 +5,7 @@ import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -270,22 +270,22 @@ public class JobMonitoringBrokerTest {
     private EnrichedContextualisedScheduledProcessEvent createEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip) {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
         enrichedContextualisedScheduledProcessEvent.setDryRun(dryRun);

@@ -4,7 +4,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
-import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.junit.Assert;
@@ -41,21 +41,21 @@ public class JobStartingBrokerTest {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         enrichedContextualisedScheduledProcessEvent.setSkipped(true);
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
         JobStartingBroker jobStartingBroker = new JobStartingBroker();
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
@@ -74,21 +74,21 @@ public class JobStartingBrokerTest {
             new EnrichedContextualisedScheduledProcessEvent();
         enrichedContextualisedScheduledProcessEvent.setSkipped(false);
         enrichedContextualisedScheduledProcessEvent.setDryRun(true);
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
         JobStartingBroker jobStartingBroker = new JobStartingBroker();
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
@@ -105,21 +105,21 @@ public class JobStartingBrokerTest {
     public void test_job_start_success() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -137,8 +137,8 @@ public class JobStartingBrokerTest {
     public void test_job_start_success_with_context_parameters() throws IOException, InterruptedException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
@@ -146,14 +146,14 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
         String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
-        internalEventDrivenJobDto.setCommandLine(cmd);
+        internalEventDrivenJobInstanceDto.setCommandLine(cmd);
 
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -175,8 +175,8 @@ public class JobStartingBrokerTest {
     public void test_job_start_success_with_null_context_parameters() throws IOException, InterruptedException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
@@ -184,14 +184,14 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setValue(null);
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
         String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
-        internalEventDrivenJobDto.setCommandLine(cmd);
+        internalEventDrivenJobInstanceDto.setCommandLine(cmd);
 
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -213,8 +213,8 @@ public class JobStartingBrokerTest {
     public void test_exception_bad_command_line() throws IOException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
@@ -222,12 +222,12 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
 
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -239,23 +239,23 @@ public class JobStartingBrokerTest {
     public void test_job_start_not_skipped_days_of_week_not_today() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
-        internalEventDrivenJobDto.setDaysOfWeekToRun(List.of(dayOfWeek == 1 ? dayOfWeek + 1 : dayOfWeek -1));
+        internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(List.of(dayOfWeek == 1 ? dayOfWeek + 1 : dayOfWeek -1));
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -275,22 +275,22 @@ public class JobStartingBrokerTest {
     public void test_job_start_not_skipped_days_of_week_today() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
-        internalEventDrivenJobDto.setDaysOfWeekToRun(List.of(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)));
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
+        internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(List.of(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)));
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -308,22 +308,22 @@ public class JobStartingBrokerTest {
     public void test_job_start_not_skipped_days_of_week_empty() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
-        internalEventDrivenJobDto.setDaysOfWeekToRun(Collections.emptyList());
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
+        internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(Collections.emptyList());
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
@@ -341,22 +341,22 @@ public class JobStartingBrokerTest {
     public void test_job_start_not_skipped_days_of_week_null() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobDto internalEventDrivenJobDto = new InternalEventDrivenJobDto();
-        internalEventDrivenJobDto.setAgentName("agent name");
-        internalEventDrivenJobDto.setDaysOfWeekToRun(null);
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
+        internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(null);
 
         if (SystemUtils.OS_NAME.contains("Windows")) {
-            internalEventDrivenJobDto.setCommandLine("java -version");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
-            internalEventDrivenJobDto.setCommandLine("pwd");
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobDto.setContextId("contextId");
-        internalEventDrivenJobDto.setIdentifier("identifier");
-        internalEventDrivenJobDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobDto);
+        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 

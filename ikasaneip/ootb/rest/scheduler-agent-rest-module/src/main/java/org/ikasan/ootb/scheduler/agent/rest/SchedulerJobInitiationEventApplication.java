@@ -6,13 +6,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextualisedScheduledProcessEventDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.*;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -46,7 +44,8 @@ public class SchedulerJobInitiationEventApplication
             .addAbstractTypeMapping(Map.class, HashMap.class)
             .addAbstractTypeMapping(SchedulerJobInitiationEvent.class, SchedulerJobInitiationEventDto.class)
             .addAbstractTypeMapping(ScheduledProcessEvent.class, ContextualisedScheduledProcessEventDto.class)
-            .addAbstractTypeMapping(ContextParameter.class, ContextParameterDto.class);
+            .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceDto.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterInstanceDto.class);
 
         this.mapper.registerModule(simpleModule);
         this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
