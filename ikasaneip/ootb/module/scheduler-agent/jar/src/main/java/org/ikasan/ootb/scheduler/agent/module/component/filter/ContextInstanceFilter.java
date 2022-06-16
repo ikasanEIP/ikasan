@@ -12,33 +12,36 @@ import org.slf4j.LoggerFactory;
 public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<ContextInstanceFilterConfiguration> {
     private static final Logger LOG = LoggerFactory.getLogger(ContextInstanceFilter.class);
 
-
     private ContextInstanceFilterConfiguration contextInstanceFilterConfiguration;
     private String configurationId;
     private DryRunModeService dryRunModeService;
+    private boolean agentRecoveryActive;
 
-    public ContextInstanceFilter(DryRunModeService dryRunModeService) {
+    public ContextInstanceFilter(DryRunModeService dryRunModeService, boolean agentRecoveryActive) {
         this.dryRunModeService = dryRunModeService;
         if (this.dryRunModeService == null) {
             throw new IllegalArgumentException("dryRunModeService cannot be null!");
         }
+        this.agentRecoveryActive = agentRecoveryActive;
     }
 
     @Override
     public T filter(T event) throws ContextInstanceFilterException {
-        if (dryRunModeService.getDryRunMode()) {
-            return event;
+        if (agentRecoveryActive) {
+            if (dryRunModeService.getDryRunMode()) {
+                return event;
+            }
+
+            ContextInstance instance = ContextInstanceCache.instance().getByContextName(contextInstanceFilterConfiguration.getContextName());
+
+            if (instance == null) {
+                LOG.warn(String.format("ContextInstanceCache does not contain instance for %s!",
+                    contextInstanceFilterConfiguration.getContextName()));
+                throw new ContextInstanceFilterException(String.format("ContextInstanceCache does not contain instance for %s!",
+                    contextInstanceFilterConfiguration.getContextName()));
+            }
+
         }
-
-        ContextInstance instance = ContextInstanceCache.instance().getByContextName(contextInstanceFilterConfiguration.getContextName());
-
-        if (instance == null) {
-            LOG.warn(String.format("ContextInstanceCache does not contain instance for %s!",
-                contextInstanceFilterConfiguration.getContextName()));
-            throw new ContextInstanceFilterException(String.format("ContextInstanceCache does not contain instance for %s!",
-                contextInstanceFilterConfiguration.getContextName()));
-        }
-
         return event;
     }
 
