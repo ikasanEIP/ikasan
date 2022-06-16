@@ -118,6 +118,9 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     @Resource
     DryRunModeService dryRunModeService;
 
+    @Value("${agent.recovery.instance.active:false}")
+    boolean agentRecoveryActive;
+
     public Consumer getScheduledConsumer() {
         return builderFactory.getComponentBuilder().scheduledConsumer()
             .setCronExpression("0 0 0 * * ?").build();
@@ -155,7 +158,7 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      */
     public Filter getContextInstanceFilter() {
         ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
-        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService);
+        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
 
         contextInstanceFilter.setConfiguration(configuration);
 

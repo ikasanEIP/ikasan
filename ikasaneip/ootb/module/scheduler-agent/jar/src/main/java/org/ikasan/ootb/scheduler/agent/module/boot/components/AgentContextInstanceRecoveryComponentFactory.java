@@ -59,11 +59,14 @@ public class AgentContextInstanceRecoveryComponentFactory {
     @Value("${agent.recovery.instance.minutes.to.retry:120}")
     private long minutesToKeepRetrying;
 
+    @Value("${agent.recovery.instance.active:false}")
+    boolean agentRecoveryActive;
+
     @Resource
     private ContextInstanceRestService contextInstanceRestService;
 
     @Bean
     public AgentInstanceRecoveryManager agentInstanceRecoveryManager() {
-        return new AgentInstanceRecoveryManager(this.contextInstanceRestService, this.minutesToKeepRetrying);
+        return new AgentInstanceRecoveryManager(this.contextInstanceRestService, this.minutesToKeepRetrying, this.agentRecoveryActive);
     }
 }
