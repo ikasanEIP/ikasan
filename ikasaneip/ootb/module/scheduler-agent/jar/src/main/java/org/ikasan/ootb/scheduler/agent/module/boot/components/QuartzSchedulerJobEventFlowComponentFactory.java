@@ -118,12 +118,26 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     @Resource
     DryRunModeService dryRunModeService;
 
-    @Value("${agent.recovery.instance.active:false}")
+    @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
     public Consumer getScheduledConsumer() {
         return builderFactory.getComponentBuilder().scheduledConsumer()
             .setCronExpression("0 0 0 * * ?").build();
+    }
+
+    /**
+     * Get the context instance filter.
+     *
+     * @return
+     */
+    public Filter getContextInstanceFilter() {
+        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
+        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
+
+        contextInstanceFilter.setConfiguration(configuration);
+
+        return contextInstanceFilter;
     }
 
     /**
@@ -148,21 +162,6 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     public Producer getScheduledStatusProducer()
     {
         return new BigQueueProducer(this.outboundQueue, new SchedulerProcessorEventSerialiser());
-    }
-
-
-    /**
-     * Get the context instance filter.
-     *
-     * @return
-     */
-    public Filter getContextInstanceFilter() {
-        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
-        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
-
-        contextInstanceFilter.setConfiguration(configuration);
-
-        return contextInstanceFilter;
     }
 }
 
