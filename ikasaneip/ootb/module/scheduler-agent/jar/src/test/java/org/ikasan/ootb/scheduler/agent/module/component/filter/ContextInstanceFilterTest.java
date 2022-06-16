@@ -36,7 +36,7 @@ public class ContextInstanceFilterTest {
 
         when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
 
-        ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService);
+        ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService, true);
 
         filter.setConfiguration(configuration);
 
@@ -56,7 +56,7 @@ public class ContextInstanceFilterTest {
 
         when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
 
-        ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService);
+        ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService, true);
 
         filter.setConfiguration(configuration);
 
@@ -65,4 +65,21 @@ public class ContextInstanceFilterTest {
         filter.filter(files);
     }
 
+    @Test
+    public void should_return_files_if_context_not_in_cache_not_active() {
+        String contextName = RandomStringUtils.randomAlphabetic(12);
+
+        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
+        configuration.setContextName(contextName);
+
+        ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService, false);
+
+        filter.setConfiguration(configuration);
+
+        List<File> files = List.of(new File("."));
+
+        List<File> results = (List<File>) filter.filter(files);
+
+        assertEquals(files, results);
+    }
 }
