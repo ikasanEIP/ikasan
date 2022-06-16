@@ -40,10 +40,13 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
+import org.ikasan.spec.event.ForceTransactionRollbackForEventExclusionException;
 import org.quartz.DisallowConcurrentExecution;
 import org.quartz.JobExecutionContext;
 import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
 
 /**
  * This implements the CallBackMessageConsumer contract supporting message provider callbacks.
@@ -60,12 +63,21 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
 
     /**
      * Constructor
-     *
      * @param scheduler
      */
     public CallBackScheduledConsumer(Scheduler scheduler)
     {
         super(scheduler);
+    }
+
+    /**
+     * Constructor
+     * @param scheduler
+     * @param scheduledJobRecoveryService
+     */
+    public CallBackScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
+    {
+        super(scheduler, scheduledJobRecoveryService);
     }
 
     @Override
@@ -90,6 +102,14 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
         try
         {
             boolean isRecovering = managedResourceRecoveryManager.isRecovering();
+
+            // TODO - should this be saved after the event invocation?
+            // only persist schedule for misfire if a business schedule ie not a recovery manager schedule
+            if(!isRecovering && this.consumerConfiguration.isPersistentRecovery())
+            {
+                this.scheduledJobRecoveryService.save(context);
+            }
+
             boolean isSuccessful = messageProvider.invoke(context).booleanValue();
 
             // we were recovering, but are now ok so restore eager or business trigger
@@ -124,6 +144,28 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
 
                     // else do not change the business trigger
                 }
+                else
+                {
+                    // if persistent recovery callback then reschedule business cron
+                    if(isPersistentRecoveryTrigger(context.getTrigger()))
+                    {
+                        scheduleAsBusinessTrigger(context.getTrigger());
+                    }
+                }
+            }
+        }
+        catch (ForceTransactionRollbackForEventExclusionException thrownByRecoveryManager)
+        {
+            // reschedule immediately to allow the event to be excluded
+            // assumes we will get the same event again
+            try
+            {
+                scheduleAsEagerTrigger(context.getTrigger(), 0);
+                throw thrownByRecoveryManager;
+            }
+            catch (SchedulerException e)
+            {
+                throw new RuntimeException(e);
             }
         }
         catch (ForceTransactionRollbackException thrownByRecoveryManager)

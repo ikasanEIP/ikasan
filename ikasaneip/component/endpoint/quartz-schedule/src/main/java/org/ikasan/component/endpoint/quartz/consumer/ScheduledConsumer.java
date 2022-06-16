@@ -66,7 +66,6 @@ import java.util.*;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This test class supports the <code>Consumer</code> class.
@@ -83,7 +82,12 @@ public class ScheduledConsumer<T>
      */
     private static Logger logger = LoggerFactory.getLogger(ScheduledConsumer.class);
 
-    private static String EAGER_CALLBACK_COUNT = "eagerCallbackCount";
+    // anything beginning with Ikasan is an internal Ikasan property reference.
+    private static String EAGER_CALLBACK_COUNT = "IkasanEagerCallbackCount";
+
+    private static String PERSISTENT_RECOVERY = "IkasanPersistentRecovery";
+
+    private static String CRON_EXPRESSION = "IkasanCronExpression";
 
     /**
      * Scheduler
@@ -113,7 +117,7 @@ public class ScheduledConsumer<T>
     /**
      * consumer configuration
      */
-    private ScheduledConsumerConfiguration consumerConfiguration;
+    protected ScheduledConsumerConfiguration consumerConfiguration;
 
     /** is this a critical resource to cause startup failure */
     private boolean criticalOnStartup;
@@ -136,7 +140,7 @@ public class ScheduledConsumer<T>
     /** resubmission event factory */
     private ResubmissionEventFactory<Resubmission> resubmissionEventFactory;
 
-    private ScheduledJobRecoveryService scheduledJobRecoveryService;
+    protected ScheduledJobRecoveryService scheduledJobRecoveryService;
 
     /**
      * Constructor
@@ -188,21 +192,34 @@ public class ScheduledConsumer<T>
                 jobGroupName = getConfiguration().getJobGroupName();
             }
 
-            TriggerBuilder triggerBuilder = newTriggerFor(jobName, jobGroupName);
-            // initial hashset size to include business expression and recovery expression
-            Set<Trigger> triggers = getTriggerSet(2);
-
-            // check if last invocation was successful
-            if(consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService.isRecoveryRequired(jobGroupName, jobName, consumerConfiguration.getRecoveryTolerance()))
+            // get all configured business expressions (expression and expressions) as a single list
+            // and create uniquely named triggers for each
+            List<String> cronExpressions = consumerConfiguration.getConsolidatedCronExpressions();
+            Set<Trigger> triggers = new HashSet<>(cronExpressions.size());
+            for(String cronExpression:cronExpressions)
             {
-                // schedule a callback through recovery trigger
-                triggers.add( triggerBuilder
-                    .startNow()
-                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build() );
-            }
+                String jobNameIteration = jobName + "_" + cronExpression.hashCode();
+                TriggerBuilder triggerBuilder = newTriggerFor(jobNameIteration, jobGroupName);
 
-            // add business trigger
-            triggers.add( getBusinessTrigger(triggerBuilder) );
+                // check if last invocation was successful, if so schedule the business trigger otherwise create a persistent recovery trigger
+                Trigger trigger = null;
+                if (consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService.isRecoveryRequired(jobNameIteration, jobGroupName, consumerConfiguration.getRecoveryTolerance()))
+                {
+                    // if unsuccessful, schedule a callback immediately if within tolerance of recovery
+                    trigger = newTriggerFor(jobNameIteration + PERSISTENT_RECOVERY, jobGroupName)
+                        .startNow()
+                        .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
+                    trigger.getJobDataMap().put(PERSISTENT_RECOVERY, PERSISTENT_RECOVERY);
+                }
+                else
+                {
+                    // if successful then just add business trigger
+                    trigger = getBusinessTrigger(triggerBuilder, cronExpression);
+                }
+
+                trigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);
+                triggers.add(trigger);
+            }
 
             if(getConfiguration().getPassthroughProperties() != null)
             {
@@ -218,14 +235,14 @@ public class ScheduledConsumer<T>
             StringBuilder logStringBuilder = new StringBuilder();
             for(Trigger trigger: triggers)
             {
-                logStringBuilder.append(" with firetime " + trigger.getNextFireTime() + "] description [" + trigger.getDescription() + "]");
+                logStringBuilder.append("Job [" + trigger.getKey() + " with firetime [" + trigger.getNextFireTime() + "] description [" + trigger.getDescription() + "]; ");
             }
 
-            scheduler.scheduleJob(jobDetail, triggers, true);
+            scheduleJobTriggers(jobDetail, triggers, true);
             logger.info("Started scheduled consumer for flow ["
                 + jobkey.getName()
                 + "] module [" + jobkey.getGroup()
-                + "]" + logStringBuilder);
+                + "] " + logStringBuilder);
         }
         catch (SchedulerException | ParseException e)
         {
@@ -233,14 +250,21 @@ public class ScheduledConsumer<T>
         }
     }
 
-    protected Set<Trigger> getTriggerSet(int size)
+    /**
+     * Factory method to aid testing.
+     * @param jobDetail
+     * @param triggers
+     * @param replace
+     * @throws SchedulerException
+     */
+    protected void scheduleJobTriggers(JobDetail jobDetail, Set<Trigger> triggers, boolean replace) throws SchedulerException
     {
-        return new HashSet<>(size);
+        scheduler.scheduleJob(jobDetail, triggers, replace);
     }
 
     protected TriggerBuilder newTriggerFor(String name, String group)
     {
-        return newTrigger().withIdentity(name, group).withDescription(getConfiguration().getDescription());
+        return TriggerBuilder.newTrigger().withIdentity(name, group).withDescription(getConfiguration().getDescription());
     }
 
     /**
@@ -299,9 +323,10 @@ public class ScheduledConsumer<T>
     {
         try
         {
-            // are we in a runtime fail / recovery scenario invoked from the Recoveyr Manager
+            // are we in a runtime fail / recovery scenario invoked from the Recovery Manager
             boolean isRecovering = managedResourceRecoveryManager.isRecovering();
 
+            // TODO - should this be saved after the event invocation?
             // only persist schedule for misfire if a business schedule ie not a recovery manager schedule
             if(!isRecovering && this.consumerConfiguration.isPersistentRecovery())
             {
@@ -343,6 +368,14 @@ public class ScheduledConsumer<T>
 
                     // else do not change the business trigger
                 }
+                else
+                {
+                    // if persistent recovery callback then reschedule business cron
+                    if(isPersistentRecoveryTrigger(context.getTrigger()))
+                    {
+                        scheduleAsBusinessTrigger(context.getTrigger());
+                    }
+                }
             }
         }
         catch (ForceTransactionRollbackForEventExclusionException thrownByRecoveryManager)
@@ -368,6 +401,11 @@ public class ScheduledConsumer<T>
             thr.printStackTrace();
             managedResourceRecoveryManager.recover(thr);
         }
+    }
+
+    protected boolean isPersistentRecoveryTrigger(Trigger trigger)
+    {
+        return trigger.getJobDataMap().containsKey(PERSISTENT_RECOVERY);
     }
 
     protected boolean isEagerCallback(Trigger trigger)
@@ -520,11 +558,12 @@ public class ScheduledConsumer<T>
     /**
      *  Trigger Scheduler now.
      */
-    public void scheduleAsBusinessTrigger(Trigger oldTrigger) throws SchedulerException
+    protected void scheduleAsBusinessTrigger(Trigger oldTrigger) throws SchedulerException
     {
         try
         {
-            Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder());
+            String cronExpression = (String)oldTrigger.getJobDataMap().get(CRON_EXPRESSION);
+            Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder(), cronExpression);
             newTrigger.getJobDataMap().clear();
 
             if(getConfiguration().getPassthroughProperties() != null)
@@ -647,9 +686,9 @@ public class ScheduledConsumer<T>
      * @return jobDetail
      * @throws java.text.ParseException
      */
-    protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder) throws ParseException
+    protected Trigger getBusinessTrigger(TriggerBuilder triggerBuilder, String cronExpression) throws ParseException
     {
-        CronScheduleBuilder cronScheduleBuilder = cronSchedule(this.consumerConfiguration.getCronExpression());
+        CronScheduleBuilder cronScheduleBuilder = cronSchedule(cronExpression);
         if (this.consumerConfiguration.isIgnoreMisfire())
         {
             cronScheduleBuilder.withMisfireHandlingInstructionDoNothing();
