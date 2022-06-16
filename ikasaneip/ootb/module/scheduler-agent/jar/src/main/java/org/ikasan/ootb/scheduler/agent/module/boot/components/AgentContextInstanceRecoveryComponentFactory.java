@@ -56,10 +56,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class AgentContextInstanceRecoveryComponentFactory {
 
-    @Value("${agent.recovery.instance.minutes.to.retry:120}")
+    @Value("${context.instance.recovery.minutes.to.retry:120}")
     private long minutesToKeepRetrying;
 
-    @Value("${agent.recovery.instance.active:false}")
+    @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
     @Resource
