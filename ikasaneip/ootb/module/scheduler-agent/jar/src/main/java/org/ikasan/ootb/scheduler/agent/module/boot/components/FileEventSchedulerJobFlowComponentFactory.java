@@ -135,11 +135,12 @@ public class FileEventSchedulerJobFlowComponentFactory
     @Resource
     DryRunModeService dryRunModeService;
 
-    @Value("${agent.recovery.instance.active:false}")
+    @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
     /**
      * Return an instance of a configured file consumer
+     *
      * @return
      */
     public Consumer getFileConsumer()
@@ -150,6 +151,20 @@ public class FileEventSchedulerJobFlowComponentFactory
         return builderFactory.getComponentBuilder().fileConsumer()
             .setConfiguration(fileConsumerConfiguration)
             .build();
+    }
+
+    /**
+     * Get the context instance filter.
+     *
+     * @return
+     */
+    public Filter getContextInstanceFilter() {
+        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
+        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
+
+        contextInstanceFilter.setConfiguration(configuration);
+
+        return contextInstanceFilter;
     }
 
     /**
@@ -182,6 +197,11 @@ public class FileEventSchedulerJobFlowComponentFactory
         return new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
     }
 
+    /**
+     * Get the broker that moves files if the job is configured to do so.
+     *
+     * @return
+     */
     public Broker getMoveFileBroker() {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = new MoveFileBrokerConfiguration();
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
@@ -212,20 +232,6 @@ public class FileEventSchedulerJobFlowComponentFactory
     public Producer getScheduledStatusProducer()
     {
         return new BigQueueProducer(this.outboundQueue, new SchedulerProcessorEventSerialiser());
-    }
-
-    /**
-     * Get the context instance filter.
-     *
-     * @return
-     */
-    public Filter getContextInstanceFilter() {
-        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
-        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
-
-        contextInstanceFilter.setConfiguration(configuration);
-
-        return contextInstanceFilter;
     }
 
 }
