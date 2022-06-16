@@ -46,6 +46,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.SchedulerException;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -82,11 +85,33 @@ public class ScheduledConsumerConfigurationTest
     }
 
     /**
+     * Test non configuration mutators.
+     */
+    @Test
+    public void test_getConsolidatedCronExpressions()
+    {
+        ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
+        assertNull("cron expression should be null", consumerConfiguration.getCronExpression());
+        assertEquals("cron expressions should be 0", 0, consumerConfiguration.getCronExpressions().size());
+        assertEquals("consolidated cron expressions should be 0", 0, consumerConfiguration.getConsolidatedCronExpressions().size());
+        consumerConfiguration.setCronExpression("0/5 * * * * ?");
+        assertEquals("consolidated cron expressions should be 1", 1, consumerConfiguration.getConsolidatedCronExpressions().size());
+
+        List<String> cronExpressions = new ArrayList<String>();
+        cronExpressions.add("0/1 * * * * ?");
+        cronExpressions.add("0/2 * * * * ?");
+        cronExpressions.add("0/3 * * * * ?");
+        cronExpressions.add("0/5 * * * * ?");   // added even though repeat of cronExpression
+        consumerConfiguration.setCronExpressions(cronExpressions);
+        assertEquals("consolidated cron expressions should be 5", 5, consumerConfiguration.getConsolidatedCronExpressions().size());
+    }
+
+    /**
      * Test to ensure the configuration is validation aware.
      *
      **/
     @Test
-    public void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
+    public void test_configuration_isValidationAware() throws InvalidConfigurationException
     {
         Assert.assertTrue("Configuration doesnt implement IsValidationAware", new ScheduledConsumerConfiguration() instanceof IsValidationAware);
     }
