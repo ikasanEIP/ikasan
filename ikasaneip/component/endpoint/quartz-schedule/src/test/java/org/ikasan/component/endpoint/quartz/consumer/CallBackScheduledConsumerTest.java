@@ -55,15 +55,18 @@ import org.junit.Test;
 import org.quartz.*;
 
 import java.text.ParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 
 /**
- * This test class supports the <code>ScheduledConsumer</code> class.
+ * This test class supports the <code>CallbackScheduledConsumer</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerTest
+public class CallBackScheduledConsumerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -109,13 +112,15 @@ public class ScheduledConsumerTest
 
     private final ScheduledJobRecoveryService scheduledJobRecoveryService = mockery.mock(ScheduledJobRecoveryService.class, "mockScheduledJobRecoveryService");
 
+    private final CallBackMessageProvider callBackMessageProvider = mockery.mock( CallBackMessageProvider.class);
+
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
      */
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_failure_NullScheduler()
     {
-        new ScheduledConsumer(null);
+        new CallBackScheduledConsumer(null);
     }
 
     /**
@@ -124,7 +129,7 @@ public class ScheduledConsumerTest
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_failure_NullScheduledJobRecoveryService()
     {
-        new ScheduledConsumer(scheduler, null);
+        new CallBackScheduledConsumer(scheduler, null);
     }
 
     /**
@@ -185,12 +190,13 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met", ((StubbedScheduledConsumer)scheduledConsumer).getTriggers().size(), 3);
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumer)scheduledConsumer).isReplace());
+        Assert.assertEquals("Expected number of triggers not met", ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size(), 3);
+        Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
 
         mockery.assertIsSatisfied();
     }
@@ -265,12 +271,13 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedScheduledConsumer)scheduledConsumer).getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumer)scheduledConsumer).isReplace());
+        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size());
+        Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
 
         mockery.assertIsSatisfied();
     }
@@ -345,12 +352,13 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedScheduledConsumer)scheduledConsumer).getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumer)scheduledConsumer).isReplace());
+        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size());
+        Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
 
         mockery.assertIsSatisfied();
     }
@@ -381,7 +389,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -414,7 +422,8 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.start();
         mockery.assertIsSatisfied();
@@ -444,7 +453,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.stop();
@@ -473,7 +482,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.stop();
@@ -505,7 +514,7 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.stop();
         mockery.assertIsSatisfied();
@@ -514,8 +523,6 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_not_null_no_persisted_recovery() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-        final String identifier = "testId";
         final JobDataMap jobDataMap = new JobDataMap();
 
         // expectations
@@ -524,15 +531,6 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
-
-                // schedule the job
-                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(1).of(eventListener).invoke(mockFlowEvent);
 
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
@@ -547,13 +545,18 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
+
+                // invocation
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(Boolean.TRUE));
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         // test
@@ -565,8 +568,6 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_not_null_with_persisted_recovery() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-        final String identifier = "testId";
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
         final JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("IkasanPersistentRecovery", "IkasanPersistentRecovery");
@@ -578,15 +579,6 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
-
-                // schedule the job
-                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(1).of(eventListener).invoke(mockFlowEvent);
 
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
@@ -640,13 +632,18 @@ public class ScheduledConsumerTest
                 will(returnValue(true));
 
                 exactly(1).of(scheduler).rescheduleJob(triggerKey, trigger);
+
+                // invocation
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(Boolean.TRUE));
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler, scheduledJobRecoveryService);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         // test
@@ -658,27 +655,13 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_null_not_in_flow_recovery() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
-        final String identifier = "testId";
         final JobDataMap jobDataMap = new JobDataMap();
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
-                will(returnValue(null));
-
-                // schedule the job
-                exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(0).of(flowEventFactory).newEvent(identifier, jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(0).of(eventListener).invoke(mockFlowEvent);
-
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
 
@@ -695,13 +678,18 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
+
+                // invocation
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(Boolean.TRUE));
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setMessageProvider(mockMessageProvider);
@@ -712,9 +700,8 @@ public class ScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_null_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
+    public void test_execute_when_messageProvider_message_invoke_is_false_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
     {
-        final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
         final TriggerKey triggerKey = new TriggerKey("moduleName", "flowName");
         final JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("IkasanCronExpression", "0/2 * * * * ?");
@@ -732,8 +719,8 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(false));
 
-                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
-                will(returnValue(null));
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(Boolean.FALSE));
 
                 // get configuration scheduler pass-through properties
                 exactly(1).of(consumerConfiguration).getPassthroughProperties();
@@ -778,12 +765,12 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler, scheduledJobRecoveryService);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
-        scheduledConsumer.setMessageProvider(mockMessageProvider);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setConfiguration(consumerConfiguration);
 
@@ -797,7 +784,6 @@ public class ScheduledConsumerTest
     public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-        final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
         final String identifier = "testId";
         final RuntimeException rt = new RuntimeException("rt is thrown");
         
@@ -808,7 +794,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
 
-                exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
                 exactly(1).of(mockManagedResourceRecoveryManager).recover(rt);
                 // schedule the job
@@ -826,12 +812,12 @@ public class ScheduledConsumerTest
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
-        scheduledConsumer.setMessageProvider(mockMessageProvider);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         // test
@@ -843,8 +829,6 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-        final String identifier = "testId";
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
         final JobDataMap jobDataMap = new JobDataMap();
@@ -855,15 +839,6 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
-
-                // schedule the job
-                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(1).of(eventListener).invoke(mockFlowEvent);
 
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
@@ -897,13 +872,18 @@ public class ScheduledConsumerTest
                 // check if persistent recovery
                 exactly(1).of(consumerConfiguration).isPersistentRecovery();
                 will(returnValue(false));
+
+                // invocation
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(Boolean.TRUE));
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setJobDetail(jobDetail);
@@ -917,9 +897,6 @@ public class ScheduledConsumerTest
     @Test
     public void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager_existing_eagerTrigger() throws SchedulerException
     {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-        final String identifier = "testId";
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
         final JobDataMap jobDataMap = new JobDataMap();
@@ -931,15 +908,6 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
-
-                // schedule the job
-                exactly(1).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
-                will(returnValue(identifier));
-
-                exactly(1).of(flowEventFactory).newEvent(identifier,jobExecutionContext);
-                will(returnValue(mockFlowEvent));
-
-                exactly(1).of(eventListener).invoke(mockFlowEvent);
 
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
@@ -976,13 +944,18 @@ public class ScheduledConsumerTest
                 // check if persistent recovery
                 exactly(1).of(consumerConfiguration).isPersistentRecovery();
                 will(returnValue(false));
+
+                // invocation
+                exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
+                will(returnValue(Boolean.TRUE));
             }
         });
 
-        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setEventFactory(flowEventFactory);
         scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.setJobDetail(jobDetail);
@@ -998,17 +971,17 @@ public class ScheduledConsumerTest
      * @author Ikasan Development Team
      *
      */
-    private class StubbedScheduledConsumer extends ScheduledConsumer
+    private class StubbedCallBackScheduledConsumer extends CallBackScheduledConsumer
     {
         Set<Trigger> triggers;
         boolean replace;
 
-        protected StubbedScheduledConsumer(Scheduler scheduler)
+        protected StubbedCallBackScheduledConsumer(Scheduler scheduler)
         {
             super(scheduler);
         }
 
-        protected StubbedScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
+        protected StubbedCallBackScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
         {
             super(scheduler, scheduledJobRecoveryService);
         }

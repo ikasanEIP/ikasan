@@ -44,9 +44,7 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import org.ikasan.spec.configuration.IsValidationAware;
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 
 /**
  * Scheduled consumer configuration bean.
@@ -66,6 +64,9 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
 
     /** cron based expression for this schedule */
     private String cronExpression;
+
+    /** allow multiple cron based expressions for this schedule */
+    private List<String> cronExpressions = new ArrayList<>();
 
     /** whether to ignore a misfire - default true */
     private boolean ignoreMisfire = true;
@@ -195,12 +196,38 @@ public class ScheduledConsumerConfiguration implements IsValidationAware
         this.persistentRecovery = persistentRecovery;
     }
 
+    public List<String> getCronExpressions()
+    {
+        return cronExpressions;
+    }
+
+    public List<String> getConsolidatedCronExpressions()
+    {
+        List<String> allCronExpressions = new ArrayList<String>(cronExpressions.size() + 1);
+        if(cronExpression != null)
+        {
+            allCronExpressions.add(cronExpression);
+        }
+
+        for(String expression:cronExpressions)
+        {
+            allCronExpressions.add(expression);
+        }
+
+        return allCronExpressions;
+    }
+
+    public void setCronExpressions(List<String> cronExpressions)
+    {
+        this.cronExpressions = cronExpressions;
+    }
+
     @Override
     public void validate() throws InvalidConfigurationException
     {
-        if(cronExpression == null)
+        if(getConsolidatedCronExpressions().size() == 0)
         {
-            throw new InvalidConfigurationException("Invalid cronExpression specified [" + cronExpression + "].");
+            throw new InvalidConfigurationException("At least one cronExpression must be specified.");
         }
     }
 }
