@@ -135,6 +135,9 @@ public class FileEventSchedulerJobFlowComponentFactory
     @Resource
     DryRunModeService dryRunModeService;
 
+    @Value("${agent.recovery.instance.active:false}")
+    boolean agentRecoveryActive;
+
     /**
      * Return an instance of a configured file consumer
      * @return
@@ -218,7 +221,7 @@ public class FileEventSchedulerJobFlowComponentFactory
      */
     public Filter getContextInstanceFilter() {
         ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
-        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService);
+        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
 
         contextInstanceFilter.setConfiguration(configuration);
 
