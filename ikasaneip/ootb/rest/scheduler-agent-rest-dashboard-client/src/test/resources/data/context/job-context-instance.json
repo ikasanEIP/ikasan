@@ -838,6 +838,186 @@
                 ]
               },
               {
+                "name": "CONTEXT--2017369407",
+                "description": null,
+                "timezone": null,
+                "jobDependencies": [
+                  {
+                    "jobIdentifier": "asset-control-scheduler-agent-1164721449",
+                    "logicalGrouping": {
+                      "logicalGrouping": {
+                        "logicalGrouping": null,
+                        "and": null,
+                        "or": [
+                          {
+                            "identifier": "asset-control-scheduler-agent--928291134",
+                            "logicalGrouping": null
+                          },
+                          {
+                            "identifier": "asset-control-scheduler-agent--928291133",
+                            "logicalGrouping": null
+                          }
+                        ],
+                        "not": null
+                      },
+                      "and": [
+                        {
+                          "identifier": "asset-control-scheduler-agent-1724676333_ScheduledJob_17:00:00",
+                          "logicalGrouping": null
+                        }
+                      ],
+                      "or": null,
+                      "not": null
+                    }
+                  }
+                ],
+                "contexts": null,
+                "contextDependencies": null,
+                "contextParameters": null,
+                "scheduledJobs": [
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "1164721449",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": null,
+                    "identifier": "asset-control-scheduler-agent-1164721449",
+                    "jobDescription": null
+                  },
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "1724676333_ScheduledJob_17:00:00",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": null,
+                    "identifier": "asset-control-scheduler-agent-1724676333_ScheduledJob_17:00:00",
+                    "jobDescription": null
+                  },
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "-928291134",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": null,
+                    "identifier": "asset-control-scheduler-agent--928291134",
+                    "jobDescription": null
+                  },
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "-928291133",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": null,
+                    "identifier": "asset-control-scheduler-agent--928291133",
+                    "jobDescription": null
+                  }
+                ],
+                "timeWindowStart": null,
+                "timeWindowEnd": null,
+                "jobLocks": null,
+                "id": "9a3488fe-8bc8-4ede-b805-7edb24a38540",
+                "createdDateTime": 1654145068781,
+                "updatedDateTime": 1654145068781,
+                "startTime": 0,
+                "endTime": 0,
+                "status": "WAITING",
+                "heldJobs": {},
+                "allSchedulerJobInstances": [
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "1164721449",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": "CONTEXT--2017369407",
+                    "identifier": "asset-control-scheduler-agent-1164721449",
+                    "jobDescription": null
+                  },
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "1724676333_ScheduledJob_17:00:00",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": "CONTEXT--2017369407",
+                    "identifier": "asset-control-scheduler-agent-1724676333_ScheduledJob_17:00:00",
+                    "jobDescription": null
+                  },
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "-928291134",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": "CONTEXT--2017369407",
+                    "identifier": "asset-control-scheduler-agent--928291134",
+                    "jobDescription": null
+                  },
+                  {
+                    "agentName": "asset-control-scheduler-agent",
+                    "jobName": "-928291133",
+                    "contextId": null,
+                    "childContextIds": null,
+                    "startupControlType": "AUTOMATIC",
+                    "contextInstanceId": null,
+                    "held": false,
+                    "skip": false,
+                    "initiationEventRaised": false,
+                    "status": "WAITING",
+                    "scheduledProcessEvent": null,
+                    "childContextName": "CONTEXT--2017369407",
+                    "identifier": "asset-control-scheduler-agent--928291133",
+                    "jobDescription": null
+                  }
+                ]
+              },
+              {
                 "name": "CONTEXT--1405621029",
                 "description": null,
                 "timezone": null,
