@@ -1,7 +1,6 @@
 package org.ikasan.spec.scheduled.notification.model;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
 
 public interface EmailNotificationDetails extends Serializable {
@@ -9,6 +8,10 @@ public interface EmailNotificationDetails extends Serializable {
     String getJobName();
 
     void setJobName(String jobName);
+
+    String getContextName();
+
+    void setContextName(String contextName);
 
     String getMonitorType();
 
@@ -50,15 +53,4 @@ public interface EmailNotificationDetails extends Serializable {
 
     void setHtml(boolean html);
 
-    long getTimestampLong();
-
-    void setTimestampLong(long timestampLong);
-
-    long getExpiryLong();
-
-    void setExpiryLong(long expiryLong);
-
-    Date getTimestamp();
-
-    Date getExpiry();
 }
