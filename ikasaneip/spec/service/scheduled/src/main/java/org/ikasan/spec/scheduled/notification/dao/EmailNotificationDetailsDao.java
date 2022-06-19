@@ -8,7 +8,7 @@ public interface EmailNotificationDetailsDao<T> {
 
     SearchResults<T> findAll(int limit, int offset);
 
-    T findByJobNameAndMonitorType(String jobName, String monitorType);
+    T findByJobNameAndMonitorType(String jobName, String contextName, String monitorType);
 
     void save(T var1);
 
