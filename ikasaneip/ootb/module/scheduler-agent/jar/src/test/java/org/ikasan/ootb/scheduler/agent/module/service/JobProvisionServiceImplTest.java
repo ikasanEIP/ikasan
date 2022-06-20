@@ -11,6 +11,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -88,6 +89,14 @@ public class JobProvisionServiceImplTest {
     @Mock FileAgeFilterConfiguration fileAgeFilterConfiguration;
 
     @Mock
+    private FlowElement duplicateMessageFilterElement;
+
+    @Mock
+    private ConfiguredResource<SchedulerFileFilterConfiguration> duplicateMessageFilter;
+
+    @Mock SchedulerFileFilterConfiguration schedulerFileFilterConfiguration;
+
+    @Mock
     private FlowElement moveFileBrokerElement;
 
     @Mock
@@ -136,6 +145,9 @@ public class JobProvisionServiceImplTest {
         when(flow.getFlowElement("Context Instance Active Filter")).thenReturn(contextFilterElement);
         when(contextFilterElement.getFlowComponent()).thenReturn(contextFilter);
         when(contextFilter.getConfiguration()).thenReturn(contextFilterConfiguration);
+        when(flow.getFlowElement("Duplicate Message Filter")).thenReturn(duplicateMessageFilterElement);
+        when(duplicateMessageFilterElement.getFlowComponent()).thenReturn(duplicateMessageFilter);
+        when(duplicateMessageFilter.getConfiguration()).thenReturn(schedulerFileFilterConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
 
 
@@ -181,6 +193,8 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
 
         verify(contextFilterConfiguration, times(2)).setContextName(anyString());
+
+        verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
 
         verify(converterConfiguration, times(2)).setContextId(anyString());
         verify(converterConfiguration, times(2)).setChildContextIds(anyList());
