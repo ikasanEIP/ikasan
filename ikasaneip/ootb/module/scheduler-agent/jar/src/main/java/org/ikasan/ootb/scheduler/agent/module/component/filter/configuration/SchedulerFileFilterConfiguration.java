@@ -1,17 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter.configuration;
 
-public class ContextInstanceFilterConfiguration {
+public class SchedulerFileFilterConfiguration {
 
-    private String contextName;
     private String jobName;
-
-    public String getContextName() {
-        return contextName;
-    }
-
-    public void setContextName(String contextName) {
-        this.contextName = contextName;
-    }
 
     public String getJobName() {
         return jobName;

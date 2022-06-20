@@ -13,6 +13,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -215,8 +216,17 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         FileAgeFilterConfiguration filterConfiguration = filter.getConfiguration();
         filterConfiguration.setFileAgeSeconds(((FileEventDrivenJob) job).getMinFileAgeSeconds());
+        filterConfiguration.setJobName(job.getJobName());
 
         this.configurationService.update(filter);
+
+        ConfiguredResource<SchedulerFileFilterConfiguration> schedulerFileFilterConfigurationConfiguredResource = (ConfiguredResource<SchedulerFileFilterConfiguration>)flow
+            .getFlowElement("Duplicate Message Filter").getFlowComponent();
+
+        SchedulerFileFilterConfiguration schedulerFileFilterConfiguration = schedulerFileFilterConfigurationConfiguredResource.getConfiguration();
+        schedulerFileFilterConfiguration.setJobName(job.getJobName());
+
+        this.configurationService.update(schedulerFileFilterConfigurationConfiguredResource);
 
 
         ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
@@ -234,7 +244,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
         moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob) job).getMoveDirectory());
 
-        this.configurationService.update(filter);
+        this.configurationService.update(broker);
     }
 
     /**
