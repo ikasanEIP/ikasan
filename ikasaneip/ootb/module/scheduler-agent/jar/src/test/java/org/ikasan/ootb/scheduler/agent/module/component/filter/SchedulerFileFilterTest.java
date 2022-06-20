@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,9 +37,13 @@ public class SchedulerFileFilterTest {
     @Test
     public void test_filter_accept_success_not_dry_run() {
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         when(isDuplicateFilterRule.accept(any(Object.class))).thenReturn(true);
 
         SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
+        configuration.setJobName("jobName");
+        filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
         List<File> results = filter.filter(files);
@@ -49,9 +54,13 @@ public class SchedulerFileFilterTest {
     @Test
     public void test_filter_filter_success_not_dry_run() {
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         when(isDuplicateFilterRule.accept(any(Object.class))).thenReturn(false);
 
         SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
+        configuration.setJobName("jobName");
+        filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
         List<File> results = filter.filter(files);
@@ -64,6 +73,25 @@ public class SchedulerFileFilterTest {
         when(dryRunModeService.getDryRunMode()).thenReturn(true);
 
         SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
+        configuration.setJobName("jobName");
+        filter.setConfiguration(configuration);
+        List<File> files = List.of(new File("."));
+
+        List<File> results = filter.filter(files);
+
+        Assert.assertNotNull(results);
+    }
+
+    @Test
+    public void test_filter_accept_success_job_dry_run() {
+        when(dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(true);
+
+        SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
+        configuration.setJobName("jobName");
+        filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
         List<File> results = filter.filter(files);

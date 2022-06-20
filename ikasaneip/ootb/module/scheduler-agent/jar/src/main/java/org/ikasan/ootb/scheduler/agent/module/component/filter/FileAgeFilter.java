@@ -38,7 +38,7 @@ public class FileAgeFilter implements Filter<List<File>>, ConfiguredResource<Fil
 
             logger.info("Received multiple files {}. Expecting only one.", filenames.toString());
         }
-        if(dryRunModeService.getDryRunMode()) {
+        if(this.dryRunModeService.getDryRunMode() || this.dryRunModeService.isJobDryRun(this.configuration.getJobName())) {
             return files;
         }
         else if(files.get(0).lastModified() < System.currentTimeMillis() - (this.configuration.getFileAgeSeconds() * 1000)) {
