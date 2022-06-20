@@ -12,6 +12,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import java.io.File;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -38,8 +39,10 @@ public class FileAgeFilterTest {
     public void test_filter_accept_success() {
         when(this.file.lastModified()).thenReturn(System.currentTimeMillis() - 50000);
         when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
         configuration.setFileAgeSeconds(30);
+        configuration.setJobName("jobName");
 
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
@@ -50,9 +53,10 @@ public class FileAgeFilterTest {
     @Test
     public void test_filter_accept_success_multiple_files() {
         when(file.lastModified()).thenReturn(System.currentTimeMillis() - 50000);
-        when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
         configuration.setFileAgeSeconds(30);
+        configuration.setJobName("jobName");
 
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
@@ -64,8 +68,10 @@ public class FileAgeFilterTest {
     public void test_filter_filter_success() {
         when(file.lastModified()).thenReturn(System.currentTimeMillis());
         when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
         configuration.setFileAgeSeconds(30);
+        configuration.setJobName("jobName");
 
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
@@ -77,12 +83,41 @@ public class FileAgeFilterTest {
     public void test_filter_filter_success_multiple_files() {
         when(file.lastModified()).thenReturn(System.currentTimeMillis());
         when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
         configuration.setFileAgeSeconds(30);
+        configuration.setJobName("jobName");
 
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
         Assert.assertNull(fileAgeFilter.filter(List.of(file, file)));
+    }
+
+    @Test
+    public void test_filter_dry_run_success() {
+        when(this.dryRunModeService.getDryRunMode()).thenReturn(true);
+        FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
+        configuration.setFileAgeSeconds(30);
+        configuration.setJobName("jobName");
+
+        FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
+        fileAgeFilter.setConfiguration(configuration);
+
+        Assert.assertNotNull(fileAgeFilter.filter(List.of(file)));
+    }
+
+    @Test
+    public void test_filter_job_dry_run_success() {
+        when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(true);
+        FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
+        configuration.setFileAgeSeconds(30);
+        configuration.setJobName("jobName");
+
+        FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
+        fileAgeFilter.setConfiguration(configuration);
+
+        Assert.assertNotNull(fileAgeFilter.filter(List.of(file)));
     }
 }

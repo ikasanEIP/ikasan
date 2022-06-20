@@ -11,4 +11,8 @@ public interface DryRunModeService<T> {
     void addDryRunFileList(List<T> dryRunFileList);
 
     String getJobFileName(String jobFileName);
+
+    void setJobDryRun(String jobName, boolean isDryRun);
+
+    boolean isJobDryRun(String jobName);
 }

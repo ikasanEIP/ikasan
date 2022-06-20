@@ -11,6 +11,7 @@ import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunModeDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.JobDryRunModeDto;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -88,6 +89,50 @@ public class DryRunSchedulerApplicationTest {
             .andExpect(status().isOk());
 
         verify(dryRunModeService).setDryRunMode(true);
+    }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
+    public void jobDryRunModeWithReadOnlyUser() throws Exception {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+        DryRunModeDto dryRunParameterDto = new DryRunModeDto();
+        dryRunParameterDto.setDryRunMode(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/rest/dryRun/jobmode")
+            .content(mapper.writeValueAsString(dryRunParameterDto))
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)).andReturn();
+
+        verifyNoInteractions(dryRunModeService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void shouldAcceptJobDryRunMode() throws Exception {
+
+        JobDryRunModeDto dryRunParameterDto = new JobDryRunModeDto();
+        dryRunParameterDto.setIsDryRun(true);
+        dryRunParameterDto.setJobName("jobName");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/rest/dryRun/jobmode")
+            .content(mapper.writeValueAsString(dryRunParameterDto))
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(dryRunModeService).setJobDryRun("jobName", true);
+
+        dryRunParameterDto = new JobDryRunModeDto();
+        dryRunParameterDto.setIsDryRun(false);
+        dryRunParameterDto.setJobName("jobName");
+
+        mockMvc.perform(MockMvcRequestBuilders.put("/rest/dryRun/jobmode")
+            .content(mapper.writeValueAsString(dryRunParameterDto))
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk());
+
+        verify(dryRunModeService).setJobDryRun("jobName", false);
     }
 
     @Test

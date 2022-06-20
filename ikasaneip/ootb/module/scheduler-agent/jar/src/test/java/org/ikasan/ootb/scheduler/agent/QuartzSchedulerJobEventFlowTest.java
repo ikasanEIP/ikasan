@@ -40,21 +40,9 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
-import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.quartz.TriggerBuilder.newTrigger;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
-import javax.annotation.Resource;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.leansoft.bigqueue.IBigQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -79,7 +67,10 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -87,9 +78,19 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.leansoft.bigqueue.IBigQueue;
+import javax.annotation.Resource;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.with;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -101,12 +102,15 @@ import com.leansoft.bigqueue.IBigQueue;
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestConfiguration.class})
-public class ApplicationTest {
+public class QuartzSchedulerJobEventFlowTest {
     @Resource
     private Module<Flow> moduleUnderTest;
 
     @Resource
     private IBigQueue outboundQueue;
+
+    @Resource
+    private DryRunModeService dryRunModeService;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
 
@@ -130,75 +134,61 @@ public class ApplicationTest {
         outboundQueue.removeAll();
     }
 
-    /**
-     * Test simple invocation.
-     */
     @Test
     @DirtiesContext
-    public void test_create_module_start_and_stop_flow() throws Exception {
-        Flow flow = moduleUnderTest.getFlow("Scheduler Flow 3");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
+    public void test_quartz_flow_success() throws IOException {
+        String contextName = createContextAndPutInCache();
 
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        flow = moduleUnderTest.getFlow("Scheduler Flow 1");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
 
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-
-        flow = moduleUnderTest.getFlow("Scheduler Flow 4");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
-
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-
-        flow = moduleUnderTest.getFlow("Scheduler Flow 2");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
-
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-
-        flow = moduleUnderTest.getFlow("Scheduled Process Event Outbound Flow");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
-
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-
-        flow = moduleUnderTest.getFlow("Housekeep Log Files Flow");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
-
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_housekeep_flow_success() throws IOException {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Housekeep Log Files Flow"));
         flowTestRule.consumer("Scheduled Consumer")
-            .producer("Log Files Process");
-
-        HousekeepLogFilesProcessConfiguration configuration = flowTestRule
-            .getComponentConfig("Log Files Process", HousekeepLogFilesProcessConfiguration.class);
-        configuration.setLogFolder("./logs");
+            .filter("Context Instance Active Filter")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_recovery_context_instance_not_found() {
+        // do not put context instance in cache
+        String contextName = RandomStringUtils.randomAlphabetic(10);
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
 
         assertEquals(0, outboundQueue.size());
 
@@ -208,5 +198,13 @@ public class ApplicationTest {
     @After
     public void teardown() {
         // post-test teardown
+    }
+
+    private String createContextAndPutInCache() {
+        String contextName = RandomStringUtils.randomAlphabetic(15);
+        ContextInstanceImpl instance = new ContextInstanceImpl();
+        instance.setName(contextName);
+        ContextInstanceCache.instance().put(contextName, instance);
+        return contextName;
     }
 }
