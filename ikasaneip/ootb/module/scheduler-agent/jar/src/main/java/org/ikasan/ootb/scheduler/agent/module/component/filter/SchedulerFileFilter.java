@@ -1,16 +1,21 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 
 import java.io.File;
 import java.util.List;
 
-public class SchedulerFileFilter implements Filter<List<File>> {
+public class SchedulerFileFilter implements Filter<List<File>>, ConfiguredResource<SchedulerFileFilterConfiguration> {
 
     private DryRunModeService dryRunModeService;
     private FilterRule filterRule;
+
+    private SchedulerFileFilterConfiguration configuration;
+    private String configurationId;
 
     /**
      * Constructor
@@ -30,7 +35,7 @@ public class SchedulerFileFilter implements Filter<List<File>> {
 
     @Override
     public List<File> filter(List<File> message) {
-        if(dryRunModeService.getDryRunMode()) {
+        if(this.dryRunModeService.getDryRunMode() || this.dryRunModeService.isJobDryRun(this.configuration.getJobName())) {
             return message;
         }
         else {
@@ -41,5 +46,25 @@ public class SchedulerFileFilter implements Filter<List<File>> {
                 return null;
             }
         }
+    }
+
+    @Override
+    public String getConfiguredResourceId() {
+        return this.configurationId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String id) {
+        this.configurationId = id;
+    }
+
+    @Override
+    public SchedulerFileFilterConfiguration getConfiguration() {
+        return this.configuration;
+    }
+
+    @Override
+    public void setConfiguration(SchedulerFileFilterConfiguration configuration) {
+        this.configuration = configuration;
     }
 }

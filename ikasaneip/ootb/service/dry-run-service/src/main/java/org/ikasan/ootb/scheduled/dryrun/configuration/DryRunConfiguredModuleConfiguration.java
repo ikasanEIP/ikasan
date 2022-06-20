@@ -42,8 +42,12 @@ package org.ikasan.ootb.scheduled.dryrun.configuration;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class DryRunConfiguredModuleConfiguration extends ConfiguredModuleConfiguration {
     private boolean dryRunMode = false;
+    private Map<String, String>  dryRunJobsMap = new HashMap<>();
 
     public boolean isDryRunMode() {
         return dryRunMode;
@@ -51,5 +55,13 @@ public class DryRunConfiguredModuleConfiguration extends ConfiguredModuleConfigu
 
     public void setDryRunMode(boolean dryRunMode) {
         this.dryRunMode = dryRunMode;
+    }
+
+    public Map<String, String> getDryRunJobsMap() {
+        return dryRunJobsMap;
+    }
+
+    public void setDryRunJobsMap(Map<String, String> dryRunJobsMap) {
+        this.dryRunJobsMap = dryRunJobsMap;
     }
 }
