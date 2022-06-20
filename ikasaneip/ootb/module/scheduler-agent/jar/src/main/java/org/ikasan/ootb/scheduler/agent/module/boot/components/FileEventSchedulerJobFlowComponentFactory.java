@@ -97,6 +97,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilt
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -194,7 +195,12 @@ public class FileEventSchedulerJobFlowComponentFactory
         IsDuplicateFilterRule isDuplicateFilterRule
             = new IsDuplicateFilterRule(duplicateFilterService, converter);
 
-        return new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
+
+        SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        filter.setConfiguration(configuration);
+
+        return filter;
     }
 
     /**

@@ -76,6 +76,32 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
         return fileName;
     }
 
+    @Override
+    public void setJobDryRun(String jobName, boolean isDryRun) {
+        ConfiguredResource<DryRunConfiguredModuleConfiguration> configureModule = getConfigureModule();
+        configureModule.getConfiguration().getDryRunJobsMap().put(jobName, Boolean.toString(isDryRun));
+
+        this.jobNameFileMap.put(jobName, "dryRun.txt");
+        configurationService.update(configureModule);
+    }
+
+    @Override
+    public boolean isJobDryRun(String jobName) {
+        String isDryRunFlag = this.getSchedulerAgentConfiguredModuleConfiguration().getDryRunJobsMap().get(jobName);
+
+        if(isDryRunFlag == null) {
+            return false;
+        }
+
+        try {
+            return Boolean.valueOf(isDryRunFlag);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     private DryRunConfiguredModuleConfiguration getSchedulerAgentConfiguredModuleConfiguration() {
         return getConfigureModule().getConfiguration();
     }

@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunModeDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.JobDryRunModeDto;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,6 +70,20 @@ public class DryRunSchedulerApplication {
             e.printStackTrace();
             return new ResponseEntity(
                 new ErrorDto("An error has occurred attempting to set dry run mode! Error message ["
+                    + e.getMessage() + "]"), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(path = "/jobmode", method = RequestMethod.PUT)
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity setJobDryRunMode(@RequestBody JobDryRunModeDto jobDryRunDto) {
+        try {
+            dryRunModeService.setJobDryRun(jobDryRunDto.getJobName(), jobDryRunDto.isDryRun());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity(
+                new ErrorDto("An error has occurred attempting to set the job dry run mode! Error message ["
                     + e.getMessage() + "]"), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
