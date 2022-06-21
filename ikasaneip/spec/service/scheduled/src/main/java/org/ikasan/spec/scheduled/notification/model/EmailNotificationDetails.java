@@ -17,6 +17,10 @@ public interface EmailNotificationDetails extends Serializable {
 
     void setMonitorType(String monitorType);
 
+    List<String> getEmailNotificationTemplateParameters();
+
+    void setEmailNotificationTemplateParameters(List<String> emailNotificationTemplateParameters);
+
     List<String> getEmailSendTo();
 
     void setEmailSendTo(List<String> emailSendTo);
