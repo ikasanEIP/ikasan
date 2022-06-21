@@ -2,6 +2,7 @@ package org.ikasan.spec.scheduled.notification.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface EmailNotificationDetails extends Serializable {
 
@@ -17,9 +18,9 @@ public interface EmailNotificationDetails extends Serializable {
 
     void setMonitorType(String monitorType);
 
-    List<String> getEmailNotificationTemplateParameters();
+    Map<String,String> getEmailNotificationTemplateParameters();
 
-    void setEmailNotificationTemplateParameters(List<String> emailNotificationTemplateParameters);
+    void setEmailNotificationTemplateParameters(Map<String,String> emailNotificationTemplateParameters);
 
     List<String> getEmailSendTo();
 
