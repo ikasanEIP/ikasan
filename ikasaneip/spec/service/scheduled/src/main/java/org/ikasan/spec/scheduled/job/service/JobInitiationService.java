@@ -1,10 +1,6 @@
 package org.ikasan.spec.scheduled.job.service;
 
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
-import org.quartz.Trigger;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface JobInitiationService {
 
@@ -16,4 +12,22 @@ public interface JobInitiationService {
      * @return
      */
     void raiseSchedulerJobInitiationEvent(String contextUrl, SchedulerJobInitiationEvent event);
+
+    /**
+     * Raise a quartz event scheduler job.
+     *
+     * @param contextUrl
+     * @param agentName
+     * @param jobName
+     */
+    void raiseQuartzSchedulerJob(String contextUrl, String agentName, String jobName);
+
+    /**
+     * Raise a file event scheduler job.
+     *
+     * @param contextUrl
+     * @param agentName
+     * @param jobName
+     */
+    void raiseFileEventSchedulerJob(String contextUrl, String agentName, String jobName);
 }
