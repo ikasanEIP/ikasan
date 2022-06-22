@@ -45,6 +45,8 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunModeDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.JobDryRunModeDto;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -58,6 +60,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class DryRunSchedulerApplication {
 
+    private Logger logger = LoggerFactory.getLogger(DryRunSchedulerApplication.class);
+
     @Autowired
     private DryRunModeService dryRunModeService;
 
@@ -65,6 +69,7 @@ public class DryRunSchedulerApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity setDryRunMode(@RequestBody DryRunModeDto dryRunDto) {
         try {
+            logger.info("Setting dry run mode[{}]!", dryRunDto);
             dryRunModeService.setDryRunMode(dryRunDto.getDryRunMode());
         } catch (Exception e) {
             e.printStackTrace();
@@ -79,6 +84,7 @@ public class DryRunSchedulerApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity setJobDryRunMode(@RequestBody JobDryRunModeDto jobDryRunDto) {
         try {
+            logger.info("Setting job dry run mode[{}]!", jobDryRunDto);
             dryRunModeService.setJobDryRun(jobDryRunDto.getJobName(), jobDryRunDto.isDryRun());
         } catch (Exception e) {
             e.printStackTrace();
@@ -93,6 +99,7 @@ public class DryRunSchedulerApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity exerciseDryRunModeWith(@RequestBody DryRunFileListParameterDto dryRunFileListParameterDto) {
         try {
+            logger.info("Setting dry run mode with file list[{}]!", dryRunFileListParameterDto);
             dryRunModeService.addDryRunFileList(dryRunFileListParameterDto.getFileList());
         } catch (Exception e) {
             e.printStackTrace();

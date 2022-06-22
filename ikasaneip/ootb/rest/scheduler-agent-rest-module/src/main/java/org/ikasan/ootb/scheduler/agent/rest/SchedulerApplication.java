@@ -121,7 +121,6 @@ public class SchedulerApplication
                         HttpStatus.BAD_REQUEST
                     );
                 }
-
                 FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
                 FlowElement<Consumer> flowConfigurationConsumerFlowElement = flowConfiguration.getConsumerFlowElement();
                 if (flowConfigurationConsumerFlowElement != null && flowConfigurationConsumerFlowElement.getFlowComponent() != null)
@@ -129,6 +128,7 @@ public class SchedulerApplication
                     Consumer consumer = resolveProxiedComponent( flowConfigurationConsumerFlowElement.getFlowComponent());
                     if (consumer instanceof ScheduledConsumer)
                     {
+                        logger.info("Triggering module[{}], flow[{}] now!", moduleName, flowName);
                         ScheduledConsumer scheduledConsumer = (ScheduledConsumer) consumer;
                         JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
                         Trigger trigger = newTrigger()
