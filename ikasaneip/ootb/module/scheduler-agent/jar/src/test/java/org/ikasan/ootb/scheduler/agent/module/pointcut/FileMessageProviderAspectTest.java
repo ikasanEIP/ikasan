@@ -27,13 +27,24 @@ public class FileMessageProviderAspectTest {
 
     @Test
     public void shouldRunProceedingJoinPointIfNotInDryRunMode() throws Throwable {
+
+        JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
+        Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
+        context.setTrigger(trigger);
+        Object[] args = {context};
+
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun("Job Name")).thenReturn(false);
+        when(proceedingJoinPoint.getArgs()).thenReturn(args);
 
         fileMessageProviderAspect.fileMessageProviderInvoke(proceedingJoinPoint);
 
-        verify(dryRunModeService).getDryRunMode();
+        verify(dryRunModeService, times(2)).getDryRunMode();
+        verify(dryRunModeService, times(2)).isJobDryRun("Job Name");
+        verify(proceedingJoinPoint).getArgs();
         verify(proceedingJoinPoint, times(1)).proceed();
         verifyNoMoreInteractions(proceedingJoinPoint);
+        verifyNoMoreInteractions(dryRunModeService);
     }
 
     @Test
@@ -48,8 +59,30 @@ public class FileMessageProviderAspectTest {
 
         fileMessageProviderAspect.fileMessageProviderInvoke(proceedingJoinPoint);
 
-        verify(dryRunModeService).getDryRunMode();
-        verify(proceedingJoinPoint).getArgs();
+        verify(dryRunModeService, times(2)).getDryRunMode();
+        verify(proceedingJoinPoint, times(2)).getArgs();
         verifyNoMoreInteractions(proceedingJoinPoint);
+    }
+
+    @Test
+    public void shouldRunProceedingJoinPointInJobDryRunMode() throws Throwable {
+        JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
+        Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
+        context.setTrigger(trigger);
+        Object[] args = {context};
+
+        when(dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(dryRunModeService.isJobDryRun("Job Name")).thenReturn(true);
+        when(dryRunModeService.getJobFileName(any(String.class))).thenReturn("filename");
+        when(proceedingJoinPoint.getArgs()).thenReturn(args);
+
+        fileMessageProviderAspect.fileMessageProviderInvoke(proceedingJoinPoint);
+
+        verify(dryRunModeService, times(2)).getDryRunMode();
+        verify(dryRunModeService, times(2)).isJobDryRun("Job Name");
+        verify(dryRunModeService, times(1)).getJobFileName(any(String.class));
+        verify(proceedingJoinPoint, times(2)).getArgs();
+        verifyNoMoreInteractions(proceedingJoinPoint);
+        verifyNoMoreInteractions(dryRunModeService);
     }
 }

@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -165,6 +166,32 @@ public class DryRunModeServiceImplTest {
     @Test
     public void shouldReturnNullIfJobNameNotInMap() {
         assertNull(service.getJobFileName("any"));
+    }
+
+    @Test
+    public void shouldSetAndSaveJobDryRunMode() throws Exception {
+        when(moduleService.getModule("scheduler-agent")).thenReturn(module);
+        when(module.getConfiguration()).thenReturn(configureModule);
+        when(configureModule.getDryRunJobsMap()).thenReturn(new HashMap<>());
+
+        service.setJobDryRun("jobName", true);
+
+        verify(moduleService).getModule("scheduler-agent");
+        verify(module).getConfiguration();
+        verify(configureModule).getDryRunJobsMap();
+        verify(configurationService).update(any(ConfiguredResource.class));
+    }
+
+    @Test
+    public void shouldReturnJobDryRunMode() {
+        HashMap<String, String> jobHashMap = new HashMap<>();
+        jobHashMap.put("test", "true");
+
+        when(moduleService.getModule("scheduler-agent")).thenReturn(module);
+        when(module.getConfiguration()).thenReturn(configureModule);
+        when(configureModule.getDryRunJobsMap()).thenReturn(jobHashMap);
+
+        assertTrue(service.isJobDryRun("test"));
     }
 
     private DryRunFileListJobParameterDto createFileListJob(String jobName, String fileName) {
