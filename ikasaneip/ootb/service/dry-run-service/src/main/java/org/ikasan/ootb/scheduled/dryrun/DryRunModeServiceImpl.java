@@ -81,7 +81,10 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
         ConfiguredResource<DryRunConfiguredModuleConfiguration> configureModule = getConfigureModule();
         configureModule.getConfiguration().getDryRunJobsMap().put(jobName, Boolean.toString(isDryRun));
 
-        this.jobNameFileMap.put(jobName, "dryRun.txt");
+        if(isDryRun) {
+            this.jobNameFileMap.put(jobName, "dryRun.txt");
+        }
+
         configurationService.update(configureModule);
     }
 

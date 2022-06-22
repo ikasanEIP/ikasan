@@ -307,6 +307,9 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.sleep(2000);
 
+        dryRunModeService.setDryRunMode(false);
+        dryRunModeService.setJobDryRun("Scheduler Flow 2", true);
+
         flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(2000);
