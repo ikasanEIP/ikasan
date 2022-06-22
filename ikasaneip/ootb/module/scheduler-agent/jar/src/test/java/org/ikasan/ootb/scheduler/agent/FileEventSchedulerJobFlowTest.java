@@ -400,7 +400,7 @@ public class FileEventSchedulerJobFlowTest {
 
         List<File> files = fileMessageProvider.invoke(context);
         assertEquals(1, files.size());
-        assertEquals("/my/bogus/file3.txt", files.get(0));
+        assertEquals("/my/bogus/file3.txt", files.get(0).getAbsolutePath());
 
         dryRunModeService.setDryRunMode(false);
     }

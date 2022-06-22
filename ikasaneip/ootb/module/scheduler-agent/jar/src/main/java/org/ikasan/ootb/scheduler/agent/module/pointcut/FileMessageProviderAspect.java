@@ -41,6 +41,7 @@
 
 package org.ikasan.ootb.scheduler.agent.module.pointcut;
 
+import java.io.File;
 import java.util.List;
 
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -65,10 +66,9 @@ public class FileMessageProviderAspect {
         JobExecutionContext jobExecutionContext = (JobExecutionContext) joinPoint.getArgs()[0];
         String jobName = jobExecutionContext.getTrigger().getKey().getName();
 
-        LOGGER.info("Determining whether to intercept join point. JobName[{}], dryRunModeService.getDryRunMode()[{}], " +
-            "dryRunModeService.isJobDryRun(jobName)[{}]", jobName, dryRunModeService.getDryRunMode(), dryRunModeService.isJobDryRun(jobName));
-
         if (dryRunModeService.getDryRunMode() || dryRunModeService.isJobDryRun(jobName)) {
+            LOGGER.info("Determined to intercept join point. JobName[{}], dryRunModeService.getDryRunMode()[{}], " +
+                "dryRunModeService.isJobDryRun(jobName)[{}]", jobName, dryRunModeService.getDryRunMode(), dryRunModeService.isJobDryRun(jobName));
             return intercept(joinPoint);
         } else {
             return joinPoint.proceed();
@@ -82,6 +82,6 @@ public class FileMessageProviderAspect {
         String dryRunFileName = dryRunModeService.getJobFileName(jobName);
         String message = "In dry run mode intercepting FileMessageProvider.invoke() for file name: " + dryRunFileName;
         LOGGER.info(message);
-        return dryRunFileName == null ? null : List.of(dryRunFileName);
+        return dryRunFileName == null ? null : List.of(new File(dryRunFileName));
     }
 }

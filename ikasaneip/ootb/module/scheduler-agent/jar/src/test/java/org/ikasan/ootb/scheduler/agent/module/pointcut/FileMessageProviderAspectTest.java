@@ -39,8 +39,8 @@ public class FileMessageProviderAspectTest {
 
         fileMessageProviderAspect.fileMessageProviderInvoke(proceedingJoinPoint);
 
-        verify(dryRunModeService, times(2)).getDryRunMode();
-        verify(dryRunModeService, times(2)).isJobDryRun("Job Name");
+        verify(dryRunModeService, times(1)).getDryRunMode();
+        verify(dryRunModeService, times(1)).isJobDryRun("Job Name");
         verify(proceedingJoinPoint).getArgs();
         verify(proceedingJoinPoint, times(1)).proceed();
         verifyNoMoreInteractions(proceedingJoinPoint);
