@@ -243,6 +243,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
         moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob) job).getMoveDirectory());
+        moveFileBrokerConfiguration.setJobName(job.getJobName());
 
         this.configurationService.update(broker);
     }
