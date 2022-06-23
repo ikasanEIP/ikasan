@@ -29,7 +29,7 @@ public class MoveFileBroker implements Broker<List<File>, List<File>>, Configure
 
     @Override
     public List<File> invoke(List<File> files) throws EndpointException {
-        if(dryRunModeService.getDryRunMode() || configuration.getMoveDirectory() == null) {
+        if(dryRunModeService.getDryRunMode() || dryRunModeService.isJobDryRun(configuration.getJobName()) || configuration.getMoveDirectory() == null) {
             return files;
         }
 
