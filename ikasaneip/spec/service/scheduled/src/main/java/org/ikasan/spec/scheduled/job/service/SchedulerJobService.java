@@ -72,6 +72,20 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void deleteByAgentName(String agentName);
 
     /**
+     * Delete all jobs associated with a context
+     *
+     * @param contextName
+     */
+    void deleteByContextName(String contextName);
+
+    /**
+     * Save a list of jobs
+     *
+     * @param records
+     */
+    void save(List<SchedulerJob> records);
+
+    /**
      * Save a FileEventDrivenJobRecord
      * @param fileEventDrivenJobRecord
      */
