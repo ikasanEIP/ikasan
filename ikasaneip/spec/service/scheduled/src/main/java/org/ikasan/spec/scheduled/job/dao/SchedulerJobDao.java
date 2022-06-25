@@ -20,6 +20,8 @@ public interface SchedulerJobDao<T extends SchedulerJobRecord> {
 
     void delete(T record);
 
+    void deleteByContextName(String contextName);
+
     void deleteByAgentName(String agentName);
 
     void save(T record);
