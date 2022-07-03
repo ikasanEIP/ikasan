@@ -12,6 +12,10 @@ public interface NotificationSendAudit extends Serializable {
 
     void setContextInstanceId(String contextInstanceId);
 
+    String getContextName();
+
+    void setContextName(String contextName);
+
     String getMonitorType();
 
     void setMonitorType(String monitorType);
