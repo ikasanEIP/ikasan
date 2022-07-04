@@ -32,23 +32,26 @@ public class MonitoringFileServiceTest {
     }
 
     @After
-    public void tearDown() throws IOException {
+    public void tearDown() throws Exception {
         FileUtils.forceDelete(new File(sampleLogFileStr));
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) ReflectionTestUtils.getField(service, "executorService");
         tpe.shutdownNow();
+        Thread.sleep(100);
     }
 
     @Test
-    public void shouldReturnEmitter() throws IOException {
+    public void shouldReturnEmitter() throws Exception {
         assertNotNull(service.addMonitoringFileService(sampleLogFileStr));
+        Thread.sleep(100);
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) ReflectionTestUtils.getField(service, "executorService");
         assertEquals(tpe.getActiveCount(), 1);
     }
 
     @Test
-    public void shouldThrowExceptionIfExceedsMaxStreamThreads() throws IOException {
+    public void shouldThrowExceptionIfExceedsMaxStreamThreads() throws Exception {
         service.addMonitoringFileService(sampleLogFileStr);
         try {
+            Thread.sleep(100);
             service.addMonitoringFileService(sampleLogFileStr);
             fail("should not get here");
         } catch (MaxThreadException e) {

@@ -33,12 +33,19 @@ public class ContextInstanceCache {
     }
 
     public void remove(String contextName) {
+        if (contextName == null) {
+            return;
+        }
         LOG.info(String.format("Removing context instance [%s]", contextName));
         this.contextInstanceMap.remove(contextName);
     }
 
     public ContextInstance getByContextName(String contextName) {
-        LOG.info(String.format("Getting context parameters for context name [%s]", contextName));
-        return this.contextInstanceMap.get(contextName);
+        if (contextName != null) {
+            LOG.info(String.format("Getting context parameters for context name [%s]", contextName));
+            return this.contextInstanceMap.get(contextName);
+        } else {
+            return null;
+        }
     }
 }
