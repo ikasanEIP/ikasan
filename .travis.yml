@@ -43,7 +43,7 @@ deploy:
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
-      branch: IKASAN-2119_export_import_contexts_core_v1
+      branch: IKASAN-2121_big_queue_management_core_v1
   # Push release to oss
   - provider: script
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
