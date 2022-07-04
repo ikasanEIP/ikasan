@@ -46,7 +46,6 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;

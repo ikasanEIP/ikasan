@@ -82,7 +82,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
-import org.ikasan.component.endpoint.bigqueue.serialiser.SimpleStringSerialiser;
+import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessagePayloadToStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventRestProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -91,7 +91,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 /**
  * Scheduled process event outbound flow component factory.
@@ -110,8 +109,9 @@ public class ScheduledProcessEventOutboundFlowComponentFactory
     @Resource
     DashboardRestService scheduleProcessEventDashboardRestService;
 
-    public Consumer getOutboundBigQueueConsumer() throws IOException {
-        BigQueueConsumer consumer = new BigQueueConsumer(outboundQueue, new SimpleStringSerialiser(), true);
+    public Consumer getOutboundBigQueueConsumer() {
+        BigQueueConsumer consumer = new BigQueueConsumer(outboundQueue, true);
+        consumer.setSerialiser(new BigQueueMessagePayloadToStringSerialiser());
         return consumer;
     }
 
