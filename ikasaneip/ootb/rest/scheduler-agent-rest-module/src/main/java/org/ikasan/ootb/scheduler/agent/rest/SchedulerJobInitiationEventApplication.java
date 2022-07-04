@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
+import org.ikasan.spec.bigqueue.BigQueueMessage;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
@@ -21,10 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Module application implementing the REST contract
@@ -60,13 +59,30 @@ public class SchedulerJobInitiationEventApplication
             logger.info("Received - {}", schedulerJobInitiationEvent);
             String queueName = schedulerJobInitiationEvent.getAgentName()+"-"+schedulerJobInitiationEvent.getJobName()+"-inbound-queue";
             IBigQueue inboundQueue = InboundJobQueueCache.instance().get(queueName);
-            inboundQueue.enqueue(mapper.writeValueAsBytes(schedulerJobInitiationEvent));
+
+            BigQueueMessage bigQueueMessage = new BigQueueMessageBuilder()
+                .withMessage(schedulerJobInitiationEvent)
+                .withMessageProperties(getProperties(schedulerJobInitiationEvent))
+                .build();
+
+            inboundQueue.enqueue(mapper.writeValueAsBytes(bigQueueMessage));
         }
         catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    private Map<String, String> getProperties(SchedulerJobInitiationEventDto schedulerJobInitiationEvent) {
+        Map<String, String> properties = new HashMap<>();
+        if (schedulerJobInitiationEvent.getContextId() != null) {
+            properties.put("contextName", schedulerJobInitiationEvent.getContextId());
+        }
+        if (schedulerJobInitiationEvent.getContextInstanceId() != null) {
+            properties.put("contextInstanceId", schedulerJobInitiationEvent.getContextInstanceId());
+        }
+        return properties;
     }
 
 }

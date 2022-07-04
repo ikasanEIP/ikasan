@@ -1,6 +1,7 @@
 package org.ikasan.component.endpoint.bigqueue.producer;
 
 import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.serialiser.Serialiser;
@@ -21,17 +22,23 @@ public class BigQueueProducer<T> implements Producer<T> {
      * Constructor
      *
      * @param inboundQueue
-     * @param serialiser
      */
-    public BigQueueProducer(IBigQueue inboundQueue, Serialiser<T,byte[]> serialiser) {
+    public BigQueueProducer(IBigQueue inboundQueue) {
         this.inboundQueue = inboundQueue;
         if(this.inboundQueue == null) {
             throw new IllegalArgumentException("inboundQueue cannot be null!");
         }
+
+        this.serialiser = new BigQueueMessageJsonSerialiser();
+    }
+
+    /**
+     * Override the default implementation of the serialiser.
+     * The default serialiser of for big queue messages.
+     * @param serialiser
+     */
+    public void setSerialiser(Serialiser<T, byte[]> serialiser) {
         this.serialiser = serialiser;
-        if(this.serialiser == null) {
-            throw new IllegalArgumentException("serialiser cannot bee null!");
-        }
     }
 
     @Override

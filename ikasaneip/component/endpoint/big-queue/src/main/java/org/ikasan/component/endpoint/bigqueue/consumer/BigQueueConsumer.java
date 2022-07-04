@@ -2,6 +2,7 @@ package org.ikasan.component.endpoint.bigqueue.consumer;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.event.*;
@@ -57,20 +58,24 @@ public class BigQueueConsumer<T>
      *
      * @param inboundQueue
      */
-    public BigQueueConsumer(IBigQueue inboundQueue, Serialiser<T, byte[]> serialiser,
-                            boolean putErrorsToBackOfQueue) {
+    public BigQueueConsumer(IBigQueue inboundQueue, boolean putErrorsToBackOfQueue) {
         this.inboundQueue = inboundQueue;
         if(this.inboundQueue == null) {
             throw new IllegalArgumentException("inboundQueue cannot bee null!");
         }
-        this.serialiser = serialiser;
-        if(this.serialiser == null) {
-            throw new IllegalArgumentException("serialiser cannot bee null!");
-        }
+        this.serialiser = new BigQueueMessageJsonSerialiser();
 
         this.putErrorsToBackOfQueue = putErrorsToBackOfQueue;
     }
 
+    /**
+     * Override the default implementation of the serialiser.
+     * The default serialiser of for big queue messages.
+     * @param serialiser
+     */
+    public void setSerialiser(Serialiser<T, byte[]> serialiser) {
+        this.serialiser = serialiser;
+    }
 
     /**
      * Invoke the eventListener with the given flowEvent.
