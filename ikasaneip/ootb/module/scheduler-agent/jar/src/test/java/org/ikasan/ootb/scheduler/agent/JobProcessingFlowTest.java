@@ -43,54 +43,37 @@ package org.ikasan.ootb.scheduler.agent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.leansoft.bigqueue.IBigQueue;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
-import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
+import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
+import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
-import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
+import org.ikasan.spec.bigqueue.BigQueueMessage;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -148,6 +131,9 @@ public class JobProcessingFlowTest {
 
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
+        schedulerJobInitiationEvent.setContextId("contextId");
+        schedulerJobInitiationEvent.setContextInstanceId("contextInstanceId");
+
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
         internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
@@ -164,7 +150,13 @@ public class JobProcessingFlowTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
+        BigQueueMessage<SchedulerJobInitiationEventDto> bigQueueMessage
+            = new BigQueueMessageBuilder<SchedulerJobInitiationEventDto>()
+            .withMessage(schedulerJobInitiationEvent)
+            .withMessageProperties(Map.of("contextName", "contextName", "contextInstanceId", "contextInstanceId"))
+            .build();
+
+        bigQueue.enqueue(objectMapper.writeValueAsBytes(bigQueueMessage));
 
         flowTestRule.sleep(2000);
 
@@ -174,11 +166,18 @@ public class JobProcessingFlowTest {
         with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
-        ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
+        byte[] dequeued = outboundQueue.dequeue();
+        BigQueueMessageImpl dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        ContextualisedScheduledProcessEventImpl event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
+
         assertEquals(true, event.isJobStarting());
         assertEquals(false, event.isSuccessful());
 
-        event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
+        dequeued = outboundQueue.dequeue();
+        dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
         assertEquals(false, event.isJobStarting());
         assertEquals(true, event.isSuccessful());
         assertEquals(false, event.isDryRun());
@@ -222,7 +221,13 @@ public class JobProcessingFlowTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
+        BigQueueMessage<SchedulerJobInitiationEventDto> bigQueueMessage
+            = new BigQueueMessageBuilder<SchedulerJobInitiationEventDto>()
+            .withMessage(schedulerJobInitiationEvent)
+            .withMessageProperties(Map.of("contextName", "contextName", "contextInstanceId", "contextInstanceId"))
+            .build();
+
+        bigQueue.enqueue(objectMapper.writeValueAsBytes(bigQueueMessage));
 
         flowTestRule.sleep(2000);
 
@@ -232,11 +237,18 @@ public class JobProcessingFlowTest {
         with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
-        ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
+        byte[] dequeued = outboundQueue.dequeue();
+        BigQueueMessageImpl dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        ContextualisedScheduledProcessEventImpl event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
+
         assertEquals(true, event.isJobStarting());
         assertEquals(false, event.isSuccessful());
 
-        event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
+        dequeued = outboundQueue.dequeue();
+        dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
         assertEquals(false, event.isJobStarting());
         assertEquals(true, event.isSuccessful());
         assertEquals(true, event.isDryRun());
@@ -279,7 +291,13 @@ public class JobProcessingFlowTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        bigQueue.enqueue(objectMapper.writeValueAsBytes(schedulerJobInitiationEvent));
+        BigQueueMessage<SchedulerJobInitiationEventDto> bigQueueMessage
+            = new BigQueueMessageBuilder<SchedulerJobInitiationEventDto>()
+            .withMessage(schedulerJobInitiationEvent)
+            .withMessageProperties(Map.of("contextName", "contextName", "contextInstanceId", "contextInstanceId"))
+            .build();
+
+        bigQueue.enqueue(objectMapper.writeValueAsBytes(bigQueueMessage));
 
         flowTestRule.sleep(2000);
 
@@ -289,11 +307,19 @@ public class JobProcessingFlowTest {
         with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
-        ScheduledProcessEvent event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
+
+        byte[] dequeued = outboundQueue.dequeue();
+        BigQueueMessageImpl dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        ContextualisedScheduledProcessEventImpl event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
+
         assertEquals(true, event.isJobStarting());
         assertEquals(false, event.isSuccessful());
 
-        event = objectMapper.readValue(outboundQueue.dequeue(), ContextualisedScheduledProcessEventImpl.class);
+        dequeued = outboundQueue.dequeue();
+        dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
         assertEquals(false, event.isJobStarting());
         assertEquals(true, event.isSuccessful());
 

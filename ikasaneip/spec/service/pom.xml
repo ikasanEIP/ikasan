@@ -74,5 +74,6 @@
         <module>cache</module>
         <module>metrics</module>
         <module>scheduled</module>
+        <module>big-queue</module>
     </modules>
 </project>
