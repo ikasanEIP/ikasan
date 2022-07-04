@@ -90,7 +90,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.SchedulerProcessorEventSerialiser;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
@@ -237,7 +237,10 @@ public class FileEventSchedulerJobFlowComponentFactory
      */
     public Producer getScheduledStatusProducer()
     {
-        return new BigQueueProducer(this.outboundQueue, new SchedulerProcessorEventSerialiser());
+        ScheduledProcessEventToBigQueueMessageSerialiser serialiser = new ScheduledProcessEventToBigQueueMessageSerialiser();
+        BigQueueProducer bigQueueProducer = new BigQueueProducer<>(this.outboundQueue);
+        bigQueueProducer.setSerialiser(serialiser);
+        return bigQueueProducer;
     }
 
 }
