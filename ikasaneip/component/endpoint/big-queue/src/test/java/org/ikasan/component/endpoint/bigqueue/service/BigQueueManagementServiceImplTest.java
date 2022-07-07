@@ -10,16 +10,13 @@ import org.ikasan.component.endpoint.bigqueue.serialiser.TestParam;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.*;
+import java.util.concurrent.*;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 import static org.junit.Assert.*;
@@ -77,26 +74,45 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    @Ignore
     public void delete_existing_message_id_by_two_threads() throws Exception {
         assertEquals(0, service.size(QUEUE_DIR, QUEUE_NAME));
-        BigQueueMessage bigQueueMessage;
         String messageId = null;
         int numberOfMessages = 1_000_000;
         for (int i = 0; i < numberOfMessages; i++) {
-            bigQueueMessage = createBigQueueMessage();
+            BigQueueMessage bigQueueMessage = createBigQueueMessage();
             bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
-            if(i == 500_000) {
+            if (i == 500_000) {
                 messageId = bigQueueMessage.getMessageId();
             }
         }
 
-        DeleterThread deleterThread1 = new DeleterThread(service, QUEUE_DIR, QUEUE_NAME, messageId);
-        DeleterThread deleterThread2 = new DeleterThread(service, QUEUE_DIR, QUEUE_NAME, messageId);
-        deleterThread1.start();
-        deleterThread2.start();
+        assertEquals(numberOfMessages, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        Thread.sleep(30000);
+        final ExecutorService pool = Executors.newFixedThreadPool(2);
+        final CompletionService<String> completionService = new ExecutorCompletionService<String>(pool);
+        final List<? extends Callable<String>> callables = Arrays.asList(
+            new DeleterCallable(service, QUEUE_DIR, QUEUE_NAME, messageId),
+            new DeleterCallable(service, QUEUE_DIR, QUEUE_NAME, messageId)
+        );
+
+        for (final Callable<String> callable : callables) {
+            completionService.submit(callable);
+        }
+
+        pool.shutdown();
+
+        long start = System.currentTimeMillis();
+        long thirtySecondsInMillis = 30000;
+        try {
+            while (!pool.isTerminated()) {
+                Thread.sleep(500);
+                if (System.currentTimeMillis() > start + thirtySecondsInMillis) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
 
         assertEquals(numberOfMessages - 1, service.size(QUEUE_DIR, QUEUE_NAME));
     }
@@ -109,7 +125,7 @@ public class BigQueueManagementServiceImplTest {
         for (int i = 0; i < numberOfMessages; i++) {
             bigQueueMessage = createBigQueueMessage();
             bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
-            if(i == 50_000) {
+            if (i == 50_000) {
                 messageId = bigQueueMessage.getMessageId();
             }
         }
@@ -343,14 +359,14 @@ public class BigQueueManagementServiceImplTest {
         return testEvent;
     }
 
-    private class DeleterThread extends Thread {
+    private class DeleterCallable implements Callable<String> {
 
         private BigQueueManagementService service;
         private String queueDir;
         private String queueName;
         private String messageId;
 
-        public DeleterThread(BigQueueManagementService service, String queueDir, String queueName, String messageId) {
+        public DeleterCallable(BigQueueManagementService service, String queueDir, String queueName, String messageId) {
             this.service = service;
             this.queueDir = queueDir;
             this.queueName = queueName;
@@ -358,12 +374,13 @@ public class BigQueueManagementServiceImplTest {
         }
 
         @Override
-        public void run() {
+        public String call() {
             try {
                 service.delete(queueDir, queueName, messageId);
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
+            return "done";
         }
     }
 
