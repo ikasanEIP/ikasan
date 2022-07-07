@@ -1,7 +1,7 @@
 package org.ikasan.component.endpoint.bigqueue.builder;
 
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
-import org.ikasan.spec.bigqueue.BigQueueMessage;
+import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 
 import java.util.Map;
 import java.util.UUID;
