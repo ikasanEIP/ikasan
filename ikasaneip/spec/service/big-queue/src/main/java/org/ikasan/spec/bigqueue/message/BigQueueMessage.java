@@ -1,4 +1,4 @@
-package org.ikasan.spec.bigqueue;
+package org.ikasan.spec.bigqueue.message;
 
 import java.util.Map;
 
