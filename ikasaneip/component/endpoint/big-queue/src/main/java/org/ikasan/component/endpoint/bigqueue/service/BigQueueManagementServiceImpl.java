@@ -17,8 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 /**
  * Implementation of a BigQueue management service.
  *
@@ -35,7 +34,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public long size(String queueDir, String queueName) throws IOException {
+    public synchronized long size(String queueDir, String queueName) throws IOException {
         if (queueExists(queueDir, queueName)) {
             IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
             return bigQueue.size();
@@ -50,7 +49,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public BigQueueMessage peek(String queueDir, String queueName) throws IOException {
+    public synchronized BigQueueMessage peek(String queueDir, String queueName) throws IOException {
         if (queueExists(queueDir, queueName)) {
             IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
             byte[] peek = bigQueue.peek();
@@ -70,7 +69,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param biQueueMessageId - the message id of the big queue message to delete
      */
     @Override
-    public void delete(String queueDir, String queueName, String biQueueMessageId) throws IOException {
+    public synchronized void delete(String queueDir, String queueName, String biQueueMessageId) throws IOException {
         if (biQueueMessageId != null
             && queueExists(queueDir, queueName)
             && messageIdExistsInMessages(queueDir, queueName, biQueueMessageId)) {
@@ -93,7 +92,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param queueDir - the directory where the queue exists
      */
     @Override
-    public List<String> listQueues(String queueDir) {
+    public synchronized List<String> listQueues(String queueDir) {
         List<String> queueNames = new ArrayList<>();
         if (queueDir != null && Files.exists(Path.of(queueDir))) {
             File[] directories = new File(queueDir).listFiles(File::isDirectory);
@@ -112,7 +111,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public List<BigQueueMessage> messages(String queueDir, String queueName) throws IOException {
+    public synchronized List<BigQueueMessage> messages(String queueDir, String queueName) throws IOException {
         if (queueExists(queueDir, queueName)) {
             IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
             MessagesIterator messagesIterator = new MessagesIterator();
