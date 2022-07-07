@@ -4,7 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.ikasan.spec.bigqueue.BigQueueMessage;
+import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 
 import java.util.Map;
 
