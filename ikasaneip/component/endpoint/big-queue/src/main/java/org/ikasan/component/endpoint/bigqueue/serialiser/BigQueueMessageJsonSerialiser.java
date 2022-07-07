@@ -3,7 +3,7 @@ package org.ikasan.component.endpoint.bigqueue.serialiser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
-import org.ikasan.spec.bigqueue.BigQueueMessage;
+import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.serialiser.Serialiser;
 
 import java.io.IOException;

@@ -2,7 +2,7 @@ package org.ikasan.component.endpoint.bigqueue.serialiser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
-import org.ikasan.spec.bigqueue.BigQueueMessage;
+import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.junit.Test;
 
 import java.util.List;
