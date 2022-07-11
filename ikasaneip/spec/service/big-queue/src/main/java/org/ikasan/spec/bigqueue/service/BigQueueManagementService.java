@@ -11,9 +11,11 @@ public interface BigQueueManagementService {
 
     BigQueueMessage peek(String queueDir, String queueName) throws IOException;
 
-    List<BigQueueMessage> messages(String queueDir, String queueName) throws IOException;
+    List<BigQueueMessage> getMessages(String queueDir, String queueName) throws IOException;
 
-    void delete(String queueDir, String queueName, String biQueueMessageId) throws IOException;
+    void deleteMessage(String queueDir, String queueName, String biQueueMessageId) throws IOException;
 
-    List<String> listQueues(String queueDir);
+    List<String> listQueues(String queueDir) throws IOException;
+
+    void deleteQueue(String queueDir, String queueName) throws IOException;
 }
