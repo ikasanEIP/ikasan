@@ -14,6 +14,13 @@ public interface ContextProfileDao {
     void save(ContextProfileRecord contextProfileRecord);
 
     /**
+     * Delete context profiles by context names.
+     *
+     * @param contextName
+     */
+    void deleteByContextName(String contextName);
+
+    /**
      * Find by id.
      *
      * @param id
