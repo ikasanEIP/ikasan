@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
 import com.leansoft.bigqueue.IBigQueue.ItemIterator;
+import org.apache.commons.io.FileUtils;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
@@ -69,7 +70,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param biQueueMessageId - the message id of the big queue message to delete
      */
     @Override
-    public synchronized void delete(String queueDir, String queueName, String biQueueMessageId) throws IOException {
+    public synchronized void deleteMessage(String queueDir, String queueName, String biQueueMessageId) throws IOException {
         if (biQueueMessageId != null
             && queueExists(queueDir, queueName)
             && messageIdExistsInMessages(queueDir, queueName, biQueueMessageId)) {
@@ -92,7 +93,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param queueDir - the directory where the queue exists
      */
     @Override
-    public synchronized List<String> listQueues(String queueDir) {
+    public synchronized List<String> listQueues(String queueDir) throws IOException {
         List<String> queueNames = new ArrayList<>();
         if (queueDir != null && Files.exists(Path.of(queueDir))) {
             File[] directories = new File(queueDir).listFiles(File::isDirectory);
@@ -105,13 +106,25 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
     }
 
     /**
+     * Deletes a queue directory.
+     * @param queueDir - the directory name
+     * @param queueName - the name of the queue
+     */
+    @Override
+    public void deleteQueue(String queueDir, String queueName) throws IOException {
+        if (queueExists(queueDir, queueName)) {
+            FileUtils.forceDelete(new File(queueDir + File.separator + queueName));
+        }
+    }
+
+    /**
      * Get the messages on the queue.
      * Ensures that the queue exists before returning the list of messages. Returns empty list otherwise.
      * @param queueDir - the directory where the queue exists
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public synchronized List<BigQueueMessage> messages(String queueDir, String queueName) throws IOException {
+    public synchronized List<BigQueueMessage> getMessages(String queueDir, String queueName) throws IOException {
         if (queueExists(queueDir, queueName)) {
             IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
             MessagesIterator messagesIterator = new MessagesIterator();
@@ -140,6 +153,6 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
     }
 
     private boolean messageIdExistsInMessages(String queueDir, String queueName, String biQueueMessageId) throws IOException {
-        return messages(queueDir, queueName).stream().anyMatch(m -> biQueueMessageId.equals(m.getMessageId()));
+        return getMessages(queueDir, queueName).stream().anyMatch(m -> biQueueMessageId.equals(m.getMessageId()));
     }
 }
