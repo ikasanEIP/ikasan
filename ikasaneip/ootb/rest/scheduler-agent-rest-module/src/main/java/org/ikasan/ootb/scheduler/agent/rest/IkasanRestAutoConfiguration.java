@@ -43,7 +43,9 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
+import org.ikasan.component.endpoint.bigqueue.service.BigQueueManagementServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
+import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -84,6 +86,16 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     @Bean
     public ContextInstanceApplication contextParametersApplication() {
         return new ContextInstanceApplication();
+    }
+
+    @Bean
+    public BigQueueManagementApplication bigQueueManagementApplication() {
+        return new BigQueueManagementApplication();
+    }
+
+    @Bean
+    public BigQueueManagementService bigQueueManagementService() {
+        return new BigQueueManagementServiceImpl();
     }
 
     @Override
