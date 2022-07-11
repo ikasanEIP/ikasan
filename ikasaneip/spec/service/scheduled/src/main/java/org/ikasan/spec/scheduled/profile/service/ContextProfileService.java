@@ -1,8 +1,11 @@
 package org.ikasan.spec.scheduled.profile.service;
 
+import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.profile.model.ContextProfileRecord;
 import org.ikasan.spec.scheduled.profile.model.ContextProfileSearchFilter;
 import org.ikasan.spec.search.SearchResults;
+
+import java.util.List;
 
 public interface ContextProfileService {
 
@@ -12,6 +15,20 @@ public interface ContextProfileService {
      * @param contextProfileRecord
      */
     void save(ContextProfileRecord contextProfileRecord);
+
+    /**
+     * Save a list of context profiles
+     *
+     * @param records
+     */
+    void save(List<ContextProfileRecord> records);
+
+    /**
+     * Delete context profiles by context names.
+     *
+     * @param contextName
+     */
+    void deleteByContextName(String contextName);
 
     /**
      * Find by id.
