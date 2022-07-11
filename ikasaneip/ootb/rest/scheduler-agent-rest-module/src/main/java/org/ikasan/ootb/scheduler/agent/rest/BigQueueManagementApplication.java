@@ -1,11 +1,10 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
-import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,123 +25,101 @@ public class BigQueueManagementApplication {
     private static final Logger LOG = LoggerFactory.getLogger(BigQueueManagementApplication.class);
 
     @Autowired
-    private BigQueueManagementService bigQueueManagementService;
-
-    @Value("${big.queue.consumer.queueDir}")
-    private String queueDir;
+    private BigQueueDirectoryManagementService bigQueueDirectoryManagementService;
 
     @RequestMapping(method = RequestMethod.GET,
         value = "/",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity workingQueueDirectory() {
+    public ResponseEntity getQueues() {
         try {
-            return new ResponseEntity(queueDir, HttpStatus.OK);
-        } catch (Exception e) {
-            String message = "Error getting working directory for queue: " + e.getMessage();
-            LOG.warn(message);
-            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
-        }
-    }
-
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/{queueDir}",
-        produces = {MediaType.APPLICATION_JSON_VALUE})
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getQueues(@PathVariable("queueDir") String queueDir) {
-        try {
-            List<String> queues = bigQueueManagementService.listQueues(queueDir);
+            List<String> queues = bigQueueDirectoryManagementService.listQueues();
             return new ResponseEntity(queues, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to list queues for dir [%s]. Error [%s]", queueDir, e.getMessage());
+            String message = String.format("Got exception trying to list queues. Error [%s]", e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(method = RequestMethod.GET,
-        value = "/size/{queueDir}/{queueName}",
+        value = "/size/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity size(@PathVariable("queueDir") String queueDir,
-                               @PathVariable("queueName") String queueName) {
+    public ResponseEntity size(@PathVariable("queueName") String queueName) {
         try {
-            long size = bigQueueManagementService.size(queueDir, queueName);
+            long size = bigQueueDirectoryManagementService.size(queueName);
             return new ResponseEntity(size, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to get size for dir [%s] queue [%s]. Error [%s]", queueDir, queueName, e.getMessage());
+            String message = String.format("Got exception trying to get size for queue [%s]. Error [%s]", queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(method = RequestMethod.GET,
-        value = "/peek/{queueDir}/{queueName}",
+        value = "/peek/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity peek(@PathVariable("queueDir") String queueDir,
-                               @PathVariable("queueName") String queueName) {
+    public ResponseEntity peek(@PathVariable("queueName") String queueName) {
         try {
-            BigQueueMessage bigQueueMessage = bigQueueManagementService.peek(queueDir, queueName);
+            BigQueueMessage bigQueueMessage = bigQueueDirectoryManagementService.peek(queueName);
             return new ResponseEntity(bigQueueMessage, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to peek queue for dir [%s] queue [%s]. Error [%s]", queueDir, queueName, e.getMessage());
+            String message = String.format("Got exception trying to peek queue for queue [%s]. Error [%s]", queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(method = RequestMethod.GET,
-        value = "/messages/{queueDir}/{queueName}",
+        value = "/messages/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity messages(@PathVariable("queueDir") String queueDir,
-                                   @PathVariable("queueName") String queueName) {
+    public ResponseEntity messages(@PathVariable("queueName") String queueName) {
         try {
-            List<BigQueueMessage> messages = bigQueueManagementService.getMessages(queueDir, queueName);
+            List<BigQueueMessage> messages = bigQueueDirectoryManagementService.getMessages(queueName);
             return new ResponseEntity(messages, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to get message for dir [%s] queue [%s]. Error [%s]", queueDir, queueName, e.getMessage());
+            String message = String.format("Got exception trying to get message for queue [%s]. Error [%s]", queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
-        value = "/delete/{queueDir}/{queueName}/{messageId}",
+        value = "/delete/{queueName}/{messageId}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteMessageId(@PathVariable("queueDir") String queueDir,
-                                          @PathVariable("queueName") String queueName,
+    public ResponseEntity deleteMessageId(@PathVariable("queueName") String queueName,
                                           @PathVariable("messageId") String messageId) {
         try {
-            bigQueueManagementService.deleteMessage(queueDir, queueName, messageId);
+            bigQueueDirectoryManagementService.deleteMessage(queueName, messageId);
             return new ResponseEntity(HttpStatus.OK);
 
         } catch (Exception e) {
             String message
-                = String.format("Got exception trying to delete message for dir [%s] queue [%s] message [%s]. Error [%s]", queueDir, queueName, messageId, e.getMessage());
+                = String.format("Got exception trying to delete message for queue [%s] message [%s]. Error [%s]", queueName, messageId, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
-        value = "/delete/{queueDir}/{queueName}",
+        value = "/delete/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteQueue(@PathVariable("queueDir") String queueDir,
-                                      @PathVariable("queueName") String queueName) {
+    public ResponseEntity deleteQueue(@PathVariable("queueName") String queueName) {
         try {
-            bigQueueManagementService.deleteQueue(queueDir, queueName);
+            bigQueueDirectoryManagementService.deleteQueue(queueName);
             return new ResponseEntity(HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to delete queue for dir [%s] queue [%s]. Error [%s]", queueDir, queueName, e.getMessage());
+            String message = String.format("Got exception trying to delete queue for queue [%s]. Error [%s]", queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
