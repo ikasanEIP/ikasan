@@ -43,9 +43,10 @@ package org.ikasan.ootb.scheduler.agent.rest;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
-import org.ikasan.component.endpoint.bigqueue.service.BigQueueManagementServiceImpl;
+import org.ikasan.component.endpoint.bigqueue.service.BigQueueDirectoryManagementServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
-import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -57,6 +58,9 @@ import java.util.List;
 @Configuration
 public class IkasanRestAutoConfiguration implements WebMvcConfigurer
 {
+
+    @Value("${big.queue.consumer.queueDir}")
+    private String queueDir;
 
     @Bean
     public SchedulerJobInitiationEventApplication schedulerJobInitiationEventApplication(){
@@ -94,8 +98,8 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Bean
-    public BigQueueManagementService bigQueueManagementService() {
-        return new BigQueueManagementServiceImpl();
+    public BigQueueDirectoryManagementService bigQueueDirectoryManagementService() {
+        return new BigQueueDirectoryManagementServiceImpl(this.queueDir);
     }
 
     @Override
