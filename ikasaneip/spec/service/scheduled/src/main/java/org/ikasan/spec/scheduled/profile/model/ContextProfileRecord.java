@@ -21,9 +21,9 @@ public interface ContextProfileRecord {
 
     void setContextProfile(ContextProfile contextProfile);
 
-    List<String> getAccessRoles();
+    List<String> getAccessGroups();
 
-    void setAccessRoles(List<String> accessRoles);
+    void setAccessGroups(List<String> accessRoles);
 
     List<String> getAccessUsers();
 
