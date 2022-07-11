@@ -14,6 +14,7 @@ import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
 import java.util.concurrent.*;
@@ -65,7 +66,21 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void list_queues_returns_empty_if_unknown_directory() {
+    public void delete_queue() throws Exception {
+        Path path = Paths.get(QUEUE_DIR + File.separator + QUEUE_NAME);
+        assertTrue(Files.exists(path));
+        service.deleteQueue(QUEUE_DIR, QUEUE_NAME);
+        assertFalse(Files.exists(path));
+    }
+
+    @Test
+    public void delete_null_queue_should_not_npe() throws Exception {
+        service.deleteQueue(null, QUEUE_NAME);
+        service.deleteQueue(QUEUE_DIR, null);
+    }
+
+    @Test
+    public void list_queues_returns_empty_if_unknown_directory() throws Exception {
         List<String> queues = service.listQueues(randomAlphabetic(10));
         assertTrue(queues.isEmpty());
 
@@ -132,7 +147,7 @@ public class BigQueueManagementServiceImplTest {
 
         assertEquals(numberOfMessages, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        service.delete(QUEUE_DIR, QUEUE_NAME, messageId);
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, messageId);
 
         assertEquals(numberOfMessages - 1, service.size(QUEUE_DIR, QUEUE_NAME));
     }
@@ -145,7 +160,7 @@ public class BigQueueManagementServiceImplTest {
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
         assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        service.delete(QUEUE_DIR, QUEUE_NAME, bigQueueMessage.getMessageId());
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, bigQueueMessage.getMessageId());
         assertEquals(0, service.size(QUEUE_DIR, QUEUE_NAME));
     }
 
@@ -159,21 +174,21 @@ public class BigQueueManagementServiceImplTest {
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
         assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        service.delete(QUEUE_DIR, QUEUE_NAME, bigQueueMessage2.getMessageId());
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, bigQueueMessage2.getMessageId());
         assertEquals(2, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        List<BigQueueMessage> messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(2, messages.size());
         assertEquals(bigQueueMessage1, messages.get(0));
         assertEquals(bigQueueMessage3, messages.get(1));
 
-        service.delete(QUEUE_DIR, QUEUE_NAME, bigQueueMessage3.getMessageId());
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, bigQueueMessage3.getMessageId());
         assertEquals(1, service.size(QUEUE_DIR, QUEUE_NAME));
-        messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(1, messages.size());
         assertEquals(bigQueueMessage1, messages.get(0));
 
-        service.delete(QUEUE_DIR, QUEUE_NAME, bigQueueMessage1.getMessageId());
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, bigQueueMessage1.getMessageId());
         assertEquals(0, service.size(QUEUE_DIR, QUEUE_NAME));
     }
 
@@ -188,19 +203,19 @@ public class BigQueueManagementServiceImplTest {
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
 
         // make sure we do not blow up
-        service.delete(QUEUE_DIR, QUEUE_NAME, null);
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, null);
         assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        List<BigQueueMessage> messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(3, messages.size());
         assertEquals(bigQueueMessage1, messages.get(0));
         assertEquals(bigQueueMessage2, messages.get(1));
         assertEquals(bigQueueMessage3, messages.get(2));
 
-        service.delete(QUEUE_DIR, QUEUE_NAME, randomMessageId);
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, randomMessageId);
         assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
 
-        messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(3, messages.size());
         assertEquals(bigQueueMessage1, messages.get(0));
         assertEquals(bigQueueMessage2, messages.get(1));
@@ -210,36 +225,36 @@ public class BigQueueManagementServiceImplTest {
     @Test
     public void delete_unknown_queue_does_not_npe() throws Exception {
         String randomString = randomAlphabetic(10);
-        service.delete(QUEUE_DIR, QUEUE_NAME, randomString);
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, randomString);
         validateNoQueueCreated(randomString);
 
-        service.delete(null, null, null);
-        service.delete(QUEUE_DIR, null, null);
-        service.delete(QUEUE_DIR, QUEUE_NAME, null);
+        service.deleteMessage(null, null, null);
+        service.deleteMessage(QUEUE_DIR, null, null);
+        service.deleteMessage(QUEUE_DIR, QUEUE_NAME, null);
 
     }
 
     @Test
     public void messages_non_empty_queue_returns_list() throws Exception {
-        List<BigQueueMessage> messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertTrue(messages.isEmpty());
 
         BigQueueMessage queueMessage1 = createBigQueueMessage();
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(queueMessage1));
 
-        messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(1, messages.size());
 
         BigQueueMessage queueMessage2 = createBigQueueMessage();
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(queueMessage2));
 
-        messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(2, messages.size());
 
         BigQueueMessage queueMessage3 = createBigQueueMessage();
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(queueMessage3));
 
-        messages = service.messages(QUEUE_DIR, QUEUE_NAME);
+        messages = service.getMessages(QUEUE_DIR, QUEUE_NAME);
         assertEquals(3, messages.size());
 
         assertEquals(queueMessage1, messages.get(0));
@@ -249,17 +264,17 @@ public class BigQueueManagementServiceImplTest {
 
     @Test
     public void messages_empty_queue_returns_emptyList() throws Exception {
-        assertTrue(service.messages(QUEUE_DIR, QUEUE_NAME).isEmpty());
+        assertTrue(service.getMessages(QUEUE_DIR, QUEUE_NAME).isEmpty());
 
-        assertTrue(service.messages(null, QUEUE_NAME).isEmpty());
-        assertTrue(service.messages(QUEUE_DIR, null).isEmpty());
-        assertTrue(service.messages(null, null).isEmpty());
+        assertTrue(service.getMessages(null, QUEUE_NAME).isEmpty());
+        assertTrue(service.getMessages(QUEUE_DIR, null).isEmpty());
+        assertTrue(service.getMessages(null, null).isEmpty());
     }
 
     @Test
     public void messages_unknown_queue_returns_emptyList() throws Exception {
         String randomString = randomAlphabetic(10);
-        assertTrue(service.messages(QUEUE_DIR, randomString).isEmpty());
+        assertTrue(service.getMessages(QUEUE_DIR, randomString).isEmpty());
         validateNoQueueCreated(randomString);
     }
 
@@ -376,7 +391,7 @@ public class BigQueueManagementServiceImplTest {
         @Override
         public String call() {
             try {
-                service.delete(queueDir, queueName, messageId);
+                service.deleteMessage(queueDir, queueName, messageId);
             } catch (Exception e) {
                 throw new RuntimeException(e.getMessage());
             }
