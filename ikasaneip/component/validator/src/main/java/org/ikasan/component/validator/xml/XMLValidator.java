@@ -52,20 +52,15 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.xml.sax.ErrorHandler;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
+import org.xml.sax.*;
+import org.xmlresolver.XMLResolverConfiguration;
+import org.xmlresolver.XercesResolver;
 
-import javax.xml.catalog.CatalogFeatures;
-import javax.xml.catalog.CatalogManager;
-import javax.xml.catalog.CatalogResolver;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -241,12 +236,14 @@ public class XMLValidator<SOURCE, TARGET>
             reader = parser.getXMLReader();
             reader.setErrorHandler(this.errorHandler);
             reader.setProperty("http://apache.org/xml/properties/internal/grammar-pool", grammarPool);
-            if (configuration.getCatalogUrl() != null)
+            String catalogUrl = configuration.getCatalogUrl();
+            if (catalogUrl != null)
             {
-                logger.debug("Setting up Xml Reader with catalog.xml file [{}]", configuration.getCatalogUrl());
-                CatalogResolver cr = CatalogManager
-                        .catalogResolver(CatalogFeatures.defaults(), new URI(configuration.getCatalogUrl()));
-                reader.setEntityResolver(cr);
+                logger.debug("Setting up Xml Reader with catalog.xml file [{}]", catalogUrl);
+                XMLResolverConfiguration xmlResolverConfiguration = new XMLResolverConfiguration();
+                xmlResolverConfiguration.addCatalog(catalogUrl);
+                EntityResolver entityResolver = new XercesResolver(xmlResolverConfiguration);
+                reader.setEntityResolver(entityResolver);
             }
         }
         catch (Exception e)
