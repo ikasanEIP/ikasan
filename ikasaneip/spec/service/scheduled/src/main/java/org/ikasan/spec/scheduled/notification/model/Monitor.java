@@ -40,6 +40,8 @@
  */
 package org.ikasan.spec.scheduled.notification.model;
 
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
+
 import java.util.List;
 
 /**
@@ -75,4 +77,9 @@ import java.util.List;
      * Destroys the monitor internal, rendering this Monitor defunct.
      */
     void destroy();
+
+    /**
+     * Newly created contextInstance registers itself to Monitor .
+     */
+    void register(ContextInstance contextInstance);
 }
