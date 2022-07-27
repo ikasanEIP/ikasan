@@ -37,35 +37,30 @@
  */
 package org.ikasan.component.endpoint.mongo.test;
 
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+import de.flapdoodle.embed.mongo.Command;
+import de.flapdoodle.embed.mongo.MongodExecutable;
+import de.flapdoodle.embed.mongo.MongodProcess;
+import de.flapdoodle.embed.mongo.MongodStarter;
+import de.flapdoodle.embed.mongo.config.*;
+import de.flapdoodle.embed.mongo.distribution.Feature;
+import de.flapdoodle.embed.mongo.distribution.Version;
+import de.flapdoodle.embed.mongo.distribution.Versions;
+import de.flapdoodle.embed.process.config.IRuntimeConfig;
+import de.flapdoodle.embed.process.config.store.HttpProxyFactory;
+import de.flapdoodle.embed.process.distribution.GenericVersion;
+import de.flapdoodle.embed.process.io.directories.IDirectory;
+import de.flapdoodle.embed.process.runtime.Network;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.UnknownHostException;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-
-import de.flapdoodle.embed.mongo.Command;
-import de.flapdoodle.embed.mongo.MongodExecutable;
-import de.flapdoodle.embed.mongo.MongodProcess;
-import de.flapdoodle.embed.mongo.MongodStarter;
-import de.flapdoodle.embed.mongo.config.ArtifactStoreBuilder;
-import de.flapdoodle.embed.mongo.config.DownloadConfigBuilder;
-import de.flapdoodle.embed.mongo.config.MongodConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Net;
-import de.flapdoodle.embed.mongo.config.RuntimeConfigBuilder;
-import de.flapdoodle.embed.mongo.config.Storage;
-import de.flapdoodle.embed.mongo.distribution.Feature;
-import de.flapdoodle.embed.mongo.distribution.Version;
-import de.flapdoodle.embed.mongo.distribution.Versions;
-import de.flapdoodle.embed.process.config.IRuntimeConfig;
-import de.flapdoodle.embed.process.distribution.GenericVersion;
-import de.flapdoodle.embed.process.io.directories.IDirectory;
-import de.flapdoodle.embed.process.runtime.Network;
 
 /**
  * Allows the port and download location of the mongo distribution to be configured Also ensures that only a single
@@ -219,6 +214,14 @@ public class EmbeddedMongo
             logger.info("Custom mongo artifact storage dir set to [{}]", customMongoArchiveDownloadDirectory);
             builder.artifactStorePath(getIDirectory(customMongoArchiveDownloadDirectory));
         }
+
+        String proxyHostName = System.getProperty("http.proxyHost");
+        String proxyPortStr = System.getProperty("http.proxyPort");
+        if (StringUtils.isNoneBlank(proxyHostName, proxyPortStr)) {
+            int proxyPort = Integer.parseInt(proxyPortStr);
+            builder.proxyFactory(new HttpProxyFactory(proxyHostName, proxyPort));
+        }
+
         return builder;
     }
 
