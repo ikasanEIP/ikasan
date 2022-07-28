@@ -116,13 +116,13 @@ public class EmbeddedMongo
     }
 
     private void overrideConfigurationWithEnvironmentVariables() {
-        final String envCustomHttpProxyHost = System.getenv(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_HOST);
-        final String envCustomHttpProxyPort = System.getenv(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_PORT);
-        if (envCustomHttpProxyHost != null) {
-            configuration.setHttpProxyHost(envCustomHttpProxyHost);
+        final String envHttpProxyHost = System.getenv(EmbeddedMongoConfiguration.HTTP_PROXY_HOST);
+        final String envHttpProxyPort = System.getenv(EmbeddedMongoConfiguration.HTTP_PROXY_PORT);
+        if (envHttpProxyHost != null) {
+            configuration.setHttpProxyHost(envHttpProxyHost);
         }
-        if (envCustomHttpProxyPort != null) {
-            configuration.setHttpProxyPort(envCustomHttpProxyPort);
+        if (envHttpProxyPort != null) {
+            configuration.setHttpProxyPort(envHttpProxyPort);
         }
     }
 
@@ -133,8 +133,8 @@ public class EmbeddedMongo
         final String sysCustomMongoVersion=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_MONGO_VERSION);
         final String sysCustomMongoArchiveStorageDir=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_MONGO_ARCHIVE_STORAGE_DIRECTORY);
         final String sysCustomMongoPort=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_MONGO_PORT);
-        final String sysCustomHttpProxyHost=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_HOST);
-        final String sysCustomHttpProxyPort=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_PORT);
+        final String sysHttpProxyHost=System.getProperty(EmbeddedMongoConfiguration.HTTP_PROXY_HOST);
+        final String sysHttpProxyPort=System.getProperty(EmbeddedMongoConfiguration.HTTP_PROXY_PORT);
         if (sysCustomMongoDatabaseDir != null){
             configuration.setDatabaseDirectory(sysCustomMongoDatabaseDir); 
         }
@@ -150,11 +150,11 @@ public class EmbeddedMongo
         if (sysCustomMongoPort != null){
             configuration.setPort(new Integer(sysCustomMongoPort));
         }
-        if (sysCustomHttpProxyHost != null){
-            configuration.setHttpProxyHost(sysCustomHttpProxyHost);
+        if (sysHttpProxyHost != null){
+            configuration.setHttpProxyHost(sysHttpProxyHost);
         }
-        if (sysCustomHttpProxyPort != null){
-            configuration.setHttpProxyPort(sysCustomHttpProxyPort);
+        if (sysHttpProxyPort != null){
+            configuration.setHttpProxyPort(sysHttpProxyPort);
         }
     }
 
