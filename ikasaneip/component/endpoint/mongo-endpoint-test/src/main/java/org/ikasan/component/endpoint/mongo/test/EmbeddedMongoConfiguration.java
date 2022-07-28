@@ -55,9 +55,9 @@ public class EmbeddedMongoConfiguration
 
     public static final String CUSTOM_MONGO_PORT = "ikasan.flapdoodle.customMongoPort";
 
-    public static final String CUSTOM_HTTP_PROXY_HOST = "http.proxy.host";
+    public static final String HTTP_PROXY_HOST = "http.proxy.host";
 
-    public static final String CUSTOM_HTTP_PROXY_PORT = "http.proxy.port";
+    public static final String HTTP_PROXY_PORT = "http.proxy.port";
 
     private String distributionDirectory;
 
