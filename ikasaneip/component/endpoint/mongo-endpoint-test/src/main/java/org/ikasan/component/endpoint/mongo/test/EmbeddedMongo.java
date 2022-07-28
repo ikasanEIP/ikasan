@@ -53,6 +53,7 @@ import de.flapdoodle.embed.process.distribution.GenericVersion;
 import de.flapdoodle.embed.process.io.directories.IDirectory;
 import de.flapdoodle.embed.process.runtime.Network;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +91,7 @@ public class EmbeddedMongo
         super();
         configuration = new EmbeddedMongoConfiguration();
         configuration.setPort(port);
+        overrideConfigurationWithEnvironmentVariables();
         overrideConfigurationWithSystemProperties();
     }
 
@@ -99,6 +101,7 @@ public class EmbeddedMongo
     public EmbeddedMongo()
     {
         configuration = new EmbeddedMongoConfiguration();
+        overrideConfigurationWithEnvironmentVariables();
         overrideConfigurationWithSystemProperties();
     }
 
@@ -108,7 +111,19 @@ public class EmbeddedMongo
     public EmbeddedMongo(EmbeddedMongoConfiguration configuration)
     {
         this.configuration = configuration;
+        overrideConfigurationWithEnvironmentVariables();
         overrideConfigurationWithSystemProperties();
+    }
+
+    private void overrideConfigurationWithEnvironmentVariables() {
+        final String envCustomHttpProxyHost = System.getenv(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_HOST);
+        final String envCustomHttpProxyPort = System.getenv(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_PORT);
+        if (envCustomHttpProxyHost != null) {
+            configuration.setHttpProxyHost(envCustomHttpProxyHost);
+        }
+        if (envCustomHttpProxyPort != null) {
+            configuration.setHttpProxyPort(envCustomHttpProxyPort);
+        }
     }
 
     private void overrideConfigurationWithSystemProperties()
@@ -118,6 +133,8 @@ public class EmbeddedMongo
         final String sysCustomMongoVersion=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_MONGO_VERSION);
         final String sysCustomMongoArchiveStorageDir=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_MONGO_ARCHIVE_STORAGE_DIRECTORY);
         final String sysCustomMongoPort=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_MONGO_PORT);
+        final String sysCustomHttpProxyHost=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_HOST);
+        final String sysCustomHttpProxyPort=System.getProperty(EmbeddedMongoConfiguration.CUSTOM_HTTP_PROXY_PORT);
         if (sysCustomMongoDatabaseDir != null){
             configuration.setDatabaseDirectory(sysCustomMongoDatabaseDir); 
         }
@@ -131,7 +148,13 @@ public class EmbeddedMongo
             configuration.setArchiveStorageDirectory((sysCustomMongoArchiveStorageDir));
         }
         if (sysCustomMongoPort != null){
-            configuration.setPort(new Integer(sysCustomMongoPort)); 
+            configuration.setPort(new Integer(sysCustomMongoPort));
+        }
+        if (sysCustomHttpProxyHost != null){
+            configuration.setHttpProxyHost(sysCustomHttpProxyHost);
+        }
+        if (sysCustomHttpProxyPort != null){
+            configuration.setHttpProxyPort(sysCustomHttpProxyPort);
         }
     }
 
@@ -215,11 +238,11 @@ public class EmbeddedMongo
             builder.artifactStorePath(getIDirectory(customMongoArchiveDownloadDirectory));
         }
 
-        String proxyHostName = System.getProperty("http.proxyHost");
-        String proxyPortStr = System.getProperty("http.proxyPort");
-        if (StringUtils.isNoneBlank(proxyHostName, proxyPortStr)) {
+        String proxyHost = configuration.getHttpProxyHost();
+        String proxyPortStr = configuration.getHttpProxyPort();
+        if (StringUtils.isNoneBlank(proxyHost, proxyPortStr) && NumberUtils.isDigits(proxyPortStr)) {
             int proxyPort = Integer.parseInt(proxyPortStr);
-            builder.proxyFactory(new HttpProxyFactory(proxyHostName, proxyPort));
+            builder.proxyFactory(new HttpProxyFactory(proxyHost, proxyPort));
         }
 
         return builder;

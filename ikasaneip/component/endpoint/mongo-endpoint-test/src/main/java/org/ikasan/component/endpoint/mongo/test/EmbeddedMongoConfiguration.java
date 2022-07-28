@@ -55,6 +55,10 @@ public class EmbeddedMongoConfiguration
 
     public static final String CUSTOM_MONGO_PORT = "ikasan.flapdoodle.customMongoPort";
 
+    public static final String CUSTOM_HTTP_PROXY_HOST = "http.proxy.host";
+
+    public static final String CUSTOM_HTTP_PROXY_PORT = "http.proxy.port";
+
     private String distributionDirectory;
 
     private String databaseDirectory;
@@ -64,6 +68,10 @@ public class EmbeddedMongoConfiguration
     private String version;
 
     private Integer port;
+
+    private String httpProxyHost;
+
+    private String httpProxyPort;
 
     public String getDistributionDirectory()
     {
@@ -129,11 +137,32 @@ public class EmbeddedMongoConfiguration
         this.port = port;
     }
 
+    public String getHttpProxyHost() {
+        return httpProxyHost;
+    }
+
+    public void setHttpProxyHost(String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
+    }
+
+    public String getHttpProxyPort() {
+        return httpProxyPort;
+    }
+
+    public void setHttpProxyPort(String httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
+    }
+
     @Override
-    public String toString()
-    {
-        return "EmbeddedMongoConfiguration [distributionDirectory=" + distributionDirectory + ", databaseDirectory="
-                + databaseDirectory + ", archiveStorageDirectory=" + archiveStorageDirectory + ", version=" + version
-                + ", port=" + port + "]";
+    public String toString() {
+        return "EmbeddedMongoConfiguration{" +
+            "distributionDirectory='" + distributionDirectory + '\'' +
+            ", databaseDirectory='" + databaseDirectory + '\'' +
+            ", archiveStorageDirectory='" + archiveStorageDirectory + '\'' +
+            ", version='" + version + '\'' +
+            ", port=" + port +
+            ", httpProxyHost='" + httpProxyHost + '\'' +
+            ", httpProxyPort='" + httpProxyPort + '\'' +
+            '}';
     }
 }
