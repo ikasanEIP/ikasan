@@ -2,6 +2,7 @@ package org.ikasan.spec.scheduled.context.service;
 
 import org.ikasan.spec.scheduled.context.model.ScheduledContextRecord;
 import org.ikasan.spec.scheduled.context.model.ScheduledContextSearchFilter;
+import org.ikasan.spec.scheduled.context.model.ScheduledContextViewRecord;
 import org.ikasan.spec.search.SearchResults;
 
 import java.util.List;
@@ -61,4 +62,18 @@ public interface ScheduledContextService {
      * @param scheduledContextRecord
      */
     void save(ScheduledContextRecord scheduledContextRecord);
+
+    /**
+     * Get a context view.
+     *
+     * @return
+     */
+    ScheduledContextViewRecord getContextView(String parentContextName, String contextName);
+
+    /**
+     * Save a context view.
+     *
+     * @return
+     */
+    void saveContextView(ScheduledContextViewRecord contextView);
 }
