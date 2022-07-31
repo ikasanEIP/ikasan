@@ -14,6 +14,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -115,9 +116,15 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param configuredModuleConfiguration
      */
     private void updateInitialModuleConfiguration(List<SchedulerJob> jobs, ConfiguredModuleConfiguration configuredModuleConfiguration) {
-        configuredModuleConfiguration.getFlowDefinitionProfiles().clear();
-        configuredModuleConfiguration.getFlowDefinitions().clear();
+        String contextName = jobs.get(0).getContextId();
+        clearFlowConfig(configuredModuleConfiguration, contextName);
+
         jobs.forEach(job -> {
+            if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+                SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
+                configuration.getFlowContextMap().put(job.getJobName(), job.getContextId());
+
+            }
             if(job instanceof FileEventDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getJobName(), "FILE");
@@ -134,6 +141,35 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         configuredModuleConfiguration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "AUTOMATIC");
         configuredModuleConfiguration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
+    }
+
+    private void clearFlowConfig(ConfiguredModuleConfiguration configuredModuleConfiguration, String contextName) {
+        if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+            SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
+
+            List<String> flowsInThatContext = new ArrayList<>();
+            for (String jobName : configuration.getFlowContextMap().keySet()) {
+                if (configuration.getFlowContextMap().get(jobName).equalsIgnoreCase(contextName)) {
+                    flowsInThatContext.add(jobName);
+                }
+            }
+
+            if (configuration.getFlowDefinitions() != null &&
+                configuration.getFlowDefinitions().keySet() != null &&
+                configuration.getFlowDefinitions().keySet().size() > 0 &&
+                configuration.getFlowContextMap() != null) {
+
+                configuration.getFlowDefinitions().keySet().removeAll(flowsInThatContext);
+            }
+            if (configuration.getFlowDefinitionProfiles() != null &&
+                configuration.getFlowDefinitionProfiles().keySet() != null &&
+                configuration.getFlowDefinitionProfiles().keySet().size() > 0 &&
+                configuration.getFlowContextMap() != null) {
+                configuration.getFlowDefinitionProfiles().keySet().removeAll(flowsInThatContext);
+            }
+
+            configuration.getFlowContextMap().keySet().removeAll(flowsInThatContext);
+        }
     }
 
     /**

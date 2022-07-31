@@ -5,13 +5,13 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
-import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -46,7 +46,7 @@ public class JobProvisionServiceImplTest {
     private ConfigurationService configurationService;
 
     @Mock
-    private ConfiguredModuleConfiguration configureModule;
+    private SchedulerAgentConfiguredModuleConfiguration configureModule;
 
     @Mock
     private ConfiguredModuleImpl module;
@@ -126,6 +126,7 @@ public class JobProvisionServiceImplTest {
 
         when(moduleService.getModule(null)).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModule);
+        when(configureModule.getFlowContextMap()).thenReturn(new HashMap<>());
         when(module.getFlow(anyString())).thenReturn(flow);
         when(flow.getFlowElement("File Consumer")).thenReturn(fileConsumerElement);
         when(fileConsumerElement.getFlowComponent()).thenReturn(fileConsumer);
