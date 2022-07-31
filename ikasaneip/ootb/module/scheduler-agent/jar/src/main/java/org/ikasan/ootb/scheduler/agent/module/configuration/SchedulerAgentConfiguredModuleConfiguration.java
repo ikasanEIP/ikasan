@@ -42,5 +42,18 @@ package org.ikasan.ootb.scheduler.agent.module.configuration;
 
 import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration {
+
+    Map<String, String> flowContextMap = new HashMap();
+
+    public Map<String, String> getFlowContextMap() {
+        return flowContextMap;
+    }
+
+    public void setFlowContextMap(Map<String, String> flowContextMap) {
+        this.flowContextMap = flowContextMap;
+    }
 }
