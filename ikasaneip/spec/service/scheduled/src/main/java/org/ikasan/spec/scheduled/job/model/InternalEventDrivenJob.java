@@ -33,4 +33,8 @@ public interface InternalEventDrivenJob extends SchedulerJob, Serializable {
     List<Integer> getDaysOfWeekToRun();
 
     void setDaysOfWeekToRun(List<Integer> daysOfWeekToRun);
+
+    void setTargetResidingContextOnly(boolean targetResidingContextOnly);
+
+    boolean isTargetResidingContextOnly();
 }
