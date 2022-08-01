@@ -34,4 +34,8 @@ public interface InternalEventDrivenJobInstance extends SchedulerJobInstance, Se
     List<Integer> getDaysOfWeekToRun();
 
     void setDaysOfWeekToRun(List<Integer> daysOfWeekToRun);
+
+    void setTargetResidingContextOnly(boolean targetResidingContextOnly);
+
+    boolean isTargetResidingContextOnly();
 }
