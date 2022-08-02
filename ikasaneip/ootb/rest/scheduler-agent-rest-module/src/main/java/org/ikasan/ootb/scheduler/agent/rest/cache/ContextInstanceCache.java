@@ -42,7 +42,7 @@ public class ContextInstanceCache {
 
     public ContextInstance getByContextName(String contextName) {
         if (contextName != null) {
-            LOG.info(String.format("Getting context parameters for context name [%s]", contextName));
+            LOG.debug(String.format("Getting context parameters for context name [%s]", contextName));
             return this.contextInstanceMap.get(contextName);
         } else {
             return null;

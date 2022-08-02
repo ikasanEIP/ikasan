@@ -80,6 +80,12 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
 
     private boolean ignoreFileRenameWhilstScanning = true;
 
+    /** whether to use dynamic file name matching of spel expression */
+    private boolean dynamicFileName = false;
+
+    /** spel expression for dynamic file name matcher */
+    private String spelExpression;
+
     public List<String> getFilenames() {
         return filenames;
     }
@@ -152,6 +158,22 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
 
     public void setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning) {
         this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
+    }
+
+    public boolean isDynamicFileName() {
+        return dynamicFileName;
+    }
+
+    public void setDynamicFileName(boolean dynamicFileName) {
+        this.dynamicFileName = dynamicFileName;
+    }
+
+    public String getSpelExpression() {
+        return spelExpression;
+    }
+
+    public void setSpelExpression(String spelExpression) {
+        this.spelExpression = spelExpression;
     }
 
     @Override
