@@ -26,11 +26,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -121,37 +125,10 @@ public class JobProvisionServiceImplTest {
     private JobProvisionServiceImpl service;
 
     @Test
-    public void test_provision_success() {
+    public void test_provision_success_no_spel_expressions() {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
-        when(moduleService.getModule(null)).thenReturn(module);
-        when(module.getConfiguration()).thenReturn(configureModule);
-        when(configureModule.getFlowContextMap()).thenReturn(new HashMap<>());
-        when(module.getFlow(anyString())).thenReturn(flow);
-        when(flow.getFlowElement("File Consumer")).thenReturn(fileConsumerElement);
-        when(fileConsumerElement.getFlowComponent()).thenReturn(fileConsumer);
-        when(fileConsumer.getConfiguration()).thenReturn(fileConsumerConfiguration);
-        when(flow.getFlowElement("JobExecution to ScheduledStatusEvent")).thenReturn(converterElement);
-        when(converterElement.getFlowComponent()).thenReturn(converter);
-        when(converter.getConfiguration()).thenReturn(converterConfiguration);
-        when(flow.getFlowElement("Scheduled Consumer")).thenReturn(scheduledConsumerElement);
-        when(scheduledConsumerElement.getFlowComponent()).thenReturn(scheduledConsumer);
-        when(scheduledConsumer.getConfiguration()).thenReturn(scheduledConsumerConfiguration);
-        when(flow.getFlowElement("File Age Filter")).thenReturn(fileAgeFilterElement);
-        when(fileAgeFilterElement.getFlowComponent()).thenReturn(fileAgeFilter);
-        when(fileAgeFilter.getConfiguration()).thenReturn(fileAgeFilterConfiguration);
-        when(flow.getFlowElement("File Move Broker")).thenReturn(moveFileBrokerElement);
-        when(moveFileBrokerElement.getFlowComponent()).thenReturn(moveFileBroker);
-        when(moveFileBroker.getConfiguration()).thenReturn(moveFileBrokerConfiguration);
-        when(flow.getFlowElement("Context Instance Active Filter")).thenReturn(contextFilterElement);
-        when(contextFilterElement.getFlowComponent()).thenReturn(contextFilter);
-        when(contextFilter.getConfiguration()).thenReturn(contextFilterConfiguration);
-        when(flow.getFlowElement("Duplicate Message Filter")).thenReturn(duplicateMessageFilterElement);
-        when(duplicateMessageFilterElement.getFlowComponent()).thenReturn(duplicateMessageFilter);
-        when(duplicateMessageFilter.getConfiguration()).thenReturn(schedulerFileFilterConfiguration);
-        when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
-
-
+        setupWhen();
 
         this.service.provisionJobs(this.getJobs());
 
@@ -204,6 +181,77 @@ public class JobProvisionServiceImplTest {
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
         verifyNoMoreInteractions(contextFilterConfiguration);
+    }
+
+    @Test
+    public void test_provision_success_with_spel_expressions() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        Map<String, List<Object>> spelMap
+            = Map.of("contextId", List.of(true, "#fileName.replace(#someValue, 'thevaluetoreplace')", Map.of("#someValue", "contextId")));
+
+        ReflectionTestUtils.setField(service,"spelExpressionsMap", spelMap);
+
+        setupWhen();
+
+        this.service.provisionJobs(this.getJobs());
+
+        verify(fileConsumerConfiguration).setDynamicFileName(true);
+        verify(fileConsumerConfiguration).setSpelExpression("#fileName.replace('contextId', 'thevaluetoreplace')");
+    }
+
+    @Test
+    public void get_spel_replacement_string() {
+        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
+        fileEventDrivenJob.setContextId("contextId");
+        fileEventDrivenJob.setJobName("jobName");
+        assertEquals("'contextId'", service.getSpelReplacement("contextId", fileEventDrivenJob));
+        assertEquals("'jobName'", service.getSpelReplacement("jobName", fileEventDrivenJob));
+        assertNull(service.getSpelReplacement("unknownVar", fileEventDrivenJob));
+    }
+
+    @Test
+    public void get_spel_replacement_list_strings() {
+        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
+        assertEquals("{}", service.getSpelReplacement("filenames", fileEventDrivenJob));
+        fileEventDrivenJob.setFilenames(List.of("fileName1", "fileName2"));
+        assertEquals("{'fileName1','fileName2'}", service.getSpelReplacement("filenames", fileEventDrivenJob));
+    }
+
+    @Test
+    public void get_spel_replacement_map_of_string_string() {
+        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
+        assertEquals("{}", service.getSpelReplacement("passthroughProperties", fileEventDrivenJob));
+        fileEventDrivenJob.setPassthroughProperties(Map.of("key1", "value1"));
+        assertEquals("{'key1':'value1'}", service.getSpelReplacement("passthroughProperties", fileEventDrivenJob));
+    }
+
+    private void setupWhen() {
+        when(moduleService.getModule(null)).thenReturn(module);
+        when(module.getConfiguration()).thenReturn(configureModule);
+        when(module.getFlow(anyString())).thenReturn(flow);
+        when(flow.getFlowElement("File Consumer")).thenReturn(fileConsumerElement);
+        when(fileConsumerElement.getFlowComponent()).thenReturn(fileConsumer);
+        when(fileConsumer.getConfiguration()).thenReturn(fileConsumerConfiguration);
+        when(flow.getFlowElement("JobExecution to ScheduledStatusEvent")).thenReturn(converterElement);
+        when(converterElement.getFlowComponent()).thenReturn(converter);
+        when(converter.getConfiguration()).thenReturn(converterConfiguration);
+        when(flow.getFlowElement("Scheduled Consumer")).thenReturn(scheduledConsumerElement);
+        when(scheduledConsumerElement.getFlowComponent()).thenReturn(scheduledConsumer);
+        when(scheduledConsumer.getConfiguration()).thenReturn(scheduledConsumerConfiguration);
+        when(flow.getFlowElement("File Age Filter")).thenReturn(fileAgeFilterElement);
+        when(fileAgeFilterElement.getFlowComponent()).thenReturn(fileAgeFilter);
+        when(fileAgeFilter.getConfiguration()).thenReturn(fileAgeFilterConfiguration);
+        when(flow.getFlowElement("File Move Broker")).thenReturn(moveFileBrokerElement);
+        when(moveFileBrokerElement.getFlowComponent()).thenReturn(moveFileBroker);
+        when(moveFileBroker.getConfiguration()).thenReturn(moveFileBrokerConfiguration);
+        when(flow.getFlowElement("Context Instance Active Filter")).thenReturn(contextFilterElement);
+        when(contextFilterElement.getFlowComponent()).thenReturn(contextFilter);
+        when(contextFilter.getConfiguration()).thenReturn(contextFilterConfiguration);
+        when(flow.getFlowElement("Duplicate Message Filter")).thenReturn(duplicateMessageFilterElement);
+        when(duplicateMessageFilterElement.getFlowComponent()).thenReturn(duplicateMessageFilter);
+        when(duplicateMessageFilter.getConfiguration()).thenReturn(schedulerFileFilterConfiguration);
+        when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
     }
 
     private List<SchedulerJob> getJobs() {
