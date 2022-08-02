@@ -193,7 +193,7 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         }
     }
 
-    protected FileMatcher getFileMatcher(String fullyQualifiedFilename)
+    protected FileMatcher getFileMatcher(String fullyQualifiedFilename, boolean dynamicFileName)
     {
         boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
         if( !isWindows && !fullyQualifiedFilename.startsWith("/") && !fullyQualifiedFilename.startsWith("."))
@@ -204,7 +204,21 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         int lastIndexOffullPath = fullyQualifiedFilename.lastIndexOf(FQN_PATH_SEPARATOR);
         String path = fullyQualifiedFilename.substring(0,lastIndexOffullPath);
         String name = fullyQualifiedFilename.substring(++lastIndexOffullPath);
-        return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
+
+        if (dynamicFileName)
+        {
+            return new DynamicFileMatcher(
+                this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(),
+                path,
+                name,
+                fileConsumerConfiguration.getDirectoryDepth(),
+                this,
+                fileConsumerConfiguration.getSpelExpression());
+        }
+        else
+        {
+            return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
+        }
     }
 
 
@@ -234,7 +248,7 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         {
             for(String filename:fileConsumerConfiguration.getFilenames())
             {
-                this.fileMatchers.add( getFileMatcher(filename) );
+                this.fileMatchers.add( getFileMatcher(filename, fileConsumerConfiguration.isDynamicFileName()) );
             }
         }
 
