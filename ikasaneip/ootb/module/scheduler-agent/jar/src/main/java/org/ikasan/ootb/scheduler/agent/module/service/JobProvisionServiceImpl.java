@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
@@ -49,6 +50,26 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
     @Autowired
     private ConfigurationService configurationService;
+
+    /**
+     * This a map of context name to list of objects
+     *  [0] = isDynamic File name (boolean)
+     *  [1] = spelExpression (String)
+     *  [2] = any parameters to replace on the spel expression (Map<String, String>)
+     *  E.g.
+     *   scheduled.dynamic.filename.spel.expressions= \
+     *    { \
+     *    'CONTEXT-369160711': { \
+     *      true,\
+     *      "#fileNamePattern?.contains('yyyyMMdd') ? \
+     *      (T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCacheUtil).getContextParameter(#contextName, 'BusinessDate') != null ? \
+     *      #fileNamePattern.replace('yyyyMMdd', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCacheUtil).getContextParameter(#contextName, 'BusinessDate')) : #fileNamePattern) : #fileNamePattern" , \
+     *       {'#contextName':'contextId'} \
+     *      } \
+     *    }
+     */
+    @Value("#{${scheduled.dynamic.filename.spel.expressions:{T(java.util.Collections).emptyMap()}}}")
+    Map<String, List<Object>> spelExpressionsMap;
 
     private ObjectMapper mapper;
 
@@ -345,6 +366,33 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         fileConsumerConfiguration.setIncludeTrailer(job.isIncludeTrailer());
         fileConsumerConfiguration.setSortAscending(job.isSortAscending());
         fileConsumerConfiguration.setSortByModifiedDateTime(job.isSortByModifiedDateTime());
+
+        if (spelExpressionsMap != null && !spelExpressionsMap.isEmpty()) {
+            for (String contextId : spelExpressionsMap.keySet()) {
+                if (contextId.equals(job.getContextId())) {
+                    List<Object> spelParams = spelExpressionsMap.get(contextId);
+                    // [0] = isDynamic File name (boolean)
+                    // [1] = spelExpression (String)
+                    // [2] = any parameters to replace on the spel expression (Map<String, String>)
+                    boolean isDynamic = (boolean) spelParams.get(0);
+                    if (isDynamic) {
+                        fileConsumerConfiguration.setDynamicFileName(true);
+                        String spelExpression = (String) spelParams.get(1);
+                        Map<String, String> spelExpressionParamsToReplace = (Map<String, String>) spelParams.get(2);
+                        if (spelExpressionParamsToReplace != null && !spelExpressionParamsToReplace.isEmpty()) {
+                            for (String key : spelExpressionParamsToReplace.keySet()) {
+                                String replacementValue = getSpelReplacement(spelExpressionParamsToReplace.get(key), job);
+                                if (replacementValue != null) {
+                                    spelExpression = spelExpression.replace(key, replacementValue);
+                                }
+                            }
+                        }
+                        logger.info("Setting spel expression on fileConsumerConfiguration: " + spelExpression);
+                        fileConsumerConfiguration.setSpelExpression(spelExpression);
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -356,5 +404,61 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     protected ConfiguredResource<ConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module)
     {
         return (ConfiguredResource<ConfiguredModuleConfiguration>)module;
+    }
+
+    /**
+     * Get the fieldName value of an object.
+     * This is very specific for spel expressions and quoting strings
+     * Only currently used in this class, hence here.
+     *
+     */
+    protected String getSpelReplacement(String fieldName, Object clazz) {
+        try {
+            Object property = ReflectionUtils.getProperty(clazz, fieldName);
+            if (property != null) {
+                if (property instanceof String) {
+                    return "'" + property + "'";
+                } else if (property instanceof List) {
+                    // assumes its a list of strings so far this is the case
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("{");
+                    int i = 0;
+                    for (Object object : ((List<?>) property)) {
+                        i++;
+                        builder.append("'" + object + "'");
+                        if (((List<?>) property).size() != i) {
+                            builder.append(",");
+                        }
+                    }
+                    builder.append("}");
+                    return builder.toString();
+
+                } else if (property instanceof Map) {
+                    int i = 0;
+                    // assumes the map is a map of string to string so far this is the case
+                    Map map = (Map) property;
+                    StringBuilder builder = new StringBuilder();
+                    builder.append("{");
+                    for (Object key : map.keySet()) {
+                        i++;
+                        builder.append("'" + key + "'");
+                        builder.append(":");
+                        builder.append("'" + map.get(key) + "'");
+                        if (((Map) property).size() != i) {
+                            builder.append(",");
+                        }
+                    }
+                    builder.append("}");
+                    return builder.toString();
+                } else {
+                    return property.toString();
+                }
+            }
+        } catch (Exception e) {
+            logger.warn(String.format("Could not get field name [%s] on class [%s]. Error [%s]",
+                fieldName, clazz.getClass().getName(), e.getMessage()));
+        }
+
+        return null;
     }
 }

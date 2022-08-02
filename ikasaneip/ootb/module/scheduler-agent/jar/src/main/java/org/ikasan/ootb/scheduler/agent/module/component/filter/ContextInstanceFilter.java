@@ -1,13 +1,13 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
-import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCacheUtil.doesNotExistInCache;
 
 public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<ContextInstanceFilterConfiguration> {
     private static final Logger LOG = LoggerFactory.getLogger(ContextInstanceFilter.class);
@@ -32,9 +32,7 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 return event;
             }
 
-            ContextInstance instance = ContextInstanceCache.instance().getByContextName(contextInstanceFilterConfiguration.getContextName());
-
-            if (instance == null) {
+            if (doesNotExistInCache(contextInstanceFilterConfiguration.getContextName())) {
                 LOG.warn(String.format("ContextInstanceCache does not contain instance for %s!",
                     contextInstanceFilterConfiguration.getContextName()));
                 throw new ContextInstanceFilterException(String.format("ContextInstanceCache does not contain instance for %s!",
