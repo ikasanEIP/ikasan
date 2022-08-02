@@ -97,6 +97,8 @@ public class FileMessageProviderTest
                 will(returnValue(true));
                 exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
                 will(returnValue(true));
+                exactly(2).of(configuration).isDynamicFileName();
+                will(returnValue(false));
             }
         });
 
@@ -131,6 +133,8 @@ public class FileMessageProviderTest
                 will(returnValue(true));
                 exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
                 will(returnValue(true));
+                exactly(2).of(configuration).isDynamicFileName();
+                will(returnValue(false));
             }
         });
 
