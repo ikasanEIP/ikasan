@@ -616,6 +616,9 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
+                exactly(1).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
+
                 exactly(1).of(consumerConfiguration).isIgnoreMisfire();
                 will(returnValue(true));
 
@@ -758,7 +761,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger1).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(2).of(trigger1).getJobDataMap();
+                exactly(3).of(trigger1).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(2).of(trigger1).getKey();
@@ -1014,7 +1017,7 @@ public class ScheduledConsumerTest
         }
 
         @Override
-        protected void scheduleJobTriggers(JobDetail jobDetail, Set triggers, boolean replace) throws SchedulerException
+        public void scheduleJobTriggers(JobDetail jobDetail, Set triggers, boolean replace) throws SchedulerException
         {
             this.triggers = triggers;
             this.replace = replace;

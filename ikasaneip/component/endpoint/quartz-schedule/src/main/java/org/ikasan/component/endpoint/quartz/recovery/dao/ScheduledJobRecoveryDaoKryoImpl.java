@@ -100,10 +100,10 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
     }
 
     @Override
-    public ScheduledJobRecoveryModel find(String group, String name)
+    public ScheduledJobRecoveryModel find(String name, String group)
     {
         Kryo kryo = kryoThreadLocal.get();
-        String path = getScheduledPersistence(group, name);
+        String path = getScheduledPersistence(name, group);
 
         try
         {
@@ -121,7 +121,7 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
     public void save(ScheduledJobRecoveryModel scheduledJobRecoveryModel)
     {
         Kryo kryo = kryoThreadLocal.get();
-        String path = getScheduledPersistence(scheduledJobRecoveryModel.getGroup(), scheduledJobRecoveryModel.getName());
+        String path = getScheduledPersistence(scheduledJobRecoveryModel.getName(), scheduledJobRecoveryModel.getGroup());
 
         try
         {
@@ -135,7 +135,26 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
         }
     }
 
-    protected String getScheduledPersistence(String group, String name)
+    @Override
+    public void deleteRecovery(String name, String group)
+    {
+        ScheduledJobRecoveryModel scheduledJobRecoveryModel = this.find(name, group);
+        String path = getScheduledPersistence(scheduledJobRecoveryModel.getName(), scheduledJobRecoveryModel.getGroup());
+        File file = new File(path);
+        file.delete();
+    }
+
+    @Override
+    public void deleteAllRecoveries()
+    {
+        File[] files = new File(this.persistenceDir).listFiles();
+        for(File file:files)
+        {
+            file.delete();
+        }
+    }
+
+    protected String getScheduledPersistence(String name, String group)
     {
         return persistenceDir + FileSystems.getDefault().getSeparator() + group + "_" + name;
     }
