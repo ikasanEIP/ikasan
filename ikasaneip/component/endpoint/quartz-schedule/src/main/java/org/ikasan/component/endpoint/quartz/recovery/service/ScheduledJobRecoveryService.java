@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.endpoint.quartz.recovery.service;
 
+import java.util.Date;
+
 /**
  * This generic Scheduler recovery Interface.
  *
@@ -47,6 +49,16 @@ package org.ikasan.component.endpoint.quartz.recovery.service;
  */
 public interface ScheduledJobRecoveryService<CONTEXT>
 {
+    /**
+     * Allow the setting of the next expected fire time of job.
+     * Method mainly used for test purposes.
+     * @param name
+     * @param group
+     * @param nextFireTime
+     * @return
+     */
+    void setNextFireTime(String name, String group, Date nextFireTime);
+
     /**
      * Save the given context representing a scheduled job recovery.
      * @param context
@@ -61,4 +73,17 @@ public interface ScheduledJobRecoveryService<CONTEXT>
      * @return
      */
     boolean isRecoveryRequired(String name, String group, long tolerance);
+
+    /**
+     * Remove any recovery state and persistence for the specified name and group.
+     *
+     * @param name
+     * @param group
+     */
+    void removeRecovery(String name, String group);
+
+    /**
+     * Remove any recovery state and persistence for everything where state is held.
+     */
+    void removeAllRecoveries();
 }

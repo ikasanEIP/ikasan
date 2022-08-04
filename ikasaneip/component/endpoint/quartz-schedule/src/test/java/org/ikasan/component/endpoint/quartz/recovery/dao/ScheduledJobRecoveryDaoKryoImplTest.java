@@ -100,7 +100,7 @@ public class ScheduledJobRecoveryDaoKryoImplTest
         Assert.assertNull("Should not find anything with invalid name",
             scheduledJobRecoveryDao.find("myGroupName", "myInvalidName") );
 
-        ScheduledJobRecoveryModel foundModel = scheduledJobRecoveryDao.find("myGroupName", "myName");
+        ScheduledJobRecoveryModel foundModel = scheduledJobRecoveryDao.find("myName", "myGroupName");
         Assert.assertTrue("Should have found the matching model groupName", foundModel.getGroup().equals("myGroupName"));
         Assert.assertTrue("Should have found the matching model name", foundModel.getName().equals("myName"));
         Assert.assertTrue("Should have found the matching model fireTime", foundModel.getFireTime().equals(fireTime));
