@@ -42,6 +42,9 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryServiceFactory;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -49,8 +52,10 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.quartz.Trigger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
@@ -65,6 +70,8 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Date;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -98,8 +105,16 @@ public class ApplicationTest
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
+    ScheduledJobRecoveryService scheduledJobRecoveryService = ScheduledJobRecoveryServiceFactory.getInstance();
+
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
+    @Before
+    public void setup()
+    {
+        // clean up recovery persistence
+        scheduledJobRecoveryService.removeAllRecoveries();
+    }
 
     @After public void shutdown() throws IOException
     {
@@ -113,7 +128,7 @@ public class ApplicationTest
     @DirtiesContext
     public void sourceFileFlow_flow() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("${sourceFlowName}"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("fileSystemToJMSFlow"));
 
         // create file to be consumed
         String content = "Hello World !!";
@@ -133,10 +148,57 @@ public class ApplicationTest
             .converter("File Converter")
             .producer("JMS Producer");
 
+        flowTestRule.startFlow();
+        flowTestRule.sleep(1000L);
+
+        flowTestRule.fireScheduledConsumer();
+
+        // wait for a brief while to let the flow complete
+        flowTestRule.sleep(2000L);
+
+        flowTestRule.assertIsSatisfied();
+
+        // Set expectation
+        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
+        assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
+            FILE_CONSUMER_FILE_NAME);
+    }
+
+    @Test
+    @DirtiesContext
+    public void sourceFileFlow_flow_with_scheduled_persistent_recovery() throws Exception
+    {
+        Flow flowOnTest = moduleUnderTest.getFlow("fileSystemToJMSFlow");
+        flowTestRule.withFlow(flowOnTest);
+
+        // create file to be consumed
+        String content = "Hello World !!";
+        Files.write(Paths.get(FILE_CONSUMER_FILE_NAME), content.getBytes());
+
+        ConfiguredResource configuredResource = (ConfiguredResource)flowTestRule.getComponent("File Consumer");
+        Object configuration = configurationManagement.createConfiguration(configuredResource);
+        configurationManagement.saveConfiguration(configuration);
+        Set<Trigger> triggers = ((ScheduledConsumer)configuredResource).getTriggers();
+
+        // set the next fire time of the scheduled job to force a persistent recovery scenario
+        ScheduledJobRecoveryService scheduledJobRecoveryService = ScheduledJobRecoveryServiceFactory.getInstance();
+        Date nextFireTime = new Date();
+        String jobNameIteration = "sampleFileConsumer" + "_" + "0 0/5 * * * ? *".hashCode();
+        scheduledJobRecoveryService.setNextFireTime(jobNameIteration, "sampleFile",  nextFireTime);
+
+        // Get MessageListenerVerifier and start the listener
+        final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
+        messageListenerVerifierTarget.start();
+
+        //Setup component expectations
+        flowTestRule.consumer("File Consumer")
+            .filter("My Filter")
+            .converter("File Converter")
+            .producer("JMS Producer");
+
 
         flowTestRule.startFlow();
         flowTestRule.sleep(1000L);
-        flowTestRule.fireScheduledConsumer();
 
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
@@ -153,7 +215,7 @@ public class ApplicationTest
     @DirtiesContext
     public void targetFileFlow_test_file_delivery() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("${targetFlowName}"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("jmsToFileSystemFlow"));
 
         // update producer with file producer name
         FileProducerConfiguration producerConfiguration =  flowTestRule.getComponentConfig("File Producer",FileProducerConfiguration.class);

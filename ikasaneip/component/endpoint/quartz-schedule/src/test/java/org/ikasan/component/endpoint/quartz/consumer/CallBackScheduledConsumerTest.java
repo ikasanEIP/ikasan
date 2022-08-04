@@ -195,7 +195,7 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met", ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size(), 3);
+        Assert.assertEquals("Expected number of triggers not met", 3, scheduledConsumer.getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
 
         mockery.assertIsSatisfied();
@@ -608,6 +608,9 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
+                exactly(1).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
+
                 exactly(1).of(consumerConfiguration).isIgnoreMisfire();
                 will(returnValue(true));
 
@@ -745,7 +748,7 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(trigger1).getTriggerBuilder();
                 will(returnValue(triggerBuilder));
 
-                exactly(2).of(trigger1).getJobDataMap();
+                exactly(3).of(trigger1).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(2).of(trigger1).getKey();
@@ -974,7 +977,7 @@ public class CallBackScheduledConsumerTest
     private class StubbedCallBackScheduledConsumer extends CallBackScheduledConsumer
     {
         Set<Trigger> triggers;
-        boolean replace;
+        Boolean replace;
 
         protected StubbedCallBackScheduledConsumer(Scheduler scheduler)
         {
@@ -987,7 +990,7 @@ public class CallBackScheduledConsumerTest
         }
 
         @Override
-        protected void scheduleJobTriggers(JobDetail jobDetail, Set triggers, boolean replace) throws SchedulerException
+        public void scheduleJobTriggers(JobDetail jobDetail, Set triggers, boolean replace) throws SchedulerException
         {
             this.triggers = triggers;
             this.replace = replace;
@@ -999,7 +1002,7 @@ public class CallBackScheduledConsumerTest
             return triggers;
         }
 
-        public boolean isReplace()
+        public Boolean isReplace()
         {
             return replace;
         }

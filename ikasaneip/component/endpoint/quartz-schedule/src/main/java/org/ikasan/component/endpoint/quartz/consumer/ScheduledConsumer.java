@@ -83,11 +83,11 @@ public class ScheduledConsumer<T>
     private static Logger logger = LoggerFactory.getLogger(ScheduledConsumer.class);
 
     // anything beginning with Ikasan is an internal Ikasan property reference.
-    private static String EAGER_CALLBACK_COUNT = "IkasanEagerCallbackCount";
+    public static String EAGER_CALLBACK_COUNT = "IkasanEagerCallbackCount";
 
-    private static String PERSISTENT_RECOVERY = "IkasanPersistentRecovery";
+    public static String PERSISTENT_RECOVERY = "IkasanPersistentRecovery";
 
-    private static String CRON_EXPRESSION = "IkasanCronExpression";
+    public static String CRON_EXPRESSION = "IkasanCronExpression";
 
     /**
      * Scheduler
@@ -206,7 +206,7 @@ public class ScheduledConsumer<T>
                 if (consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService.isRecoveryRequired(jobNameIteration, jobGroupName, consumerConfiguration.getRecoveryTolerance()))
                 {
                     // if unsuccessful, schedule a callback immediately if within tolerance of recovery
-                    trigger = newTriggerFor(jobNameIteration + PERSISTENT_RECOVERY, jobGroupName)
+                    trigger = newTriggerFor(jobNameIteration, jobGroupName)
                         .startNow()
                         .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
                     trigger.getJobDataMap().put(PERSISTENT_RECOVERY, PERSISTENT_RECOVERY);
@@ -248,6 +248,19 @@ public class ScheduledConsumer<T>
         {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * Added access to triggers for this jobDetail to aid in testing.
+     * NOTEL: This is not part of the public contract and is explicit for Scheduler testing.
+     * @return
+     * @throws SchedulerException
+     */
+    public Set<Trigger> getTriggers() throws SchedulerException
+    {
+        JobKey jobKey = this.jobDetail.getKey();
+        List triggers = this.scheduler.getTriggersOfJob(jobKey);
+        return Set.copyOf(triggers);
     }
 
     /**
@@ -564,7 +577,8 @@ public class ScheduledConsumer<T>
         {
             String cronExpression = (String)oldTrigger.getJobDataMap().get(CRON_EXPRESSION);
             Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder(), cronExpression);
-            newTrigger.getJobDataMap().clear();
+            newTrigger.getJobDataMap().clear();     // clear any passed state from the trigger
+            newTrigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);  // think we need to keep cron expression value
 
             if(getConfiguration().getPassthroughProperties() != null)
             {

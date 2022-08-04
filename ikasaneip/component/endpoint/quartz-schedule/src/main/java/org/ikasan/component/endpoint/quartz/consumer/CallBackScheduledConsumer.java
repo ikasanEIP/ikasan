@@ -43,10 +43,9 @@ package org.ikasan.component.endpoint.quartz.consumer;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ForceTransactionRollbackForEventExclusionException;
-import org.quartz.DisallowConcurrentExecution;
-import org.quartz.JobExecutionContext;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
+import org.quartz.*;
+
+import java.util.Set;
 
 /**
  * This implements the CallBackMessageConsumer contract supporting message provider callbacks.
