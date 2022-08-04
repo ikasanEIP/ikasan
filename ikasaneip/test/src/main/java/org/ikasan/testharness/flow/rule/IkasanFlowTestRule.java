@@ -386,7 +386,7 @@ public class IkasanFlowTestRule implements TestRule
     }
 
     /**
-     * Invoke the scheduled consumer via its triggerSchedulerNow method
+     * Invoke the scheduled consumer via its triggerSchedulerNow method as a regular business callback.
      * <p>
      * This method executes the underlying Job asynchronously
      */
@@ -396,7 +396,33 @@ public class IkasanFlowTestRule implements TestRule
         try
         {
             JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
-            Trigger trigger = newTrigger().withIdentity("name", "group").forJob(jobDetail).build();
+            String jobNameIteration = jobDetail.getKey().getName() + "_" + consumer.getConfiguration().getConsolidatedCronExpressions().get(0).hashCode();
+
+            Trigger trigger = newTrigger().withIdentity(jobNameIteration, jobDetail.getKey().getGroup()).forJob(jobDetail).build();
+            trigger.getJobDataMap().put(ScheduledConsumer.CRON_EXPRESSION, consumer.getConfiguration().getConsolidatedCronExpressions().get(0));
+            consumer.scheduleAsEagerTrigger(trigger, 0);
+        }
+        catch (SchedulerException se)
+        {
+            throw new RuntimeException(se);
+        }
+    }
+
+    /**
+     * Invoke the scheduled consumer via its triggerSchedulerNow method as if the callback was driven from a
+     * persistent recovery marker.
+     * <p>
+     * This method executes the underlying Job asynchronously
+     */
+    public void fireScheduledConsumerPersistentRecovery()
+    {
+        ScheduledConsumer consumer = (ScheduledConsumer) getComponent(scheduledConsumerName);
+        try
+        {
+            JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
+            Trigger trigger = newTrigger().withIdentity(jobDetail.getKey().getName(), jobDetail.getKey().getGroup()).forJob(jobDetail).build();
+            trigger.getJobDataMap().put(ScheduledConsumer.CRON_EXPRESSION, consumer.getConfiguration().getConsolidatedCronExpressions().get(0));
+            trigger.getJobDataMap().put(ScheduledConsumer.PERSISTENT_RECOVERY, ScheduledConsumer.PERSISTENT_RECOVERY);
             consumer.scheduleAsEagerTrigger(trigger, 0);
         }
         catch (SchedulerException se)

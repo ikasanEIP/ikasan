@@ -71,8 +71,8 @@ public class ScheduledJobRecoveryServiceTest
     /** Mock jobexcecutioncontext */
     private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class, "mockJobExecutionContext");
 
-    /** Mock jobDetail */
-    private final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
+    /** Mock trigger */
+    private final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
 
     /**
      * Test.
@@ -81,7 +81,7 @@ public class ScheduledJobRecoveryServiceTest
     @Test
     public void test_successful_start_no_recovery_required_firetime_in_future() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
         final Date nextFireTime = new Date(System.currentTimeMillis() + 10000L);
 
@@ -89,12 +89,12 @@ public class ScheduledJobRecoveryServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // get flow and module name from the job
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
+                // get flow and module name from the trigger
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
 
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
 
                 // get firetime
                 exactly(1).of(jobExecutionContext).getFireTime();
@@ -122,7 +122,7 @@ public class ScheduledJobRecoveryServiceTest
     @Test
     public void test_successful_start_no_recovery_required_firetime_in_past_beyond_tolerance() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
         final Date nextFireTime = new Date(System.currentTimeMillis() - 10000L);
 
@@ -130,12 +130,12 @@ public class ScheduledJobRecoveryServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // get flow and module name from the job
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
+                // get flow and module name from the trigger
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
 
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
 
                 // get firetime
                 exactly(1).of(jobExecutionContext).getFireTime();
@@ -163,7 +163,7 @@ public class ScheduledJobRecoveryServiceTest
     @Test
     public void test_successful_start_no_recovery_required_due_to_no_persistence() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
         final Date nextFireTime = new Date(System.currentTimeMillis() + 10000L);
 
@@ -171,12 +171,12 @@ public class ScheduledJobRecoveryServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // get flow and module name from the job
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
+                // get flow and module name from the trigger
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
 
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
 
                 // get firetime
                 exactly(1).of(jobExecutionContext).getFireTime();
@@ -204,7 +204,7 @@ public class ScheduledJobRecoveryServiceTest
     @Test
     public void test_successful_start_recovery_required_firetime_in_past_within_tolerance() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
         final Date nextFireTime = new Date(System.currentTimeMillis() - 100L);
 
@@ -212,12 +212,12 @@ public class ScheduledJobRecoveryServiceTest
         mockery.checking(new Expectations()
         {
             {
-                // get flow and module name from the job
-                exactly(1).of(jobExecutionContext).getJobDetail();
-                will(returnValue(jobDetail));
+                // get flow and module name from the trigger
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
 
-                exactly(1).of(jobDetail).getKey();
-                will(returnValue(jobKey));
+                exactly(1).of(trigger).getKey();
+                will(returnValue(triggerKey));
 
                 // get firetime
                 exactly(1).of(jobExecutionContext).getFireTime();
@@ -233,7 +233,7 @@ public class ScheduledJobRecoveryServiceTest
             ScheduledJobRecoveryServiceFactory.getInstance();
 
         scheduledJobRecoveryService.save(jobExecutionContext);
-        Assert.assertTrue( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "flowName", 10000l) );
+        Assert.assertTrue( scheduledJobRecoveryService.isRecoveryRequired("flowName", "moduleName", 10000l) );
 
         mockery.assertIsSatisfied();
     }

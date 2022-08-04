@@ -53,11 +53,25 @@ public interface ScheduledJobRecoveryDao<MODEL>
      * @param group
      * @return
      */
-    MODEL find(String group, String name);
+    MODEL find(String name, String group);
 
     /**
-     * Save the modelled shceduled job recovery.
+     * Save the modelled scheduled job recovery.
      * @param model
      */
     void save(MODEL model);
+
+    /**
+     * Delete any recovery state for the given job name and group.
+     * @param name
+     * @param group
+     * @return
+     */
+    void deleteRecovery(String name, String group);
+
+    /**
+     * Delete all recoveries in the scheduled recovery persistence directory.
+     *
+     */
+    void deleteAllRecoveries();
 }

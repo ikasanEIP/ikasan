@@ -92,12 +92,41 @@ public class ScheduledJobRecoveryServiceImpl implements ScheduledJobRecoveryServ
     }
 
     @Override
+    public void removeRecovery(String name, String group)
+    {
+        this.scheduledJobRecoveryDao.deleteRecovery(name, group);
+    }
+
+    @Override
+    public void removeAllRecoveries()
+    {
+        this.scheduledJobRecoveryDao.deleteAllRecoveries();
+    }
+
+    @Override
+    public void setNextFireTime(String name, String group, Date nextFireTime)
+    {
+        ScheduledJobRecoveryModel model = this.scheduledJobRecoveryDao.find(name, group);
+        if(model == null)
+        {
+            model = new ScheduledJobRecoveryModel();
+        }
+
+        model.setName(name);
+        model.setGroup(group);
+        model.setNextFireTime(nextFireTime);
+
+        // persist
+        this.scheduledJobRecoveryDao.save(model);
+    }
+
+    @Override
     public void save(JobExecutionContext jobExecutionContext)
     {
-        JobKey jobKey = jobExecutionContext.getJobDetail().getKey();
+        TriggerKey triggerKey = jobExecutionContext.getTrigger().getKey();
         ScheduledJobRecoveryModel model = new ScheduledJobRecoveryModel();
-        model.setName(jobKey.getName());
-        model.setGroup(jobKey.getGroup());
+        model.setName(triggerKey.getName());
+        model.setGroup(triggerKey.getGroup());
         model.setFireTime(jobExecutionContext.getFireTime());
         model.setNextFireTime(jobExecutionContext.getNextFireTime());
 
