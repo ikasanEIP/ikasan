@@ -31,6 +31,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private boolean initiationEventRaised = false;
     private InstanceStatus status;
     private ScheduledProcessEvent scheduledProcessEvent;
+    private boolean targetResidingContextOnly;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -243,6 +244,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     }
 
     @Override
+    public boolean isTargetResidingContextOnly() {
+        return targetResidingContextOnly;
+    }
+
+    @Override
+    public void setTargetResidingContextOnly(boolean targetResidingContextOnly) {
+        this.targetResidingContextOnly = targetResidingContextOnly;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
@@ -264,6 +275,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
         sb.append(", jobName='").append(jobName).append('\'');
         sb.append(", jobDescription='").append(jobDescription).append('\'');
         sb.append(", startupControlType='").append(startupControlType).append('\'');
+        sb.append(", targetResidingContextOnly='").append(targetResidingContextOnly).append('\'');
         sb.append('}');
         return sb.toString();
     }
