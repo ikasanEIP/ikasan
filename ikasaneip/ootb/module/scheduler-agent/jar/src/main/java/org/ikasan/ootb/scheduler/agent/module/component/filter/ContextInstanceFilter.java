@@ -7,7 +7,7 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCacheUtil.doesNotExistInCache;
+import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.doesNotExistInCache;
 
 public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<ContextInstanceFilterConfiguration> {
     private static final Logger LOG = LoggerFactory.getLogger(ContextInstanceFilter.class);

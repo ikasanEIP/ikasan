@@ -66,7 +66,7 @@ public class FileMessageProviderAspect {
         JobExecutionContext jobExecutionContext = (JobExecutionContext) joinPoint.getArgs()[0];
         String jobName = jobExecutionContext.getTrigger().getKey().getName();
 
-        if (dryRunModeService.getDryRunMode() || dryRunModeService.isJobDryRun(jobName)) {
+        if (dryRunModeService != null && (dryRunModeService.getDryRunMode() || dryRunModeService.isJobDryRun(jobName))) {
             LOGGER.info("Determined to intercept join point. JobName[{}], dryRunModeService.getDryRunMode()[{}], " +
                 "dryRunModeService.isJobDryRun(jobName)[{}]", jobName, dryRunModeService.getDryRunMode(), dryRunModeService.isJobDryRun(jobName));
             return intercept(joinPoint);

@@ -88,7 +88,7 @@ public class ContextInstanceApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity save(@RequestBody ContextInstanceImpl contextInstance) {
         try {
-            ContextInstanceCache.instance().put(contextInstance);
+            ContextInstanceCache.instance().put(contextInstance.getName(), contextInstance);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(
