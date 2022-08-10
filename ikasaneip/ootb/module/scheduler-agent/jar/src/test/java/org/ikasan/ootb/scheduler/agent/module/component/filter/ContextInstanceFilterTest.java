@@ -29,7 +29,7 @@ public class ContextInstanceFilterTest {
         ContextInstance instance = new ContextInstanceImpl();
         instance.setName(contextName);
 
-        ContextInstanceCache.instance().put(instance);
+        ContextInstanceCache.instance().put(instance.getName(), instance);
 
         ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
         configuration.setContextName(contextName);
