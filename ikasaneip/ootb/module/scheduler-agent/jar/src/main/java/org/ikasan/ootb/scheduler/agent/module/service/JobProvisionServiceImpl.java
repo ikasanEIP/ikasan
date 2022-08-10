@@ -62,8 +62,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      *    'CONTEXT-369160711': { \
      *      true,\
      *      "#fileNamePattern?.contains('yyyyMMdd') ? \
-     *      (T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCacheUtil).getContextParameter(#contextName, 'BusinessDate') != null ? \
-     *      #fileNamePattern.replace('yyyyMMdd', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCacheUtil).getContextParameter(#contextName, 'BusinessDate')) : #fileNamePattern) : #fileNamePattern" , \
+     *      (T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache).getContextParameter(#contextName, 'BusinessDate') != null ? \
+     *      #fileNamePattern.replace('yyyyMMdd', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache).getContextParameter(#contextName, 'BusinessDate')) : #fileNamePattern) : #fileNamePattern" , \
      *       {'#contextName':'contextId'} \
      *      } \
      *    }
