@@ -44,9 +44,11 @@ import javax.annotation.Resource;
 
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
+import org.ikasan.spec.module.ModuleService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 
 /**
  * Agent context instances recovery component factory.
@@ -62,11 +64,16 @@ public class AgentContextInstanceRecoveryComponentFactory {
     @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
+    @Value("${module.name}")
+    private String moduleName;
+
     @Resource
     private ContextInstanceRestService contextInstanceRestService;
 
     @Bean
-    public AgentInstanceRecoveryManager agentInstanceRecoveryManager() {
-        return new AgentInstanceRecoveryManager(this.contextInstanceRestService, this.minutesToKeepRetrying, this.agentRecoveryActive);
+    @DependsOn("moduleLoader")
+    public AgentInstanceRecoveryManager agentInstanceRecoveryManager(ModuleService moduleService) {
+        return new AgentInstanceRecoveryManager(this.contextInstanceRestService,
+            this.minutesToKeepRetrying, this.agentRecoveryActive, this.moduleName, moduleService);
     }
 }
