@@ -47,35 +47,37 @@ public class AgentRecoveryRunnable implements Runnable {
             Map<String, String> flowContextMap = configuration.getFlowContextMap();
             Set<String> contextNames = flowContextMap.values().stream().filter(s -> !s.isBlank()).collect(Collectors.toSet());
             LOG.info("Recovering instances for " + contextNames);
-            for (String contextName : contextNames) {
-                long attempts = 0;
-                long retryWaitTime = 0;
-                boolean exception = false;
-                long maxTimeToRetry = minutesToKeepRetrying * 60 * 1000;
-                long startTimeMillis = System.currentTimeMillis();
-                while (retryWaitTime < maxTimeToRetry) {
-                    if (System.currentTimeMillis() > startTimeMillis + maxTimeToRetry) {
-                        break;
-                    }
-                    exception = false;
-                    try {
-                        Map<String, ContextInstance> contextInstances = contextInstanceRestService.getByContextName(contextName);
-                        ContextInstanceCache.instance().put(contextName, contextInstances.get(contextName));
-                        LOG.info("Successfully recovered context instances at start up for context: " + contextName);
-                        break;
-                    } catch (Exception e) {
-                        exception = true;
-                        retryWaitTime = 500L * attempts;
-                        sleep(retryWaitTime);
-                        attempts++;
-                    }
+            long attempts = 0;
+            long retryWaitTime = 0;
+            boolean exception = false;
+            long maxTimeToRetry = minutesToKeepRetrying * 60 * 1000;
+            long startTimeMillis = System.currentTimeMillis();
+            while (retryWaitTime < maxTimeToRetry) {
+                if (System.currentTimeMillis() > startTimeMillis + maxTimeToRetry) {
+                    break;
                 }
-                if (exception) {
-                    String message
-                        = String.format("Could not recover instances for agent in %d minutes. This is a fatal problem that needs to be resolved!", minutesToKeepRetrying);
-                    LOG.error(message);
-                    throw new EndpointException(message);
+                exception = false;
+                try {
+                    Map<String, ContextInstance> contextInstances = contextInstanceRestService.getAll();
+                    for (String contextName : contextInstances.keySet()) {
+                        if (contextNames.contains(contextName)) {
+                            ContextInstanceCache.instance().put(contextName, contextInstances.get(contextName));
+                        }
+                    }
+                    LOG.info("Successfully recovered context instances at start up for contexts: " + contextNames);
+                    break;
+                } catch (Exception e) {
+                    exception = true;
+                    retryWaitTime = 500L * attempts;
+                    sleep(retryWaitTime);
+                    attempts++;
                 }
+            }
+            if (exception) {
+                String message
+                    = String.format("Could not recover instances for agent in %d minutes. This is a fatal problem that needs to be resolved!", minutesToKeepRetrying);
+                LOG.error(message);
+                throw new EndpointException(message);
             }
         } else {
             LOG.warn("Could not find module for: " + moduleName);
