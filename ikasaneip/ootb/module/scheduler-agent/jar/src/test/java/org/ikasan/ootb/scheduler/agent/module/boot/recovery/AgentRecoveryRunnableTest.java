@@ -49,6 +49,10 @@ public class AgentRecoveryRunnableTest {
         String contextName2 = contextName + RandomStringUtils.randomNumeric(10);
         instance2.setName(contextName2);
 
+        ContextInstance instance3 = new ContextInstanceImpl();
+        String contextName3 = contextName + RandomStringUtils.randomNumeric(10);
+        instance2.setName(contextName2);
+
         Map<String, String> contextFlowMap = Map.of(
           "jobName1", contextName1, "jobNName2", contextName1, "jobName3", contextName2, "jobNName4", contextName2
         );
@@ -57,16 +61,15 @@ public class AgentRecoveryRunnableTest {
         when(module.getConfiguration()).thenReturn(configureModule);
         when(configureModule.getFlowContextMap()).thenReturn(contextFlowMap);
 
-        Map<String, ContextInstance> map1 = Map.of(contextName1, instance1);
-        Map<String, ContextInstance> map2 = Map.of(contextName2, instance2);
+        Map<String, ContextInstance> map = Map.of(contextName1, instance1, contextName2, instance2, contextName3, instance3);
 
-        when(contextInstanceRestService.getByContextName(contextName1)).thenReturn(map1);
-        when(contextInstanceRestService.getByContextName(contextName2)).thenReturn(map2);
+        when(contextInstanceRestService.getAll()).thenReturn(map);
 
         runner.run();
 
         Assert.assertNotNull(ContextInstanceCache.instance().getByContextName(contextName1));
         Assert.assertNotNull(ContextInstanceCache.instance().getByContextName(contextName2));
+        Assert.assertNull(ContextInstanceCache.instance().getByContextName(contextName3));
     }
 
     @Test(expected = EndpointException.class)
@@ -87,7 +90,7 @@ public class AgentRecoveryRunnableTest {
         when(module.getConfiguration()).thenReturn(configureModule);
         when(configureModule.getFlowContextMap()).thenReturn(contextFlowMap);
 
-        when(contextInstanceRestService.getByContextName(contextName1)).thenThrow(new EndpointException("excepted exception"));
+        when(contextInstanceRestService.getAll()).thenThrow(new EndpointException("excepted exception"));
 
         runner.run();
     }
