@@ -59,6 +59,7 @@
     <version>3.3.0-scheduler-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Ikasan Projects Parent</name>
+
     <description>Ikasan Projects Parent</description>
 
     <organization>
