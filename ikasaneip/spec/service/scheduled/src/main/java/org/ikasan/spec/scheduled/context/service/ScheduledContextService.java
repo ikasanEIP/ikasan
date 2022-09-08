@@ -76,4 +76,21 @@ public interface ScheduledContextService {
      * @return
      */
     void saveContextView(ScheduledContextViewRecord contextView);
+
+    /**
+     * Helper method to delete a context and all associated artefacts.
+     *
+     * @param contextName
+     */
+    void deleteContext(String contextName);
+
+    /**
+     * Clone a context
+     *
+     * @param contextName
+     * @param clonedContextName
+     *
+     * @return the cloned context record
+     */
+    ScheduledContextRecord cloneContext(String contextName, String clonedContextName);
 }

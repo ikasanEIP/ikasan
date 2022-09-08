@@ -62,4 +62,11 @@ public interface ScheduledContextDao {
      * @param scheduledContextRecord
      */
     void save(ScheduledContextRecord scheduledContextRecord);
+
+    /**
+     * Helper method to delete a context.
+     *
+     * @param contextName
+     */
+    void deleteContext(String contextName);
 }
