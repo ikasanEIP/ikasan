@@ -103,21 +103,32 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             logger.info(String.format("Provisioning %s jobs for agent %s", jobs.size(), this,moduleName));
 
             Module<Flow> module = this.moduleService.getModule(moduleName);
+            logger.info(String.format("Deactivating module [%s]", this,moduleName));
             moduleActivator.deactivate(module);
+            logger.info(String.format("Deactivated module [%s]", this,moduleName));
 
             ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
             ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
 
+            logger.info(String.format("Updating module configuration [%s]", this,moduleName));
             this.updateInitialModuleConfiguration(jobs, configuredModuleConfiguration);
             this.configurationService.update(configuredModule);
+            logger.info(String.format("Updated module configuration [%s]", this,moduleName));
 
+            logger.info(String.format("Activating module [%s]", this,moduleName));
             moduleActivator.activate(module);
+            logger.info(String.format("Activated module [%s]", this,moduleName));
 
+            logger.info(String.format("Configuring components [%s]", this,moduleName));
             this.configureComponents(jobs, module);
+            logger.info(String.format("Configured components [%s]", this,moduleName));
 
+            logger.info(String.format("Updating startup types [%s]", this,moduleName));
             this.updateModuleConfigurationStartupType(jobs, configuredModuleConfiguration);
             this.configurationService.update(configuredModule);
+            logger.info(String.format("Updated startup types [%s]", this,moduleName));
 
+            logger.info(String.format("Starting jobs [%s]", this,moduleName));
             this.startJobs(jobs);
             logger.info(String.format("Finished provisioning %s jobs. Time taken %s milliseconds."
                 , jobs.size(), System.currentTimeMillis()-now));
