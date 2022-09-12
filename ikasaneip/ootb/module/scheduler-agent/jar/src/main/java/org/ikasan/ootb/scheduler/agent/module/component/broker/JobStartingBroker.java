@@ -55,6 +55,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.Random;
@@ -143,6 +144,28 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
 
         try {
             // Start the process and enrich the payload.
+            StringBuffer processStartString = new StringBuffer("\nExecuting Job -> Context Name[")
+                .append(scheduledProcessEvent.getContextId())
+                .append("] Job Name[")
+                .append(scheduledProcessEvent.getInternalEventDrivenJob().getJobName())
+                .append("]\n\n");
+            processStartString.append("Process Environment Variables -> ").append("\n");
+            processBuilder.environment().entrySet()
+                .forEach(entry -> processStartString.append("Name[")
+                    .append(entry.getKey())
+                    .append("] Value[")
+                    .append(entry.getValue())
+                    .append("]")
+                    .append("\n"));
+
+
+            StringBuffer commandString = new StringBuffer("Process Command -> ").append("\n");
+            Arrays.stream(commandLineArgs).forEach(command -> commandString.append(command).append("\n"));
+
+            processStartString.append("\n").append(commandString);
+
+            logger.info(processStartString.toString());
+
             Process process = processBuilder.start();
             scheduledProcessEvent.setPid(process.pid());
             scheduledProcessEvent.setProcess(process);
