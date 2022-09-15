@@ -19,10 +19,6 @@ public interface SchedulerJobInstance extends SchedulerJob, StatefulEntity, Seri
 
     void setHeld(boolean held);
 
-    boolean isSkip();
-
-    void setSkip(boolean skip);
-
     boolean isInitiationEventRaised();
 
     void setInitiationEventRaised(boolean initiationEventRaised) ;
