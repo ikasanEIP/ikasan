@@ -2,7 +2,9 @@ package org.ikasan.spec.scheduled.instance.model;
 
 public enum InstanceStatus {
     RUNNING,
+    SKIPPED_RUNNING,
     COMPLETE,
+    SKIPPED_COMPLETE,
     WAITING,
     ERROR,
     SKIPPED,
