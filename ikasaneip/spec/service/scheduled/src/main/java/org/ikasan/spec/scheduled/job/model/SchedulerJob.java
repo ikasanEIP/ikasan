@@ -100,4 +100,8 @@ public interface SchedulerJob extends Serializable {
      * @param startupControlType
      */
     void setStartupControlType(String startupControlType);
+
+    boolean isSkip();
+
+    void setSkip(boolean skip);
 }
