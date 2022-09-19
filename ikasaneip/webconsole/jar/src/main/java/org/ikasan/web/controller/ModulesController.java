@@ -1,40 +1,40 @@
 /*
  * $Id$
  * $URL$
- * 
+ *
  * ====================================================================
  * Ikasan Enterprise Integration Platform
- * 
+ *
  * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
+ * Copyright notice: The copyright for this software and a full listing
+ * of individual contributors are as shown in the packaged copyright.txt
+ * file.
+ *
  * All rights reserved.
  *
- * Redistribution and use in source and binary forms, with or without 
+ * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions of source code must retain the above copyright notice, 
+ *  - Redistributions of source code must retain the above copyright notice,
  *    this list of conditions and the following disclaimer.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
+ *  - Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
  *    and/or other materials provided with the distribution.
  *
  *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
+ *    be used to endorse or promote products derived from this software without
  *    specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
  * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
+ * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
@@ -61,7 +61,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * Controller class for the web-console dealing with modules
- * 
+ *
  * @author Ikasan Development Team
  */
 @Controller
@@ -82,7 +82,7 @@ public class ModulesController
 
     /** The flow startupType parameter name */
     private static final String STARTUP_TYPE_PARAMETER_NAME = "startupType";
-    
+
     /** The flow startup comment parameter name */
     private static final String STARTUP_COMMENT_PARAMETER_NAME = "startupComment";
 
@@ -94,7 +94,7 @@ public class ModulesController
 
     /**
      * Constructor
-     * 
+     *
      * @param moduleService - The module service
      * @param monitor - A moitor of module's flows
      */
@@ -106,7 +106,7 @@ public class ModulesController
 
     /**
      * List the modules given a window (map)
-     * 
+     *
      * @param model - The window (map)
      * @return "modules/modules"
      */
@@ -119,7 +119,7 @@ public class ModulesController
 
     /**
      * View the module
-     * 
+     *
      * @param moduleName - The name of the module to view
      * @param model - The window
      * @return - "modules/viewModule"
@@ -137,7 +137,7 @@ public class ModulesController
 
     /**
      * View the flow
-     * 
+     *
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param model - The window
@@ -160,7 +160,7 @@ public class ModulesController
 
     /**
      * Control the initiator (stop, start etc)
-     * 
+     *
      * @param moduleName The name of the module
      * @param initiatorName - The name of the initiator
      * @param initiatorAction - The controlling action for the initiator
@@ -178,7 +178,7 @@ public class ModulesController
         if (startupType!=null)
         {
             if (startupType.equalsIgnoreCase("manual")||startupType.equalsIgnoreCase("automatic")||startupType.equalsIgnoreCase("disabled"))
-            {           
+            {
                 //crude check to ensure comment is supplied when disabling
                 if (startupType.equalsIgnoreCase("disabled"))
                 {
@@ -187,22 +187,22 @@ public class ModulesController
                         throw new IllegalArgumentException("must supply comment when disabling Initiator");
                     }
                 }
-                
+
                 moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, currentUser);
             }
             else
             {
                 throw new RuntimeException("Unknown startupType:" + startupType);
-            }           
+            }
         }
-        
+
         return "redirect:view.htm?moduleName=" + moduleName;
     }
-    
+
     /**
      * @param moduleName
      * @param flowName
-     * @param action 
+     * @param action
      * @return
      */
     @RequestMapping(value = "flow.htm", method = RequestMethod.POST)
@@ -241,7 +241,7 @@ public class ModulesController
 
     /**
      * View the flow element
-     * 
+     *
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param flowElementName - The name of the flow element
@@ -276,7 +276,7 @@ public class ModulesController
 
     /**
      * Sets the window attributes required for the window sub-navigation
-     * 
+     *
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param flowElementName - The name of the flow element
@@ -291,7 +291,7 @@ public class ModulesController
 
     /**
      * Sets an attribute in the window if it is not null
-     * 
+     *
      * @param model - The window
      * @param parameterName - The parameter name
      * @param parameterValue - The parameter value
@@ -306,7 +306,7 @@ public class ModulesController
 
     /**
      * Delete a wiretap trigger
-     * 
+     *
      * @param moduleName - The name of the module
      * @param flowName - The name of the flow
      * @param flowElementName - The name of the flow element
@@ -327,7 +327,7 @@ public class ModulesController
 
     /**
      * resolves a named FlowElement from a VisitingInvokerFlow
-     * 
+     *
      * @param flowElementName - The name of the flow element
      * @param flow - The flow
      * @return The resolve FlowElement
@@ -348,11 +348,11 @@ public class ModulesController
 
     /**
      * Set the job aware flow event listener
-     * 
+     *
      * @param jobAwareFlowEventListener - The job aware flow event listener to set
      */
-    @Autowired 
-    public void setJobAwareFlowEventListener(JobAwareFlowEventListener jobAwareFlowEventListener)
+    @Autowired
+    public void setJobAwareJobAwareFlowEventListenerFlowEventListener(JobAwareFlowEventListener jobAwareFlowEventListener)
     {
         this.jobAwareFlowEventListener = jobAwareFlowEventListener;
     }

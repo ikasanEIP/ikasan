@@ -41,10 +41,7 @@
 package org.ikasan.module;
 
 import org.ikasan.module.container.ModuleContainerImpl;
-import org.ikasan.module.service.ModuleActivatorDefaultImpl;
-import org.ikasan.module.service.ModuleInitialisationServiceImpl;
-import org.ikasan.module.service.ModuleServiceImpl;
-import org.ikasan.module.service.StartupControlServiceImpl;
+import org.ikasan.module.service.*;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -56,6 +53,7 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -102,10 +100,24 @@ public class IkasanModuleAutoConfiguration
 
 
     @Bean
+    @ConfigurationProperties(prefix = "ikasan.startup")
+    public StartupModuleConfiguration startupModuleConfiguration(){
+        return new StartupModuleConfiguration();
+    }
+
+    @Bean
+    public StartupModuleProcessor startupModuleProcessor(StartupModuleConfiguration startupModuleConfiguration,
+                                                         StartupControlDao startupControlDao){
+        return new StartupModuleProcessor(startupModuleConfiguration, startupControlDao);
+
+    }
+
+    @Bean
     public ModuleActivator moduleActivator(StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService,
-                                           DashboardRestService configurationMetadataDashboardRestService) {
+                                           DashboardRestService configurationMetadataDashboardRestService,
+                                           StartupModuleProcessor startupModuleProcessor) {
         return new ModuleActivatorDefaultImpl(configurationService, startupControlDao, moduleMetadataDashboardRestService,
-            configurationMetadataDashboardRestService);
+            configurationMetadataDashboardRestService, startupModuleProcessor);
     }
 
     @Bean
