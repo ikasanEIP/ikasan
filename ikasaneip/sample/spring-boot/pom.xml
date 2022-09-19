@@ -58,6 +58,7 @@
         <module>sftp-jms</module>
         <module>ftp-jms</module>
         <module>scheduled</module>
+        <module>startup-processor</module>
     </modules>
 
 </project>
