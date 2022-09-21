@@ -29,8 +29,8 @@ public class ScheduledProcessEventToBigQueueMessageSerialiser implements Seriali
         try {
             ContextualisedScheduledProcessEvent event = (ContextualisedScheduledProcessEvent) source;
             Map<String, String> properties = new HashMap<>();
-            if (event.getContextId() != null) {
-                properties.put("contextName", event.getContextId());
+            if (event.getContextName() != null) {
+                properties.put("contextName", event.getContextName());
             }
             if (event.getContextInstanceId() != null) {
                 properties.put("contextInstanceId", event.getContextInstanceId());

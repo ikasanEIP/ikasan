@@ -51,9 +51,9 @@ public class ScheduledProcessEventToBigQueueMessageSerialiserTest {
         byte[] bytes = mapper.writeValueAsBytes(bigQueueMessage);
 
         ContextualisedScheduledProcessEvent scheduledProcessEvent = (ContextualisedScheduledProcessEvent) serialiser.deserialise(bytes);
-        assertEquals("ContextIdName", scheduledProcessEvent.getContextId());
+        assertEquals("ContextIdName", scheduledProcessEvent.getContextName());
         assertEquals("ContextInstanceIdForContext", scheduledProcessEvent.getContextInstanceId());
-        assertEquals(List.of("child1", "child2"), scheduledProcessEvent.getChildContextIds());
+        assertEquals(List.of("child1", "child2"), scheduledProcessEvent.getChildContextNames());
         assertEquals("agentName", scheduledProcessEvent.getAgentName());
         assertEquals("hostname", scheduledProcessEvent.getAgentHostname());
         assertEquals("commandLine", scheduledProcessEvent.getCommandLine());
@@ -71,9 +71,9 @@ public class ScheduledProcessEventToBigQueueMessageSerialiserTest {
 
     private ScheduledProcessEvent getEvent() {
         ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
-        scheduledProcessEvent.setContextId("ContextIdName");
+        scheduledProcessEvent.setContextName("ContextIdName");
         scheduledProcessEvent.setContextInstanceId("ContextInstanceIdForContext");
-        scheduledProcessEvent.setChildContextIds(List.of("child1", "child2"));
+        scheduledProcessEvent.setChildContextNames(List.of("child1", "child2"));
         scheduledProcessEvent.setAgentName("agentName");
         scheduledProcessEvent.setAgentHostname("hostname");
         scheduledProcessEvent.setCommandLine("commandLine");

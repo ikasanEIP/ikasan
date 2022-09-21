@@ -38,8 +38,8 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
         schedulerJobInitiationEventDto.setDryRun(true);
         schedulerJobInitiationEventDto.setAgentName("agentName");
         schedulerJobInitiationEventDto.setAgentUrl("agentUrl");
-        schedulerJobInitiationEventDto.setChildContextIds(List.of("childContextId1", "childContextId2"));
-        schedulerJobInitiationEventDto.setContextId("contextId");
+        schedulerJobInitiationEventDto.setChildContextNames(List.of("childContextId1", "childContextId2"));
+        schedulerJobInitiationEventDto.setContextName("contextId");
         schedulerJobInitiationEventDto.setContextInstanceId("contextInstanceId");
         schedulerJobInitiationEventDto.setJobName("jobName");
 
@@ -63,9 +63,9 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
 
         Assert.assertEquals("agentName", result.getAgentName());
         Assert.assertEquals("jobName", result.getJobName());
-        Assert.assertEquals("contextId", result.getContextId());
+        Assert.assertEquals("contextId", result.getContextName());
         Assert.assertEquals("contextInstanceId", result.getContextInstanceId());
-        Assert.assertEquals(2, result.getChildContextIds().size());
+        Assert.assertEquals(2, result.getChildContextNames().size());
         Assert.assertTrue(result.isJobStarting());
         Assert.assertFalse(result.isSuccessful());
         Assert.assertTrue(result.isSkipped());

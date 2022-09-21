@@ -29,5 +29,9 @@ public interface SchedulerJobInstance extends SchedulerJob, StatefulEntity, Seri
 
     ScheduledProcessEvent getScheduledProcessEvent();
 
-    void setScheduledProcessEvent(ScheduledProcessEvent scheduledProcessEvent) ;
+    void setScheduledProcessEvent(ScheduledProcessEvent scheduledProcessEvent);
+
+    boolean isSkip();
+
+    void setSkip(boolean skip);
 }

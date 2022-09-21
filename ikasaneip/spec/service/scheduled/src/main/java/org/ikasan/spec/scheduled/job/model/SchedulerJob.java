@@ -2,6 +2,7 @@ package org.ikasan.spec.scheduled.job.model;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface SchedulerJob extends Serializable {
 
@@ -9,27 +10,27 @@ public interface SchedulerJob extends Serializable {
      * Get the parent context id that this job belongs to.
      * @return
      */
-    String getContextId();
+    String getContextName();
 
     /**
      * Set the parent context id that this job belongs to.
-     * @param contextId
+     * @param contextName
      */
-    void setContextId(String contextId);
+    void setContextName(String contextName);
 
     /**
      * Get the child context ids that this job belongs to. Contexts can appear within contexts.
      *
      * @return
      */
-    List<String> getChildContextIds();
+    List<String> getChildContextNames();
 
     /**
      * Set the child context ids that this job belongs to. Contexts can appear within contexts.
      *
      * @param contextIds
      */
-    void setChildContextIds(List<String> contextIds);
+    void setChildContextNames(List<String> contextIds);
 
     /**
      * Get the unique identifier for this job.
@@ -101,7 +102,31 @@ public interface SchedulerJob extends Serializable {
      */
     void setStartupControlType(String startupControlType);
 
-    boolean isSkip();
+    /**
+     * Set a map of contexts within which this job will be skipped
+     *
+     * @param skippedContexts
+     */
+    void setSkippedContexts(Map<String, Boolean> skippedContexts);
 
-    void setSkip(boolean skip);
+    /**
+     * Get a map of contexts within which this job will be skipped
+     *
+     * @return
+     */
+    Map<String, Boolean> getSkippedContexts();
+
+    /**
+     * Set a map of contexts within which this job will be held
+     *
+     * @param heldContexts
+     */
+    void setHeldContexts(Map<String, Boolean> heldContexts);
+
+    /**
+     * Get a map of contexts within which this job will be held
+     *
+     * @return
+     */
+    Map<String, Boolean> getHeldContexts();
 }

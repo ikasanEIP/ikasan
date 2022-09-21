@@ -76,8 +76,8 @@ public class SchedulerJobInitiationEventApplication
 
     private Map<String, String> getProperties(SchedulerJobInitiationEventDto schedulerJobInitiationEvent) {
         Map<String, String> properties = new HashMap<>();
-        if (schedulerJobInitiationEvent.getContextId() != null) {
-            properties.put("contextName", schedulerJobInitiationEvent.getContextId());
+        if (schedulerJobInitiationEvent.getContextName() != null) {
+            properties.put("contextName", schedulerJobInitiationEvent.getContextName());
         }
         if (schedulerJobInitiationEvent.getContextInstanceId() != null) {
             properties.put("contextInstanceId", schedulerJobInitiationEvent.getContextInstanceId());

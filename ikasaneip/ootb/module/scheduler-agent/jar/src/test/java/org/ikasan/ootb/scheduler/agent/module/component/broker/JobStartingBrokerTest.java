@@ -50,7 +50,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -83,7 +83,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -114,7 +114,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -148,7 +148,7 @@ public class JobStartingBrokerTest {
         String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
         internalEventDrivenJobInstanceDto.setCommandLine(cmd);
 
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -186,7 +186,7 @@ public class JobStartingBrokerTest {
         String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
         internalEventDrivenJobInstanceDto.setCommandLine(cmd);
 
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -222,7 +222,7 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
 
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -250,7 +250,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -285,7 +285,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -318,7 +318,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -351,7 +351,7 @@ public class JobStartingBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);

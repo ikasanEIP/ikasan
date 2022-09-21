@@ -69,13 +69,13 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     }
 
     @Override
-    public String getContextId() {
+    public String getContextName() {
         return this.contextId;
     }
 
     @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextName(String contextName) {
+        this.contextId = contextName;
     }
 
     @Override
@@ -89,12 +89,12 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     }
 
     @Override
-    public List<String> getChildContextIds() {
+    public List<String> getChildContextNames() {
         return childContextIds;
     }
 
     @Override
-    public void setChildContextIds(List<String> childContextIds) {
+    public void setChildContextNames(List<String> childContextIds) {
         this.childContextIds = childContextIds;
     }
 
