@@ -188,7 +188,7 @@ public class JobProvisionServiceImplTest {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
         Map<String, List<Object>> spelMap
-            = Map.of("contextId", List.of(true, "#fileName.replace(#someValue, 'thevaluetoreplace')", Map.of("#someValue", "contextId")));
+            = Map.of("contextName", List.of(true, "#fileName.replace(#someValue, 'thevaluetoreplace')", Map.of("#someValue", "contextName")));
 
         ReflectionTestUtils.setField(service,"spelExpressionsMap", spelMap);
 
@@ -197,15 +197,15 @@ public class JobProvisionServiceImplTest {
         this.service.provisionJobs(this.getJobs());
 
         verify(fileConsumerConfiguration).setDynamicFileName(true);
-        verify(fileConsumerConfiguration).setSpelExpression("#fileName.replace('contextId', 'thevaluetoreplace')");
+        verify(fileConsumerConfiguration).setSpelExpression("#fileName.replace('contextName', 'thevaluetoreplace')");
     }
 
     @Test
     public void get_spel_replacement_string() {
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
-        fileEventDrivenJob.setContextName("contextId");
+        fileEventDrivenJob.setContextName("contextName");
         fileEventDrivenJob.setJobName("jobName");
-        assertEquals("'contextId'", service.getSpelReplacement("contextId", fileEventDrivenJob));
+        assertEquals("'contextName'", service.getSpelReplacement("contextName", fileEventDrivenJob));
         assertEquals("'jobName'", service.getSpelReplacement("jobName", fileEventDrivenJob));
         assertNull(service.getSpelReplacement("unknownVar", fileEventDrivenJob));
     }
@@ -261,13 +261,13 @@ public class JobProvisionServiceImplTest {
         InternalEventDrivenJobImpl internalEventDrivenJob = new InternalEventDrivenJobImpl();
         internalEventDrivenJob.setAgentName("agentName");
         internalEventDrivenJob.setJobName("jobName");
-        internalEventDrivenJob.setContextName("contextId");
+        internalEventDrivenJob.setContextName("contextName");
         internalEventDrivenJob.setChildContextNames(childIds);
 
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         fileEventDrivenJob.setAgentName("agentName");
         fileEventDrivenJob.setJobName("jobName");
-        fileEventDrivenJob.setContextName("contextId");
+        fileEventDrivenJob.setContextName("contextName");
         fileEventDrivenJob.setChildContextNames(childIds);
         fileEventDrivenJob.setFilenames(new ArrayList<>());
         fileEventDrivenJob.setJobGroup("group");
@@ -296,7 +296,7 @@ public class JobProvisionServiceImplTest {
         quartzScheduleDrivenJob.setJobName("jobName");
         quartzScheduleDrivenJob.setJobGroup("jobGroup");
         quartzScheduleDrivenJob.setJobDescription("description");
-        quartzScheduleDrivenJob.setContextName("contextId");
+        quartzScheduleDrivenJob.setContextName("contextName");
         quartzScheduleDrivenJob.setCronExpression("cronExpression");
         quartzScheduleDrivenJob.setTimeZone("timezone");
         quartzScheduleDrivenJob.setEager(true);
