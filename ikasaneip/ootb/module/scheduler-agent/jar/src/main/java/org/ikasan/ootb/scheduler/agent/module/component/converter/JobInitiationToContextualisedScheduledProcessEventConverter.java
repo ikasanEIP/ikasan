@@ -115,9 +115,9 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setFireTime(System.currentTimeMillis());
             scheduledProcessEvent.setAgentName(moduleName);
             scheduledProcessEvent.setJobName(schedulerJobInitiationEvent.getJobName());
-            scheduledProcessEvent.setContextId(schedulerJobInitiationEvent.getContextId());
+            scheduledProcessEvent.setContextName(schedulerJobInitiationEvent.getContextName());
             scheduledProcessEvent.setContextInstanceId(schedulerJobInitiationEvent.getContextInstanceId());
-            scheduledProcessEvent.setChildContextIds(schedulerJobInitiationEvent.getChildContextIds());
+            scheduledProcessEvent.setChildContextNames(schedulerJobInitiationEvent.getChildContextNames());
             scheduledProcessEvent.setJobStarting(true);
             scheduledProcessEvent.setSuccessful(false);
             scheduledProcessEvent.setDryRun(schedulerJobInitiationEvent.isDryRun());
@@ -129,11 +129,11 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             // We are going to use a file naming convention for the log files used by the process to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log
             long currentTimeMillis = System.currentTimeMillis();
-            scheduledProcessEvent.setResultOutput(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
+            scheduledProcessEvent.setResultOutput(fixParenthesis() + schedulerJobInitiationEvent.getContextName() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
                 + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis + "-" + "out.log");
 
-            scheduledProcessEvent.setResultError(fixParenthesis() + schedulerJobInitiationEvent.getContextId() + "-" +
+            scheduledProcessEvent.setResultError(fixParenthesis() + schedulerJobInitiationEvent.getContextName() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
                 + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis + "-" + "err.log");
 

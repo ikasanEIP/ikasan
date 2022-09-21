@@ -12,9 +12,9 @@ public interface InternalEventDrivenJobRecord {
 
     public void setJobName(String jobName);
 
-    String getContextId();
+    String getContextName();
 
-    void setContextId(String contextId);
+    void setContextName(String contextName);
 
     public InternalEventDrivenJob getInternalEventDrivenJob();
 
@@ -31,4 +31,16 @@ public interface InternalEventDrivenJobRecord {
     String getModifiedBy();
 
     void setModifiedBy(String modifiedBy);
+
+    boolean isHeld();
+
+    void setHeld(boolean held);
+
+    boolean isSkipped();
+
+    void setSkipped(boolean skipped);
+
+    void setTargetResidingContextOnly(boolean targetResidingContextOnly);
+
+    boolean isTargetResidingContextOnly();
 }
