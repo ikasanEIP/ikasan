@@ -135,7 +135,7 @@ public class QuartzScheduleDrivenJobImpl extends SchedulerJobImpl implements Qua
         sb.append(", jobIdentifier='").append(jobIdentifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');
         sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", contextId='").append(contextId).append('\'');
+        sb.append(", contextId='").append(contextName).append('\'');
         sb.append(", description='").append(description).append('\'');
         sb.append(", startupControlType='").append(startupControlType).append('\'');
         sb.append('}');

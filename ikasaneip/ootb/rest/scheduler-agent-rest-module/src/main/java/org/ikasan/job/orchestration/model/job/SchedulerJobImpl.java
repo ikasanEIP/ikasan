@@ -4,35 +4,37 @@ package org.ikasan.job.orchestration.model.job;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import java.util.List;
+import java.util.Map;
 
 public class SchedulerJobImpl implements SchedulerJob {
     protected String jobIdentifier;
     protected String agentName;
     protected String jobName;
-    protected String contextId;
-    protected List<String> childContextIds;
+    protected String contextName;
+    protected List<String> childContextNames;
     protected String description;
     protected String startupControlType = "AUTOMATIC";
-    protected boolean skip;
+    protected Map<String, Boolean> skippedContexts;
+    protected Map<String, Boolean> heldContexts;
 
     @Override
-    public String getContextId() {
-        return this.contextId;
+    public String getContextName() {
+        return this.contextName;
     }
 
     @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextName(String contextName) {
+        this.contextName = contextName;
     }
 
     @Override
-    public List<String> getChildContextIds() {
-        return childContextIds;
+    public List<String> getChildContextNames() {
+        return childContextNames;
     }
 
     @Override
-    public void setChildContextIds(List<String> childContextIds) {
-        this.childContextIds = childContextIds;
+    public void setChildContextNames(List<String> childContextIds) {
+        this.childContextNames = childContextIds;
     }
 
     @Override
@@ -86,26 +88,37 @@ public class SchedulerJobImpl implements SchedulerJob {
     }
 
     @Override
-    public boolean isSkip() {
-        return skip;
+    public Map<String, Boolean> getSkippedContexts() {
+        return skippedContexts;
     }
 
     @Override
-    public void setSkip(boolean skip) {
-        this.skip = skip;
+    public void setSkippedContexts(Map<String, Boolean> skippedContexts) {
+        this.skippedContexts = skippedContexts;
+    }
+
+    @Override
+    public Map<String, Boolean> getHeldContexts() {
+        return heldContexts;
+    }
+
+    @Override
+    public void setHeldContexts(Map<String, Boolean> heldContexts) {
+        this.heldContexts = heldContexts;
     }
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("SchedulerJobImpl{");
-        sb.append("jobIdentifier='").append(jobIdentifier).append('\'');
-        sb.append(", agentName='").append(agentName).append('\'');
-        sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", contextId='").append(contextId).append('\'');
-        sb.append(", description='").append(description).append('\'');
-        sb.append(", startupControlType='").append(startupControlType).append('\'');
-        sb.append(", skip='").append(skip).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return "SchedulerJobImpl{" +
+            "jobIdentifier='" + jobIdentifier + '\'' +
+            ", agentName='" + agentName + '\'' +
+            ", jobName='" + jobName + '\'' +
+            ", contextId='" + contextName + '\'' +
+            ", childContextIds=" + childContextNames +
+            ", description='" + description + '\'' +
+            ", startupControlType='" + startupControlType + '\'' +
+            ", skippedContexts=" + skippedContexts +
+            ", heldContexts=" + heldContexts +
+            '}';
     }
 }

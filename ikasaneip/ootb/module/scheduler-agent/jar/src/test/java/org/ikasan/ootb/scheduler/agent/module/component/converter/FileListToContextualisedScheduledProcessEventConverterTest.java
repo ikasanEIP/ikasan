@@ -36,8 +36,8 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
 
         Assert.assertEquals("agentName", event.getAgentName());
         Assert.assertEquals("jobName", event.getJobName());
-        Assert.assertEquals("contextid", event.getContextId());
-        Assert.assertEquals(2, event.getChildContextIds().size());
+        Assert.assertEquals("contextid", event.getContextName());
+        Assert.assertEquals(2, event.getChildContextNames().size());
         Assert.assertEquals(true, event.isSuccessful());
     }
 }

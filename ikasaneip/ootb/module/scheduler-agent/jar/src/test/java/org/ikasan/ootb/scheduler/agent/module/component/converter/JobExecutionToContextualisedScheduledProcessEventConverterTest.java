@@ -1,10 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
-import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,7 +63,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         Assert.assertEquals(nextFireTime.getTime(), event.getNextFireTime());
         Assert.assertEquals("moduleName", event.getAgentName());
         Assert.assertEquals("name", event.getJobName());
-        Assert.assertEquals("contextId", event.getContextId());
+        Assert.assertEquals("contextId", event.getContextName());
         Assert.assertEquals(true, event.isSuccessful());
         Assert.assertEquals("description", event.getJobDescription());
         Assert.assertEquals("group", event.getJobGroup());

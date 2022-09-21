@@ -158,20 +158,20 @@ public class JobProvisionApplicationTest {
         InternalEventDrivenJobImpl internalEventDrivenJob = new InternalEventDrivenJobImpl();
         internalEventDrivenJob.setAgentName("agentName");
         internalEventDrivenJob.setJobName("jobName");
-        internalEventDrivenJob.setContextId("contextId");
-        internalEventDrivenJob.setChildContextIds(childIds);
+        internalEventDrivenJob.setContextName("contextId");
+        internalEventDrivenJob.setChildContextNames(childIds);
 
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         fileEventDrivenJob.setAgentName("agentName");
         fileEventDrivenJob.setJobName("jobName");
-        fileEventDrivenJob.setContextId("contextId");
-        fileEventDrivenJob.setChildContextIds(childIds);
+        fileEventDrivenJob.setContextName("contextId");
+        fileEventDrivenJob.setChildContextNames(childIds);
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
         quartzScheduleDrivenJob.setAgentName("agentName");
         quartzScheduleDrivenJob.setJobName("jobName");
-        quartzScheduleDrivenJob.setContextId("contextId");
-        quartzScheduleDrivenJob.setChildContextIds(childIds);
+        quartzScheduleDrivenJob.setContextName("contextId");
+        quartzScheduleDrivenJob.setChildContextNames(childIds);
         ArrayList<SchedulerJob> jobs = new ArrayList<>();
         jobs.add(internalEventDrivenJob);
         jobs.add(fileEventDrivenJob);

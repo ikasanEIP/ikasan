@@ -2,7 +2,6 @@ package org.ikasan.spec.scheduled.event.model;
 
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.io.Serializable;
 import java.util.List;
@@ -82,32 +81,32 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
     void setJobName(String jobName);
 
     /**
-     * Get the context id that this job belongs to.
+     * Get the context name that this job belongs to.
      *
      * @return
      */
-    String getContextId();
+    String getContextName();
 
     /**
-     * Set the context id that this job belongs to.
+     * Set the context name that this job belongs to.
      *
-     * @param contextId
+     * @param contextName
      */
-    void setContextId(String contextId);
+    void setContextName(String contextName);
 
     /**
-     * Get the child context ids that this job belongs to. Contexts can appear within contexts.
+     * Get the child context names that this job belongs to. Contexts can appear within contexts.
      *
      * @return
      */
-    List<String> getChildContextIds();
+    List<String> getChildContextNames();
 
     /**
-     * Set the child context ids that this job belongs to. Contexts can appear within contexts.
+     * Set the child context names that this job belongs to. Contexts can appear within contexts.
      *
      * @param contextIds
      */
-    void setChildContextIds(List<String> contextIds);
+    void setChildContextNames(List<String> contextNames);
 
     /**
      * Get the context instance id that this job belongs to.

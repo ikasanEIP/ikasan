@@ -12,9 +12,9 @@ public interface QuartzScheduleDrivenJobRecord {
 
     public void setJobName(String jobName);
 
-    String getContextId();
+    String getContextName();
 
-    void setContextId(String contextId);
+    void setContextName(String contextName);
 
     public QuartzScheduleDrivenJob getQuartzScheduleDrivenJob();
 

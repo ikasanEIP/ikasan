@@ -17,4 +17,18 @@ public interface SchedulerJobSearchFilter {
     public void setContextSearchFilter(String contextSearchFilter);
 
     public List<String> getTobTypes();
+
+    public boolean isHeld();
+
+    public void setHeld(boolean held);
+
+    public boolean isSkipped();
+
+    public void setSkipped(boolean skipped);
+
+    void setStatus(String status);
+
+    void setTargetResidingContextOnly(String targetResidingContextOnly);
+
+    boolean isTargetResidingContextOnly();
 }

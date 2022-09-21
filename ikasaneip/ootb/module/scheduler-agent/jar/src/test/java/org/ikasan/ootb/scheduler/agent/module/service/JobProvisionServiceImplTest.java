@@ -203,7 +203,7 @@ public class JobProvisionServiceImplTest {
     @Test
     public void get_spel_replacement_string() {
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
-        fileEventDrivenJob.setContextId("contextId");
+        fileEventDrivenJob.setContextName("contextId");
         fileEventDrivenJob.setJobName("jobName");
         assertEquals("'contextId'", service.getSpelReplacement("contextId", fileEventDrivenJob));
         assertEquals("'jobName'", service.getSpelReplacement("jobName", fileEventDrivenJob));
@@ -261,14 +261,14 @@ public class JobProvisionServiceImplTest {
         InternalEventDrivenJobImpl internalEventDrivenJob = new InternalEventDrivenJobImpl();
         internalEventDrivenJob.setAgentName("agentName");
         internalEventDrivenJob.setJobName("jobName");
-        internalEventDrivenJob.setContextId("contextId");
-        internalEventDrivenJob.setChildContextIds(childIds);
+        internalEventDrivenJob.setContextName("contextId");
+        internalEventDrivenJob.setChildContextNames(childIds);
 
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         fileEventDrivenJob.setAgentName("agentName");
         fileEventDrivenJob.setJobName("jobName");
-        fileEventDrivenJob.setContextId("contextId");
-        fileEventDrivenJob.setChildContextIds(childIds);
+        fileEventDrivenJob.setContextName("contextId");
+        fileEventDrivenJob.setChildContextNames(childIds);
         fileEventDrivenJob.setFilenames(new ArrayList<>());
         fileEventDrivenJob.setJobGroup("group");
         fileEventDrivenJob.setJobDescription("description");
@@ -296,7 +296,7 @@ public class JobProvisionServiceImplTest {
         quartzScheduleDrivenJob.setJobName("jobName");
         quartzScheduleDrivenJob.setJobGroup("jobGroup");
         quartzScheduleDrivenJob.setJobDescription("description");
-        quartzScheduleDrivenJob.setContextId("contextId");
+        quartzScheduleDrivenJob.setContextName("contextId");
         quartzScheduleDrivenJob.setCronExpression("cronExpression");
         quartzScheduleDrivenJob.setTimeZone("timezone");
         quartzScheduleDrivenJob.setEager(true);
@@ -306,7 +306,7 @@ public class JobProvisionServiceImplTest {
         quartzScheduleDrivenJob.setPersistentRecovery(true);
         quartzScheduleDrivenJob.setRecoveryTolerance(5);
 
-        quartzScheduleDrivenJob.setChildContextIds(childIds);
+        quartzScheduleDrivenJob.setChildContextNames(childIds);
         ArrayList<SchedulerJob> jobs = new ArrayList<>();
         jobs.add(internalEventDrivenJob);
         jobs.add(fileEventDrivenJob);
