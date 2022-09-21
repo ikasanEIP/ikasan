@@ -47,7 +47,6 @@ import org.ikasan.ootb.scheduled.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * Job Starting Broker implementation for the execution of the command line process.
@@ -145,7 +143,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         try {
             // Start the process and enrich the payload.
             StringBuffer processStartString = new StringBuffer("\nExecuting Job -> Context Name[")
-                .append(scheduledProcessEvent.getContextId())
+                .append(scheduledProcessEvent.getContextName())
                 .append("] Job Name[")
                 .append(scheduledProcessEvent.getInternalEventDrivenJob().getJobName())
                 .append("]\n\n");

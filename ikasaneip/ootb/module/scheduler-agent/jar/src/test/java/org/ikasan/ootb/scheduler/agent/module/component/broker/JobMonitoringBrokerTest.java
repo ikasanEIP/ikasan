@@ -280,7 +280,7 @@ public class JobMonitoringBrokerTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);

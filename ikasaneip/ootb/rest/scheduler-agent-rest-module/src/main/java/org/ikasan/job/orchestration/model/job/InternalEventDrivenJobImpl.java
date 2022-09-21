@@ -109,13 +109,13 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
         sb.append(", jobIdentifier='").append(jobIdentifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');
         sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", contextId='").append(contextId).append('\'');
-        if(childContextIds != null) {
+        sb.append(", contextId='").append(contextName).append('\'');
+        if(childContextNames != null) {
             sb.append(", childContextIds=[ ");
-            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+            childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
         }
         else {
-            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+            sb.append(", childContextIds='").append(this.childContextNames).append('\'');
         }
         sb.append("], description='").append(description).append('\'');
         sb.append(", startupControlType='").append(startupControlType).append('\'');

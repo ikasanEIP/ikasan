@@ -90,8 +90,8 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
         scheduledProcessEvent.setAgentName(this.agentName);
         scheduledProcessEvent.setJobName(this.jobName);
         scheduledProcessEvent.setSuccessful(true);
-        scheduledProcessEvent.setContextId(this.configuration.getContextId());
-        scheduledProcessEvent.setChildContextIds(this.configuration.getChildContextIds());
+        scheduledProcessEvent.setContextName(this.configuration.getContextId());
+        scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextIds());
 
         return scheduledProcessEvent;
     }
