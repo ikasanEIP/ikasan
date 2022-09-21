@@ -4,9 +4,9 @@ import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.util.List;
+import java.util.Map;
 
 public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJobInstance {
 
@@ -16,8 +16,8 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private long minExecutionTime;
     private long maxExecutionTime;
     private List<ContextParameter> contextParameters;
-    private String contextId;
-    protected List<String> childContextIds;
+    private String contextName;
+    protected List<String> childContextNames;
     private String identifier;
     private String agentName;
     private String jobName;
@@ -32,6 +32,10 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private InstanceStatus status;
     private ScheduledProcessEvent scheduledProcessEvent;
     private boolean targetResidingContextOnly;
+
+    private Map<String, Boolean> skippedContexts;
+
+    private Map<String, Boolean> heldContexts;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -94,23 +98,23 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     }
 
     @Override
-    public String getContextId() {
-        return this.contextId;
+    public String getContextName() {
+        return this.contextName;
     }
 
     @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextName(String contextName) {
+        this.contextName = contextName;
     }
 
     @Override
-    public List<String> getChildContextIds() {
-        return childContextIds;
+    public List<String> getChildContextNames() {
+        return childContextNames;
     }
 
     @Override
-    public void setChildContextIds(List<String> childContextIds) {
-        this.childContextIds = childContextIds;
+    public void setChildContextNames(List<String> childContextIds) {
+        this.childContextNames = childContextIds;
     }
 
     @Override
@@ -254,6 +258,26 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     }
 
     @Override
+    public Map<String, Boolean> getSkippedContexts() {
+        return skippedContexts;
+    }
+
+    @Override
+    public void setSkippedContexts(Map<String, Boolean> skippedContexts) {
+        this.skippedContexts = skippedContexts;
+    }
+
+    @Override
+    public Map<String, Boolean> getHeldContexts() {
+        return heldContexts;
+    }
+
+    @Override
+    public void setHeldContexts(Map<String, Boolean> heldContexts) {
+        this.heldContexts = heldContexts;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
@@ -262,13 +286,13 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
         sb.append(", minExecutionTime=").append(minExecutionTime);
         sb.append(", maxExecutionTime=").append(maxExecutionTime);
         sb.append(", contextParameters=").append(contextParameters);
-        sb.append(", contextId='").append(contextId).append('\'');
-        if(childContextIds != null) {
+        sb.append(", contextId='").append(contextName).append('\'');
+        if(childContextNames != null) {
             sb.append(", childContextIds=[ ");
-            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+            childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
         }
         else {
-            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+            sb.append(", childContextIds='").append(this.childContextNames).append('\'');
         }
         sb.append("], identifier='").append(identifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');

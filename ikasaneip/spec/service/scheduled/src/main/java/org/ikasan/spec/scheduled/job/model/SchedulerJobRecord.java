@@ -9,7 +9,7 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
 
     String getJobName();
 
-    String getContextId();
+    String getContextName();
 
     T getJob();
 
@@ -17,9 +17,19 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
 
     long getModifiedTimestamp();
 
-    void setModifiedTimestamp(long timestamp);
+//    void setModifiedTimestamp(long timestamp);
 
     String getModifiedBy();
 
-    void setModifiedBy(String modifiedBy);
+//    void setModifiedBy(String modifiedBy);
+
+    public boolean isHeld();
+
+//    public void setHeld(boolean held);
+
+    public boolean isSkipped();
+
+//    public void setSkipped(boolean skipped);
+
+    boolean isTargetResidingContextOnly();
 }

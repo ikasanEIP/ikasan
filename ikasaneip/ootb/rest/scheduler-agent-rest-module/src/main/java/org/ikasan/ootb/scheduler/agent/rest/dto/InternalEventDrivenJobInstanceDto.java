@@ -6,6 +6,7 @@ import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.util.List;
+import java.util.Map;
 
 public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJobInstance {
 
@@ -31,6 +32,10 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     private InstanceStatus status;
     private ScheduledProcessEvent scheduledProcessEvent;
     private boolean targetResidingContextOnly;
+
+    private Map<String, Boolean> skippedContexts;
+
+    private Map<String, Boolean> heldContexts;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -93,22 +98,22 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     }
 
     @Override
-    public String getContextId() {
+    public String getContextName() {
         return this.contextId;
     }
 
     @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextName(String contextName) {
+        this.contextId = contextName;
     }
 
     @Override
-    public List<String> getChildContextIds() {
+    public List<String> getChildContextNames() {
         return childContextIds;
     }
 
     @Override
-    public void setChildContextIds(List<String> childContextIds) {
+    public void setChildContextNames(List<String> childContextIds) {
         this.childContextIds = childContextIds;
     }
 
@@ -250,6 +255,26 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     @Override
     public void setTargetResidingContextOnly(boolean targetResidingContextOnly) {
         this.targetResidingContextOnly = targetResidingContextOnly;
+    }
+
+    @Override
+    public Map<String, Boolean> getSkippedContexts() {
+        return skippedContexts;
+    }
+
+    @Override
+    public void setSkippedContexts(Map<String, Boolean> skippedContexts) {
+        this.skippedContexts = skippedContexts;
+    }
+
+    @Override
+    public Map<String, Boolean> getHeldContexts() {
+        return heldContexts;
+    }
+
+    @Override
+    public void setHeldContexts(Map<String, Boolean> heldContexts) {
+        this.heldContexts = heldContexts;
     }
 
     @Override

@@ -131,7 +131,7 @@ public class JobProcessingFlowTest {
 
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
-        schedulerJobInitiationEvent.setContextId("contextId");
+        schedulerJobInitiationEvent.setContextName("contextId");
         schedulerJobInitiationEvent.setContextInstanceId("contextInstanceId");
 
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
@@ -143,7 +143,7 @@ public class JobProcessingFlowTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -214,7 +214,7 @@ public class JobProcessingFlowTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
@@ -284,7 +284,7 @@ public class JobProcessingFlowTest {
         else {
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
-        internalEventDrivenJobInstanceDto.setContextId("contextId");
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
         internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
         internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);

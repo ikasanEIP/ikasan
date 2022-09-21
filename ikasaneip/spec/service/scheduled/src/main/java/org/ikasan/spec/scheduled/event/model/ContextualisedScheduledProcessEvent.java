@@ -1,7 +1,6 @@
 package org.ikasan.spec.scheduled.event.model;
 
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,31 +9,31 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
     extends DryRunParameters> extends ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS>, Serializable {
 
     /**
-     * Get the parent context id that this job belongs to.
+     * Get the parent context name that this job belongs to.
      *
      * @return
      */
-    String getContextId();
+    String getContextName();
 
     /**
      * Set the parent context id that this job belongs to.
-     * @param contextId
+     * @param contextName
      */
-     void setContextId(String contextId);
+     void setContextName(String contextName);
 
     /**
-     * Get the child context id that this job belongs to. Contexts can appear within contexts.
+     * Get the child context names that this job belongs to. Contexts can appear within contexts.
      *
      * @return
      */
-    List<String> getChildContextIds();
+    List<String> getChildContextNames();
 
     /**
-     * Set the child context id that this job belongs to. Contexts can appear within contexts.
+     * Set the child context names that this job belongs to. Contexts can appear within contexts.
      *
      * @param contextId
      */
-    void setChildContextIds(List<String> contextId);
+    void setChildContextNames(List<String> contextId);
 
     /**
      * Get the context instance id that this event is associated with.

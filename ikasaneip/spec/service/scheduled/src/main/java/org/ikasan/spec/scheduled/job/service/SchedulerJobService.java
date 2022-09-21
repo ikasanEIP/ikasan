@@ -166,4 +166,58 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param quartzScheduleDrivenJobs
      */
     public void saveFileEventDrivenJobs(List<FileEventDrivenJob> quartzScheduleDrivenJobs);
+
+    /**
+     * Set a InternalEventDrivenJobRecord to skip. If targetResidingContextOnly is set
+     * on the InternalEventDrivenJob the childContextNames contain the specific child
+     * contexts that the job will be skipped in.
+     *
+     * @param jobRecord
+     * @param childContextNames
+     * @param actor
+     */
+    void skip(T jobRecord, List<String> childContextNames, String actor);
+
+    /**
+     * Set a InternalEventDrivenJobRecord to enabled. Enabled is skipped == false.
+     *
+     * @param jobRecord
+     * @param actor
+     */
+    void enable(T jobRecord, String actor);
+
+    /**
+     * Set a InternalEventDrivenJobRecord to hold. If targetResidingContextOnly is set
+     * on the InternalEventDrivenJob the childContextNames contain the specific child
+     * contexts that the job will be held in.
+     *
+     * @param jobRecord
+     * @param childContextNames
+     * @param actor
+     */
+    void hold(T jobRecord, List<String> childContextNames, String actor);
+
+    /**
+     * Set a InternalEventDrivenJobRecord to release. Release is held == false.
+     *
+     * @param jobRecord
+     * @param actor
+     */
+    void release(T jobRecord, String actor);
+
+    /**
+     * Release all jobs that are held.
+     *
+     * @param contextName
+     * @param actor
+     */
+    void releaseAll(String contextName, String actor);
+
+    /**
+     * Enable all jobs that are skipped.
+     *
+     * @param contextName
+     * @param actor
+     */
+    void enableAll(String contextName, String actor);
 }

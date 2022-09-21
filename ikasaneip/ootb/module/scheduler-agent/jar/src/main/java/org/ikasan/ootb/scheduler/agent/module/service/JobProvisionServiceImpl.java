@@ -148,13 +148,13 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param configuredModuleConfiguration
      */
     private void updateInitialModuleConfiguration(List<SchedulerJob> jobs, ConfiguredModuleConfiguration configuredModuleConfiguration) {
-        String contextName = jobs.get(0).getContextId();
+        String contextName = jobs.get(0).getContextName();
         clearFlowConfig(configuredModuleConfiguration, contextName);
 
         jobs.forEach(job -> {
             if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
                 SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
-                configuration.getFlowContextMap().put(job.getJobName(), job.getContextId());
+                configuration.getFlowContextMap().put(job.getJobName(), job.getContextName());
 
             }
             if(job instanceof FileEventDrivenJob) {
@@ -247,7 +247,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("Context Instance Active Filter").getFlowComponent();
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = contextFilter.getConfiguration();
-        contextInstanceFilterConfiguration.setContextName(job.getContextId());
+        contextInstanceFilterConfiguration.setContextName(job.getContextName());
 
         this.configurationService.update(contextFilter);
 
@@ -255,8 +255,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
 
         ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-        converterConfiguration.setContextId(job.getContextId());
-        converterConfiguration.setChildContextIds(job.getChildContextIds());
+        converterConfiguration.setContextId(job.getContextName());
+        converterConfiguration.setChildContextIds(job.getChildContextNames());
 
         this.configurationService.update(converter);
     }
@@ -275,7 +275,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("Context Instance Active Filter").getFlowComponent();
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = contextFilter.getConfiguration();
-        contextInstanceFilterConfiguration.setContextName(job.getContextId());
+        contextInstanceFilterConfiguration.setContextName(job.getContextName());
 
         this.configurationService.update(contextFilter);
 
@@ -301,8 +301,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
 
         ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-        converterConfiguration.setContextId(job.getContextId());
-        converterConfiguration.setChildContextIds(job.getChildContextIds());
+        converterConfiguration.setContextId(job.getContextName());
+        converterConfiguration.setChildContextIds(job.getChildContextNames());
 
         this.configurationService.update(converter);
 
@@ -380,7 +380,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         if (spelExpressionsMap != null && !spelExpressionsMap.isEmpty()) {
             for (String contextId : spelExpressionsMap.keySet()) {
-                if (contextId.equals(job.getContextId())) {
+                if (contextId.equals(job.getContextName())) {
                     List<Object> spelParams = spelExpressionsMap.get(contextId);
                     // [0] = isDynamic File name (boolean)
                     // [1] = spelExpression (String)

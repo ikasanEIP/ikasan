@@ -64,22 +64,22 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     private InternalEventDrivenJobInstance internalEventDrivenJob;
 
     @Override
-    public String getContextId() {
+    public String getContextName() {
         return this.contextId;
     }
 
     @Override
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextName(String contextName) {
+        this.contextId = contextName;
     }
 
     @Override
-    public List<String> getChildContextIds() {
+    public List<String> getChildContextNames() {
         return childContextIds;
     }
 
     @Override
-    public void setChildContextIds(List<String> childContextId) {
+    public void setChildContextNames(List<String> childContextId) {
         this.childContextIds = childContextId;
     }
 
