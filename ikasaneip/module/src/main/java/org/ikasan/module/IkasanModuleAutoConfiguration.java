@@ -51,6 +51,7 @@ import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.systemevent.SystemEventService;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -75,6 +76,7 @@ public class IkasanModuleAutoConfiguration
     @Autowired
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
+
     @Bean
     @DependsOn("liquibase")
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
@@ -94,7 +96,8 @@ public class IkasanModuleAutoConfiguration
     }
 
     @Bean
-    public StartupControlServiceImpl startupControlService(SystemEventService systemEventService, StartupControlDao startupControlDao){
+    public StartupControlServiceImpl startupControlService(SystemEventService systemEventService,
+                                                           StartupControlDao startupControlDao){
         return new StartupControlServiceImpl(systemEventService,startupControlDao);
     }
 
@@ -107,8 +110,9 @@ public class IkasanModuleAutoConfiguration
 
     @Bean
     public StartupModuleProcessor startupModuleProcessor(StartupModuleConfiguration startupModuleConfiguration,
-                                                         StartupControlDao startupControlDao){
-        return new StartupModuleProcessor(startupModuleConfiguration, startupControlDao);
+                                                         StartupControlDao startupControlDao,
+                                                         JobAwareFlowEventListener jobAwareFlowEventListener){
+        return new StartupModuleProcessor(startupModuleConfiguration, startupControlDao, jobAwareFlowEventListener);
 
     }
 

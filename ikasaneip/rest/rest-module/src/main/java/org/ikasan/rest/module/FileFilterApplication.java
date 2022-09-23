@@ -54,7 +54,7 @@ public class FileFilterApplication
         @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
         @RequestParam(value = "criteria", required = false) String criteria,
         @RequestParam(value = "clientId", required = false) String clientId
-                             )
+    )
     {
         PagedSearchResult<FileFilter>  pagedResult = baseFileTransferDao.find(pageNumber, pageSize, criteria,clientId);
         return new ResponseEntity(pagedResult, HttpStatus.OK);
@@ -62,8 +62,8 @@ public class FileFilterApplication
     }
 
     @RequestMapping(method = RequestMethod.GET,
-                    value = "/",
-                    produces = { MediaType.APPLICATION_JSON_VALUE })
+        value = "/",
+        produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity get(@RequestParam(value = "id") Integer id)
     {
@@ -72,7 +72,7 @@ public class FileFilterApplication
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/")
+        value = "/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity delete(@RequestParam(value = "id") Integer id)
     {
@@ -86,7 +86,7 @@ public class FileFilterApplication
 
                 this.systemEventService.logSystemEvent(fileFilter.getClientId() +"_"+ fileFilter.getCriteria(),
                     String.format("File Filter deleted [%s]", fileFilterJson), UserUtil.getUser()
-                                                      );
+                );
             }
             catch (JsonProcessingException e)
             {
@@ -102,8 +102,8 @@ public class FileFilterApplication
     }
 
     @RequestMapping(method = RequestMethod.POST,
-                    value = "/",
-                    consumes = { MediaType.APPLICATION_JSON_VALUE })
+        value = "/",
+        consumes = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity create(@RequestBody FileFilter fileFilter)
     {
@@ -114,7 +114,7 @@ public class FileFilterApplication
 
             this.systemEventService.logSystemEvent(fileFilter.getClientId() +"_"+ fileFilter.getCriteria(),
                 String.format("File Filter created [%s]", fileFilterJson), UserUtil.getUser()
-                                                  );
+            );
         }
         catch (JsonProcessingException e)
         {

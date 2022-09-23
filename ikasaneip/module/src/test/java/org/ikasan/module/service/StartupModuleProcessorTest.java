@@ -2,19 +2,25 @@ package org.ikasan.module.service;
 
 import org.ikasan.module.SimpleModule;
 import org.ikasan.module.StartupModuleConfiguration;
+import org.ikasan.module.WiretapTriggerConfiguration;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
+import org.ikasan.spec.trigger.Trigger;
+import org.ikasan.trigger.model.TriggerImpl;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.Test;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.ikasan.module.service.StartupModuleProcessor.WIRETAP_JOB;
 import static org.mockito.Mockito.*;
 
 public class StartupModuleProcessorTest  {
@@ -49,7 +55,7 @@ public class StartupModuleProcessorTest  {
 
 
         StartupModuleProcessor startupModuleProcessor = new StartupModuleProcessor(startupModuleConfiguration,
-            startupControlDao);
+            startupControlDao, null);
         List<Flow> flows = Arrays.asList(flowOne, flowTwo, manualFlow);
         SimpleModule simpleModule = new SimpleModule("simpleModule", flows);
 
@@ -104,7 +110,7 @@ public class StartupModuleProcessorTest  {
 
 
         StartupModuleProcessor startupModuleProcessor = new StartupModuleProcessor(startupModuleConfiguration,
-            startupControlDao);
+            startupControlDao, null);
         List<Flow> flows = Arrays.asList(flowOne, flowTwo, manualFlow);
         SimpleModule simpleModule = new SimpleModule("simpleModule", flows);
 
@@ -138,6 +144,143 @@ public class StartupModuleProcessorTest  {
         Mockito.verifyNoMoreInteractions(startupControlDao);
     }
 
+    /**
+     * Testing adding two wiretaps one which exists already on flow one, jms consumer, the other doesnt on flow one
+     * jms producer should result in only the single jms producer wiretap being added
+     */
+    @Test
+    public void testSaveUnsavedWiretaps() {
+        JobAwareFlowEventListener jobAwareFlowEventListener = Mockito.mock(JobAwareFlowEventListener.class);
+        Map<String,String> params = new LinkedHashMap<>();
+        params.put("timeToLive", "600000");
+        Trigger existingFlowOneAfterConsumerWiretap = new TriggerImpl("simpleModule", "flowOne", "AFTER",
+            WIRETAP_JOB, "jmsConsumer", params);
+        List<Trigger>preExistingTriggers = Arrays.asList(existingFlowOneAfterConsumerWiretap);
+        when(jobAwareFlowEventListener.getTriggers()).thenReturn(preExistingTriggers);
+        Flow flowOne = Mockito.mock(Flow.class);
+        when(flowOne.getName()).thenReturn("flowOne");
+        Flow flowTwo = Mockito.mock(Flow.class);
+        when(flowTwo.getName()).thenReturn("flowTwo");
+        Flow manualFlow = Mockito.mock(Flow.class);
+        when(manualFlow.getName()).thenReturn("manualFlow");
+        List<Flow> flows = Arrays.asList(flowOne, flowTwo, manualFlow);
+        SimpleModule simpleModule = new SimpleModule("simpleModule", flows);
+
+
+        Map<String, WiretapTriggerConfiguration> wiretapsMap = new LinkedHashMap<>();
+        wiretapsMap.put("flowOneAfterConsumerWiretap", new WiretapTriggerConfiguration("flowOne",
+                "jmsConsumer", "AFTER", "600"));
+        wiretapsMap.put("flowOneBeforeProducerWiretap", new WiretapTriggerConfiguration("flowOne",
+            "jmsProducer", "BEFORE", "600"));
+
+        StartupModuleConfiguration startupModuleConfiguration = new StartupModuleConfiguration();
+        startupModuleConfiguration.setWiretaps(wiretapsMap);
+
+        StartupModuleProcessor startupModuleProcessor = new StartupModuleProcessor(startupModuleConfiguration,
+            null, jobAwareFlowEventListener);
+
+        Map<String,String> expectedFlowOneBeforeProducerWiretapMap = new LinkedHashMap<>();
+        expectedFlowOneBeforeProducerWiretapMap.put("timeToLive", "600000");
+        TriggerImpl expectedFlowOneBeforeProducerWiretap = new TriggerImpl("simpleModule", "flowOne",
+            "BEFORE",WIRETAP_JOB, "jmsProducer",
+            expectedFlowOneBeforeProducerWiretapMap);
+
+        startupModuleProcessor.run(simpleModule);
+        verify(jobAwareFlowEventListener, times(1)).getTriggers();
+        verify(jobAwareFlowEventListener, times(1)).addDynamicTrigger(argThat(
+            new TriggerMatcher(expectedFlowOneBeforeProducerWiretap) ));
+        Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener);
+    }
+
+    /**
+     * Same as previous but also deletes all wiretaps via a configuration option first so in this case both
+     * wiretaps should then be saved after the delete
+     */
+    @Test
+    public void testSaveUnsavedWiretapsAfterAllWiretapsDeleted() {
+        JobAwareFlowEventListener jobAwareFlowEventListener = Mockito.mock(JobAwareFlowEventListener.class);
+        Map<String,String> params = new LinkedHashMap<>();
+        params.put("timeToLive", "600000");
+        Trigger existingFlowOneAfterConsumerWiretap = new TriggerImpl("simpleModule", "flowOne", "AFTER",
+            WIRETAP_JOB, "jmsConsumer", params);
+
+        // first call gets triggers to delete, then second call there are no triggers so will return null
+        when(jobAwareFlowEventListener.getTriggers()).thenReturn(
+            Arrays.asList(existingFlowOneAfterConsumerWiretap), null);
+
+        Flow flowOne = Mockito.mock(Flow.class);
+        when(flowOne.getName()).thenReturn("flowOne");
+        Flow flowTwo = Mockito.mock(Flow.class);
+        when(flowTwo.getName()).thenReturn("flowTwo");
+        Flow manualFlow = Mockito.mock(Flow.class);
+        when(manualFlow.getName()).thenReturn("manualFlow");
+        List<Flow> flows = Arrays.asList(flowOne, flowTwo, manualFlow);
+        SimpleModule simpleModule = new SimpleModule("simpleModule", flows);
+
+
+        Map<String, WiretapTriggerConfiguration> wiretapsMap = new LinkedHashMap<>();
+        wiretapsMap.put("flowOneAfterConsumerWiretap", new WiretapTriggerConfiguration("flowOne",
+            "jmsConsumer", "AFTER", "600"));
+        wiretapsMap.put("flowOneBeforeProducerWiretap", new WiretapTriggerConfiguration("flowOne",
+            "jmsProducer", "BEFORE", "600"));
+
+        StartupModuleConfiguration startupModuleConfiguration = new StartupModuleConfiguration();
+        startupModuleConfiguration.setWiretaps(wiretapsMap);
+        startupModuleConfiguration.setDeleteAllPreviouslySavedWiretaps(true);
+
+        StartupModuleProcessor startupModuleProcessor = new StartupModuleProcessor(startupModuleConfiguration,
+            null, jobAwareFlowEventListener);
+
+        Map<String,String> expectedFlowOneAfterConsumerWiretapMap = new LinkedHashMap<>();
+        expectedFlowOneAfterConsumerWiretapMap.put("timeToLive", "600000");
+        TriggerImpl expectedFlowOneAfterConsumerWiretap = new TriggerImpl("simpleModule", "flowOne",
+            "AFTER",WIRETAP_JOB, "jmsConsumer",
+            expectedFlowOneAfterConsumerWiretapMap);
+        Map<String,String> expectedFlowOneBeforeProducerWiretapMap = new LinkedHashMap<>();
+        expectedFlowOneBeforeProducerWiretapMap.put("timeToLive", "600000");
+        TriggerImpl expectedFlowOneBeforeProducerWiretap = new TriggerImpl("simpleModule", "flowOne",
+            "BEFORE",WIRETAP_JOB, "jmsProducer",
+            expectedFlowOneBeforeProducerWiretapMap);
+
+        startupModuleProcessor.run(simpleModule);
+        verify(jobAwareFlowEventListener, times(2)).getTriggers();
+        verify(jobAwareFlowEventListener, times(1)).deleteDynamicTrigger(null);
+        verify(jobAwareFlowEventListener, times(1)).addDynamicTrigger(argThat(
+            new TriggerMatcher(expectedFlowOneAfterConsumerWiretap) ));
+        verify(jobAwareFlowEventListener, times(1)).addDynamicTrigger(argThat(
+            new TriggerMatcher(expectedFlowOneBeforeProducerWiretap) ));
+        Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener);
+    }
+
+
+    public static class TriggerMatcher implements ArgumentMatcher<Trigger> {
+
+        private final Trigger left;
+
+        public TriggerMatcher(Trigger left) {
+            this.left = left;
+        }
+
+        // constructors
+
+        @Override
+        public boolean matches(Trigger right) {
+            return
+                left.getJobName().equals(right.getJobName()) &&
+                left.getModuleName().equals(right.getModuleName()) &&
+                left.getRelationship().equals(right.getRelationship()) &&
+                left.getFlowElementName().equals(right.getFlowElementName()) &&
+                left.getParams().equals(right.getParams()) &&
+                left.getFlowName().equals(right.getFlowName()) ;
+        }
+
+        @Override
+        public String toString() {
+            return "TriggerMatcher{" +
+                "left =" + left.toString() +
+                '}';
+        }
+    }
 
     public static class StartupControlMatcher implements ArgumentMatcher<StartupControl> {
 

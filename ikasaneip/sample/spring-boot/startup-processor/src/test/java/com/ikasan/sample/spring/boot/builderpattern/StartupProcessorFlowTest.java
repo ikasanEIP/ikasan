@@ -43,10 +43,12 @@ import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.*;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
@@ -92,6 +94,9 @@ public class StartupProcessorFlowTest {
 
     @Resource
     private StartupControlDao startupControlDao;
+
+    @Resource
+    private JobAwareFlowEventListener jobAwareFlowEventListener;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
@@ -165,8 +170,15 @@ public class StartupProcessorFlowTest {
         StartupControl flowTwoStartupControl =
             startupControls.stream().filter(s -> s.getFlowName().equals("Flow Two")).findFirst().get();
 
-        assertEquals("MANUAL", flowOneStartupControl.getStartupType().toString());
-        assertEquals("MANUAL", flowTwoStartupControl.getStartupType().toString());
+        List<Trigger> triggers = jobAwareFlowEventListener.getTriggers();
+        assertEquals("org.ikasan.trigger.model.TriggerImpl[id=1,moduleName=sample-boot-startup-processor," +
+            "flowName=Flow One,flowElementName=JMS Consumer One,params={timeToLive=600000}," +
+            "jobName=wiretapJob,relationship=AFTER]", triggers.stream().filter(t->t.getFlowElementName().equals("JMS Consumer One"))
+            .findFirst().get().toString());
+        assertEquals("org.ikasan.trigger.model.TriggerImpl[id=2,moduleName=sample-boot-startup-processor," +
+            "flowName=Flow One,flowElementName=JMS Producer One,params={timeToLive=600000},jobName=wiretapJob," +
+            "relationship=BEFORE]", triggers.stream().filter(t->t.getFlowElementName().equals("JMS Producer One"))
+            .findFirst().get().toString());
     }
 
     /**
