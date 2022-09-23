@@ -28,6 +28,18 @@ public class StartupModuleConfiguration {
      */
     private Boolean deleteAllPreviouslySavedStartupTypes;
 
+
+    /**
+     * Saves wiretap triggers if these have not been set before
+     */
+    private Map<String,WiretapTriggerConfiguration>wiretaps;
+
+    /**
+     * Use with CAUTION Deletes all previously saved wiretaps
+     */
+    private Boolean deleteAllPreviouslySavedWiretaps;
+
+
     public String getDefaultFlowStartupType() {
         return defaultFlowStartupType;
     }
@@ -64,5 +76,21 @@ public class StartupModuleConfiguration {
             ", flowNameToStartupTypeMap=" + flowNameToStartupTypeMap +
             ", deleteAllPreviouslySavedStartupTypes=" + deleteAllPreviouslySavedStartupTypes +
             '}';
+    }
+
+    public Map<String, WiretapTriggerConfiguration> getWiretaps() {
+        return wiretaps;
+    }
+
+    public void setWiretaps(Map<String, WiretapTriggerConfiguration> wiretaps) {
+        this.wiretaps = wiretaps;
+    }
+
+    public Boolean getDeleteAllPreviouslySavedWiretaps() {
+        return deleteAllPreviouslySavedWiretaps;
+    }
+
+    public void setDeleteAllPreviouslySavedWiretaps(Boolean deleteAllPreviouslySavedWiretaps) {
+        this.deleteAllPreviouslySavedWiretaps = deleteAllPreviouslySavedWiretaps;
     }
 }
