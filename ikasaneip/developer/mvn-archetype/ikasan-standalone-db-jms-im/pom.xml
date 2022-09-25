@@ -54,12 +54,12 @@
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
         <maven.compiler.source>11</maven.compiler.source>
-        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
+        <version.org.springboot>2.7.3</version.org.springboot>
         <maven.compiler.target>11</maven.compiler.target>
         <version.com.h2database>1.4.200</version.com.h2database>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.2.2</version.ikasan>
-        <version.activemq>5.16.3</version.activemq>
+        <version.ikasan>3.3.0-SNAPSHOT</version.ikasan>
+        <version.activemq>5.16.5</version.activemq>
     </properties>
 
     <build>

@@ -177,8 +177,9 @@ public class FlowBuilderTest
     public void setup()
     {
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+            "--spring.mvc.pathmatch.matching-strategy=ANT_PATH_MATCHER",
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
-            "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
+            "--server.tomcat.additional-tld-skip-patterns=*.jar",
             "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
             + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
             + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
