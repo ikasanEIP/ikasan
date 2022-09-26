@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.context.model;
 
+import org.ikasan.spec.scheduled.core.listener.JobLockCacheEventListener;
 import org.ikasan.spec.scheduled.event.model.ContextualisedSchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.joblock.model.JobLockCacheRecord;
@@ -104,4 +105,18 @@ public interface JobLockCache extends Serializable {
      * @param jobLockCacheRecord
      */
     void setJobLockCacheRecord(JobLockCacheRecord jobLockCacheRecord);
+
+    /**
+     * Remove all jobs locks for a given context.
+     *
+     * @param context
+     */
+    void removeJobsLocksForContext(Context context);
+
+    /**
+     * Add a job lock cache event listener.
+     *JobLockCacheEvent
+     * @param listener
+     */
+    void addJobLockCacheEventListener(JobLockCacheEventListener listener);
 }
