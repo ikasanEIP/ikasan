@@ -46,7 +46,18 @@ import org.ikasan.spec.scheduled.event.model.ContextInstanceStateChangeEvent;
 
 public interface ContextInstanceStateChangeEventBroadcaster<R> {
 
+    /**
+     * Register a listener for context instance state change events.
+     *
+     * @param listener
+     * @return
+     */
     R register(Consumer<ContextInstanceStateChangeEvent> listener);
 
+    /**
+     * Broadcast the context instance state change event to all listeners.
+     *
+     * @param message
+     */
     void broadcast(ContextInstanceStateChangeEvent message);
 }
