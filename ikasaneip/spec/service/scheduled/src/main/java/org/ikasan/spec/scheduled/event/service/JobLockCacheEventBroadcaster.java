@@ -40,24 +40,24 @@
  */
 package org.ikasan.spec.scheduled.event.service;
 
+import org.ikasan.spec.scheduled.event.model.JobLockCacheEvent;
+
 import java.util.function.Consumer;
 
-import org.ikasan.spec.scheduled.event.model.SchedulerJobInstanceStateChangeEvent;
-
-public interface SchedulerJobStateChangeEventBroadcaster<R> {
+public interface JobLockCacheEventBroadcaster<R> {
 
     /**
-     * Register a listener for scheduler job instance state change events.
+     * Register a listener for job lock cache events.
      *
      * @param listener
      * @return
      */
-    R register(Consumer<SchedulerJobInstanceStateChangeEvent> listener);
+    R register(Consumer<JobLockCacheEvent> listener);
 
     /**
-     * Broadcast the scheduler job instance state change event to all listeners.
+     * Broadcast the job lock cache event to all listeners.
      *
      * @param message
      */
-    void broadcast(SchedulerJobInstanceStateChangeEvent message);
+    void broadcast(JobLockCacheEvent message);
 }
