@@ -55,6 +55,13 @@ public interface JobLockHolder extends Serializable {
     void addSchedulerJobs(String contextName, List<SchedulerJob> jobs);
 
     /**
+     * Remove all scheduler jobs for a context.
+     *
+     * @param context
+     */
+    void removeSchedulerJobsForContext(Context context);
+
+    /**
      * Get the job identifier/s holding the lock.
      *
      * @return
