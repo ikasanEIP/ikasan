@@ -5,7 +5,9 @@ import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectoryManagementService {
 
@@ -19,6 +21,21 @@ public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectory
         }
 
         this.bigQueueManagementService = new BigQueueManagementServiceImpl();
+    }
+
+    @Override
+    public Map<String, Long> size(boolean includeZeros) throws IOException {
+        Map<String, Long> mapQueuesWithSize = new HashMap<>();
+        List<String> listQueues = listQueues();
+        for (String queue: listQueues) {
+            long size = size(queue);
+            // Skip if includeZero == false and the size of the queue is 0
+            if (!includeZeros && size == 0) {
+                continue;
+            }
+            mapQueuesWithSize.put(queue, size);
+        }
+        return mapQueuesWithSize;
     }
 
     @Override
