@@ -9,12 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Module application implementing the REST contract for queue management in the agents.
@@ -54,6 +52,22 @@ public class BigQueueManagementApplication {
 
         } catch (Exception e) {
             String message = String.format("Got exception trying to get size for queue [%s]. Error [%s]", queueName, e.getMessage());
+            LOG.warn(message);
+            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/size",
+        produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity size(@RequestParam(value="includeZeros", required = false, defaultValue = "true") boolean includeZeros) {
+        try {
+            Map<String, Long> size = bigQueueDirectoryManagementService.size(includeZeros);
+            return new ResponseEntity(size, HttpStatus.OK);
+
+        } catch (Exception e) {
+            String message = String.format("Got exception trying to get size for all queue. Error [%s]", e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }

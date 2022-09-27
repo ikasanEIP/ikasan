@@ -5,6 +5,7 @@ import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,7 +13,9 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
@@ -104,5 +107,44 @@ public class BigQueueDirectoryManagementServiceImplTest {
         service.deleteQueue(queueName);
 
         verify(bigQueueManagementService).deleteQueue(queueDir, queueName);
+    }
+
+    @Test
+    public void sizeOfAllQueuesWithReturnZeroTrue() throws IOException {
+        String queueName = RandomStringUtils.randomAlphabetic(12);
+        String queueName2 = RandomStringUtils.randomAlphabetic(12);
+        when(bigQueueManagementService.listQueues(queueDir)).thenReturn(List.of(queueName, queueName2));
+
+        when(bigQueueManagementService.size(queueDir, queueName)).thenReturn(3L);
+        when(bigQueueManagementService.size(queueDir, queueName2)).thenReturn(0L);
+
+        Map<String, Long> results = service.size(true);
+
+        verify(bigQueueManagementService).listQueues(queueDir);
+        verify(bigQueueManagementService).size(queueDir, queueName);
+        verify(bigQueueManagementService).size(queueDir, queueName2);
+
+        Assert.assertEquals(2, results.size());
+        Assert.assertEquals(3L, results.get(queueName).longValue());
+        Assert.assertEquals(0L, results.get(queueName2).longValue());
+    }
+
+    @Test
+    public void sizeOfAllQueuesWithReturnZeroFalse() throws IOException {
+        String queueName = RandomStringUtils.randomAlphabetic(12);
+        String queueName2 = RandomStringUtils.randomAlphabetic(12);
+        when(bigQueueManagementService.listQueues(queueDir)).thenReturn(List.of(queueName, queueName2));
+
+        when(bigQueueManagementService.size(queueDir, queueName)).thenReturn(3L);
+        when(bigQueueManagementService.size(queueDir, queueName2)).thenReturn(0L);
+
+        Map<String, Long> results = service.size(false);
+
+        verify(bigQueueManagementService).listQueues(queueDir);
+        verify(bigQueueManagementService).size(queueDir, queueName);
+        verify(bigQueueManagementService).size(queueDir, queueName2);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(3L, results.get(queueName).longValue());
     }
 }
