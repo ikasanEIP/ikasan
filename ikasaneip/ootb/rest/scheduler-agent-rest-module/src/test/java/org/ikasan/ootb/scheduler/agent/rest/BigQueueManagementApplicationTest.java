@@ -25,7 +25,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -398,4 +400,79 @@ public class BigQueueManagementApplicationTest {
         verify(bigQueueDirectoryManagementService).listQueues();
         verifyNoMoreInteractions(bigQueueDirectoryManagementService);
     }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void size_all_web_admin() throws Exception {
+
+        Map<String, Long> withZeroSize = new HashMap<>();
+        withZeroSize.put("queue1", 0L);
+        withZeroSize.put("queue2", 3L);
+        withZeroSize.put("queue3", 0L);
+        withZeroSize.put("queue4", 4L);
+
+        when(bigQueueDirectoryManagementService.size(true)).thenReturn(withZeroSize);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/size")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("{\"queue1\":0,\"queue2\":3,\"queue3\":0,\"queue4\":4}", result.getResponse().getContentAsString());
+
+        verify(bigQueueDirectoryManagementService).size(true);
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void size_all_web_admin_dont_include_zeros() throws Exception {
+
+        Map<String, Long> withZeroSize = new HashMap<>();
+        withZeroSize.put("queue2", 3L);
+        withZeroSize.put("queue4", 4L);
+
+        when(bigQueueDirectoryManagementService.size(false)).thenReturn(withZeroSize);
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/size?includeZeros=false")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("{\"queue2\":3,\"queue4\":4}", result.getResponse().getContentAsString());
+
+        verify(bigQueueDirectoryManagementService).size(false);
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
+    public void size_all_web_read_only() throws Exception {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/size")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andReturn();
+
+        verifyNoInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void size_all_web_admin_errors() throws Exception {
+        when(bigQueueDirectoryManagementService.size(true)).thenThrow(new RuntimeException("Expected"));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/size")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+
+        verify(bigQueueDirectoryManagementService).size(true);
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
 }
