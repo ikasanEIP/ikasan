@@ -4,6 +4,7 @@ import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 public interface BigQueueDirectoryManagementService {
 
@@ -20,4 +21,6 @@ public interface BigQueueDirectoryManagementService {
     void deleteQueue(String queueName) throws IOException;
 
     String getQueueDirectory();
+
+    Map<String, Long> size(boolean includeZero) throws IOException;
 }
