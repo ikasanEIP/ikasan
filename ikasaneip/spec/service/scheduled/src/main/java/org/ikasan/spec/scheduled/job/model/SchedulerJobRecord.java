@@ -17,19 +17,13 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
 
     long getModifiedTimestamp();
 
-//    void setModifiedTimestamp(long timestamp);
-
     String getModifiedBy();
 
-//    void setModifiedBy(String modifiedBy);
+    boolean isHeld();
 
-    public boolean isHeld();
+    boolean isSkipped();
 
-//    public void setHeld(boolean held);
-
-    public boolean isSkipped();
-
-//    public void setSkipped(boolean skipped);
+    boolean isParticipatesInLock();
 
     boolean isTargetResidingContextOnly();
 }

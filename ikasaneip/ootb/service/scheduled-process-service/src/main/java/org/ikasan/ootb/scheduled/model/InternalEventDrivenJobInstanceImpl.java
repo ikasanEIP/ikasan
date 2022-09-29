@@ -113,8 +113,8 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     }
 
     @Override
-    public void setChildContextNames(List<String> childContextIds) {
-        this.childContextNames = childContextIds;
+    public void setChildContextNames(List<String> childContextNames) {
+        this.childContextNames = childContextNames;
     }
 
     @Override
@@ -288,11 +288,11 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
         sb.append(", contextParameters=").append(contextParameters);
         sb.append(", contextId='").append(contextName).append('\'');
         if(childContextNames != null) {
-            sb.append(", childContextIds=[ ");
+            sb.append(", childContextNames=[ ");
             childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
         }
         else {
-            sb.append(", childContextIds='").append(this.childContextNames).append('\'');
+            sb.append(", childContextNames='").append(this.childContextNames).append('\'');
         }
         sb.append("], identifier='").append(identifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');
