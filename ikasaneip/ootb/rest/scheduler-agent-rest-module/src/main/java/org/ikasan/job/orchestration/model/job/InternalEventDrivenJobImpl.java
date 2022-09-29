@@ -16,6 +16,7 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
     private List<ContextParameter> contextParameters = new ArrayList<>();
     private List<Integer> daysOfWeekToRun;
     private boolean targetResidingContextOnly;
+    private boolean participatesInLock;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -98,6 +99,16 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
     }
 
     @Override
+    public boolean isParticipatesInLock() {
+        return participatesInLock;
+    }
+
+    @Override
+    public void setParticipatesInLock(boolean participatesInLock) {
+        this.participatesInLock = participatesInLock;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
@@ -109,17 +120,18 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
         sb.append(", jobIdentifier='").append(jobIdentifier).append('\'');
         sb.append(", agentName='").append(agentName).append('\'');
         sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", contextId='").append(contextName).append('\'');
+        sb.append(", contextName='").append(contextName).append('\'');
         if(childContextNames != null) {
-            sb.append(", childContextIds=[ ");
+            sb.append(", childContextNames=[ ");
             childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
         }
         else {
-            sb.append(", childContextIds='").append(this.childContextNames).append('\'');
+            sb.append(", childContextNames='").append(this.childContextNames).append('\'');
         }
         sb.append("], description='").append(description).append('\'');
         sb.append(", startupControlType='").append(startupControlType).append('\'');
         sb.append(", targetResidingContextOnly='").append(targetResidingContextOnly).append('\'');
+        sb.append(", participatesInLock='").append(participatesInLock).append('\'');
         sb.append('}');
         return sb.toString();
     }

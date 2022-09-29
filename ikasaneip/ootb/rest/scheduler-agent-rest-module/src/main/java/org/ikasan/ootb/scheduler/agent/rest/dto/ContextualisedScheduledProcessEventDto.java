@@ -25,8 +25,8 @@ public class ContextualisedScheduledProcessEventDto implements ContextualisedSch
     private long nextFireTime;
     private long completionTime;
     private boolean dryRun = false;
-    private String contextId;
-    private List<String> childContextIds;
+    private String contextName;
+    private List<String> childContextNames;
     private String contextInstanceId;
     private boolean jobStarting = false;
     private DryRunParametersDto dryRunParameters;
@@ -224,22 +224,22 @@ public class ContextualisedScheduledProcessEventDto implements ContextualisedSch
 
     @Override
     public String getContextName() {
-        return this.contextId;
+        return this.contextName;
     }
 
     @Override
     public void setContextName(String contextName) {
-        this.contextId = contextName;
+        this.contextName = contextName;
     }
 
     @Override
     public List<String> getChildContextNames() {
-        return childContextIds;
+        return childContextNames;
     }
 
     @Override
-    public void setChildContextNames(List<String> childContextIds) {
-        this.childContextIds = childContextIds;
+    public void setChildContextNames(List<String> childContextNames) {
+        this.childContextNames = childContextNames;
     }
 
     @Override
@@ -313,13 +313,13 @@ public class ContextualisedScheduledProcessEventDto implements ContextualisedSch
         sb.append(", nextFireTime=").append(nextFireTime);
         sb.append(", completionTime=").append(completionTime);
         sb.append(", dryRun=").append(dryRun);
-        sb.append(", contextId='").append(contextId).append('\'');
-        if(childContextIds != null) {
-            sb.append(", childContextIds=[ ");
-            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        sb.append(", contextName='").append(contextName).append('\'');
+        if(childContextNames != null) {
+            sb.append(", childContextNames=[ ");
+            childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
         }
         else {
-            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+            sb.append(", childContextNames='").append(this.childContextNames).append('\'');
         }
         sb.append("], contextInstanceId='").append(contextInstanceId).append('\'');
         sb.append(", jobStarting=").append(jobStarting);

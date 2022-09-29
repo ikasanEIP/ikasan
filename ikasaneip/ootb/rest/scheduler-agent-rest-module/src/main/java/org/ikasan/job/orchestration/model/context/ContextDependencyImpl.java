@@ -7,7 +7,6 @@ public class ContextDependencyImpl implements ContextDependency {
     private String contextIdentifier;
     private String contextDependencyName;
     private LogicalGrouping logicalGrouping;
-//    private List<ContextDependency> contextDependencies;
 
     public String getContextIdentifier() {
         return contextIdentifier;
@@ -33,11 +32,4 @@ public class ContextDependencyImpl implements ContextDependency {
         this.logicalGrouping = logicalGrouping;
     }
 
-//    public List<ContextDependency> getContextDependencies() {
-//        return contextDependencies;
-//    }
-//
-//    public void setContextDependencies(List<ContextDependency> contextDependencies) {
-//        this.contextDependencies = contextDependencies;
-//    }
 }
