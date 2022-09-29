@@ -10,5 +10,6 @@ public enum InstanceStatus {
     SKIPPED,
     ON_HOLD,
     RELEASED,
-    ENDED;
+    ENDED,
+    LOCK_QUEUED;
 }

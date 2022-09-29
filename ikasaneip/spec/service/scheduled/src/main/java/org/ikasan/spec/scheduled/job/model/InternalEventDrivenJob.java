@@ -37,4 +37,8 @@ public interface InternalEventDrivenJob extends SchedulerJob, Serializable {
     void setTargetResidingContextOnly(boolean targetResidingContextOnly);
 
     boolean isTargetResidingContextOnly();
+
+    void setParticipatesInLock(boolean participatesInLock);
+
+    boolean isParticipatesInLock();
 }

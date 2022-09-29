@@ -43,4 +43,8 @@ public interface InternalEventDrivenJobRecord {
     void setTargetResidingContextOnly(boolean targetResidingContextOnly);
 
     boolean isTargetResidingContextOnly();
+
+    void setParticipatesInLock(boolean participatesInLock);
+
+    boolean isParticipatesInLock();
 }
