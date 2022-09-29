@@ -11,8 +11,8 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     private String jobName;
     private List<ContextParameterInstanceDto> contextParameters;
     private InternalEventDrivenJobInstanceDto internalEventDrivenJob;
-    private String contextId;
-    private List<String> childContextIds;
+    private String contextName;
+    private List<String> childContextNames;
     private String contextInstanceId;
     private boolean dryRun;
     private DryRunParametersDto dryRunParametersDto;
@@ -70,12 +70,12 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public String getContextName() {
-        return this.contextId;
+        return this.contextName;
     }
 
     @Override
     public void setContextName(String contextName) {
-        this.contextId = contextName;
+        this.contextName = contextName;
     }
 
     @Override
@@ -90,12 +90,12 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
 
     @Override
     public List<String> getChildContextNames() {
-        return childContextIds;
+        return childContextNames;
     }
 
     @Override
     public void setChildContextNames(List<String> childContextIds) {
-        this.childContextIds = childContextIds;
+        this.childContextNames = childContextIds;
     }
 
     @Override
@@ -135,13 +135,13 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
         sb.append(", agentUrl='").append(agentUrl).append('\'');
         sb.append(", jobName='").append(jobName).append('\'');
         sb.append(", internalEventDrivenJob=").append(internalEventDrivenJob);
-        sb.append(", contextId='").append(contextId).append('\'');
-        if(childContextIds != null) {
-            sb.append(", childContextIds=[ ");
-            childContextIds.forEach(id -> sb.append("[").append(id).append("] "));
+        sb.append(", contextName='").append(contextName).append('\'');
+        if(childContextNames != null) {
+            sb.append(", childContextNames=[ ");
+            childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
         }
         else {
-            sb.append(", childContextIds='").append(this.childContextIds).append('\'');
+            sb.append(", childContextNames='").append(this.childContextNames).append('\'');
         }
         sb.append("], contextInstanceId='").append(contextInstanceId).append('\'');
         sb.append(", contextParameters=").append(contextParameters);

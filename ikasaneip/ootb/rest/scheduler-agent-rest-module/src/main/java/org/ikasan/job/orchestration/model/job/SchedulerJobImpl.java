@@ -33,8 +33,8 @@ public class SchedulerJobImpl implements SchedulerJob {
     }
 
     @Override
-    public void setChildContextNames(List<String> childContextIds) {
-        this.childContextNames = childContextIds;
+    public void setChildContextNames(List<String> childContextNames) {
+        this.childContextNames = childContextNames;
     }
 
     @Override

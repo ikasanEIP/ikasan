@@ -3,7 +3,6 @@ package org.ikasan.spec.scheduled.job.service;
 import org.ikasan.spec.scheduled.job.model.*;
 import org.ikasan.spec.search.SearchResults;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface SchedulerJobService<T extends SchedulerJobRecord> {
@@ -29,11 +28,11 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     /**
      * Find a job by context and job name.
      *
-     * @param contextId
+     * @param contextName
      * @param jobName
      * @return
      */
-    T findByContextIdAndJobName(String contextId, String jobName);
+    T findByContextNameAndJobName(String contextName, String jobName);
 
     /**
      * Find jobs by context.
@@ -110,21 +109,21 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      *
      * @param fileEventDrivenJob
      */
-    void saveFileEventDrivenJob(FileEventDrivenJob fileEventDrivenJob);
+    void saveFileEventDrivenJob(FileEventDrivenJob fileEventDrivenJob, String modifiedBy);
 
     /**
      * Save a InternalEventDrivenJob
      *
      * @param internalEventDrivenJob
      */
-    void saveInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob);
+    void saveInternalEventDrivenJob(InternalEventDrivenJob internalEventDrivenJob, String modifiedBy);
 
     /**
      * Save a QuartzScheduleDrivenJob
      *
      * @param quartzScheduleDrivenJob
      */
-    void saveQuartzScheduledJob(QuartzScheduleDrivenJob quartzScheduleDrivenJob);
+    void saveQuartzScheduledJob(QuartzScheduleDrivenJob quartzScheduleDrivenJob, String modifiedBy);
 
     /**
      * Save a list of FileEventDrivenJobRecord.
