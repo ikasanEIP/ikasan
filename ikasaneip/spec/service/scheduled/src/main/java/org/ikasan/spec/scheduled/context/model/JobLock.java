@@ -27,13 +27,13 @@ public interface JobLock extends Serializable {
      *
      * @param lockCount
      */
-    void setLockCount(long lockCount);
+    void setLockCount(int lockCount);
 
     /**
      * Get the name of the lock count.
      * @return
      */
-    long getLockCount();
+    int getLockCount();
 
     /**
      * Set the scheduler jobs.
