@@ -24,4 +24,12 @@ public interface SchedulerJobInstanceSearchFilter {
     String getStatus();
 
     void setStatus(String status);
+
+    void setTargetResidingContextOnly(Boolean targetResidingContextOnly);
+
+    Boolean isTargetResidingContextOnly();
+
+    void setParticipatesInLock(Boolean participatesInLock);
+
+    Boolean isParticipatesInLock();
 }
