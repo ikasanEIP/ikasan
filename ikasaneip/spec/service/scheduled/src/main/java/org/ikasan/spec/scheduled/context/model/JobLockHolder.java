@@ -30,14 +30,14 @@ public interface JobLockHolder extends Serializable {
      *
      * @return
      */
-    long getLockCount();
+    int getLockCount();
 
     /**
      * Set the lock count
      *
      * @param lockCount
      */
-    void setLockCount(long lockCount);
+    void setLockCount(int lockCount);
 
     /**
      * Get the jobs associated with the lock
