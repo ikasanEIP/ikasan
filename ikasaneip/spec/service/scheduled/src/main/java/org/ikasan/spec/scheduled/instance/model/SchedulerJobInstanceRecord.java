@@ -30,6 +30,14 @@ public interface SchedulerJobInstanceRecord {
 
     void setStatus(String status);
 
+    void setTargetResidingContextOnly(boolean targetResidingContextOnly);
+
+    boolean isTargetResidingContextOnly();
+
+    void setParticipatesInLock(boolean participatesInLock);
+
+    boolean isParticipatesInLock();
+
     long getTimestamp();
 
     void setTimestamp(long timestamp);
