@@ -32,7 +32,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private InstanceStatus status;
     private ScheduledProcessEvent scheduledProcessEvent;
     private boolean targetResidingContextOnly;
-
+    private boolean participatesInLock;
     private Map<String, Boolean> skippedContexts;
 
     private Map<String, Boolean> heldContexts;
@@ -255,6 +255,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setTargetResidingContextOnly(boolean targetResidingContextOnly) {
         this.targetResidingContextOnly = targetResidingContextOnly;
+    }
+
+    @Override
+    public void setParticipatesInLock(boolean participatesInLock) {
+        this.participatesInLock = participatesInLock;
+    }
+
+    @Override
+    public boolean isParticipatesInLock() {
+        return this.participatesInLock;
     }
 
     @Override

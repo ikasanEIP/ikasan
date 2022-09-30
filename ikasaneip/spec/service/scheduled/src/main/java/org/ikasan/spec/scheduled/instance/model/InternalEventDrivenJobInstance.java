@@ -38,4 +38,8 @@ public interface InternalEventDrivenJobInstance extends SchedulerJobInstance, Se
     void setTargetResidingContextOnly(boolean targetResidingContextOnly);
 
     boolean isTargetResidingContextOnly();
+
+    void setParticipatesInLock(boolean participatesInLock);
+
+    boolean isParticipatesInLock();
 }
