@@ -5,7 +5,7 @@ import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import java.util.List;
 import java.util.Map;
 
-public interface BigQueueModuleService {
+public interface BigQueueModuleService<T> {
 
     /**
      * Calls the module to get the size of a given queue
@@ -23,7 +23,7 @@ public interface BigQueueModuleService {
      *
      * @return BigQueueMessage
      */
-    BigQueueMessage peek(String contextUrl, String queueName);
+    BigQueueMessage<T> peek(String contextUrl, String queueName);
 
     /**
      * Calls the module to get the all the messages on the provided queue
@@ -32,7 +32,7 @@ public interface BigQueueModuleService {
      *
      * @return list of BigQueueMessage
      */
-    List<BigQueueMessage> getMessages(String contextUrl, String queueName);
+    List<BigQueueMessage<T>> getMessages(String contextUrl, String queueName);
 
     /**
      * Calls the module to get all the queue names that exist
