@@ -11,6 +11,7 @@ import java.util.Set;
 
 public interface JobLockHolder extends Serializable {
 
+
     /**
      * Get the job lock name.
      *
