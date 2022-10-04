@@ -61,4 +61,13 @@ public interface BigQueueModuleService<T> {
      * @return true if successfully removed, false if something went wrong
      */
     boolean deleteMessage(String contextUrl, String queueName, String messageId);
+
+    /**
+     * Calls the module to remove all message from a queue
+     * @param contextUrl    url of the module
+     * @param queueName     name of the queue to delete a message from
+     *
+     * @return true if successfully removed, false if something went wrong
+     */
+    boolean deleteAllMessage(String contextUrl, String queueName);
 }
