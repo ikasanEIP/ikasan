@@ -87,6 +87,21 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
     }
 
     /**
+     * Deletes all message off the queue.
+     * Will check if the queue exist and then it will action removeAll() method from BigQueueImpl
+     * @param queueDir - the directory where the queue exists
+     * @param queueName - the name of the queue to inspect
+     * @throws IOException exception throws if there is any IO error during dequeue operation.
+     */
+    @Override
+    public synchronized void deleteAllMessage(String queueDir, String queueName) throws IOException {
+        if (queueExists(queueDir, queueName)) {
+            IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
+            bigQueue.removeAll();
+        }
+    }
+
+    /**
      * Get a list of the directories in the queue directory.
      * Ensures that the queue exists before returning the list of directory names under the queue directory.
      * Returns empty list otherwise.
