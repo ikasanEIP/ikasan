@@ -291,6 +291,51 @@ public class BigQueueManagementApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
+    public void delete_all_messages_read_only_user() throws Exception {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/big/queue/delete/allMessages/queueName")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andReturn();
+
+        verifyNoInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void delete_all_messages_admin() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/big/queue/delete/allMessages/queueName")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+
+        verify(bigQueueDirectoryManagementService).deleteAllMessage("queueName");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void delete_all_messages_admin_error() throws Exception {
+        doThrow(new RuntimeException("Expected")).when(bigQueueDirectoryManagementService).deleteAllMessage("queueName");
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/big/queue/delete/allMessages/queueName")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+
+        verify(bigQueueDirectoryManagementService).deleteAllMessage("queueName");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
     public void delete_queue_read_only_user() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
