@@ -54,6 +54,11 @@ public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectory
     }
 
     @Override
+    public void deleteAllMessage(String queueName) throws IOException {
+        bigQueueManagementService.deleteAllMessage(queueDirectory, queueName);
+    }
+
+    @Override
     public void deleteMessage(String queueName, String biQueueMessageId) throws IOException {
         bigQueueManagementService.deleteMessage(queueDirectory, queueName, biQueueMessageId);
     }

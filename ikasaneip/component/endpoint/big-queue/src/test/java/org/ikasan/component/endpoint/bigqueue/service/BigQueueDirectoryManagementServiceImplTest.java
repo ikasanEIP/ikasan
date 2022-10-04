@@ -81,6 +81,14 @@ public class BigQueueDirectoryManagementServiceImplTest {
     }
 
     @Test
+    public void deleteAllMessage() throws Exception {
+        String queueName = RandomStringUtils.randomAlphabetic(12);
+
+        service.deleteAllMessage(queueName);
+        verify(bigQueueManagementService).deleteAllMessage(queueDir, queueName);
+    }
+
+    @Test
     public void deleteMessage() throws Exception {
         String queueName = RandomStringUtils.randomAlphabetic(12);
         String messageId = RandomStringUtils.randomAlphabetic(12);

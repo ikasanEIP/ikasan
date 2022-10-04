@@ -15,6 +15,8 @@ public interface BigQueueManagementService {
 
     void deleteMessage(String queueDir, String queueName, String biQueueMessageId) throws IOException;
 
+    void deleteAllMessage(String queueDir, String queueName) throws IOException;
+
     List<String> listQueues(String queueDir) throws IOException;
 
     void deleteQueue(String queueDir, String queueName) throws IOException;
