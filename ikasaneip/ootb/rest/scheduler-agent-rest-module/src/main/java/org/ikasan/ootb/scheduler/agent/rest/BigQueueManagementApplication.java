@@ -124,6 +124,23 @@ public class BigQueueManagementApplication {
     }
 
     @RequestMapping(method = RequestMethod.DELETE,
+        value = "/delete/allMessages/{queueName}",
+        produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity deleteAllMessages(@PathVariable("queueName") String queueName) {
+        try {
+            bigQueueDirectoryManagementService.deleteAllMessage(queueName);
+            return new ResponseEntity(HttpStatus.OK);
+
+        } catch (Exception e) {
+            String message
+                = String.format("Got exception trying to delete all messages for queue [%s]. Error [%s]", queueName, e.getMessage());
+            LOG.warn(message);
+            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.DELETE,
         value = "/delete/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
