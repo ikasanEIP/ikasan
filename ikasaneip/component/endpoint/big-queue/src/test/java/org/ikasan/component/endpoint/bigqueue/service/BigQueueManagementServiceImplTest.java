@@ -223,6 +223,36 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
+    public void delete_all_message_queue() throws Exception {
+        BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
+        BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
+        BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
+
+        // make sure we do not blow up
+        assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
+        service.deleteAllMessage(QUEUE_DIR, QUEUE_NAME);
+        assertEquals(0, service.size(QUEUE_DIR, QUEUE_NAME));
+    }
+
+    @Test
+    public void delete_all_message_queue_different_queue_name() throws Exception {
+        BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
+        BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
+        BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
+
+        // make sure we do not blow up
+        assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
+        service.deleteAllMessage(QUEUE_DIR, QUEUE_NAME + "DOSE_NOT_EXIST");
+        assertEquals(3, service.size(QUEUE_DIR, QUEUE_NAME));
+    }
+
+    @Test
     public void delete_unknown_queue_does_not_npe() throws Exception {
         String randomString = randomAlphabetic(10);
         service.deleteMessage(QUEUE_DIR, QUEUE_NAME, randomString);
