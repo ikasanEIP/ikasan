@@ -264,7 +264,8 @@
         <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
         <version.org.springboot>2.7.3</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
-        <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
+<!--        <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>-->
+        <version.springdoc.openapi.ui>1.6.11</version.springdoc.openapi.ui>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>1.7.36</version.org.slf4j>
@@ -1558,6 +1559,10 @@
                         <groupId>org.mockito</groupId>
                         <artifactId>mockito-all</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.xml.bind</groupId>
+                        <artifactId>jakarta.xml.bind-api</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -1911,12 +1916,17 @@
             </dependency>
 
             <!-- Swagger -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${version.io.spingfox.swagger}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>io.springfox</groupId>-->
+<!--                <artifactId>springfox-boot-starter</artifactId>-->
+<!--                <version>${version.io.spingfox.swagger}</version>-->
+<!--            </dependency>-->
 
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${version.springdoc.openapi.ui}</version>
+            </dependency>
             <dependency>
                 <groupId>com.fasterxml</groupId>
                 <artifactId>classmate</artifactId>
