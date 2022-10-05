@@ -32,8 +32,8 @@
 		context="baseline">
 
 		<preConditions onFail="MARK_RAN">
-			<foreignKeyConstraintExists foreignKeyName="UserPrinci_1343340819" />
-			<foreignKeyConstraintExists foreignKeyName="UserPrinci_1359340876" />
+            <not><foreignKeyConstraintExists foreignKeyName="UserPrinci_1343340819" /></not>
+            <not><foreignKeyConstraintExists foreignKeyName="UserPrinci_1359340876" /></not>
 		</preConditions>
 
 		<addForeignKeyConstraint baseColumnNames="PrincipalId"

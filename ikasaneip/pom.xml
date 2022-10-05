@@ -264,7 +264,6 @@
         <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
         <version.org.springboot>2.7.3</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
-<!--        <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>-->
         <version.springdoc.openapi.ui>1.6.11</version.springdoc.openapi.ui>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
@@ -307,7 +306,7 @@
         <version.com.unboundid>2.3.4</version.com.unboundid>
         <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
         <version.com.h2database>1.4.200</version.com.h2database>
-        <version.org.liquibase>4.9.1</version.org.liquibase>
+        <version.org.liquibase>3.8.9</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.28</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>9.4.41.v20210516</version.org.eclipse.jetty>
