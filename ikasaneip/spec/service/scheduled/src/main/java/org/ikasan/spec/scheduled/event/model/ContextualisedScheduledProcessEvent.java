@@ -74,4 +74,20 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      * @return
      */
     InternalEventDrivenJobInstance getInternalEventDrivenJob();
+
+    /**
+     * Get flag to indicate that this event is raised due to a failure resubmission that
+     * is initiated by a user.
+     *
+     * @return
+     */
+    boolean isRaisedDueToFailureResubmission();
+
+    /**
+     * Set flag to indicate that this event is raised due to a failure resubmission that
+     * is initiated by a user.
+     *
+     * @param raisedDueToFailureResubmission
+     */
+    void setRaisedDueToFailureResubmission(boolean raisedDueToFailureResubmission);
 }
