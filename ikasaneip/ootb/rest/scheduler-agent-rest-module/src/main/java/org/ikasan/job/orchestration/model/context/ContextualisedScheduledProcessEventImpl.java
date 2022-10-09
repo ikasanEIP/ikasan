@@ -34,7 +34,7 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     private boolean skipped;
     private InternalEventDrivenJobInstance internalEventDrivenJobInstance;
 
-
+    private boolean raisedDueToFailureResubmission;
     public Long getId()
     {
         return id;
@@ -291,6 +291,16 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     @Override
     public InternalEventDrivenJobInstance getInternalEventDrivenJob() {
         return this.internalEventDrivenJobInstance;
+    }
+
+    @Override
+    public boolean isRaisedDueToFailureResubmission() {
+        return raisedDueToFailureResubmission;
+    }
+
+    @Override
+    public void setRaisedDueToFailureResubmission(boolean raisedDueToFailureResubmission) {
+        this.raisedDueToFailureResubmission = raisedDueToFailureResubmission;
     }
 
     @Override
