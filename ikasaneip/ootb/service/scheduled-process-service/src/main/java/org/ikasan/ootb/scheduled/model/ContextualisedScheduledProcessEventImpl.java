@@ -62,6 +62,7 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     private String contextInstanceId;
     private boolean skipped;
     private InternalEventDrivenJobInstance internalEventDrivenJob;
+    private boolean raisedDueToFailureResubmission;
 
     @Override
     public String getContextName() {
@@ -111,6 +112,16 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     @Override
     public InternalEventDrivenJobInstance getInternalEventDrivenJob() {
         return this.internalEventDrivenJob;
+    }
+
+    @Override
+    public boolean isRaisedDueToFailureResubmission() {
+        return raisedDueToFailureResubmission;
+    }
+
+    @Override
+    public void setRaisedDueToFailureResubmission(boolean raisedDueToFailureResubmission) {
+        this.raisedDueToFailureResubmission = raisedDueToFailureResubmission;
     }
 
     @Override
