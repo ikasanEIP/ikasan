@@ -50,7 +50,7 @@ public class InboundJobQueueCache
     public boolean contains(String contextName)
     {
         logger.debug(String.format("%s check contains[%s] - result [%s]",this
-            , contextName));
+            , contextName, this.cache.containsKey(contextName)));
         return this.cache.containsKey(contextName);
     }
 

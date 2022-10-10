@@ -14,13 +14,16 @@ public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectory
     private final String queueDirectory;
     private final BigQueueManagementService bigQueueManagementService;
 
-    public BigQueueDirectoryManagementServiceImpl(String queueDirectory) {
+    public BigQueueDirectoryManagementServiceImpl(BigQueueManagementService bigQueueManagementService, String queueDirectory) {
         this.queueDirectory = queueDirectory;
         if (this.queueDirectory == null) {
             throw new IllegalArgumentException("queueDirectory can not be null!");
         }
 
-        this.bigQueueManagementService = new BigQueueManagementServiceImpl();
+        this.bigQueueManagementService = bigQueueManagementService;
+        if (this.bigQueueManagementService == null) {
+            throw new IllegalArgumentException("bigQueueManagementService can not be null!");
+        }
     }
 
     @Override
@@ -40,27 +43,27 @@ public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectory
 
     @Override
     public long size(String queueName) throws IOException {
-        return bigQueueManagementService.size(queueDirectory, queueName);
+        return bigQueueManagementService.size(queueName);
     }
 
     @Override
     public BigQueueMessage peek(String queueName) throws IOException {
-        return bigQueueManagementService.peek(queueDirectory, queueName);
+        return bigQueueManagementService.peek(queueName);
     }
 
     @Override
     public List<BigQueueMessage> getMessages(String queueName) throws IOException {
-        return bigQueueManagementService.getMessages(queueDirectory, queueName);
+        return bigQueueManagementService.getMessages(queueName);
     }
 
     @Override
     public void deleteAllMessage(String queueName) throws IOException {
-        bigQueueManagementService.deleteAllMessage(queueDirectory, queueName);
+        bigQueueManagementService.deleteAllMessage(queueName);
     }
 
     @Override
     public void deleteMessage(String queueName, String biQueueMessageId) throws IOException {
-        bigQueueManagementService.deleteMessage(queueDirectory, queueName, biQueueMessageId);
+        bigQueueManagementService.deleteMessage(queueName, biQueueMessageId);
     }
 
     @Override

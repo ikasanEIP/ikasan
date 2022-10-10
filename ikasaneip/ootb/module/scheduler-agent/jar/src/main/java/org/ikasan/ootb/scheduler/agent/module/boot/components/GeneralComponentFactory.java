@@ -83,6 +83,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
 import org.ikasan.ootb.scheduler.agent.module.service.JobProvisionServiceImpl;
+import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -115,12 +116,18 @@ public class GeneralComponentFactory
 
     @Bean
     public IBigQueue inboundQueue() throws IOException {
-        return new BigQueueImpl(this.queueDir, this.inboundQueueName);
+        IBigQueue inboundQueue = new BigQueueImpl(this.queueDir, this.inboundQueueName);
+        // Add the inbound queue to the cache.
+        InboundJobQueueCache.instance().put(this.inboundQueueName, inboundQueue);
+        return inboundQueue;
     }
 
     @Bean
     public IBigQueue outboundQueue() throws IOException {
-        return new BigQueueImpl(this.queueDir, this.outboundQueueName);
+        IBigQueue outboundQueue = new BigQueueImpl(this.queueDir, this.outboundQueueName);
+        // Add the inbound queue to the cache.
+        InboundJobQueueCache.instance().put(this.outboundQueueName, outboundQueue);
+        return outboundQueue;
     }
 
     @Bean
