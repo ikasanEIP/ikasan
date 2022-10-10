@@ -1,13 +1,14 @@
 package org.ikasan.component.endpoint.bigqueue.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leansoft.bigqueue.BigQueueImpl;
 import com.leansoft.bigqueue.IBigQueue;
 import com.leansoft.bigqueue.IBigQueue.ItemIterator;
 import org.apache.commons.io.FileUtils;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,37 +25,74 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
- // TODO REMOVE THIS WHEN READY, replaced with AbstractBigQueueManagementService
-public class BigQueueManagementServiceImpl implements BigQueueManagementService {
+public abstract class AbstractBigQueueManagementService implements BigQueueManagementService {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBigQueueManagementService.class);
+
+    /**
+     * Defines the implementation of how to get the associated Big Queue based on the queueName
+     * It is important that you associated the Big Queue Object attached to the application in this
+     * method. Do not create new IBigQueue instance as you will get unexpected behaviours
+     * @param queueName Name of the queue
+     * @return the related IBigQueue instance of that queueName.
+     */
+    public abstract IBigQueue getBigQueue(String queueName);
+
+    /**
+     * Users getBigQueue(String queueName) to check if a queue exist
+     * @param queueName name of the queue
+     * @return true if non null is returned
+     */
+    public boolean queueExists(String queueName) {
+        return getBigQueue(queueName) != null;
+    }
+
+    /**
+     * This uses the directory of where the queue is located to see if the queue exist.
+     * @param queueDir directory of where the queues are located
+     * @param queueName name of the queue
+     * @return true if the file path of the queue exist.
+     */
+    private boolean queueExists(String queueDir, String queueName) {
+        return Files.exists(Paths.get(queueDir + File.separator + queueName));
+    }
+
+    /**
+     * Checks if a messageId exist in the Big Queue
+     * @param queueName name of the queue
+     * @param biQueueMessageId messageId passed
+     * @return true if the messageId is found
+     * @throws IOException if error looking at the queue
+     */
+    private boolean messageIdExistsInMessages(String queueName, String biQueueMessageId) throws IOException {
+        return getMessages(queueName).stream().anyMatch(m -> biQueueMessageId.equals(m.getMessageId()));
+    }
 
     /**
      * Get the size of a given queue.
      * Ensures that the queue exists before finding out the size of the queue, otherwise retuns 0
-     * @param queueDir - the directory where the queue exists
      * @param queueName - the name of the queue to inspect
      */
-
-    public synchronized long size(String queueDir, String queueName) throws IOException {
-        if (queueExists(queueDir, queueName)) {
-            IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
-            return bigQueue.size();
+    @Override
+    public synchronized long size(String queueName) {
+        if (queueExists(queueName)) {
+            return getBigQueue(queueName).size();
         }
         return 0;
     }
 
+
+
     /**
      * Get the first message off the queue.
      * Ensures that the queue exists before doing a peek of the queue. Returns null otherwise or if nothing on the queue.
-     * @param queueDir - the directory where the queue exists
      * @param queueName - the name of the queue to inspect
      */
-
-    public synchronized BigQueueMessage peek(String queueDir, String queueName) throws IOException {
-        if (queueExists(queueDir, queueName)) {
-            IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
-            byte[] peek = bigQueue.peek();
+    @Override
+    public synchronized BigQueueMessage peek(String queueName) throws IOException {
+        if (queueExists(queueName)) {
+            byte[] peek = getBigQueue(queueName).peek();
             if (peek != null) {
                 return MAPPER.readValue(peek, BigQueueMessageImpl.class);
             }
@@ -66,39 +104,43 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * Deletes a message off the queue.
      * Ensures that the queue exists and the messageId is in the queue before looping i.e. dequeue and enqueue without
      * enqueuing the message to be deleted.
-     * @param queueDir - the directory where the queue exists
      * @param queueName - the name of the queue to inspect
      * @param biQueueMessageId - the message id of the big queue message to delete
      */
-
-    public synchronized void deleteMessage(String queueDir, String queueName, String biQueueMessageId) throws IOException {
+    @Override
+    public synchronized void deleteMessage(String queueName, String biQueueMessageId) throws IOException {
         if (biQueueMessageId != null
-            && queueExists(queueDir, queueName)
-            && messageIdExistsInMessages(queueDir, queueName, biQueueMessageId)) {
-            IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
-            long size = bigQueue.size();
+            && queueExists(queueName)
+            && messageIdExistsInMessages(queueName, biQueueMessageId)) {
+            long size = getBigQueue(queueName).size();
+            LOGGER.info("Start of delete for [{}] messageId on the queue [{}]", biQueueMessageId, queueName);
             for (int i = 0; i < size; i++) {
-                byte[] dequeue = bigQueue.dequeue();
-                BigQueueMessage message = MAPPER.readValue(dequeue, BigQueueMessageImpl.class);
+                byte[] dequeueMsg = getBigQueue(queueName).dequeue();
+                getBigQueue(queueName).gc();
+                BigQueueMessage message = MAPPER.readValue(dequeueMsg, BigQueueMessageImpl.class);
+                LOGGER.debug("MessageId Read is = [{}]", message.getMessageId());
                 if (!biQueueMessageId.equals(message.getMessageId())) {
-                    bigQueue.enqueue(dequeue);
+                    LOGGER.debug("MessageId is not equal to [{}]. Re-adding to the back of the queue", biQueueMessageId);
+                    getBigQueue(queueName).enqueue(dequeueMsg);
+                } else {
+                    LOGGER.info("MessageId FOUND! Removing [{}]",biQueueMessageId);
                 }
             }
+            LOGGER.info("End of delete [{}] messageId on the queue [{}]", biQueueMessageId, queueName);
         }
     }
 
     /**
      * Deletes all message off the queue.
      * Will check if the queue exist and then it will action removeAll() method from BigQueueImpl
-     * @param queueDir - the directory where the queue exists
      * @param queueName - the name of the queue to inspect
      * @throws IOException exception throws if there is any IO error during dequeue operation.
      */
-
-    public synchronized void deleteAllMessage(String queueDir, String queueName) throws IOException {
-        if (queueExists(queueDir, queueName)) {
-            IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
-            bigQueue.removeAll();
+    @Override
+    public synchronized void deleteAllMessage(String queueName) throws IOException {
+        if (queueExists(queueName)) {
+            getBigQueue(queueName).removeAll();
+            getBigQueue(queueName).gc();
         }
     }
 
@@ -109,7 +151,7 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
      * @param queueDir - the directory where the queue exists
      */
     @Override
-    public synchronized List<String> listQueues(String queueDir) throws IOException {
+    public synchronized List<String> listQueues(String queueDir) {
         List<String> queueNames = new ArrayList<>();
         if (queueDir != null && Files.exists(Path.of(queueDir))) {
             File[] directories = new File(queueDir).listFiles(File::isDirectory);
@@ -136,15 +178,13 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
     /**
      * Get the messages on the queue.
      * Ensures that the queue exists before returning the list of messages. Returns empty list otherwise.
-     * @param queueDir - the directory where the queue exists
      * @param queueName - the name of the queue to inspect
      */
-
-    public synchronized List<BigQueueMessage> getMessages(String queueDir, String queueName) throws IOException {
-        if (queueExists(queueDir, queueName)) {
-            IBigQueue bigQueue = new BigQueueImpl(queueDir, queueName);
+    @Override
+    public synchronized List<BigQueueMessage> getMessages(String queueName) throws IOException {
+        if (queueExists(queueName)) {
             MessagesIterator messagesIterator = new MessagesIterator();
-            bigQueue.applyForEach(messagesIterator);
+            getBigQueue(queueName).applyForEach(messagesIterator);
             return messagesIterator.getMessages();
         }
 
@@ -162,35 +202,5 @@ public class BigQueueManagementServiceImpl implements BigQueueManagementService 
         public List<BigQueueMessage> getMessages() {
             return messages;
         }
-    }
-
-    private boolean queueExists(String queueDir, String queueName) {
-        return Files.exists(Paths.get(queueDir + File.separator + queueName));
-    }
-
-    private boolean messageIdExistsInMessages(String queueDir, String queueName, String biQueueMessageId) throws IOException {
-        return getMessages(queueDir, queueName).stream().anyMatch(m -> biQueueMessageId.equals(m.getMessageId()));
-    }
-
-    @Override
-    public long size(String queueName) {
-        return 0;
-    }
-
-    @Override
-    public BigQueueMessage peek(String queueName) throws IOException {
-        return null;
-    }
-
-    @Override
-    public void deleteMessage(String queueName, String biQueueMessageId) throws IOException { }
-
-
-    @Override
-    public void deleteAllMessage(String queueName) throws IOException { }
-
-    @Override
-    public List<BigQueueMessage> getMessages(String queueName) throws IOException {
-        return null;
     }
 }

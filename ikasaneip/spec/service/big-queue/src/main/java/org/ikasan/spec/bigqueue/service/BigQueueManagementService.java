@@ -7,15 +7,15 @@ import java.util.List;
 
 public interface BigQueueManagementService {
 
-    long size(String queueDir, String queueName) throws IOException;
+    long size(String queueName);
 
-    BigQueueMessage peek(String queueDir, String queueName) throws IOException;
+    BigQueueMessage peek(String queueName) throws IOException;
 
-    List<BigQueueMessage> getMessages(String queueDir, String queueName) throws IOException;
+    List<BigQueueMessage> getMessages(String queueName) throws IOException;
 
-    void deleteMessage(String queueDir, String queueName, String biQueueMessageId) throws IOException;
+    void deleteMessage(String queueName, String biQueueMessageId) throws IOException;
 
-    void deleteAllMessage(String queueDir, String queueName) throws IOException;
+    void deleteAllMessage(String queueName) throws IOException;
 
     List<String> listQueues(String queueDir) throws IOException;
 
