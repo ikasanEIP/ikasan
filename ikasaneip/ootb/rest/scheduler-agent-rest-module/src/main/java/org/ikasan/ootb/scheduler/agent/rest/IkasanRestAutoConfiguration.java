@@ -45,6 +45,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.ikasan.component.endpoint.bigqueue.service.BigQueueDirectoryManagementServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
+import org.ikasan.ootb.scheduler.agent.rest.service.BigQueueManagementAppServiceImpl;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -99,7 +100,7 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
 
     @Bean
     public BigQueueDirectoryManagementService bigQueueDirectoryManagementService() {
-        return new BigQueueDirectoryManagementServiceImpl(this.queueDir);
+        return new BigQueueDirectoryManagementServiceImpl(new BigQueueManagementAppServiceImpl(), this.queueDir);
     }
 
     @Override
