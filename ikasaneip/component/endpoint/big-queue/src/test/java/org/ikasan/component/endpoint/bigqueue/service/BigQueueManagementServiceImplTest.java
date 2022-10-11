@@ -178,7 +178,7 @@ public class BigQueueManagementServiceImplTest {
         assertEquals(0, service.size(QUEUE_NAME));
     }
 
-    @Ignore //TODO FIX
+    @Ignore //TODO FIX later when we better understand the issue with AbstractBigQueueManagementService.getMessages
     @Test
     public void delete_existing_queue_existing_message_id() throws Exception {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
