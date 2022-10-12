@@ -43,7 +43,10 @@ public class BigQueueManagementServiceImplTest {
 
         @Override
         public IBigQueue getBigQueue(String queueName) {
-            return bigQueue;
+            if (queueName.equals(QUEUE_NAME)) {
+                return bigQueue;
+            }
+            return null;
         }
     }
 
