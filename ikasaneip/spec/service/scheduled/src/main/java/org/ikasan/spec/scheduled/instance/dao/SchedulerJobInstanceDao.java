@@ -59,4 +59,11 @@ public interface SchedulerJobInstanceDao {
      */
     SearchResults<SchedulerJobInstanceRecord> getScheduledContextInstancesByFilter(SchedulerJobInstanceSearchFilter filter, int limit, int offset, String sortField, String sortDirection);
 
+    /**
+     * Get a list of scheduler context instance aggregate jobs statuses.
+     *
+     * @param contextInstanceIds
+     * @return
+     */
+    List<ContextInstanceAggregateJobStatus> getJobStatusCountForContextInstances(List<String> contextInstanceIds);
 }
