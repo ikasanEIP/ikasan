@@ -1,9 +1,6 @@
 package org.ikasan.spec.scheduled.instance.service;
 
-import org.ikasan.spec.scheduled.instance.model.ContextInstance;
-import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstance;
-import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstanceRecord;
-import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstanceSearchFilter;
+import org.ikasan.spec.scheduled.instance.model.*;
 import org.ikasan.spec.scheduled.instance.service.exception.SchedulerJobInstanceInitialisationException;
 import org.ikasan.spec.search.SearchResults;
 
@@ -89,4 +86,11 @@ public interface SchedulerJobInstanceService {
      */
     List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(ContextInstance contextInstance) throws SchedulerJobInstanceInitialisationException;
 
+    /**
+     * Get a list of scheduler context instance aggregate jobs statuses.
+     *
+     * @param contextInstanceIds
+     * @return
+     */
+    List<ContextInstanceAggregateJobStatus> getJobStatusCountForContextInstances(List<String> contextInstanceIds);
 }
