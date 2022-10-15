@@ -1,7 +1,10 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -22,9 +25,15 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
 
     @Test
     public void test_convert_success() {
+        ContextInstance contextInstance = new ContextInstanceImpl();
+        contextInstance.setName("contextName");
+        contextInstance.setId("contextInstanceId");
+
+        ContextInstanceCache.instance().put("contextName", contextInstance);
+
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
-        configuration.setContextId("contextid");
-        configuration.setChildContextIds(List.of("childContextId1", "childContextId2"));
+        configuration.setContextName("contextName");
+        configuration.setChildContextNames(List.of("childContextId1", "childContextId2"));
 
         FileListToContextualisedScheduledProcessEventConverter converter
             = new FileListToContextualisedScheduledProcessEventConverter("agentName", "jobName");
@@ -36,7 +45,8 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
 
         Assert.assertEquals("agentName", event.getAgentName());
         Assert.assertEquals("jobName", event.getJobName());
-        Assert.assertEquals("contextid", event.getContextName());
+        Assert.assertEquals("contextName", event.getContextName());
+        Assert.assertEquals("contextInstanceId", event.getContextInstanceId());
         Assert.assertEquals(2, event.getChildContextNames().size());
         Assert.assertEquals(true, event.isSuccessful());
     }
