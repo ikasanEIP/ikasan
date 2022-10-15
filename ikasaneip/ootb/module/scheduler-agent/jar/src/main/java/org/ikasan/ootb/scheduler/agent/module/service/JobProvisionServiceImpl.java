@@ -255,8 +255,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
 
         ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-        converterConfiguration.setContextId(job.getContextName());
-        converterConfiguration.setChildContextIds(job.getChildContextNames());
+        converterConfiguration.setContextName(job.getContextName());
+        converterConfiguration.setChildContextNames(job.getChildContextNames());
 
         this.configurationService.update(converter);
     }
@@ -301,8 +301,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
 
         ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-        converterConfiguration.setContextId(job.getContextName());
-        converterConfiguration.setChildContextIds(job.getChildContextNames());
+        converterConfiguration.setContextName(job.getContextName());
+        converterConfiguration.setChildContextNames(job.getChildContextNames());
 
         this.configurationService.update(converter);
 

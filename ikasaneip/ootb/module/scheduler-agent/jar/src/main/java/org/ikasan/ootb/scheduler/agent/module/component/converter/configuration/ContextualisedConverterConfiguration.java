@@ -4,22 +4,22 @@ import java.util.List;
 
 public class ContextualisedConverterConfiguration {
 
-    private String contextId;
-    private List<String> childContextIds;
+    private String contextName;
+    private List<String> childContextNames;
 
-    public String getContextId() {
-        return contextId;
+    public String getContextName() {
+        return contextName;
     }
 
-    public void setContextId(String contextId) {
-        this.contextId = contextId;
+    public void setContextName(String contextName) {
+        this.contextName = contextName;
     }
 
-    public List<String> getChildContextIds() {
-        return childContextIds;
+    public List<String> getChildContextNames() {
+        return childContextNames;
     }
 
-    public void setChildContextIds(List<String> childContextId) {
-        this.childContextIds = childContextId;
+    public void setChildContextNames(List<String> childContextId) {
+        this.childContextNames = childContextId;
     }
 }

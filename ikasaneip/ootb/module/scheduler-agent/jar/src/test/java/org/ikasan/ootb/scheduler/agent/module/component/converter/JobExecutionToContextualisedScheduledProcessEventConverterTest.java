@@ -1,8 +1,11 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,9 +52,15 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         when(trigger.getDescription()).thenReturn("description");
         when(trigger.getKey()).thenReturn(triggerKey);
 
+        ContextInstance contextInstance = new ContextInstanceImpl();
+        contextInstance.setName("contextName");
+        contextInstance.setId("contextInstanceId");
+
+        ContextInstanceCache.instance().put("contextName", contextInstance);
+
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
-        configuration.setChildContextIds(List.of("childContextId1", "childContextId2"));
-        configuration.setContextId("contextId");
+        configuration.setChildContextNames(List.of("childContextId1", "childContextId2"));
+        configuration.setContextName("contextName");
 
         JobExecutionToContextualisedScheduledProcessEventConverter converter
             = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName", "jobName");
@@ -63,7 +72,8 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         Assert.assertEquals(nextFireTime.getTime(), event.getNextFireTime());
         Assert.assertEquals("moduleName", event.getAgentName());
         Assert.assertEquals("name", event.getJobName());
-        Assert.assertEquals("contextId", event.getContextName());
+        Assert.assertEquals("contextName", event.getContextName());
+        Assert.assertEquals("contextInstanceId", event.getContextInstanceId());
         Assert.assertEquals(true, event.isSuccessful());
         Assert.assertEquals("description", event.getJobDescription());
         Assert.assertEquals("group", event.getJobGroup());
