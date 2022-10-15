@@ -174,8 +174,8 @@ public class JobProvisionServiceImplTest {
 
         verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
 
-        verify(converterConfiguration, times(2)).setContextId(anyString());
-        verify(converterConfiguration, times(2)).setChildContextIds(anyList());
+        verify(converterConfiguration, times(2)).setContextName(anyString());
+        verify(converterConfiguration, times(2)).setChildContextNames(anyList());
 
         verifyNoMoreInteractions(fileConsumerConfiguration);
         verifyNoMoreInteractions(scheduledConsumerConfiguration);

@@ -42,10 +42,12 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 
 import java.io.File;
 import java.util.List;
@@ -90,8 +92,14 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
         scheduledProcessEvent.setAgentName(this.agentName);
         scheduledProcessEvent.setJobName(this.jobName);
         scheduledProcessEvent.setSuccessful(true);
-        scheduledProcessEvent.setContextName(this.configuration.getContextId());
-        scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextIds());
+        scheduledProcessEvent.setContextName(this.configuration.getContextName());
+        scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
+
+        if(ContextInstanceCache.existsInCache(this.configuration.getContextName())) {
+            ContextInstance contextInstance = ContextInstanceCache.instance()
+                .getByContextName(this.configuration.getContextName());
+            scheduledProcessEvent.setContextInstanceId(contextInstance.getId());
+        }
 
         return scheduledProcessEvent;
     }
