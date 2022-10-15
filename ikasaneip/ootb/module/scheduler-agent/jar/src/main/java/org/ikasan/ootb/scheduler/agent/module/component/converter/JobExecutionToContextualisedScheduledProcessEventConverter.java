@@ -42,10 +42,12 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
@@ -88,9 +90,15 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
             scheduledProcessEvent.setFireTime(jobExecutionContext.getFireTime().getTime());
             scheduledProcessEvent.setAgentName(moduleName);
             scheduledProcessEvent.setJobName(this.jobName);
-            scheduledProcessEvent.setContextName(this.configuration.getContextId());
-            scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextIds());
+            scheduledProcessEvent.setContextName(this.configuration.getContextName());
+            scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
             scheduledProcessEvent.setSuccessful(true);
+
+            if(ContextInstanceCache.existsInCache(this.configuration.getContextName())) {
+                ContextInstance contextInstance = ContextInstanceCache.instance()
+                    .getByContextName(this.configuration.getContextName());
+                scheduledProcessEvent.setContextInstanceId(contextInstance.getId());
+            }
 
             Trigger jobTrigger = jobExecutionContext.getTrigger();
             if (jobTrigger != null) {
