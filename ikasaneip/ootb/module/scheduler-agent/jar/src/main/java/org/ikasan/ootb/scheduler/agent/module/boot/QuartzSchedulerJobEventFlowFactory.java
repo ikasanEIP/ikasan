@@ -44,6 +44,7 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.OnException;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.QuartzSchedulerJobEventFlowComponentFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilterException;
+import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -87,8 +88,12 @@ public class QuartzSchedulerJobEventFlowFactory
             .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
             .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter(jobName))
-            .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer())
-            .build();
+            .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
+            .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
+                .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))
+            .otherwise(builderFactory.getRouteBuilder()
+                .filter("Publish Scheduled Status", componentFactory.getScheduledStatusFilter())
+                .producer("Blackout Scheduled Status Producer", componentFactory.getScheduledStatusProducer()));
     }
 }
 

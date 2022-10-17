@@ -91,17 +91,16 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.*;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Value;
@@ -228,6 +227,26 @@ public class FileEventSchedulerJobFlowComponentFactory
         converter.setConfiguration(configuration);
 
         return converter;
+    }
+
+    /**
+     * Get the router responsible for determining if a job has been run in a blackout window.
+     *
+     * @return
+     */
+    public SingleRecipientRouter getBlackoutRouter()
+    {
+        return new BlackoutRouter();
+    }
+
+    /**
+     * Get the filter that drops ScheduledProcessEvents that should not be published back to the dashboard.
+     *
+     * @return
+     */
+    public Filter getScheduledStatusFilter()
+    {
+        return new ScheduledProcessEventFilter();
     }
 
     /**

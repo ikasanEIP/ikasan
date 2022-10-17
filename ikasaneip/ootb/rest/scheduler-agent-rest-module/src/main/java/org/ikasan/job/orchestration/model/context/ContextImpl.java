@@ -12,6 +12,8 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected String name;
     protected String description;
     protected String timezone;
+    protected Map<Long, Long> blackoutWindowDateTimeRanges;
+    protected List<String> blackoutWindowCronExpressions;
     protected List<JobDependency> jobDependencies;
     protected List<ContextDependency> contextDependencies;
     protected List<CONTEXT_PARAM> contextParameters;
@@ -46,6 +48,26 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public void setTimezone(String timezone) {
         this.timezone = timezone;
+    }
+
+    @Override
+    public Map<Long, Long> getBlackoutWindowDateTimeRanges() {
+        return blackoutWindowDateTimeRanges;
+    }
+
+    @Override
+    public void setBlackoutWindowDateTimeRanges(Map<Long, Long> blackoutWindowDateTimeRanges) {
+        this.blackoutWindowDateTimeRanges = blackoutWindowDateTimeRanges;
+    }
+
+    @Override
+    public List<String> getBlackoutWindowCronExpressions() {
+        return blackoutWindowCronExpressions;
+    }
+
+    @Override
+    public void setBlackoutWindowCronExpressions(List<String> blackoutWindowCronExpressions) {
+        this.blackoutWindowCronExpressions = blackoutWindowCronExpressions;
     }
 
     @Override
