@@ -48,6 +48,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
+import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
@@ -56,7 +57,9 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
@@ -114,6 +117,9 @@ public class FileEventSchedulerJobFlowTest {
     @Resource
     private DryRunModeService dryRunModeService;
 
+    @Resource
+    private FilteredMessageDao filteredMessageDao;
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
@@ -159,6 +165,7 @@ public class FileEventSchedulerJobFlowTest {
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
             .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
             .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
@@ -175,6 +182,155 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
+        String contextName = createContextAndPutInCache();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration
+            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
+        blackoutRouterConfiguration.setCronExpressions(List.of("0 15 10 * * ? 3000"));
+
+        flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
+            , new File("src/test/resources/data"), true);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success() throws IOException {
+        String contextName = createContextAndPutInCache();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration
+            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
+        blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
+
+        flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .filter("Publish Scheduled Status")
+            .producer("Blackout Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
+            , new File("src/test/resources/data"), true);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filterd() throws IOException {
+        String contextName = createContextAndPutInCache();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , FileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
+            , ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration
+            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
+        blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
+
+        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration
+            = flowTestRule.getComponentConfig("Publish Scheduled Status", ScheduledProcessEventFilterConfiguration.class);
+        scheduledProcessEventFilterConfiguration.setDropOnBlackout(true);
+
+        flowTestRule.consumer("File Consumer")
+            .filter("Context Instance Active Filter")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .filter("Publish Scheduled Status");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
+            , new File("src/test/resources/data"), true);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
 
         flowTestRule.stopFlow();
     }
@@ -344,6 +500,7 @@ public class FileEventSchedulerJobFlowTest {
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
             .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
             .producer("Scheduled Status Producer")
             .consumer("File Consumer")
             .filter("Context Instance Active Filter")

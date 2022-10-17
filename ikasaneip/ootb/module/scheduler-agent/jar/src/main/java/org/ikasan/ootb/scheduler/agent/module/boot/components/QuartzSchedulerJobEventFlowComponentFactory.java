@@ -87,10 +87,13 @@ import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionTo
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
+import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Value;
@@ -152,6 +155,25 @@ public class QuartzSchedulerJobEventFlowComponentFactory
         converter.setConfiguration(configuration);
 
         return converter;
+    }
+
+    /**
+     * Get the router responsible for determining if a job has been run in a blackout window.
+     *
+     * @return
+     */
+    public SingleRecipientRouter getBlackoutRouter()
+    {
+        return new BlackoutRouter();
+    }
+
+    /**
+     * Get the filter that drops ScheduledProcessEvents that should not be published back to the dashboard.
+     *
+     * @return
+     */
+    public Filter getScheduledStatusFilter() {
+        return new ScheduledProcessEventFilter();
     }
 
     /**

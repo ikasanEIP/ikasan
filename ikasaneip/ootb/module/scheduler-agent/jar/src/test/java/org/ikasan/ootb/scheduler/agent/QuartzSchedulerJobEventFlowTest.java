@@ -55,6 +55,8 @@ import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
@@ -141,13 +143,14 @@ public class QuartzSchedulerJobEventFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
+            = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
         contextInstanceFilterConfiguration.setContextName(contextName);
 
         flowTestRule.consumer("Scheduled Consumer")
             .filter("Context Instance Active Filter")
             .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
             .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
@@ -173,8 +176,8 @@ public class QuartzSchedulerJobEventFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
+            = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
         contextInstanceFilterConfiguration.setContextName(contextName);
 
         flowTestRule.consumer("Scheduled Consumer")
@@ -189,6 +192,119 @@ public class QuartzSchedulerJobEventFlowTest {
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
+        String contextName = createContextAndPutInCache();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
+            = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration
+            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
+        blackoutRouterConfiguration.setCronExpressions(List.of("0 15 10 * * ? 3000"));
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_not_dropped_success() throws IOException {
+        String contextName = createContextAndPutInCache();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
+            = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration
+            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
+        blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .filter("Publish Scheduled Status")
+            .producer("Blackout Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(1, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_dropped_success() throws IOException {
+        String contextName = createContextAndPutInCache();
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
+            = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
+        contextInstanceFilterConfiguration.setContextName(contextName);
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration
+            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
+        blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
+
+        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration
+            = flowTestRule.getComponentConfig("Publish Scheduled Status", ScheduledProcessEventFilterConfiguration.class);
+        scheduledProcessEventFilterConfiguration.setDropOnBlackout(true);
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .filter("Publish Scheduled Status");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(0, outboundQueue.size());
 
