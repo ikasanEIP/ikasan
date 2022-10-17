@@ -10,7 +10,9 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -120,6 +122,24 @@ public class JobProvisionServiceImplTest {
 
     @Mock
     ContextInstanceFilterConfiguration contextFilterConfiguration;
+
+    @Mock
+    private FlowElement blackoutRouterElement;
+
+    @Mock
+    private ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter;
+
+    @Mock
+    BlackoutRouterConfiguration blackoutRouterConfiguration;
+
+    @Mock
+    private FlowElement scheduledStatusFilterElement;
+
+    @Mock
+    private ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter;
+
+    @Mock
+    ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration;
 
     @InjectMocks
     private JobProvisionServiceImpl service;
@@ -251,6 +271,12 @@ public class JobProvisionServiceImplTest {
         when(flow.getFlowElement("Duplicate Message Filter")).thenReturn(duplicateMessageFilterElement);
         when(duplicateMessageFilterElement.getFlowComponent()).thenReturn(duplicateMessageFilter);
         when(duplicateMessageFilter.getConfiguration()).thenReturn(schedulerFileFilterConfiguration);
+        when(flow.getFlowElement("Blackout Router")).thenReturn(blackoutRouterElement);
+        when(blackoutRouterElement.getFlowComponent()).thenReturn(blackoutRouter);
+        when(blackoutRouter.getConfiguration()).thenReturn(blackoutRouterConfiguration);
+        when(flow.getFlowElement("Publish Scheduled Status")).thenReturn(scheduledStatusFilterElement);
+        when(scheduledStatusFilterElement.getFlowComponent()).thenReturn(scheduledProcessEventFilter);
+        when(scheduledProcessEventFilter.getConfiguration()).thenReturn(scheduledProcessEventFilterConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
     }
 
