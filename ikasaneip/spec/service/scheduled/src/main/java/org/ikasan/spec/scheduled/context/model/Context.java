@@ -3,6 +3,8 @@ package org.ikasan.spec.scheduled.context.model;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +21,17 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     String getTimezone();
 
     void setTimezone(String timezone);
+
+    List<String> cronExpressions = new ArrayList<>();
+    Map<String,String> dateTimeRanges = new HashMap<>();
+
+    List<String> getBlackoutWindowCronExpressions();
+
+    void setBlackoutWindowCronExpressions(List<String> blackoutWindowCronExpressions);
+
+    Map<Long, Long> getBlackoutWindowDateTimeRanges();
+
+    void setBlackoutWindowDateTimeRanges(Map<Long, Long> blackoutWindowDateTimeRanges);
 
     List<CONTEXT_PARAM> getContextParameters();
 

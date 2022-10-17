@@ -14,7 +14,9 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -259,6 +261,23 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         converterConfiguration.setChildContextNames(job.getChildContextNames());
 
         this.configurationService.update(converter);
+
+        ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter = (ConfiguredResource<BlackoutRouterConfiguration>)flow
+            .getFlowElement("Blackout Router").getFlowComponent();
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration = blackoutRouter.getConfiguration();
+        blackoutRouterConfiguration.setCronExpressions(((QuartzScheduleDrivenJob) job).getBlackoutWindowCronExpressions());
+        blackoutRouterConfiguration.setDateTimeRanges(((QuartzScheduleDrivenJob) job).getBlackoutWindowDateTimeRanges());
+
+        this.configurationService.update(blackoutRouter);
+
+        ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter = (ConfiguredResource<ScheduledProcessEventFilterConfiguration>)flow
+            .getFlowElement("Publish Scheduled Status").getFlowComponent();
+
+        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration = scheduledProcessEventFilter.getConfiguration();
+        scheduledProcessEventFilterConfiguration.setDropOnBlackout(((QuartzScheduleDrivenJob) job).isDropEventOnBlackout());
+
+        this.configurationService.update(scheduledProcessEventFilterConfiguration);
     }
 
     private void configureFileEventDrivenFlowComponents(Module<Flow> module, SchedulerJob job) {
@@ -305,6 +324,23 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         converterConfiguration.setChildContextNames(job.getChildContextNames());
 
         this.configurationService.update(converter);
+
+        ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter = (ConfiguredResource<BlackoutRouterConfiguration>)flow
+            .getFlowElement("Blackout Router").getFlowComponent();
+
+        BlackoutRouterConfiguration blackoutRouterConfiguration = blackoutRouter.getConfiguration();
+        blackoutRouterConfiguration.setCronExpressions(((FileEventDrivenJob) job).getBlackoutWindowCronExpressions());
+        blackoutRouterConfiguration.setDateTimeRanges(((FileEventDrivenJob) job).getBlackoutWindowDateTimeRanges());
+
+        this.configurationService.update(blackoutRouter);
+
+        ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter = (ConfiguredResource<ScheduledProcessEventFilterConfiguration>)flow
+            .getFlowElement("Publish Scheduled Status").getFlowComponent();
+
+        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration = scheduledProcessEventFilter.getConfiguration();
+        scheduledProcessEventFilterConfiguration.setDropOnBlackout(((FileEventDrivenJob) job).isDropEventOnBlackout());
+
+        this.configurationService.update(scheduledProcessEventFilterConfiguration);
 
         ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
             .getFlowElement("File Move Broker").getFlowComponent();

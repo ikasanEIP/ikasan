@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.job.model;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public interface QuartzScheduleDrivenJob extends SchedulerJob, Serializable {
@@ -40,4 +41,16 @@ public interface QuartzScheduleDrivenJob extends SchedulerJob, Serializable {
     boolean isPersistentRecovery();
 
     void setPersistentRecovery(boolean persistentRecovery);
+
+    List<String> getBlackoutWindowCronExpressions();
+
+    void setBlackoutWindowCronExpressions(List<String> blackoutWindowCronExpressions);
+
+    Map<String,String> getBlackoutWindowDateTimeRanges();
+
+    void setBlackoutWindowDateTimeRanges(Map<String,String> blackoutWindowDateTimeRanges);
+
+    boolean isDropEventOnBlackout();
+
+    void setDropEventOnBlackout(boolean isDropEventOnBlackout);
 }
