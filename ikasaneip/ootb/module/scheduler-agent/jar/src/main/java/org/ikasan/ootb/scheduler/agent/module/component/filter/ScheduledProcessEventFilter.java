@@ -55,7 +55,7 @@ public class ScheduledProcessEventFilter implements Filter<ScheduledProcessEvent
     ConfiguredResource<ScheduledProcessEventFilterConfiguration>
 {
     String configuredResourceId;
-    ScheduledProcessEventFilterConfiguration configuration;
+    ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
 
     @Override
     public ScheduledProcessEvent filter(ScheduledProcessEvent scheduledProcessEvent) throws FilterException
