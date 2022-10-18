@@ -356,7 +356,7 @@
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
-        <version.big.queue>0.7.2</version.big.queue>
+        <version.big.queue>1.0.0-SNAPSHOT</version.big.queue>
         <version.expiring.map>0.5.10</version.expiring.map>
     </properties>
 
@@ -374,13 +374,6 @@
             <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </snapshotRepository>
     </distributionManagement>
-
-    <repositories>
-        <repository>
-            <id>Big Queue Repo</id>
-            <url>https://raw.github.com/bulldog2011/bulldog-repo/master/repo/releases/</url>
-        </repository>
-    </repositories>
 
     <build>
         <pluginManagement>
@@ -1691,7 +1684,7 @@
             </dependency>
 
             <dependency>
-                <groupId>com.leansoft</groupId>
+                <groupId>org.ikasan</groupId>
                 <artifactId>bigqueue</artifactId>
                 <version>${version.big.queue}</version>
             </dependency>

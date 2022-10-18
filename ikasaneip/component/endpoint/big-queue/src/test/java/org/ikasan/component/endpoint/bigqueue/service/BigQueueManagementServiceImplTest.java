@@ -2,8 +2,8 @@ package org.ikasan.component.endpoint.bigqueue.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leansoft.bigqueue.BigQueueImpl;
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.BigQueueImpl;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.serialiser.TestEvent;
 import org.ikasan.component.endpoint.bigqueue.serialiser.TestParam;
