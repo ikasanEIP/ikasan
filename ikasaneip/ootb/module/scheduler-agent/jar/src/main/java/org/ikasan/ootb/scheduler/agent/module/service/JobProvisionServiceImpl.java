@@ -277,7 +277,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration = scheduledProcessEventFilter.getConfiguration();
         scheduledProcessEventFilterConfiguration.setDropOnBlackout(((QuartzScheduleDrivenJob) job).isDropEventOnBlackout());
 
-        this.configurationService.update(scheduledProcessEventFilterConfiguration);
+        this.configurationService.update(scheduledProcessEventFilter);
     }
 
     private void configureFileEventDrivenFlowComponents(Module<Flow> module, SchedulerJob job) {
@@ -340,7 +340,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration = scheduledProcessEventFilter.getConfiguration();
         scheduledProcessEventFilterConfiguration.setDropOnBlackout(((FileEventDrivenJob) job).isDropEventOnBlackout());
 
-        this.configurationService.update(scheduledProcessEventFilterConfiguration);
+        this.configurationService.update(scheduledProcessEventFilter);
 
         ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
             .getFlowElement("File Move Broker").getFlowComponent();
