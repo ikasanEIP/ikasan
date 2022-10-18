@@ -80,7 +80,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
