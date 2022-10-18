@@ -80,8 +80,8 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
-import com.leansoft.bigqueue.BigQueueImpl;
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.BigQueueImpl;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.ootb.scheduler.agent.module.service.JobProvisionServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;

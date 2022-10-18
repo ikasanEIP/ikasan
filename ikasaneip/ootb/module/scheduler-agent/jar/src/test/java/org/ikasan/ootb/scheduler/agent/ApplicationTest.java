@@ -89,7 +89,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.

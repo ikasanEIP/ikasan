@@ -42,7 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.SystemUtils;

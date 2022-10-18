@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
