@@ -14,7 +14,7 @@ public class SchedulerFileFilter implements Filter<List<File>>, ConfiguredResour
     private DryRunModeService dryRunModeService;
     private FilterRule filterRule;
 
-    private SchedulerFileFilterConfiguration configuration;
+    private SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
     private String configurationId;
 
     /**
