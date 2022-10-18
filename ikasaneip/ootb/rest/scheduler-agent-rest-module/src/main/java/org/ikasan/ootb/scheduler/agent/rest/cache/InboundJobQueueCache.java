@@ -1,6 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.rest.cache;
 
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

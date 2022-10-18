@@ -1,7 +1,7 @@
 package org.ikasan.component.endpoint.bigqueue.consumer;
 
 import com.google.common.util.concurrent.ListenableFuture;
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;

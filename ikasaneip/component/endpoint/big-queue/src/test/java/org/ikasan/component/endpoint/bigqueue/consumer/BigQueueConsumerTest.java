@@ -1,6 +1,6 @@
 package org.ikasan.component.endpoint.bigqueue.consumer;
 
-import com.leansoft.bigqueue.BigQueueImpl;
+import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;

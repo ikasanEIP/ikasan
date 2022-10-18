@@ -64,7 +64,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.leansoft</groupId>
+            <groupId>org.ikasan</groupId>
             <artifactId>bigqueue</artifactId>
         </dependency>
 

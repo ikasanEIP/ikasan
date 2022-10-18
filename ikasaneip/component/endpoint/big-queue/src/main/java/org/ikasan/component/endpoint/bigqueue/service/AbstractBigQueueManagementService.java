@@ -1,8 +1,8 @@
 package org.ikasan.component.endpoint.bigqueue.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.leansoft.bigqueue.IBigQueue;
-import com.leansoft.bigqueue.IBigQueue.ItemIterator;
+import org.ikasan.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue.ItemIterator;
 import org.apache.commons.io.FileUtils;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;

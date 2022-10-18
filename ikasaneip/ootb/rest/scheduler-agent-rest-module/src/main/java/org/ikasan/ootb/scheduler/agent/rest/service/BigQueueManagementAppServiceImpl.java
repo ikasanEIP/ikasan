@@ -1,6 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.rest.service;
 
-import com.leansoft.bigqueue.IBigQueue;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.service.AbstractBigQueueManagementService;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 
