@@ -12,5 +12,14 @@ public interface JobProvisionModuleService {
      * @param jobs
      * @throws JsonProcessingException
      */
-    public void provisionJobs(String contextUrl, SchedulerJobWrapper jobs);
+    void provisionJobs(String contextUrl, SchedulerJobWrapper jobs);
+
+
+    /**
+     * Remove all jobs on an agent for a given context.
+     *
+     * @param contextUrl
+     * @param contextName
+     */
+    void removeJobsForContext(String contextUrl, String contextName);
 }
