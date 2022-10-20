@@ -100,7 +100,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void test_exception_job_initiation_event_put() throws Exception {
+    public void test_exception_job_provision_jobs_put() throws Exception {
         doThrow(new RuntimeException("error provisioning jobs!"))
             .when(jobProvisionService).provisionJobs(anyList());
 
@@ -118,7 +118,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void test_success_job_initiation_event_put() throws Exception {
+    public void test_success_job_provision_jobs_put() throws Exception {
         String payload = createSchedulerJobWrapper();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/jobProvision")
@@ -142,12 +142,37 @@ public class JobProvisionApplicationTest {
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-
-        verifyNoInteractions(this.jobProvisionService);
+        mockMvc.perform(requestBuilder).andReturn();
     }
 
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_success_job_remove_delete() throws Exception {
+        String payload = "contextName";
 
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/jobProvision/remove")
+            .content(payload)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
+    public void test_execption_job_remove_delete_read_only() throws Exception {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+        String payload = "contextName";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/jobProvision/remove")
+            .content(payload)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andReturn();
+    }
 
     private String createSchedulerJobWrapper() throws JsonProcessingException {
         SchedulerJobWrapper wrapper = new SchedulerJobWrapperImpl();
