@@ -12,4 +12,11 @@ public interface JobProvisionService {
      * @param jobs
      */
     void provisionJobs(List<SchedulerJob> jobs);
+
+    /**
+     * Remove jobs from the agent for a given context.
+     *
+     * @param contextName
+     */
+    void removeJobs(String contextName);
 }

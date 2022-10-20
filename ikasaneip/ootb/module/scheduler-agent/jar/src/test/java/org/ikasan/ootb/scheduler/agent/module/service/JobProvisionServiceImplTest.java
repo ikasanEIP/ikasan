@@ -22,6 +22,7 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
+import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -52,7 +53,7 @@ public class JobProvisionServiceImplTest {
     private ConfigurationService configurationService;
 
     @Mock
-    private SchedulerAgentConfiguredModuleConfiguration configureModule;
+    private SchedulerAgentConfiguredModuleConfiguration configureModuleConfiguration;
 
     @Mock
     private ConfiguredModuleImpl module;
@@ -246,9 +247,41 @@ public class JobProvisionServiceImplTest {
         assertEquals("{'key1':'value1'}", service.getSpelReplacement("passthroughProperties", fileEventDrivenJob));
     }
 
+    @Test
+    public void test_remove_jobs_for_context() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
+        configuration.setFlowContextMap(this.getJobContextMap());
+        configuration.setFlowDefinitions(this.getJobContextMap());
+        configuration.setFlowDefinitionProfiles(this.getJobContextMap());
+
+        Assert.assertEquals(3, configuration.getFlowContextMap().size());
+        Assert.assertEquals(3, configuration.getFlowDefinitions().size());
+        Assert.assertEquals(3, configuration.getFlowDefinitionProfiles().size());
+
+        when(moduleService.getModule(null)).thenReturn(module);
+        when(module.getConfiguration()).thenReturn(configuration);
+
+        this.service.removeJobs("contextName");
+
+        verify(moduleActivator).deactivate(module);
+        verify(moduleActivator).activate(module);
+
+        verifyNoMoreInteractions(fileConsumerConfiguration);
+        verifyNoMoreInteractions(moduleActivator);
+        verifyNoMoreInteractions(scheduledConsumerConfiguration);
+        verifyNoMoreInteractions(converterConfiguration);
+        verifyNoMoreInteractions(contextFilterConfiguration);
+
+        Assert.assertEquals(0, configuration.getFlowContextMap().size());
+        Assert.assertEquals(0, configuration.getFlowDefinitions().size());
+        Assert.assertEquals(0, configuration.getFlowDefinitionProfiles().size());
+    }
+
     private void setupWhen() {
         when(moduleService.getModule(null)).thenReturn(module);
-        when(module.getConfiguration()).thenReturn(configureModule);
+        when(module.getConfiguration()).thenReturn(configureModuleConfiguration);
         when(module.getFlow(anyString())).thenReturn(flow);
         when(flow.getFlowElement("File Consumer")).thenReturn(fileConsumerElement);
         when(fileConsumerElement.getFlowComponent()).thenReturn(fileConsumer);
@@ -280,19 +313,27 @@ public class JobProvisionServiceImplTest {
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
     }
 
+    private Map<String, String> getJobContextMap() {
+        Map<String, String> contextJobs = new HashMap<>();
+
+        this.getJobs().forEach(job -> contextJobs.put(job.getJobName(), job.getContextName()));
+
+        return contextJobs;
+    }
+
     private List<SchedulerJob> getJobs() {
         List<String> childIds = new ArrayList<>();
         childIds.add("childId");
 
         InternalEventDrivenJobImpl internalEventDrivenJob = new InternalEventDrivenJobImpl();
         internalEventDrivenJob.setAgentName("agentName");
-        internalEventDrivenJob.setJobName("jobName");
+        internalEventDrivenJob.setJobName("internalEventDrivenJobName");
         internalEventDrivenJob.setContextName("contextName");
         internalEventDrivenJob.setChildContextNames(childIds);
 
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         fileEventDrivenJob.setAgentName("agentName");
-        fileEventDrivenJob.setJobName("jobName");
+        fileEventDrivenJob.setJobName("fileEventDrivenJobName");
         fileEventDrivenJob.setContextName("contextName");
         fileEventDrivenJob.setChildContextNames(childIds);
         fileEventDrivenJob.setFilenames(new ArrayList<>());
@@ -319,7 +360,7 @@ public class JobProvisionServiceImplTest {
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
         quartzScheduleDrivenJob.setAgentName("agentName");
-        quartzScheduleDrivenJob.setJobName("jobName");
+        quartzScheduleDrivenJob.setJobName("quartzScheduleDrivenJobName");
         quartzScheduleDrivenJob.setJobGroup("jobGroup");
         quartzScheduleDrivenJob.setJobDescription("description");
         quartzScheduleDrivenJob.setContextName("contextName");

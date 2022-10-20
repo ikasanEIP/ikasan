@@ -142,6 +142,27 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         }
     }
 
+    @Override
+    public void removeJobs(String contextName) {
+        logger.info(String.format("Removing jobs for context[%s].", contextName));
+        Module<Flow> module = this.moduleService.getModule(moduleName);
+        logger.info(String.format("Deactivating module [%s]", this,moduleName));
+        moduleActivator.deactivate(module);
+        logger.info(String.format("Deactivated module [%s]", this,moduleName));
+
+        ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
+        ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
+
+        this.clearFlowConfig(configuredModuleConfiguration, contextName);
+        this.configurationService.update(configuredModule);
+
+        logger.info(String.format("Activating module [%s]", this,moduleName));
+        moduleActivator.activate(module);
+        logger.info(String.format("Activated module [%s]", this,moduleName));
+
+        logger.info(String.format("Finished removing jobs for context[%s].", contextName));
+    }
+
     /**
      * Update the initial module configuration in order to define the job types. All jobs are initially set
      * to start manually allowing for the relevant components to be configured.
@@ -192,7 +213,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 configuration.getFlowDefinitions().keySet() != null &&
                 configuration.getFlowDefinitions().keySet().size() > 0 &&
                 configuration.getFlowContextMap() != null) {
-
                 configuration.getFlowDefinitions().keySet().removeAll(flowsInThatContext);
             }
             if (configuration.getFlowDefinitionProfiles() != null &&
