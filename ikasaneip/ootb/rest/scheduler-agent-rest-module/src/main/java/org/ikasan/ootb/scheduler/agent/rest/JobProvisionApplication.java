@@ -90,4 +90,20 @@ public class JobProvisionApplication {
         }
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/remove", method = RequestMethod.DELETE)
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity removeJobsForContext(@RequestBody String contextName) {
+        try {
+            this.jobProvisionService.removeJobs(contextName);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            logger.error(String.format("An error has occurred attempting to remove scheduler jobs for context[%s]!"), e);
+            return new ResponseEntity(
+                new ErrorDto(String.format("An error has occurred attempting to remove scheduler jobs for context[%s]! Error message [%s]"
+                    , contextName, e.getMessage())), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }
