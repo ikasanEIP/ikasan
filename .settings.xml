@@ -1,6 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <settings>
     <localRepository>/home/travis/.m2/repository</localRepository>
+
+    <mirrors>
+        <mirror>
+            <id>maven-default-http-blocker</id>
+            <mirrorOf>dummy</mirrorOf>
+            <name>Dummy mirror to override default blocking mirror that blocks http</name>
+            <url>http://0.0.0.0/</url>
+        </mirror>
+    </mirrors>
+
     <servers>
         <server>
             <id>ikasaneip-snapshots</id>
