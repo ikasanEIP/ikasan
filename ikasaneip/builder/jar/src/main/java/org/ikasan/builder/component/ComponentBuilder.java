@@ -328,6 +328,49 @@ public class ComponentBuilder
     }
 
     /**
+     * Get an instance of an Ikasan BigQueueConsumerBuilder
+     *
+     * @return BigQueueConsumerBuilder
+     */
+    public BigQueueConsumerBuilder bigQueueConsumer()
+    {
+        try
+        {
+            return new BigQueueConsumerBuilderImpl(this.applicationContext.getBean(AopProxyProvider.class),
+                this.applicationContext.getBean(JtaTransactionManager.class).getTransactionManager());
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                + "<dependency>\n"
+                + "  <groupId>org.ikasan</groupId>\n"
+                + "  <artifactId>ikasan-big-queue</artifactId>\n"
+                + "</dependency>\n", e);
+        }
+    }
+
+    /**
+     * Get an instance of an Ikasan BigQueueConsumerBuilder
+     *
+     * @return BigQueueConsumerBuilder
+     */
+    public BigQueueProducerLRCOBuilder bigQueueProducer()
+    {
+        try
+        {
+            return new BigQueueProducerLRCOBuilderImpl(this.applicationContext.getBean(JtaTransactionManager.class).getTransactionManager());
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
+                + "<dependency>\n"
+                + "  <groupId>org.ikasan</groupId>\n"
+                + "  <artifactId>ikasan-big-queue</artifactId>\n"
+                + "</dependency>\n", e);
+        }
+    }
+
+    /**
      * New instance of an Ikasan ObjectToXmlStringConverterBuilder
      * @return ObjectToXmlStringConverterBuilderImpl
      */
