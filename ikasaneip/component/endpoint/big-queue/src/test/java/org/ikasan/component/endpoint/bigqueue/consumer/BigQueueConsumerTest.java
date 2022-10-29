@@ -24,7 +24,9 @@ import javax.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.Xid;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
@@ -80,16 +82,20 @@ public class BigQueueConsumerTest {
         BigQueueMessageJsonSerialiser bigQueueMessageJsonSerialiser = new BigQueueMessageJsonSerialiser();
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage));
 
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(()
+                -> verify(eventListener, times(1)).invoke(any(FlowEvent.class))
+            );
+
         consumer.commit(xid, true);
 
-        Thread.sleep(1000);
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> Assert.assertEquals(0, bigQueue.size()));
 
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
         Assert.assertEquals(0, bigQueue.size());
         bigQueue.close();
-
-        verify(eventListener, times(1)).invoke(any(FlowEvent.class));
     }
 
     @Test
@@ -119,14 +125,18 @@ public class BigQueueConsumerTest {
         BigQueueMessageJsonSerialiser bigQueueMessageJsonSerialiser = new BigQueueMessageJsonSerialiser();
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage));
 
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(()
+                -> verify(eventListener, times(1)).invoke(any(FlowEvent.class))
+            );
+
         consumer.rollback(xid);
 
-        Thread.sleep(1000);
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> Assert.assertEquals(1, bigQueue.size()));
 
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
-
-        Assert.assertEquals(1, bigQueue.size());
         bigQueue.close();
 
         verify(eventListener, times(2)).invoke(any(FlowEvent.class));
@@ -161,14 +171,19 @@ public class BigQueueConsumerTest {
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage1));
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage2));
 
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(()
+                -> verify(eventListener, times(1)).invoke(any(FlowEvent.class))
+            );
+
         consumer.rollback(xid);
 
-        Thread.sleep(1000);
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> Assert.assertEquals(2, bigQueue.size()));
+
 
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
-
-        Assert.assertEquals(2, bigQueue.size());
 
         byte[] dequeue1 = bigQueue.dequeue();
         byte[] dequeue2 = bigQueue.dequeue();
@@ -178,8 +193,6 @@ public class BigQueueConsumerTest {
         Assert.assertEquals("\"test message 1\"", deserialised2.getMessage());
 
         bigQueue.close();
-
-        verify(eventListener, times(2)).invoke(any(FlowEvent.class));
     }
 
     @Test
