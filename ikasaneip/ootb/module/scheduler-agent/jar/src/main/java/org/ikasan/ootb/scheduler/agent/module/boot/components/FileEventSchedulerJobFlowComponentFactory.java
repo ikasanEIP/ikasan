@@ -82,7 +82,6 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
@@ -256,10 +255,10 @@ public class FileEventSchedulerJobFlowComponentFactory
      */
     public Producer getScheduledStatusProducer()
     {
-        ScheduledProcessEventToBigQueueMessageSerialiser serialiser = new ScheduledProcessEventToBigQueueMessageSerialiser();
-        BigQueueProducer bigQueueProducer = new BigQueueProducer<>(this.outboundQueue);
-        bigQueueProducer.setSerialiser(serialiser);
-        return bigQueueProducer;
+        return builderFactory.getComponentBuilder().bigQueueProducer()
+            .setOutboundQueue(this.outboundQueue)
+            .setSerialiser(new ScheduledProcessEventToBigQueueMessageSerialiser())
+            .build();
     }
 
 }

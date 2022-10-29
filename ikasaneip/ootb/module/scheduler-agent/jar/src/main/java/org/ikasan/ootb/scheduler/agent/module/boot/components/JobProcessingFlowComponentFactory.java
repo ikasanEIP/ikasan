@@ -83,6 +83,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
+import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessagePayloadToStringSerialiser;
 import org.ikasan.component.router.multirecipient.RecipientListRouter;
@@ -131,6 +132,8 @@ public class JobProcessingFlowComponentFactory
     @Resource
     private IBigQueue outboundQueue;
 
+    @Resource
+    BuilderFactory builderFactory;
 
     /**
      * Get the big queue consumer
@@ -146,9 +149,11 @@ public class JobProcessingFlowComponentFactory
         // Add the inbound queue to the cache.
         InboundJobQueueCache.instance().put(queueName, inboundQueue);
 
-        BigQueueConsumer consumer = new BigQueueConsumer(inboundQueue, false);
-        consumer.setSerialiser(new BigQueueMessagePayloadToStringSerialiser());
-        return consumer;
+        return builderFactory.getComponentBuilder().bigQueueConsumer()
+            .setInboundQueue(inboundQueue)
+            .setPutErrorsToBackOfQueue(false)
+            .setSerialiser(new BigQueueMessagePayloadToStringSerialiser())
+            .build();
     }
 
     /**
