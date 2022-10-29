@@ -82,7 +82,6 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
@@ -183,10 +182,10 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      */
     public Producer getScheduledStatusProducer()
     {
-        ScheduledProcessEventToBigQueueMessageSerialiser serialiser = new ScheduledProcessEventToBigQueueMessageSerialiser();
-        BigQueueProducer bigQueueProducer = new BigQueueProducer<>(this.outboundQueue);
-        bigQueueProducer.setSerialiser(serialiser);
-        return bigQueueProducer;
+        return builderFactory.getComponentBuilder().bigQueueProducer()
+            .setOutboundQueue(this.outboundQueue)
+            .setSerialiser(new ScheduledProcessEventToBigQueueMessageSerialiser())
+            .build();
     }
 }
 
