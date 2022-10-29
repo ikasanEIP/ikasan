@@ -102,6 +102,6 @@ You can now access the basic web interface http://localhost:8080/sample-boot-jms
 
 * Click Create
  
-* The configuration screen allows you to chage the JMS consumer configuration, like:
+* The configuration screen allows you to change the JMS consumer configuration, like:
 ** change jms destination name
 ** provide JNDI properties
