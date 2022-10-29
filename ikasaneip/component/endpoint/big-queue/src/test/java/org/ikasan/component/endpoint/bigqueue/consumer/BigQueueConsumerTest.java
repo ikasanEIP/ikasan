@@ -2,6 +2,8 @@ package org.ikasan.component.endpoint.bigqueue.consumer;
 
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
+import org.ikasan.component.endpoint.bigqueue.consumer.configuration.BigQueueConsumerConfiguration;
+import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.event.EventFactory;
@@ -16,6 +18,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 
+import javax.transaction.SystemException;
+import javax.transaction.Transaction;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.Xid;
 import java.io.IOException;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -35,20 +42,33 @@ public class BigQueueConsumerTest {
     @Mock
     private Resubmission resubmission;
 
+    @Mock
+    private TransactionManager transactionManager;
+
+    @Mock
+    private Transaction transaction;
+
+    @Mock
+    private Xid xid;
+
     @Before
     public void init() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void test_message_consumed_successfully() throws IOException, InterruptedException {
+    public void test_message_consumed_successfully() throws IOException, InterruptedException, XAException, SystemException {
         Mockito.doNothing().when(eventListener).invoke(any(FlowEvent.class));
-        when(flowEventFactory.newEvent(anyString(), anyString(), any(BigQueueMessage.class))).thenReturn(flowEvent);
+        when(flowEventFactory.newEvent(anyString(), anyString(), any())).thenReturn(flowEvent);
+        when(transactionManager.getTransaction()).thenReturn(transaction);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, false);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -59,6 +79,8 @@ public class BigQueueConsumerTest {
         BigQueueMessage bigQueueMessage = new BigQueueMessageBuilder<>().withMessage("test message").build();
         BigQueueMessageJsonSerialiser bigQueueMessageJsonSerialiser = new BigQueueMessageJsonSerialiser();
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage));
+
+        consumer.commit(xid, true);
 
         Thread.sleep(1000);
 
@@ -71,14 +93,21 @@ public class BigQueueConsumerTest {
     }
 
     @Test
-    public void test_exception_invoke() throws IOException, InterruptedException {
+    public void test_exception_invoke() throws IOException, InterruptedException, XAException, SystemException {
         doThrow(new RuntimeException("test exception")).when(eventListener).invoke(any(FlowEvent.class));
-        when(flowEventFactory.newEvent(anyString(), anyString(), any(BigQueueMessage.class))).thenReturn(flowEvent);
+        when(flowEventFactory.newEvent(anyString(), anyString(), any())).thenReturn(flowEvent);
+        when(transactionManager.getTransaction()).thenReturn(transaction);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, false);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        BigQueueConsumerConfiguration configuration = new BigQueueConsumerConfiguration();
+        configuration.setPutErrorsToBackOfQueue(true);
+        consumer.setConfiguration(configuration);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -90,6 +119,8 @@ public class BigQueueConsumerTest {
         BigQueueMessageJsonSerialiser bigQueueMessageJsonSerialiser = new BigQueueMessageJsonSerialiser();
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage));
 
+        consumer.rollback(xid);
+
         Thread.sleep(1000);
 
         consumer.stop();
@@ -98,18 +129,25 @@ public class BigQueueConsumerTest {
         Assert.assertEquals(1, bigQueue.size());
         bigQueue.close();
 
-        verify(eventListener, times(1)).invoke(any(FlowEvent.class));
+        verify(eventListener, times(2)).invoke(any(FlowEvent.class));
     }
 
     @Test
-    public void test_exception_invoke_messagee_moved_to_back_of_queue() throws IOException, InterruptedException {
+    public void test_exception_invoke_message_moved_to_back_of_queue() throws IOException, InterruptedException, XAException, SystemException {
         doThrow(new RuntimeException("test exception")).when(eventListener).invoke(any(FlowEvent.class));
-        when(flowEventFactory.newEvent(anyString(), anyString(), any(BigQueueMessage.class))).thenReturn(flowEvent);
+        when(flowEventFactory.newEvent(anyString(), anyString(), any())).thenReturn(flowEvent);
+        when(transactionManager.getTransaction()).thenReturn(transaction);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, true);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        BigQueueConsumerConfiguration configuration = new BigQueueConsumerConfiguration();
+        configuration.setPutErrorsToBackOfQueue(true);
+        consumer.setConfiguration(configuration);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -122,6 +160,8 @@ public class BigQueueConsumerTest {
         BigQueueMessageJsonSerialiser bigQueueMessageJsonSerialiser = new BigQueueMessageJsonSerialiser();
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage1));
         bigQueue.enqueue(bigQueueMessageJsonSerialiser.serialise(bigQueueMessage2));
+
+        consumer.rollback(xid);
 
         Thread.sleep(1000);
 
@@ -139,7 +179,7 @@ public class BigQueueConsumerTest {
 
         bigQueue.close();
 
-        verify(eventListener, times(1)).invoke(any(FlowEvent.class));
+        verify(eventListener, times(2)).invoke(any(FlowEvent.class));
     }
 
     @Test
@@ -150,7 +190,8 @@ public class BigQueueConsumerTest {
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, false);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
 
@@ -172,14 +213,19 @@ public class BigQueueConsumerTest {
     }
 
     @Test
-    public void test_message_resubmitted_successfully() throws IOException, InterruptedException {
+    public void test_message_resubmitted_successfully() throws IOException, InterruptedException, SystemException {
         Mockito.doNothing().when(eventListener).invoke(any(Resubmission.class));
-        when(resubmissionEventFactory.newResubmissionEvent(anyString())).thenReturn(resubmission);
+        when(resubmissionEventFactory.newResubmissionEvent(any())).thenReturn(resubmission);
+        when(resubmission.getEvent()).thenReturn(new BigQueueMessageImpl<>());
+        when(transactionManager.getTransaction()).thenReturn(transaction);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, false);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -204,12 +250,15 @@ public class BigQueueConsumerTest {
     @Test(expected = RuntimeException.class)
     public void test_exception_resubmitted_invoke_exception() throws IOException, InterruptedException {
         doThrow(new RuntimeException("test exception")).when(eventListener).invoke(any(Resubmission.class));
-        when(resubmissionEventFactory.newResubmissionEvent(anyString())).thenReturn(resubmission);
+        when(resubmissionEventFactory.newResubmissionEvent(any())).thenReturn(resubmission);
 
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, false);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
         consumer.setListener(this.eventListener);
@@ -228,7 +277,10 @@ public class BigQueueConsumerTest {
         BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
         bigQueue.removeAll();
 
-        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, false);
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
         consumer.setEventFactory(this.flowEventFactory);
         consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
 
@@ -240,7 +292,8 @@ public class BigQueueConsumerTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_exception_null_big_queue_constructor() {
-        new BigQueueConsumer(null, false);
+        new BigQueueConsumer(null
+            , null, null);
     }
 
 }

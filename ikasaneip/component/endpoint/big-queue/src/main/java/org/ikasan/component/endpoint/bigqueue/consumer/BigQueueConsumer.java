@@ -2,9 +2,11 @@ package org.ikasan.component.endpoint.bigqueue.consumer;
 
 import com.google.common.util.concurrent.ListenableFuture;
 import org.ikasan.bigqueue.IBigQueue;
+import org.ikasan.component.endpoint.bigqueue.consumer.configuration.BigQueueConsumerConfiguration;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
@@ -14,6 +16,12 @@ import org.ikasan.spec.serialiser.Serialiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,7 +34,8 @@ import java.util.concurrent.Executors;
 public class BigQueueConsumer<T>
     implements Consumer<EventListener<?>,EventFactory>,
     ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<T, Throwable>, MessageListener<T>,
-    ResubmissionService<T> {
+    ConfiguredResource<BigQueueConsumerConfiguration>,
+    ResubmissionService<T>, XAResource {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(BigQueueConsumer.class);
 
@@ -49,23 +58,37 @@ public class BigQueueConsumer<T>
 
     protected ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService;
 
-    protected Serialiser<T,byte[]> serialiser;
+    protected Serialiser<T,byte[]> serialiser = new BigQueueMessageJsonSerialiser();;
 
-    protected boolean putErrorsToBackOfQueue;
+    private InboundQueueMessageRunner inboundQueueMessageRunner;
+
+    private TransactionManager transactionManager;
+
+    private BigQueueConsumerConfiguration bigQueueConsumerConfiguration;
+
+    private String configurationId;
 
     /**
      * Constructor
      *
      * @param inboundQueue
+     * @param inboundQueueMessageRunner
+     * @param transactionManager
      */
-    public BigQueueConsumer(IBigQueue inboundQueue, boolean putErrorsToBackOfQueue) {
+    public BigQueueConsumer(IBigQueue inboundQueue, InboundQueueMessageRunner inboundQueueMessageRunner
+        , TransactionManager transactionManager) {
         this.inboundQueue = inboundQueue;
         if(this.inboundQueue == null) {
             throw new IllegalArgumentException("inboundQueue cannot bee null!");
         }
-        this.serialiser = new BigQueueMessageJsonSerialiser();
-
-        this.putErrorsToBackOfQueue = putErrorsToBackOfQueue;
+        this.inboundQueueMessageRunner = inboundQueueMessageRunner;
+        if(this.inboundQueueMessageRunner == null) {
+            throw new IllegalArgumentException("inboundQueueMessageRunner cannot bee null!");
+        }
+        this.transactionManager = transactionManager;
+        if(this.transactionManager == null) {
+            throw new IllegalArgumentException("transactionManager cannot bee null!");
+        }
     }
 
     /**
@@ -101,7 +124,21 @@ public class BigQueueConsumer<T>
             throw new RuntimeException("No active eventListeners registered for resubmission event!");
         }
 
-        this.eventListener.invoke(resubmission);
+        FlowEvent<?,?> flowEvent;
+
+        if(this.managedRelatedEventIdentifierService != null) {
+            flowEvent = flowEventFactory.newEvent(managedRelatedEventIdentifierService.getEventIdentifier(resubmission.getEvent())
+                , managedRelatedEventIdentifierService.getRelatedEventIdentifier(resubmission.getEvent()), resubmission);
+        }
+        else {
+            flowEvent = flowEventFactory.newEvent(String.valueOf(resubmission.getEvent().hashCode())
+                , String.valueOf(resubmission.getEvent().hashCode()), resubmission.getEvent());
+        }
+
+        Resubmission resubmissionEvent = this.resubmissionEventFactory.newResubmissionEvent(flowEvent);
+
+
+        this.eventListener.invoke(resubmissionEvent);
     }
 
     @Override
@@ -129,7 +166,7 @@ public class BigQueueConsumer<T>
     private void addInboundListener() {
         if(this.bigQueueListenerExecutor != null) {
             this.listenableFuture = this.inboundQueue.peekAsync();
-            this.listenableFuture.addListener(new InboundQueueMessageRunner()
+            this.listenableFuture.addListener(this.inboundQueueMessageRunner
                 , bigQueueListenerExecutor);
         }
     }
@@ -155,10 +192,10 @@ public class BigQueueConsumer<T>
 
     @Override
     public void onMessage(T event) {
-        logger.info("Received message " + event);
+        logger.debug("Received message " + event);
 
-        boolean exception = false;
         try {
+            this.transactionManager.getTransaction().enlistResource(this);
             FlowEvent<?, ?> flowEvent;
             if(this.managedRelatedEventIdentifierService != null) {
                 flowEvent = flowEventFactory.newEvent(managedRelatedEventIdentifierService.getEventIdentifier(event)
@@ -169,32 +206,18 @@ public class BigQueueConsumer<T>
             }
             invoke(flowEvent);
         }
-        catch (Exception e) {
-            // Just log this error as the recovery manager is dealing with the exception case.
-            logger.error(e.getMessage());
-            exception = true;
-        }
-        finally {
-            try {
-                if(!exception) {
-                    inboundQueue.dequeue();
-                    inboundQueue.gc();
-                    addInboundListener();
-                }
-                else if(exception && this.putErrorsToBackOfQueue) {
-                    inboundQueue.enqueue(inboundQueue.dequeue());
-                }
-
-            }
-            catch (IOException e) {
-                throw new RuntimeException(e);
-            }
+        catch (RollbackException | SystemException e) {
+            this.onException(e);
         }
     }
 
     @Override
     public void onException(Throwable throwable) {
-        if(this.eventListener != null) {
+        if (throwable instanceof ForceTransactionRollbackException)
+        {
+            logger.info("Ignoring rethrown ForceTransactionRollbackException");
+        }
+        else if(this.eventListener != null) {
             this.eventListener.invoke(throwable);
         }
         else {
@@ -226,24 +249,89 @@ public class BigQueueConsumer<T>
         this.resubmissionEventFactory = resubmissionEventFactory;
     }
 
-    /**
-     * Inner class to allow for us to listen asynchronously to the BigQueue.
-     */
-    private class InboundQueueMessageRunner implements Runnable {
+    @Override
+    public BigQueueConsumerConfiguration getConfiguration() {
+        return this.bigQueueConsumerConfiguration;
+    }
 
-        @Override
-        public void run() {
-            try {
-                byte[] event = inboundQueue.peek();
-                if(event == null) {
-                    return;
-                }
+    @Override
+    public void setConfiguration(BigQueueConsumerConfiguration configuration) {
+        this.bigQueueConsumerConfiguration = configuration;
+    }
 
-                onMessage(serialiser.deserialise(event));
-            }
-            catch (Exception e) {
-                onException(e);
-            }
+    @Override
+    public String getConfiguredResourceId() {
+        return this.configurationId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String id) {
+        this.configurationId = id;
+    }
+
+    @Override
+    public void commit(Xid xid, boolean onePhase) throws XAException {
+        logger.debug("commit " + xid);
+        try {
+            inboundQueue.dequeue();
+            inboundQueue.gc();
+            this.addInboundListener();
+        } catch (IOException e) {
+            throw new XAException(e.getMessage());
         }
+    }
+
+    @Override
+    public void end(Xid xid, int flags) throws XAException {
+        logger.debug("end " + xid);
+    }
+
+    @Override
+    public void forget(Xid xid) throws XAException {
+        logger.debug("forget " + xid);
+    }
+
+    @Override
+    public int getTransactionTimeout() throws XAException {
+        return 0;
+    }
+
+    @Override
+    public boolean isSameRM(XAResource xares) throws XAException {
+        return false;
+    }
+
+    @Override
+    public int prepare(Xid xid) throws XAException {
+        logger.debug("prepare " + xid);
+        return 0;
+    }
+
+    @Override
+    public Xid[] recover(int flag) throws XAException {
+        return new Xid[0];
+    }
+
+    @Override
+    public void rollback(Xid xid) throws XAException {
+        logger.debug("rollback " + xid);
+        try {
+            if(this.bigQueueConsumerConfiguration.isPutErrorsToBackOfQueue()) {
+                inboundQueue.enqueue(inboundQueue.dequeue());
+            }
+            this.addInboundListener();
+        } catch (IOException e) {
+            throw new XAException(e.getMessage());
+        }
+    }
+
+    @Override
+    public boolean setTransactionTimeout(int seconds) throws XAException {
+        return false;
+    }
+
+    @Override
+    public void start(Xid xid, int flags) throws XAException {
+        logger.debug("start " + xid);
     }
 }
