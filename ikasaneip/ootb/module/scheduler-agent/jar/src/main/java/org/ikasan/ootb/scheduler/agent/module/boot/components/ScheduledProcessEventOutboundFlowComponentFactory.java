@@ -81,7 +81,9 @@
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.IBigQueue;
+import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
+import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessagePayloadToStringSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventRestProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -109,10 +111,15 @@ public class ScheduledProcessEventOutboundFlowComponentFactory
     @Resource
     DashboardRestService scheduleProcessEventDashboardRestService;
 
+    @Resource
+    BuilderFactory builderFactory;
+
     public Consumer getOutboundBigQueueConsumer() {
-        BigQueueConsumer consumer = new BigQueueConsumer(outboundQueue, true);
-        consumer.setSerialiser(new BigQueueMessagePayloadToStringSerialiser());
-        return consumer;
+        return builderFactory.getComponentBuilder().bigQueueConsumer()
+            .setInboundQueue(outboundQueue)
+            .setPutErrorsToBackOfQueue(false)
+            .setSerialiser(new BigQueueMessagePayloadToStringSerialiser())
+            .build();
     }
 
     /**

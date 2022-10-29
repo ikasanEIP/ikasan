@@ -50,7 +50,10 @@ import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
-import org.ikasan.ootb.scheduler.agent.rest.dto.*;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -62,6 +65,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,7 +73,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
@@ -86,6 +93,10 @@ import static org.junit.Assert.assertEquals;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestConfiguration.class})
 public class JobProcessingFlowTest {
+
+    @Value( "${module.name}" )
+    String moduleName;
+
     @Resource
     private Module<Flow> moduleUnderTest;
 
@@ -130,6 +141,7 @@ public class JobProcessingFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
+        bigQueue.removeAll();
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEvent.setContextName("contextId");
         schedulerJobInitiationEvent.setContextInstanceId("contextInstanceId");
@@ -160,10 +172,10 @@ public class JobProcessingFlowTest {
 
         flowTestRule.sleep(2000);
 
-        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+        with().pollInterval(1, TimeUnit.SECONDS).and().await().atMost(10, TimeUnit.SECONDS)
             .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
-        with().pollInterval(10, TimeUnit.SECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+        with().pollInterval(1, TimeUnit.SECONDS).and().await().atMost(10, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         byte[] dequeued = outboundQueue.dequeue();
@@ -182,7 +194,7 @@ public class JobProcessingFlowTest {
         assertEquals(true, event.isSuccessful());
         assertEquals(false, event.isDryRun());
 
-
+        bigQueue.removeAll();
         flowTestRule.stopFlow();
     }
 
