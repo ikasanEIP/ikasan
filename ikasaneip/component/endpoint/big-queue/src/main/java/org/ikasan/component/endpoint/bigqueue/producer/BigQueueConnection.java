@@ -21,7 +21,7 @@ public class BigQueueConnection implements LastResourceCommitOptimisation {
     @Override
     public void commit(Xid xid, boolean onePhase) throws XAException {
         try {
-            logger.info(xid + " commit");
+            logger.debug(xid + " commit");
             this.bigQueueConnectionCallback.execute();
         } catch (IOException e) {
             throw new XAException();
@@ -30,12 +30,12 @@ public class BigQueueConnection implements LastResourceCommitOptimisation {
 
     @Override
     public void end(Xid xid, int flags) throws XAException {
-        logger.info(xid + " end");
+        logger.debug(xid + " end");
     }
 
     @Override
     public void forget(Xid xid) throws XAException {
-        logger.info(xid + " forget");
+        logger.debug(xid + " forget");
     }
 
     @Override
@@ -50,7 +50,7 @@ public class BigQueueConnection implements LastResourceCommitOptimisation {
 
     @Override
     public int prepare(Xid xid) throws XAException {
-        logger.info(xid + " prepare");
+        logger.debug(xid + " prepare");
         return 0;
     }
 
@@ -61,7 +61,7 @@ public class BigQueueConnection implements LastResourceCommitOptimisation {
 
     @Override
     public void rollback(Xid xid) throws XAException {
-        logger.info(xid + " rollback");
+        logger.debug(xid + " rollback");
     }
 
     @Override
@@ -71,6 +71,6 @@ public class BigQueueConnection implements LastResourceCommitOptimisation {
 
     @Override
     public void start(Xid xid, int flags) throws XAException {
-        logger.info(xid + " start");
+        logger.debug(xid + " start");
     }
 }

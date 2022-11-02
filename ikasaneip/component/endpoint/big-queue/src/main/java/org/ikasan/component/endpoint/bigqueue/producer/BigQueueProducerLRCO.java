@@ -16,7 +16,7 @@ import javax.transaction.TransactionManager;
  *
  * @author Ikasan Development Team
  */
-public class BigQueueProducerLRCO<T> implements Producer<FlowEvent>{
+public class BigQueueProducerLRCO<T> implements Producer<FlowEvent> {
 
     private static Logger logger = LoggerFactory.getLogger(BigQueueProducerLRCO.class);
 
