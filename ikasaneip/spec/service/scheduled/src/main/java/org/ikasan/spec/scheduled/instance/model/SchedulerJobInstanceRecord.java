@@ -49,4 +49,8 @@ public interface SchedulerJobInstanceRecord {
     String getModifiedBy();
 
     void setModifiedBy(String modifiedBy);
+
+    String getManuallySubmittedBy();
+
+    void setManuallySubmittedBy(String manuallySubmittedBy);
 }
