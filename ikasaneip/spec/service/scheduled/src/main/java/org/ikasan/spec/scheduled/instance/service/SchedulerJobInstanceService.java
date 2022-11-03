@@ -50,7 +50,8 @@ public interface SchedulerJobInstanceService {
      * @param sortDirection
      * @return
      */
-    SearchResults<SchedulerJobInstanceRecord> getSchedulerJobInstancesByContextInstanceId(String contextInstanceId, int limit, int offset, String sortField, String sortDirection);
+    SearchResults<SchedulerJobInstanceRecord> getSchedulerJobInstancesByContextInstanceId(String contextInstanceId
+        , int limit, int offset, String sortField, String sortDirection);
 
     /**
      * Get scheduler job instances by context name
@@ -62,7 +63,8 @@ public interface SchedulerJobInstanceService {
      * @param sortDirection
      * @return
      */
-    SearchResults<SchedulerJobInstanceRecord> getSchedulerJobInstancesByContextName(String contextName, int limit, int offset, String sortField, String sortDirection);
+    SearchResults<SchedulerJobInstanceRecord> getSchedulerJobInstancesByContextName(String contextName, int limit
+        , int offset, String sortField, String sortDirection);
 
 
     /**
@@ -75,16 +77,21 @@ public interface SchedulerJobInstanceService {
      * @param sortDirection
      * @return
      */
-    SearchResults<SchedulerJobInstanceRecord> getScheduledContextInstancesByFilter(SchedulerJobInstanceSearchFilter filter, int limit, int offset, String sortField, String sortDirection);
+    SearchResults<SchedulerJobInstanceRecord> getScheduledContextInstancesByFilter(SchedulerJobInstanceSearchFilter filter
+        , int limit, int offset, String sortField, String sortDirection);
 
 
     /**
-     * Initialise scheduler job instances for a given context instances. This method will initialise the instances and persist them before returning the new instances.
+     * Initialise scheduler job instances for a given context instances. This method will initialise the
+     * instances and persist them before returning the new instances.
      *
      * @param contextInstance
+     * @param parameters
+     *
      * @return
      */
-    List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(ContextInstance contextInstance) throws SchedulerJobInstanceInitialisationException;
+    List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(ContextInstance contextInstance
+        , SchedulerJobInstancesInitialisationParameters parameters) throws SchedulerJobInstanceInitialisationException;
 
     /**
      * Get a list of scheduler context instance aggregate jobs statuses.
