@@ -1640,6 +1640,12 @@
                 <groupId>org.springframework.cloud</groupId>
                 <artifactId>spring-cloud-config-client</artifactId>
                 <version>${version.spring.cloud.config.client}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.security</groupId>
+                        <artifactId>spring-security-crypto</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
