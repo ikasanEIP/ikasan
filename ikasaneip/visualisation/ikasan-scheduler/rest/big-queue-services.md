@@ -25,7 +25,8 @@ The scheduler dashboard comes with its own rest services to manage its queues. T
 | Service Context                      |  /rest/dashboard/bigQueue/                                                                                                                                         |
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/                                                                                                                    |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
-| Returns                              | HTTP 200 status and json array list                                                                                                                                |
+| Returns                              | HTTP 200 status and json array list    |                                                                                                                            
+
 **Sample Response** 
 ```json 
 [
@@ -45,7 +46,8 @@ The scheduler dashboard comes with its own rest services to manage its queues. T
 | Optional parameter includeZeros      | Boolean value _true_ or *false*. Set to _true_ to include zero queue size, set to _false_ to only include sizes greater than 0. <br> Defaults to true if not specified. |
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/size <br>https://localhost:9090/rest/dashboard/bigQueue/size?includeZeros=false                                     |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
-| Returns                              | HTTP 200 status and json map value pairs                                                                                                                           |
+| Returns                              | HTTP 200 status and json map value pairs           |                                                                                                                
+
 **Sample Response**
 ```json 
 {
@@ -65,7 +67,8 @@ The scheduler dashboard comes with its own rest services to manage its queues. T
 | Required parameter queueName         | Name of the queue                                                                                                                                                  |
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/size/dashboard-inbound-queue                                                                                        |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
-| Returns                              | HTTP 200 status and a numeric value                                                                                                                                |
+| Returns                              | HTTP 200 status and a numeric value        |                                                                                                                        
+
 **Sample Response**
 ```json 
 5
@@ -82,6 +85,7 @@ The scheduler dashboard comes with its own rest services to manage its queues. T
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/peek/dashboard-inbound-queue                                                                                        |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
 | Returns                              | HTTP 200 status and json serialised [BigQueueMessage](../../../spec/service/big-queue/src/main/java/org/ikasan/spec/bigqueue/message/BigQueueMessage.java)         |
+
 **Sample Response**
 ```json 
 {
@@ -128,6 +132,7 @@ The scheduler dashboard comes with its own rest services to manage its queues. T
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/messages/dashboard-inbound-queue                                                                                    |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
 | Returns                              | HTTP 200 status and array of json serialised [BigQueueMessage](../../../spec/service/big-queue/src/main/java/org/ikasan/spec/bigqueue/message/BigQueueMessage.java)|
+
 **Sample Response**
 ```json 
 [
@@ -231,7 +236,7 @@ The scheduler dashboard comes with its own rest services to manage its queues. T
 | Required parameter queueName         | Name of the queue                                                                                                                                                  |
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/delete/dashboard-inbound-queue                                                                                      |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
-| Returns                              | HTTP 200 status                                                                                                                                                    |
+| Returns                              | HTTP 200 status        |                                                                                                                                        
 
 
 ## Managing queues through the Scheduler Agent
@@ -246,7 +251,7 @@ The scheduler agents comes with its own rest services to manage its queues. The 
 | Service Context                      | /rest/big/queue/                                                                                                                                                   |
 | Sample                               | https://localhost:9090/agent-module-name/rest/big/queue/                                                                                                           |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
-| Returns                              | HTTP 200 status and json array list                                                                                                                                |
+| Returns                              | HTTP 200 status and json array list                                                                                                 |
 **Sample Response** 
 ```json 
 [
@@ -515,7 +520,9 @@ The scheduler dashboard exposes rest services to manage its connected scheduler 
 | Required parameter includeZeros      | Boolean value _true_ or *false*. Set to _true_ to include zero queue size, set to _false_ to only include sizes greater than 0.                                    |
 | Sample                               | https://localhost:9090/rest/module/bigQueue/size/module/true/agent-module-name                                                                                     |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
-| Returns                              | HTTP 200 status and json map value pairs                                                                                                                           |
+| Returns                              | HTTP 200 status and json map value pairs   |                                                                     
+
+
 **Sample Response**
 ```json 
 {
@@ -537,6 +544,7 @@ The scheduler dashboard exposes rest services to manage its connected scheduler 
 | Sample                               | https://localhost:9090/rest/module/bigQueue/size/queue-inbound-name/agent-module-name                                                                              |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
 | Returns                              | HTTP 200 status and a numeric value                                                                                                                                |
+
 **Sample Response**
 ```json 
 5
@@ -554,6 +562,7 @@ The scheduler dashboard exposes rest services to manage its connected scheduler 
 | Sample                               | https://localhost:9090/rest/module/bigQueue/peek/queue-inbound-name/agent-module-name                                                                              |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
 | Returns                              | HTTP 200 status and json serialised [BigQueueMessage](../../../spec/service/big-queue/src/main/java/org/ikasan/spec/bigqueue/message/BigQueueMessage.java)         |
+
 **Sample Response**
 ```json 
 {
@@ -601,6 +610,7 @@ The scheduler dashboard exposes rest services to manage its connected scheduler 
 | Sample                               | https://localhost:9090/rest/dashboard/bigQueue/messages/queue-inbound-name/agent-module-name                                                                       |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
 | Returns                              | HTTP 200 status and array of json serialised [BigQueueMessage](../../../spec/service/big-queue/src/main/java/org/ikasan/spec/bigqueue/message/BigQueueMessage.java)|
+
 **Sample Response**
 ```json 
 [
