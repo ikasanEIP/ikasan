@@ -14,6 +14,10 @@ public interface EmailNotificationDetails extends Serializable {
 
     void setContextName(String contextName);
 
+    String getChildContextName();
+
+    void setChildContextName(String childContextName);
+
     String getMonitorType();
 
     void setMonitorType(String monitorType);
