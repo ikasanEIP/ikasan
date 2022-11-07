@@ -5,6 +5,7 @@ import org.ikasan.spec.scheduled.instance.service.exception.SchedulerJobInstance
 import org.ikasan.spec.search.SearchResults;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SchedulerJobInstanceService {
 
@@ -32,6 +33,13 @@ public interface SchedulerJobInstanceService {
      * @param scheduledContextInstanceRecord
      */
     void save(SchedulerJobInstanceRecord scheduledContextInstanceRecord);
+
+    /**
+     * Save a List of scheduled context instance records.
+     *
+     * @param scheduledContextInstanceRecords
+     */
+    void save(List<SchedulerJobInstanceRecord> scheduledContextInstanceRecords);
 
     /**
      * Method to update an existing schedulerJobInstance.
@@ -100,4 +108,43 @@ public interface SchedulerJobInstanceService {
      * @return
      */
     List<ContextInstanceAggregateJobStatus> getJobStatusCountForContextInstances(List<String> contextInstanceIds);
+
+    /**
+     * Helper method to get all command execution jobs associated with an context instance keyed on job identifier.
+     *
+     * @param contextInstanceId the id of the context instance that we want the jobs for.
+     *
+     * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
+     * keyed on their identifier.
+     */
+    Map<String, InternalEventDrivenJobInstance> getCommandExecutionJobsForContextInstance(String contextInstanceId);
+
+    /**
+     * Helper method to get all command execution jobs associated with an context instance keyed on job identifier
+     * and child context name.
+     *
+     * @param contextInstanceId the id of the context instance that we want the jobs for.
+     *
+     * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
+     * keyed on their identifier.
+     */
+    Map<String, InternalEventDrivenJobInstance> getCommandExecutionJobsForContextInstanceChildContext(String contextInstanceId);
+
+    /**
+     * Hold all jobs within a context instance.
+     *
+     * @param contextInstance
+     * @param childContextName
+     * @return
+     */
+    List<SchedulerJobInstanceRecord> holdJobsWithinContext(ContextInstance contextInstance, String childContextName);
+
+    /**
+     * Release all jobs withing a context instance.
+     *
+     * @param contextInstance
+     * @param childContextName
+     * @return
+     */
+    List<SchedulerJobInstanceRecord> getJobsToReleaseWithinContext(ContextInstance contextInstance, String childContextName);
 }
