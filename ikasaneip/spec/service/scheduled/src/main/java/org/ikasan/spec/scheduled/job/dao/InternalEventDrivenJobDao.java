@@ -87,6 +87,14 @@ public interface InternalEventDrivenJobDao<T extends InternalEventDrivenJobRecor
     void releaseAll(List<T> jobRecords, String actor);
 
     /**
+     * Hold all jobs.
+     *
+     * @param jobRecords
+     * @param actor
+     */
+    void holdAll(List<T> jobRecords, String actor);
+
+    /**
      * Enable all jobs that are skipped.
      *
      * @param jobRecords
