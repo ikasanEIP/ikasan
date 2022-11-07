@@ -8,6 +8,18 @@ public interface EmailNotificationDetailsRecord extends Serializable {
 
     void setId(String id);
 
+    String getJobName();
+
+    void setJobName(String jobName);
+
+    String getContextName();
+
+    void setContextName(String contextName);
+
+    String getMonitorType();
+
+    void setMonitorType(String monitorType);
+
     EmailNotificationDetails getEmailNotificationDetails();
 
     void setEmailNotificationDetails(EmailNotificationDetails emailNotificationDetails);
