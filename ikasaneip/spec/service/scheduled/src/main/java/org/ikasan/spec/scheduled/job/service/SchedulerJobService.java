@@ -213,6 +213,14 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void releaseAll(String contextName, String actor);
 
     /**
+     * Hold all jobs.
+     *
+     * @param contextName
+     * @param actor
+     */
+    void holdAll(String contextName, String actor);
+
+    /**
      * Enable all jobs that are skipped.
      *
      * @param contextName
