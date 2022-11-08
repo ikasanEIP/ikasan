@@ -18,4 +18,6 @@ public interface EmailNotificationDetailsDao {
     void save(List<EmailNotificationDetailsRecord> var1);
 
     void deleteByContextName(String contextName);
+
+    void deleteByJobNameAndMonitorType(String jobName, String childContextName, String monitorType);
 }
