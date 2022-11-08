@@ -40,7 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.router;
 
-import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.component.routing.RouterException;
