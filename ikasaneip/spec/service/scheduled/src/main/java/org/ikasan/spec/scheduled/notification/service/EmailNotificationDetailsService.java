@@ -21,4 +21,6 @@ public interface EmailNotificationDetailsService {
     void saveEmailNotificationDetails(List<EmailNotificationDetails> emailNotificationDetails);
 
     void deleteByContextName(String contextName);
+
+    void deleteByJobNameAndMonitorType(String jobName, String childContextName, String monitorType);
 }
