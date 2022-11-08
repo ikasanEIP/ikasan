@@ -97,7 +97,7 @@
                   column="Outcome"
                   not-null="false">
             <type name="org.hibernate.type.EnumType">
-                <param name="enumClass">org.ikasan.ootb.scheduled.model.Outcome</param>
+                <param name="enumClass">org.ikasan.spec.scheduled.event.model.Outcome</param>
             </type>
         </property>
         <property name="resultOutput"

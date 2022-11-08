@@ -1,5 +1,7 @@
 package org.ikasan.ootb.scheduled.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 
 public class DryRunParametersImpl implements DryRunParameters {
@@ -62,13 +64,6 @@ public class DryRunParametersImpl implements DryRunParameters {
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("DryRunParametersImpl{");
-        sb.append("minExecutionTimeMillis=").append(minExecutionTimeMillis);
-        sb.append(", maxExecutionTimeMillis=").append(maxExecutionTimeMillis);
-        sb.append(", fixedExecutionTimeMillis=").append(fixedExecutionTimeMillis);
-        sb.append(", jobErrorPercentage=").append(jobErrorPercentage);
-        sb.append(", error=").append(error);
-        sb.append('}');
-        return sb.toString();
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

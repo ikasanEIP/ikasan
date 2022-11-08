@@ -40,7 +40,7 @@
  */
 package org.ikasan.ootb.scheduled.dao;
 
-import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
