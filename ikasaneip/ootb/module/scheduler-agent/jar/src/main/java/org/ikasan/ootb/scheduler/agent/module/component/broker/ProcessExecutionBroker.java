@@ -43,7 +43,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 import ch.qos.logback.core.util.FileUtil;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
