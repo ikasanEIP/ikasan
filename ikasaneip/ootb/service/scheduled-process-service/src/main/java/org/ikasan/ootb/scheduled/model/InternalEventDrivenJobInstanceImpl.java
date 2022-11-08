@@ -1,5 +1,7 @@
 package org.ikasan.ootb.scheduled.model;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
@@ -289,28 +291,6 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
-        sb.append("successfulReturnCodes=").append(successfulReturnCodes);
-        sb.append(", workingDirectory='").append(workingDirectory).append('\'');
-        sb.append(", commandLine='").append(commandLine).append('\'');
-        sb.append(", minExecutionTime=").append(minExecutionTime);
-        sb.append(", maxExecutionTime=").append(maxExecutionTime);
-        sb.append(", contextParameters=").append(contextParameters);
-        sb.append(", contextId='").append(contextName).append('\'');
-        if(childContextNames != null) {
-            sb.append(", childContextNames=[ ");
-            childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
-        }
-        else {
-            sb.append(", childContextNames='").append(this.childContextNames).append('\'');
-        }
-        sb.append("], identifier='").append(identifier).append('\'');
-        sb.append(", agentName='").append(agentName).append('\'');
-        sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", jobDescription='").append(jobDescription).append('\'');
-        sb.append(", startupControlType='").append(startupControlType).append('\'');
-        sb.append(", targetResidingContextOnly='").append(targetResidingContextOnly).append('\'');
-        sb.append('}');
-        return sb.toString();
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }
