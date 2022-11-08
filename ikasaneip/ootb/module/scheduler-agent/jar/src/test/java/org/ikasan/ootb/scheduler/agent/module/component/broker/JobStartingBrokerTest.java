@@ -2,7 +2,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.ikasan.ootb.scheduled.model.Outcome;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.component.endpoint.EndpointException;
