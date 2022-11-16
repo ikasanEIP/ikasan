@@ -10,66 +10,208 @@ import java.util.Map;
 
 public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends SchedulerJob, JOB_LOCK extends JobLock> extends Serializable {
 
+    /**
+     * Get the name of the context
+     * @return
+     */
     String getName();
 
+    /**
+     * Set the name of the context.
+     * @param name
+     */
     void setName(String name);
 
+    /**
+     * Get the description of the context
+     *
+     * @return
+     */
     String getDescription();
 
+    /**
+     * Set the description of the template.
+     *
+     * @param description
+     */
     void setDescription(String description);
 
+    /**
+     * Get the timezone that the job plan operates within.
+     * @return
+     */
     String getTimezone();
 
+    /**
+     * Set the timezone that the job plan operates within.
+     *
+     * @param timezone
+     */
     void setTimezone(String timezone);
 
-    List<String> cronExpressions = new ArrayList<>();
-    Map<String,String> dateTimeRanges = new HashMap<>();
-
+    /**
+     * Get the blackout window cron expressions.
+     *
+     * @return
+     */
     List<String> getBlackoutWindowCronExpressions();
 
+    /**
+     * Set the blackout window cron expressions.
+     *
+     * @param blackoutWindowCronExpressions
+     */
     void setBlackoutWindowCronExpressions(List<String> blackoutWindowCronExpressions);
 
+    /**
+     * Get the blackout window date time ranges.
+     *
+     * @return
+     */
     Map<Long, Long> getBlackoutWindowDateTimeRanges();
 
+    /**
+     * Set the blackout window date time ranges.
+     *
+     * @param blackoutWindowDateTimeRanges
+     */
     void setBlackoutWindowDateTimeRanges(Map<Long, Long> blackoutWindowDateTimeRanges);
 
+    /**
+     * Get the context parameters.
+     *
+     * @return
+     */
     List<CONTEXT_PARAM> getContextParameters();
 
+    /**
+     * Set the context parameters.
+     *
+     * @param contextParameters
+     */
     void setContextParameters(List<CONTEXT_PARAM> contextParameters) ;
 
+    /**
+     * Get the scheduled jobs
+     *
+     * @return
+     */
     List<JOB> getScheduledJobs();
 
+    /**
+     * Set the scheduled jobs
+     *
+     * @param scheduledJobs
+     */
     void setScheduledJobs(List<JOB> scheduledJobs) ;
 
+    /**
+     * Get the job dependencies.
+     *
+     * @return
+     */
     List<JobDependency> getJobDependencies();
 
+    /**
+     * Set the job dependencies.
+     *
+     * @param jobDependencies
+     */
     void setJobDependencies(List<JobDependency> jobDependencies) ;
 
+    /**
+     * Get the contexts.
+     *
+     * @return
+     */
     List<CONTEXT> getContexts();
 
+    /**
+     * Set the contexts.
+     *
+     * @param contexts
+     */
     void setContexts(List<CONTEXT> contexts) ;
 
+    /**
+     * Get the context dependencies
+     *
+     * @return
+     */
     List<ContextDependency> getContextDependencies();
 
+    /**
+     * Set the context dependencies
+     *
+     * @param contextDependencies
+     */
     void setContextDependencies(List<ContextDependency> contextDependencies);
 
+    /**
+     * Get the scheduled job map
+     *
+     * @return
+     */
     Map<String, JOB> getScheduledJobsMap();
 
+    /**
+     * Set the scheduled job map
+     *
+     * @return
+     */
     Map<String, CONTEXT> getContextsMap();
 
+    /**
+     * Get the time window start cron expression
+     * @return
+     */
     String getTimeWindowStart();
 
+    /**
+     * Set the time window start cron expression
+     *
+     * @param timeWindowStart
+     */
     void setTimeWindowStart(String timeWindowStart);
 
+    /**
+     * Get the time window end cron expression
+     * @return
+     */
     String getTimeWindowEnd();
 
+    /**
+     * Set the time window end cron expression
+     *
+     * @param timeWindowEnd
+     */
     void setTimeWindowEnd(String timeWindowEnd);
 
+    /**
+     * Set the job locks.
+     *
+     * @param jobLocks
+     */
     void setJobLocks(List<JOB_LOCK> jobLocks);
 
+    /**
+     * Get the job locks.
+     *
+     * @return
+     */
     List<JOB_LOCK> getJobLocks();
 
+    /**
+     * Get the jobs locks map.
+     *
+     * @return
+     */
     Map<String, JOB_LOCK> getJobLocksMap();
 
+    /**
+     * Set the job lock map.
+     *
+     * @return
+     */
     List<JOB_LOCK> getAllNestedJobLocks();
 }
