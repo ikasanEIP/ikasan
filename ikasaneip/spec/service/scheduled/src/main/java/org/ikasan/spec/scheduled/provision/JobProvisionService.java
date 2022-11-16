@@ -10,8 +10,9 @@ public interface JobProvisionService {
      * Service to provision scheduler jobs.
      *
      * @param jobs
+     * @param actor
      */
-    void provisionJobs(List<SchedulerJob> jobs);
+    void provisionJobs(List<SchedulerJob> jobs, String actor);
 
     /**
      * Remove jobs from the agent for a given context.

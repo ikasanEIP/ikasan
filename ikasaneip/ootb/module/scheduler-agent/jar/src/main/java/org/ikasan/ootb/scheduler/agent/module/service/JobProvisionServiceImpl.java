@@ -98,7 +98,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     }
 
     @Override
-    public void provisionJobs(List<SchedulerJob> jobs) {
+    public void provisionJobs(List<SchedulerJob> jobs, String actor) {
         try
         {
             long now = System.currentTimeMillis();

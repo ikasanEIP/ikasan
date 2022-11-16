@@ -151,7 +151,7 @@ public class JobProvisionServiceImplTest {
 
         setupWhen();
 
-        this.service.provisionJobs(this.getJobs());
+        this.service.provisionJobs(this.getJobs(), "system");
 
         verify(scheduledConsumerConfiguration, times(1)).setJobName(anyString());
         verify(scheduledConsumerConfiguration, times(1)).setJobGroupName(anyString());
@@ -215,7 +215,7 @@ public class JobProvisionServiceImplTest {
 
         setupWhen();
 
-        this.service.provisionJobs(this.getJobs());
+        this.service.provisionJobs(this.getJobs(), "system");
 
         verify(fileConsumerConfiguration).setDynamicFileName(true);
         verify(fileConsumerConfiguration).setSpelExpression("#fileName.replace('contextName', 'thevaluetoreplace')");

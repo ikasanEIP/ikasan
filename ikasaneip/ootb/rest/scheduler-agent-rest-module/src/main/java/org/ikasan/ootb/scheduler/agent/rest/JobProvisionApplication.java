@@ -78,7 +78,7 @@ public class JobProvisionApplication {
             SchedulerJobWrapper schedulerJobWrapper = this.mapper.readValue(schedulerJobs
                 , SchedulerJobWrapperImpl.class);
 
-            this.jobProvisionService.provisionJobs(schedulerJobWrapper.getJobs());
+            this.jobProvisionService.provisionJobs(schedulerJobWrapper.getJobs(), "system");
         }
         catch (Exception e)
         {
