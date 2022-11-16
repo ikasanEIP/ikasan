@@ -82,7 +82,7 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      *
      * @param records
      */
-    void save(List<SchedulerJob> records);
+    void save(List<SchedulerJob> records, String actor);
 
     /**
      * Save a FileEventDrivenJobRecord
@@ -150,21 +150,25 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * Save a list of InternalEventDrivenJob.
      *
      * @param quartzScheduleDrivenJobs
+     * @param actor
      */
-    public void saveInternalEventDrivenJobs(List<InternalEventDrivenJob> quartzScheduleDrivenJobs);
+    public void saveInternalEventDrivenJobs(List<InternalEventDrivenJob> quartzScheduleDrivenJobs, String actor);
 
     /**
      * Save a list of QuartzScheduleDrivenJob.
+     *
      * @param quartzScheduleDrivenJobs
+     * @param actor
      */
-    public void saveQuartzScheduledJobs(List<QuartzScheduleDrivenJob> quartzScheduleDrivenJobs);
+    public void saveQuartzScheduledJobs(List<QuartzScheduleDrivenJob> quartzScheduleDrivenJobs, String actor);
 
     /**
      * Save a list of FileEventDrivenJob.
      *
      * @param quartzScheduleDrivenJobs
+     * @param actor
      */
-    public void saveFileEventDrivenJobs(List<FileEventDrivenJob> quartzScheduleDrivenJobs);
+    public void saveFileEventDrivenJobs(List<FileEventDrivenJob> quartzScheduleDrivenJobs, String actor);
 
     /**
      * Set a InternalEventDrivenJobRecord to skip. If targetResidingContextOnly is set
@@ -227,4 +231,13 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param actor
      */
     void enableAll(String contextName, String actor);
+
+    /**
+     * Rename the context associated with all jobs.
+     *
+     * @param oldName
+     * @param newName
+     * @param actor
+     */
+    void renameContextForJobs(String oldName, String newName, String actor);
 }
