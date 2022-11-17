@@ -17,4 +17,11 @@ public interface DashboardJob extends Job {
      * @return
      */
     String getCronExpression();
+
+    /**
+     * Get the timezone .
+     *
+     * @return
+     */
+    String getTimezone();
 }
