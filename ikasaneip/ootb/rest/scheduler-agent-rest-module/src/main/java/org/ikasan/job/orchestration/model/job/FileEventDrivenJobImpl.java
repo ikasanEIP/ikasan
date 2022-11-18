@@ -39,6 +39,9 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
 
     private int minFileAgeSeconds;
 
+    /** cron expression on expected time of file availability */
+    private String slaCronExpression;
+
     @Override
     public String getFilePath() {
         return this.filePath;
@@ -160,6 +163,16 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
     }
 
     @Override
+    public String getSlaCronExpression() {
+        return slaCronExpression;
+    }
+
+    @Override
+    public void setSlaCronExpression(String slaCronExpression) {
+        this.slaCronExpression = slaCronExpression;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("FileEventDrivenJobImpl{");
         sb.append("filePath='").append(filePath).append('\'');
@@ -172,6 +185,7 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
         sb.append(", directoryDepth=").append(directoryDepth);
         sb.append(", logMatchedFilenames=").append(logMatchedFilenames);
         sb.append(", ignoreFileRenameWhilstScanning=").append(ignoreFileRenameWhilstScanning);
+        sb.append(", slaCronExpression=").append(slaCronExpression);
         sb.append('}');
         return sb.toString();
     }
