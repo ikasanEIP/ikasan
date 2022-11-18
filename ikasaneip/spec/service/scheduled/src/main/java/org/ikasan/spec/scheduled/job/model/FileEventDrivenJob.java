@@ -156,4 +156,19 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
      * @param minFileAgeSeconds
      */
     void setMinFileAgeSeconds(int minFileAgeSeconds);
+
+    /**
+     * Get the cron expression for the SLA of the file.
+     * This will be used to alert if the file has not been received by this cron expression
+     *
+     * @return slaCronExpression
+     */
+    String getSlaCronExpression();
+
+    /**
+     * Set the SLA Cron Expression
+     *
+     * @param slaCronExpression in quartz format
+     */
+    void setSlaCronExpression(String slaCronExpression);
 }
