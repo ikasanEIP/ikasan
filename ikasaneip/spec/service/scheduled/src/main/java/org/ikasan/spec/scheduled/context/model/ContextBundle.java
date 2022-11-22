@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.context.model;
 
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
+import org.ikasan.spec.scheduled.notification.model.EmailNotificationContext;
 import org.ikasan.spec.scheduled.notification.model.EmailNotificationDetails;
 import org.ikasan.spec.scheduled.profile.model.ContextProfileRecord;
 
@@ -15,4 +16,6 @@ public interface ContextBundle {
     List<ContextProfileRecord> getContextProfiles();
 
     List<EmailNotificationDetails> getEmailNotificationDetails();
+
+    EmailNotificationContext getEmailNotificationContext();
 }
