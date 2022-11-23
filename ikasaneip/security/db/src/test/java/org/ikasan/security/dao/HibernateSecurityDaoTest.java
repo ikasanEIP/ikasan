@@ -310,6 +310,60 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals("found role module equals", roleModule.getModuleName(), foundRoleModule.getModuleName());
     }
 
+    @Test
+    @DirtiesContext
+    public void test_success_add_role_wth_role_job_plan()
+    {
+        IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+
+        Assert.assertNotNull(principal);
+
+        Assert.assertEquals(principal.getRoles().size(), 10);
+
+        Role role = new Role();
+        role.setName("role_new");
+        role.setDescription("description");
+
+        HashSet<Policy> policies = new HashSet<Policy>();
+
+        for(int j=0; j<10; j++)
+        {
+            Policy policy = new Policy();
+            policy.setName("policy" + j);
+            policy.setDescription("description");
+            this.xaSecurityDao.saveOrUpdatePolicy(policy);
+            policies.add(policy);
+        }
+
+
+        role.setPolicies(policies);
+        this.xaSecurityDao.saveOrUpdateRole(role);
+
+        RoleJobPlan roleJobPlan = new RoleJobPlan();
+        roleJobPlan.setJobPlanName("jobPlan");
+        roleJobPlan.setRole(role);
+        this.xaSecurityDao.saveRoleJobPlan(roleJobPlan);
+
+        role.addRoleJobPlan(roleJobPlan);
+        this.xaSecurityDao.saveOrUpdateRole(role);
+
+        principal.getRoles().add(role);
+
+        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+
+        principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+
+        Assert.assertNotNull(principal);
+
+        Assert.assertEquals(principal.getRoles().size(), 11);
+
+        Role foundRole = principal.getRoles().stream().filter(role1 -> role1.getName().equals("role_new")).findFirst().get();
+
+        RoleJobPlan foundRoleJobPlan = foundRole.getRoleJobPlans().stream().findFirst().get();
+
+        Assert.assertEquals("found role module equals", roleJobPlan.getJobPlanName(), foundRoleJobPlan.getJobPlanName());
+    }
+
     @Test 
     @DirtiesContext
     public void test_success_remove_role()
@@ -627,7 +681,7 @@ public class HibernateSecurityDaoTest
     
     @Test
     @DirtiesContext
-    public void test_success_get_principal_by_name_like_bad_bname()
+    public void test_success_get_principal_by_name_like_bad_name()
     {    	
     	List<IkasanPrincipal> principals = this.xaSecurityDao.getPrincipalByNameLike("bad name");
 
@@ -636,7 +690,7 @@ public class HibernateSecurityDaoTest
     
     @Test
     @DirtiesContext
-    public void test_success_get_all_policy_lonk_types()
+    public void test_success_get_all_policy_link_types()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityDao.getAllPolicyLinkTypes();
 
