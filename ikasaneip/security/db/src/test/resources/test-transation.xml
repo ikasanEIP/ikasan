@@ -75,11 +75,8 @@
                    || execution(* org.ikasan.security.dao.UserDao.delete(..))
                    || execution(* org.ikasan.security.dao.UserDao.save(..))
                    || execution(* org.ikasan.security.dao.SecurityDao.saveRoleModule(..))
-
-
+                   || execution(* org.ikasan.security.dao.SecurityDao.saveRoleJobPlan(..))
 "/>
-        <!--<aop:pointcut id="serviceMethods"-->
-                <!--expression="execution(* org.ikasan.security.dao.service*.*(..))"/>-->
                 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
 

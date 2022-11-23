@@ -17,6 +17,14 @@ public interface ContextInstanceSearchFilter {
 
     public void setModifiedTimestamp(long modifiedTimestamp);
 
+    public long getStartTime();
+
+    public void setStartTime(long createdTimestamp);
+
+    public long getEndTime();
+
+    public void setEndTime(long modifiedTimestamp);
+
     public String getStatus();
 
     public void setStatus(String status);

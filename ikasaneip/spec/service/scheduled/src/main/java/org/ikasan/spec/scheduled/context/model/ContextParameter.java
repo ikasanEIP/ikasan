@@ -8,7 +8,7 @@ public interface ContextParameter extends Serializable {
 
     void setName(String name);
 
-    String getType();
+    String getDefaultValue();
 
-    void setType(String type);
+    void setDefaultValue(String defaultValue);
 }
