@@ -340,6 +340,16 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
         this.getHibernateTemplate().save(roleModule);
     }
 
+    @Override
+    public void deleteRoleJobPlan(RoleJobPlan roleJobPlan) {
+        this.getHibernateTemplate().delete(roleJobPlan);
+    }
+
+    @Override
+    public void saveRoleJobPlan(RoleJobPlan roleJobPlan) {
+        this.getHibernateTemplate().save(roleJobPlan);
+    }
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.dao.SecurityDao#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)
@@ -430,7 +440,8 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<IkasanPrincipal> getPrincipalByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<IkasanPrincipal> results = (List<IkasanPrincipal>) getHibernateTemplate().findByNamedParam("from IkasanPrincipal where name LIKE :name", "name", name + '%');
+		List<IkasanPrincipal> results = (List<IkasanPrincipal>) getHibernateTemplate()
+            .findByNamedParam("from IkasanPrincipal where name LIKE :name", "name", name + '%');
 
         return results;
 	}
@@ -465,7 +476,8 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<Policy> getPolicyByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<Policy> results = (List<Policy>) getHibernateTemplate().findByNamedParam("from Policy where name LIKE :name", "name", name + '%');
+		List<Policy> results = (List<Policy>) getHibernateTemplate()
+            .findByNamedParam("from Policy where name LIKE :name", "name", name + '%');
 
         return results;
 	}
@@ -477,7 +489,8 @@ public class HibernateSecurityDao extends HibernateDaoSupport implements Securit
 	public List<Role> getRoleByNameLike(String name)
 	{
 		@SuppressWarnings("unchecked")
-		List<Role> results = (List<Role>) getHibernateTemplate().findByNamedParam("from Role where name LIKE :name", "name", name + '%');
+		List<Role> results = (List<Role>) getHibernateTemplate()
+            .findByNamedParam("from Role where name LIKE :name", "name", name + '%');
 
         return results;
 	}

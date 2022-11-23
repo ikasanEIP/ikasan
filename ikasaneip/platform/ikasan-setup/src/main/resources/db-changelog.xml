@@ -52,4 +52,7 @@
     <!-- 3.2.x change log -->
     <include file="db-changelog-3.2.0.xml" relativeToChangelogFile="true" />
 
+    <!-- 3.3.x change log -->
+    <include file="db-changelog-3.3.0.xml" relativeToChangelogFile="true" />
+
 </databaseChangeLog>
