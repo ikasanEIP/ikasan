@@ -100,6 +100,18 @@ public interface SecurityDao
     public void saveRoleModule(RoleModule roleModule);
 
     /**
+     *
+     * @param roleJobPlan
+     */
+    public void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
+
+    /**
+     *
+     * @param roleJobPlan
+     */
+    public void saveRoleJobPlan(RoleJobPlan roleJobPlan);
+
+    /**
      * 
      * @param principal
      */

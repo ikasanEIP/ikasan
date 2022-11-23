@@ -49,8 +49,8 @@
     "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
     <class
-        name="org.ikasan.security.model.Role"
-        table="SecurityRole">
+        name="org.ikasan.security.model.RoleJobPlan"
+        table="RoleJobPlan">
 
         <id name="id"
           type="java.lang.Long"
@@ -59,31 +59,13 @@
           <generator class="identity" />
         </id>
 
-        <set name="policies" table="RolePolicy" cascade="merge" lazy="false" fetch="select" inverse="false">
-            <key column="RoleId"/>
-            <many-to-many column="PolicyId"
-                class="org.ikasan.security.model.Policy"/>
-        </set>
+        <many-to-one name="role" class="org.ikasan.security.model.Role" fetch="select">
+            <column name="RoleId" />
+        </many-to-one>
 
-        <set name="roleModules" table="RoleModule" lazy="false" fetch="select" inverse="false">
-            <key column="RoleId"/>
-            <one-to-many class="org.ikasan.security.model.RoleModule"/>
-        </set>
-
-        <set name="roleJobPlans" table="RoleJobPlan" lazy="false" fetch="select" inverse="false">
-            <key column="RoleId"/>
-            <one-to-many class="org.ikasan.security.model.RoleJobPlan"/>
-        </set>
-
-        <property name="name"
+         <property name="jobPlanName"
                   type="java.lang.String"
-                  column="Name"
-                  not-null="true" 
-                  unique="true"/>
-
-         <property name="description"
-                  type="java.lang.String"
-                  column="Description"
+                  column="JobPlanName"
                   not-null="true" 
                   unique="false"/>
 

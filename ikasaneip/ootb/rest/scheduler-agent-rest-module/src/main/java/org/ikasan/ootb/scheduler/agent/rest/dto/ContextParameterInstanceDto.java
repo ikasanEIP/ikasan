@@ -5,7 +5,7 @@ import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 public class ContextParameterInstanceDto implements ContextParameterInstance {
 
     private String name;
-    private String type;
+    private String defaultValue;
     private Object value;
 
     @Override
@@ -19,13 +19,13 @@ public class ContextParameterInstanceDto implements ContextParameterInstance {
     }
 
     @Override
-    public String getType() {
-        return this.type;
+    public String getDefaultValue() {
+        return defaultValue;
     }
 
     @Override
-    public void setType(String type) {
-        this.type = type;
+    public void setDefaultValue(String defaultValue) {
+        this.defaultValue = defaultValue;
     }
 
     @Override
