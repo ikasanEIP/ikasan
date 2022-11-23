@@ -53,6 +53,7 @@ public class Role implements Comparable<Role>
     private String description = "";
     private Set<Policy> policies;
     private Set<RoleModule> roleModules;
+    private Set<RoleJobPlan> roleJobPlans;
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;
@@ -110,6 +111,22 @@ public class Role implements Comparable<Role>
         {
             this.roleModules = new HashSet<>();
             this.roleModules.add(roleModule);
+        }
+    }
+
+    public void addRoleJobPlan(RoleJobPlan roleJobPlan){
+
+        if(this.roleJobPlans!=null)
+        {
+            if(!this.roleJobPlans.contains(roleJobPlan))
+            {
+                this.roleJobPlans.add(roleJobPlan);
+            }
+        }
+        else
+        {
+            this.roleJobPlans = new HashSet<>();
+            this.roleJobPlans.add(roleJobPlan);
         }
     }
 
@@ -215,6 +232,14 @@ public class Role implements Comparable<Role>
 
     public void setRoleModules(Set<RoleModule> roleModules) {
         this.roleModules = roleModules;
+    }
+
+    public Set<RoleJobPlan> getRoleJobPlans() {
+        return roleJobPlans;
+    }
+
+    public void setRoleJobPlans(Set<RoleJobPlan> roleJobPlans) {
+        this.roleJobPlans = roleJobPlans;
     }
 
     @Override

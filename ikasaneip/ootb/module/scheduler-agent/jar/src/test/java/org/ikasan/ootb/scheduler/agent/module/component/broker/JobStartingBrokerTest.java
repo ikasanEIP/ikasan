@@ -142,7 +142,7 @@ public class JobStartingBrokerTest {
 
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
-        contextParameterInstance.setType("java.lang.String");
+        contextParameterInstance.setDefaultValue("defaultValue");
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
         String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
@@ -180,7 +180,7 @@ public class JobStartingBrokerTest {
 
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
-        contextParameterInstance.setType("java.lang.String");
+        contextParameterInstance.setDefaultValue("defaultValue");
         contextParameterInstance.setValue(null);
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
         String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
@@ -218,7 +218,7 @@ public class JobStartingBrokerTest {
 
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
-        contextParameterInstance.setType("java.lang.String");
+        contextParameterInstance.setDefaultValue("defaultValue");
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
 
@@ -373,7 +373,7 @@ public class JobStartingBrokerTest {
     private class ContextParameterInstanceImpl implements ContextParameterInstance {
         private Object value;
         private String name;
-        private String type;
+        private String defaultValue;
 
         @Override
         public Object getValue() {
@@ -396,13 +396,13 @@ public class JobStartingBrokerTest {
         }
 
         @Override
-        public String getType() {
-            return this.type;
+        public String getDefaultValue() {
+            return defaultValue;
         }
 
         @Override
-        public void setType(String type) {
-            this.type = type;
+        public void setDefaultValue(String defaultValue) {
+            this.defaultValue = defaultValue;
         }
     }
 

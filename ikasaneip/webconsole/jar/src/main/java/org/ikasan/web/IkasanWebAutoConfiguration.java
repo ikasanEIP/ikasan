@@ -163,8 +163,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 
 
     @Bean
-    public LocalSessionFactoryBean securitySessionFactory(
-    )
+    public LocalSessionFactoryBean securitySessionFactory()
     {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(ikasands);
@@ -172,7 +171,8 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
             "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/RoleModule.hbm.xml",
             "/org/ikasan/security/model/Policy.hbm.xml", "/org/ikasan/security/model/User.hbm.xml",
             "/org/ikasan/security/model/Authority.hbm.xml", "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
-            "/org/ikasan/security/model/PolicyLink.hbm.xml", "/org/ikasan/security/model/PolicyLinkType.hbm.xml");
+            "/org/ikasan/security/model/PolicyLink.hbm.xml", "/org/ikasan/security/model/PolicyLinkType.hbm.xml",
+            "/org/ikasan/security/model/RoleJobPlan.hbm.xml");
         Properties properties = new Properties();
         properties.putAll(platformHibernateProperties);
         sessionFactoryBean.setHibernateProperties(properties);
