@@ -203,6 +203,16 @@ public class SecurityServiceImpl implements SecurityService
         this.securityDao.saveRoleModule(roleModule);
     }
 
+    @Override
+    public void deleteRoleJobPlan(RoleJobPlan roleJobPlan) {
+        this.securityDao.deleteRoleJobPlan(roleJobPlan);
+    }
+
+    @Override
+    public void saveRoleJobPlan(RoleJobPlan roleJobPlan) {
+        this.securityDao.saveRoleJobPlan(roleJobPlan);
+    }
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAllPrincipals()

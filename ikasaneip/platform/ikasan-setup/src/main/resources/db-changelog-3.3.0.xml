@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <!-- 3.3.x table creation -->
+    <include file="db/tables/db-changeLog-createRoleJobPlan.xml" relativeToChangelogFile="true" />
+
+    <!-- 3.3.x table alterations -->
+
+    <!-- 3.3.x cardinality creation -->
+
+    <!-- 3.3.x data creation -->
+    <include file="db/data/db-changelog-scheduler-all-policies.xml" relativeToChangelogFile="true" />
+
+    <!-- 3.3.x index creation -->
+
+    <!-- 3.3.x table drop -->
+
+    <!-- 3.3.x table modify -->
+
+</databaseChangeLog>
