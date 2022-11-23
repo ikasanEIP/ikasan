@@ -172,6 +172,12 @@ public interface SecurityService
 
     /**
      *
+     * @param roleJobPlan
+     */
+    public void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
+
+    /**
+     *
      * @return
      */
     public List<Policy> getAllPolicies();
@@ -232,6 +238,12 @@ public interface SecurityService
      * @param roleModule
      */
     public void saveRoleModule(RoleModule roleModule);
+
+    /**
+     *
+     * @param roleJobPlan
+     */
+    public void saveRoleJobPlan(RoleJobPlan roleJobPlan);
     
     /**
      * 
