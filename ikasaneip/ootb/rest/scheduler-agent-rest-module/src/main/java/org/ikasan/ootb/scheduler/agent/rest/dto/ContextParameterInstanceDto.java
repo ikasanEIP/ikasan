@@ -6,7 +6,7 @@ public class ContextParameterInstanceDto implements ContextParameterInstance {
 
     private String name;
     private String defaultValue;
-    private Object value;
+    private String value;
 
     @Override
     public String getName() {
@@ -29,12 +29,12 @@ public class ContextParameterInstanceDto implements ContextParameterInstance {
     }
 
     @Override
-    public Object getValue() {
+    public String getValue() {
         return this.value;
     }
 
     @Override
-    public void setValue(Object value) {
+    public void setValue(String value) {
         this.value = value;
     }
 }
