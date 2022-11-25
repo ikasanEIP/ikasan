@@ -371,17 +371,17 @@ public class JobStartingBrokerTest {
     }
 
     private class ContextParameterInstanceImpl implements ContextParameterInstance {
-        private Object value;
+        private String value;
         private String name;
         private String defaultValue;
 
         @Override
-        public Object getValue() {
+        public String getValue() {
             return this.value;
         }
 
         @Override
-        public void setValue(Object value) {
+        public void setValue(String value) {
             this.value = value;
         }
 
