@@ -5,7 +5,17 @@ import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import java.io.Serializable;
 
 public interface ContextParameterInstance extends ContextParameter, Serializable {
-    Object getValue();
 
-    void setValue(Object value);
+    /**
+     * Get the parameter instance value.
+     * @return
+     */
+    String getValue();
+
+    /**
+     * Set the parameter instance value.
+     *
+     * @param value
+     */
+    void setValue(String value);
 }

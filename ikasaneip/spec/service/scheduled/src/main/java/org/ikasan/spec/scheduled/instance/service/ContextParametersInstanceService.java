@@ -8,7 +8,7 @@ public interface ContextParametersInstanceService {
 
     void populateContextParameters();
 
-    Object getContextParameterValue(String contextName, String parameterValue);
+    String getContextParameterValue(String contextName, String parameterValue);
 
     List<ContextParameterInstance> getAllContextParameters(String contextName);
 
