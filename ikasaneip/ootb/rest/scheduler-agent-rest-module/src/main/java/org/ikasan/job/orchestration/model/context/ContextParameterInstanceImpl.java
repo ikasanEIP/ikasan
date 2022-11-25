@@ -3,13 +3,15 @@ package org.ikasan.job.orchestration.model.context;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 
 public class ContextParameterInstanceImpl extends ContextParameterImpl implements ContextParameterInstance {
-    private Object value;
+    private String value;
 
-    public Object getValue() {
+    @Override
+    public String getValue() {
         return value;
     }
 
-    public void setValue(Object value) {
+    @Override
+    public void setValue(String value) {
         this.value = value;
     }
 }
