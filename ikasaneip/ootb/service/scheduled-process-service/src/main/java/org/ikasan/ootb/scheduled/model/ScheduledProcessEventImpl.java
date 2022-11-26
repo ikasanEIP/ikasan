@@ -78,6 +78,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome,
     protected boolean dryRun = false;
     protected boolean jobStarting = false;
     protected DryRunParameters dryRunParameters;
+    private String executionDetails;
 
 
     public Long getId()
@@ -306,7 +307,15 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome,
         this.jobStarting = jobStarting;
     }
 
+    @Override
+    public String getExecutionDetails() {
+        return executionDetails;
+    }
 
+    @Override
+    public void setExecutionDetails(String executionDetails) {
+        this.executionDetails = executionDetails;
+    }
 
     @Override
     public String toString() {
