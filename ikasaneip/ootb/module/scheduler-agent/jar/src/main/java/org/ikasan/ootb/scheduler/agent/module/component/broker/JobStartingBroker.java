@@ -164,6 +164,8 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
 
             logger.info(processStartString.toString());
 
+            scheduledProcessEvent.setExecutionDetails(processStartString.toString());
+
             Process process = processBuilder.start();
             scheduledProcessEvent.setPid(process.pid());
             scheduledProcessEvent.setProcess(process);

@@ -33,8 +33,8 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     private DryRunParametersDto dryRunParameters;
     private boolean skipped;
     private InternalEventDrivenJobInstance internalEventDrivenJobInstance;
-
     private boolean raisedDueToFailureResubmission;
+    private String executionDetails;
     public Long getId()
     {
         return id;
@@ -301,6 +301,16 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     @Override
     public void setRaisedDueToFailureResubmission(boolean raisedDueToFailureResubmission) {
         this.raisedDueToFailureResubmission = raisedDueToFailureResubmission;
+    }
+
+    @Override
+    public String getExecutionDetails() {
+        return executionDetails;
+    }
+
+    @Override
+    public void setExecutionDetails(String executionDetails) {
+        this.executionDetails = executionDetails;
     }
 
     @Override
