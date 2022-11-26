@@ -66,6 +66,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
@@ -99,6 +100,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
@@ -131,6 +133,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
@@ -165,6 +168,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         // give the file a chance to get written to
         Thread.sleep(250);
@@ -203,6 +207,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         // give the file a chance to get written to
         Thread.sleep(250);
@@ -269,6 +274,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
@@ -302,6 +308,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
@@ -335,6 +342,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
@@ -368,6 +376,7 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     private class ContextParameterInstanceImpl implements ContextParameterInstance {
