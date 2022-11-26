@@ -282,4 +282,18 @@ public interface ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMS extends DryRunPar
      * @return
      */
     DRY_RUN_PARAMS getDryRunParameters();
+
+    /**
+     * Get the execution details.
+     *
+     * @return
+     */
+    String getExecutionDetails();
+
+    /**
+     * Set the execution details
+     *
+     * @param executionDetails
+     */
+    void setExecutionDetails(String executionDetails);
 }
