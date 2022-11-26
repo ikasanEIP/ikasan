@@ -32,4 +32,20 @@ public interface SchedulerJobInstanceSearchFilter {
     void setParticipatesInLock(Boolean participatesInLock);
 
     Boolean isParticipatesInLock();
+
+    long getStartTimeWindowStart();
+
+    void setStartTimeWindowStart(long startTimeWindowStart);
+
+    long getStartTimeWindowEnd();
+
+    void setStartTimeWindowEnd(long startTimeWindowEnd);
+
+    long getEndTimeWindowStart();
+
+    void setEndTimeWindowStart(long endTimeWindowStart);
+
+    long getEndTimeWindowEnd();
+
+    void setEndTimeWindowEnd(long endTimeWindowEnd);
 }
