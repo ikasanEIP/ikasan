@@ -192,7 +192,7 @@ public class ApplicationTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(2000);
 

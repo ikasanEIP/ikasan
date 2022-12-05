@@ -285,7 +285,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filterd() throws IOException {
+    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filtered() throws IOException {
         String contextName = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
@@ -509,8 +509,7 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        // file first time
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
         flowTestRule.sleep(2000);
 
@@ -518,7 +517,7 @@ public class FileEventSchedulerJobFlowTest {
             , new File("src/test/resources/data"), true);
 
         // file second time
-        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumerWithExistingTrigger();
         flowTestRule.sleep(2000);
 
 
