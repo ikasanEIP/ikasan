@@ -53,6 +53,7 @@ import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledConsumerConfigurationEnhanced;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
@@ -83,10 +84,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
@@ -143,6 +141,12 @@ public class QuartzSchedulerJobEventFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
+        ScheduledConsumerConfigurationEnhanced scheduledConsumerConfigurationEnhanced
+            = flowTestRule.getComponentConfig("Scheduled Consumer", ScheduledConsumerConfigurationEnhanced.class);
+        scheduledConsumerConfigurationEnhanced.setCronExpression("* * * * * ? *");
+        scheduledConsumerConfigurationEnhanced.getRootPlanCorrelationIds().add(UUID.randomUUID().toString());
+
+
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
         contextInstanceFilterConfiguration.setContextName(contextName);
@@ -155,9 +159,9 @@ public class QuartzSchedulerJobEventFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+//        flowTestRule.fireScheduledConsumerWithExistingTrigger();
 
-        flowTestRule.sleep(2000);
+        flowTestRule.sleep(10000);
 
         flowTestRule.assertIsSatisfied();
 
@@ -240,6 +244,10 @@ public class QuartzSchedulerJobEventFlowTest {
         String contextName = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        ScheduledConsumerConfigurationEnhanced scheduledConsumerConfigurationEnhanced
+            = flowTestRule.getComponentConfig("Scheduled Consumer", ScheduledConsumerConfigurationEnhanced.class);
+        scheduledConsumerConfigurationEnhanced.getRootPlanCorrelationIds().add(UUID.randomUUID().toString());
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
