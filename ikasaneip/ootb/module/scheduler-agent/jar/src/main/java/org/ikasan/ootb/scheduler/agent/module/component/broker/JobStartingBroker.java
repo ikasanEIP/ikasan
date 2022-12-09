@@ -42,6 +42,8 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
 
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
@@ -90,7 +92,8 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             return scheduledProcessEvent;
         }
 
-        String[] commandLineArgs = getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
+        String[] commandLineArgs = getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine(),
+            scheduledProcessEvent.getInternalEventDrivenJob().getExecutionEnvironmentProperties());
         ProcessBuilder processBuilder = new ProcessBuilder();
         processBuilder.command(commandLineArgs);
 
@@ -177,14 +180,21 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         return scheduledProcessEvent;
     }
 
-    String[] getCommandLineArgs(String commandLine)
-    {
+    String[] getCommandLineArgs(String commandLine, String executionEnvironmentProperties) {
         if(commandLine != null && commandLine.length() > 0) {
-            if (SystemUtils.OS_NAME.contains("Windows")) {
-                return new String[]{"cmd.exe", "/c", commandLine};
+            if (executionEnvironmentProperties != null && executionEnvironmentProperties.length() > 0) {
+                String[] processBuilderArgs = StringUtils.split(executionEnvironmentProperties, "|");
+                if (processBuilderArgs == null || processBuilderArgs.length == 0) {
+                    throw new EndpointException("Unable to split by | (pipe) [" + executionEnvironmentProperties + "] for executionEnvironmentProperties");
+                }
+                return ArrayUtils.add(processBuilderArgs, commandLine);
             } else {
-                // assume unix flavour
-                return new String[]{"/bin/bash", "-c", commandLine};
+                if (SystemUtils.OS_NAME.contains("Windows")) {
+                    return new String[]{"cmd.exe", "/c", commandLine};
+                } else {
+                    // assume unix flavour
+                    return new String[]{"/bin/bash", "-c", commandLine};
+                }
             }
         }
 
