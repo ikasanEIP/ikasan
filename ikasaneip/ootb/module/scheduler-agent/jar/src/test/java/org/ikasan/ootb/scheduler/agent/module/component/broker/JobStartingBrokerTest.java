@@ -23,7 +23,7 @@ public class JobStartingBrokerTest {
     public void get_command_line_args()  {
         JobStartingBroker jobStartingBroker = new JobStartingBroker();
         String cmd = "source $HOME/.bash_profile;\necho \"some_cmd(\\\"code = 'code'\\\");\" | do_some_something - | blah.sh -\t\t\nblah1.sh -c some_param -i\n";
-        String[] commandLineArgs = jobStartingBroker.getCommandLineArgs(cmd);
+        String[] commandLineArgs = jobStartingBroker.getCommandLineArgs(cmd, null);
         if (SystemUtils.OS_NAME.contains("Windows")) {
             Assert.assertEquals("cmd.exe", commandLineArgs[0]);
             Assert.assertEquals("/c", commandLineArgs[1]);
@@ -32,6 +32,19 @@ public class JobStartingBrokerTest {
             Assert.assertEquals("/bin/bash", commandLineArgs[0]);
             Assert.assertEquals("-c", commandLineArgs[1]);
         }
+
+        Assert.assertEquals(cmd, commandLineArgs[2]);
+    }
+
+    @Test
+    public void get_command_line_args_execution_env_prop()  {
+        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        String executionEnvProp = "powershell.exe|-Command";
+        String cmd = "echo Hello World";
+        String[] commandLineArgs = jobStartingBroker.getCommandLineArgs(cmd, executionEnvProp);
+
+        Assert.assertEquals("powershell.exe", commandLineArgs[0]);
+        Assert.assertEquals("-Command", commandLineArgs[1]);
 
         Assert.assertEquals(cmd, commandLineArgs[2]);
     }
@@ -114,6 +127,41 @@ public class JobStartingBrokerTest {
             internalEventDrivenJobInstanceDto.setCommandLine("java -version");
         }
         else {
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+    }
+
+    @Test
+    public void test_job_start_success_custom_command() {
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobInstanceDto.setExecutionEnvironmentProperties("cmd.exe|/c");
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
+        }
+        else {
+            internalEventDrivenJobInstanceDto.setExecutionEnvironmentProperties("/bin/bash|-c");
             internalEventDrivenJobInstanceDto.setCommandLine("pwd");
         }
         internalEventDrivenJobInstanceDto.setContextName("contextId");

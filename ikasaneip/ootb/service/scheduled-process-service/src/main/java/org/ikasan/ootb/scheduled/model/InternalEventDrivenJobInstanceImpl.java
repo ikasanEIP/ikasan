@@ -36,8 +36,8 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private boolean targetResidingContextOnly;
     private boolean participatesInLock;
     private Map<String, Boolean> skippedContexts;
-
     private Map<String, Boolean> heldContexts;
+    private String executionEnvironmentProperties;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -287,6 +287,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setHeldContexts(Map<String, Boolean> heldContexts) {
         this.heldContexts = heldContexts;
+    }
+
+    @Override
+    public String getExecutionEnvironmentProperties() {
+        return executionEnvironmentProperties;
+    }
+
+    @Override
+    public void setExecutionEnvironmentProperties(String executionEnvironmentProperties) {
+        this.executionEnvironmentProperties = executionEnvironmentProperties;
     }
 
     @Override
