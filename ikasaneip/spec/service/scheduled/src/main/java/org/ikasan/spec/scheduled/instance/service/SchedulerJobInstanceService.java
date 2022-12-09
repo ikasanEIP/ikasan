@@ -123,6 +123,8 @@ public interface SchedulerJobInstanceService {
      * Helper method to get all command execution jobs associated with an context instance keyed on job identifier
      * and child context name.
      *
+     * The results are key on job.getIdentifier() + "-" + jon.getChildContextName()
+     *
      * @param contextInstanceId the id of the context instance that we want the jobs for.
      *
      * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
