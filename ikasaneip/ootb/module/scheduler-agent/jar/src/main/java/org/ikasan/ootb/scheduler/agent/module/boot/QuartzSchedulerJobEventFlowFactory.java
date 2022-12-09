@@ -46,6 +46,7 @@ import org.ikasan.ootb.scheduler.agent.module.boot.components.QuartzSchedulerJob
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilterException;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -75,6 +76,8 @@ public class QuartzSchedulerJobEventFlowFactory
     @Resource
     QuartzSchedulerJobEventFlowComponentFactory componentFactory;
 
+    @Resource
+    Scheduler scheduler;
 
     public Flow create(String jobName)
     {
@@ -85,7 +88,7 @@ public class QuartzSchedulerJobEventFlowFactory
                     .getExceptionResolverBuilder()
                     .addExceptionToAction(ContextInstanceFilterException.class, OnException.retry(agentRecoveryRetryDelay, agentRecoveryMaxRetries))
             )
-            .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
+            .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer(scheduler))
             .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter(jobName))
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
