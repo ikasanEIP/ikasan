@@ -33,6 +33,7 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     private ScheduledProcessEvent scheduledProcessEvent;
     private boolean targetResidingContextOnly;
     private boolean participatesInLock;
+    private String executionEnvironmentProperties;
 
     private Map<String, Boolean> skippedContexts;
 
@@ -289,6 +290,16 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     }
 
     @Override
+    public String getExecutionEnvironmentProperties() {
+        return executionEnvironmentProperties;
+    }
+
+    @Override
+    public void setExecutionEnvironmentProperties(String executionEnvironmentProperties) {
+        this.executionEnvironmentProperties = executionEnvironmentProperties;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("InternalEventDrivenJobDto{");
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
@@ -311,6 +322,7 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
         sb.append(", jobDescription='").append(jobDescription).append('\'');
         sb.append(", startupControlType='").append(startupControlType).append('\'');
         sb.append(", targetResidingContextOnly='").append(targetResidingContextOnly).append('\'');
+        sb.append(", executionEnvironmentProperties='").append(executionEnvironmentProperties).append('\'');
         sb.append('}');
         return sb.toString();
     }

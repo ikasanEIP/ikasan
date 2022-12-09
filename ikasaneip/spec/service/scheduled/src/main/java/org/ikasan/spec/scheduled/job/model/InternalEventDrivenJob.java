@@ -41,4 +41,21 @@ public interface InternalEventDrivenJob extends SchedulerJob, Serializable {
     void setParticipatesInLock(boolean participatesInLock);
 
     boolean isParticipatesInLock();
+
+    /**
+     * An optional property to set how you want the getCommandLine to be executed, by default if the agent is
+     * deployed on a unix environment it will default to Bash, windows it will default to cmd.
+     * @return
+     */
+    String getExecutionEnvironmentProperties();
+
+    /**
+     * An optional property to set how you want the getCommandLine to be executed, by default if the agent is
+     * deployed on a unix environment it will default to Bash, windows it will default to cmd.
+     *
+     * To set, passing a pipe delimited string to represent the String array that represent the commands that will be
+     * used by the java.lang.ProcessBuilder to set how we want to execute the script from getCommandLine
+     * @return
+     */
+    void setExecutionEnvironmentProperties(String executionEnvironmentProperties);
 }
