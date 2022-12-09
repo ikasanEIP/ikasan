@@ -82,4 +82,10 @@ import java.util.List;
      * Newly created contextInstance registers itself to Monitor .
      */
     void register(ContextInstance contextInstance);
+
+    /**
+     * Remove the contextInstance from the Monitor .
+     */
+    void unregister(ContextInstance contextInstance);
+
 }
