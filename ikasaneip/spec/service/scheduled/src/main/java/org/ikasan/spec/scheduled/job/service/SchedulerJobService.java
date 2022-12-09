@@ -1,9 +1,11 @@
 package org.ikasan.spec.scheduled.job.service;
 
+import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.*;
 import org.ikasan.spec.search.SearchResults;
 
 import java.util.List;
+import java.util.Map;
 
 public interface SchedulerJobService<T extends SchedulerJobRecord> {
 
@@ -240,4 +242,17 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param actor
      */
     void renameContextForJobs(String oldName, String newName, String actor);
+
+    /**
+     * Helper method to get all command execution jobs associated with an context instance keyed on job identifier
+     * and child context name.
+     *
+     * The results are key on job.getIdentifier()
+     *
+     * @param contextName the name of the context that we want the jobs for.
+     *
+     * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
+     * keyed on their identifier.
+     */
+    Map<String, InternalEventDrivenJob> getCommandExecutionJobsForContext(String contextName);
 }

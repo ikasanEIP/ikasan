@@ -17,7 +17,7 @@ public class BigQueueProducerLRCOBuilderImpl implements BigQueueProducerLRCOBuil
     public BigQueueProducerLRCOBuilderImpl(TransactionManager transactionManager) {
         this.transactionManager = transactionManager;
         if(this.transactionManager == null) {
-            throw new IllegalArgumentException("transation manager cannot be null!");
+            throw new IllegalArgumentException("transaction manager cannot be null!");
         }
     }
 
