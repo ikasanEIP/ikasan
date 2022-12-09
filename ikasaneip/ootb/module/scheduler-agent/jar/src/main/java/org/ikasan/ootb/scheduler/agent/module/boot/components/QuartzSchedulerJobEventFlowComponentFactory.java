@@ -81,20 +81,26 @@
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.IBigQueue;
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.builder.ScheduledConsumerEnhancedBuilderImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledConsumerConfigurationEnhanced;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledConsumerEnhanced;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -123,9 +129,28 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
-    public Consumer getScheduledConsumer() {
-        return builderFactory.getComponentBuilder().scheduledConsumer()
-            .setCronExpression("0 0 0 * * ?").build();
+    @Resource
+    Scheduler scheduler;
+
+    @Resource
+    ScheduledJobFactory scheduledJobFactory;
+
+    @Resource
+    AopProxyProvider aopProxyProvider;
+
+    public Consumer getScheduledConsumer(Scheduler scheduler) {
+        ScheduledConsumerConfigurationEnhanced scheduledConsumerConfigurationEnhanced = new ScheduledConsumerConfigurationEnhanced();
+        scheduledConsumerConfigurationEnhanced.setCronExpression("0 0 0 * * ?");
+
+        ScheduledConsumerEnhancedBuilderImpl scheduledConsumerEnhancedBuilder = new ScheduledConsumerEnhancedBuilderImpl(scheduler, scheduledJobFactory, aopProxyProvider);
+        return scheduledConsumerEnhancedBuilder.setConfiguration(scheduledConsumerConfigurationEnhanced).build();
+
+//        ScheduledConsumerEnhanced scheduledConsumerEnhanced = new ScheduledConsumerEnhanced(scheduler);
+//
+//        scheduledConsumerEnhanced.setConfiguration(scheduledConsumerConfigurationEnhanced);
+//        return scheduledConsumerEnhanced;
+//        return builderFactory.getComponentBuilder().scheduledConsumer()
+//            .setCronExpression("0 0 0 * * ?").build();
     }
 
     /**
