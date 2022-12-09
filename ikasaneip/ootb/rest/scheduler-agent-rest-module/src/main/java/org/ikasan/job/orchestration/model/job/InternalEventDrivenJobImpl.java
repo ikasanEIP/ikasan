@@ -17,6 +17,7 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
     private List<Integer> daysOfWeekToRun;
     private boolean targetResidingContextOnly;
     private boolean participatesInLock;
+    private String executionEnvironmentProperties;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -109,6 +110,16 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
     }
 
     @Override
+    public String getExecutionEnvironmentProperties() {
+        return executionEnvironmentProperties;
+    }
+
+    @Override
+    public void setExecutionEnvironmentProperties(String executionEnvironmentProperties) {
+        this.executionEnvironmentProperties = executionEnvironmentProperties;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("InternalEventDrivenJobImpl{");
         sb.append("successfulReturnCodes=").append(successfulReturnCodes);
@@ -132,6 +143,7 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
         sb.append(", startupControlType='").append(startupControlType).append('\'');
         sb.append(", targetResidingContextOnly='").append(targetResidingContextOnly).append('\'');
         sb.append(", participatesInLock='").append(participatesInLock).append('\'');
+        sb.append(", executionEnvironmentProperties='").append(executionEnvironmentProperties).append('\'');
         sb.append('}');
         return sb.toString();
     }
