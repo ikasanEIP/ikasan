@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverter;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-public class SchedulerFilterEntryConverter implements FilterEntryConverter<List<File>> {
+public class SchedulerFilterEntryConverter implements FilterEntryConverter<CorrelatedFileList> {
 
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(SchedulerFilterEntryConverter.class);
@@ -27,19 +28,19 @@ public class SchedulerFilterEntryConverter implements FilterEntryConverter<List<
     }
 
     @Override
-    public FilterEntry convert(List<File> files) throws FilterEntryConverterException {
-        if(files == null || files.isEmpty()) {
+    public FilterEntry convert(CorrelatedFileList correlatedFileList) throws FilterEntryConverterException {
+        if(correlatedFileList.getFileList() == null || correlatedFileList.getFileList().isEmpty()) {
             throw new FilterEntryConverterException("Received a null or empty file list!");
         }
 
-        if(files.size() > 1) {
+        if(correlatedFileList.getFileList().size() > 1) {
             StringBuffer filenames = new StringBuffer();
-            files.forEach(file -> filenames.append(file.getName()).append(" "));
+            correlatedFileList.getFileList().forEach(file -> filenames.append(file.getName()).append(" "));
 
             logger.info("Received multiple files {}. Expecting only one.", filenames.toString());
         }
 
-        Integer criteria = files.get(0).getName().hashCode();
+        Integer criteria = correlatedFileList.getFileList().get(0).getName().hashCode();
         return new DefaultFilterEntry(criteria, configuredResourceId, filterTimeToLive);
     }
 }

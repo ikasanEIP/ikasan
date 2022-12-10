@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;

@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.io.FileUtils;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
@@ -40,7 +41,8 @@ public class MoveFileBrokerTest {
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
-        broker.invoke(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
 
         String[] archiveFiles = new File("src/test/resources/data/archive").list();
 
@@ -62,7 +64,8 @@ public class MoveFileBrokerTest {
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
-        broker.invoke(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
 
         String[] archiveFiles = new File("src/test/resources/data/archive").list();
 
@@ -82,7 +85,8 @@ public class MoveFileBrokerTest {
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
-        broker.invoke(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
 
         String[] archiveFiles = new File("src/test/resources/data/archive").list();
 
@@ -101,7 +105,8 @@ public class MoveFileBrokerTest {
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
-        broker.invoke(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
     }
 
     @Test
@@ -115,7 +120,8 @@ public class MoveFileBrokerTest {
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
-        broker.invoke(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
 
         String[] archiveFiles = new File("src/test/resources/data/archive").list();
 

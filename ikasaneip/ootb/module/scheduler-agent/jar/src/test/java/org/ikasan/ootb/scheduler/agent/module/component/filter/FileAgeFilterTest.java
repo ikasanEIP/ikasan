@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.spec.component.filter.FilterException;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
@@ -32,7 +33,10 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        fileAgeFilter.filter(List.of());
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of()
+            , "correlationIdentifier");
+
+        fileAgeFilter.filter(correlatedFileList);
     }
 
     @Test
@@ -47,7 +51,10 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        Assert.assertNotNull(fileAgeFilter.filter(List.of(file)));
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of(file)
+            , "correlationIdentifier");
+
+        Assert.assertNotNull(fileAgeFilter.filter(correlatedFileList));
     }
 
     @Test
@@ -61,7 +68,10 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        Assert.assertNotNull(fileAgeFilter.filter(List.of(file, file)));
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of(file, file)
+            , "correlationIdentifier");
+
+        Assert.assertNotNull(fileAgeFilter.filter(correlatedFileList));
     }
 
     @Test
@@ -76,7 +86,10 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        Assert.assertNull(fileAgeFilter.filter(List.of(file)));
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of(file)
+            , "correlationIdentifier");
+
+        Assert.assertNull(fileAgeFilter.filter(correlatedFileList));
     }
 
     @Test
@@ -91,7 +104,10 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        Assert.assertNull(fileAgeFilter.filter(List.of(file, file)));
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of(file, file)
+            , "correlationIdentifier");
+
+        Assert.assertNull(fileAgeFilter.filter(correlatedFileList));
     }
 
     @Test
@@ -104,7 +120,10 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        Assert.assertNotNull(fileAgeFilter.filter(List.of(file)));
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of(file)
+            , "correlationIdentifier");
+
+        Assert.assertNotNull(fileAgeFilter.filter(correlatedFileList));
     }
 
     @Test
@@ -118,6 +137,9 @@ public class FileAgeFilterTest {
         FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
         fileAgeFilter.setConfiguration(configuration);
 
-        Assert.assertNotNull(fileAgeFilter.filter(List.of(file)));
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(List.of(file)
+            , "correlationIdentifier");
+
+        Assert.assertNotNull(fileAgeFilter.filter(correlatedFileList));
     }
 }

@@ -41,10 +41,13 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Quartz Job Execution Context converter to Scheduled Process Event.
@@ -53,6 +56,8 @@ import org.quartz.*;
  */
 public class JobExecutionConverter implements Converter<JobExecutionContext, ScheduledProcessEvent>
 {
+    private static final Logger logger = LoggerFactory.getLogger(JobExecutionConverter.class);
+
     String moduleName;
 
     /**
@@ -71,6 +76,9 @@ public class JobExecutionConverter implements Converter<JobExecutionContext, Sch
     @Override
     public ScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException
     {
+        logger.info(CorrelatingScheduledConsumer.CORRELATION_ID
+            + " " + jobExecutionContext.getMergedJobDataMap().get(CorrelatingScheduledConsumer.CORRELATION_ID));
+
         ScheduledProcessEvent scheduledProcessEvent = getScheduledProcessEvent();
         scheduledProcessEvent.setFireTime( jobExecutionContext.getFireTime().getTime() );
         scheduledProcessEvent.setAgentName(moduleName);

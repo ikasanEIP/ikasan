@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
@@ -41,7 +42,9 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
 
         List<File> files = List.of(new File("."));
 
-        ContextualisedScheduledProcessEvent event = converter.convert(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "contextInstanceId");
+
+        ContextualisedScheduledProcessEvent event = converter.convert(correlatedFileList);
 
         Assert.assertEquals("agentName", event.getAgentName());
         Assert.assertEquals("jobName", event.getJobName());

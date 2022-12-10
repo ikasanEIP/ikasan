@@ -38,14 +38,11 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,36 +51,32 @@ import org.slf4j.LoggerFactory;
  *
  * @author Ikasan Development Team
  */
-public class ContextualisedScheduledProcessEventRestProducer implements Producer<ContextualisedScheduledProcessEvent>
+public class ScheduledProcessEventRestProducer implements Producer<String>
 {
     /** logger */
-    private static Logger logger = LoggerFactory.getLogger(ContextualisedScheduledProcessEventRestProducer.class);
+    private static Logger logger = LoggerFactory.getLogger(ScheduledProcessEventRestProducer.class);
 
     private DashboardRestService scheduleProcessEventDashboardRestService;
-    private ObjectMapper objectMapper;
 
-    public ContextualisedScheduledProcessEventRestProducer(DashboardRestService scheduleProcessEventDashboardRestService)
+    public ScheduledProcessEventRestProducer(DashboardRestService scheduleProcessEventDashboardRestService)
     {
         this.scheduleProcessEventDashboardRestService = scheduleProcessEventDashboardRestService;
         if(scheduleProcessEventDashboardRestService == null) {
             throw new IllegalArgumentException("ScheduledProcessService cannot be 'null");
         }
-
-        this.objectMapper = ObjectMapperFactory.newInstance();
     }
 
     @Override
-    public void invoke(ContextualisedScheduledProcessEvent scheduledStatusEvent) throws EndpointException
+    public void invoke(String scheduledStatusEvent) throws EndpointException
     {
         try {
-            boolean success = this.scheduleProcessEventDashboardRestService
-                .publish(this.objectMapper.writeValueAsString(scheduledStatusEvent));
+            boolean success = this.scheduleProcessEventDashboardRestService.publish(scheduledStatusEvent);
 
             if(!success) {
                 throw new EndpointException("Could not publish an event to the dashboard. Please confirm that dashboard extract is enabled!");
             }
         }
-        catch (Exception e) {
+        catch (RuntimeException e) {
             throw new EndpointException(e);
         }
     }

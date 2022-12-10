@@ -38,51 +38,42 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.builder.component.endpoint;
 
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.ScheduledProcessEventProducer;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Test;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.MessageProviderPostProcessor;
+
+import java.util.List;
 
 /**
- * This test class supports the <code>ScheduledProcessEventProducer</code>.
+ * Contract for a default file consumer builder.
  *
- * @author Ikasan Development Team
+ * @author Ikasan Development Team.
  */
-public class ScheduledProcessEventProducerTest
+public interface CorrelatingFileConsumerBuilder extends AbstractScheduledConsumerBuilder<CorrelatingFileConsumerBuilder>
 {
-    /**
-     * Mockery for mocking concrete classes
-     */
-    private Mockery mockery = new Mockery()
-    {{
-        setImposteriser(ClassImposteriser.INSTANCE);
-    }};
+    static CorrelatedFileConsumerConfiguration newConfiguration() { return new CorrelatedFileConsumerConfiguration(); }
 
-    ScheduledProcessEventService scheduledProcessEventService = mockery.mock(ScheduledProcessEventService.class,"mockScheduledProcessService");
+    CorrelatingFileConsumerBuilder setConfiguration(CorrelatedFileConsumerConfiguration scheduledConsumerConfiguration);
 
-    /**
-     * Test simple invocation.
-     */
-    @Test
-    public void test_publish()
-    {
-        ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessEventService);
-        ScheduledProcessEvent event = new ScheduledProcessEventImpl();
+    CorrelatingFileConsumerBuilder setFilenames(List<String> filenames);
 
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(scheduledProcessEventService).save(event);
-            }
-        });
+    CorrelatingFileConsumerBuilder setEncoding(String encoding);
 
-        producer.invoke(event);
-        mockery.assertIsSatisfied();
-    }
+    CorrelatingFileConsumerBuilder setIncludeHeader(boolean includeHeader);
+
+    CorrelatingFileConsumerBuilder setIncludeTrailer(boolean includeTrailer);
+
+    CorrelatingFileConsumerBuilder setSortByModifiedDateTime(boolean sortByModifiedDateTime);
+
+    CorrelatingFileConsumerBuilder setSortAscending(boolean sortAscending);
+
+    CorrelatingFileConsumerBuilder setDirectoryDepth(int directoryDepth);
+
+    CorrelatingFileConsumerBuilder setLogMatchedFilenames(boolean logMatchedFilenames);
+
+    CorrelatingFileConsumerBuilder setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
+
+    CorrelatingFileConsumerBuilder setMessageProviderPostProcessor(MessageProviderPostProcessor messageProviderPostProcessor);
 }
+

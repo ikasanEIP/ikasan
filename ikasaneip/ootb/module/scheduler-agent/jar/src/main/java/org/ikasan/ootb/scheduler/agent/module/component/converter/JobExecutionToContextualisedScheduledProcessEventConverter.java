@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
@@ -51,6 +52,8 @@ import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Quartz Job Execution Context converter to Contextualised Scheduled Process Event.
@@ -60,6 +63,8 @@ import org.quartz.TriggerKey;
 public class JobExecutionToContextualisedScheduledProcessEventConverter implements Converter<JobExecutionContext, ContextualisedScheduledProcessEvent>,
     ConfiguredResource<ContextualisedConverterConfiguration>
 {
+    private static final Logger logger = LoggerFactory.getLogger(JobExecutionToContextualisedScheduledProcessEventConverter.class);
+
     private String moduleName;
     private String jobName;
     private String configurationId;
@@ -86,6 +91,12 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
     @Override
     public ContextualisedScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException {
         try {
+            String contextInstanceIdentifier = (String)jobExecutionContext.getMergedJobDataMap()
+                .get(CorrelatingScheduledConsumer.CORRELATION_ID);
+
+            logger.info(CorrelatingScheduledConsumer.CORRELATION_ID
+                + " " + contextInstanceIdentifier);
+
             ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
             scheduledProcessEvent.setFireTime(jobExecutionContext.getFireTime().getTime());
             scheduledProcessEvent.setAgentName(moduleName);
@@ -94,11 +105,9 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
             scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
             scheduledProcessEvent.setSuccessful(true);
 
-            if(ContextInstanceCache.existsInCache(this.configuration.getContextName())) {
-                ContextInstance contextInstance = ContextInstanceCache.instance()
-                    .getByContextName(this.configuration.getContextName());
-                scheduledProcessEvent.setContextInstanceId(contextInstance.getId());
-            }
+            // This is where the correlation identifier is set onto the scheduler process event
+            // that is sent to the dashboard.
+            scheduledProcessEvent.setContextInstanceId(contextInstanceIdentifier);
 
             Trigger jobTrigger = jobExecutionContext.getTrigger();
             if (jobTrigger != null) {

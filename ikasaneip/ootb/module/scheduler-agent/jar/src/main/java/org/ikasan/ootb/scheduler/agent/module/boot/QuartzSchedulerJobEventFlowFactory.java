@@ -76,9 +76,6 @@ public class QuartzSchedulerJobEventFlowFactory
     @Resource
     QuartzSchedulerJobEventFlowComponentFactory componentFactory;
 
-    @Resource
-    Scheduler scheduler;
-
     public Flow create(String jobName)
     {
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
@@ -88,7 +85,7 @@ public class QuartzSchedulerJobEventFlowFactory
                     .getExceptionResolverBuilder()
                     .addExceptionToAction(ContextInstanceFilterException.class, OnException.retry(agentRecoveryRetryDelay, agentRecoveryMaxRetries))
             )
-            .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer(scheduler))
+            .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
             .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter(jobName))
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())

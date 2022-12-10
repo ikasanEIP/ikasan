@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.io.FileUtils;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -12,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-public class MoveFileBroker implements Broker<List<File>, List<File>>, ConfiguredResource<MoveFileBrokerConfiguration> {
+public class MoveFileBroker implements Broker<CorrelatedFileList, CorrelatedFileList>, ConfiguredResource<MoveFileBrokerConfiguration> {
 
     private static Logger logger = LoggerFactory.getLogger(MoveFileBroker.class);
 
@@ -28,13 +29,13 @@ public class MoveFileBroker implements Broker<List<File>, List<File>>, Configure
     }
 
     @Override
-    public List<File> invoke(List<File> files) throws EndpointException {
+    public CorrelatedFileList invoke(CorrelatedFileList files) throws EndpointException {
         if(dryRunModeService.getDryRunMode() || dryRunModeService.isJobDryRun(configuration.getJobName()) || configuration.getMoveDirectory() == null) {
             return files;
         }
 
         try {
-            for (File file : files) {
+            for (File file : files.getFileList()) {
                 logger.info(String.format("Moving file[%s] to directory[%s]", file.getAbsolutePath(), configuration.getMoveDirectory()));
                 FileUtils.moveFileToDirectory(file, new File(configuration.getMoveDirectory()), true);
             }

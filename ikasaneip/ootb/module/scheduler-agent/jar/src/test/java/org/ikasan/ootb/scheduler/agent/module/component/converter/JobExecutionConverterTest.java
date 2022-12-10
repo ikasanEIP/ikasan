@@ -50,6 +50,8 @@ import org.junit.Test;
 import org.quartz.*;
 
 import java.util.Date;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * This test class supports the <code>JobExecutionConverter</code>.
@@ -98,6 +100,11 @@ public class JobExecutionConverterTest
 
                 exactly(2).of(jobExecutionContext).getNextFireTime();
                 will(returnValue(nextFireDate));
+
+                exactly(1).of(jobExecutionContext).getMergedJobDataMap();
+                JobDataMap jobDataMap = new JobDataMap();
+                jobDataMap.put("correlationIdentifier", UUID.randomUUID().toString());
+                will(returnValue(jobDataMap));
             }
         });
 
