@@ -11,12 +11,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.mockito.Mockito.when;
 
@@ -51,6 +53,9 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         when(jobExecutionContext.getTrigger()).thenReturn(trigger);
         when(trigger.getDescription()).thenReturn("description");
         when(trigger.getKey()).thenReturn(triggerKey);
+        JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put("correlationIdentifier", UUID.randomUUID().toString());
+        when(jobExecutionContext.getMergedJobDataMap()).thenReturn(jobDataMap);
 
         ContextInstance contextInstance = new ContextInstanceImpl();
         contextInstance.setName("contextName");

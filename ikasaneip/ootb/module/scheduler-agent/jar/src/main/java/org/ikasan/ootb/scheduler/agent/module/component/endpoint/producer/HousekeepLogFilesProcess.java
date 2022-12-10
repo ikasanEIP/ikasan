@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
@@ -6,7 +6,7 @@ import org.apache.commons.compress.compressors.gzip.GzipCompressorOutputStream;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.AgeFileFilter;
 import org.apache.commons.lang3.time.DateUtils;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;

@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterRule;
@@ -9,7 +10,7 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import java.io.File;
 import java.util.List;
 
-public class SchedulerFileFilter implements Filter<List<File>>, ConfiguredResource<SchedulerFileFilterConfiguration> {
+public class SchedulerFileFilter implements Filter<CorrelatedFileList>, ConfiguredResource<SchedulerFileFilterConfiguration> {
 
     private DryRunModeService dryRunModeService;
     private FilterRule filterRule;
@@ -34,7 +35,7 @@ public class SchedulerFileFilter implements Filter<List<File>>, ConfiguredResour
     }
 
     @Override
-    public List<File> filter(List<File> message) {
+    public CorrelatedFileList filter(CorrelatedFileList message) {
         if(this.dryRunModeService.getDryRunMode() || this.dryRunModeService.isJobDryRun(this.configuration.getJobName())) {
             return message;
         }

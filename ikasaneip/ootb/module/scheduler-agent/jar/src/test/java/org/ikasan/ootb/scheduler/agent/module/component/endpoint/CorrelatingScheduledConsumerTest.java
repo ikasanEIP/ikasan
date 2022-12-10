@@ -1,6 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -14,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
-public class ScheduledConsumerEnhancedTest {
+public class CorrelatingScheduledConsumerTest {
     /**
      * Mockery for mocking concrete classes
      */
@@ -33,8 +35,8 @@ public class ScheduledConsumerEnhancedTest {
     private final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
     /** Mock consumerConfiguration */
-    private final ScheduledConsumerConfigurationEnhanced consumerConfiguration =
-        mockery.mock(ScheduledConsumerConfigurationEnhanced.class, "mockScheduledConsumerConfigurationEnhanced");
+    private final CorrelatingScheduledConsumerConfiguration consumerConfiguration =
+        mockery.mock(CorrelatingScheduledConsumerConfiguration.class, "mockScheduledConsumerConfigurationEnhanced");
 
     private final ScheduledJobRecoveryService scheduledJobRecoveryService = mockery.mock(ScheduledJobRecoveryService.class, "mockScheduledJobRecoveryService");
 
@@ -44,7 +46,7 @@ public class ScheduledConsumerEnhancedTest {
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_failure_NullScheduler()
     {
-        new ScheduledConsumerEnhanced(null);
+        new CorrelatingScheduledConsumer(null);
     }
 
     /**
@@ -53,7 +55,7 @@ public class ScheduledConsumerEnhancedTest {
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_failure_NullScheduledJobRecoveryService()
     {
-        new ScheduledConsumerEnhanced(scheduler, null);
+        new CorrelatingScheduledConsumer(scheduler, null);
     }
 
     /**
@@ -106,7 +108,7 @@ public class ScheduledConsumerEnhancedTest {
                 will(returnValue("UTC"));
 
                 // get configuration scheduler correlation ID's for the Root (top level) Job Plans
-                exactly(1).of(consumerConfiguration).getRootPlanCorrelationIds();
+                exactly(1).of(consumerConfiguration).correlatingIdentifiers();
                 will(returnValue(Arrays.asList("cor1", "cor2")));
 
                 // get configuration scheduler pass-through properties
@@ -118,12 +120,12 @@ public class ScheduledConsumerEnhancedTest {
             }
         });
 
-        ScheduledConsumerEnhanced ScheduledConsumerEnhanced = new StubbedScheduledConsumerEnhanced(scheduler, scheduledJobRecoveryService);
-        ScheduledConsumerEnhanced.setConfiguration(consumerConfiguration);
-        ScheduledConsumerEnhanced.setJobDetail(mockJobDetail);
-        ScheduledConsumerEnhanced.start();
-        Assert.assertEquals("Expected number of triggers not met", ((StubbedScheduledConsumerEnhanced)ScheduledConsumerEnhanced).getTriggers().size(), 6);
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumerEnhanced)ScheduledConsumerEnhanced).isReplace());
+        CorrelatingScheduledConsumer CorrelatingScheduledConsumer = new StubbedCorrelatingScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        CorrelatingScheduledConsumer.setConfiguration(consumerConfiguration);
+        CorrelatingScheduledConsumer.setJobDetail(mockJobDetail);
+        CorrelatingScheduledConsumer.start();
+        Assert.assertEquals("Expected number of triggers not met", ((StubbedCorrelatingScheduledConsumer) CorrelatingScheduledConsumer).getTriggers().size(), 6);
+        Assert.assertTrue("Expected replacement of triggers", ((StubbedCorrelatingScheduledConsumer) CorrelatingScheduledConsumer).isReplace());
 
         mockery.assertIsSatisfied();
     }
@@ -134,17 +136,17 @@ public class ScheduledConsumerEnhancedTest {
      * @author Ikasan Development Team
      *
      */
-    private class StubbedScheduledConsumerEnhanced extends ScheduledConsumerEnhanced
+    private class StubbedCorrelatingScheduledConsumer extends CorrelatingScheduledConsumer
     {
         Set<Trigger> triggers;
         boolean replace;
 
-        protected StubbedScheduledConsumerEnhanced(Scheduler scheduler)
+        protected StubbedCorrelatingScheduledConsumer(Scheduler scheduler)
         {
             super(scheduler);
         }
 
-        protected StubbedScheduledConsumerEnhanced(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
+        protected StubbedCorrelatingScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
         {
             super(scheduler, scheduledJobRecoveryService);
         }

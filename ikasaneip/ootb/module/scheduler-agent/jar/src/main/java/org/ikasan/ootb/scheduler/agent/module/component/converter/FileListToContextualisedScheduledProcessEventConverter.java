@@ -40,6 +40,8 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
+
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
@@ -57,7 +59,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public class FileListToContextualisedScheduledProcessEventConverter implements Converter<List<File>, ContextualisedScheduledProcessEvent>
+public class FileListToContextualisedScheduledProcessEventConverter implements Converter<CorrelatedFileList, ContextualisedScheduledProcessEvent>
     , ConfiguredResource<ContextualisedConverterConfiguration>
 {
     private String agentName;
@@ -85,7 +87,7 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
     }
 
     @Override
-    public ContextualisedScheduledProcessEvent convert(List<File> event) throws TransformationException
+    public ContextualisedScheduledProcessEvent convert(CorrelatedFileList event) throws TransformationException
     {
         ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
@@ -94,12 +96,7 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
         scheduledProcessEvent.setSuccessful(true);
         scheduledProcessEvent.setContextName(this.configuration.getContextName());
         scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
-
-        if(ContextInstanceCache.existsInCache(this.configuration.getContextName())) {
-            ContextInstance contextInstance = ContextInstanceCache.instance()
-                .getByContextName(this.configuration.getContextName());
-            scheduledProcessEvent.setContextInstanceId(contextInstance.getId());
-        }
+        scheduledProcessEvent.setContextInstanceId(event.getCorrelatingIdentifier());
 
         return scheduledProcessEvent;
     }

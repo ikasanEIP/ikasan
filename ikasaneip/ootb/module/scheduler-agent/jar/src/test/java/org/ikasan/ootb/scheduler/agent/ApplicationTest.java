@@ -40,48 +40,27 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
-import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.quartz.TriggerBuilder.newTrigger;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.SystemUtils;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
-import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
-import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
-import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
-import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -150,12 +129,25 @@ public class ApplicationTest {
         flow.stop();
         assertEquals(Flow.STOPPED, flow.getState());
 
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
+        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(UUID.randomUUID().toString());
+
         flow = moduleUnderTest.getFlow("Scheduler Flow 4");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 
         flow.stop();
         assertEquals(Flow.STOPPED, flow.getState());
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(UUID.randomUUID().toString()));
 
         flow = moduleUnderTest.getFlow("Scheduler Flow 2");
         flow.start();

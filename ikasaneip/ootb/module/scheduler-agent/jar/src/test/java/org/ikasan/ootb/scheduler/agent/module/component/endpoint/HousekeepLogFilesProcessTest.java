@@ -1,7 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
 import org.apache.commons.io.FileUtils;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration.HousekeepLogFilesProcessConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.HousekeepLogFilesProcess;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
