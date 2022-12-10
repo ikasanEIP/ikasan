@@ -84,7 +84,7 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionConverter;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventProducer;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.ScheduledProcessEventProducer;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.component.endpoint.Broker;

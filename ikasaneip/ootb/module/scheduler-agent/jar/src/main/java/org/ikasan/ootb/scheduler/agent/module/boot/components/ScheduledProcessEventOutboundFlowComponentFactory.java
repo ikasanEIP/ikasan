@@ -82,10 +82,8 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
-import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessagePayloadToStringSerialiser;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventRestProducer;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.ScheduledProcessEventRestProducer;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;

@@ -42,10 +42,12 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import liquibase.pro.packaged.C;
 import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.apache.commons.lang3.SystemUtils;
+import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
@@ -54,28 +56,25 @@ import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
-import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.*;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
+import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -86,13 +85,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
 
-import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -117,9 +111,6 @@ public class FileEventSchedulerJobFlowTest {
     @Resource
     private DryRunModeService dryRunModeService;
 
-    @Resource
-    private FilteredMessageDao filteredMessageDao;
-
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
@@ -140,6 +131,27 @@ public class FileEventSchedulerJobFlowTest {
     @Before
     public void setup() throws IOException {
         outboundQueue.removeAll();
+        if(new File("src/test/resources/data/archive/test.txt").exists()) {
+            FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+                , new File("src/test/resources/data"), true);
+        }
+        if(new File("src/test/resources/data/archive/test1.txt").exists()) {
+            FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
+                , new File("src/test/resources/data"), true);
+        }
+    }
+
+    @After
+    public void teardown() throws IOException {
+        outboundQueue.removeAll();
+        if(new File("src/test/resources/data/archive/test.txt").exists()) {
+            FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+                , new File("src/test/resources/data"), true);
+        }
+        if(new File("src/test/resources/data/archive/test1.txt").exists()) {
+            FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
+                , new File("src/test/resources/data"), true);
+        }
     }
 
     @Test
@@ -149,9 +161,13 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -170,18 +186,21 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(5000);
-
-        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
-            , new File("src/test/resources/data"), true);
 
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(1, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
 
         flowTestRule.stopFlow();
     }
@@ -193,9 +212,13 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -218,18 +241,20 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
-
-        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
-            , new File("src/test/resources/data"), true);
 
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(1, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
@@ -241,9 +266,13 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -267,18 +296,20 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
-
-        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
-            , new File("src/test/resources/data"), true);
 
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(1, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
@@ -290,9 +321,11 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(UUID.randomUUID().toString()));
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -319,12 +352,9 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
-
-        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
-            , new File("src/test/resources/data"), true);
 
         flowTestRule.assertIsSatisfied();
 
@@ -337,15 +367,18 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
+    // TODO need to think about this case as may not be necessary.
     public void test_file_flow_recovery_no_instance_in_cache() {
         // do not put it in the cache
         String contextName = RandomStringUtils.randomAlphabetic(11);
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(UUID.randomUUID().toString()));
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -358,7 +391,7 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
 
@@ -373,7 +406,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_with_aspect() {
+    public void test_file_flow_success_with_aspect() throws IOException {
         String contextName = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
@@ -385,10 +418,14 @@ public class FileEventSchedulerJobFlowTest {
         jobs.setFileName("/some/bogus/file/bogus1.txt");
         dryRunModeService.addDryRunFileList(List.of(jobs));
 
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setJobName("Flow 2 Job Name");
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+        fileConsumerConfiguration.setJobName("Flow 2 Job Name");
+
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
             , ContextInstanceFilterConfiguration.class);
         contextInstanceFilterConfiguration.setContextName(contextName);
@@ -403,7 +440,7 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
 
@@ -411,7 +448,7 @@ public class FileEventSchedulerJobFlowTest {
         jobs.setJobName("Flow 2 Job Name");
         jobs.setFileName("/some/bogus/file/bogus1.txt");
         dryRunModeService.addDryRunFileList(List.of(jobs));
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
 
@@ -419,22 +456,28 @@ public class FileEventSchedulerJobFlowTest {
 
         assertEquals(2, outboundQueue.size());
 
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_with_aspect_job_dry_run() {
+    public void test_file_flow_success_with_aspect_job_dry_run() throws IOException {
         String contextName = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         dryRunModeService.setDryRunMode(false);
         dryRunModeService.setJobDryRun("Scheduler Flow 2", true);
-
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setJobName("Scheduler Flow 2");
 
         SchedulerFileFilterConfiguration schedulerFileFilterConfiguration = flowTestRule.getComponentConfig("Duplicate Message Filter"
             , SchedulerFileFilterConfiguration.class);
@@ -444,7 +487,14 @@ public class FileEventSchedulerJobFlowTest {
             , FileAgeFilterConfiguration.class);
         fileAgeFilterConfiguration.setJobName("Scheduler Flow 2");
 
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+        fileConsumerConfiguration.setJobName("Scheduler Flow 2");
+
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
             , ContextInstanceFilterConfiguration.class);
         contextInstanceFilterConfiguration.setContextName(contextName);
@@ -459,20 +509,30 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
 
         dryRunModeService.setDryRunMode(false);
         dryRunModeService.setJobDryRun("Scheduler Flow 2", true);
 
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(2, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
@@ -487,9 +547,15 @@ public class FileEventSchedulerJobFlowTest {
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
             , ContextInstanceFilterConfiguration.class);
         contextInstanceFilterConfiguration.setContextName(contextName);
-        FileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , FileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
@@ -509,23 +575,26 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
         flowTestRule.sleep(2000);
 
-        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test1.txt")
             , new File("src/test/resources/data"), true);
 
-        // file second time
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
         flowTestRule.sleep(2000);
-
 
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(1, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
 
@@ -561,11 +630,14 @@ public class FileEventSchedulerJobFlowTest {
         dryRunModeService.setDryRunMode(false);
     }
 
-
-    @After
-    public void teardown() {
-        // post-test teardown
+    private ContextualisedScheduledProcessEvent getEvent() throws IOException {
+        byte[] dequeued = outboundQueue.dequeue();
+        BigQueueMessageImpl dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
+        String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
+        return objectMapper.readValue(messageAsString
+            , ContextualisedScheduledProcessEventImpl.class);
     }
+
 
     private String createContextAndPutInCache() {
         String contextName = RandomStringUtils.randomAlphabetic(15);

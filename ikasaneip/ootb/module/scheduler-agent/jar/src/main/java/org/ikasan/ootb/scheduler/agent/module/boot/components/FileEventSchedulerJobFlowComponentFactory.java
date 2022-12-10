@@ -81,20 +81,24 @@
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.IBigQueue;
+import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.builder.component.endpoint.CorrelatingFileConsumerBuilderImpl;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.*;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
+import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
+import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -102,6 +106,7 @@ import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -137,6 +142,15 @@ public class FileEventSchedulerJobFlowComponentFactory
     @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
+    @Resource
+    Scheduler scheduler;
+
+    @Resource
+    ScheduledJobFactory scheduledJobFactory;
+
+    @Resource
+    AopProxyProvider aopProxyProvider;
+
     /**
      * Return an instance of a configured file consumer
      *
@@ -144,11 +158,13 @@ public class FileEventSchedulerJobFlowComponentFactory
      */
     public Consumer getFileConsumer()
     {
-        FileConsumerConfiguration fileConsumerConfiguration = new FileConsumerConfiguration();
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = new CorrelatedFileConsumerConfiguration();
         fileConsumerConfiguration.setFilenames(List.of("set me"));
         fileConsumerConfiguration.setCronExpression("0 0 0 * * ?");
-        return builderFactory.getComponentBuilder().fileConsumer()
-            .setConfiguration(fileConsumerConfiguration)
+        CorrelatingFileConsumerBuilderImpl builder = new CorrelatingFileConsumerBuilderImpl
+            (this.scheduler,  this.scheduledJobFactory, this.aopProxyProvider, new CorrelatingFileMessageProvider());
+
+        return builder.setConfiguration(fileConsumerConfiguration)
             .build();
     }
 

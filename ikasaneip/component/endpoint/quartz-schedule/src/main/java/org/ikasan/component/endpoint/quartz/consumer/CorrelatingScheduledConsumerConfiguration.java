@@ -38,30 +38,26 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.component.endpoint.quartz.consumer;
 
 
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.spec.configuration.InvalidConfigurationException;
-import org.ikasan.spec.configuration.IsValidationAware;
 
 import java.util.*;
 
 /**
- * Scheduled consumer configuration bean.
+ * Correlating Scheduled consumer configuration bean.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerConfigurationEnhanced extends ScheduledConsumerConfiguration
-{
-    /** The context ID for the top l */
-    private List<String> rootPlanCorrelationIds = new ArrayList<>();
+public class CorrelatingScheduledConsumerConfiguration extends ScheduledConsumerConfiguration {
+    private List<String> correlatingIdentifiers = new ArrayList<>();
 
-    public List<String> getRootPlanCorrelationIds() {
-        return rootPlanCorrelationIds;
+    public List<String> correlatingIdentifiers() {
+        return correlatingIdentifiers;
     }
 
-    public void setRootPlanCorrelationIds(List<String> rootPlanCorrelationIds) {
-        this.rootPlanCorrelationIds = rootPlanCorrelationIds;
+    public void setCorrelatingIdentifiers(List<String> correlatingIdentifiers) {
+        this.correlatingIdentifiers = correlatingIdentifiers;
     }
 }

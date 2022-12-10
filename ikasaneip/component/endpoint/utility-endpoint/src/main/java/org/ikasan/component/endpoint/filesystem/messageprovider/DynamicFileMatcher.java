@@ -56,6 +56,11 @@ import java.nio.file.attribute.BasicFileAttributes;
  * DynamicFileMatcher which extends FileMatcher.
  *
  */
+// TODO David we have some work to do here and this is quite complicated. Basically this is using
+// SPEL to dynamically populate file names in files watcher jobs for the
+// scheduler with values that come from a specific context instance. Now that we manage
+// multiple context instances we need to make sure we are getting the value to replace in
+// the spel from the correct context instance.
 public class DynamicFileMatcher extends FileMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicFileMatcher.class);
 

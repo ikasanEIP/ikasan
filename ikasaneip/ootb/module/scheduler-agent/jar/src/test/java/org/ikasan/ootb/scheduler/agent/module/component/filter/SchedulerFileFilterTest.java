@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
@@ -46,7 +47,10 @@ public class SchedulerFileFilterTest {
         filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
-        List<File> results = filter.filter(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files
+            , "correlationIdentifier");
+
+        CorrelatedFileList results = filter.filter(correlatedFileList);
 
         Assert.assertNotNull(results);
     }
@@ -63,7 +67,10 @@ public class SchedulerFileFilterTest {
         filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
-        List<File> results = filter.filter(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files
+            , "correlationIdentifier");
+
+        CorrelatedFileList results = filter.filter(correlatedFileList);
 
         Assert.assertNull(results);
     }
@@ -78,7 +85,10 @@ public class SchedulerFileFilterTest {
         filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
-        List<File> results = filter.filter(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files
+            , "correlationIdentifier");
+
+        CorrelatedFileList results = filter.filter(correlatedFileList);
 
         Assert.assertNotNull(results);
     }
@@ -94,7 +104,10 @@ public class SchedulerFileFilterTest {
         filter.setConfiguration(configuration);
         List<File> files = List.of(new File("."));
 
-        List<File> results = filter.filter(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files
+            , "correlationIdentifier");
+
+        CorrelatedFileList results = filter.filter(correlatedFileList);
 
         Assert.assertNotNull(results);
     }
