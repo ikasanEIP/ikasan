@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.ootb.scheduler.agent.module.component.serialiser;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;

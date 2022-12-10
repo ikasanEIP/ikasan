@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.filter.FilterException;
@@ -11,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.util.List;
 
-public class FileAgeFilter implements Filter<List<File>>, ConfiguredResource<FileAgeFilterConfiguration> {
+public class FileAgeFilter implements Filter<CorrelatedFileList>, ConfiguredResource<FileAgeFilterConfiguration> {
 
     private static Logger logger = LoggerFactory.getLogger(FileAgeFilter.class);
 
@@ -27,22 +28,22 @@ public class FileAgeFilter implements Filter<List<File>>, ConfiguredResource<Fil
     }
 
     @Override
-    public List<File> filter(List<File> files) throws FilterException {
-        if(files == null || files.isEmpty()) {
+    public CorrelatedFileList filter(CorrelatedFileList correlatedFileList) throws FilterException {
+        if(correlatedFileList.getFileList() == null || correlatedFileList.getFileList().isEmpty()) {
             throw new FilterException("Received a null or empty file list!");
         }
 
-        if(files.size() > 1) {
+        if(correlatedFileList.getFileList().size() > 1) {
             StringBuffer filenames = new StringBuffer();
-            files.forEach(file -> filenames.append(file.getName()).append(" "));
+            correlatedFileList.getFileList().forEach(file -> filenames.append(file.getName()).append(" "));
 
             logger.info("Received multiple files {}. Expecting only one.", filenames.toString());
         }
         if(this.dryRunModeService.getDryRunMode() || this.dryRunModeService.isJobDryRun(this.configuration.getJobName())) {
-            return files;
+            return correlatedFileList;
         }
-        else if(files.get(0).lastModified() < System.currentTimeMillis() - (this.configuration.getFileAgeSeconds() * 1000)) {
-            return files;
+        else if(correlatedFileList.getFileList().get(0).lastModified() < System.currentTimeMillis() - (this.configuration.getFileAgeSeconds() * 1000)) {
+            return correlatedFileList;
         }
         else {
             return null;

@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverterException;
 import org.junit.Assert;
@@ -21,7 +22,8 @@ public class SchedulerFilterEntryConverterTest {
 
         List<File> files = List.of();
 
-        converter.convert(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        converter.convert(correlatedFileList);
     }
 
     @Test
@@ -30,7 +32,8 @@ public class SchedulerFilterEntryConverterTest {
 
         List<File> files = List.of(new File("."));
 
-        FilterEntry entry = converter.convert(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        FilterEntry entry = converter.convert(correlatedFileList);
 
         Assert.assertEquals((Integer) new File(".").getName().hashCode(), entry.getCriteria());
         Assert.assertEquals("configurationId", entry.getClientId());
@@ -42,7 +45,8 @@ public class SchedulerFilterEntryConverterTest {
 
         List<File> files = List.of(new File("."), new File("."));
 
-        FilterEntry entry = converter.convert(files);
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        FilterEntry entry = converter.convert(correlatedFileList);
 
         Assert.assertEquals((Integer) new File(".").getName().hashCode(), entry.getCriteria());
         Assert.assertEquals("configurationId", entry.getClientId());

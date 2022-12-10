@@ -38,9 +38,8 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.quartz.*;
 import org.slf4j.Logger;
@@ -61,19 +60,22 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  */
 @DisallowConcurrentExecution
 @SuppressWarnings("unchecked")
-public class ScheduledConsumerEnhanced<T> extends ScheduledConsumer<T>
+public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implements Job
 {
     /**
      * logger
      */
-    private static final Logger logger = LoggerFactory.getLogger(ScheduledConsumerEnhanced.class);
-    public static final String ROOT_PLAN_CORRELATION_ID = "rootPlanCorrelationId";
+    private static final Logger logger = LoggerFactory.getLogger(CorrelatingScheduledConsumer.class);
+    public static final String CORRELATION_ID = "correlationId";
+
+    private Set<Trigger> triggers = null;
+
     /**
      * Constructor
      *
      * @param scheduler the Quartz Scheduler
      */
-    public ScheduledConsumerEnhanced(Scheduler scheduler)
+    public CorrelatingScheduledConsumer(Scheduler scheduler)
     {
         super(scheduler);
     }
@@ -83,7 +85,7 @@ public class ScheduledConsumerEnhanced<T> extends ScheduledConsumer<T>
      * @param scheduler implementing Quartze
      * @param scheduledJobRecoveryService for when the scheduler crashes
      */
-    public ScheduledConsumerEnhanced(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
+    public CorrelatingScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
     {
         super(scheduler, scheduledJobRecoveryService);
     }
@@ -91,6 +93,9 @@ public class ScheduledConsumerEnhanced<T> extends ScheduledConsumer<T>
     /**
      * Start the underlying tech
      */
+    // David I have moved this out of the ootb into this namespace as I think this is actuallly
+    // a fairly clean and general implementation. I would like you to please make sure that
+    // this implementation is bullet proof and well unit tested.
     public void start()
     {
         try
@@ -110,10 +115,10 @@ public class ScheduledConsumerEnhanced<T> extends ScheduledConsumer<T>
 
             // get all configured business expressions (expression and expressions) as a single list
             // and create uniquely named triggers for each
-            List<String> rootPlanCorrelationIds = ((ScheduledConsumerConfigurationEnhanced)getConfiguration()).getRootPlanCorrelationIds();
+            List<String> correlatingIdentifiers = ((CorrelatingScheduledConsumerConfiguration)getConfiguration()).correlatingIdentifiers();
             List<String> cronExpressions = consumerConfiguration.getConsolidatedCronExpressions();
-            Set<Trigger> triggers = new HashSet<>(cronExpressions.size());
-            for(String rootPlanCorrelationId:rootPlanCorrelationIds) {
+            triggers = new HashSet<>(cronExpressions.size());
+            for(String rootPlanCorrelationId:correlatingIdentifiers) {
                 for(String cronExpression:cronExpressions)
                 {
                     String jobNameIteration = jobName + "_" + rootPlanCorrelationId + "_" + cronExpression.hashCode();
@@ -137,8 +142,7 @@ public class ScheduledConsumerEnhanced<T> extends ScheduledConsumer<T>
 
                     trigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);
 
-                    // Not sure if I need this, ask Mick, I assumed the trigger needs to pass this state back later ?
-                    trigger.getJobDataMap().put(ROOT_PLAN_CORRELATION_ID, rootPlanCorrelationId);
+                    trigger.getJobDataMap().put(CORRELATION_ID, rootPlanCorrelationId);
                     triggers.add(trigger);
                 }
             }

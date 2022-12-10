@@ -2,8 +2,8 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.HousekeepLogFilesProcess;
-import org.ikasan.ootb.scheduler.agent.module.component.endpoint.configuration.HousekeepLogFilesProcessConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.HousekeepLogFilesProcess;
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.springframework.beans.factory.annotation.Value;

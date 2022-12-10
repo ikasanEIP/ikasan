@@ -96,6 +96,11 @@ public class SchedulerApplication
                     value = "/{moduleName}/{flowName}",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    // TODO David there is some work to do here to provide the contextInstanceId
+    // to the trigger. This is the call across the wire that allows us to manually
+    // submit a scheduler job from the dashboard. It should be as simple as
+    // adding the correlating idetifer to the trigger in a similar way that
+    // I did in IkasanFlowTestExtensionRule.
     public ResponseEntity triggerNow(@PathVariable("moduleName") String moduleName,
                                      @PathVariable("flowName") String flowName)
     {

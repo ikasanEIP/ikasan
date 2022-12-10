@@ -1,8 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
+import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.ScheduledProcessEventRestProducer;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
