@@ -71,7 +71,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         Assert.assertEquals(fireTime.getTime(), event.getFireTime());
         Assert.assertEquals(nextFireTime.getTime(), event.getNextFireTime());
         Assert.assertEquals("moduleName", event.getAgentName());
-        Assert.assertEquals("name", event.getJobName());
+        Assert.assertEquals("jobName", event.getJobName()); // IKASAN-2174 - return jobName provided to the component.
         Assert.assertEquals("contextName", event.getContextName());
         Assert.assertEquals("contextInstanceId", event.getContextInstanceId());
         Assert.assertEquals(true, event.isSuccessful());
