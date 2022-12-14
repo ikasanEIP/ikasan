@@ -42,19 +42,20 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
-import org.ikasan.ootb.scheduler.agent.rest.dto.*;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
@@ -74,7 +75,6 @@ import java.io.IOException;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -127,9 +127,9 @@ public class QuartzSchedulerJobEventFlowTest {
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
 
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
-        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(contextInstanceIdentifier);
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceIdentifier);
 
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
@@ -168,9 +168,9 @@ public class QuartzSchedulerJobEventFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
-        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(UUID.randomUUID().toString());
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(UUID.randomUUID().toString());
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
@@ -203,9 +203,9 @@ public class QuartzSchedulerJobEventFlowTest {
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
 
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
-        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(contextInstanceIdentifier);
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceIdentifier);
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
@@ -248,9 +248,9 @@ public class QuartzSchedulerJobEventFlowTest {
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
 
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
-        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(contextInstanceIdentifier);
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceIdentifier);
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
@@ -292,9 +292,9 @@ public class QuartzSchedulerJobEventFlowTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
-        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(UUID.randomUUID().toString());
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(UUID.randomUUID().toString());
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);

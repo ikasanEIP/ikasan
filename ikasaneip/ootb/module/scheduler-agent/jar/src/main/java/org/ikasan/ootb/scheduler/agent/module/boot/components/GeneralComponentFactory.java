@@ -82,8 +82,10 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.bigqueue.IBigQueue;
+import org.ikasan.ootb.scheduler.agent.module.service.ContextInstanceIdentifierProvisionServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.service.JobProvisionServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
+import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -133,6 +135,11 @@ public class GeneralComponentFactory
     @Bean
     public JobProvisionService jobProvisionService() {
         return new JobProvisionServiceImpl();
+    }
+
+    @Bean
+    public ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService() {
+        return new ContextInstanceIdentifierProvisionServiceImpl();
     }
 }
 

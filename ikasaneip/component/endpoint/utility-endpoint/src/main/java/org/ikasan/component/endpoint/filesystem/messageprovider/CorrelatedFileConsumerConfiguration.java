@@ -40,8 +40,7 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
 
@@ -53,7 +52,7 @@ import java.util.List;
  * 
  * @author mitcje
  */
-public class CorrelatedFileConsumerConfiguration extends CorrelatingScheduledConsumerConfiguration implements IsValidationAware
+public class CorrelatedFileConsumerConfiguration extends CorrelatedScheduledConsumerConfiguration implements IsValidationAware
 {
     /** filenames to be processed */
     private List<String> filenames = new ArrayList<String>();
