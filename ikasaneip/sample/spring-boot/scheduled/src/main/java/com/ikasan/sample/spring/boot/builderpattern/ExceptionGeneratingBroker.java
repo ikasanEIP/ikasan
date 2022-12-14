@@ -63,10 +63,16 @@ public class ExceptionGeneratingBroker implements Broker
         }
 
         if(shouldThrowScheduledRecoveryException){
+            // Set this to false to allow for the flow to successfully recover after the
+            // recovery manager has kicked in. Next execution will not throw the exception.
+            shouldThrowScheduledRecoveryException = false;
             throw  new SampleScheduledRecoveryGeneratedException("This exception is thrown to test recovery.");
         }
 
         if(shouldThrowRecoveryException){
+            // Set this to false to allow for the flow to successfully recover after the
+            // recovery manager has kicked in. Next execution will not throw the exception.
+            shouldThrowRecoveryException = false;
             throw  new EndpointException("This exception is thrown to test recovery.");
         }
 
