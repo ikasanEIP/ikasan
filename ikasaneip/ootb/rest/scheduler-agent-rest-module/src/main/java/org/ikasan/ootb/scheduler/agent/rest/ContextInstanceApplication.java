@@ -46,10 +46,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
+import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -64,6 +65,8 @@ import java.util.Map;
 @RestController
 public class ContextInstanceApplication {
 
+    @Autowired
+    private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
     private ObjectMapper mapper;
 
     public ContextInstanceApplication() {
@@ -88,7 +91,7 @@ public class ContextInstanceApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity save(@RequestBody ContextInstanceImpl contextInstance) {
         try {
-            ContextInstanceCache.instance().put(contextInstance.getName(), contextInstance);
+            contextInstanceIdentifierProvisionService.provision(contextInstance);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(
@@ -112,5 +115,4 @@ public class ContextInstanceApplication {
         }
         return new ResponseEntity(HttpStatus.OK);
     }
-
 }

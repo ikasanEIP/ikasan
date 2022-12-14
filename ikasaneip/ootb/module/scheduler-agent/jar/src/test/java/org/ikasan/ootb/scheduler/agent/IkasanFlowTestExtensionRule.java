@@ -1,10 +1,7 @@
 package org.ikasan.ootb.scheduler.agent;
 
-import static org.quartz.TriggerBuilder.newTrigger;
-
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.quartz.JobDetail;
@@ -12,9 +9,10 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Set;
+
+import static org.quartz.TriggerBuilder.newTrigger;
 
 public class IkasanFlowTestExtensionRule extends IkasanFlowTestRule {
 
@@ -38,14 +36,15 @@ public class IkasanFlowTestExtensionRule extends IkasanFlowTestRule {
         }
     }
 
-    // David you can see here how I am tricking the unit test to include
-    // the job data map from the triggers registered in the
-    // CorrelatingScheduledConsumer. I use refection to get a handle to the
-    // triggers on the consumer.
     public void fireScheduledConsumerWithExistingTriggerEnhanced() {
         CorrelatingScheduledConsumer consumer = (CorrelatingScheduledConsumer) getComponent(super.getScheduledConsumerName());
-        Set<Trigger> triggers = (Set<Trigger>)ReflectionTestUtils.getField(consumer,  "triggers");
         JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
+        Set<Trigger> triggers = null;
+        try {
+            triggers = consumer.getTriggers();
+        } catch (SchedulerException e) {
+            throw new RuntimeException(e);
+        }
 
         triggers.forEach(trigger -> {
             try {

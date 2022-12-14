@@ -41,19 +41,18 @@
 package org.ikasan.component.endpoint.quartz.consumer;
 
 
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Correlating Scheduled consumer configuration bean.
  * 
  * @author Ikasan Development Team
  */
-public class CorrelatingScheduledConsumerConfiguration extends ScheduledConsumerConfiguration {
+public class CorrelatedScheduledConsumerConfiguration extends ScheduledConsumerConfiguration {
     private List<String> correlatingIdentifiers = new ArrayList<>();
 
-    public List<String> correlatingIdentifiers() {
+    public List<String> getCorrelatingIdentifiers() {
         return correlatingIdentifiers;
     }
 
