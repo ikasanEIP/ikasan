@@ -184,6 +184,48 @@ public class ScheduledToJmsFlowTest
     }
 
     @Test
+    public void test_consume_recover_with_recovery_successful() throws Exception
+    {
+        ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
+        broker.setShouldThrowRecoveryException(true);
+
+        //Setup component expectations
+        FakeDataProvider.add("message 1");
+        FakeDataProvider.add("message 2");
+        FakeDataProvider.add("message 3");
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .broker("Exception Generating Broker")
+            .consumer("Scheduled Consumer")
+            .broker("Exception Generating Broker")
+            .producer("Scheduled Jms Producer");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        flowTestRule.fireScheduledConsumer();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(0, messageListenerVerifier.getCaptureResults().size() ));
+
+        // This should not go into stopped in error. Should be running!
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("stoppedInError",flowTestRule.getFlowState()));
+
+        flowTestRule.assertIsSatisfied();
+
+        Assert.assertEquals(3, FakeDataProvider.size());
+        Assert.assertEquals("message 1", FakeDataProvider.get(0));
+        Assert.assertEquals("message 2", FakeDataProvider.get(1));
+        Assert.assertEquals("message 3", FakeDataProvider.get(2));
+    }
+
+    @Test
     public void test_consume_stop() throws Exception
     {
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
