@@ -54,7 +54,8 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         when(trigger.getDescription()).thenReturn("description");
         when(trigger.getKey()).thenReturn(triggerKey);
         JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("correlationIdentifier", UUID.randomUUID().toString());
+        String correaltionID = UUID.randomUUID().toString();
+        jobDataMap.put("correlationId", correaltionID);
         when(jobExecutionContext.getMergedJobDataMap()).thenReturn(jobDataMap);
 
         ContextInstance contextInstance = new ContextInstanceImpl();
@@ -78,7 +79,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         Assert.assertEquals("moduleName", event.getAgentName());
         Assert.assertEquals("jobName", event.getJobName()); // IKASAN-2174 - return jobName provided to the component.
         Assert.assertEquals("contextName", event.getContextName());
-        Assert.assertEquals("contextInstanceId", event.getContextInstanceId());
+        Assert.assertEquals(correaltionID, event.getContextInstanceId());
         Assert.assertEquals(true, event.isSuccessful());
         Assert.assertEquals("description", event.getJobDescription());
         Assert.assertEquals("group", event.getJobGroup());
