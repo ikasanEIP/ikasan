@@ -1,16 +1,11 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
 import org.apache.commons.io.IOUtils;
 import org.hamcrest.core.IsInstanceOf;
+import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
+import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +14,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -31,10 +27,19 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import static org.junit.Assert.assertEquals;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {ContextInstanceApplication.class, MockedUserServiceTestConfigWithConverter.class})
 @EnableWebMvc
 public class ContextInstanceApplicationTest {
+
+    @MockBean
+    private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
 
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
@@ -81,17 +86,8 @@ public class ContextInstanceApplicationTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        assertEquals(1, getContextNames().size());
-        ContextInstance complexInstance = ContextInstanceCache.instance().getByContextName("COMPLEX_CONTEXT_SAVE");
-        assertNotNull(complexInstance);
-
-        assertEquals(3, complexInstance.getContextParameters().size());
-        assertEquals("BusinessDate", complexInstance.getContextParameters().get(0).getName());
-        assertEquals("20220505", complexInstance.getContextParameters().get(0).getValue());
-        assertEquals("ErrorSearch", complexInstance.getContextParameters().get(1).getName());
-        assertEquals("Blah", complexInstance.getContextParameters().get(1).getValue());
-        assertEquals("UseBusinessDate", complexInstance.getContextParameters().get(2).getName());
-        assertEquals("1", complexInstance.getContextParameters().get(2).getValue());
+        // Note, this controller now delegates the update of the Context Instance to the class invoked by the save
+        // (which is mocked out) hence so there is little further to test.
     }
 
     @Test
@@ -109,16 +105,10 @@ public class ContextInstanceApplicationTest {
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
     public void remove() throws Exception {
+        String PLAN_NAME = "COMPLEX_CONTEXT_SAVE";
         assertEquals(0, getContextNames().size());
 
-        String content = IOUtils.toString(getClass().getResourceAsStream("/data/job-context-instance-1.json"), "UTF-8");
-
-        mockMvc.perform(MockMvcRequestBuilders.put("/rest/contextInstance/save")
-                .content(content)
-                .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON))
-            .andExpect(status().isOk());
-
+        getContextInstanceMap().put(PLAN_NAME, new ContextInstanceImpl());
         assertEquals(1, getContextNames().size());
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/remove?contextName=COMPLEX_CONTEXT_SAVE")
@@ -130,10 +120,15 @@ public class ContextInstanceApplicationTest {
         assertEquals(0, getContextNames().size());
     }
 
-    private Set<String> getContextNames() {
+    private ConcurrentHashMap<String, ContextInstance> getContextInstanceMap() {
         ConcurrentHashMap<String, ContextInstance> contextInstanceMap
             = (ConcurrentHashMap<String, ContextInstance>) ReflectionTestUtils.getField(ContextInstanceCache.instance(), "contextInstanceMap");
-        Set<String> contextNames =contextInstanceMap.keySet();
+        return contextInstanceMap;
+    }
+
+    private Set<String> getContextNames() {
+        ConcurrentHashMap<String, ContextInstance> contextInstanceMap = getContextInstanceMap();
+        Set<String> contextNames = contextInstanceMap.keySet();
         return contextNames;
     }
 }

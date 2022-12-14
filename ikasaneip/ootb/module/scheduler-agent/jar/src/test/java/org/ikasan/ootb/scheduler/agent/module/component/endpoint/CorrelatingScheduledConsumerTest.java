@@ -1,8 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
 
-import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -35,8 +35,8 @@ public class CorrelatingScheduledConsumerTest {
     private final JobDetail mockJobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
 
     /** Mock consumerConfiguration */
-    private final CorrelatingScheduledConsumerConfiguration consumerConfiguration =
-        mockery.mock(CorrelatingScheduledConsumerConfiguration.class, "mockScheduledConsumerConfigurationEnhanced");
+    private final CorrelatedScheduledConsumerConfiguration consumerConfiguration =
+        mockery.mock(CorrelatedScheduledConsumerConfiguration.class, "mockScheduledConsumerConfigurationEnhanced");
 
     private final ScheduledJobRecoveryService scheduledJobRecoveryService = mockery.mock(ScheduledJobRecoveryService.class, "mockScheduledJobRecoveryService");
 
@@ -108,7 +108,7 @@ public class CorrelatingScheduledConsumerTest {
                 will(returnValue("UTC"));
 
                 // get configuration scheduler correlation ID's for the Root (top level) Job Plans
-                exactly(1).of(consumerConfiguration).correlatingIdentifiers();
+                exactly(1).of(consumerConfiguration).getCorrelatingIdentifiers();
                 will(returnValue(Arrays.asList("cor1", "cor2")));
 
                 // get configuration scheduler pass-through properties

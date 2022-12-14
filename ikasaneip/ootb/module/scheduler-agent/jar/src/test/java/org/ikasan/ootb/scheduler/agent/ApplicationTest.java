@@ -40,35 +40,36 @@
  */
 package org.ikasan.ootb.scheduler.agent;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.util.*;
-
-import javax.annotation.Resource;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration.HousekeepLogFilesProcessConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.dto.*;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.bigqueue.IBigQueue;
+import javax.annotation.Resource;
+import java.io.IOException;
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -131,9 +132,9 @@ public class ApplicationTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatingScheduledConsumerConfiguration.class);
-        correlatingScheduledConsumerConfiguration.correlatingIdentifiers().add(UUID.randomUUID().toString());
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(UUID.randomUUID().toString());
 
         flow = moduleUnderTest.getFlow("Scheduler Flow 4");
         flow.start();

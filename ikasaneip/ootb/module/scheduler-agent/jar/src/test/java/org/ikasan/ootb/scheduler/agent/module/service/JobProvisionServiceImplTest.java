@@ -1,7 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
@@ -65,10 +65,10 @@ public class JobProvisionServiceImplTest {
     private FlowElement fileConsumerElement;
 
     @Mock
-    private ConfiguredResource<ScheduledConsumerConfiguration> fileConsumer;
+    private ConfiguredResource<CorrelatedFileConsumerConfiguration> fileConsumer;
 
     @Mock
-    private FileConsumerConfiguration fileConsumerConfiguration;
+    private CorrelatedFileConsumerConfiguration fileConsumerConfiguration;
 
     @Mock
     private FlowElement converterElement;
@@ -83,9 +83,9 @@ public class JobProvisionServiceImplTest {
     private FlowElement scheduledConsumerElement;
 
     @Mock
-    private ConfiguredResource<ScheduledConsumerConfiguration> scheduledConsumer;
+    private ConfiguredResource<CorrelatedScheduledConsumerConfiguration> scheduledConsumer;
 
-    @Mock ScheduledConsumerConfiguration scheduledConsumerConfiguration;
+    @Mock CorrelatedScheduledConsumerConfiguration scheduledConsumerConfiguration;
 
     @Mock
     private FlowElement fileAgeFilterElement;

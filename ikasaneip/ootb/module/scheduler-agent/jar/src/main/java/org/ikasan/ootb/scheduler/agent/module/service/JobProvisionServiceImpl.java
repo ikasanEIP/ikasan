@@ -6,7 +6,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.module.ConfiguredModuleConfiguration;
@@ -260,10 +261,10 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
     private void configureQuartzScheduledFlowComponents(Module<Flow> module, SchedulerJob job) {
         Flow flow = module.getFlow(job.getJobName());
-        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
+        ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow
             .getFlowElement("Scheduled Consumer").getFlowComponent();
 
-        ScheduledConsumerConfiguration configuration = consumer.getConfiguration();
+        CorrelatedScheduledConsumerConfiguration configuration = consumer.getConfiguration();
         this.updateScheduleConsumerConfiguration((QuartzScheduleDrivenJob) job, configuration);
 
         this.configurationService.update(consumer);
@@ -305,10 +306,10 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
     private void configureFileEventDrivenFlowComponents(Module<Flow> module, SchedulerJob job) {
         Flow flow = module.getFlow(job.getJobName());
-        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
+        ConfiguredResource<CorrelatedFileConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedFileConsumerConfiguration>)flow
             .getFlowElement("File Consumer").getFlowComponent();
 
-        FileConsumerConfiguration configuration = (FileConsumerConfiguration)consumer.getConfiguration();
+        CorrelatedFileConsumerConfiguration configuration = (CorrelatedFileConsumerConfiguration)consumer.getConfiguration();
         this.updateFileConsumerConfiguration((FileEventDrivenJob) job, configuration);
 
         this.configurationService.update(consumer);
@@ -415,7 +416,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param job
      * @param fileConsumerConfiguration
      */
-    private void updateFileConsumerConfiguration(FileEventDrivenJob job, FileConsumerConfiguration fileConsumerConfiguration) {
+    private void updateFileConsumerConfiguration(FileEventDrivenJob job, CorrelatedFileConsumerConfiguration fileConsumerConfiguration) {
         fileConsumerConfiguration.setFilenames(job.getFilenames());
         fileConsumerConfiguration.setJobName(job.getJobName());
         fileConsumerConfiguration.setJobGroupName(job.getJobGroup());

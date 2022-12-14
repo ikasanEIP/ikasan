@@ -83,7 +83,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.boot.builder.CorrelatingScheduledConsumerBuilderImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
@@ -138,12 +138,12 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     AopProxyProvider aopProxyProvider;
 
     public Consumer getScheduledConsumer() {
-        CorrelatingScheduledConsumerConfiguration correlatingScheduledConsumerConfiguration = new CorrelatingScheduledConsumerConfiguration();
-        correlatingScheduledConsumerConfiguration.setCronExpression("0 0 0 * * ?");
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration = new CorrelatedScheduledConsumerConfiguration();
+        correlatedScheduledConsumerConfiguration.setCronExpression("0 0 0 * * ?");
 
         CorrelatingScheduledConsumerBuilderImpl scheduledConsumerEnhancedBuilder = new CorrelatingScheduledConsumerBuilderImpl
             (scheduler, scheduledJobFactory, aopProxyProvider);
-        return scheduledConsumerEnhancedBuilder.setConfiguration(correlatingScheduledConsumerConfiguration).build();
+        return scheduledConsumerEnhancedBuilder.setConfiguration(correlatedScheduledConsumerConfiguration).build();
     }
 
     /**
