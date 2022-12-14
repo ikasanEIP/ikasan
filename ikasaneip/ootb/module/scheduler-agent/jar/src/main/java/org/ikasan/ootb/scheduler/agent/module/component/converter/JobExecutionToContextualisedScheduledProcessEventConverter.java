@@ -106,7 +106,6 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
 
                 TriggerKey triggerKey = jobTrigger.getKey();
                 if (triggerKey != null) {
-                    scheduledProcessEvent.setJobName(triggerKey.getName());
                     scheduledProcessEvent.setJobGroup(triggerKey.getGroup());
                 }
             }
