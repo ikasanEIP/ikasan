@@ -25,35 +25,35 @@ public class ContextInstanceCache {
         this.contextInstanceMap = new ConcurrentHashMap<>();
     }
 
-    public void put(String contextName, ContextInstance instance) {
-        if (contextName == null || instance == null) {
+    public void put(String correlationId, ContextInstance instance) {
+        if (correlationId == null || instance == null) {
             return;
         }
 
-        LOG.info(String.format("Adding context instance [%s]", contextName));
-        this.contextInstanceMap.put(contextName, instance);
+        LOG.info(String.format("Adding context instance [%s]", correlationId));
+        this.contextInstanceMap.put(correlationId, instance);
     }
 
-    public void remove(String contextName) {
-        if (contextName == null) {
+    public void remove(String correlationId) {
+        if (correlationId == null) {
             return;
         }
-        LOG.info(String.format("Removing context instance [%s]", contextName));
-        this.contextInstanceMap.remove(contextName);
+        LOG.info(String.format("Removing context instance [%s]", correlationId));
+        this.contextInstanceMap.remove(correlationId);
     }
 
-    public ContextInstance getByContextName(String contextName) {
-        if (contextName != null) {
-            LOG.debug(String.format("Getting context parameters for context name [%s]", contextName));
-            return this.contextInstanceMap.get(contextName);
+    public ContextInstance getByCorrelationId(String correlationId) {
+        if (correlationId != null) {
+            LOG.debug(String.format("Getting context parameters for context instance ID [%s]", correlationId));
+            return this.contextInstanceMap.get(correlationId);
         } else {
             return null;
         }
     }
 
-    public static String getContextParameter(String contextName, String contextParameterName) {
-        if (contextName != null && contextParameterName != null) {
-            ContextInstance instance = ContextInstanceCache.instance().getByContextName(contextName);
+    public static String getContextParameter(String correlationId, String contextParameterName) {
+        if (correlationId != null && contextParameterName != null) {
+            ContextInstance instance = ContextInstanceCache.instance().getByCorrelationId(correlationId);
             if (instance != null) {
                 List<ContextParameterInstance> contextParameters = instance.getContextParameters();
                 if (contextParameters != null) {
@@ -61,7 +61,7 @@ public class ContextInstanceCache {
                         if (contextParameter.getName() != null
                             && contextParameter.getValue() != null
                             && contextParameterName.equals(contextParameter.getName())) {
-                            return contextParameter.getValue().toString();
+                            return contextParameter.getValue();
                         }
                     }
                 }
@@ -70,12 +70,27 @@ public class ContextInstanceCache {
         return null;
     }
 
-    public static boolean existsInCache(String contextName) {
-        return ContextInstanceCache.instance().getByContextName(contextName) != null;
+    public static boolean existsInCache(String correlationId) {
+        return ContextInstanceCache.instance().getByCorrelationId(correlationId) != null;
     }
 
-    public static boolean doesNotExistInCache(String contextName) {
-        return !existsInCache(contextName);
+    public static boolean doesNotExistInCache(String correlationId) {
+        return !existsInCache(correlationId);
+    }
+
+    public static boolean anyExistInCache(List<String> correlationIds) {
+        if (correlationIds != null && ! correlationIds.isEmpty()) {
+            for(String correlationId : correlationIds) {
+                if (existsInCache (correlationId)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean noneExistInCache(List<String> correlationIds) {
+        return ! anyExistInCache(correlationIds);
     }
 
 }

@@ -97,4 +97,18 @@ public class ContextInstanceImpl extends ContextImpl<ContextInstance, ContextPar
     public void setHeldJobs(Map<String, SchedulerJobInitiationEvent> heldJobs) {
         this.heldJobs = heldJobs;
     }
+
+    @Override
+    public String toString() {
+        return "ContextInstanceImpl{" +
+            "id='" + id + '\'' +
+            ", createdDateTime=" + createdDateTime +
+            ", updatedDateTime=" + updatedDateTime +
+            ", startTime=" + startTime +
+            ", endTime=" + endTime +
+            ", timezone='" + timezone + '\'' +
+            ", status=" + status +
+            ", heldJobs=" + heldJobs +
+            '}';
+    }
 }

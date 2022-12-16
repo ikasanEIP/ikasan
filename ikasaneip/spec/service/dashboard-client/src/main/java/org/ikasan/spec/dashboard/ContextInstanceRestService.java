@@ -6,5 +6,5 @@ public interface ContextInstanceRestService<T> {
 
     Map<String, T> getAll();
 
-    Map<String, T> getByContextName(String contextName);
+    Map<String, T> getByContextId(String correlationId);
 }

@@ -74,7 +74,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
     }
 
     @Override
-    public Map<String, ContextInstance> getByContextName(String contextName) {
+    public Map<String, ContextInstance> getByContextId(String correlationId) {
         if (this.token == null) {
             authenticate(moduleName);
         }
@@ -86,7 +86,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
                 .encode()
                 .toUriString();
             Map<String, String> parameters = new HashMap<>() {{
-                put("contextName", contextName);
+                put("contextName", correlationId);
             }};
 
             ResponseEntity<String> response = restTemplate.exchange(urlTemplate, HttpMethod.GET, entity, String.class, parameters);
