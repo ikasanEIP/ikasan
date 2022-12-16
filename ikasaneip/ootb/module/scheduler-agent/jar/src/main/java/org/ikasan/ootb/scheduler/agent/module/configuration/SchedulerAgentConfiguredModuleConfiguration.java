@@ -47,8 +47,12 @@ import java.util.Map;
 
 public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration {
 
-    Map<String, String> flowContextMap = new HashMap();
+    Map<String, String> flowContextMap = new HashMap<>();
 
+    /**
+     * Get plan/context (not instance!) details
+     * @return return the map of flow name -> plan name
+     */
     public Map<String, String> getFlowContextMap() {
         return flowContextMap;
     }

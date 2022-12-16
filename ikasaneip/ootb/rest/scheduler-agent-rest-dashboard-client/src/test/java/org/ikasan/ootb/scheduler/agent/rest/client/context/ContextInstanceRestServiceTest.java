@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -31,7 +32,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 public class ContextInstanceRestServiceTest {
 
     private static final String MODULE_NAME = "module name";
-    private Mockery mockery = new Mockery() {{
+    private final Mockery mockery = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
     }};
@@ -106,7 +107,7 @@ public class ContextInstanceRestServiceTest {
                 .withStatus(200)
             ));
 
-        Map<String, ContextInstance> complex_context = uut.getByContextName("COMPLEX_CONTEXT");
+        Map<String, ContextInstance> complex_context = uut.getByContextId("COMPLEX_CONTEXT");
         assertEquals(1, complex_context.size());
 
         ContextInstance contextInstance = complex_context.get("COMPLEX_CONTEXT");
@@ -124,16 +125,14 @@ public class ContextInstanceRestServiceTest {
                 .withStatus(403)
             ));
 
-        uut.getByContextName("COMPLEX_CONTEXT");
+        uut.getByContextId("COMPLEX_CONTEXT");
     }
 
     protected String loadDataFile(String fileName) throws IOException {
-        String contentToSend = IOUtils.toString(loadDataFileStream(fileName), "UTF-8");
-
-        return contentToSend;
+        return IOUtils.toString(loadDataFileStream(fileName), StandardCharsets.UTF_8);
     }
 
-    protected InputStream loadDataFileStream(String fileName) throws IOException {
+    protected InputStream loadDataFileStream(String fileName) {
         return getClass().getResourceAsStream(fileName);
     }
 

@@ -164,6 +164,7 @@ public class JobProvisionServiceImplTest {
         verify(scheduledConsumerConfiguration, times(1)).setPassthroughProperties(anyMap());
         verify(scheduledConsumerConfiguration, times(1)).setPersistentRecovery(anyBoolean());
         verify(scheduledConsumerConfiguration, times(1)).setRecoveryTolerance(anyLong());
+        verify(scheduledConsumerConfiguration, times(1)).getCorrelatingIdentifiers();
 
         verify(fileConsumerConfiguration, times(1)).setJobName(anyString());
         verify(fileConsumerConfiguration, times(1)).setJobGroupName(anyString());
@@ -190,8 +191,9 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setIncludeTrailer(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortAscending(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
+        verify(fileConsumerConfiguration, times(1)).getCorrelatingIdentifiers();
 
-        verify(contextFilterConfiguration, times(2)).setContextName(anyString());
+        verify(contextFilterConfiguration, times(2)).addContextInstanceIds(anyList());
 
         verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
 

@@ -38,6 +38,10 @@ public class AgentRecoveryRunnable implements Runnable {
         LOG.info("Successfully recovered context instances at start up!");
     }
 
+    /**
+     * Note, by this point the standard Ikasan Recovery Manager has recovered the flows themselves, here we are merely
+     * getting the instance information back from the dashboard.
+     */
     private void importInstances() {
         Module<Flow> module = moduleService.getModule(moduleName);
         if (module != null) {
@@ -45,6 +49,7 @@ public class AgentRecoveryRunnable implements Runnable {
             ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
             SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
             Map<String, String> flowContextMap = configuration.getFlowContextMap();
+
             Set<String> contextNames = flowContextMap.values().stream().filter(s -> !s.isBlank()).collect(Collectors.toSet());
             LOG.info("Recovering instances for " + contextNames);
             long attempts = 0;
@@ -58,11 +63,17 @@ public class AgentRecoveryRunnable implements Runnable {
                 }
                 exception = false;
                 try {
+                    // If the context instance from the dashboard relates to a plan that has been recovered, add it.
                     Map<String, ContextInstance> contextInstances = contextInstanceRestService.getAll();
-                    for (String contextName : contextInstances.keySet()) {
-                        if (contextNames.contains(contextName)) {
-                            ContextInstanceCache.instance().put(contextName, contextInstances.get(contextName));
+                    for (String correlationId : contextInstances.keySet()) {
+                        ContextInstance contextInstance = contextInstances.get(correlationId);
+                        if (contextNames.contains(contextInstance.getName())) {
+                            ContextInstanceCache.instance().put(correlationId, contextInstances.get(correlationId));
+                        } else {
+                            LOG.error("The dashboard thinks this agent should be dealing a context instance for the job plan name [" + contextInstance.getName() +
+                                "] but there is no recovered plan to deal with it, the only plans available are " + contextNames);
                         }
+
                     }
                     LOG.info("Successfully recovered context instances at start up for contexts: " + contextNames);
                     break;
