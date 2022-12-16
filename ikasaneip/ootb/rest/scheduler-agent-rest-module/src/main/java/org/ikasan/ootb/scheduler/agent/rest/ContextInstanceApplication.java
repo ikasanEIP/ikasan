@@ -103,14 +103,14 @@ public class ContextInstanceApplication {
 
     @RequestMapping(path = "/remove", method = RequestMethod.DELETE)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity remove(@RequestParam("contextName") String contextName) {
+    public ResponseEntity remove(@RequestParam("correlationId") String correlationId) {
         try {
-            ContextInstanceCache.instance().remove(contextName);
+            ContextInstanceCache.instance().remove(correlationId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(
                 new ErrorDto(
-                    String.format("An error has occurred attempting to remove context instance for %s! Error message [%s]", contextName, e.getMessage())),
+                    String.format("An error has occurred attempting to remove context instance for %s! Error message [%s]", correlationId, e.getMessage())),
                 HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);

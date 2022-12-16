@@ -18,30 +18,30 @@ public class ContextInstanceCacheTest {
     @Test
     public void getContextParameter_should_return_null_values() {
         assertNull(ContextInstanceCache.getContextParameter(null, "contextParameterName"));
-        assertNull(ContextInstanceCache.getContextParameter("contextName", null));
+        assertNull(ContextInstanceCache.getContextParameter("contextInstanceId", null));
     }
 
     @Test
     public void getContextParameter_should_return_null_null_context_instance() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
-        assertNull(ContextInstanceCache.getContextParameter(contextName, "contextParameterName"));
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
+        assertNull(ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
     }
 
     @Test
     public void getContextParameter_should_return_null_null_context_parameters() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
-        instance.setName(contextName);
+        instance.setId(contextInstanceId);
 
-        ContextInstanceCache.instance().put(instance.getName(), instance);
-        assertNull(ContextInstanceCache.getContextParameter(contextName, "contextParameterName"));
+        ContextInstanceCache.instance().put(instance.getId(), instance);
+        assertNull(ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
     }
 
     @Test
     public void getContextParameter_should_return_value() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
-        instance.setName(contextName);
+        instance.setId(contextInstanceId);
         ContextParameterInstance contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("BusinessDate");
         String date = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
@@ -49,15 +49,15 @@ public class ContextInstanceCacheTest {
         List<ContextParameterInstance> params = List.of(contextParameterInstance);
         instance.setContextParameters(params);
 
-        ContextInstanceCache.instance().put(instance.getName(), instance);
-        assertEquals(date, (ContextInstanceCache.getContextParameter(contextName, contextParameterInstance.getName())));
+        ContextInstanceCache.instance().put(instance.getId(), instance);
+        assertEquals(date, (ContextInstanceCache.getContextParameter(contextInstanceId, contextParameterInstance.getName())));
     }
 
     @Test
     public void getContextParameter_should_return_null_with_context_parameters_null_name() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
-        instance.setName(contextName);
+        instance.setId(contextInstanceId);
         ContextParameterInstance contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName(null);
         String date = LocalDate.now().format(DateTimeFormatter.ISO_DATE);
@@ -65,98 +65,98 @@ public class ContextInstanceCacheTest {
         List<ContextParameterInstance> params = List.of(contextParameterInstance);
         instance.setContextParameters(params);
 
-        ContextInstanceCache.instance().put(instance.getName(), instance);
-        assertNull(ContextInstanceCache.getContextParameter(contextName, "BusinessDate"));
+        ContextInstanceCache.instance().put(instance.getId(), instance);
+        assertNull(ContextInstanceCache.getContextParameter(contextInstanceId, "BusinessDate"));
     }
 
     @Test
     public void getContextParameter_should_return_null_with_context_parameters_null_value() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
-        instance.setName(contextName);
+        instance.setId(contextInstanceId);
         ContextParameterInstance contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("BusinessDate");
         contextParameterInstance.setValue(null);
         List<ContextParameterInstance> params = List.of(contextParameterInstance);
         instance.setContextParameters(params);
 
-        ContextInstanceCache.instance().put(instance.getName(), instance);
-        assertNull(ContextInstanceCache.getContextParameter(contextName, "BusinessDate"));
+        ContextInstanceCache.instance().put(instance.getId(), instance);
+        assertNull(ContextInstanceCache.getContextParameter(contextInstanceId, "BusinessDate"));
     }
 
     @Test
     public void existsInCache() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
-        instance.setName(contextName);
-        ContextInstanceCache.instance().put(instance.getName(), instance);
+        instance.setId(contextInstanceId);
+        ContextInstanceCache.instance().put(instance.getId(), instance);
 
-        assertTrue(ContextInstanceCache.existsInCache(contextName));
+        assertTrue(ContextInstanceCache.existsInCache(contextInstanceId));
         assertFalse(ContextInstanceCache.existsInCache(null));
-        assertFalse(ContextInstanceCache.existsInCache(contextName + RandomStringUtils.randomAlphabetic(5)));
+        assertFalse(ContextInstanceCache.existsInCache(contextInstanceId + RandomStringUtils.randomAlphabetic(5)));
 
         ContextInstanceCache.instance().remove(null);
-        assertTrue(ContextInstanceCache.existsInCache(contextName));
+        assertTrue(ContextInstanceCache.existsInCache(contextInstanceId));
 
-        ContextInstanceCache.instance().remove(contextName);
-        assertFalse(ContextInstanceCache.existsInCache(contextName));
+        ContextInstanceCache.instance().remove(contextInstanceId);
+        assertFalse(ContextInstanceCache.existsInCache(contextInstanceId));
     }
 
     @Test
     public void doesNotExistInCache() {
-        String contextName = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
-        instance.setName(contextName);
-        ContextInstanceCache.instance().put(instance.getName(), instance);
+        instance.setId(contextInstanceId);
+        ContextInstanceCache.instance().put(instance.getId(), instance);
 
         assertTrue(ContextInstanceCache.doesNotExistInCache(null));
-        assertTrue(ContextInstanceCache.doesNotExistInCache(contextName + RandomStringUtils.randomAlphabetic(5)));
-        assertFalse(ContextInstanceCache.doesNotExistInCache(contextName));
+        assertTrue(ContextInstanceCache.doesNotExistInCache(contextInstanceId + RandomStringUtils.randomAlphabetic(5)));
+        assertTrue(ContextInstanceCache.existsInCache(contextInstanceId));
     }
 
     @Test
-    public void getByContextName_and_remove() {
-        String contextName1 = RandomStringUtils.randomAlphanumeric(12);
+    public void getByContextId_and_remove() {
+        String contextInstanceId1 = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance1 = new ContextInstanceImpl();
-        instance1.setName(contextName1);
-        ContextInstanceCache.instance().put(instance1.getName(), instance1);
+        instance1.setId(contextInstanceId1);
+        ContextInstanceCache.instance().put(instance1.getId(), instance1);
 
-        String contextName2 = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId2 = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance2 = new ContextInstanceImpl();
-        instance2.setName(contextName2);
-        ContextInstanceCache.instance().put(instance2.getName(), instance2);
+        instance2.setId(contextInstanceId2);
+        ContextInstanceCache.instance().put(instance2.getId(), instance2);
 
-        assertNull(ContextInstanceCache.instance().getByContextName(null));
-        assertEquals(instance1, ContextInstanceCache.instance().getByContextName(contextName1));
-        assertEquals(instance2, ContextInstanceCache.instance().getByContextName(contextName2));
+        assertNull(ContextInstanceCache.instance().getByCorrelationId(null));
+        assertEquals(instance1, ContextInstanceCache.instance().getByCorrelationId(contextInstanceId1));
+        assertEquals(instance2, ContextInstanceCache.instance().getByCorrelationId(contextInstanceId2));
 
         ContextInstanceCache.instance().remove(null);
-        assertEquals(instance1, ContextInstanceCache.instance().getByContextName(contextName1));
-        assertEquals(instance2, ContextInstanceCache.instance().getByContextName(contextName2));
+        assertEquals(instance1, ContextInstanceCache.instance().getByCorrelationId(contextInstanceId1));
+        assertEquals(instance2, ContextInstanceCache.instance().getByCorrelationId(contextInstanceId2));
 
-        ContextInstanceCache.instance().remove(contextName1);
-        assertNull(ContextInstanceCache.instance().getByContextName(contextName1));
-        assertEquals(instance2, ContextInstanceCache.instance().getByContextName(contextName2));
+        ContextInstanceCache.instance().remove(contextInstanceId1);
+        assertNull(ContextInstanceCache.instance().getByCorrelationId(contextInstanceId1));
+        assertEquals(instance2, ContextInstanceCache.instance().getByCorrelationId(contextInstanceId2));
 
-        ContextInstanceCache.instance().remove(contextName2);
-        assertNull(ContextInstanceCache.instance().getByContextName(contextName1));
-        assertNull(ContextInstanceCache.instance().getByContextName(contextName2));
+        ContextInstanceCache.instance().remove(contextInstanceId2);
+        assertNull(ContextInstanceCache.instance().getByCorrelationId(contextInstanceId1));
+        assertNull(ContextInstanceCache.instance().getByCorrelationId(contextInstanceId2));
     }
 
     @Test
     public void put() {
-        String contextName1 = RandomStringUtils.randomAlphanumeric(12);
+        String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance1 = new ContextInstanceImpl();
-        instance1.setName(contextName1);
+        instance1.setId(contextInstanceId);
 
-        ContextInstanceCache.instance().put(contextName1, null);
-        assertNull(ContextInstanceCache.instance().getByContextName(contextName1));
+        ContextInstanceCache.instance().put(contextInstanceId, null);
+        assertNull(ContextInstanceCache.instance().getByCorrelationId(contextInstanceId));
 
         ContextInstanceCache.instance().put(null, instance1);
-        assertNull(ContextInstanceCache.instance().getByContextName(contextName1));
+        assertNull(ContextInstanceCache.instance().getByCorrelationId(contextInstanceId));
 
-        ContextInstanceCache.instance().put(instance1.getName(), instance1);
-        assertEquals(instance1, ContextInstanceCache.instance().getByContextName(contextName1));
+        ContextInstanceCache.instance().put(instance1.getId(), instance1);
+        assertEquals(instance1, ContextInstanceCache.instance().getByCorrelationId(contextInstanceId));
     }
 
 }

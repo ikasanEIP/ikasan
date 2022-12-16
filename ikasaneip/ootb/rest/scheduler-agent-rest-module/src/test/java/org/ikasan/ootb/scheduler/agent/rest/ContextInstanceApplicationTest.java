@@ -27,6 +27,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -52,9 +53,9 @@ public class ContextInstanceApplicationTest {
     @Before
     public void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-        Set<String> contextNames = getContextNames();
-        for (String contextName : contextNames) {
-            ContextInstanceCache.instance().remove(contextName);
+        Set<String> contextInstanceIds = getContextInstanceIds();
+        for (String contextInstanceId : contextInstanceIds) {
+            ContextInstanceCache.instance().remove(contextInstanceId);
         }
     }
 
@@ -63,7 +64,7 @@ public class ContextInstanceApplicationTest {
     public void save_read_only_user_causes_access_denied_exception() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
-        String content = IOUtils.toString(getClass().getResourceAsStream("/data/job-context-instance-1.json"), "UTF-8");
+        String content = IOUtils.toString(getClass().getResourceAsStream("/data/job-context-instance-1.json"), StandardCharsets.UTF_8);
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/contextInstance/save")
             .content(content)
             .accept(MediaType.APPLICATION_JSON)
@@ -76,9 +77,9 @@ public class ContextInstanceApplicationTest {
     @WithMockUser(authorities = "WebServiceAdmin")
     public void save() throws Exception {
 
-        assertEquals(0, getContextNames().size());
+        assertEquals(0, getContextInstanceIds().size());
 
-        String content = IOUtils.toString(getClass().getResourceAsStream("/data/job-context-instance-1.json"), "UTF-8");
+        String content = IOUtils.toString(getClass().getResourceAsStream("/data/job-context-instance-1.json"), StandardCharsets.UTF_8);
 
         mockMvc.perform(MockMvcRequestBuilders.put("/rest/contextInstance/save")
                 .content(content)
@@ -95,7 +96,7 @@ public class ContextInstanceApplicationTest {
     public void remove_read_only_user_causes_access_denied_exception() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/remove?contextName=CONTEXT_NAME")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/remove?correlationId=COL_ID_1")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
@@ -105,19 +106,19 @@ public class ContextInstanceApplicationTest {
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
     public void remove() throws Exception {
-        String PLAN_NAME = "COMPLEX_CONTEXT_SAVE";
-        assertEquals(0, getContextNames().size());
+        String CORRELATION_ID = "COL_ID_1";
+        assertEquals(0, getContextInstanceIds().size());
 
-        getContextInstanceMap().put(PLAN_NAME, new ContextInstanceImpl());
-        assertEquals(1, getContextNames().size());
+        getContextInstanceMap().put(CORRELATION_ID, new ContextInstanceImpl());
+        assertEquals(1, getContextInstanceIds().size());
 
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/remove?contextName=COMPLEX_CONTEXT_SAVE")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/remove?correlationId=COL_ID_1")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
         mockMvc.perform(requestBuilder).andReturn();
 
-        assertEquals(0, getContextNames().size());
+        assertEquals(0, getContextInstanceIds().size());
     }
 
     private ConcurrentHashMap<String, ContextInstance> getContextInstanceMap() {
@@ -126,9 +127,8 @@ public class ContextInstanceApplicationTest {
         return contextInstanceMap;
     }
 
-    private Set<String> getContextNames() {
+    private Set<String> getContextInstanceIds() {
         ConcurrentHashMap<String, ContextInstance> contextInstanceMap = getContextInstanceMap();
-        Set<String> contextNames = contextInstanceMap.keySet();
-        return contextNames;
+        return contextInstanceMap.keySet();
     }
 }

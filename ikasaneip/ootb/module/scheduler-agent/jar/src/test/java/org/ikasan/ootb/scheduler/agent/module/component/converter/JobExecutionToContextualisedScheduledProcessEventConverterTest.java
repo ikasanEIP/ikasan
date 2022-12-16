@@ -62,7 +62,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         contextInstance.setName("contextName");
         contextInstance.setId("contextInstanceId");
 
-        ContextInstanceCache.instance().put("contextName", contextInstance);
+        ContextInstanceCache.instance().put("contextInstanceId", contextInstance);
 
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
         configuration.setChildContextNames(List.of("childContextId1", "childContextId2"));
@@ -80,7 +80,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         Assert.assertEquals("jobName", event.getJobName()); // IKASAN-2174 - return jobName provided to the component.
         Assert.assertEquals("contextName", event.getContextName());
         Assert.assertEquals(correaltionID, event.getContextInstanceId());
-        Assert.assertEquals(true, event.isSuccessful());
+        Assert.assertTrue(event.isSuccessful());
         Assert.assertEquals("description", event.getJobDescription());
         Assert.assertEquals("group", event.getJobGroup());
     }

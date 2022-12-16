@@ -38,8 +38,6 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     public void provision(ContextInstance contextInstance) {
 
         try {
-            contextInstance.getId();
-
             List<String> allFlows = getFlowsForModules(contextInstance);
             List<String> scheduledFlows = filterFlowsOnProfile(allFlows, SCHEDULED_CONSUMER_PROFILE);
             List<String> fileWatcherFlows = filterFlowsOnProfile(allFlows, FILE_CONSUMER_PROFILE);
@@ -47,7 +45,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
             configureFlows(SCHEDULED_CONSUMER, contextInstance, scheduledFlows);
             configureFlows(FILE_CONSUMER, contextInstance, fileWatcherFlows);
 
-            ContextInstanceCache.instance().put(contextInstance.getName(), contextInstance);
+            ContextInstanceCache.instance().put(contextInstance.getId(), contextInstance);
         }
         catch (Exception e)
         {
