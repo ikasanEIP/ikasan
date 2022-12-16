@@ -7,8 +7,12 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.doesNotExistInCache;
+import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.noneExistInCache;
 
+/**
+ * This is how we control whether a Flow (Trigger Job) is allowed to run
+ * @param <T>
+ */
 public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<ContextInstanceFilterConfiguration> {
     private static final Logger LOG = LoggerFactory.getLogger(ContextInstanceFilter.class);
 
@@ -32,13 +36,13 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 return event;
             }
 
-            if (doesNotExistInCache(contextInstanceFilterConfiguration.getContextName())) {
-                LOG.warn(String.format("ContextInstanceCache does not contain instance for %s!",
-                    contextInstanceFilterConfiguration.getContextName()));
-                throw new ContextInstanceFilterException(String.format("ContextInstanceCache does not contain instance for %s!",
-                    contextInstanceFilterConfiguration.getContextName()));
+            // If just one contextIntanceId is found, allow through
+            if (noneExistInCache(contextInstanceFilterConfiguration.getContextInstanceIds())) {
+                String error = String.format("ContextInstanceCache does not contain instance for any of %s!",
+                    contextInstanceFilterConfiguration.getContextInstanceIds());
+                LOG.warn(error);
+                throw new ContextInstanceFilterException(error);
             }
-
         }
         return event;
     }

@@ -96,7 +96,7 @@ public class QuartzSchedulerJobEventFlowTest {
     @Resource
     private DryRunModeService dryRunModeService;
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
@@ -121,7 +121,7 @@ public class QuartzSchedulerJobEventFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_success() throws IOException {
-        String contextName = createContextAndPutInCache();
+        String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
@@ -134,7 +134,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.setContextName(contextName);
+        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         flowTestRule.consumer("Scheduled Consumer")
             .filter("Context Instance Active Filter")
@@ -174,7 +174,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.setContextName(contextName);
+        contextInstanceFilterConfiguration.addContextInstanceId(contextName);
 
         flowTestRule.consumer("Scheduled Consumer")
             .filter("Context Instance Active Filter");
@@ -197,7 +197,7 @@ public class QuartzSchedulerJobEventFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
-        String contextName = createContextAndPutInCache();
+        String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
@@ -209,7 +209,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.setContextName(contextName);
+        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -242,7 +242,7 @@ public class QuartzSchedulerJobEventFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_not_dropped_success() throws IOException {
-        String contextName = createContextAndPutInCache();
+        String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
@@ -254,7 +254,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.setContextName(contextName);
+        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -287,8 +287,8 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_dropped_success() throws IOException {
-        String contextName = createContextAndPutInCache();
+    public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_dropped_success() {
+        String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
@@ -298,7 +298,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
         ContextInstanceFilterConfiguration contextInstanceFilterConfiguration
             = flowTestRule.getComponentConfig("Context Instance Active Filter", ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.setContextName(contextName);
+        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -341,10 +341,11 @@ public class QuartzSchedulerJobEventFlowTest {
     }
 
     private String createContextAndPutInCache() {
-        String contextName = RandomStringUtils.randomAlphabetic(15);
+        String contextInstanceID = RandomStringUtils.randomAlphabetic(15);
         ContextInstanceImpl instance = new ContextInstanceImpl();
-        instance.setName(contextName);
-        ContextInstanceCache.instance().put(contextName, instance);
-        return contextName;
+        instance.setId(contextInstanceID);
+        instance.setName("contextInstanceName");
+        ContextInstanceCache.instance().put(contextInstanceID, instance);
+        return contextInstanceID;
     }
 }

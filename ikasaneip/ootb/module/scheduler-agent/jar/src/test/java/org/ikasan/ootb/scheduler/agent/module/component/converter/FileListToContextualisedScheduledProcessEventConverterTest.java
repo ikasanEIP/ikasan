@@ -30,7 +30,7 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
         contextInstance.setName("contextName");
         contextInstance.setId("contextInstanceId");
 
-        ContextInstanceCache.instance().put("contextName", contextInstance);
+        ContextInstanceCache.instance().put("contextInstanceId", contextInstance);
 
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
         configuration.setContextName("contextName");
@@ -51,6 +51,6 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
         Assert.assertEquals("contextName", event.getContextName());
         Assert.assertEquals("contextInstanceId", event.getContextInstanceId());
         Assert.assertEquals(2, event.getChildContextNames().size());
-        Assert.assertEquals(true, event.isSuccessful());
+        Assert.assertTrue(event.isSuccessful());
     }
 }
