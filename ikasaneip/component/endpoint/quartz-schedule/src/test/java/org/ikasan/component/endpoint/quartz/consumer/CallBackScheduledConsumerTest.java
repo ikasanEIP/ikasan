@@ -137,7 +137,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_start_no_persisted_recovery() throws SchedulerException
+    public void test_start_no_persisted_recovery_no_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -160,6 +160,10 @@ public class CallBackScheduledConsumerTest
                 // get configuration job group name
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
+
+                // are we in recovery (from Recovery Manager)
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
@@ -194,6 +198,7 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
         Assert.assertEquals("Expected number of triggers not met", 3, scheduledConsumer.getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
@@ -206,7 +211,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException
      */
     @Test
-    public void test_start_with_persisted_recovery_outside_tolerance() throws SchedulerException
+    public void test_start_no_persisted_recovery_with_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -229,6 +234,64 @@ public class CallBackScheduledConsumerTest
                 // get configuration job group name
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
+
+                // are we in recovery (from Recovery Manager)
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(true));
+
+                // get configuration scheduler pass-through properties
+                exactly(1).of(consumerConfiguration).getPassthroughProperties();
+                will(returnValue(null));
+
+                // schedule the job triggers
+                exactly(1).of(scheduler).scheduleJob(with(any(JobDetail.class)), with(any(Trigger.class)));
+            }
+        });
+
+        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler, scheduledJobRecoveryService);
+        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+        scheduledConsumer.start();
+        Assert.assertNull("Expected number of triggers not null", scheduledConsumer.getTriggers());
+        Assert.assertNull("Expected no triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful consumer start.
+     * @throws SchedulerException
+     */
+    @Test
+    public void test_start_with_persisted_recovery_outside_tolerance_no_recovery_manager_recovery() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        final List<String> expressions = new ArrayList(2);
+        expressions.add("0/1 * * * * ?");
+        expressions.add("0/2 * * * * ?");
+        expressions.add("0/3 * * * * ?");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // get flow and module name from the job
+                exactly(1).of(mockJobDetail).getKey();
+                will(returnValue(jobKey));
+
+                // get configuration job name
+                exactly(2).of(consumerConfiguration).getJobName();
+                will(returnValue("jobName"));
+
+                // get configuration job group name
+                exactly(2).of(consumerConfiguration).getJobGroupName();
+                will(returnValue("jobGroupName"));
+
+                // are we in recovery (from Recovery Manager)
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
@@ -275,6 +338,7 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
         Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
@@ -287,7 +351,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException
      */
     @Test
-    public void test_start_with_persisted_recovery_inside_tolerance() throws SchedulerException
+    public void test_start_with_persisted_recovery_inside_tolerance_no_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -310,6 +374,10 @@ public class CallBackScheduledConsumerTest
                 // get configuration job group name
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
+
+                // are we in recovery (from Recovery Manager)
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
@@ -356,6 +424,7 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
         Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
