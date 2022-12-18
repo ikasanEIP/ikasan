@@ -156,6 +156,9 @@ public class ScheduledConsumerTest
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
                 will(returnValue(expressions));
@@ -188,6 +191,7 @@ public class ScheduledConsumerTest
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
         Assert.assertEquals("Expected number of triggers not met", ((StubbedScheduledConsumer)scheduledConsumer).getTriggers().size(), 3);
         Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumer)scheduledConsumer).isReplace());
@@ -223,6 +227,9 @@ public class ScheduledConsumerTest
                 // get configuration job group name
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
+
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
@@ -268,6 +275,7 @@ public class ScheduledConsumerTest
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
         Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedScheduledConsumer)scheduledConsumer).getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumer)scheduledConsumer).isReplace());
@@ -303,6 +311,9 @@ public class ScheduledConsumerTest
                 // get configuration job group name
                 exactly(2).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
+
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
 
                 // access configuration for details
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
@@ -348,6 +359,7 @@ public class ScheduledConsumerTest
         ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler, scheduledJobRecoveryService);
         scheduledConsumer.setConfiguration(consumerConfiguration);
         scheduledConsumer.setJobDetail(mockJobDetail);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
         Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedScheduledConsumer)scheduledConsumer).getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", ((StubbedScheduledConsumer)scheduledConsumer).isReplace());
@@ -719,6 +731,7 @@ public class ScheduledConsumerTest
     {
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
         final TriggerKey triggerKey = new TriggerKey("moduleName", "flowName");
+        final JobKey jobKey = new JobKey("flowName", "moduleName");
         final JobDataMap jobDataMap = new JobDataMap();
         jobDataMap.put("IkasanCronExpression", "0/2 * * * * ?");
         final List<String> expressions = new ArrayList(2);
@@ -740,8 +753,12 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger1));
-//                exactly(1).of(trigger1).getJobKey();
-//                will(returnValue(jobKey));
+                exactly(1).of(trigger1).getJobKey();
+                will(returnValue(jobKey));
+                exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
+                will(returnValue(expressions));
+                exactly(1).of(consumerConfiguration).getDescription();
+                will(returnValue("description"));
 
                 // get configuration scheduler pass-through properties
                 exactly(1).of(consumerConfiguration).getPassthroughProperties();
@@ -753,30 +770,20 @@ public class ScheduledConsumerTest
                 exactly(3).of(consumerConfiguration).getTimezone();
                 will(returnValue("UTC"));
 
-                exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
-                will(returnValue(triggerBuilder));
-                exactly(1).of(triggerBuilder).startAt(with(any(Date.class)));
-                will(returnValue(triggerBuilder));
-                exactly(1).of(triggerBuilder).build();
-                will(returnValue(trigger1));
-
                 exactly(1).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger1));
+                exactly(1).of(trigger1).getJobKey();
+                will(returnValue(jobKey));
+                exactly(1).of(consumerConfiguration).getDescription();
+                will(returnValue("description"));
 
-                exactly(1).of(trigger1).getTriggerBuilder();
-                will(returnValue(triggerBuilder));
-
-                exactly(3).of(trigger1).getJobDataMap();
-                will(returnValue(jobDataMap));
-
-                exactly(2).of(trigger1).getKey();
-                will(returnValue(triggerKey));
-
-                exactly(1).of(scheduler).checkExists(triggerKey);
+                exactly(1).of(consumerConfiguration).isIgnoreMisfire();
                 will(returnValue(true));
 
-                exactly(1).of(scheduler).rescheduleJob(triggerKey, trigger1);
-                will(returnValue(new Date()));
+                exactly(3).of(consumerConfiguration).getTimezone();
+                will(returnValue("UTC"));
+
+                exactly(1).of(scheduler).scheduleJob(with(any(JobDetail.class)), with(any(Set.class)), with(any(Boolean.class)));
 
                 exactly(1).of(mockManagedResourceRecoveryManager).cancel();
 
