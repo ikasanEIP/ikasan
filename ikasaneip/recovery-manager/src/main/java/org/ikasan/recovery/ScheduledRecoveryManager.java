@@ -42,7 +42,6 @@ package org.ikasan.recovery;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
-import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -62,7 +61,6 @@ import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.text.ParseException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -644,32 +642,10 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         try
         {
             startManagedResources();
-
-            if(this.consumer instanceof ScheduledComponent)
+            this.consumer.start();
+            if(!isEventBaseRecovery)
             {
-                JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
-                Trigger trigger = newTrigger()
-                            .withIdentity(triggerKey(jobDetail.getKey().getName(), jobDetail.getKey().getGroup() ))
-                            .startNow()
-                            .withSchedule(simpleSchedule().withMisfireHandlingInstructionNextWithRemainingCount())
-                            .build();
-
-                Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
-                if(logger.isDebugEnabled())
-                {
-                    logger.debug("RecoveryManager scheduled callback on consumer flow ["
-                            + trigger.getKey().getName()
-                            + "] module [" + trigger.getKey().getGroup()
-                            + "] for [" + scheduledDate + "]");
-                }
-            }
-            else
-            {
-                this.consumer.start();
-                if(!isEventBaseRecovery)
-                {
-                    cancelAll();
-                }
+                cancelAll();
             }
         }
         catch(Throwable throwable)
