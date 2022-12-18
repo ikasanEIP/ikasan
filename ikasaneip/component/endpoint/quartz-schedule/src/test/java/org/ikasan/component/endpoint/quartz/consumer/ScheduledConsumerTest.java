@@ -738,6 +738,11 @@ public class ScheduledConsumerTest
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(null));
 
+                exactly(1).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger1));
+//                exactly(1).of(trigger1).getJobKey();
+//                will(returnValue(jobKey));
+
                 // get configuration scheduler pass-through properties
                 exactly(1).of(consumerConfiguration).getPassthroughProperties();
                 will(returnValue(null));
