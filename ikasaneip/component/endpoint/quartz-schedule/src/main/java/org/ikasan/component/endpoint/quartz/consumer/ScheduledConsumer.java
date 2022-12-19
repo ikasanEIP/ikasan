@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.apache.commons.lang3.StringUtils;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryServiceFactory;
 import org.ikasan.scheduler.ScheduledComponent;
@@ -653,17 +652,6 @@ public class ScheduledConsumer<T>
         try
         {
             String cronExpression = (String)oldTrigger.getJobDataMap().get(CRON_EXPRESSION);
-
-            /* When recovering from a ScheduledRecoveryManager, the oldTrigger value for getJobDataMap().get(CRON_EXPRESSION)
-               does not exist, so build it based from the original configuration */
-            if (StringUtils.isBlank(cronExpression)) {
-                if (StringUtils.isNotBlank(consumerConfiguration.getCronExpression())) {
-                    cronExpression = consumerConfiguration.getCronExpression();
-                } else {
-                    // TODO need to handle a list of cronJobs IKASAN-1464 - need to create multiple triggers?
-                }
-            }
-
             Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder(), cronExpression);
             newTrigger.getJobDataMap().clear();     // clear any passed state from the trigger
             newTrigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);  // think we need to keep cron expression value
