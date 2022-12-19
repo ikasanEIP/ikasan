@@ -1,6 +1,5 @@
 package org.ikasan.spec.scheduled.job.service;
 
-import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.ikasan.spec.scheduled.job.model.*;
 import org.ikasan.spec.search.SearchResults;
 
