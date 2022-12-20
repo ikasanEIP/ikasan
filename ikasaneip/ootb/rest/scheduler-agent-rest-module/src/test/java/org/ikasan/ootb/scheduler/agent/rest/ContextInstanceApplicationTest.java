@@ -116,9 +116,8 @@ public class ContextInstanceApplicationTest {
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-        mockMvc.perform(requestBuilder).andReturn();
-
-        assertEquals(0, getContextInstanceIds().size());
+        // Note, this controller now delegates the update of the Context Instance to the class invoked by the save
+        // (which is mocked out) hence so there is little further to test.
     }
 
     private ConcurrentHashMap<String, ContextInstance> getContextInstanceMap() {

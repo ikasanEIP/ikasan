@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import static org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter.CORRELATION_ID;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
@@ -18,24 +19,31 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.quartz.JobDataMap;
+import org.quartz.JobExecutionContext;
+import org.quartz.impl.JobExecutionContextImpl;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ContextInstanceFilterTest {
 
     @Mock
     private DryRunModeService dryRunModeService;
+    /** Mock jobExecutionContext **/
+    @Mock
+    private  JobExecutionContextImpl jobExecutionContextImpl;
+    @Mock
+    private  JobDataMap jobDataMap;
+
     private ContextInstanceFilterConfiguration configuration;
+    private static final String contextInstanceId = RandomStringUtils.randomAlphabetic(12);
     @Before
     public void setup() {
-        String contextInstanceId = RandomStringUtils.randomAlphabetic(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setName("ContextInstanceName1");
         instance.setId(contextInstanceId);
-
         ContextInstanceCache.instance().put(instance.getId(), instance);
 
         configuration = new ContextInstanceFilterConfiguration();
-        configuration.addContextInstanceId(contextInstanceId);
     }
 
     @Test
@@ -55,16 +63,22 @@ public class ContextInstanceFilterTest {
 
     @Test(expected = ContextInstanceFilterException.class)
     public void should_throw_exception_if_context_not_in_cache() {
-        configuration.setContextInstanceIds(new ArrayList<>());
         when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(jobExecutionContextImpl.getMergedJobDataMap()).thenReturn(jobDataMap);
+        when(jobDataMap.get(CORRELATION_ID)).thenReturn("someValueNotCorrelationId");
 
         ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService, true);
+        filter.filter(jobExecutionContextImpl);
+    }
 
-        filter.setConfiguration(configuration);
+    @Test
+    public void should_pass_though_event_if_correlationId_in_cache() {
+        when(this.dryRunModeService.getDryRunMode()).thenReturn(false);
+        when(jobExecutionContextImpl.getMergedJobDataMap()).thenReturn(jobDataMap);
+        when(jobDataMap.get(CORRELATION_ID)).thenReturn(contextInstanceId);
 
-        List<File> files = List.of(new File("."));
-
-        filter.filter(files);
+        ContextInstanceFilter filter = new ContextInstanceFilter(dryRunModeService, true);
+        filter.filter(jobExecutionContextImpl);
     }
 
     @Test
