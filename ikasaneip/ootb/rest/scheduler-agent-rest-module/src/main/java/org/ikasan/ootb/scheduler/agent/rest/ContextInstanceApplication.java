@@ -50,6 +50,8 @@ import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -64,7 +66,7 @@ import java.util.Map;
 @RequestMapping("/rest/contextInstance")
 @RestController
 public class ContextInstanceApplication {
-
+    private final Logger logger = LoggerFactory.getLogger(ContextInstanceApplication.class);
     @Autowired
     private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
     private ObjectMapper mapper;
@@ -91,6 +93,7 @@ public class ContextInstanceApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity save(@RequestBody ContextInstanceImpl contextInstance) {
         try {
+            logger.info("Requested to save context instance, ID [" + contextInstance.getId() + "]");
             contextInstanceIdentifierProvisionService.provision(contextInstance);
         } catch (Exception e) {
             e.printStackTrace();
@@ -105,7 +108,8 @@ public class ContextInstanceApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity remove(@RequestParam("correlationId") String correlationId) {
         try {
-            ContextInstanceCache.instance().remove(correlationId);
+            logger.info("Requested to remove context instance, ID [" + correlationId + "]");
+            contextInstanceIdentifierProvisionService.update(correlationId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(

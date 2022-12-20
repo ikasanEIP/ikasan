@@ -152,8 +152,7 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_file_flow_success_without_aspect() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
@@ -166,10 +165,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
-
         flowTestRule.consumer("File Consumer")
             .filter("Context Instance Active Filter")
             .filter("File Age Filter")
@@ -203,8 +198,7 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
@@ -217,9 +211,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -257,8 +248,7 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
@@ -271,9 +261,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -312,8 +299,7 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filtered() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
@@ -324,9 +310,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -364,8 +347,7 @@ public class FileEventSchedulerJobFlowTest {
     @DirtiesContext
     // TODO need to think about this case as may not be necessary.
     public void test_file_flow_recovery_no_instance_in_cache() {
-        // do not put it in the cache
-        String contextInstanceId = RandomStringUtils.randomAlphabetic(11);
+        // do not create the cache
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -377,12 +359,15 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter");
+            .filter("Context Instance Active Filter")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
@@ -391,10 +376,12 @@ public class FileEventSchedulerJobFlowTest {
         flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
+        // Note, since the ContextInstanceFilter no longer requires plan name, and the reacts to a
+        // JobExecutionContextImpl not a CorrelatedFileList, the flow will continue. This test could be expended with
+        // a more complex scenario or make use of JobExecutionContext later
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
-
-        assertEquals(0, outboundQueue.size());
+        assertEquals(1, outboundQueue.size());
 
         flowTestRule.stopFlow();
     }
@@ -402,8 +389,7 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_file_flow_success_with_aspect() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         dryRunModeService.setDryRunMode(true);
@@ -420,10 +406,6 @@ public class FileEventSchedulerJobFlowTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
         fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
         fileConsumerConfiguration.setJobName("Flow 2 Job Name");
-
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         flowTestRule.consumer("File Consumer")
             .filter("Context Instance Active Filter")
@@ -467,8 +449,7 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_file_flow_success_with_aspect_job_dry_run() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
         dryRunModeService.setDryRunMode(false);
@@ -489,10 +470,6 @@ public class FileEventSchedulerJobFlowTest {
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
         fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
         fileConsumerConfiguration.setJobName("Scheduler Flow 2");
-
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
 
         flowTestRule.consumer("File Consumer")
             .filter("Context Instance Active Filter")
@@ -535,14 +512,8 @@ public class FileEventSchedulerJobFlowTest {
     @Test
     @DirtiesContext
     public void test_file_flow_with_filter() throws IOException {
-        String contextInstanceId = createContextAndPutInCache();
-
+        createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = flowTestRule.getComponentConfig("Context Instance Active Filter"
-            , ContextInstanceFilterConfiguration.class);
-        contextInstanceFilterConfiguration.addContextInstanceId(contextInstanceId);
-
 
         String contextInstanceIdentifier = UUID.randomUUID().toString();
         CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"

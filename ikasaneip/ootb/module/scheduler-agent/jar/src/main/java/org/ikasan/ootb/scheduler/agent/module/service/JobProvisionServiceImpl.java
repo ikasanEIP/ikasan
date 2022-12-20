@@ -272,10 +272,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
             .getFlowElement("Context Instance Active Filter").getFlowComponent();
 
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = contextFilter.getConfiguration();
-
-        contextInstanceFilterConfiguration.addContextInstanceIds(configuration.getCorrelatingIdentifiers());
-
         this.configurationService.update(contextFilter);
 
         ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
@@ -317,9 +313,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
             .getFlowElement("Context Instance Active Filter").getFlowComponent();
-
-        ContextInstanceFilterConfiguration contextInstanceFilterConfiguration = contextFilter.getConfiguration();
-        contextInstanceFilterConfiguration.addContextInstanceIds(configuration.getCorrelatingIdentifiers());
 
         this.configurationService.update(contextFilter);
 

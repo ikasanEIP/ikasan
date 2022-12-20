@@ -15,10 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ContextInstanceIdentifierProvisionServiceImpl implements ContextInstanceIdentifierProvisionService {
     Logger logger = LoggerFactory.getLogger(ContextInstanceIdentifierProvisionServiceImpl.class);
@@ -38,12 +35,12 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     public void provision(ContextInstance contextInstance) {
 
         try {
-            List<String> allFlows = getFlowsForModules(contextInstance);
-            List<String> scheduledFlows = filterFlowsOnProfile(allFlows, SCHEDULED_CONSUMER_PROFILE);
-            List<String> fileWatcherFlows = filterFlowsOnProfile(allFlows, FILE_CONSUMER_PROFILE);
+            List<String> allFlowsForPlanName = filterFlowNamesForGivenPlanName(contextInstance.getName());
+            List<String> scheduledFlows = filterFlowNamesThatContainTargetElement(allFlowsForPlanName, SCHEDULED_CONSUMER_PROFILE);
+            List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElement(allFlowsForPlanName, FILE_CONSUMER_PROFILE);
 
-            configureFlows(SCHEDULED_CONSUMER, contextInstance, scheduledFlows);
-            configureFlows(FILE_CONSUMER, contextInstance, fileWatcherFlows);
+            updateConsumerOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, contextInstance.getId());
+            updateConsumerOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, contextInstance.getId());
 
             ContextInstanceCache.instance().put(contextInstance.getId(), contextInstance);
         }
@@ -54,56 +51,117 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
         }
     }
 
-    private List<String> getFlowsForModules(ContextInstance contextInstance) {
-        List<String> flows = new ArrayList<>();
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule = getConfiguredResource(moduleService.getModule(moduleName));
-        SchedulerAgentConfiguredModuleConfiguration  configuredModuleConfiguration = configuredModule.getConfiguration();
+    public void update(String correlationId) {
+        // If the contextInstanceCache has somehow dropped the instance before we can remove its correlation ID
+        // raise an error but try to recover anyway (extra resilience)
+        ContextInstance contextInstance = ContextInstanceCache.instance().getByCorrelationId(correlationId);
 
-        Map<String, String> flowContextMap = configuredModuleConfiguration.getFlowContextMap();
+        try {
+            Set<String> allFlows = getModuleConfiguration().getFlowContextMap().keySet();
+            List<String> scheduledFlows = filterFlowNamesThatContainTargetElementAndCorrelationId(allFlows, SCHEDULED_CONSUMER_PROFILE, SCHEDULED_CONSUMER, correlationId);
+            List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElementAndCorrelationId(allFlows, FILE_CONSUMER_PROFILE, FILE_CONSUMER, correlationId);
+
+            removeCorrelationIdOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, correlationId);
+            removeCorrelationIdOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, correlationId);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ContextInstanceIdentifierProvisionServiceException(e);
+        }
+    }
+
+    private List<String> filterFlowNamesForGivenPlanName(String planName) {
+        List<String> flows = new ArrayList<>();
         // flow name -> context name
+        Map<String, String> flowContextMap = getModuleConfiguration().getFlowContextMap();
         flowContextMap.entrySet().forEach(entry -> {
-            if (entry.getValue().equals(contextInstance.getName())) {
+            if (entry.getValue().equals(planName)) {
                 flows.add(entry.getKey());
             }
         });
-        logger.info("The following flows will be reviewed  [" + flows + "]");
+        logger.info("The following flows will be reviewed  [" + flows + "] because they belong to plan [" + planName + "]");
         return flows;
     }
 
-    private List<String> filterFlowsOnProfile(List<String> allFlows, String profile) {
+    private SchedulerAgentConfiguredModuleConfiguration getModuleConfiguration() {
+        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule =
+            (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>)moduleService.getModule(moduleName);
+        return configuredModule.getConfiguration();
+    }
+
+    private List<String> filterFlowNamesThatContainTargetElementAndCorrelationId(Collection<String> allFlows, String elementProfile, String consumerType, String correlationId) {
+        List<String> filterFlowsThatContainTargetElementAndCorrelationID = new ArrayList<>();
+        List<String> filterFlowsThatContainTargetElement = filterFlowNamesThatContainTargetElement(allFlows, elementProfile);
+
+        Module<Flow> module = this.moduleService.getModule(moduleName);
+
+        filterFlowsThatContainTargetElement.forEach(flowName -> {
+            Flow flow =  module.getFlow(flowName);
+            ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer =
+                (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow.getFlowElement(consumerType).getFlowComponent();
+
+            CorrelatedScheduledConsumerConfiguration correlatedConsumerConfiguration = consumer.getConfiguration();
+            if (correlatedConsumerConfiguration != null && correlatedConsumerConfiguration.getCorrelatingIdentifiers().contains(correlationId)) {
+                filterFlowsThatContainTargetElementAndCorrelationID.add(flowName);
+            }
+        });
+
+        return filterFlowsThatContainTargetElementAndCorrelationID;
+    }
+
+    private List<String> filterFlowNamesThatContainTargetElement(Collection<String> allFlows, String elementProfile) {
         List<String> flows = new ArrayList<>();
-        ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> configuredModule = getConfiguredResource(moduleService.getModule(moduleName));
-        SchedulerAgentConfiguredModuleConfiguration  configuredModuleConfiguration = configuredModule.getConfiguration();
         // Map of FlowName to Plan Name
-        Map<String, String> flowDefinitionProfilesMap = configuredModuleConfiguration.getFlowDefinitionProfiles();
+        Map<String, String> flowDefinitionProfilesMap = getModuleConfiguration().getFlowDefinitionProfiles();
         allFlows.forEach(flow -> {
             String flowProfile = flowDefinitionProfilesMap.get(flow);
-            if (flowProfile != null && flowProfile.equals(profile)) {
+            if (flowProfile != null && flowProfile.equals(elementProfile)) {
                 flows.add(flow);
             }
         });
         return flows;
     }
 
-    private void configureFlows(String flowType, ContextInstance contextInstance, List<String> flowNames) {
-        logger.info("Updating flows " + flowNames + " with correlation ID " + contextInstance.getId());
+    private void removeCorrelationIdOnTargetFlows(String consumerType, List<String> flowNames, String correlationId) {
+        logger.info("Updating flows " + flowNames + " removing correlation ID " + correlationId);
         Module<Flow> module = this.moduleService.getModule(moduleName);
 
         flowNames.forEach(flowName -> {
             Flow flow =  module.getFlow(flowName);
-            updateConsumerConfiguration(flowType, contextInstance, flow);
+            ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer =
+                (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow.getFlowElement(consumerType).getFlowComponent();
+
+            CorrelatedScheduledConsumerConfiguration correlatedConsumerConfiguration = consumer.getConfiguration();
+            if (correlatedConsumerConfiguration.getCorrelatingIdentifiers().contains(correlationId)) {
+                logger.info("Removing correlation id [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] and stop/starting flow");
+
+                // Stop flow here, to prevent any triggers (maybe there is a way to suspend)
+                flow.stop();
+                correlatedConsumerConfiguration.getCorrelatingIdentifiers().remove(correlationId);
+                // If we don't force the update to be persisted, the old value will be used when the flow starts
+                // because persisted configuration is used at startup
+                configurationService.update(consumer);
+
+                // This needs to be out of the context before the flow restarts otherwise it will be added back into the trigger.
+                if (ContextInstanceCache.instance().getByCorrelationId(correlationId) != null) {
+                    ContextInstanceCache.instance().remove(correlationId);
+                }
+                flow.start();
+            } else {
+                logger.warn("Expected to remove correlation id [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] but it was not there");
+            }
         });
     }
 
-    /**
-     * Cast module to configured resource.
-     *
-     * @param module instance to be recast
-     * @return correctly cast instance
-     */
-    protected ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration> getConfiguredResource(Module<Flow> module)
-    {
-        return (ConfiguredResource<SchedulerAgentConfiguredModuleConfiguration>)module;
+    private void updateConsumerOnTargetFlows(String consumerType, List<String> flowNames, String correlationId) {
+        logger.info("Updating flows " + flowNames + " with correlation ID " + correlationId);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
+
+        flowNames.forEach(flowName -> {
+            Flow flow =  module.getFlow(flowName);
+            updateConsumerConfiguration(consumerType, correlationId, flow);
+        });
     }
 
     /**
@@ -111,11 +169,10 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
      * config contains the correlation ID of the root job plan instance.
      * Then stop/start the flow so that config becomes active.
      * @param consumerType e.g. FileWatcher, ScheduleConsumer
-     * @param contextInstance of the root of the job plans
+     * @param correlationId of the root of the job plans
      * @param flow containing the components to be updated
      */
-    private void updateConsumerConfiguration(String consumerType, ContextInstance contextInstance, Flow flow) {
-        // Note, the FILE_CONSUMER inherits from the SCHEDULED_CONSUMER
+    private void updateConsumerConfiguration(String consumerType, String correlationId, Flow flow) {
         ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer =
             (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow.getFlowElement(consumerType).getFlowComponent();
 
@@ -124,10 +181,10 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
         boolean flagToUpdate = false;
 
         if (correlatedConsumerConfiguration.getCorrelatingIdentifiers() == null) {
-            correlatedConsumerConfiguration.setCorrelatingIdentifiers(Arrays.asList(contextInstance.getId()));
+            correlatedConsumerConfiguration.setCorrelatingIdentifiers(Arrays.asList(correlationId));
             flagToUpdate = true;
-        } else if ( ! correlatedConsumerConfiguration.getCorrelatingIdentifiers().contains(contextInstance.getId())) {
-            correlatedConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstance.getId());
+        } else if ( ! correlatedConsumerConfiguration.getCorrelatingIdentifiers().contains(correlationId)) {
+            correlatedConsumerConfiguration.getCorrelatingIdentifiers().add(correlationId);
             flagToUpdate = true;
         }
 
