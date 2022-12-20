@@ -113,14 +113,14 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
                 jobGroupName = getConfiguration().getJobGroupName();
             }
 
-            // get all configured business expressions (expression and expressions) as a single list
-            // and create uniquely named triggers for each
-            List<String> correlatingIdentifiers = ((CorrelatedScheduledConsumerConfiguration)getConfiguration()).getCorrelatingIdentifiers();
             List<String> cronExpressions = consumerConfiguration.getConsolidatedCronExpressions();
             triggers = new HashSet<>(cronExpressions.size());
-            for(String rootPlanCorrelationId:correlatingIdentifiers) {
-                for(String cronExpression:cronExpressions)
-                {
+
+            List<String> correlatingIdentifiers = ((CorrelatedScheduledConsumerConfiguration)getConfiguration()).getCorrelatingIdentifiers();
+            // get all configured business expressions (expression and expressions) as a single list
+            // and create uniquely named triggers for each
+            for(String cronExpression:cronExpressions) {
+                for(String rootPlanCorrelationId:correlatingIdentifiers) {
                     String jobNameIteration = jobName + "_" + rootPlanCorrelationId + "_" + cronExpression.hashCode();
                     TriggerBuilder triggerBuilder = newTriggerFor(jobNameIteration, jobGroupName);
 

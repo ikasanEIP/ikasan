@@ -121,8 +121,6 @@ public class JobProvisionServiceImplTest {
     @Mock
     private ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter;
 
-    @Mock
-    ContextInstanceFilterConfiguration contextFilterConfiguration;
 
     @Mock
     private FlowElement blackoutRouterElement;
@@ -164,7 +162,6 @@ public class JobProvisionServiceImplTest {
         verify(scheduledConsumerConfiguration, times(1)).setPassthroughProperties(anyMap());
         verify(scheduledConsumerConfiguration, times(1)).setPersistentRecovery(anyBoolean());
         verify(scheduledConsumerConfiguration, times(1)).setRecoveryTolerance(anyLong());
-        verify(scheduledConsumerConfiguration, times(1)).getCorrelatingIdentifiers();
 
         verify(fileConsumerConfiguration, times(1)).setJobName(anyString());
         verify(fileConsumerConfiguration, times(1)).setJobGroupName(anyString());
@@ -191,9 +188,6 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setIncludeTrailer(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortAscending(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).getCorrelatingIdentifiers();
-
-        verify(contextFilterConfiguration, times(2)).addContextInstanceIds(anyList());
 
         verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
 
@@ -203,7 +197,6 @@ public class JobProvisionServiceImplTest {
         verifyNoMoreInteractions(fileConsumerConfiguration);
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
-        verifyNoMoreInteractions(contextFilterConfiguration);
     }
 
     @Test
@@ -274,7 +267,6 @@ public class JobProvisionServiceImplTest {
         verifyNoMoreInteractions(moduleActivator);
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
-        verifyNoMoreInteractions(contextFilterConfiguration);
 
         Assert.assertEquals(0, configuration.getFlowContextMap().size());
         Assert.assertEquals(0, configuration.getFlowDefinitions().size());
@@ -302,7 +294,6 @@ public class JobProvisionServiceImplTest {
         when(moveFileBroker.getConfiguration()).thenReturn(moveFileBrokerConfiguration);
         when(flow.getFlowElement("Context Instance Active Filter")).thenReturn(contextFilterElement);
         when(contextFilterElement.getFlowComponent()).thenReturn(contextFilter);
-        when(contextFilter.getConfiguration()).thenReturn(contextFilterConfiguration);
         when(flow.getFlowElement("Duplicate Message Filter")).thenReturn(duplicateMessageFilterElement);
         when(duplicateMessageFilterElement.getFlowComponent()).thenReturn(duplicateMessageFilter);
         when(duplicateMessageFilter.getConfiguration()).thenReturn(schedulerFileFilterConfiguration);
