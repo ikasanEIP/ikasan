@@ -7,7 +7,7 @@ import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import java.util.Set;
 public class ContextInstanceCache {
     private static final Logger LOG = LoggerFactory.getLogger(ContextInstanceCache.class);
 
@@ -30,7 +30,7 @@ public class ContextInstanceCache {
             return;
         }
 
-        LOG.info(String.format("Adding context instance [%s]", correlationId));
+        LOG.info(String.format("Adding context instance [%s] to cache", correlationId));
         this.contextInstanceMap.put(correlationId, instance);
     }
 
@@ -93,4 +93,7 @@ public class ContextInstanceCache {
         return ! anyExistInCache(correlationIds);
     }
 
+    public static Set<String> getCorrelationIds() {
+        return ContextInstanceCache.instance().contextInstanceMap.keySet();
+    }
 }
