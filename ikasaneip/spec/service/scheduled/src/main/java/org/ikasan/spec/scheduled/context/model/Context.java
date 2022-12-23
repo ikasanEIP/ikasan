@@ -214,4 +214,17 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @return
      */
     List<JOB_LOCK> getAllNestedJobLocks();
+
+    /**
+     * Get the environment group.
+     * Group together Context that may require events sent between them.
+     * @return
+     */
+    String getEnvironmentGroup();
+
+    /**
+     * Set the environment group.
+     * @param environmentGroup
+     */
+    void setEnvironmentGroup(String environmentGroup);
 }
