@@ -106,6 +106,13 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void saveQuartzScheduledJobRecord(QuartzScheduleDrivenJobRecord quartzScheduleDrivenJobRecord);
 
     /**
+     * Save a GlobalEventJobRecord
+     *
+     * @param globalEventJobRecord
+     */
+    void saveGlobalEventJobRecord(GlobalEventJobRecord globalEventJobRecord);
+
+    /**
      * Save a FileEventDrivenJob
      *
      * @param fileEventDrivenJob
@@ -127,6 +134,13 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void saveQuartzScheduledJob(QuartzScheduleDrivenJob quartzScheduleDrivenJob, String modifiedBy);
 
     /**
+     * Save a GlobalEventJob
+     *
+     * @param globalEventJob
+     */
+    void saveGlobalEventJob(GlobalEventJob globalEventJob, String modifiedBy);
+
+    /**
      * Save a list of FileEventDrivenJobRecord.
      *
      * @param fileEventDrivenJobRecords
@@ -146,6 +160,13 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param quartzScheduleDrivenJobRecord
      */
     public void saveQuartzScheduledJobRecords(List<QuartzScheduleDrivenJobRecord> quartzScheduleDrivenJobRecord);
+
+    /**
+     * Save a list of GlobalEventJobRecord.
+     *
+     * @param globalEventJobRecords
+     */
+    public void saveGlobalEventJobRecords(List<GlobalEventJobRecord> globalEventJobRecords);
 
     /**
      * Save a list of InternalEventDrivenJob.
@@ -170,6 +191,14 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param actor
      */
     public void saveFileEventDrivenJobs(List<FileEventDrivenJob> quartzScheduleDrivenJobs, String actor);
+
+    /**
+     * Save a list of GlobalEventJob.
+     *
+     * @param globalEventJobs
+     * @param actor
+     */
+    public void saveGlobalEventJobs(List<GlobalEventJob> globalEventJobs, String actor);
 
     /**
      * Set a InternalEventDrivenJobRecord to skip. If targetResidingContextOnly is set
