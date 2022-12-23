@@ -38,6 +38,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private Map<String, Boolean> skippedContexts;
     private Map<String, Boolean> heldContexts;
     private String executionEnvironmentProperties;
+    private boolean jobRepeatable;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -297,6 +298,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setExecutionEnvironmentProperties(String executionEnvironmentProperties) {
         this.executionEnvironmentProperties = executionEnvironmentProperties;
+    }
+
+    @Override
+    public boolean isJobRepeatable() {
+        return jobRepeatable;
+    }
+
+    @Override
+    public void setJobRepeatable(boolean jobRepeatable) {
+        this.jobRepeatable = jobRepeatable;
     }
 
     @Override
