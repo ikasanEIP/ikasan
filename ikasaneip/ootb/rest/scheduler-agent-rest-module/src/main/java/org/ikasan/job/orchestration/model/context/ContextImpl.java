@@ -19,6 +19,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected List<CONTEXT_PARAM> contextParameters;
     protected String timeWindowStart;
     protected String timeWindowEnd;
+    protected String environmentGroup;
 
     @Override
     public String getName() {
@@ -123,5 +124,15 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public void setTimeWindowEnd(String timeWindowEnd) {
         this.timeWindowEnd = timeWindowEnd;
+    }
+
+    @Override
+    public String getEnvironmentGroup() {
+        return environmentGroup;
+    }
+
+    @Override
+    public void setEnvironmentGroup(String environmentGroup) {
+        this.environmentGroup = environmentGroup;
     }
 }
