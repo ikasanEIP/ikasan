@@ -51,18 +51,28 @@ import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
+import org.ikasan.testharness.flow.database.DatabaseHelper;
+import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.util.TestPropertyValues;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
+import javax.sql.DataSource;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
@@ -83,6 +93,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ContextConfiguration( initializers = { ApplicationTest.PropertiesInitializer.class})
+@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
 public class ApplicationTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -98,6 +110,11 @@ public class ApplicationTest
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
+
+    @Resource
+    @Autowired
+    @Qualifier("ikasan.xads")
+    private DataSource ikasanxads;
 
     public IkasanFlowTestRule flow1TestRule = new IkasanFlowTestRule();
     public IkasanFlowTestRule flow2TestRule = new IkasanFlowTestRule();
@@ -119,12 +136,13 @@ public class ApplicationTest
     // AMQ persistence
     String amqPersistenceBaseDir = "./activemq-data";
     String amqPersistenceDir = amqPersistenceBaseDir + "/localhost/KahaDB";
-
+    static int h2Port;
     @BeforeClass
     public static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
-        server =  Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
+        h2Port = SocketUtils.findAvailableTcpPort();
+        server =  Server.createTcpServer("-tcpPort", String.valueOf(h2Port), "-tcpAllowOthers","-ifNotExists").start();
     }
 
     @Before
@@ -151,8 +169,11 @@ public class ApplicationTest
         flow3TestRule.stopFlow();
         flow4TestRule.stopFlow();
 
+        removeAllMessages();
+
         Thread.sleep(1000);
         broker.stop();
+        clearDatabase();
     }
 
     @AfterClass
@@ -298,6 +319,24 @@ public class ApplicationTest
         flow2TestRule.assertIsSatisfied();
         flow3TestRule.assertIsSatisfied();
         flow4TestRule.assertIsSatisfied();
+    }
+
+    private void removeAllMessages() throws Exception {
+        new ActiveMqHelper().removeAllMessages();
+    }
+
+    private void clearDatabase() throws SQLException {
+        new DatabaseHelper(ikasanxads).clearDatabase();
+    }
+
+    public static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext>
+    {
+        public PropertiesInitializer(){}
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext)
+        {
+            TestPropertyValues.of(new String[]{"h2.db.port="+h2Port}).applyTo(applicationContext.getEnvironment());
+        }
     }
 }
 
