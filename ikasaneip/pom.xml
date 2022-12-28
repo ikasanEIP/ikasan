@@ -255,20 +255,20 @@
         <version.logback.core>1.2.11</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
-        <version.org.hibernate>5.6.10.Final</version.org.hibernate>
-        <version.org.hibernate-validator>6.2.4.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.3.23</version.org.springframework>
+        <version.org.hibernate>5.6.14.Final</version.org.hibernate>
+        <version.org.hibernate-validator>6.2.5.Final</version.org.hibernate-validator>
+        <version.org.springframework>5.3.24</version.org.springframework>
         <version.org.springframework.security>5.7.3</version.org.springframework.security>
         <version.org.springframework.ldap>2.3.8.RELEASE</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
-        <version.org.springboot>2.7.3</version.org.springboot>
+        <version.org.springboot>2.7.7</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
         <version.springdoc.openapi.ui>1.6.11</version.springdoc.openapi.ui>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.10.6</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>1.7.36</version.org.slf4j>
-        <version.junit>4.13.1</version.junit>
+        <version.junit>4.13.2</version.junit>
         <version.org.awaitility>4.0.2</version.org.awaitility>
         <version.org.jmock>2.12.0</version.org.jmock>
         <version.org.jmock.jmock-legacy>2.12.0</version.org.jmock.jmock-legacy>
