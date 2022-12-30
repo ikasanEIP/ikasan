@@ -78,7 +78,7 @@
 		<security:authorize access="hasAnyAuthority('ALL','WriteBlueConsole')">
 		  <li><a href="<c:url value='/admin/admin.htm'/>">Admin</a></li>
 		</security:authorize>
-        <li><a href="<c:url value='/swagger-ui/'/>">REST API</a></li>
+        <li><a href="<c:url value='/swagger-ui/index.html'/>">REST API</a></li>
 
     </ul>
 	<span id="sessioninfo">

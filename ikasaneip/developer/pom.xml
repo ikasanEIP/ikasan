@@ -53,7 +53,7 @@
 
     <modules>
         <module>mvn-util</module>
-        <module>mvn-archetype</module>
+<!--        <module>mvn-archetype</module>-->
     </modules>
 
 </project>
