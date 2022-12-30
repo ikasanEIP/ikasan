@@ -3,10 +3,12 @@ package org.ikasan.transaction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
+import com.arjuna.ats.jta.common.jtaPropertyManager;
 import me.snowdrop.boot.narayana.autoconfigure.NarayanaBeanFactoryPostProcessor;
 import me.snowdrop.boot.narayana.core.jdbc.GenericXADataSourceWrapper;
 import me.snowdrop.boot.narayana.core.jdbc.PooledXADataSourceWrapper;
-import me.snowdrop.boot.narayana.core.jms.NarayanaXAConnectionFactoryWrapper;
+import me.snowdrop.boot.narayana.core.jms.GenericXAConnectionFactoryWrapper;
+import me.snowdrop.boot.narayana.core.jms.PooledXAConnectionFactoryWrapper;
 import me.snowdrop.boot.narayana.core.properties.NarayanaProperties;
 import me.snowdrop.boot.narayana.core.properties.NarayanaPropertiesInitializer;
 import org.springframework.beans.factory.ObjectProvider;
@@ -28,6 +30,7 @@ import org.springframework.util.StringUtils;
 
 import javax.jms.Message;
 import javax.transaction.TransactionManager;
+import javax.transaction.TransactionSynchronizationRegistry;
 import javax.transaction.UserTransaction;
 import java.io.File;
 
@@ -86,6 +89,13 @@ public class IkasanTransactionConfiguration
          return com.arjuna.ats.jta.TransactionManager.transactionManager();
     }
 
+    @Bean
+    @DependsOn("narayanaPropertiesInitializer")
+    @ConditionalOnMissingBean
+    public TransactionSynchronizationRegistry narayanaTransactionSynchronizationRegistry() {
+        return jtaPropertyManager.getJTAEnvironmentBean().getTransactionSynchronizationRegistry();
+    }
+
     /**
      *     <bean id="transactionManager" class="org.springframework.transaction.jta.JtaTransactionManager">
      *         <property name="transactionManager"  ref="arjunaTransactionManager" />
@@ -97,12 +107,15 @@ public class IkasanTransactionConfiguration
      *
      *     </bean>
      */
+
      @Bean
     @ConditionalOnMissingBean
     public JtaTransactionManager transactionManager(UserTransaction userTransaction,
                                                     TransactionManager transactionManager,
+                                                    TransactionSynchronizationRegistry transactionSynchronizationRegistry,
                                                    @Value("${ikasan.default.transaction.timeout.seconds:300}") Integer timeout) {
         JtaTransactionManager jtaTransactionManager = new JtaTransactionManager(userTransaction, transactionManager);
+        jtaTransactionManager.setTransactionSynchronizationRegistry(transactionSynchronizationRegistry);
         if (this.transactionManagerCustomizers != null) {
             this.transactionManagerCustomizers.customize(jtaTransactionManager);
         }
@@ -169,7 +182,8 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule) {
-            return new GenericXADataSourceWrapper(narayanaProperties, xaRecoveryModule);
+            return new GenericXADataSourceWrapper(xaRecoveryModule,
+                narayanaProperties.getRecoveryDbCredentials());
         }
 
     }
@@ -184,7 +198,9 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule, TransactionManager transactionManager) {
-            return new PooledXADataSourceWrapper(narayanaProperties, xaRecoveryModule, transactionManager);
+            return new PooledXADataSourceWrapper(transactionManager, xaRecoveryModule,
+                narayanaProperties.getDbcp(),
+                narayanaProperties.getRecoveryDbCredentials());
         }
 
     }
@@ -192,15 +208,31 @@ public class IkasanTransactionConfiguration
     /**
      * JMS connection factory wrapper configuration.
      */
-    @Configuration
+    @ConditionalOnProperty(name = "narayana.messaginghub.enabled", havingValue = "false", matchIfMissing = true)
     @ConditionalOnClass(Message.class)
-    static class NarayanaJmsConfiguration {
+    static class GenericJmsConfiguration {
 
         @Bean
         @ConditionalOnMissingBean(XAConnectionFactoryWrapper.class)
         public XAConnectionFactoryWrapper xaConnectionFactoryWrapper(TransactionManager transactionManager,
                                                                      XARecoveryModule xaRecoveryModule, NarayanaProperties narayanaProperties) {
-            return new NarayanaXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule, narayanaProperties);
+            return new GenericXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule,
+                narayanaProperties.getRecoveryJmsCredentials());
+        }
+
+    }
+
+    @ConditionalOnProperty(name = "narayana.messaginghub.enabled", havingValue = "true")
+    @ConditionalOnClass(Message.class)
+    static class PooledJmsConfiguration {
+
+        @Bean
+        @ConditionalOnMissingBean(XAConnectionFactoryWrapper.class)
+        public XAConnectionFactoryWrapper xaConnectionFactoryWrapper(TransactionManager transactionManager,
+                                                                     XARecoveryModule xaRecoveryModule, NarayanaProperties narayanaProperties) {
+            return new PooledXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule,
+                narayanaProperties.getMessaginghub(),
+                narayanaProperties.getRecoveryJmsCredentials());
         }
 
     }

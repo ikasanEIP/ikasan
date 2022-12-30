@@ -295,6 +295,7 @@
         <version.commons-collections>3.2.2</version.commons-collections>
         <version.commons-io>2.7</version.commons-io>
         <version.commons-dbcp2>2.9.0</version.commons-dbcp2>
+        <version.commons-pool2>2.11.1</version.commons-pool2>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.12.0</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
@@ -324,7 +325,7 @@
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
         <version.org.jboss.narayana.jta>5.9.8.Final</version.org.jboss.narayana.jta>
-        <version.me.snowdrop.narayana>2.2.0</version.me.snowdrop.narayana>
+        <version.me.snowdrop.narayana>2.6.7</version.me.snowdrop.narayana>
         <version.commons.net>3.3</version.commons.net>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
         <version.org.jboss.logging.jboss-logging>3.3.2.Final</version.org.jboss.logging.jboss-logging>
@@ -1585,6 +1586,11 @@
                         <groupId>org.jboss.spec.javax.transaction</groupId>
                         <artifactId>jboss-transaction-api_1.2_spec</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.commons</groupId>
+                        <artifactId>commons-pool2</artifactId>
+                    </exclusion>
+
                 </exclusions>
             </dependency>
 
@@ -2097,6 +2103,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>${version.commons-dbcp2}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${version.commons-pool2}</version>
             </dependency>
 
             <dependency>
