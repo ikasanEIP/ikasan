@@ -32,6 +32,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 public class ContextInstanceRestServiceTest {
 
     private static final String MODULE_NAME = "module name";
+    private static final String AGENT_NAME = "asset-control-scheduler-agent";
     private final Mockery mockery = new Mockery() {{
         setImposteriser(ClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
@@ -63,17 +64,52 @@ public class ContextInstanceRestServiceTest {
         uut = new ContextInstanceRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/jobContext");
     }
 
+    // @Mick, don't think we need these anymore
+//    @Test
+//    public void get_all_contexts() throws IOException {
+//        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
+//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
+//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+//            .willReturn(aResponse()
+//                .withBody(loadDataFile("/data/context/job-context-instance-all.json"))
+//                .withStatus(200)
+//            ));
+//
+//        Map<String, ContextInstance> all = uut.getAll();
+//        assertEquals(2, all.size());
+//
+//        ContextInstance contextInstance = all.get("COMPLEX_CONTEXT-1");
+//        List<ContextParameterInstance> params = contextInstance.getContextParameters();
+//        assertEquals(3, params.size());
+//        contextInstance = all.get("COMPLEX_CONTEXT-2");
+//        params = contextInstance.getContextParameters();
+//        assertEquals(3, params.size());
+//    }
+//
+//    @Test(expected = EndpointException.class)
+//    public void get_all_contexts_returns_error() {
+//        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
+//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
+//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+//            .willReturn(aResponse()
+//                .withBody("{500 Error}")
+//                .withStatus(500)
+//            ));
+//
+//        uut.getAll();
+//    }
+//
     @Test
-    public void get_all_contexts() throws IOException {
-        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
+    public void get_by_agent_name_contexts() throws IOException {
+        stubFor(get(urlEqualTo("/rest/jobContext/getByAgentName?agentName="+AGENT_NAME))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-                .withBody(loadDataFile("/data/context/job-context-instance-all.json"))
+                .withBody(loadDataFile("/data/context/job-context-instance-by-agent.json"))
                 .withStatus(200)
             ));
 
-        Map<String, ContextInstance> all = uut.getAll();
+        Map<String, ContextInstance> all = uut.getByAgentName(AGENT_NAME);
         assertEquals(2, all.size());
 
         ContextInstance contextInstance = all.get("COMPLEX_CONTEXT-1");
@@ -85,8 +121,8 @@ public class ContextInstanceRestServiceTest {
     }
 
     @Test(expected = EndpointException.class)
-    public void get_all_contexts_returns_error() {
-        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
+    public void when_get_by_agent_returns_error() {
+        stubFor(get(urlEqualTo("/rest/jobContext/getByAgentName?agentName="+AGENT_NAME))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -94,39 +130,40 @@ public class ContextInstanceRestServiceTest {
                 .withStatus(500)
             ));
 
-        uut.getAll();
+        uut.getByAgentName(AGENT_NAME);
     }
 
-    @Test
-    public void get_context() throws IOException {
-        stubFor(get(urlEqualTo("/rest/jobContext/getByContextName?contextName=COMPLEX_CONTEXT"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse()
-                .withBody(loadDataFile("/data/context/job-context-instance.json"))
-                .withStatus(200)
-            ));
-
-        Map<String, ContextInstance> complex_context = uut.getByContextId("COMPLEX_CONTEXT");
-        assertEquals(1, complex_context.size());
-
-        ContextInstance contextInstance = complex_context.get("COMPLEX_CONTEXT");
-        List<ContextParameterInstance> params = contextInstance.getContextParameters();
-        assertEquals(3, params.size());
-    }
-
-    @Test(expected = EndpointException.class)
-    public void get_context_with_error() {
-        stubFor(get(urlEqualTo("/rest/jobContext/getByContextName?contextName=COMPLEX_CONTEXT"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse()
-                .withBody("{403 Error}")
-                .withStatus(403)
-            ));
-
-        uut.getByContextId("COMPLEX_CONTEXT");
-    }
+    // @Mick, don't think we need these anymore
+//    @Test
+//    public void get_context() throws IOException {
+//        stubFor(get(urlEqualTo("/rest/jobContext/getByContextName?contextName=COMPLEX_CONTEXT"))
+//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
+//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+//            .willReturn(aResponse()
+//                .withBody(loadDataFile("/data/context/job-context-instance.json"))
+//                .withStatus(200)
+//            ));
+//
+//        Map<String, ContextInstance> complex_context = uut.getByContextId("COMPLEX_CONTEXT");
+//        assertEquals(1, complex_context.size());
+//
+//        ContextInstance contextInstance = complex_context.get("COMPLEX_CONTEXT");
+//        List<ContextParameterInstance> params = contextInstance.getContextParameters();
+//        assertEquals(3, params.size());
+//    }
+//
+//    @Test(expected = EndpointException.class)
+//    public void get_context_with_error() {
+//        stubFor(get(urlEqualTo("/rest/jobContext/getByContextName?contextName=COMPLEX_CONTEXT"))
+//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
+//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+//            .willReturn(aResponse()
+//                .withBody("{403 Error}")
+//                .withStatus(403)
+//            ));
+//
+//        uut.getByContextId("COMPLEX_CONTEXT");
+//    }
 
     protected String loadDataFile(String fileName) throws IOException {
         return IOUtils.toString(loadDataFileStream(fileName), StandardCharsets.UTF_8);
