@@ -21,8 +21,8 @@ public class AgentRecoveryRunnable implements Runnable {
 
     private final ContextInstanceRestService<ContextInstance> contextInstanceRestService;
     private final long minutesToKeepRetrying;
-    private String moduleName;
-    private ModuleService moduleService;
+    private final String moduleName;
+    private final ModuleService moduleService;
 
     public AgentRecoveryRunnable(ContextInstanceRestService contextInstanceRestService, long minutesToKeepRetrying, String moduleName, ModuleService moduleService) {
         this.contextInstanceRestService = contextInstanceRestService;
@@ -64,16 +64,18 @@ public class AgentRecoveryRunnable implements Runnable {
                 exception = false;
                 try {
                     // If the context instance from the dashboard relates to a plan that has been recovered, add it.
-                    Map<String, ContextInstance> contextInstances = contextInstanceRestService.getAll();
+                    Map<String, ContextInstance> contextInstances = contextInstanceRestService.getByAgentName(moduleName);
                     for (String correlationId : contextInstances.keySet()) {
                         ContextInstance contextInstance = contextInstances.get(correlationId);
+
+                        // @TODO in theory we should have the correct parameters e.g. SPEL to inject back in if we need to.
                         if (contextNames.contains(contextInstance.getName())) {
                             ContextInstanceCache.instance().put(correlationId, contextInstances.get(correlationId));
+                            LOG.info("Adding [" + correlationId + "] to the cache.");
                         } else {
-                            LOG.error("The dashboard thinks this agent should be dealing a context instance for the job plan name [" + contextInstance.getName() +
+                            LOG.error("The dashboard thinks this agent should be dealing context instance " + contextInstance.getId() + " for the plan [" + contextInstance.getName() +
                                 "] but there is no recovered plan to deal with it, the only plans available are " + contextNames);
                         }
-
                     }
                     LOG.info("Successfully recovered context instances at start up for contexts: " + contextNames);
                     break;

@@ -22,7 +22,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AgentRecoveryRunnableTest {
-
+    private static final String AGENT = "scheduler-agent";
     @Mock
     private ContextInstanceRestService contextInstanceRestService;
 
@@ -38,7 +38,7 @@ public class AgentRecoveryRunnableTest {
 
     @Test
     public void should_successfully_recover_instances() {
-        AgentRecoveryRunnable runner = new AgentRecoveryRunnable(contextInstanceRestService, 1, "scheduler-agent", moduleService);
+        AgentRecoveryRunnable runner = new AgentRecoveryRunnable(contextInstanceRestService, 1, AGENT, moduleService);
 
         ContextInstance instance1 = new ContextInstanceImpl();
         String rootPlan1CorrelationId = RandomStringUtils.randomNumeric(10);
@@ -69,7 +69,8 @@ public class AgentRecoveryRunnableTest {
 
         Map<String, ContextInstance> map = Map.of(rootPlan1CorrelationId, instance1, rootPlan2CorrelationId, instance2, rootPlan3CorrelationId, instance3);
 
-        when(contextInstanceRestService.getAll()).thenReturn(map);
+//        when(contextInstanceRestService.getAll()).thenReturn(map);
+        when(contextInstanceRestService.getByAgentName(AGENT)).thenReturn(map);
 
         runner.run();
 
@@ -82,7 +83,7 @@ public class AgentRecoveryRunnableTest {
     @Test(expected = EndpointException.class)
     @Ignore // takes at least 1 minute to run
     public void should_throw_exception_if_times_out_recovering() {
-        AgentRecoveryRunnable runner = new AgentRecoveryRunnable(contextInstanceRestService, 1, "scheduler-agent", moduleService);
+        AgentRecoveryRunnable runner = new AgentRecoveryRunnable(contextInstanceRestService, 1, AGENT, moduleService);
 
         String contextName = RandomStringUtils.randomAlphabetic(12);
         ContextInstance instance1 = new ContextInstanceImpl();
@@ -97,7 +98,7 @@ public class AgentRecoveryRunnableTest {
         when(module.getConfiguration()).thenReturn(configureModule);
         when(configureModule.getFlowContextMap()).thenReturn(contextFlowMap);
 
-        when(contextInstanceRestService.getAll()).thenThrow(new EndpointException("excepted exception"));
+        when(contextInstanceRestService.getByAgentName(AGENT)).thenThrow(new EndpointException("excepted exception"));
 
         runner.run();
     }

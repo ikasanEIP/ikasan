@@ -4,7 +4,9 @@ import java.util.Map;
 
 public interface ContextInstanceRestService<T> {
 
-    Map<String, T> getAll();
-
-    Map<String, T> getByContextId(String correlationId);
+    // @Mick I don't think we need these anymore
+//    Map<String, T> getAll();
+//
+//    Map<String, T> getByContextId(String correlationId);
+    Map<String, T> getByAgentName(String agentName);
 }
