@@ -263,7 +263,7 @@
         <version.org.springframework.webflow>2.4.8.RELEASE</version.org.springframework.webflow>
         <version.spring.cloud.config.client>3.1.5</version.spring.cloud.config.client>
         <version.org.springboot>2.7.7</version.org.springboot>
-        <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
+        <version.org.springframework.shell>2.1.4</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.springdoc.openapi.ui>1.6.11</version.springdoc.openapi.ui>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
