@@ -54,8 +54,6 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     public void update(String correlationId) {
         // If the contextInstanceCache has somehow dropped the instance before we can remove its correlation ID
         // raise an error but try to recover anyway (extra resilience)
-        ContextInstance contextInstance = ContextInstanceCache.instance().getByCorrelationId(correlationId);
-
         try {
             Set<String> allFlows = getModuleConfiguration().getFlowContextMap().keySet();
             List<String> scheduledFlows = filterFlowNamesThatContainTargetElementAndCorrelationId(allFlows, SCHEDULED_CONSUMER_PROFILE, SCHEDULED_CONSUMER, correlationId);
@@ -75,9 +73,9 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
         List<String> flows = new ArrayList<>();
         // flow name -> context name
         Map<String, String> flowContextMap = getModuleConfiguration().getFlowContextMap();
-        flowContextMap.entrySet().forEach(entry -> {
-            if (entry.getValue().equals(planName)) {
-                flows.add(entry.getKey());
+        flowContextMap.forEach((key, value) -> {
+            if (value.equals(planName)) {
+                flows.add(key);
             }
         });
         logger.info("The following flows will be reviewed  [" + flows + "] because they belong to plan [" + planName + "]");
@@ -124,7 +122,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     }
 
     private void removeCorrelationIdOnTargetFlows(String consumerType, List<String> flowNames, String correlationId) {
-        logger.info("Updating flows " + flowNames + " removing correlation ID " + correlationId);
+        logger.info("Updating flows " + flowNames + " removing correlation ID " + correlationId + " for component type " + consumerType);
         Module<Flow> module = this.moduleService.getModule(moduleName);
 
         flowNames.forEach(flowName -> {
@@ -155,7 +153,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     }
 
     private void updateConsumerOnTargetFlows(String consumerType, List<String> flowNames, String correlationId) {
-        logger.info("Updating flows " + flowNames + " with correlation ID " + correlationId);
+        logger.info("Updating flows " + flowNames + " with correlation ID " + correlationId + " for component " + consumerType);
         Module<Flow> module = this.moduleService.getModule(moduleName);
 
         flowNames.forEach(flowName -> {
