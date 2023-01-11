@@ -64,20 +64,20 @@ public class AgentRecoveryRunnable implements Runnable {
                 exception = false;
                 try {
                     // If the context instance from the dashboard relates to a plan that has been recovered, add it.
-                    Map<String, ContextInstance> contextInstances = contextInstanceRestService.getByAgentName(moduleName);
+                    Map<String, ContextInstance> contextInstances = contextInstanceRestService.getAllInstancesDashboardThinksAgentShouldHandle(moduleName);
                     for (String correlationId : contextInstances.keySet()) {
                         ContextInstance contextInstance = contextInstances.get(correlationId);
 
                         // @TODO in theory we should have the correct parameters e.g. SPEL to inject back in if we need to.
                         if (contextNames.contains(contextInstance.getName())) {
                             ContextInstanceCache.instance().put(correlationId, contextInstances.get(correlationId));
-                            LOG.info("Adding [" + correlationId + "] to the cache.");
+                            LOG.info("Adding correlationId [" + correlationId + "] to the cache.");
                         } else {
-                            LOG.error("The dashboard thinks this agent should be dealing context instance " + contextInstance.getId() + " for the plan [" + contextInstance.getName() +
+                            LOG.error("The dashboard thinks this agent should be dealing correlationId " + contextInstance.getId() + " for the plan [" + contextInstance.getName() +
                                 "] but there is no recovered plan to deal with it, the only plans available are " + contextNames);
                         }
                     }
-                    LOG.info("Successfully recovered context instances at start up for contexts: " + contextNames);
+                    LOG.info("Successfully recovered correlationId at start up for contexts: " + contextNames);
                     break;
                 } catch (Exception e) {
                     exception = true;
