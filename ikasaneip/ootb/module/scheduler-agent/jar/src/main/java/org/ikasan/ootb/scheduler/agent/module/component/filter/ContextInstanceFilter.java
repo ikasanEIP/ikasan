@@ -7,9 +7,9 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.quartz.impl.JobExecutionContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.quartz.JobExecutionContext;
 
-import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.*;
+import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.existsInCache;
+import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.getCorrelationIds;
 
 /**
  * This is how we control whether a Flow (Trigger Job) is allowed to run
@@ -20,8 +20,8 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
     protected static final String CORRELATION_ID = "correlationId";
     private ContextInstanceFilterConfiguration contextInstanceFilterConfiguration;
     private String configurationId;
-    private DryRunModeService dryRunModeService;
-    private boolean agentRecoveryActive;
+    private final DryRunModeService dryRunModeService;
+    private final boolean agentRecoveryActive;
 
     public ContextInstanceFilter(DryRunModeService dryRunModeService, boolean agentRecoveryActive) {
         this.dryRunModeService = dryRunModeService;
@@ -44,11 +44,12 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 // If we have a trigger with a correlation ID not in the Cache - error
                 // If we have a trigger with a correlation ID in cache or correlation ID is blank (the scenario to prevent job going into recovery) - allow through
                 if (correlationId == null || correlationId.isEmpty()) {
-                    LOG.warn("The correlation ID was [" + correlationId + "] for cron ID " +
-                        (String)jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID) + "] and job [" +
+                    LOG.warn("The correlationId was [" + correlationId + "] for cron ID " +
+                        jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID) + "] and job [" +
                         jobExecutionContext.getJobDetail().getDescription() + "]");
                 } else if (!existsInCache(correlationId)) {
-                    String error = String.format("Expected to find the correlation ID [%s] in the ContextInstanceCache but it was not there, could only find id,plans [%s]", correlationId, getCorrelationIds());
+                    String error = String.format("Expected to find the correlationId [%s] in the ContextInstanceCache but it was not there," +
+                        "maybe the dashboard restarted so this ID is no longer running, could only find correlationIds/plans [%s]", correlationId, getCorrelationIds());
                     LOG.error(error);
                     throw new ContextInstanceFilterException(error);
                 } else {
@@ -56,11 +57,7 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 }
             } else {
                 LOG.info("Event of type " + event + " ignored");
-                // TODO Review with Mick, should be returning null?, perhaps tests not right ?
             }
-        } else {
-            ;
-            // TODO Review with Mick, should be returning null?, perhaps tests not right ?
         }
         return event;
     }

@@ -47,7 +47,6 @@ import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
 import org.slf4j.Logger;
@@ -69,10 +68,9 @@ public class ContextInstanceApplication {
     private final Logger logger = LoggerFactory.getLogger(ContextInstanceApplication.class);
     @Autowired
     private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
-    private ObjectMapper mapper;
 
     public ContextInstanceApplication() {
-        this.mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
             .allowIfSubType("org.ikasan.spec.scheduled.instance.model")
             .allowIfSubType("org.ikasan.job.orchestration.model.context")
@@ -83,22 +81,22 @@ public class ContextInstanceApplication {
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class);
 
-        this.mapper.registerModule(simpleModule);
-        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
-        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.registerModule(simpleModule);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
     @RequestMapping(path = "/save", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity save(@RequestBody ContextInstanceImpl contextInstance) {
         try {
-            logger.info("Requested to save context instance, ID [" + contextInstance.getId() + "]");
+            logger.info("Requested to save correlationId [" + contextInstance.getId() + "]");
             contextInstanceIdentifierProvisionService.provision(contextInstance);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(
-                new ErrorDto("An error has occurred attempting to save context instance! Error message ["
+                new ErrorDto("An error has occurred attempting to save correlationId " + contextInstance.getId() + " Error message ["
                     + e.getMessage() + "]"), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
@@ -108,13 +106,13 @@ public class ContextInstanceApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity remove(@RequestParam("correlationId") String correlationId) {
         try {
-            logger.info("Requested to remove context instance, ID [" + correlationId + "]");
+            logger.info("Requested to remove correlationId [" + correlationId + "]");
             contextInstanceIdentifierProvisionService.update(correlationId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(
                 new ErrorDto(
-                    String.format("An error has occurred attempting to remove context instance for %s! Error message [%s]", correlationId, e.getMessage())),
+                    String.format("An error has occurred attempting to remove correlationId [%s] Error message [%s]", correlationId, e.getMessage())),
                 HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);

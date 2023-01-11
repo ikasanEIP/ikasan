@@ -122,7 +122,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     }
 
     private void removeCorrelationIdOnTargetFlows(String consumerType, List<String> flowNames, String correlationId) {
-        logger.info("Updating flows " + flowNames + " removing correlation ID " + correlationId + " for component type " + consumerType);
+        logger.info("Updating flows " + flowNames + " removing correlationId " + correlationId + " for component type " + consumerType);
         Module<Flow> module = this.moduleService.getModule(moduleName);
 
         flowNames.forEach(flowName -> {
@@ -132,7 +132,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
 
             CorrelatedScheduledConsumerConfiguration correlatedConsumerConfiguration = consumer.getConfiguration();
             if (correlatedConsumerConfiguration.getCorrelatingIdentifiers().contains(correlationId)) {
-                logger.info("Removing correlation id [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] and stop/starting flow");
+                logger.info("Removing correlationId [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] and stop/starting flow");
 
                 // Stop flow here, to prevent any triggers (maybe there is a way to suspend)
                 flow.stop();
@@ -147,7 +147,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
                 }
                 flow.start();
             } else {
-                logger.warn("Expected to remove correlation id [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] but it was not there");
+                logger.warn("Expected to remove correlationId [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] but it was not there");
             }
         });
     }
