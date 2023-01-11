@@ -8,5 +8,5 @@ public interface ContextInstanceRestService<T> {
 //    Map<String, T> getAll();
 //
 //    Map<String, T> getByContextId(String correlationId);
-    Map<String, T> getByAgentName(String agentName);
+    Map<String, T> getAllInstancesDashboardThinksAgentShouldHandle(String agentName);
 }
