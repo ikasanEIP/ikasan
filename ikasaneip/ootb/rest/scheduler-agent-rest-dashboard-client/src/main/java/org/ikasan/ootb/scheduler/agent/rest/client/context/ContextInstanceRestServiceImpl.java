@@ -68,7 +68,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
 //            return this.mapper.readValue(response.getBody(), new TypeReference<>() {
 //            });
 //        } catch (RestClientException | JsonProcessingException e) {
-//            String message = "Issue getting all context instances for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
+//            String message = "Issue getting all ccorrelationId for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
 //            logger.error(message);
 //            throw new EndpointException(e);
 //        }
@@ -96,13 +96,13 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
 //            });
 //
 //        } catch (RestClientException | JsonProcessingException e) {
-//            String message = "Issue getting context instance for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
+//            String message = "Issue getting correlationId for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
 //            logger.error(message);
 //            throw new EndpointException(e);
 //        }
 //    }
     @Override
-    public Map<String, ContextInstance> getByAgentName(String agentName) {
+    public Map<String, ContextInstance> getAllInstancesDashboardThinksAgentShouldHandle(String agentName) {
         if (this.token == null) {
             authenticate(moduleName);
         }

@@ -30,7 +30,7 @@ public class ContextInstanceCache {
             return;
         }
 
-        LOG.info(String.format("Adding context instance [%s] to cache", correlationId));
+        LOG.info(String.format("Adding correlationId [%s] to cache", correlationId));
         this.contextInstanceMap.put(correlationId, instance);
     }
 
@@ -38,13 +38,13 @@ public class ContextInstanceCache {
         if (correlationId == null) {
             return;
         }
-        LOG.info(String.format("Removing context instance [%s]", correlationId));
+        LOG.info(String.format("Removing correlationId [%s]", correlationId));
         this.contextInstanceMap.remove(correlationId);
     }
 
     public ContextInstance getByCorrelationId(String correlationId) {
         if (correlationId != null) {
-            LOG.debug(String.format("Getting context parameters for context instance ID [%s]", correlationId));
+            LOG.debug(String.format("Getting context parameters for correlationId [%s]", correlationId));
             return this.contextInstanceMap.get(correlationId);
         } else {
             return null;
@@ -87,10 +87,6 @@ public class ContextInstanceCache {
             }
         }
         return false;
-    }
-
-    public static boolean noneExistInCache(List<String> correlationIds) {
-        return ! anyExistInCache(correlationIds);
     }
 
     public static Set<String> getCorrelationIds() {
