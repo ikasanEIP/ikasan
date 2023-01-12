@@ -4,7 +4,7 @@ import org.quartz.JobExecutionContext;
 
 public interface ContextInstanceRegistrationService {
 
-    void register(String contextName);
+    String register(String contextName);
     void deRegisterByName(String contextName);
     void deRegisterById(String contextInstanceId, JobExecutionContext context);
 }
