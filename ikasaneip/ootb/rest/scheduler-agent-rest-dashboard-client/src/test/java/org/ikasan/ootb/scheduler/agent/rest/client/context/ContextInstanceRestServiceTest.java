@@ -109,7 +109,7 @@ public class ContextInstanceRestServiceTest {
                 .withStatus(200)
             ));
 
-        Map<String, ContextInstance> all = uut.getByAgentName(AGENT_NAME);
+        Map<String, ContextInstance> all = uut.getAllInstancesDashboardThinksAgentShouldHandle(AGENT_NAME);
         assertEquals(2, all.size());
 
         ContextInstance contextInstance = all.get("COMPLEX_CONTEXT-1");
@@ -130,7 +130,7 @@ public class ContextInstanceRestServiceTest {
                 .withStatus(500)
             ));
 
-        uut.getByAgentName(AGENT_NAME);
+        uut.getAllInstancesDashboardThinksAgentShouldHandle(AGENT_NAME);
     }
 
     // @Mick, don't think we need these anymore

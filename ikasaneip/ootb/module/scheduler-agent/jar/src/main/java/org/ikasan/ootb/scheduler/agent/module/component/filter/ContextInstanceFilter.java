@@ -48,6 +48,7 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                         jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID) + "] and job [" +
                         jobExecutionContext.getJobDetail().getDescription() + "]");
                 } else if (!existsInCache(correlationId)) {
+                    // @todo as agreed with Mick, we should remove correlation IDs from the agent that the dashboard is no longer interested in.
                     String error = String.format("Expected to find the correlationId [%s] in the ContextInstanceCache but it was not there," +
                         "maybe the dashboard restarted so this ID is no longer running, could only find correlationIds/plans [%s]", correlationId, getCorrelationIds());
                     LOG.error(error);

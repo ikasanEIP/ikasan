@@ -69,8 +69,7 @@ public class AgentRecoveryRunnableTest {
 
         Map<String, ContextInstance> map = Map.of(rootPlan1CorrelationId, instance1, rootPlan2CorrelationId, instance2, rootPlan3CorrelationId, instance3);
 
-//        when(contextInstanceRestService.getAll()).thenReturn(map);
-        when(contextInstanceRestService.getByAgentName(AGENT)).thenReturn(map);
+        when(contextInstanceRestService.getAllInstancesDashboardThinksAgentShouldHandle(AGENT)).thenReturn(map);
 
         runner.run();
 
@@ -98,7 +97,7 @@ public class AgentRecoveryRunnableTest {
         when(module.getConfiguration()).thenReturn(configureModule);
         when(configureModule.getFlowContextMap()).thenReturn(contextFlowMap);
 
-        when(contextInstanceRestService.getByAgentName(AGENT)).thenThrow(new EndpointException("excepted exception"));
+        when(contextInstanceRestService.getAllInstancesDashboardThinksAgentShouldHandle(AGENT)).thenThrow(new EndpointException("excepted exception"));
 
         runner.run();
     }
