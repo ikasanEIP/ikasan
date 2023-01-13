@@ -198,7 +198,7 @@ public class SchedulerApplicationTest
             .thenReturn(null);
 
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/test-module/Scheduled Flow")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/test-module/Scheduled Flow/395f7f9b-c8a9-4c2a-be3a-92e3b95bd929]")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -234,7 +234,7 @@ public class SchedulerApplicationTest
             .thenReturn(module);
 
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/Scheduled Flow")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/Scheduled Flow/395f7f9b-c8a9-4c2a-be3a-92e3b95bd929]")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -300,7 +300,7 @@ public class SchedulerApplicationTest
             .thenReturn(jobDetail);
 
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow/395f7f9b-c8a9-4c2a-be3a-92e3b95bd929]")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -375,7 +375,7 @@ public class SchedulerApplicationTest
             .thenReturn(jobDetail);
 
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow/395f7f9b-c8a9-4c2a-be3a-92e3b95bd929]")
             .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -450,7 +450,7 @@ public class SchedulerApplicationTest
             .thenReturn(jobDetail);
 
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/testModule/testFlow/395f7f9b-c8a9-4c2a-be3a-92e3b95bd929]")
             .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 

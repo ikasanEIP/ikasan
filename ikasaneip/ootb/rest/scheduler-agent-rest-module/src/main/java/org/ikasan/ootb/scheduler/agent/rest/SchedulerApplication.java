@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.scheduler.ScheduledComponent;
@@ -25,9 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -39,7 +38,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class SchedulerApplication
 {
     /** logger */
-    private static Logger logger = LoggerFactory.getLogger(SchedulerApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SchedulerApplication.class);
 
     @Autowired
     private Scheduler platformScheduler;
@@ -89,20 +88,19 @@ public class SchedulerApplication
 
     /**
      * Allows to trigger a scheduled flow with immediate effect rather than waiting for next cron.
-     *
-     * @return
+     * @param moduleName to invoke
+     * @param flowName to invoke
+     * @param correlationId relating to the dashboard instance that these events are for (the response will include
+     *                          the correlation ID so that it can be correlated back to the correct dashboard instance
+     * @return the response
      */
     @RequestMapping(method = RequestMethod.GET,
-                    value = "/{moduleName}/{flowName}",
+                    value = "/{moduleName}/{flowName}/{correlationId}",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    // TODO David there is some work to do here to provide the contextInstanceId
-    // to the trigger. This is the call across the wire that allows us to manually
-    // submit a scheduler job from the dashboard. It should be as simple as
-    // adding the correlating idetifer to the trigger in a similar way that
-    // I did in IkasanFlowTestExtensionRule.
     public ResponseEntity triggerNow(@PathVariable("moduleName") String moduleName,
-                                     @PathVariable("flowName") String flowName)
+                                     @PathVariable("flowName") String flowName,
+                                     @PathVariable("correlationId") Optional <String> correlationId)
     {
         try
         {
@@ -133,17 +131,21 @@ public class SchedulerApplication
                     Consumer consumer = resolveProxiedComponent( flowConfigurationConsumerFlowElement.getFlowComponent());
                     if (consumer instanceof ScheduledConsumer)
                     {
-                        logger.info("Triggering module[{}], flow[{}] now!", moduleName, flowName);
+                        LOG.info("Triggering module[{}], flow[{}] correlationId [{}] now!", moduleName, flowName, correlationId);
                         ScheduledConsumer scheduledConsumer = (ScheduledConsumer) consumer;
                         JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
-                        Trigger trigger = newTrigger()
+
+                        TriggerBuilder triggerBuilder = newTrigger()
                             .withIdentity((scheduledConsumer.getConfiguration().getJobName()  != null && !scheduledConsumer.getConfiguration().getJobName().isEmpty())
                                     ? scheduledConsumer.getConfiguration().getJobName() : "name",
                                 (scheduledConsumer.getConfiguration().getJobGroupName() != null && !scheduledConsumer.getConfiguration().getJobGroupName().isEmpty())
                                     ? scheduledConsumer.getConfiguration().getJobGroupName() + " (manual fire)" : "group (manual fire)")
                             .withDescription(scheduledConsumer.getConfiguration().getDescription())
-                            .forJob(jobDetail).build();
-                        scheduledConsumer.scheduleAsEagerTrigger(trigger, 0);
+                            .forJob(jobDetail);
+                        if (correlationId.isPresent()) {
+                            triggerBuilder.usingJobData(CorrelatingScheduledConsumer.CORRELATION_ID, correlationId.get());
+                        }
+                        scheduledConsumer.scheduleAsEagerTrigger(triggerBuilder.build(), 0);
                     }
                 }
 
@@ -173,7 +175,7 @@ public class SchedulerApplication
         }
         catch (Exception e)
         {
-            logger.warn("Unable to unwrap proxied target for component [" + component.getClass().getName() + "]. Returning component as is.", e);
+            LOG.warn("Unable to unwrap proxied target for component [" + component.getClass().getName() + "]. Returning component as is.", e);
         }
 
         return component;
