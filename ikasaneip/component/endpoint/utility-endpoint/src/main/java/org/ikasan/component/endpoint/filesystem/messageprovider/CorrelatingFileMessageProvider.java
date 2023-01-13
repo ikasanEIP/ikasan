@@ -91,9 +91,6 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
     boolean active;
 
     @Override
-    // David I have moved this out of the ootb into this namespace because of some
-    // namspace issues and package level dependencies. I would like you to please make sure that
-    // this implementation is bullet proof and well unit tested.
     public CorrelatedFileList invoke(JobExecutionContext context)
     {
         String correlatingIdentifier = (String)context.getMergedJobDataMap()
@@ -106,7 +103,7 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
             return null;
         }
 
-        List<File> files = new ArrayList<File>();
+        List<File> files = new ArrayList<>();
         filenames.clear();
 
         try
@@ -115,6 +112,7 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
             {
                 try
                 {
+                    // Note, this class is a listener, file matcher can invoke this.onMessage and thus update filenames.
                     fileMatcher.invoke();
                 }
                 catch(IOException e)
@@ -207,6 +205,12 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         }
     }
 
+    /**
+     * Split fullyQualifiedFilename into its path and basename (filename), use these to create a matcher.
+     * @param fullyQualifiedFilename is a template i.e. /a/b/c/filePattern  path=/a/b/c  name=filePattern
+     * @param dynamicFileName return a DynamicFileMatcher instead of a FileMatcher
+     * @return the filematcher using the template provided by fullyQualifiedFilename
+     */
     protected FileMatcher getFileMatcher(String fullyQualifiedFilename, boolean dynamicFileName)
     {
         boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
@@ -258,7 +262,7 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
     {
         if(fileConsumerConfiguration.getFilenames() != null)
         {
-            for(String filename:fileConsumerConfiguration.getFilenames())
+            for(String filename : fileConsumerConfiguration.getFilenames())
             {
                 this.fileMatchers.add( getFileMatcher(filename, fileConsumerConfiguration.isDynamicFileName()) );
             }

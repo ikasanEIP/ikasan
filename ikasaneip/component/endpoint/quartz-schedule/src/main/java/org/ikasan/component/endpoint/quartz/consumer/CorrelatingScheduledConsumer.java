@@ -82,7 +82,7 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
 
     /**
      * Constructor
-     * @param scheduler implementing Quartze
+     * @param scheduler implementing Quartz
      * @param scheduledJobRecoveryService for when the scheduler crashes
      */
     public CorrelatingScheduledConsumer(Scheduler scheduler, ScheduledJobRecoveryService scheduledJobRecoveryService)
@@ -93,9 +93,6 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
     /**
      * Start the underlying tech
      */
-    // David I have moved this out of the ootb into this namespace as I think this is actuallly
-    // a fairly clean and general implementation. I would like you to please make sure that
-    // this implementation is bullet proof and well unit tested.
     public void start()
     {
         try
@@ -122,7 +119,7 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
             for(String cronExpression:cronExpressions) {
                 for(String rootPlanCorrelationId:correlatingIdentifiers) {
                     String jobNameIteration = jobName + "_" + rootPlanCorrelationId + "_" + cronExpression.hashCode();
-                    TriggerBuilder triggerBuilder = newTriggerFor(jobNameIteration, jobGroupName);
+                    TriggerBuilder<Trigger> triggerBuilder = newTriggerFor(jobNameIteration, jobGroupName);
 
                     // check if last invocation was successful, if so schedule the business trigger otherwise create a persistent recovery trigger
                     Trigger trigger;
@@ -141,7 +138,6 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
                     }
 
                     trigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);
-
                     trigger.getJobDataMap().put(CORRELATION_ID, rootPlanCorrelationId);
                     triggers.add(trigger);
                 }
@@ -174,5 +170,12 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
         {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "CorrelatingScheduledConsumer{" +
+            "triggers=" + triggers +
+            '}';
     }
 }
