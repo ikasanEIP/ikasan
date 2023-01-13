@@ -9,7 +9,6 @@ public interface JobInitiationService {
      *
      * @param contextUrl
      * @param event
-     * @return
      */
     void raiseSchedulerJobInitiationEvent(String contextUrl, SchedulerJobInitiationEvent event);
 
@@ -19,8 +18,9 @@ public interface JobInitiationService {
      * @param contextUrl
      * @param agentName
      * @param jobName
+     * @param correlationId used to uniquely identify the events raised e.g. for the dashboard this would be the contextInstanceId
      */
-    void raiseQuartzSchedulerJob(String contextUrl, String agentName, String jobName);
+    void raiseQuartzSchedulerJob(String contextUrl, String agentName, String jobName, String correlationId);
 
     /**
      * Raise a file event scheduler job.
@@ -28,6 +28,7 @@ public interface JobInitiationService {
      * @param contextUrl
      * @param agentName
      * @param jobName
+     * @param correlationId used to uniquely identify the events raised e.g. for the dashboard this would be the contextInstanceId
      */
-    void raiseFileEventSchedulerJob(String contextUrl, String agentName, String jobName);
+    void raiseFileEventSchedulerJob(String contextUrl, String agentName, String jobName, String correlationId);
 }
