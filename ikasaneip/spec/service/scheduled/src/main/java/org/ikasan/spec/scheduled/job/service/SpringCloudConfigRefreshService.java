@@ -15,4 +15,9 @@ public interface SpringCloudConfigRefreshService {
      * @param applicationPattern application patterned required for multi repository
      */
     void refreshConfigRepo(String contextUrl, String applicationPattern);
+
+    /**
+     * Service to run the Spring Actuator Refresh
+     */
+    void actuatorRefresh();
 }
