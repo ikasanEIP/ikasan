@@ -91,6 +91,7 @@ import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfigu
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
@@ -105,6 +106,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Scheduler Agent component factory.
@@ -129,6 +131,9 @@ public class JobProcessingFlowComponentFactory
     @Value( "${job.monitoring.broker.timeout.minutes:240}" )
     long timeout;
 
+    @Value(" #{T(java.util.Arrays).asList('${job.starting.broker.list.environment.add.space.empty.parameters:}')}" )
+    private List<String> environmentToAddSpaceForEmptyContextParam;
+    
     @Resource
     private IBigQueue outboundQueue;
 
@@ -173,7 +178,14 @@ public class JobProcessingFlowComponentFactory
      * @return
      */
     public Broker getJobStartingBroker() {
-        return new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBrokerConfiguration configuration = new JobStartingBrokerConfiguration();
+        configuration.setEnvironmentToAddSpaceForEmptyContextParam(environmentToAddSpaceForEmptyContextParam);
+        
+        jobStartingBroker.setConfiguration(configuration);
+        jobStartingBroker.setConfiguredResourceId(moduleName+"-jobStartingBroker");
+        
+        return jobStartingBroker;
     }
 
     /**
