@@ -45,6 +45,8 @@ import ch.qos.logback.core.util.FileUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -65,11 +67,15 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class JobStartingBroker implements Broker<EnrichedContextualisedScheduledProcessEvent, EnrichedContextualisedScheduledProcessEvent>
+public class JobStartingBroker implements Broker<EnrichedContextualisedScheduledProcessEvent, EnrichedContextualisedScheduledProcessEvent>,
+                                          ConfiguredResource<JobStartingBrokerConfiguration>
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(JobStartingBroker.class);
 
+    private String configuredResourceId;
+    private JobStartingBrokerConfiguration configuration;
+    
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
 
     @Override
@@ -125,16 +131,28 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         processBuilder.redirectError(errorLog);
         scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
 
+        // Some environments like cmd.exe will not persist an environment value if it is empty. This will identify
+        // based on a list of environments provided in the broker configuration if a space should be added to the 
+        // context parameter value if it empty 
+        boolean addSpaceToEmptyContextParamValue = false;
+        if (commandLineArgs.length > 0) {
+            String targetEnvironment = commandLineArgs[0];
+            if (configuration.getEnvironmentToAddSpaceForEmptyContextParam().contains(targetEnvironment)) {
+                addSpaceToEmptyContextParamValue = true;
+            }
+        }
+        
         // Add job context parameters to the process environment if there are any.
         if(scheduledProcessEvent.getContextParameters() != null
             && !scheduledProcessEvent.getContextParameters().isEmpty()) {
             Map<String, String> env = processBuilder.environment();
 
+            final boolean finalAddSpaceToEmptyContextParamValue = addSpaceToEmptyContextParamValue; // required for lambda
             scheduledProcessEvent.getContextParameters()
                 .forEach(contextParameter -> {
                     if(contextParameter.getValue() != null) {
-                        env.put(contextParameter.getName()
-                            , (String) contextParameter.getValue());
+                        env.put(contextParameter.getName(),
+                            (("".equals(contextParameter.getValue()) && finalAddSpaceToEmptyContextParamValue) ? " " : contextParameter.getValue()));
                     }
                     else {
                         logger.warn("Context parameter[{}] could not be initialised on process as its value was NULL!"
@@ -199,5 +217,25 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         }
 
         throw new EndpointException("Invalid commandLine [" + commandLine + "]");
+    }
+
+    @Override
+    public String getConfiguredResourceId() {
+        return configuredResourceId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String configuredResourceId) {
+        this.configuredResourceId = configuredResourceId;
+    }
+
+    @Override
+    public JobStartingBrokerConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
+    public void setConfiguration(JobStartingBrokerConfiguration configuration) {
+        this.configuration = configuration;
     }
 }
