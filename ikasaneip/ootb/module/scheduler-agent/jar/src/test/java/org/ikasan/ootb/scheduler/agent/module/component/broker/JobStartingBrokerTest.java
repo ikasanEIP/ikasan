@@ -290,7 +290,7 @@ public class JobStartingBrokerTest {
                 // cmd - if parameter is null will interpret the env replace literally if env is not set
         } else {
             Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
-                Assert.assertEquals("\"END\" \t OF \"CMD -\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+                Assert.assertEquals("\"END\" \t OF \"CMD - \"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
         }
     }
 
