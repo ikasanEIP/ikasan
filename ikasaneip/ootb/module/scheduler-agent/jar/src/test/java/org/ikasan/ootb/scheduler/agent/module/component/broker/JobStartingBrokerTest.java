@@ -201,7 +201,7 @@ public class JobStartingBrokerTest {
     }
 
     @Test
-    public void test_job_start_success_with_context_parameters() throws IOException, InterruptedException {
+    public void test_job_start_success_with_context_parameters() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
@@ -212,8 +212,11 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setDefaultValue("defaultValue");
         contextParameterInstance.setValue("echo test");
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
-        String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
-        internalEventDrivenJobInstanceDto.setCommandLine(cmd);
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobInstanceDto.setCommandLine("echo \"END\" \t OF \"CMD - %cmd%\"");
+        } else {
+            internalEventDrivenJobInstanceDto.setCommandLine("source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD - $cmd\\\"");
+        }
 
         internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
@@ -236,13 +239,13 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
-        // give the file a chance to get written to
-        Thread.sleep(250);
-        Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
+        final EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
+        Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
+            Assert.assertEquals("\"END\" \t OF \"CMD - echo test\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
     }
 
     @Test
-    public void test_job_start_success_with_null_context_parameters() throws IOException, InterruptedException {
+    public void test_job_start_success_with_null_context_parameters() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
@@ -253,8 +256,11 @@ public class JobStartingBrokerTest {
         contextParameterInstance.setDefaultValue("defaultValue");
         contextParameterInstance.setValue(null);
         enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
-        String cmd = "source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD\\\"";
-        internalEventDrivenJobInstanceDto.setCommandLine(cmd);
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobInstanceDto.setCommandLine("echo \"END\" \t OF \"CMD - %cmd%\"");
+        } else {
+            internalEventDrivenJobInstanceDto.setCommandLine("source $HOME/.some_profile \necho \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD - $cmd\\\"");
+        }
 
         internalEventDrivenJobInstanceDto.setContextName("contextId");
         internalEventDrivenJobInstanceDto.setIdentifier("identifier");
@@ -277,9 +283,15 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
-        // give the file a chance to get written to
-        Thread.sleep(250);
-        Assert.assertEquals("\"END\" \t OF \"CMD\"", loadDataFile(enrichedContextualisedScheduledProcessEvent.getResultOutput()).trim());
+        EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
+                Assert.assertEquals("\"END\" \t OF \"CMD - %cmd%\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+                // cmd - if parameter is null will interpret the env replace literally if env is not set
+        } else {
+            Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
+                Assert.assertEquals("\"END\" \t OF \"CMD -\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+        }
     }
 
     @Test
