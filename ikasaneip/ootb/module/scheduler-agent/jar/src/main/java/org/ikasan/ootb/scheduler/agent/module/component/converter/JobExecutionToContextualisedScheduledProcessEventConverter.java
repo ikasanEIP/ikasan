@@ -43,12 +43,10 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
@@ -65,14 +63,13 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
 {
     private static final Logger logger = LoggerFactory.getLogger(JobExecutionToContextualisedScheduledProcessEventConverter.class);
 
-    private String moduleName;
-    private String jobName;
+    private final String moduleName;
+    private final String jobName;
     private String configurationId;
     private ContextualisedConverterConfiguration configuration;
 
     /**
      * Constructor
-     * @param moduleName
      */
     public JobExecutionToContextualisedScheduledProcessEventConverter(String moduleName, String jobName)
     {

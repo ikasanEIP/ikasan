@@ -2,7 +2,10 @@ package org.ikasan.spec.scheduled.provision;
 
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 
+import java.util.Map;
+
 public interface ContextInstanceIdentifierProvisionService {
-    public void provision(ContextInstance contextInstance);
-    public void update(String correlationId);
+    void provision(ContextInstance contextInstance);
+    void remove(String correlationId);
+    void reset(Map<String, ContextInstance> liveContextInstances);
 }

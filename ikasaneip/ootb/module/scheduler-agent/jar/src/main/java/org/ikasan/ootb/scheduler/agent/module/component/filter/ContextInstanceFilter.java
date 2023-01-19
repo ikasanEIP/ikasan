@@ -8,8 +8,7 @@ import org.quartz.impl.JobExecutionContextImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.existsInCache;
-import static org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache.getCorrelationIds;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 
 /**
  * This is how we control whether a Flow (Trigger Job) is allowed to run
@@ -47,10 +46,10 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                     LOG.warn("The correlationId was [" + correlationId + "] for cron ID " +
                         jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID) + "] and job [" +
                         jobExecutionContext.getJobDetail().getDescription() + "]");
-                } else if (!existsInCache(correlationId)) {
-                    // @todo as agreed with Mick, we should remove correlation IDs from the agent that the dashboard is no longer interested in.
-                    String error = String.format("Expected to find the correlationId [%s] in the ContextInstanceCache but it was not there," +
-                        "maybe the dashboard restarted so this ID is no longer running, could only find correlationIds/plans [%s]", correlationId, getCorrelationIds());
+                } else if (!ContextInstanceCache.existsInCache(correlationId)) {
+                    String error = String.format("Could not find correlationId [%s] in ContextInstanceCache," +
+                        "maybe the dashboard restarted so this ID is no longer running, " +
+                        "could only find correlationIds/plans [%s]. Try restarting the agent to clean the cache", correlationId, ContextInstanceCache.getCorrelationIds());
                     LOG.error(error);
                     throw new ContextInstanceFilterException(error);
                 } else {
