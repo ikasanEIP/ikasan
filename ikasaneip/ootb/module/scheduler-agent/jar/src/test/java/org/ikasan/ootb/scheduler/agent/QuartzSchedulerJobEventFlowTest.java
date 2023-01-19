@@ -50,7 +50,6 @@ import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
@@ -59,7 +58,6 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
@@ -92,9 +90,6 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Resource
     private IBigQueue outboundQueue;
-
-    @Resource
-    private DryRunModeService dryRunModeService;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
 

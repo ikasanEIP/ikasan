@@ -17,6 +17,8 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.*;
 
+import static java.util.Collections.sort;
+
 public class ContextInstanceIdentifierProvisionServiceImpl implements ContextInstanceIdentifierProvisionService {
     Logger logger = LoggerFactory.getLogger(ContextInstanceIdentifierProvisionServiceImpl.class);
     protected static final String SCHEDULED_CONSUMER = "Scheduled Consumer";
@@ -51,9 +53,11 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
         }
     }
 
-    public void update(String correlationId) {
-        // If the contextInstanceCache has somehow dropped the instance before we can remove its correlation ID
-        // raise an error but try to recover anyway (extra resilience)
+    /**
+     * Remove this correlation ID from the components. Usually called when the dashboard identified a context instance as finished.
+     * @param correlationId to be removed.
+     */
+    public void remove(String correlationId) {
         try {
             Set<String> allFlows = getModuleConfiguration().getFlowContextMap().keySet();
             List<String> scheduledFlows = filterFlowNamesThatContainTargetElementAndCorrelationId(allFlows, SCHEDULED_CONSUMER_PROFILE, SCHEDULED_CONSUMER, correlationId);
@@ -61,6 +65,35 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
 
             removeCorrelationIdOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, correlationId);
             removeCorrelationIdOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, correlationId);
+
+            ContextInstanceCache.instance().remove(correlationId);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ContextInstanceIdentifierProvisionServiceException(e);
+        }
+    }
+
+    /**
+     * Reset all components so that the only context instances they will deal with are within the supplied Map
+     * This usually happens when the agent is restarted and has asked the dashboard what instances it should be handling.
+     * Even an empty list is actioned i.e. removal of any correlationIDs
+     * @param liveContextInstances to be used for components.
+     */
+    public void reset(Map<String, ContextInstance> liveContextInstances) {
+        try {
+            List<String> sortedCorrelationIds = new ArrayList<>(liveContextInstances.keySet());
+            Collections.sort(sortedCorrelationIds);
+
+            Set<String> allFlows = getModuleConfiguration().getFlowContextMap().keySet();
+            List<String> scheduledFlows = filterFlowNamesThatContainTargetElement(allFlows, SCHEDULED_CONSUMER_PROFILE);
+            List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElement(allFlows, FILE_CONSUMER_PROFILE);
+
+            resetCorrelationIdsOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, sortedCorrelationIds);
+            resetCorrelationIdsOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, sortedCorrelationIds);
+
+            ContextInstanceCache.instance().putAll(liveContextInstances);
         }
         catch (Exception e)
         {
@@ -137,17 +170,41 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
                 // Stop flow here, to prevent any triggers (maybe there is a way to suspend)
                 flow.stop();
                 correlatedConsumerConfiguration.getCorrelatingIdentifiers().remove(correlationId);
-                // If we don't force the update to be persisted, the old value will be used when the flow starts
-                // because persisted configuration is used at startup
                 configurationService.update(consumer);
 
-                // This needs to be out of the context before the flow restarts otherwise it will be added back into the trigger.
-                if (ContextInstanceCache.instance().getByCorrelationId(correlationId) != null) {
-                    ContextInstanceCache.instance().remove(correlationId);
-                }
                 flow.start();
             } else {
                 logger.warn("Expected to remove correlationId [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] but it was not there");
+            }
+        });
+    }
+
+    private void resetCorrelationIdsOnTargetFlows(String consumerType, List<String> flowNames, List<String> sortedCorrelationIds) {
+        logger.info("Updating flows " + flowNames + " resetting to use correlationIds " + sortedCorrelationIds + " for component type " + consumerType);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
+
+        flowNames.forEach(flowName -> {
+            Flow flow =  module.getFlow(flowName);
+            ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer =
+                (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow.getFlowElement(consumerType).getFlowComponent();
+
+            CorrelatedScheduledConsumerConfiguration correlatedConsumerConfiguration = consumer.getConfiguration();
+
+            List<String> oldIds = correlatedConsumerConfiguration.getCorrelatingIdentifiers();
+            sort(oldIds);
+
+            if ( ! oldIds.equals(sortedCorrelationIds)) {
+                logger.warn("Replacing correlationIds [" + oldIds + "] with correlationsIDs [" + sortedCorrelationIds +
+                    "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] and stop/starting flow, " +
+                    "the agent was offline when context instances expired on the dashboard");
+                // Stop flow here, to prevent any triggers (maybe there is a way to suspend)
+                flow.stop();
+                correlatedConsumerConfiguration.getCorrelatingIdentifiers().removeAll(oldIds);
+                ContextInstanceCache.instance().removeAll(oldIds);
+
+                correlatedConsumerConfiguration.getCorrelatingIdentifiers().addAll(sortedCorrelationIds);
+                configurationService.update(consumer);
+                flow.start();
             }
         });
     }
