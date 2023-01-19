@@ -107,7 +107,7 @@ public class ContextInstanceApplication {
     public ResponseEntity remove(@RequestParam("correlationId") String correlationId) {
         try {
             logger.info("Requested to remove correlationId [" + correlationId + "]");
-            contextInstanceIdentifierProvisionService.update(correlationId);
+            contextInstanceIdentifierProvisionService.remove(correlationId);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity(

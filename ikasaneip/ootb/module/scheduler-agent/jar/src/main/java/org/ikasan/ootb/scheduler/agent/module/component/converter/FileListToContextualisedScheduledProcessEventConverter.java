@@ -44,15 +44,10 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.instance.model.ContextInstance;
-
-import java.io.File;
-import java.util.List;
 
 /**
  * File list to contextualised scheduled process event converter.
@@ -62,15 +57,14 @@ import java.util.List;
 public class FileListToContextualisedScheduledProcessEventConverter implements Converter<CorrelatedFileList, ContextualisedScheduledProcessEvent>
     , ConfiguredResource<ContextualisedConverterConfiguration>
 {
-    private String agentName;
-    private String jobName;
+    private final String agentName;
+    private final String jobName;
     private String configurationId;
     private ContextualisedConverterConfiguration configuration;
 
 
     /**
      * Constructor
-     * @param agentName
      */
     public FileListToContextualisedScheduledProcessEventConverter(String agentName, String jobName)
     {
