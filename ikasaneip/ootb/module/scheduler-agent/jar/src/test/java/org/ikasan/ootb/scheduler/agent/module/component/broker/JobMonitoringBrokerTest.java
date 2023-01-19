@@ -246,6 +246,30 @@ public class JobMonitoringBrokerTest {
         Assert.assertEquals(true, event.isSuccessful());
     }
 
+    @Test
+    public void test_job_monitor_running_too_long() {
+        // Mocking exception that is thrown in the java.lang.ProcessImpl Class
+        when(process.exitValue()).thenThrow(new IllegalThreadStateException("process has not exited"));
+        JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
+        configuration.setTimeout(1);
+
+        JobMonitoringBroker broker = new JobMonitoringBroker();
+        broker.setConfiguration(configuration);
+
+        EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false);
+        event.setProcess(process);
+
+        event = broker.invoke(event);
+
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        Assert.assertEquals(false, event.isJobStarting());
+        Assert.assertEquals(false, event.isSkipped());
+        Assert.assertEquals(false, event.isDryRun());
+        Assert.assertEquals(false, event.isSuccessful());
+        Assert.assertEquals(-1, event.getReturnCode());
+        Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raised this to the administrator to change the timeout setting."));
+    }
+
     private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip
         , ArrayList<Integer> daysOfWeekToRun) {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent

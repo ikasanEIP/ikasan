@@ -102,10 +102,25 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
 
             try {
                 // We wait indefinitely until the process is finished or it times out.
-                process.waitFor(configuration.getTimeout(), TimeUnit.MINUTES);
+                try {
+                    process.waitFor(configuration.getTimeout(), TimeUnit.MINUTES);
+                    scheduledProcessEvent.setReturnCode(process.exitValue());    
+                } catch (IllegalThreadStateException e) {
+                    process.destroy();
+                    logger.error("Process was killed due to not finishing in the allowed time [{}]. Job Name [{}], " +
+                            "ContextInstanceId [{}], Timeout settings in minutes [{}] ", process.toString(), 
+                        scheduledProcessEvent.getJobName(), scheduledProcessEvent.getContextInstanceId(), configuration.getTimeout(), e);
+                    scheduledProcessEvent.setReturnCode(-1); // Indicate it wasn't successful
+                    
+                    // Add to the execution details.
+                    String executionDetails = scheduledProcessEvent.getExecutionDetails();
+                    executionDetails += "\n\nProcess did not complete in "+configuration.getTimeout()+" minutes. Killing the process. " +
+                        "If more time is required, please raised this to the administrator to change the timeout setting.";
+                    scheduledProcessEvent.setExecutionDetails(executionDetails);
+                    
+                }
 
                 scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
-                scheduledProcessEvent.setReturnCode(process.exitValue());
                 if( (scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes() == null
                     || scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes().size() == 0)) {
                     if(scheduledProcessEvent.getReturnCode() == 0) {
