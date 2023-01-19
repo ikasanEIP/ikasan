@@ -88,7 +88,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_instance_refresh_when_current_plan_has_no_correlation_ids() {
+    public void test_provision_instance_refresh_when_current_plan_has_no_correlation_ids() {
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>();
         List<String> fileConsumerCorrelationIdList = new ArrayList<>();
 
@@ -113,7 +113,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_refresh_when_another_instance_is_already_present() {
+    public void test_provision_refresh_when_another_instance_is_already_present() {
         String existingCorrelationId = "CorrelationId0";
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
         List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
@@ -141,7 +141,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_refresh_when_same_correlation_id_presented_twice() {
+    public void test_provision_refresh_when_same_correlation_id_presented_twice() {
         String existingCorrelationId = ROOT_PLAN_CONTEXT_INTANCE_ID;
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
         List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));

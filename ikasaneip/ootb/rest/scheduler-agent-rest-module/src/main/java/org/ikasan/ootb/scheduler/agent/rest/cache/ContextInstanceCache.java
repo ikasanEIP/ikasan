@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.rest.cache;
 
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
@@ -19,6 +20,7 @@ public class ContextInstanceCache {
         return InstanceHolder.INSTANCE;
     }
 
+    // correlationId -> ContextInstances
     private final ConcurrentHashMap<String, ContextInstance> contextInstanceMap;
 
     private ContextInstanceCache() {
@@ -34,12 +36,24 @@ public class ContextInstanceCache {
         this.contextInstanceMap.put(correlationId, instance);
     }
 
+    public void putAll(Map<String, ContextInstance> newInstances) {
+        if (newInstances != null && ! newInstances.isEmpty()) {
+            newInstances.keySet().forEach( ciKey -> this.put(ciKey, newInstances.get(ciKey)));
+        }
+    }
+
     public void remove(String correlationId) {
         if (correlationId == null) {
             return;
         }
         LOG.info(String.format("Removing correlationId [%s]", correlationId));
         this.contextInstanceMap.remove(correlationId);
+    }
+
+    public void removeAll(List<String> correlationIds) {
+        if (correlationIds != null && ! correlationIds.isEmpty()) {
+            correlationIds.forEach(this::remove);
+        }
     }
 
     public ContextInstance getByCorrelationId(String correlationId) {
@@ -76,17 +90,6 @@ public class ContextInstanceCache {
 
     public static boolean doesNotExistInCache(String correlationId) {
         return !existsInCache(correlationId);
-    }
-
-    public static boolean anyExistInCache(List<String> correlationIds) {
-        if (correlationIds != null && ! correlationIds.isEmpty()) {
-            for(String correlationId : correlationIds) {
-                if (existsInCache (correlationId)) {
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
     public static Set<String> getCorrelationIds() {
