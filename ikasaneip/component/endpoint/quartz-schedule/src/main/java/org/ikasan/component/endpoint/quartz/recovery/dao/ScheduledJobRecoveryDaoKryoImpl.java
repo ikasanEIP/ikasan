@@ -156,7 +156,7 @@ public class ScheduledJobRecoveryDaoKryoImpl implements ScheduledJobRecoveryDao<
 
     protected String getScheduledPersistence(String name, String group)
     {
-        return persistenceDir + FileSystems.getDefault().getSeparator() + group + "_" + name;
+        return persistenceDir + FileSystems.getDefault().getSeparator() + group.hashCode() + "_" + name.hashCode();
     }
 
 }
