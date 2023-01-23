@@ -17,6 +17,14 @@ public interface SpringCloudConfigRefreshService {
     void refreshConfigRepo(String contextUrl, String applicationPattern);
 
     /**
+     * Request config service to decrypt the value so we can read the values
+     * @param contextUrl url path to config service
+     * @param encryptedValue value you want to decrypt using Spring Cloud Config Service decryption
+     * @return decrypted value
+     */
+    String decrypt(String contextUrl, String encryptedValue);
+    
+    /**
      * Service to run the Spring Actuator Refresh
      */
     void actuatorRefresh();
