@@ -11,10 +11,17 @@ public interface ContextInstancePublicationService<CONTEXT_INSTANCE> {
     void publish(String contextUrl, CONTEXT_INSTANCE instance);
 
     /**
-     * This method is responsible for removing a context instance to an agent.
+     * This method is responsible for removing a context instance from an agent.
      *
      * @param contextUrl
      * @param instance
      */
     void remove(String contextUrl, CONTEXT_INSTANCE instance);
+
+    /**
+     * This method is responsible for removing all context instances from an agent.
+     *
+     * @param contextUrl
+     */
+    void removeAll(String contextUrl);
 }

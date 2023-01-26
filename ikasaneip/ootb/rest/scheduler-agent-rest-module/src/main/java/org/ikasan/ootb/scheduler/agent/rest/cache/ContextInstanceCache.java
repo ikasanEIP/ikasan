@@ -56,6 +56,10 @@ public class ContextInstanceCache {
         }
     }
 
+    public void removeAll() {
+        this.contextInstanceMap.clear();
+    }
+
     public ContextInstance getByCorrelationId(String correlationId) {
         if (correlationId != null) {
             LOG.debug(String.format("Getting context parameters for correlationId [%s]", correlationId));

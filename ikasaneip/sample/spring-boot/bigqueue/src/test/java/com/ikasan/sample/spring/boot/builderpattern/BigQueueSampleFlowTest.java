@@ -126,7 +126,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Before
-    public void setup() throws JMSException {
+    public void setup() {
         flowTestRule = new IkasanFlowTestRule();
         flowTestRule.withFlow(moduleUnderTest.getFlow("BigQueue Sample Flow"));
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
