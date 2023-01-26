@@ -47,7 +47,10 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
 import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
@@ -71,6 +74,7 @@ import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.quartz.JobDataMap;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
@@ -574,8 +578,12 @@ public class FileEventSchedulerJobFlowTest {
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);
 
+        context.setJobDataMap(new JobDataMap());
+        context.getMergedJobDataMap().put(CorrelatingScheduledConsumer.CORRELATION_ID
+            , UUID.randomUUID().toString());
+
         // will get an error as the file message provider has nothing wired in etc
-        FileMessageProvider fileMessageProvider = new FileMessageProvider();
+        CorrelatingFileMessageProvider fileMessageProvider = new CorrelatingFileMessageProvider();
 
         try {
             fileMessageProvider.invoke(context);
@@ -589,9 +597,9 @@ public class FileEventSchedulerJobFlowTest {
         dto.setFileName("/my/bogus/file3.txt");
         dryRunModeService.addDryRunFileList(List.of(dto));
 
-        List<File> files = fileMessageProvider.invoke(context);
-        assertEquals(1, files.size());
-        assertEquals("/my/bogus/file3.txt", files.get(0).getAbsolutePath());
+        CorrelatedFileList files = fileMessageProvider.invoke(context);
+        assertEquals(1, files.getFileList().size());
+        assertEquals("/my/bogus/file3.txt", files.getFileList().get(0).getAbsolutePath());
 
         dryRunModeService.setDryRunMode(false);
     }

@@ -79,6 +79,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
      * Reset all components so that the only context instances they will deal with are within the supplied Map
      * This usually happens when the agent is restarted and has asked the dashboard what instances it should be handling.
      * Even an empty list is actioned i.e. removal of any correlationIDs
+     *
      * @param liveContextInstances to be used for components.
      */
     public void reset(Map<String, ContextInstance> liveContextInstances) {
@@ -94,6 +95,25 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
             resetCorrelationIdsOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, sortedCorrelationIds);
 
             ContextInstanceCache.instance().putAll(liveContextInstances);
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            throw new ContextInstanceIdentifierProvisionServiceException(e);
+        }
+    }
+
+    @Override
+    public void removeAll() {
+        try {
+            Set<String> allFlows = getModuleConfiguration().getFlowContextMap().keySet();
+            List<String> scheduledFlows = filterFlowNamesThatContainTargetElement(allFlows, SCHEDULED_CONSUMER_PROFILE);
+            List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElement(allFlows, FILE_CONSUMER_PROFILE);
+
+            this.removeAllCorrelationIdsOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows);
+            this.removeAllCorrelationIdsOnTargetFlows(FILE_CONSUMER, fileWatcherFlows);
+
+            ContextInstanceCache.instance().removeAll();
         }
         catch (Exception e)
         {
@@ -176,6 +196,28 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
             } else {
                 logger.warn("Expected to remove correlationId [" + correlationId + "] from consumer [" + correlatedConsumerConfiguration.getJobName() + "] but it was not there");
             }
+        });
+    }
+
+    private void removeAllCorrelationIdsOnTargetFlows(String consumerType, List<String> flowNames) {
+        logger.info("Removing all correlating identifiers from flows " + flowNames + " for component type " + consumerType);
+        Module<Flow> module = this.moduleService.getModule(moduleName);
+
+        flowNames.forEach(flowName -> {
+            Flow flow =  module.getFlow(flowName);
+            ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer =
+                (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow.getFlowElement(consumerType).getFlowComponent();
+
+            CorrelatedScheduledConsumerConfiguration correlatedConsumerConfiguration = consumer.getConfiguration();
+            logger.info("Removing all correlating identifiers from consumer [" + correlatedConsumerConfiguration.getJobName() + "] and stop/starting flow");
+
+            // Stop flow here, to prevent any triggers (maybe there is a way to suspend)
+            flow.stop();
+            correlatedConsumerConfiguration.getCorrelatingIdentifiers().clear();
+            configurationService.update(consumer);
+
+            flow.start();
+
         });
     }
 
