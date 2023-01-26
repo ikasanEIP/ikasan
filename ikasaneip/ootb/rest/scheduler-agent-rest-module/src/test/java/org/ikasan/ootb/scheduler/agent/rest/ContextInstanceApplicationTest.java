@@ -32,6 +32,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -87,8 +89,7 @@ public class ContextInstanceApplicationTest {
                 .contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk());
 
-        // Note, this controller now delegates the update of the Context Instance to the class invoked by the save
-        // (which is mocked out) hence so there is little further to test.
+        verify(this.contextInstanceIdentifierProvisionService).provision(any());
     }
 
     @Test
@@ -116,8 +117,34 @@ public class ContextInstanceApplicationTest {
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
-        // Note, this controller now delegates the update of the Context Instance to the class invoked by the save
-        // (which is mocked out) hence so there is little further to test.
+        mockMvc.perform(requestBuilder).andExpect(status().isOk());
+
+        verify(this.contextInstanceIdentifierProvisionService).remove(CORRELATION_ID);
+    }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
+    public void remove_all_read_only_user_causes_access_denied_exception() throws Exception {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/removeAll")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andReturn();
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void removeAll() throws Exception {
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/removeAll")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        mockMvc.perform(requestBuilder).andExpect(status().isOk());
+
+        verify(this.contextInstanceIdentifierProvisionService).removeAll();
     }
 
     private ConcurrentHashMap<String, ContextInstance> getContextInstanceMap() {

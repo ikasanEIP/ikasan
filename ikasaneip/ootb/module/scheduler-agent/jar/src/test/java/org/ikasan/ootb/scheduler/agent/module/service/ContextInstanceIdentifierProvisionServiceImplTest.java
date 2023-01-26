@@ -162,6 +162,29 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
         assertEquals(ROOT_PLAN_CONTEXT_INTANCE_ID, fileConsumerCorrelationIdList.get(0));
     }
 
+    @Test
+    public void test_remove_all() {
+        List<String> scheduledConsumerCorrelationIdList = new ArrayList<>();
+        List<String> fileConsumerCorrelationIdList = new ArrayList<>();
+
+        setupWhen(scheduledConsumerCorrelationIdList, fileConsumerCorrelationIdList);
+
+        service.removeAll();
+
+        // Verify we DO stop/start the module
+        verify(scheduleConsumerFlow).getFlowElement(SCHEDULED_CONSUMER);
+        verify(scheduleConsumerFlow).stop();
+        verify(scheduleConsumerFlow).start();
+        verify(fileConsumerFlow).getFlowElement(FILE_CONSUMER);
+        verify(fileConsumerFlow).stop();
+        verify(fileConsumerFlow).start();
+        verifyNoMoreInteractions(scheduleConsumerFlow);
+        verifyNoMoreInteractions(fileConsumerFlow);
+
+        assertEquals(0, scheduledConsumerCorrelationIdList.size());
+        assertEquals(0, fileConsumerCorrelationIdList.size());
+    }
+
     private void setupWhen(List scheduledConsumerCorrelationIdList, List fileConsumerCorrelationIdList) {
 
         when(moduleService.getModule(moduleName)).thenReturn(module);

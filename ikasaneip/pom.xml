@@ -358,6 +358,8 @@
         <version.maven-model>3.3.9</version.maven-model>
         <version.big.queue>1.0.0-SNAPSHOT</version.big.queue>
         <version.expiring.map>0.5.10</version.expiring.map>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <!-- Distribution for releases -->

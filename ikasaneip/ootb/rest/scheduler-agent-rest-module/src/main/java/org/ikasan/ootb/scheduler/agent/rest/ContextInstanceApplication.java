@@ -117,4 +117,20 @@ public class ContextInstanceApplication {
         }
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @RequestMapping(path = "/removeAll", method = RequestMethod.DELETE)
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity removeAll() {
+        try {
+            logger.info("Requested to remove all correlationIds");
+            contextInstanceIdentifierProvisionService.removeAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity(
+                new ErrorDto(
+                    String.format("An error has occurred attempting to remove all correlationIds. Error message [%s]"
+                        , e.getMessage())), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(HttpStatus.OK);
+    }
 }

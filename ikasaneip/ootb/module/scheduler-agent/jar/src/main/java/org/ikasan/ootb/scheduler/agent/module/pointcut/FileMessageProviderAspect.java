@@ -47,6 +47,8 @@ import java.util.List;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.quartz.JobExecutionContext;
 import org.slf4j.Logger;
@@ -61,7 +63,7 @@ public class FileMessageProviderAspect {
     @Autowired
     private DryRunModeService dryRunModeService;
 
-    @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.invoke(..))")
+    @Around("execution(* org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider.invoke(..))")
     public Object fileMessageProviderInvoke(ProceedingJoinPoint joinPoint) throws Throwable {
         JobExecutionContext jobExecutionContext = (JobExecutionContext) joinPoint.getArgs()[0];
         String jobName = jobExecutionContext.getTrigger().getKey().getName();
@@ -79,9 +81,13 @@ public class FileMessageProviderAspect {
         JobExecutionContext jobExecutionContext = (JobExecutionContext) joinPoint.getArgs()[0];
         String jobName = jobExecutionContext.getTrigger().getKey().getName();
 
+        String correlatingIdentifier = (String)jobExecutionContext.getMergedJobDataMap()
+            .get(CorrelatingScheduledConsumer.CORRELATION_ID);
+
         String dryRunFileName = dryRunModeService.getJobFileName(jobName);
         String message = "In dry run mode intercepting FileMessageProvider.invoke() for file name: " + dryRunFileName;
         LOGGER.info(message);
-        return dryRunFileName == null ? null : List.of(new File(dryRunFileName));
+        return dryRunFileName == null ? null : new CorrelatedFileList(List.of(new File(dryRunFileName))
+            , correlatingIdentifier);
     }
 }
