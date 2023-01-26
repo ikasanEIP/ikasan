@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 import org.aspectj.lang.ProceedingJoinPoint;
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.junit.Test;
@@ -11,7 +12,10 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.quartz.JobDataMap;
 import org.quartz.Trigger;
+
+import java.util.UUID;
 
 @RunWith(MockitoJUnitRunner.class)
 public class FileMessageProviderAspectTest {
@@ -31,6 +35,11 @@ public class FileMessageProviderAspectTest {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);
+
+        context.setJobDataMap(new JobDataMap());
+        context.getMergedJobDataMap().put(CorrelatingScheduledConsumer.CORRELATION_ID
+            , UUID.randomUUID().toString());
+
         Object[] args = {context};
 
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
@@ -52,6 +61,11 @@ public class FileMessageProviderAspectTest {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);
+
+        context.setJobDataMap(new JobDataMap());
+        context.getMergedJobDataMap().put(CorrelatingScheduledConsumer.CORRELATION_ID
+            , UUID.randomUUID().toString());
+
         Object[] args = {context};
 
         when(dryRunModeService.getDryRunMode()).thenReturn(true);
@@ -69,6 +83,11 @@ public class FileMessageProviderAspectTest {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);
+
+        context.setJobDataMap(new JobDataMap());
+        context.getMergedJobDataMap().put(CorrelatingScheduledConsumer.CORRELATION_ID
+            , UUID.randomUUID().toString());
+
         Object[] args = {context};
 
         when(dryRunModeService.getDryRunMode()).thenReturn(false);

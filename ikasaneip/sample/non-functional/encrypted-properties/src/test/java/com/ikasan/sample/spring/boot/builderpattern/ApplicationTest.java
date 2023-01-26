@@ -53,19 +53,19 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.sql.SQLException;
 
 /**
  * Testing of Ikasan encrypted properties.
- *
- *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
-@SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
+@RunWith(SpringJUnit4ClassRunner.class)
+@SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(loader = EncryptedEnvironmentContextLoader.class)
 public class ApplicationTest
@@ -74,22 +74,27 @@ public class ApplicationTest
 
     @Resource
     private Module<Flow> moduleUnderTest;
-    
 
-    public IkasanFlowTestRule splitterFlowTestRule = new IkasanFlowTestRule();
+    private IkasanFlowTestRule flowTestRule;
 
     // h2 server instance
     static Server server;
 
-    @Before
-    public static void setup() throws SQLException
-    {
-        // TODO can we use a random port and tie back to the application.properties url?
+    @DynamicPropertySource
+    public static void startH2Server(DynamicPropertyRegistry registry) throws SQLException {
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
+
+    }
+
+    @Before
+    public void setup()
+    {
+        flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("sample flow"));
     }
 
     @After
-    public static void teardown()
+    public void teardown()
     {
         server.shutdown();
     }
@@ -99,14 +104,11 @@ public class ApplicationTest
     public void test_bootstrap_with_encrypted_values() throws Exception
     {
         // All we want to is bootstrap, start and stop the flow!
-        // event generator publishing to JMS topic
-        splitterFlowTestRule.withFlow(moduleUnderTest.getFlow("sample flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("sample flow"));
 
-        // start flows right to left
-        splitterFlowTestRule.startFlow();
+        flowTestRule.startFlow();
 
-        splitterFlowTestRule.stopFlow();
-
+        flowTestRule.stopFlow();
     }
 }
 

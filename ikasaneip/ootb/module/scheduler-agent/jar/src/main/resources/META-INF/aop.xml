@@ -1,7 +1,7 @@
 <aspectj>
     <weaver options="-Xset:weaveJavaxPackages=true">
         <!-- only weave classes in our application-specific packages -->
-        <include within="org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider.*"/>
+        <include within="org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider.*"/>
     </weaver>
     <aspects>
         <aspect name="org.ikasan.ootb.scheduler.agent.module.pointcut.FileMessageProviderAspect"/>
