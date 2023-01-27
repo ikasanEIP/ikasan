@@ -128,8 +128,8 @@ public class CorrelatingFileMessageProviderTest {
         Assert.assertTrue("Should have returned 3 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 3);
         Assert.assertEquals(files.toString(), "" +
             "CorrelatedFileList{fileList=[" +
-            "./src/test/resources/data/unit/subdir/Trade_20141212_99_20140000000000.txt, " +
             "./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, " +
+            "./src/test/resources/data/unit/subdir/Trade_20141212_99_20140000000000.txt, " +
             "./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], correlatingIdentifier='TestCorrelatingId'}");
         mockery.assertIsSatisfied();
     }
