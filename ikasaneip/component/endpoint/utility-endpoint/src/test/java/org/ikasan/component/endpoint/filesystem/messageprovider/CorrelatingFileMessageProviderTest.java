@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -126,11 +127,11 @@ public class CorrelatingFileMessageProviderTest {
         CorrelatedFileList files = messageProviderInvoke();
 
         Assert.assertTrue("Should have returned 3 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 3);
-        Assert.assertEquals(files.toString(), "" +
-            "CorrelatedFileList{fileList=[" +
-            "./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, " +
-            "./src/test/resources/data/unit/subdir/Trade_20141212_99_20140000000000.txt, " +
-            "./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], correlatingIdentifier='TestCorrelatingId'}");
+        Assert.assertTrue("Should have returned 3 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 3);
+        Assert.assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt")));
+        Assert.assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/subdir/Trade_20141212_99_20140000000000.txt")));
+        Assert.assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt")));
+        Assert.assertEquals("TestCorrelatingId", files.getCorrelatingIdentifier());
         mockery.assertIsSatisfied();
     }
 
