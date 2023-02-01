@@ -227,4 +227,18 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @param environmentGroup
      */
     void setEnvironmentGroup(String environmentGroup);
+
+    /**
+     * Determine if all quartz schedule driven jobs are disabled for the context.
+     *
+     * @return
+     */
+    boolean isQuartzScheduleDrivenJobsDisabledForContext();
+
+    /**
+     * Set flag used to determine if all quartz schedule driven jobs are disabled for the context.
+     *
+     * @param isQuartzScheduleDrivenJobsDisabledForContext
+     */
+    void setQuartzScheduleDrivenJobsDisabledForContext(boolean isQuartzScheduleDrivenJobsDisabledForContext);
 }
