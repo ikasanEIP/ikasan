@@ -86,4 +86,11 @@ public interface ScheduledContextRecord extends Serializable {
      * @return
      */
     boolean isDisabled();
+
+    /**
+     * Determine if all quartz schedule driven jobs are disabled for the context.
+     *
+     * @return
+     */
+    boolean isQuartzScheduleDrivenJobsDisabledForContext();
 }
