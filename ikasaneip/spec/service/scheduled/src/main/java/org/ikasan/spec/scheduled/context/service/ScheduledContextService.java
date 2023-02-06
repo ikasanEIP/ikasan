@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.context.service;
 
+import org.ikasan.spec.scheduled.context.model.ContextTemplate;
 import org.ikasan.spec.scheduled.context.model.ScheduledContextRecord;
 import org.ikasan.spec.scheduled.context.model.ScheduledContextSearchFilter;
 import org.ikasan.spec.scheduled.context.model.ScheduledContextViewRecord;
@@ -93,4 +94,20 @@ public interface ScheduledContextService {
      * @return the cloned context record
      */
     ScheduledContextRecord cloneContext(String contextName, String clonedContextName);
+
+    /**
+     * Enable all scheduled jobs in the context template.
+     *
+     * @param contextTemplate
+     * @param modifiedBy
+     */
+    void enableScheduledJobs(ContextTemplate contextTemplate, String modifiedBy);
+
+    /**
+     * Disable all scheduled jobs in the context template.
+     *
+     * @param contextTemplate
+     * @param modifiedBy
+     */
+    void disableScheduledJobs(ContextTemplate contextTemplate, String modifiedBy);
 }
