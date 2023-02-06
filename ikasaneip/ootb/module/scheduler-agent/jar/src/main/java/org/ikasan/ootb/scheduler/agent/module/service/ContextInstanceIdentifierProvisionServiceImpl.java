@@ -265,6 +265,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
      * From this flow, get the component (e.g. FileWatcher, ScheduleConsumer, assumed only 1 per flow) and ensure its
      * config contains the correlation ID of the root job plan instance.
      * Then stop/start the flow so that config becomes active.
+     *
      * @param consumerType e.g. FileWatcher, ScheduleConsumer
      * @param correlationId of the root of the job plans
      * @param flow containing the components to be updated

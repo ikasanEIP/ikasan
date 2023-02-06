@@ -61,6 +61,12 @@ public enum InstanceStatus {
             return "status.ENDED";
         }
     },
+    DISABLED{
+        @Override
+        public String getTranslationLabel() {
+            return "status.ENDED";
+        }
+    },
     LOCK_QUEUED{
         @Override
         public String getTranslationLabel() {
