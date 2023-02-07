@@ -38,6 +38,9 @@ public class CorrelatingFileMessageProviderTest {
     private static final List<String> FILENAME_PATTERNS_THAT_WILL_NOT_MATCH_THE_FS = Arrays.asList(
         "src/test/resources/data/unit/Trade_\\d{8}_\\d+_\\{14}.xxxtxt");
 
+    private static final List<String> DYNAMIC_FILE_NAME_PATTERN = Arrays.asList(
+        "./src/test/resources/data/unit/xxx_TradeLeg_20141212_99_20141212121212.txt");
+
     @Test
     public void test_file_consumer_with_no_correlation_id_will_be_passive()
     {
@@ -81,6 +84,30 @@ public class CorrelatingFileMessageProviderTest {
             "./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, " +
             "./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], " +
             "correlatingIdentifier='TestCorrelatingId'}");
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_list_of_files_dynamic_file_matcher()
+    {
+        // set test expectations
+        setupCorrelationIdExpectations();
+        setupDynamicFilenameExpectations();
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(true));
+                exactly(1).of(configuration).getDirectoryDepth();
+                will(returnValue(1));
+            }
+        });
+
+        CorrelatedFileList files = messageProviderInvoke();
+        Assert.assertTrue("Should have returned 1 files, but returned " + files.getFileList().size() + " files."
+            , files.getFileList().size() == 1);
+        Assert.assertEquals(new File("./src/test/resources/data/unit/TestCorrelatingId_TradeLeg_20141212_99_20141212121212.txt")
+            , files.getFileList().get(0));
+        Assert.assertEquals("TestCorrelatingId", files.getCorrelatingIdentifier());
         mockery.assertIsSatisfied();
     }
 
@@ -186,6 +213,21 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(false));
                 exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
                 will(returnValue(true));
+            }
+        });
+    }
+
+    private void setupDynamicFilenameExpectations() {
+        mockery.checking(new Expectations() {
+            {
+                exactly(2).of(configuration).getFilenames();
+                will(returnValue(DYNAMIC_FILE_NAME_PATTERN));
+                exactly(1).of(configuration).isDynamicFileName();
+                will(returnValue(true));
+                exactly(1).of(configuration).isIgnoreFileRenameWhilstScanning();
+                will(returnValue(true));
+                exactly(1).of(configuration).getSpelExpression();
+                will(returnValue("#fileNamePattern.replace('xxx', #correlatingIdentifier)"));
             }
         });
     }
