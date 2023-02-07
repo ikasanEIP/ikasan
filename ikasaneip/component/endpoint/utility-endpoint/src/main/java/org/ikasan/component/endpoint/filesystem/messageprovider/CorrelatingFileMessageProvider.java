@@ -112,6 +112,10 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
             {
                 try
                 {
+                    if(fileMatcher instanceof DynamicFileMatcher) {
+                        ((DynamicFileMatcher) fileMatcher).setCorrelatingIdentifier(correlatingIdentifier);
+                    }
+
                     // Note, this class is a listener, file matcher can invoke this.onMessage and thus update filenames.
                     fileMatcher.invoke();
                 }
