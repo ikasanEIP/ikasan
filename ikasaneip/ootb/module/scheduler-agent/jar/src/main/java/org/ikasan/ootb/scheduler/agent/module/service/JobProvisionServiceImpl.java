@@ -475,7 +475,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * Get the fieldName value of an object.
      * This is very specific for spel expressions and quoting strings
      * Only currently used in this class, hence here.
-     *
      */
     protected String getSpelReplacement(String fieldName, Object clazz) {
         try {
