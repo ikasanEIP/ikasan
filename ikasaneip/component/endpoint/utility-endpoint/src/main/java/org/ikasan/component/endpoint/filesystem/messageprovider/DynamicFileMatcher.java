@@ -64,6 +64,10 @@ import java.nio.file.attribute.BasicFileAttributes;
 public class DynamicFileMatcher extends FileMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicFileMatcher.class);
 
+    public static final String FILE_NAME_PATTERN = "fileNamePattern";
+    public static final String CORRELATING_IDENTIFIER = "correlatingIdentifier";
+    public static final String REGEX = "regex:";
+
     /**
      * fileNamePattern that will be dynamically generated
      */
@@ -77,6 +81,8 @@ public class DynamicFileMatcher extends FileMatcher {
      * spel expression can be null
      */
     private final String spelExpression;
+
+    private String correlatingIdentifier;
 
     /**
      * Constructor
@@ -118,7 +124,8 @@ public class DynamicFileMatcher extends FileMatcher {
             // NOTE: variable names can be null for spel expression evaluation
             // it is up to the spel expression to decide if it needs them or not
             // in this case fileNamePattern will almost always be needed if evaluating it
-            evaluationContext.setVariable("fileNamePattern", fileNamePattern);
+            evaluationContext.setVariable(FILE_NAME_PATTERN, this.fileNamePattern);
+            evaluationContext.setVariable(CORRELATING_IDENTIFIER, this.correlatingIdentifier);
 
             ExpressionParser parser = new SpelExpressionParser();
             Expression exp = parser.parseExpression(this.spelExpression);
@@ -127,8 +134,8 @@ public class DynamicFileMatcher extends FileMatcher {
         }
 
         // create a new matcher every time as the fileNamePattern can change potentially every time
-        LOG.debug("fileNamePattern: " + dynamicFilePattern);
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher("regex:" + dynamicFilePattern);
+        LOG.debug(FILE_NAME_PATTERN + dynamicFilePattern);
+        PathMatcher matcher = FileSystems.getDefault().getPathMatcher(REGEX + dynamicFilePattern);
         if (name != null && matcher != null && matcher.matches(name)) {
             this.endpointListener.onMessage(path.toString());
         }
@@ -159,5 +166,9 @@ public class DynamicFileMatcher extends FileMatcher {
     @Override
     public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) {
         return this.match(dir);
+    }
+
+    public void setCorrelatingIdentifier(String correlatingIdentifier) {
+        this.correlatingIdentifier = correlatingIdentifier;
     }
 }
