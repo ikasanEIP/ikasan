@@ -86,7 +86,6 @@ public class FileEventSchedulerJobFlowFactory
                     .addExceptionToAction(ContextInstanceFilterException.class, OnException.retry(agentRecoveryRetryDelay, agentRecoveryMaxRetries))
             )
             .consumer("File Consumer", componentFactory.getFileConsumer())
-            .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
             .filter("File Age Filter", componentFactory.getFileAgeFilter())
             .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter(jobName))
             .broker("File Move Broker", componentFactory.getMoveFileBroker())

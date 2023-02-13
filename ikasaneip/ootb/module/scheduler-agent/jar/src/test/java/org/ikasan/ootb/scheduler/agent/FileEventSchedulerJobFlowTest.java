@@ -170,7 +170,6 @@ public class FileEventSchedulerJobFlowTest {
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -221,7 +220,6 @@ public class FileEventSchedulerJobFlowTest {
         blackoutRouterConfiguration.setCronExpressions(List.of("0 15 10 * * ? 3000"));
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -271,7 +269,6 @@ public class FileEventSchedulerJobFlowTest {
         blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -324,7 +321,6 @@ public class FileEventSchedulerJobFlowTest {
         scheduledProcessEventFilterConfiguration.setDropOnBlackout(true);
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -365,7 +361,6 @@ public class FileEventSchedulerJobFlowTest {
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -412,7 +407,6 @@ public class FileEventSchedulerJobFlowTest {
         fileConsumerConfiguration.setJobName("Flow 2 Job Name");
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -476,7 +470,6 @@ public class FileEventSchedulerJobFlowTest {
         fileConsumerConfiguration.setJobName("Scheduler Flow 2");
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -531,7 +524,6 @@ public class FileEventSchedulerJobFlowTest {
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
@@ -539,7 +531,6 @@ public class FileEventSchedulerJobFlowTest {
             .router("Blackout Router")
             .producer("Scheduled Status Producer")
             .consumer("File Consumer")
-            .filter("Context Instance Active Filter")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter");
 
