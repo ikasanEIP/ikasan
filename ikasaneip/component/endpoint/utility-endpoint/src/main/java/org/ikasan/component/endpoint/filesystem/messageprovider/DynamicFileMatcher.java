@@ -134,7 +134,7 @@ public class DynamicFileMatcher extends FileMatcher {
         }
 
         // create a new matcher every time as the fileNamePattern can change potentially every time
-        LOG.debug(FILE_NAME_PATTERN + dynamicFilePattern);
+        LOG.info("Attempting to locate file[{}]", dynamicFilePattern);
         PathMatcher matcher = FileSystems.getDefault().getPathMatcher(REGEX + dynamicFilePattern);
         if (name != null && matcher != null && matcher.matches(name)) {
             this.endpointListener.onMessage(path.toString());

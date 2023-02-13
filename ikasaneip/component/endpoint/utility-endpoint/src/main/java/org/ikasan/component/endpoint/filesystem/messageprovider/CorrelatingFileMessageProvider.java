@@ -96,7 +96,7 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         String correlatingIdentifier = (String)context.getMergedJobDataMap()
             .get(CorrelatingScheduledConsumer.CORRELATION_ID);
 
-        logger.info(CorrelatingScheduledConsumer.CORRELATION_ID
+        logger.debug(CorrelatingScheduledConsumer.CORRELATION_ID
             + " " + correlatingIdentifier);
 
         if(correlatingIdentifier == null) {
