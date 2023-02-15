@@ -11,4 +11,10 @@ public interface GlobalEventService {
      * @param contextInstanceId
      */
     void raiseGlobalEventJob(GlobalEventJobInstance globalEventJobInstance, String contextInstanceId);
+
+    /**
+     * Raise global event to all context instances
+     * @param globalJobName
+     */
+    void raiseGlobalEventJob(String globalJobName);
 }
