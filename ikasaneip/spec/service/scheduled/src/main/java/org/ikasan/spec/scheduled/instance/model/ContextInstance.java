@@ -69,6 +69,20 @@ public interface ContextInstance extends Context<ContextInstance, ContextParamet
     void setStartTime(long startTime);
 
     /**
+     * Get the projected end date time of the ContextInstance in milli since epoch.
+     *
+     * @return
+     */
+    long getProjectedEndTime();
+
+    /**
+     * Set the projected end date time of the ContextInstance in milli since epoch.
+     *
+     * @param projected
+     */
+    void setProjectedEndTime(long projected);
+
+    /**
      * Get the end date time of the ContextInstance in milli since epoch.
      *
      * @return
@@ -95,6 +109,19 @@ public interface ContextInstance extends Context<ContextInstance, ContextParamet
      * @param timezone
      */
     void setTimezone(String timezone);
+
+    /**
+     * Flag to indicate if the instance should run until manually ended.
+     * @return
+     */
+    boolean isRunContextUntilManuallyEnded();
+
+    /**
+     * Set flag to indicate if the instance should run until manually ended.
+     *
+     * @param isRunContextUntilManuallyEnded
+     */
+    void setRunContextUntilManuallyEnded(boolean isRunContextUntilManuallyEnded);
 
     /**
      * Get all held jobs associated with the context instance.

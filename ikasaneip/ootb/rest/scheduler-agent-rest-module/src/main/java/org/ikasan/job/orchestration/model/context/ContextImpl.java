@@ -18,7 +18,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected List<ContextDependency> contextDependencies;
     protected List<CONTEXT_PARAM> contextParameters;
     protected String timeWindowStart;
-    protected String timeWindowEnd;
+    protected long ttl;
     protected String environmentGroup;
     private boolean isQuartzScheduleDrivenJobsDisabledForContext = false;
 
@@ -118,13 +118,13 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     }
 
     @Override
-    public String getTimeWindowEnd() {
-        return timeWindowEnd;
+    public long getContextTtlMilliseconds() {
+        return this.ttl;
     }
 
     @Override
-    public void setTimeWindowEnd(String timeWindowEnd) {
-        this.timeWindowEnd = timeWindowEnd;
+    public void setContextTtlMilliseconds(long ttl) {
+        this.ttl = ttl;
     }
 
     @Override
