@@ -175,17 +175,18 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     void setTimeWindowStart(String timeWindowStart);
 
     /**
-     * Get the time window end cron expression
+     * Get the ttl of the context in milliseconds since epoch.
+     *
      * @return
      */
-    String getTimeWindowEnd();
+    long getContextTtlMilliseconds();
 
     /**
-     * Set the time window end cron expression
+     * Set the ttl of the context in milliseconds since epoch.
      *
-     * @param timeWindowEnd
+     * @param ttl
      */
-    void setTimeWindowEnd(String timeWindowEnd);
+    void setContextTtlMilliseconds(long ttl);
 
     /**
      * Set the job locks.
