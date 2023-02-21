@@ -171,7 +171,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
 
             processStartString.append("Job Parameters -> ").append("\n");
 
-            if(scheduledProcessEvent.getContextParameters().isEmpty()) {
+            if(scheduledProcessEvent.getContextParameters() == null || scheduledProcessEvent.getContextParameters().isEmpty()) {
                 processStartString.append("There are no parameters set on this job.\n");
             }
             else {
