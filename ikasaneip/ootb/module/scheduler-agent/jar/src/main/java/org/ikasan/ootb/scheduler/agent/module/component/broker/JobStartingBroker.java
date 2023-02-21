@@ -168,14 +168,21 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                 .append("] Job Name[")
                 .append(scheduledProcessEvent.getInternalEventDrivenJob().getJobName())
                 .append("]\n\n");
-            processStartString.append("Process Environment Variables -> ").append("\n");
-            processBuilder.environment().entrySet()
-                .forEach(entry -> processStartString.append("Name[")
-                    .append(entry.getKey())
-                    .append("] Value[")
-                    .append(entry.getValue())
-                    .append("]")
-                    .append("\n"));
+
+            processStartString.append("Job Parameters -> ").append("\n");
+
+            if(scheduledProcessEvent.getContextParameters().isEmpty()) {
+                processStartString.append("There are no parameters set on this job.\n");
+            }
+            else {
+                scheduledProcessEvent.getContextParameters()
+                    .forEach(contextParameter -> processStartString.append("Name[")
+                        .append(contextParameter.getName())
+                        .append("] Value[")
+                        .append(contextParameter.getValue())
+                        .append("]")
+                        .append("\n"));
+            }
 
 
             StringBuffer commandString = new StringBuffer("Process Command -> ").append("\n");
