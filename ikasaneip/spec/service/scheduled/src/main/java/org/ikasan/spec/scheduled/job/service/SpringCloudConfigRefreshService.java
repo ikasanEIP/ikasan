@@ -23,7 +23,15 @@ public interface SpringCloudConfigRefreshService {
      * @return decrypted value
      */
     String decrypt(String contextUrl, String encryptedValue);
-    
+
+    /**
+     * Request config service to encrypt a value
+     * @param contextUrl url path to config service
+     * @param valueToEncrypt value you want to encrypt using Spring Cloud Config Service
+     * @return encrypt value
+     */
+    String encrypt(String contextUrl, String valueToEncrypt);
+
     /**
      * Service to run the Spring Actuator Refresh
      */
