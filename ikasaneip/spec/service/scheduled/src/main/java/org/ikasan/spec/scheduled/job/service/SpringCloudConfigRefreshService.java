@@ -26,11 +26,10 @@ public interface SpringCloudConfigRefreshService {
 
     /**
      * Request config service to encrypt a value
-     * @param contextUrl url path to config service
      * @param valueToEncrypt value you want to encrypt using Spring Cloud Config Service
      * @return encrypt value
      */
-    String encrypt(String contextUrl, String valueToEncrypt);
+    String encrypt(String valueToEncrypt);
 
     /**
      * Service to run the Spring Actuator Refresh
