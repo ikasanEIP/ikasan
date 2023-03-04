@@ -97,7 +97,7 @@ public interface JobLockCache extends Serializable {
      *
      * @return
      */
-    ContextualisedSchedulerJobInitiationEvent pollSchedulerJobInitiationEventWaitQueue(String jobIdentifier, String contextName);
+    List<ContextualisedSchedulerJobInitiationEvent> pollSchedulerJobInitiationEventWaitQueue(String jobIdentifier, String contextName);
 
     /**
      * Set the cache record if there is one.
