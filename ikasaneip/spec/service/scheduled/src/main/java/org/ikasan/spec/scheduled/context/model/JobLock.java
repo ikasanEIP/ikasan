@@ -48,4 +48,27 @@ public interface JobLock extends Serializable {
      * @return
      */
     Map<String, List<SchedulerJob>> getJobs();
+
+    /**
+     * Add flag to indicate that a job lock is exclusive.
+     *
+     * What is an exclusive lock?
+     *
+     * If a job that is part of an exclusive lock is required to run, it will take out an exclusive
+     * lock and thus prevent any other jobs that are part of any other lock or the same lock from
+     * running until the job with the exclusive lock completes.
+     *
+     * Similarly, if a job with an exclusive lock requires an exclusive lock, it will wait until all
+     * other jobs that are part of locks to complete before it can take the exclusive lock and start.
+     *
+     * @param isExclusiveJobLock
+     */
+    void setExclusiveJobLock(boolean isExclusiveJobLock);
+
+    /**
+     * Get flag to indicate if the lock is an exclusive lock.
+     *
+     * @return
+     */
+    boolean isExclusiveJobLock();
 }
