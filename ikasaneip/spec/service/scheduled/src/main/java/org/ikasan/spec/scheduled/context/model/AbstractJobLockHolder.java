@@ -19,7 +19,7 @@ public class AbstractJobLockHolder {
         this.schedulerJobs.get(contextName).addAll(jobs);
     }
 
-    public final void removeSchedulerJobsForContext(Context context) {
+    public final synchronized void removeSchedulerJobsForContext(Context context) {
         Map<String, List<SchedulerJob>> newJobLockMap = new HashMap<>();
         this.schedulerJobs.entrySet().forEach(entry -> {
             entry.getValue().forEach(job -> {
