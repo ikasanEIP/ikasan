@@ -13,6 +13,7 @@
 
     <!-- 3.3.x data creation -->
     <include file="db/data/db-changelog-scheduler-all-policies.xml" relativeToChangelogFile="true" />
+    <include file="db/data/db-changelog-scheduler-dev-policies.xml" relativeToChangelogFile="true" />
 
     <!-- 3.3.x index creation -->
 
