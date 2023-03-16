@@ -267,7 +267,7 @@ public class JobMonitoringBrokerTest {
         Assert.assertEquals(false, event.isDryRun());
         Assert.assertEquals(false, event.isSuccessful());
         Assert.assertEquals(-1, event.getReturnCode());
-        Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raised this to the administrator to change the timeout setting."));
+        Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting."));
     }
 
     private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip
