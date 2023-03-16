@@ -115,7 +115,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                     // Add to the execution details.
                     String executionDetails = scheduledProcessEvent.getExecutionDetails();
                     executionDetails += "\n\nProcess did not complete in "+configuration.getTimeout()+" minutes. Killing the process. " +
-                        "If more time is required, please raised this to the administrator to change the timeout setting.";
+                        "If more time is required, please raise this to the administrator to change the timeout setting.";
                     scheduledProcessEvent.setExecutionDetails(executionDetails);
                     
                 }
