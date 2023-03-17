@@ -2,6 +2,7 @@ package org.ikasan.ootb.scheduler.agent.rest.client.model;
 
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.util.List;
@@ -34,6 +35,7 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     private InternalEventDrivenJobInstance internalEventDrivenJob;
     private boolean raisedDueToFailureResubmission;
     private String executionDetails;
+    private ScheduledProcessEvent catalystEvent;
 
     public Long getId()
     {
@@ -311,6 +313,16 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     @Override
     public void setExecutionDetails(String executionDetails) {
         this.executionDetails = executionDetails;
+    }
+
+    @Override
+    public ScheduledProcessEvent getCatalystEvent() {
+        return catalystEvent;
+    }
+
+    @Override
+    public void setCatalystEvent(ScheduledProcessEvent catalystEvent) {
+        this.catalystEvent = catalystEvent;
     }
 
     @Override

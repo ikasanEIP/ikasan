@@ -46,6 +46,7 @@ import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.event.model.Outcome;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.util.List;
@@ -65,7 +66,7 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     private boolean skipped;
     private InternalEventDrivenJobInstance internalEventDrivenJob;
     private boolean raisedDueToFailureResubmission;
-
+    private ScheduledProcessEvent catalystEvent;
     @Override
     public String getContextName() {
         return this.contextId;
@@ -124,6 +125,16 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     @Override
     public void setRaisedDueToFailureResubmission(boolean raisedDueToFailureResubmission) {
         this.raisedDueToFailureResubmission = raisedDueToFailureResubmission;
+    }
+
+    @Override
+    public ScheduledProcessEvent getCatalystEvent() {
+        return catalystEvent;
+    }
+
+    @Override
+    public void setCatalystEvent(ScheduledProcessEvent catalystEvent) {
+        this.catalystEvent = catalystEvent;
     }
 
     @Override

@@ -104,7 +104,7 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
     /**
      * Set the child context names that this job belongs to. Contexts can appear within contexts.
      *
-     * @param contextIds
+     * @param contextNames
      */
     void setChildContextNames(List<String> contextNames);
 
@@ -163,4 +163,18 @@ public interface SchedulerJobInitiationEvent<CONTEXT_PARAM extends ContextParame
      * @return
      */
     boolean isSkipped();
+
+    /**
+     * Set the event that was responsible for creating this job initiation event.
+     *
+     * @param scheduledProcessEvent
+     */
+    void setCatalystEvent(ScheduledProcessEvent scheduledProcessEvent);
+
+    /**
+     * Get the event that was responsible for creating this job initiation event.
+     *
+     * @return
+     */
+    ScheduledProcessEvent getCatalystEvent();
 }
