@@ -90,4 +90,18 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      * @param raisedDueToFailureResubmission
      */
     void setRaisedDueToFailureResubmission(boolean raisedDueToFailureResubmission);
+
+    /**
+     * Set the event that was responsible for creating this job initiation event.
+     *
+     * @param scheduledProcessEvent
+     */
+    void setCatalystEvent(ScheduledProcessEvent scheduledProcessEvent);
+
+    /**
+     * Get the event that was responsible for creating this job initiation event.
+     *
+     * @return
+     */
+    ScheduledProcessEvent getCatalystEvent();
 }

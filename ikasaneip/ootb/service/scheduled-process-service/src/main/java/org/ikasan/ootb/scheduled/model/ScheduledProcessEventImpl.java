@@ -79,6 +79,7 @@ public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome,
     protected boolean jobStarting = false;
     protected DryRunParameters dryRunParameters;
     private String executionDetails;
+    private ScheduledProcessEvent catalystEvent;
 
 
     public Long getId()
