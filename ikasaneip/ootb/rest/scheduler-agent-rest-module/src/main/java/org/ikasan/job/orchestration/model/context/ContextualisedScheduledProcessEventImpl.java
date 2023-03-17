@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 public class ContextualisedScheduledProcessEventImpl implements ContextualisedScheduledProcessEvent<String, DryRunParametersDto> {
@@ -35,6 +36,8 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     private InternalEventDrivenJobInstance internalEventDrivenJobInstance;
     private boolean raisedDueToFailureResubmission;
     private String executionDetails;
+    private ScheduledProcessEvent catalystEvent;
+
     public Long getId()
     {
         return id;
@@ -311,6 +314,16 @@ public class ContextualisedScheduledProcessEventImpl implements ContextualisedSc
     @Override
     public void setExecutionDetails(String executionDetails) {
         this.executionDetails = executionDetails;
+    }
+
+    @Override
+    public ScheduledProcessEvent getCatalystEvent() {
+        return catalystEvent;
+    }
+
+    @Override
+    public void setCatalystEvent(ScheduledProcessEvent catalystEvent) {
+        this.catalystEvent = catalystEvent;
     }
 
     @Override

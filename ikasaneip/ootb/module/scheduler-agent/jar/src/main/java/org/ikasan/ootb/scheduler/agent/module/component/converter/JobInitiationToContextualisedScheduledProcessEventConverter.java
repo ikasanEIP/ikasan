@@ -125,6 +125,7 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
             scheduledProcessEvent.setInternalEventDrivenJob(schedulerJobInitiationEvent.getInternalEventDrivenJob());
             scheduledProcessEvent.setContextParameters(schedulerJobInitiationEvent.getContextParameters());
+            scheduledProcessEvent.setCatalystEvent(schedulerJobInitiationEvent.getCatalystEvent());
 
             // We are going to use a file naming convention for the log files used by the process to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log

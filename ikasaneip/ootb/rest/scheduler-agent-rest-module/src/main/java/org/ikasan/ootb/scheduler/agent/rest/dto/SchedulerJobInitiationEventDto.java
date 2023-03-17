@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.rest.dto;
 
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     private boolean dryRun;
     private DryRunParametersDto dryRunParametersDto;
     private boolean skipped;
+    private ScheduledProcessEvent catalystEvent;
 
     @Override
     public InternalEventDrivenJobInstanceDto getInternalEventDrivenJob() {
@@ -126,6 +128,16 @@ public class SchedulerJobInitiationEventDto implements SchedulerJobInitiationEve
     @Override
     public boolean isSkipped() {
         return this.skipped;
+    }
+
+    @Override
+    public ScheduledProcessEvent getCatalystEvent() {
+        return catalystEvent;
+    }
+
+    @Override
+    public void setCatalystEvent(ScheduledProcessEvent catalystEvent) {
+        this.catalystEvent = catalystEvent;
     }
 
     @Override
