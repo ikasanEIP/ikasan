@@ -242,4 +242,18 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @param isQuartzScheduleDrivenJobsDisabledForContext
      */
     void setQuartzScheduleDrivenJobsDisabledForContext(boolean isQuartzScheduleDrivenJobsDisabledForContext);
+
+    /**
+     * Get the tree view expand level. This assist with the UI tree view widget and the way it is presented.
+     *
+     * @return
+     */
+    int getTreeViewExpandLevel();
+
+    /**
+     * Set the tree view expand level.
+     *
+     * @param treeViewExpandLevel
+     */
+    void setTreeViewExpandLevel(int treeViewExpandLevel);
 }
