@@ -1,42 +1,40 @@
-/* 
- * $Id$
- * $URL$
+/*
+ *  ====================================================================
+ *  Ikasan Enterprise Integration Platform
  *
- * ====================================================================
- * Ikasan Enterprise Integration Platform
- * 
- * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing 
- * of individual contributors are as shown in the packaged copyright.txt 
- * file. 
- * 
- * All rights reserved.
+ *  Distributed under the Modified BSD License.
+ *  Copyright notice: The copyright for this software and a full listing
+ *  of individual contributors are as shown in the packaged copyright.txt
+ *  file.
  *
- * Redistribution and use in source and binary forms, with or without 
- * modification, are permitted provided that the following conditions are met:
+ *  All rights reserved.
  *
- *  - Redistributions of source code must retain the above copyright notice, 
- *    this list of conditions and the following disclaimer.
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
- *  - Redistributions in binary form must reproduce the above copyright notice, 
- *    this list of conditions and the following disclaimer in the documentation 
- *    and/or other materials provided with the distribution.
+ *   - Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
  *
- *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without 
- *    specific prior written permission.
+ *   - Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE 
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE 
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL 
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR 
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER 
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE 
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
+ *   - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *     be used to endorse or promote products derived from this software without
+ *     specific prior written permission.
+ *
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ *  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  ====================================================================
+ *
  */
 package org.ikasan.module.service;
 
@@ -86,13 +84,22 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
     /** keep a handle to the state (running or stopped) of each flow when deactivated for reference on activation */
     List<String> flowsInStoppedState = new ArrayList<String>();
 
+    /** allows the startup type to be set up on all flows in a module on activation **/
+    private BulkStartupTypeSetupService bulkStartupTypeSetupService;
+
+    /** allows wiretap triggers to be setup on activation **/
+    private WiretapTriggerSetupService wiretapTriggerSetupService;
+
     /**
      * Constructor
      * @param configurationService
      * @param startupControlDao
      */
     public ModuleActivatorDefaultImpl(ConfigurationService configurationService, StartupControlDao startupControlDao
-        , DashboardRestService moduleMetadataDashboardRestService, DashboardRestService configurationMetadataDashboardRestService)
+        , DashboardRestService moduleMetadataDashboardRestService,
+                                      DashboardRestService configurationMetadataDashboardRestService,
+                                      BulkStartupTypeSetupService bulkStartupTypeSetupService,
+                                      WiretapTriggerSetupService wiretapTriggerSetupService)
     {
         this.configurationService = configurationService;
         if(configurationService == null)
@@ -117,13 +124,21 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         {
             throw new IllegalArgumentException("configurationMetadataDashboardRestService cannot be 'null'");
         }
+        this.bulkStartupTypeSetupService = bulkStartupTypeSetupService;
+        this.wiretapTriggerSetupService = wiretapTriggerSetupService;
     }
+
 
     /* (non-Javadoc)
      * @see org.ikasan.module.service.ModuleActivation#activate(org.ikasan.spec.module.Module)
      */
     public void activate(Module<Flow> module)
     {
+
+        // setup any wiretap triggers
+        wiretapTriggerSetupService.setup(module.getName());
+        bulkStartupTypeSetupService.deleteAllOnlyIfConfigured(module.getName());
+
         // get a full list of startup controls for this module
         Map<String,StartupControl> startupControls = new HashMap<String,StartupControl>();
         for(StartupControl startupControl:this.startupControlDao.getStartupControls(module.getName()))
@@ -165,11 +180,12 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         {
             // remove them as they are accounted for
             StartupControl flowStartupControl = startupControls.remove(flow.getName());
+
             if(flowStartupControl == null)
             {
                 flowStartupControl = this.startupControlDao.getStartupControl(module.getName(), flow.getName());
             }
-
+            flowStartupControl = bulkStartupTypeSetupService.setup(flowStartupControl);
             if(StartupType.AUTOMATIC.equals(flowStartupControl.getStartupType()))
             {
                 try
@@ -204,6 +220,9 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         this.activatedModuleNames.add(module);
         this.initialiseModuleMetaData(module);
     }
+
+
+
 
     protected boolean isConfiguredResource(Module<Flow> module)
     {
@@ -286,4 +305,5 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         moduleMetadataDashboardRestService.publish(module);
         configurationMetadataDashboardRestService.publish(module);
     }
+
 }
