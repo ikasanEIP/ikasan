@@ -1,42 +1,40 @@
 /*
- * $Id$
- * $URL$
+ *  ====================================================================
+ *  Ikasan Enterprise Integration Platform
  *
- * ====================================================================
- * Ikasan Enterprise Integration Platform
+ *  Distributed under the Modified BSD License.
+ *  Copyright notice: The copyright for this software and a full listing
+ *  of individual contributors are as shown in the packaged copyright.txt
+ *  file.
  *
- * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing
- * of individual contributors are as shown in the packaged copyright.txt
- * file.
+ *  All rights reserved.
  *
- * All rights reserved.
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ *   - Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
  *
- *  - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ *   - Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ *   - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *     be used to endorse or promote products derived from this software without
+ *     specific prior written permission.
  *
- *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ *  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  ====================================================================
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
  */
 package org.ikasan.module.service;
 
@@ -92,6 +90,8 @@ public class ModuleActivatorDefaultImplTest
 
     ConfiguredResource<ConfiguredModuleConfiguration> configuredResource = mockery.mock(ConfiguredResource.class);
     ConfiguredResource<ConfiguredModuleConfiguration> configuredModuleConfiguration = new ExtendedConfiguredResource();
+    private BulkStartupTypeSetupService bulkStartupTypeSetupService = mockery.mock(BulkStartupTypeSetupService.class);
+    private WiretapTriggerSetupService wiretapTriggerSetupService = mockery.mock(WiretapTriggerSetupService.class);
 
     /**
      * Class under test
@@ -101,25 +101,29 @@ public class ModuleActivatorDefaultImplTest
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_configurationService()
     {
-        new ModuleActivatorDefaultImpl(null, startupControlDao, dashboardRestService, dashboardRestService);
+        new ModuleActivatorDefaultImpl(null, startupControlDao, dashboardRestService,
+            dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_startupControlDao()
     {
-        new ModuleActivatorDefaultImpl(configurationService, null, dashboardRestService, dashboardRestService);
+        new ModuleActivatorDefaultImpl(configurationService, null, dashboardRestService,
+            dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_moduleDashboardRestService()
     {
-        new ModuleActivatorDefaultImpl(configurationService, startupControlDao, null, dashboardRestService);
+        new ModuleActivatorDefaultImpl(configurationService, startupControlDao, null,
+            dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_null_configurationDashboardRestService()
     {
-        new ModuleActivatorDefaultImpl(configurationService, startupControlDao, dashboardRestService, null);
+        new ModuleActivatorDefaultImpl(configurationService, startupControlDao, dashboardRestService,
+            null, bulkStartupTypeSetupService, wiretapTriggerSetupService);
     }
 
     @Test
@@ -134,15 +138,25 @@ public class ModuleActivatorDefaultImplTest
         startupControls.add(flowStartupControl);
 
         moduleActivator =
-            new ExtendedModuleActivator(true, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(
+                true, configurationService, startupControlDao, dashboardRestService,
+                dashboardRestService,bulkStartupTypeSetupService, wiretapTriggerSetupService);
 
         String moduleName = "moduleName";
 
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(wiretapTriggerSetupService).setup("moduleName");
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(bulkStartupTypeSetupService).deleteAllOnlyIfConfigured("moduleName");
                 exactly(1).of(startupControlDao).getStartupControls(moduleName);
                 will(returnValue(startupControls));
+                exactly(1).of(bulkStartupTypeSetupService).setup(flowStartupControl);
+                will(returnValue(flowStartupControl));
 
                 exactly(1).of(flowStartupControl).getFlowName();
                 will(returnValue("flowname1"));
@@ -196,15 +210,24 @@ public class ModuleActivatorDefaultImplTest
         final List startupControls = new ArrayList();
 
         moduleActivator =
-            new ExtendedModuleActivator(true, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(true, configurationService, startupControlDao,
+                dashboardRestService, dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
 
         String moduleName = "moduleName";
 
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(wiretapTriggerSetupService).setup("moduleName");
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(bulkStartupTypeSetupService).deleteAllOnlyIfConfigured("moduleName");
                 exactly(1).of(startupControlDao).getStartupControls(moduleName);
                 will(returnValue(startupControls));
+                exactly(1).of(bulkStartupTypeSetupService).setup(flowStartupControl);
+                will(returnValue(flowStartupControl));
 
                 oneOf(configurationService).configure(configuredModuleConfiguration);
                 ignoring(configuredResource);
@@ -263,15 +286,25 @@ public class ModuleActivatorDefaultImplTest
         final List startupControls = new ArrayList();
 
         moduleActivator =
-            new ExtendedModuleActivator(false, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(false, configurationService, startupControlDao,
+                dashboardRestService, dashboardRestService,
+                bulkStartupTypeSetupService, wiretapTriggerSetupService);
 
         String moduleName = "moduleName";
 
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(wiretapTriggerSetupService).setup("moduleName");
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(bulkStartupTypeSetupService).deleteAllOnlyIfConfigured("moduleName");
                 exactly(1).of(startupControlDao).getStartupControls(moduleName);
                 will(returnValue(startupControls));
+                exactly(1).of(bulkStartupTypeSetupService).setup(flowStartupControl);
+                will(returnValue(flowStartupControl));
 
                 oneOf(module).getName();
                 will(returnValue(moduleName));
@@ -316,7 +349,9 @@ public class ModuleActivatorDefaultImplTest
         final List startupControls = new ArrayList();
 
         moduleActivator =
-            new ExtendedModuleActivator(false, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(false, configurationService, startupControlDao,
+                dashboardRestService, dashboardRestService,
+                bulkStartupTypeSetupService, wiretapTriggerSetupService);
 
         String moduleName = "moduleName";
 
@@ -341,9 +376,16 @@ public class ModuleActivatorDefaultImplTest
                 //
                 // activate
 
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(wiretapTriggerSetupService).setup("moduleName");
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(bulkStartupTypeSetupService).deleteAllOnlyIfConfigured("moduleName");
                 exactly(1).of(startupControlDao).getStartupControls(moduleName);
                 will(returnValue(startupControls));
-
+                exactly(1).of(bulkStartupTypeSetupService).setup(flowStartupControl);
+                will(returnValue(flowStartupControl));
                 oneOf(module).getName();
                 will(returnValue(moduleName));
 
@@ -394,7 +436,8 @@ public class ModuleActivatorDefaultImplTest
         final List startupControls = new ArrayList();
 
         moduleActivator =
-            new ExtendedModuleActivator(false, configurationService, startupControlDao, dashboardRestService, dashboardRestService);
+            new ExtendedModuleActivator(false, configurationService, startupControlDao,
+                dashboardRestService, dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
 
         String moduleName = "moduleName";
 
@@ -416,8 +459,16 @@ public class ModuleActivatorDefaultImplTest
                 //
                 // activate
 
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(wiretapTriggerSetupService).setup("moduleName");
+                exactly(1).of(module).getName();
+                will(returnValue(moduleName));
+                exactly(1).of(bulkStartupTypeSetupService).deleteAllOnlyIfConfigured("moduleName");
                 exactly(1).of(startupControlDao).getStartupControls(moduleName);
                 will(returnValue(startupControls));
+                exactly(1).of(bulkStartupTypeSetupService).setup(flowStartupControl);
+                will(returnValue(flowStartupControl));
 
                 oneOf(module).getName();
                 will(returnValue(moduleName));
@@ -466,9 +517,14 @@ public class ModuleActivatorDefaultImplTest
          * @param moduleMetadataDashboardRestService
          * @param configurationMetadataDashboardRestService
          */
-        public ExtendedModuleActivator(boolean configuredModule, ConfigurationService configurationService, StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService, DashboardRestService configurationMetadataDashboardRestService)
+        public ExtendedModuleActivator(boolean configuredModule, ConfigurationService configurationService, StartupControlDao startupControlDao,
+                                       DashboardRestService moduleMetadataDashboardRestService,
+                                       DashboardRestService configurationMetadataDashboardRestService,
+                                       BulkStartupTypeSetupService bulkStartupTypeSetupService,
+                                       WiretapTriggerSetupService wiretapTriggerSetupService)
         {
-            super(configurationService, startupControlDao, moduleMetadataDashboardRestService, configurationMetadataDashboardRestService);
+            super(configurationService, startupControlDao, moduleMetadataDashboardRestService,
+                configurationMetadataDashboardRestService,bulkStartupTypeSetupService, wiretapTriggerSetupService );
             this.configuredModule = configuredModule;
         }
 

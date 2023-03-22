@@ -1,42 +1,40 @@
 /*
- * $Id$
- * $URL$
+ *  ====================================================================
+ *  Ikasan Enterprise Integration Platform
  *
- * ====================================================================
- * Ikasan Enterprise Integration Platform
+ *  Distributed under the Modified BSD License.
+ *  Copyright notice: The copyright for this software and a full listing
+ *  of individual contributors are as shown in the packaged copyright.txt
+ *  file.
  *
- * Distributed under the Modified BSD License.
- * Copyright notice: The copyright for this software and a full listing
- * of individual contributors are as shown in the packaged copyright.txt
- * file.
+ *  All rights reserved.
  *
- * All rights reserved.
+ *  Redistribution and use in source and binary forms, with or without
+ *  modification, are permitted provided that the following conditions are met:
  *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions are met:
+ *   - Redistributions of source code must retain the above copyright notice,
+ *     this list of conditions and the following disclaimer.
  *
- *  - Redistributions of source code must retain the above copyright notice,
- *    this list of conditions and the following disclaimer.
+ *   - Redistributions in binary form must reproduce the above copyright notice,
+ *     this list of conditions and the following disclaimer in the documentation
+ *     and/or other materials provided with the distribution.
  *
- *  - Redistributions in binary form must reproduce the above copyright notice,
- *    this list of conditions and the following disclaimer in the documentation
- *    and/or other materials provided with the distribution.
+ *   - Neither the name of the ORGANIZATION nor the names of its contributors may
+ *     be used to endorse or promote products derived from this software without
+ *     specific prior written permission.
  *
- *  - Neither the name of the ORGANIZATION nor the names of its contributors may
- *    be used to endorse or promote products derived from this software without
- *    specific prior written permission.
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ *  AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ *  IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ *  DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
+ *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ *  DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+ *  SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
+ *  CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
+ *  OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
+ *  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *  ====================================================================
  *
- * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
- * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
- * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
- * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
- * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
- * SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
- * CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE
- * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- * ====================================================================
  */
 package org.ikasan.builder;
 
@@ -47,16 +45,16 @@ import org.ikasan.exceptionResolver.action.IgnoreAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
+import org.ikasan.module.service.FlowStartupTypeConfigurationConverter;
+import org.ikasan.module.service.WiretapTriggerConfigurationConverter;
 import org.ikasan.monitor.IkasanMonitorAutoConfiguration;
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
+import org.springframework.context.annotation.*;
 
 @Configuration
 @ImportResource( {
@@ -84,6 +82,8 @@ import org.springframework.context.annotation.ImportResource;
             WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
+
+
 
     @Bean
     public BuilderFactory builderFactory(){
@@ -131,4 +131,16 @@ public class IkasanBaseAutoConfiguration
         return builder.build();
     }
 
+    /** Put Spring Type Converters here or will get problems with circular dependencies **/
+    @Bean
+    @ConfigurationPropertiesBinding
+    public FlowStartupTypeConfigurationConverter flowStartupTypeConfigurationConverter(){
+        return new FlowStartupTypeConfigurationConverter();
+    }
+
+    @Bean
+    @ConfigurationPropertiesBinding
+    public WiretapTriggerConfigurationConverter wiretapTriggerConfigurationConverter(){
+        return new WiretapTriggerConfigurationConverter();
+    }
 }
