@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.job.service;
 
+import org.ikasan.spec.scheduled.context.model.ContextTemplate;
 import org.ikasan.spec.scheduled.job.model.*;
 import org.ikasan.spec.search.SearchResults;
 
@@ -215,9 +216,10 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * Set a InternalEventDrivenJobRecord to enabled. Enabled is skipped == false.
      *
      * @param jobRecord
+     * @param contextTemplate
      * @param actor
      */
-    void enable(T jobRecord, String actor);
+    void enable(T jobRecord, ContextTemplate contextTemplate,  String actor);
 
     /**
      * Set a InternalEventDrivenJobRecord to hold. If targetResidingContextOnly is set
