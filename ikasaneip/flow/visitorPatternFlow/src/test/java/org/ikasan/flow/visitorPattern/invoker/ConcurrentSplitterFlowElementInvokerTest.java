@@ -41,8 +41,11 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
+import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.flow.*;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -61,7 +64,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
     private FlowInvocationContext flowInvocationContext = Mockito
         .mock(FlowInvocationContext.class, "flowInvocationContext");
 
-    private FlowEvent flowEvent = Mockito.mock(FlowEvent.class, "flowEvent");
 
     /**
      * the sub flow element, also used as the current splitter flow element
@@ -88,25 +90,34 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
     private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
-    private Object payload = Mockito.mock(Object.class, "payload");
 
     private ConcurrentSplitterFlowElementInvoker.SplitFlowElement asyncTask = Mockito
         .mock(ConcurrentSplitterFlowElementInvoker.SplitFlowElement.class, "mockAsyncTask");
 
-    private ExecutorService executorService = Executors.newFixedThreadPool(1);
+    private ExecutorService executorService;
+
+    @Before
+    public void setup(){
+         executorService = Executors.newFixedThreadPool(1);
+    }
+
+    @After
+    public void shutdown(){
+        executorService.shutdownNow();
+    }
 
     @Test
     @SuppressWarnings("unchecked")
     public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution() throws Exception
     {
-        final List payloads = new ArrayList();
+        String payload = "one";
+        final List<String> payloads = new ArrayList<>();
         payloads.add(payload);
+        FlowEvent flowEvent = new FlowEventFactory().newEvent("id", "id",payload);
 
         asyncTask._flowEvent = flowEvent;
         asyncTask._flowInvocationContext = flowInvocationContext;
 
-        Mockito.when(flowEvent.getIdentifier()).thenReturn(payload);
-        Mockito.when(flowEvent.getRelatedIdentifier()).thenReturn(payload);
         Mockito.spy(flowInvocationContext).addElementInvocation(Mockito.any(FlowElementInvocation.class));
         Mockito.spy(flowInvocationContext).setLastComponentName(null);
 
@@ -115,8 +126,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
         Mockito.when(subFlowElement.getFlowComponent()).thenReturn(splitter);
 
         Mockito.when(splitter.split(flowEvent)).thenThrow(new ClassCastException());
-        Mockito.when(flowEvent.getPayload()).thenReturn(payload);
-        Mockito.when(flowEvent.getIdentifier()).thenReturn("id");
+
 
         Mockito.when(splitter.split(payload)).thenReturn(payloads);
 
@@ -154,14 +164,14 @@ public class ConcurrentSplitterFlowElementInvokerTest
     public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution_invocation_aware()
         throws Exception
     {
-        final List payloads = new ArrayList();
+        String payload = "one";
+        final List<String> payloads = new ArrayList<>();
         payloads.add(payload);
-
+        FlowEvent flowEvent = new FlowEventFactory().newEvent("id", "id",payload);
         asyncTask._flowEvent = flowEvent;
         asyncTask._flowInvocationContext = flowInvocationContext;
 
-        Mockito.when(flowEvent.getIdentifier()).thenReturn(payload);
-        Mockito.when(flowEvent.getRelatedIdentifier()).thenReturn(payload);
+
         Mockito.spy(flowInvocationContext).addElementInvocation(Mockito.any(FlowElementInvocation.class));
         Mockito.spy(flowInvocationContext).setLastComponentName(null);
 
@@ -172,8 +182,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
         Mockito.spy(splitterInvocationAware).setFlowElementInvocation(Mockito.any(FlowElementInvocation.class));
 
         Mockito.when(splitterInvocationAware.split(flowEvent)).thenThrow(new ClassCastException());
-        Mockito.when(flowEvent.getPayload()).thenReturn(payload);
-        Mockito.when(flowEvent.getIdentifier()).thenReturn("id");
+
 
         Mockito.when(splitterInvocationAware.split(payload)).thenReturn(payloads);
 
@@ -206,15 +215,6 @@ public class ConcurrentSplitterFlowElementInvokerTest
         flowElementInvoker
             .invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, subFlowElement);
 
-
-
-        Mockito.verify(flowEvent,Mockito.times(3)).getIdentifier();
-        Mockito.verify(flowEvent,Mockito.times(2)).getRelatedIdentifier();
-        Mockito.verify(flowEvent,Mockito.times(2)).getPayload();
-        Mockito.verify(flowEvent,Mockito.times(3)).getIdentifier();
-       // Mockito.verify(flowEvent).setPayload(payload);
-
-        //Mockito.verifyNoMoreInteractions(flowEvent);
     }
 
     class StubbedConcurrentSplitterFlowElementInvoker extends ConcurrentSplitterFlowElementInvoker
