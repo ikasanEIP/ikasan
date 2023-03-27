@@ -311,11 +311,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         this.configurationService.update(consumer);
 
-        ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
-            .getFlowElement("Context Instance Active Filter").getFlowComponent();
-
-        this.configurationService.update(contextFilter);
-
         ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
             .getFlowElement("File Age Filter").getFlowComponent();
 
