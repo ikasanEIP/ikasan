@@ -216,10 +216,10 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * Set a InternalEventDrivenJobRecord to enabled. Enabled is skipped == false.
      *
      * @param jobRecord
-     * @param contextTemplate
+     * @param contextTemplateName
      * @param actor
      */
-    void enable(T jobRecord, ContextTemplate contextTemplate,  String actor);
+    void enable(T jobRecord, String contextTemplateName,  String actor);
 
     /**
      * Set a InternalEventDrivenJobRecord to hold. If targetResidingContextOnly is set
