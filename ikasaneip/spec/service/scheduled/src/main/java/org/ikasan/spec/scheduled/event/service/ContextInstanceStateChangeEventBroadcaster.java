@@ -40,11 +40,9 @@
  */
 package org.ikasan.spec.scheduled.event.service;
 
-import java.util.function.Consumer;
-
 import org.ikasan.spec.scheduled.event.model.ContextInstanceStateChangeEvent;
 
-public interface ContextInstanceStateChangeEventBroadcaster<R> {
+public interface ContextInstanceStateChangeEventBroadcaster {
 
     /**
      * Register a listener for context instance state change events.
@@ -52,7 +50,7 @@ public interface ContextInstanceStateChangeEventBroadcaster<R> {
      * @param listener
      * @return
      */
-    R register(Consumer<ContextInstanceStateChangeEvent> listener);
+    void register(ContextInstanceStateChangeEventBroadcastListener listener);
 
     /**
      * Broadcast the context instance state change event to all listeners.

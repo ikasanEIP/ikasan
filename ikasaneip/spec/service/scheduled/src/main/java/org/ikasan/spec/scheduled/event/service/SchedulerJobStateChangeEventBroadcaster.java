@@ -40,19 +40,16 @@
  */
 package org.ikasan.spec.scheduled.event.service;
 
-import java.util.function.Consumer;
-
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInstanceStateChangeEvent;
 
-public interface SchedulerJobStateChangeEventBroadcaster<R> {
+public interface SchedulerJobStateChangeEventBroadcaster {
 
     /**
      * Register a listener for scheduler job instance state change events.
      *
      * @param listener
-     * @return
      */
-    R register(Consumer<SchedulerJobInstanceStateChangeEvent> listener);
+    void register(SchedulerJobStateChangeEventBroadcastListener listener);
 
     /**
      * Broadcast the scheduler job instance state change event to all listeners.

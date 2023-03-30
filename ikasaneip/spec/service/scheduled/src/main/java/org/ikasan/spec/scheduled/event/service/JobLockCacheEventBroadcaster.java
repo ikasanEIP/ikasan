@@ -42,9 +42,7 @@ package org.ikasan.spec.scheduled.event.service;
 
 import org.ikasan.spec.scheduled.event.model.JobLockCacheEvent;
 
-import java.util.function.Consumer;
-
-public interface JobLockCacheEventBroadcaster<R> {
+public interface JobLockCacheEventBroadcaster {
 
     /**
      * Register a listener for job lock cache events.
@@ -52,7 +50,7 @@ public interface JobLockCacheEventBroadcaster<R> {
      * @param listener
      * @return
      */
-    R register(Consumer<JobLockCacheEvent> listener);
+    void register(JobLockCacheEventBroadcastListener listener);
 
     /**
      * Broadcast the job lock cache event to all listeners.
