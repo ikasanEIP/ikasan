@@ -28,6 +28,9 @@ public class HousekeepLogFilesFlowComponentFactory
     @Resource
     BuilderFactory builderFactory;
 
+    @Resource
+    HousekeepLogFilesProcessConfiguration housekeepLogFilesProcessConfiguration;
+
 
     public Consumer getScheduledConsumer()
     {
@@ -41,9 +44,8 @@ public class HousekeepLogFilesFlowComponentFactory
 
 
     public Producer getHousekeepLogFilesProcess() {
-        HousekeepLogFilesProcessConfiguration configuration = new HousekeepLogFilesProcessConfiguration();
         HousekeepLogFilesProcess housekeepLogFilesProcess = new HousekeepLogFilesProcess();
-        housekeepLogFilesProcess.setConfiguration(configuration);
+        housekeepLogFilesProcess.setConfiguration(housekeepLogFilesProcessConfiguration);
         housekeepLogFilesProcess.setConfiguredResourceId(moduleName+"-housekeepLogFilesProcess");
 
         return housekeepLogFilesProcess;
