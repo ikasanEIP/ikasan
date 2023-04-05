@@ -182,7 +182,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
                 SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
                 configuration.getFlowContextMap().put(job.getJobName(), job.getContextName());
-
             }
             if(job instanceof FileEventDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getJobName(), "MANUAL");
@@ -200,6 +199,9 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         configuredModuleConfiguration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "AUTOMATIC");
         configuredModuleConfiguration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
+
+        configuredModuleConfiguration.getFlowDefinitions().put("Housekeep Log Files Flow", "AUTOMATIC");
+        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", "HOUSEKEEP_LOG");
     }
 
     private void clearFlowConfig(ConfiguredModuleConfiguration configuredModuleConfiguration, String contextName) {
