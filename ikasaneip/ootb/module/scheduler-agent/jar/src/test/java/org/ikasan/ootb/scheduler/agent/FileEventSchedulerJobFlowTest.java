@@ -200,6 +200,36 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
+    public void test_file_flow_success_without_aspect_no_correlating_identifier() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        flowTestRule.consumer("File Consumer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(5000);
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+
+        assertEquals(Flow.STOPPED, flowTestRule.getFlowState());
+    }
+
+    @Test
+    @DirtiesContext
     public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));

@@ -238,19 +238,6 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
-        Assert.assertEquals("\n" +
-            "Executing Job -> Context Name[null] Job Name[null]\n" +
-            "\n" +
-            "Job Parameters -> \n" +
-            "Name[cmd] Value[echo test]\n" +
-            "Name[LOG_FILE_PATH] Value[/Users/mick/workspace/ikasan/ikasaneip/ootb/module/scheduler-agent/jar/out]\n" +
-            "Name[ERROR_LOG_FILE_PATH] Value[/Users/mick/workspace/ikasan/ikasaneip/ootb/module/scheduler-agent/jar/err]\n" +
-            "\n" +
-            "Process Command -> \n" +
-            "/bin/bash\n" +
-            "-c\n" +
-            "source $HOME/.some_profile \n" +
-            "echo \"some_command(\\\"code = 'SOME_VAR'\\\");\"\\n | echo \"TEST\" | grep -i 'test' | echo \\\"END\\\" \\\t OF \\\"CMD - $cmd\\\"\n", enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         final EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
         Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->

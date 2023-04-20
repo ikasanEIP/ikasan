@@ -67,6 +67,7 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
      */
     private static final Logger logger = LoggerFactory.getLogger(CorrelatingScheduledConsumer.class);
     public static final String CORRELATION_ID = "correlationId";
+    public static final String EMPTY_CORRELATION_ID = "EMPTY_CORRELATION_ID";
 
     private Set<Trigger> triggers = null;
 
@@ -117,29 +118,13 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
             // get all configured business expressions (expression and expressions) as a single list
             // and create uniquely named triggers for each
             for(String cronExpression:cronExpressions) {
-                for(String rootPlanCorrelationId:correlatingIdentifiers) {
-                    String jobNameIteration = jobName + "_" + rootPlanCorrelationId + "_" + cronExpression.hashCode();
-                    TriggerBuilder<Trigger> triggerBuilder = newTriggerFor(jobNameIteration, jobGroupName);
-
-                    // check if last invocation was successful, if so schedule the business trigger otherwise create a persistent recovery trigger
-                    Trigger trigger;
-                    if (consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService.isRecoveryRequired(jobNameIteration, jobGroupName, consumerConfiguration.getRecoveryTolerance()))
-                    {
-                        // if unsuccessful, schedule a callback immediately if within tolerance of recovery
-                        trigger = newTriggerFor(jobNameIteration, jobGroupName)
-                            .startNow()
-                            .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
-                        trigger.getJobDataMap().put(PERSISTENT_RECOVERY, PERSISTENT_RECOVERY);
+                if(correlatingIdentifiers.isEmpty()) {
+                    this.populateTrigger(jobName, jobGroupName, EMPTY_CORRELATION_ID, cronExpression);
+                }
+                else {
+                    for (String rootPlanCorrelationId : correlatingIdentifiers) {
+                        this.populateTrigger(jobName, jobGroupName, rootPlanCorrelationId, cronExpression);
                     }
-                    else
-                    {
-                        // if successful then just add business trigger
-                        trigger = getBusinessTrigger(triggerBuilder, cronExpression);
-                    }
-
-                    trigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);
-                    trigger.getJobDataMap().put(CORRELATION_ID, rootPlanCorrelationId);
-                    triggers.add(trigger);
                 }
             }
 
@@ -170,6 +155,29 @@ public class CorrelatingScheduledConsumer<T> extends ScheduledConsumer<T> implem
         {
             throw new RuntimeException(e);
         }
+    }
+
+    private void populateTrigger(String jobName, String jobGroupName, String rootPlanCorrelationId, String cronExpression) throws ParseException {
+        String jobNameIteration = jobName + "_" + rootPlanCorrelationId + "_" + cronExpression.hashCode();
+        TriggerBuilder<Trigger> triggerBuilder = newTriggerFor(jobNameIteration, jobGroupName);
+
+        // check if last invocation was successful, if so schedule the business trigger otherwise create a persistent recovery trigger
+        Trigger trigger;
+        if (consumerConfiguration.isPersistentRecovery() && scheduledJobRecoveryService
+            .isRecoveryRequired(jobNameIteration, jobGroupName, consumerConfiguration.getRecoveryTolerance())) {
+            // if unsuccessful, schedule a callback immediately if within tolerance of recovery
+            trigger = newTriggerFor(jobNameIteration, jobGroupName)
+                .startNow()
+                .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()).build();
+            trigger.getJobDataMap().put(PERSISTENT_RECOVERY, PERSISTENT_RECOVERY);
+        } else {
+            // if successful then just add business trigger
+            trigger = getBusinessTrigger(triggerBuilder, cronExpression);
+        }
+
+        trigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);
+        trigger.getJobDataMap().put(CORRELATION_ID, rootPlanCorrelationId);
+        triggers.add(trigger);
     }
 
     @Override

@@ -115,6 +115,29 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Test
     @DirtiesContext
+    public void test_quartz_flow_success_start_no_correlation_id() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.stopFlow();
+        assertEquals(Flow.STOPPED, flowTestRule.getFlowState());
+
+        flowTestRule.assertIsSatisfied();
+    }
+
+    @Test
+    @DirtiesContext
     public void test_quartz_flow_success() throws IOException {
         String contextInstanceId = createContextAndPutInCache();
 
