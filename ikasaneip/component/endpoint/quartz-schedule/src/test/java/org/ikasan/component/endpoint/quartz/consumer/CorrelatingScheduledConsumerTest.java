@@ -1,8 +1,5 @@
-package org.ikasan.ootb.scheduler.agent.module.component.endpoint;
+package org.ikasan.component.endpoint.quartz.consumer;
 
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecoveryService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
@@ -70,8 +67,20 @@ public class CorrelatingScheduledConsumerTest {
                 exactly(1).of(mockConsumerConfiguration).getCorrelatingIdentifiers();
                 will(returnValue(new ArrayList<>()));
 
-                exactly(1).of(mockConsumerConfiguration).getPassthroughProperties();
+                exactly(4).of(mockConsumerConfiguration).getPassthroughProperties();
                 will(returnValue(new HashMap<String,String>()));
+
+                exactly(3).of(mockConsumerConfiguration).getDescription();
+                will(returnValue("configuration description"));
+
+                exactly(3).of(mockConsumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
+
+                exactly(3).of(mockConsumerConfiguration).isIgnoreMisfire();
+                will(returnValue(true));
+
+                exactly(9).of(mockConsumerConfiguration).getTimezone();
+                will(returnValue("UTC"));
             }
         });
 
@@ -82,7 +91,7 @@ public class CorrelatingScheduledConsumerTest {
 
         StubbedCorrelatingScheduledConsumer stubbedCorrelatingScheduledConsumer = (StubbedCorrelatingScheduledConsumer) correlatingScheduledConsumer;
         // No correlating identifiers means no triggers i.e. the component is passive until correlating identifiers are added
-        Assert.assertEquals("Expected number of triggers not met", stubbedCorrelatingScheduledConsumer.getTriggers().size(), 0);
+        Assert.assertEquals("Expected number of triggers not met", 3, stubbedCorrelatingScheduledConsumer.getTriggers().size());
         Assert.assertTrue("Expected replacement of triggers", stubbedCorrelatingScheduledConsumer.isReplace());
         mockery.assertIsSatisfied();
     }

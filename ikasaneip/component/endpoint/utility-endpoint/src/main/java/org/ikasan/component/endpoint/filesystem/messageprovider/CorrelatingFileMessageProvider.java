@@ -40,6 +40,7 @@ package org.ikasan.component.endpoint.filesystem.messageprovider;
 
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
@@ -99,7 +100,8 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         logger.debug(CorrelatingScheduledConsumer.CORRELATION_ID
             + " " + correlatingIdentifier);
 
-        if(correlatingIdentifier == null) {
+        if(correlatingIdentifier == null || correlatingIdentifier
+            .equals(CorrelatingScheduledConsumer.EMPTY_CORRELATION_ID)) {
             return null;
         }
 
