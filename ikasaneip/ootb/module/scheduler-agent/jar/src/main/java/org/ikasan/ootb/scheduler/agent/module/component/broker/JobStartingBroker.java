@@ -73,6 +73,9 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(JobStartingBroker.class);
 
+    public static final String LOG_FILE_PATH = "LOG_FILE_PATH";
+    public static final String ERROR_LOG_FILE_PATH = "ERROR_LOG_FILE_PATH";
+
     private String configuredResourceId;
     private JobStartingBrokerConfiguration configuration;
     
@@ -141,11 +144,14 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                 addSpaceToEmptyContextParamValue = true;
             }
         }
-        
+
+        Map<String, String> env = processBuilder.environment();
+        env.put(LOG_FILE_PATH, scheduledProcessEvent.getResultOutput());
+        env.put(ERROR_LOG_FILE_PATH, scheduledProcessEvent.getResultError());
+
         // Add job context parameters to the process environment if there are any.
         if(scheduledProcessEvent.getContextParameters() != null
             && !scheduledProcessEvent.getContextParameters().isEmpty()) {
-            Map<String, String> env = processBuilder.environment();
 
             final boolean finalAddSpaceToEmptyContextParamValue = addSpaceToEmptyContextParamValue; // required for lambda
             scheduledProcessEvent.getContextParameters()
@@ -184,6 +190,19 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                         .append("\n"));
             }
 
+            processStartString.append("Name[")
+                .append(LOG_FILE_PATH)
+                .append("] Value[")
+                .append(scheduledProcessEvent.getResultOutput())
+                .append("]")
+                .append("\n");
+
+            processStartString.append("Name[")
+                .append(ERROR_LOG_FILE_PATH)
+                .append("] Value[")
+                .append(scheduledProcessEvent.getResultError())
+                .append("]")
+                .append("\n");
 
             StringBuffer commandString = new StringBuffer("Process Command -> ").append("\n");
             Arrays.stream(commandLineArgs).forEach(command -> commandString.append(command).append("\n"));

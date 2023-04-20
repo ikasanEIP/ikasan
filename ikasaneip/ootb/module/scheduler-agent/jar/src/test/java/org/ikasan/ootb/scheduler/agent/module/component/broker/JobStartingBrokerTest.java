@@ -243,6 +243,8 @@ public class JobStartingBrokerTest {
             "\n" +
             "Job Parameters -> \n" +
             "Name[cmd] Value[echo test]\n" +
+            "Name[LOG_FILE_PATH] Value[/Users/mick/workspace/ikasan/ikasaneip/ootb/module/scheduler-agent/jar/out]\n" +
+            "Name[ERROR_LOG_FILE_PATH] Value[/Users/mick/workspace/ikasan/ikasaneip/ootb/module/scheduler-agent/jar/err]\n" +
             "\n" +
             "Process Command -> \n" +
             "/bin/bash\n" +
@@ -306,7 +308,7 @@ public class JobStartingBrokerTest {
     }
 
     @Test
-    public void test_job_start_success_with_empty_value_context_parameters_() {
+    public void test_job_start_success_with_empty_value_context_parameters() {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
