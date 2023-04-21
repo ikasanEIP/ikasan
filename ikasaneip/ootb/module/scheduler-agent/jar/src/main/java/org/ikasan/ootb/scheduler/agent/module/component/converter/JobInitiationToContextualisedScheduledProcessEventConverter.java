@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextualisedScheduledProcessEventDto;
@@ -49,6 +50,7 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDt
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
+import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
@@ -64,12 +66,17 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class JobInitiationToContextualisedScheduledProcessEventConverter implements Converter<String, EnrichedContextualisedScheduledProcessEvent>
+public class JobInitiationToContextualisedScheduledProcessEventConverter
+    implements Converter<String, EnrichedContextualisedScheduledProcessEvent>, ConfiguredResource<JobInitiationToContextualisedScheduledProcessEventConverterConfiguration>
 {
     private String moduleName;
     private ObjectMapper objectMapper;
     private String logParentFolder;
     private String logParentFolderParenthesis;
+
+    private JobInitiationToContextualisedScheduledProcessEventConverterConfiguration contextualisedScheduledProcessEventConverterConfiguration;
+
+    private String configurationId;
 
     /**
      * Constructor
@@ -130,13 +137,16 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
             // We are going to use a file naming convention for the log files used by the process to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log
             long currentTimeMillis = System.currentTimeMillis();
-            scheduledProcessEvent.setResultOutput(fixParenthesis() + schedulerJobInitiationEvent.getContextName() + "-" +
+            String logFileBaseName = schedulerJobInitiationEvent.getContextName() + "-" +
                 schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
-                + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis + "-" + "out.log");
+                + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis;
 
-            scheduledProcessEvent.setResultError(fixParenthesis() + schedulerJobInitiationEvent.getContextName() + "-" +
-                schedulerJobInitiationEvent.getContextInstanceId() + "-" + schedulerJobInitiationEvent.getAgentName() + "-"
-                + schedulerJobInitiationEvent.getJobName() + "-" + currentTimeMillis + "-" + "err.log");
+            if(this.contextualisedScheduledProcessEventConverterConfiguration.isHashProcessLogFilenames()) {
+                logFileBaseName = Integer.toString(Math.abs(logFileBaseName.hashCode()));
+            }
+
+            scheduledProcessEvent.setResultOutput(fixParenthesis() + logFileBaseName + "-" + "out.log");
+            scheduledProcessEvent.setResultError(fixParenthesis() + logFileBaseName + "-" + "err.log");
 
             return scheduledProcessEvent;
         }
@@ -160,5 +170,25 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter impleme
     protected EnrichedContextualisedScheduledProcessEvent getScheduledProcessEvent()
     {
         return new EnrichedContextualisedScheduledProcessEvent();
+    }
+
+    @Override
+    public JobInitiationToContextualisedScheduledProcessEventConverterConfiguration getConfiguration() {
+        return this.contextualisedScheduledProcessEventConverterConfiguration;
+    }
+
+    @Override
+    public void setConfiguration(JobInitiationToContextualisedScheduledProcessEventConverterConfiguration configuration) {
+        this.contextualisedScheduledProcessEventConverterConfiguration = configuration;
+    }
+
+    @Override
+    public String getConfiguredResourceId() {
+        return this.configurationId;
+    }
+
+    @Override
+    public void setConfiguredResourceId(String id) {
+        this.configurationId = id;
     }
 }

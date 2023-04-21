@@ -92,6 +92,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -130,6 +131,9 @@ public class JobProcessingFlowComponentFactory
     @Value( "${job.monitoring.broker.timeout.minutes:240}" )
     long timeout;
 
+    @Value("${hash.process.log.filenames:false}")
+    private boolean hashProcessLogFilenames;
+
     @Value(" #{T(java.util.Arrays).asList('${job.starting.broker.list.environment.add.space.empty.parameters:}')}" )
     private List<String> environmentToAddSpaceForEmptyContextParam;
     
@@ -166,8 +170,17 @@ public class JobProcessingFlowComponentFactory
      * @return the converter
      */
     public Converter getJobInitiationEventConverter() {
-        return new JobInitiationToContextualisedScheduledProcessEventConverter
-        (moduleName, logParentFolder, logParentFolderParenthesis);
+        JobInitiationToContextualisedScheduledProcessEventConverterConfiguration configuration
+            = new JobInitiationToContextualisedScheduledProcessEventConverterConfiguration();
+        configuration.setHashProcessLogFilenames(this.hashProcessLogFilenames);
+
+        JobInitiationToContextualisedScheduledProcessEventConverter converter
+            =  new JobInitiationToContextualisedScheduledProcessEventConverter(moduleName, logParentFolder, logParentFolderParenthesis);
+
+        converter.setConfiguration(configuration);
+        converter.setConfiguredResourceId(moduleName+"-jobInitiationToContextualisedScheduledProcessEventConverter");
+
+        return converter;
     }
 
 
@@ -179,7 +192,7 @@ public class JobProcessingFlowComponentFactory
     public Broker getJobStartingBroker() {
         JobStartingBroker jobStartingBroker = new JobStartingBroker();
         JobStartingBrokerConfiguration configuration = new JobStartingBrokerConfiguration();
-        configuration.setEnvironmentToAddSpaceForEmptyContextParam(environmentToAddSpaceForEmptyContextParam);
+        configuration.setEnvironmentToAddSpaceForEmptyContextParam(this.environmentToAddSpaceForEmptyContextParam);
         
         jobStartingBroker.setConfiguration(configuration);
         jobStartingBroker.setConfiguredResourceId(moduleName+"-jobStartingBroker");

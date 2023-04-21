@@ -2,6 +2,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
@@ -53,6 +54,10 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
 
         JobInitiationToContextualisedScheduledProcessEventConverter converter
             = new JobInitiationToContextualisedScheduledProcessEventConverter("agentName", "logFolder", "/");
+        JobInitiationToContextualisedScheduledProcessEventConverterConfiguration configuration
+            = new JobInitiationToContextualisedScheduledProcessEventConverterConfiguration();
+        converter.setConfiguration(configuration);
+
 
         ContextualisedScheduledProcessEvent result = converter.convert(objectMapper.writeValueAsString(schedulerJobInitiationEventDto));
 
@@ -86,6 +91,63 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
         millisFromFileName = Long.valueOf(millis);
         //make sure the millis from the filename is in the last 500ms (If the test is taking more than this something is wrong)
         Assert.assertTrue(isWithinTheLast500Millis(millisFromFileName, currentTestTimeMillis));
+
+        Assert.assertEquals(2, result.getInternalEventDrivenJob().getContextParameters().size());
+    }
+
+    @Test
+    public void test_convert_success_with_hashed_logs() throws JsonProcessingException {
+        SchedulerJobInitiationEventDto schedulerJobInitiationEventDto = new SchedulerJobInitiationEventDto();
+        schedulerJobInitiationEventDto.setSkipped(true);
+        schedulerJobInitiationEventDto.setDryRunParameters(new DryRunParametersDto());
+        schedulerJobInitiationEventDto.setDryRun(true);
+        schedulerJobInitiationEventDto.setAgentName("agentName");
+        schedulerJobInitiationEventDto.setAgentUrl("agentUrl");
+        schedulerJobInitiationEventDto.setChildContextNames(List.of("childContextId1", "childContextId2"));
+        schedulerJobInitiationEventDto.setContextName("contextId");
+        schedulerJobInitiationEventDto.setContextInstanceId("contextInstanceId");
+        schedulerJobInitiationEventDto.setJobName("jobName");
+
+        InternalEventDrivenJobInstanceDto internalEventDrivenJob = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJob.setAgentName("agentName");
+        internalEventDrivenJob.setContextParameters(List.of(new ContextParameterInstanceDto(), new ContextParameterInstanceDto()));
+
+        schedulerJobInitiationEventDto.setInternalEventDrivenJob(internalEventDrivenJob);
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        JobInitiationToContextualisedScheduledProcessEventConverter converter
+            = new JobInitiationToContextualisedScheduledProcessEventConverter("agentName", "logFolder", "/");
+        JobInitiationToContextualisedScheduledProcessEventConverterConfiguration configuration
+            = new JobInitiationToContextualisedScheduledProcessEventConverterConfiguration();
+        configuration.setHashProcessLogFilenames(true);
+        converter.setConfiguration(configuration);
+
+
+        ContextualisedScheduledProcessEvent result = converter.convert(objectMapper.writeValueAsString(schedulerJobInitiationEventDto));
+
+        long currentTestTimeMillis = System.currentTimeMillis();
+
+        //make sure the millis is in the last 500ms (If the test is taking more than this something is wrong)
+        Assert.assertTrue(isWithinTheLast500Millis(result.getFireTime(), currentTestTimeMillis));
+
+        Assert.assertEquals("agentName", result.getAgentName());
+        Assert.assertEquals("jobName", result.getJobName());
+        Assert.assertEquals("contextId", result.getContextName());
+        Assert.assertEquals("contextInstanceId", result.getContextInstanceId());
+        Assert.assertEquals(2, result.getChildContextNames().size());
+        Assert.assertTrue(result.isJobStarting());
+        Assert.assertFalse(result.isSuccessful());
+        Assert.assertTrue(result.isSkipped());
+        Assert.assertTrue(result.isDryRun());
+
+        // file name is "logFolder/contextId-contextInstanceId-agentName-jobName-System.currentTimeMillis()-err.log"
+        Assert.assertFalse(result.getResultError().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
+        Assert.assertTrue(result.getResultError().endsWith("-err.log"));
+
+        // file name is "logFolder/contextId-contextInstanceId-agentName-jobName-System.currentTimeMillis()-out.log"
+        Assert.assertFalse(result.getResultOutput().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
+        Assert.assertTrue(result.getResultOutput().endsWith("-out.log"));
 
         Assert.assertEquals(2, result.getInternalEventDrivenJob().getContextParameters().size());
     }
