@@ -40,7 +40,4 @@ public interface ContextParametersInstanceService {
      */
     void populateContextParametersOnContextInstance(ContextInstance contextInstance
         , Map<String, InternalEventDrivenJobInstance> internalJobs);
-
-    // TODO can be removed when no longer being hardcoded
-    boolean isSkipped(String contextName, String jobName);
 }
