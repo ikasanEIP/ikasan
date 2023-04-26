@@ -80,6 +80,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import org.ikasan.bigqueue.BigArrayImpl;
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
@@ -100,6 +101,8 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -114,8 +117,8 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @Configuration
-public class JobProcessingFlowComponentFactory
-{
+public class JobProcessingFlowComponentFactory {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value( "${module.name}" )
     String moduleName;
 
@@ -136,6 +139,9 @@ public class JobProcessingFlowComponentFactory
 
     @Value(" #{T(java.util.Arrays).asList('${job.starting.broker.list.environment.add.space.empty.parameters:}')}" )
     private List<String> environmentToAddSpaceForEmptyContextParam;
+
+    @Value("${big.queue.page.size:"+ BigArrayImpl.DEFAULT_DATA_PAGE_SIZE + "}")
+    private int bigQueuePageSize;
     
     @Resource
     private IBigQueue outboundQueue;
@@ -152,7 +158,14 @@ public class JobProcessingFlowComponentFactory
      */
     public Consumer bigQueueConsumer(String jobName) throws IOException {
         String queueName = moduleName+"-"+jobName+"-inbound-queue";
-        IBigQueue inboundQueue = new BigQueueImpl(queueDir, queueName);
+
+        if(bigQueuePageSize < BigArrayImpl.MINIMUM_DATA_PAGE_SIZE) {
+            logger.info("bigQueuePageSize[{}] is smaller than BigArrayImpl.MINIMUM_DATA_PAGE_SIZE[{}]. Setting to [{}]"
+                , bigQueuePageSize, BigArrayImpl.MINIMUM_DATA_PAGE_SIZE, BigArrayImpl.MINIMUM_DATA_PAGE_SIZE);
+            bigQueuePageSize = BigArrayImpl.MINIMUM_DATA_PAGE_SIZE;
+        }
+
+        IBigQueue inboundQueue = new BigQueueImpl(queueDir, queueName, bigQueuePageSize);
 
         // Add the inbound queue to the cache.
         InboundJobQueueCache.instance().put(queueName, inboundQueue);
