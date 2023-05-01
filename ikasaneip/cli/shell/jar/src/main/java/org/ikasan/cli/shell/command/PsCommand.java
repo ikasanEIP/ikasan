@@ -62,7 +62,7 @@ public class PsCommand extends AbstractCommand
     @Value("${module.name:null}")
     String moduleName;
 
-    @ShellMethod(value = "Check running process. Syntax: ps <process name> | -name <process name>, ps <process name> | -name <process name>", group = "Ikasan Commands", key = "ps")
+    @ShellMethod(value = "Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]", group = "Ikasan Commands", key = "ps")
     public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalModuleName,
                      @ShellOption(value = "-user", defaultValue = "")  String optionalUsername)
     {

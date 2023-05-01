@@ -2559,8 +2559,6 @@
                 <version>${version.glassfish.javax.el}</version>
             </dependency>
 
-
-
         </dependencies>
     </dependencyManagement>
 

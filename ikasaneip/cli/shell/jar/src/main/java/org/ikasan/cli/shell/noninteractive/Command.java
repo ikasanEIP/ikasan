@@ -27,6 +27,7 @@ public class Command
         "stop-h2","stop-h2",
         "stop-module","stop-module",
         "stop","stop-module\nstop-h2",
+        "env","env",
         "ps", "ps");
 
 
