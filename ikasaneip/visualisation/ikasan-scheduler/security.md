@@ -1,4 +1,7 @@
+
+
 ## Role Definitions
+```sql
 --<role-name> security roles and associated policies --
 
 -- <role-name>_READ_ONLY --
@@ -26,10 +29,10 @@ values (select ID from SECURITYROLE where NAME = '<role-name>_ADMIN', select ID 
 -- <role-name>_ADMIN --
 
 -- END <role-name> security roles and associated policies --
-
+```
 
 ## Associated Agents
-
+```sql
 -- <role-name> security associated agents --
 delete
 from ROLEMODULE
@@ -51,9 +54,11 @@ values (select ID from SECURITYROLE where NAME = '<role-name>_ADMIN', '<agent-na
 -- <role-name>_ADMIN --
 
 -- END <role-name> associated agents --
-  
+```
+
 ## Associated Job Plans
-  
+
+```sql
 -- Asset Control associated job plans --
 delete
 from ROLEJOBPLAN
@@ -75,4 +80,4 @@ values (select ID from SECURITYROLE where NAME = '<role-name>_ADMIN', '<job-plan
 -- <role-name>_ADMIN --
 
 -- END <role-name> associated job plans --
-
+```
