@@ -52,6 +52,7 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
@@ -132,7 +133,13 @@ public class JobInitiationToContextualisedScheduledProcessEventConverter
             scheduledProcessEvent.setSkipped(schedulerJobInitiationEvent.isSkipped());
             scheduledProcessEvent.setInternalEventDrivenJob(schedulerJobInitiationEvent.getInternalEventDrivenJob());
             scheduledProcessEvent.setContextParameters(schedulerJobInitiationEvent.getContextParameters());
-            scheduledProcessEvent.setCatalystEvent(schedulerJobInitiationEvent.getCatalystEvent());
+
+            if(schedulerJobInitiationEvent.getCatalystEvent() != null) {
+                ContextualisedScheduledProcessEvent contextualisedScheduledProcessEvent = (ContextualisedScheduledProcessEvent) schedulerJobInitiationEvent.getCatalystEvent();
+                // We do not want to maintain nested catalyst events.
+                contextualisedScheduledProcessEvent.setCatalystEvent(null);
+                scheduledProcessEvent.setCatalystEvent(contextualisedScheduledProcessEvent);
+            }
 
             // We are going to use a file naming convention for the log files used by the process to write
             // stdout and stderr. The convention is 'contextId'-'contextInstanceId'-'agentName'-'jobName'-currentMillis-suffix.log
