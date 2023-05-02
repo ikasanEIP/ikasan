@@ -1,25 +1,29 @@
-Introduction
-This page outlines the life cycle of a context in the scheduler dashboard and scheduler agent.
+![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-Core Concepts
+# Ikasan Enterprise Scheduler - Job Plan Lifecycle
+
+## Introduction
+This page outlines the life cycle of a job plan in the scheduler dashboard and scheduler agent.
+
+## Core Concepts
 There are a number of core concepts relating to the Ikasan Scheduler.
 
-Context
-Scheduler Context Data Model outlines how complex job orchestrations are organised.
+### Job Plan
+[Job Plan Data Model](../model/job-plan-data-model.md) outlines how complex job orchestrations are organised.
 
 For futher details on the context data model see the Ikasan implementation - Ikasan context implemtation.
 
-Context Instance
+### Job Plan Instance
 Scheduler Context Instantiation Data Model outlines what a context looks like when it is instantiated.
 
 For futher details on the context instance data model see the Ikasan implementation - Ikasan context instance implemtation.
 
-Scheduler Jobs
+### Scheduler Jobs
 Scheduled Job Data Model outlines the different jobs that are supported by the Ikasan Scheduler.
 
 For futher details on the scheduler job data model see the Ikasan implementation - Ikasan scheduler job implementation.
 
-Context Machine
+### Context Machine
 The ContextMachine is at the core of the Ikasan Scheduler. There is an individual context machine created for each context instance. The context machine is responsible for managing a context instance. It does this by listening for scheduler events and applying logic against the context instance to determine if there are any jobs that can be initiated as a result of the event received. If there are, the context machine notifies any listeners of those job initiations.
 
 As each event is received and a state change occurs against the underlying context instance, the context instance is updated and persisted, as well as there being an audit record created for each transition in order to provide complete transparency and auditability of the behaviour of the Ikasan Scheduler. 

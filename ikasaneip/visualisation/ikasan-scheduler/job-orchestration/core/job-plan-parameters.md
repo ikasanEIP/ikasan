@@ -8,7 +8,7 @@ as a business date, or a file path in order to successfully execute.
 
 ### Defining Job PlanParameters for a Job.
 
-#### Defining Parameters on a Job
+#### Defining Parameters on a Job's JSON
 Internal Event Driven Jobs contain an attribute contextParameters containing a list of 
 [ContextParameter](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextParameter.java). 
 In order to provide a job plan parameter, a name and default value must be provided.
@@ -43,6 +43,7 @@ In order to provide a job plan parameter, a name and default value must be provi
   "identifier": "scheduler-agent-sample-job"
 }
 ```
+#### Defining Parameters on a Job Using the Job Builder
 It is also possible to provide parameters to a job using the Ikasan Scheduler builder `org.ikasan.job.orchestration.builder.job.InternalEventDrivenJobBuilder` class.
 ```xml
 <dependency>
@@ -74,6 +75,7 @@ internalEventDrivenJobBuilder
     .withDescription("This is the job description.")
     .withJobName("sample-job");
 ```
+#### Defining Parameters on a Job Using the Ikasan Dashboard
 Job parameters can also be added to a job using the Ikasan Scheduler Dashboard. Click the `PARAMETERS` button on the 
 Command Execution Job screen.
 ![new-internal-event-job.png](new-internal-event-job.png)
