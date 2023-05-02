@@ -1,4 +1,8 @@
-Introduction
+![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
+
+# Ikasan Enterprise Scheduler - Job Plan Data Model
+
+## Introduction
 This page describes how a context template data model is defined. This represents the scaffholding that defines how context instantiations will be created, as well as underpinning the scheduler designs that are created within the Ikasan Dashboard and the target document format that the Cronacle migration will produce.
 
 Scheduler Context
