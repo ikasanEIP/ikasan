@@ -19,11 +19,17 @@ public class IkasanShell
     {
         // deal with any non-interactive commands passed as args
         List<String> scriptArgs = new ArrayList<>();
-        for(String arg:args)
+        if(args.length > 0)
         {
-            scriptArgs.add( Command.getNonInterative(arg) );
+            scriptArgs.add( Command.getNonInterative(args) );
         }
 
         SpringApplication.run( IkasanShell.class, scriptArgs.toArray(String[]::new) );
+
+        // clean up any non-interactive files
+        for(String scriptArg:scriptArgs)
+        {
+            Command.remove(scriptArg);
+        }
     }
 }
