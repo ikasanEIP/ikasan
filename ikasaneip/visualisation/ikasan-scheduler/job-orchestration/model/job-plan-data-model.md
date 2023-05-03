@@ -3,41 +3,69 @@
 # Ikasan Enterprise Scheduler - Job Plan Data Model
 
 ## Introduction
-This page describes how a context template data model is defined. This represents the scaffholding that defines how context instantiations will be created, as well as underpinning the scheduler designs that are created within the Ikasan Dashboard and the target document format that the Cronacle migration will produce.
+This page describes how a job plan template data model is defined. This represents the scaffolding that defines how job plan 
+instantiations will be created, as well as underpinning the scheduler designs that are created within the Ikasan Dashboard.
 
-Scheduler Context
-name	String	The name of the scheduler context.	context-name
-timeWindowStart	String	A cron expression defining when this context becomes active 	
-"timeWindowStart" : "* * 6 ? * * *"
+## Scheduler Context
 
-timeWindowEnd	String	A cron expression defining when this context becomes inactive	
-"timeWindowEnd" : "* * 15 ? * * *"
+[ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java)
 
-contextParameters
+| Field                         | Type            | Description                                                                                           |
+|-------------------------------|-----------------|-------------------------------------------------------------------------------------------------------|
+| name                          | String          | The job plan name.	                                                                                   |
+| description                   | String          | The job plan description.                                                                             |
+| timeWindowStart               | String          | A Quartz cron expression used to define the time that a new instance of the job plan will be created. |
+| contextTtlMilliseconds        | long            | The length of time that the job plan instance will be active for.                                     |
+| timezone                      |                 | The timezone that the job plan operated within.                                                       |
+| blackoutWindowCronExpressions | List<String>    | A list of cron expressions that define blackout windows within which the job plan will not run.       |
+| blackoutWindowDateTimeRanges  | Map<Long, Long> | A list of ranges in milliseconds since epoch within which the job plan will not run.                  |
+| environmentGroup                              | String          | A label to indicate which environment group the job plan is part of.                                  |
+| isQuartzScheduleDrivenJobsDisabledForContext                              | boolean         | Flag to indicate if all quartz jobs are to be disabled when instances of the job plan are created.    |
+| treeViewExpandLevel                              | int             | Defines the job plan instance tree view is expanded by default.                                       |
+| disabled                      | boolean         | Flag to indicate if the job plan is disabled.                                                         |
+
+
+## contextParameters
 The context parameters represents the template that describes any values that are passed to a scheduler context instantiation. 
 
-Field	Type	Description	Example
-name	String	The parameter name.	
+Array of [ContextParameter](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextParameter.java)
+
+| Field        | Type   | Description          |
+|--------------|--------|----------------------|
+| name         | String | The parameter name.	 |
+| defaultValue | String | The default value.   |
+
+### Example
+```json
 "contextParameters": [
   {
-    "name": "name",
-    "type": "type"
+    "name": "name1",
+    "defaultValue": "defaultValue1"
   },
   {
-    "name": "name",
-    "type": "type"
+    "name": "name2",
+    "defaultValue": "defaultValue2"
   },
   {
-    "name": "name",
-    "type": "type"
+    "name": "name3",
+    "defaultValue": "defaultValue3"
   }
-],
-type	String	The parameter type.
-scheduledJobs
+]
+```
+	
+## scheduledJobs
 The scheduledJobs element represents an array of scheduledJob deifinitions. As scheduled job is defined as seeen below.
 
-Field	Type	Description	Example
-identifier	String	The unique identifier for the job within the job schedule.	
+Array of [SchedulerJob](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/job/model/SchedulerJob.java)
+
+|Field     |Type     |Description     |
+|-----|-----|-----|
+| identifier    |String     |The unique identifier for the job within the job schedule.     |
+|agentName     | String    |The name of the agent that will be managing the scheduled job.     |
+|jobName     |String     | The name of the scheduled job running on the agent.    |
+
+### Example
+```json
 "scheduledJobs": [
   {
     "identifier": "agentName1-jobName1",
@@ -69,54 +97,49 @@ identifier	String	The unique identifier for the job within the job schedule.
     "agentName": "agentName6",
     "jobName": "jobName6"
   }
-],
-agentName	String	The name of the agent that will be managing the scheduled job.
-jobName	String	The name of the scheduled job running on the agent.
-logicalGrouping
-A logicalGrouping allows us to model the types of logical relationships that exists between scheduld jobs who are dependant upon one another.
+]
+```
 
-and	array(Object)	
-The and represents an array of jobs that must have all executed sucessfully in order for true to be returned. For example and[job1, job2, job3] represents a construct by which job1, job2 and job3 would be required to have executed sucessfully to return true, thus indicating that any dependent job on the logical statement could progress.
+## logicalGrouping
+A logicalGrouping allows us to model the types of logical relationships that exists between scheduled jobs who are 
+dependant upon one another.
 
-The and array can be of 4 different types in order to support complex logic:
+[LogicalGrouping](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/LogicalGrouping.java)
 
-A strings representing a job name.
-An and array representing a group of logical objects that must all equate to true in order to return true.
-An or array representing a group of logical objects in which one must equate to true in order to return true.
-A logicalGrouping allowing for more complex nesting of logical constructs.
-or	array(Object)	
-The or represents an array of jobs in which one must have executed sucessfully in order for true to be returned. For example or[job1, job2, job3] represents a construct by which either job1, job2 and job3 would be required to have executed sucessfully to return true, thus indicating that any dependent job on the logical statement could progress.
+| Field                                                                                                    |Type     | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+|----------------------------------------------------------------------------------------------------------|-----|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [and](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/And.java) |array(Object)     | The and represents an array of jobs that must have all executed sucessfully in order for true to be returned. For example and[job1, job2, job3] represents a construct by which job1, job2 and job3 would be required to have executed sucessfully to return true, thus indicating that any dependent job on the logical statement could progress.<br /><br />The and array can be of 3 different types in order to support complex logic:<br /><ul><li>An and array representing a group of logical objects that must all equate to true in order to return true.</li><li>An or array representing a group of logical objects in which one must equate to true in order to return true.</li><li>A logicalGrouping allowing for more complex nesting of logical constructs.</li></ul>         |
+| [or](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/Or.java)   |array(Object)     | The or represents an array of jobs in which one must have executed sucessfully in order for true to be returned. For example or[job1, job2, job3] represents a construct by which either job1, job2 and job3 would be required to have executed sucessfully to return true, thus indicating that any dependent job on the logical statement could progress.<br /><br />The or array can be of 3 different types in order to support complex logic:<br /><ul><li>An and array representing a group of logical objects that must all equate to true in order to return true.</li><li>An or array representing a group of logical objects in which one must equate to true in order to return true.</li><li>A logicalGrouping allowing for more complex nesting of logical constructs.</li></ul> |
+| [logicalGrouping](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/LogicalGrouping.java)                                                                                        |logicalGrouping    | See [LogicalGrouping](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/LogicalGrouping.java)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
 
-The or array can be of 4 different types in order to support complex logic:
-
-A strings representing a job name.
-An and array representing a group of logical objects that must all equate to true in order to return true.
-An or array representing a group of logical objects in which one must equate to true in order to return true.
-A logicalGrouping allowing for more complex nesting of logical constructs.
-logicalGrouping	logicalGrouping	
 It is possible for a logicalGrouping to be nested allowing for complex logical constructs to be defined. Some examples are:
 
-(a and b)	
+### Examples
+#### (a and b)	
+![and](./and.png)
+```json
 "logicalGrouping": {
   "and": [
     "a",
     "b"
   ]
 }
-and
-A
-B
-(a or b)	
+```
+
+#### (a or b)
+![or](./or.png)
+```json
 "logicalGrouping": {
   "or": [
     "a",
     "b"
   ]
 }
-or
-A
-B
-((a and b) or c)	
+```
+
+#### ((a and b) or c)	
+![and-or](./and-or.png)
+```json
 "logicalGrouping": {
   "and": [
     "a",
@@ -126,12 +149,11 @@ B
     "c"
   ]
 }
-or
-and
-A
-B
-C
-(((a and b) or c) and d)	
+```
+
+#### (((a and b) or c) and d)
+![nested-example-1](./nested-example-1.png)
+```json
 "logicalGrouping": {
   "logicalGrouping": {
     "and": [
@@ -146,14 +168,11 @@ C
     "d"
   ]
 }
-and
-or
-and
-A
-B
-C
-D
-(a and b) or (c and d)	
+```
+
+#### (a and b) or (c and d)	
+![nested-example-2](./nested-example-2.png)
+```json
 "logicalGrouping": {
     "or":[
         {
@@ -171,14 +190,11 @@ D
         }
     ]
 }
-or
-and
-and
-A
-B
-C
-D
-(a and b) and (c or d)	
+```
+
+#### (a and b) and (c or d)
+![nested-example-3](./nested-example-3.png)
+```json
 "logicalGrouping": {
     "and":[
         {
@@ -196,26 +212,31 @@ D
         }
     ]
 }
-and
-or
-and
-A
-B
-C
-D
-jobDependency
-The jobDependency element defines the logical rules required to be fulfiled prior to the job being executed. If there is no logicalGrouping element found, the job has no dependencies and can fire as scheduled.
+```
 
-job	String	The job field contains the job identifier of the job that the dependency is defined for.
-logicalGrouping	logicalGrouping	
-The logicalGrouping field contains logical structure that must equate to true in order for the dependant job to execute.
+## jobDependency
+The jobDependency element defines the logical rules required to be fulfilled prior to the job being executed. If there 
+is no logicalGrouping element found, the job has no dependencies and can fire as scheduled.
 
-jobDependencies
-The jobDependencies array provides the opportunity to logically group a number of jobs and their dependencies that may support an individual business function or logically bound set of scheduled jobs, within a given context. 
+[JobDependency](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/JobDependency.java)
 
-jobDependencies	array(jobDependency)	
-The contains a list of jobDependency objects, each of which define the logical relationships between jobs.
+| Field            | Type   | Description                                                                                        |
+|------------------|--------|----------------------------------------------------------------------------------------------------|
+| jobIdentifier    | String | The jobIdentifier field contains the job identifier of the job that the dependency is defined for. |
+| logicalGrouping  | [LogicalGrouping](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/LogicalGrouping.java)       | The logicalGrouping field contains logical structure that must equate to true in order for the dependant job to execute. |
 
+
+## jobDependencies
+The jobDependencies array provides the opportunity to logically group a number of jobs and their dependencies that may 
+support an individual business function or logically bound set of scheduled jobs, within a given context. 
+
+| Field            | Type                                                                                                                                | Description                                                                                        |
+|------------------|-------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------|
+| jobDependencies    | array([JobDependency](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/JobDependency.java)) | The contains a list of jobDependency objects, each of which define the logical relationships between jobs. |
+
+### Examples
+![complex-example-1](./complex-example-1.png)
+```json
 "jobDependencies": [
   {
     "jobDependency": {
@@ -267,18 +288,10 @@ The contains a list of jobDependency objects, each of which define the logical r
     }
   }
 ]
-and
-and
-or
-and
-agentName1-jobName1
-agentName2-jobName2
-agentName3-jobName3
-agentName4-jobName4
-agentName5-jobName5
-agentName6-jobName6
-agentName7-jobName7
-agentName8-jobName8
+```
+
+![complex-example-2](./complex-example-2.png)
+```json
 {
   "jobDependencies": [
     {
@@ -320,22 +333,22 @@ agentName8-jobName8
     }
   ]
 }
-agentName1-jobName1
-agentName2-jobName2
-agentName3-jobName3
-agentName4-jobName4
-agentName5-jobName5
-contexts
+```
+
+## contexts
 The contexts array allows for the nesting of scheduler contexts.
+array([ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java))
 
-Putting It All Together
-The table below provides a series of full job schedules along with associated visual representation of the jobs.
+## Putting It All Together
+The example below provides a series of full job schedules along with associated visual representation of the jobs.
 
+![full-example](./full-example.png)
+```json
 {
   "name": "Context1",
   "description": "Context Template Description",
   "timeWindowStart" : "0 0 1 ? * * *",
-  "timeWindowEnd" : "0 0 23 ? * * *",
+  "contextTtlMilliseconds" : 86400000,
   "contextParameters": [
     {
       "name": "name",
@@ -631,35 +644,7 @@ The table below provides a series of full job schedules along with associated vi
     }
   ]
 }
-Context1
-Context2
-Context5
-Context3
-and
-or
-and
-agentName1-jobName1
-agentName2-jobName2
-agentName3-jobName3
-agentName4-jobName4
-agentName5-jobName5
-agentName6-jobName6
-and
-and
-agentName12-jobName12
-agentName13-jobName13
-agentName15-jobName15
-agentName14-jobName14
-agentName16-jobName16
-Context4
-and
-or
-agentName7-jobName7
-agentName8-jobName8
-agentName10-jobName10
-agentName9-jobName9
-agentName11-jobName11
-AND
+```
 
 
 
