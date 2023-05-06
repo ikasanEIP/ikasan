@@ -70,9 +70,10 @@ public class EnvCommand extends AbstractCommand
 
     @ShellMethod(value = "Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]", group = "Ikasan Commands", key = "env")
     public String env(@ShellOption(defaultValue="") String variable,
-                      @ShellOption(value = "-names") boolean names,
+                      @ShellOption({"-n", "-name", "-names"}) boolean names,
+                      @ShellOption({"-v", "-value", "-values"}) boolean values,
                       @ShellOption(value = "-no-expand") boolean noExpand,
-                      @ShellOption(value = "-list") boolean list)
+                      @ShellOption({"-l", "-list"}) boolean list)
     {
         Properties props = new Properties();
         MutablePropertySources propSrcs = ((AbstractEnvironment) environment).getPropertySources();
@@ -91,10 +92,10 @@ public class EnvCommand extends AbstractCommand
         JSONObject jsonProps = new JSONObject(matchedProperties);
         if(names)
         {
+            JSONArray jsonArray = jsonProps.names();
             if(list)
             {
                 StringBuilder sb = new StringBuilder();
-                JSONArray jsonArray = jsonProps.names();
                 for(Object name:jsonArray.toList())
                 {
                      sb.append(name);
@@ -104,7 +105,31 @@ public class EnvCommand extends AbstractCommand
                 return sb.toString();
             }
 
-            return jsonProps.toString();
+            return jsonArray.toString();
+        }
+
+        if(values)
+        {
+            Map<String,Object> jsonMap = jsonProps.toMap();
+            if(list)
+            {
+                StringBuilder sb = new StringBuilder();
+                for(Map.Entry<String,Object> entry:jsonMap.entrySet())
+                {
+                    sb.append(entry.getValue().toString());
+                    sb.append("\n");
+                }
+
+                return sb.toString();
+            }
+
+            JSONArray valueArray = new JSONArray();
+            for(Map.Entry<String,Object> entry:jsonMap.entrySet())
+            {
+                valueArray.put(entry.getValue());
+            }
+
+            return valueArray.toString();
         }
 
         if(list)

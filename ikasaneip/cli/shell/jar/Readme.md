@@ -137,6 +137,26 @@ Ikasan Shell:>
 |         |  | -command <Alternate JVM Command> which overrides module.java.command |
 | stop-module | Stops the Integration Module JVM process. | -name <Alternate Module Name> |
 
+#### Sample Usage
+Command
+
+```ikasan-simple.sh env h2.java.module -list```
+
+Output
+
+```h2.java.command=java -Dmodule.name=vanilla-im -classpath ./lib/h2-1.4.200.jar: org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8082```
+
+
+Assigning a variable sourced from Ikasan Shell
+Command
+
+```export myVar=`./ikasan-simple.sh env h2.java -values -list` ```
+```echo $myVar ```
+
+Output
+
+```java -Dmodule.name=vanilla-im -classpath ./lib/h2-1.4.200.jar: org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8082```
+
 
 
 
