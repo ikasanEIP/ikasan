@@ -1,14 +1,19 @@
 package org.ikasan.spec.scheduled.context.service;
 
+import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
+
+import java.util.List;
+
 public interface ContextInstanceRegistrationService {
 
     /**
      * Method to register a context by name.
      *
      * @param contextName
+     * @param contextParameterInstances
      * @return
      */
-    String register(String contextName);
+    String register(String contextName, List<ContextParameterInstance> contextParameterInstances);
 
     /**
      * Method to deregister all context instance of the named context.
