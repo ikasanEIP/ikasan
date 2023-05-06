@@ -256,4 +256,18 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @param treeViewExpandLevel
      */
     void setTreeViewExpandLevel(int treeViewExpandLevel);
+
+    /**
+     * Get flag to indicate if concurrent versions of a context can run.
+     *
+     * @return
+     */
+    boolean isAbleToRunConcurrently();
+
+    /**
+     * Set flag to indicate if concurrent versions of a context can run.
+     *
+     * @param ableToRunConcurrently
+     */
+    void setAbleToRunConcurrently(boolean ableToRunConcurrently);
 }
