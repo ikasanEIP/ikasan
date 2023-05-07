@@ -1,5 +1,7 @@
 package org.ikasan.job.orchestration.model.context;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.ikasan.spec.scheduled.context.model.*;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
@@ -22,6 +24,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected String environmentGroup;
     private boolean isQuartzScheduleDrivenJobsDisabledForContext = false;
     int treeViewExpandLevel = 1;
+    private boolean ableToRunConcurrently;
 
     @Override
     public String getName() {
@@ -156,5 +159,20 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public void setTreeViewExpandLevel(int treeViewExpandLevel) {
         this.treeViewExpandLevel = treeViewExpandLevel;
+    }
+
+    @Override
+    public boolean isAbleToRunConcurrently() {
+        return ableToRunConcurrently;
+    }
+
+    @Override
+    public void setAbleToRunConcurrently(boolean ableToRunConcurrently) {
+        this.ableToRunConcurrently = ableToRunConcurrently;
+    }
+
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }

@@ -2,11 +2,12 @@ package org.ikasan.job.orchestration.model.context;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.instance.model.*;
 
 public class ContextInstanceImpl extends ContextImpl<ContextInstance, ContextParameterInstance, SchedulerJobInstance, JobLockInstance> implements ContextInstance {
-
     private String id;
     private long createdDateTime;
     private long updatedDateTime;
@@ -122,15 +123,6 @@ public class ContextInstanceImpl extends ContextImpl<ContextInstance, ContextPar
 
     @Override
     public String toString() {
-        return "ContextInstanceImpl{" +
-            "id='" + id + '\'' +
-            ", createdDateTime=" + createdDateTime +
-            ", updatedDateTime=" + updatedDateTime +
-            ", startTime=" + startTime +
-            ", endTime=" + endTime +
-            ", timezone='" + timezone + '\'' +
-            ", status=" + status +
-            ", heldJobs=" + heldJobs +
-            '}';
+        return ToStringBuilder.reflectionToString(this, ToStringStyle.SHORT_PREFIX_STYLE);
     }
 }
