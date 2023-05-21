@@ -7,3 +7,4 @@
 - [Deployment Guide](./deployment-guide.md)
 - [Configuration Guide](./configuration-guide.md)
 - [Scheduler Dashboard Guide](./scheduler-dashboard.md)
+- [Scheduler Dashboard Security Matrix](./scheduler-security-matrix.md)
