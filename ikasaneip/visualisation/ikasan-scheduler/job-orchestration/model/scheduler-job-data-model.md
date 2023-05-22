@@ -2,13 +2,13 @@
 
 # Ikasan Enterprise Scheduler - Scheduler Job Data Model
 
-The Ikasan Scheduler support 4 different job types.
+The Ikasan Scheduler support 4 different job types. See [Scheduler Job Builder](../builder/scheduler-job-builder.md) for details of how to easily
+build jobs using the builder implementation.
 
 ## File Event Driven Jobs
 
 These jobs raise events upon receipt of a file in a location that the job is configured to look for a file within a
-configurable time window. See [Scheduler Job Builder](../builder/scheduler-job-builder.md) for details of how to easily
-build File Event Driven Jobs using the builder implementation.
+configurable time window.
 
 ### Configuration
 
@@ -82,7 +82,7 @@ build File Event Driven Jobs using the builder implementation.
 
 ## Quartz Scheduled Event Driven Jobs
 
-These jobs raise events purely upon a time schedule.
+These jobs raise events based upon a time schedule.
 
 ### Configuration
 |Field Name|	Type|	Description|	Mandatory| 	Default Value |	Allowed Values|	Comments|
@@ -182,9 +182,10 @@ job that is executed is generally a bash or some kind of shell script within a W
 }
 ```
 
-## Global Event Driven Jobs
+## Global Event Jobs
 
-TBD
+Global Event Jobs allow for events to be raised in a job plan instance, and for that event to be received by all other running job plan instances
+which can react to the Global Event if necessary.
 
 ### Configuration
 |Field Name|	Type|	Description|	Mandatory| 	Default Value |	Allowed Values|	Comments|
