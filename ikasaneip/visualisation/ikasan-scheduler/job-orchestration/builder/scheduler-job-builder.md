@@ -2,7 +2,7 @@
 
 # Ikasan Enterprise Scheduler - Builder
 The various job builder implementations allow for jobs to be easily created in Java code. These builder implementations assist in the 
-construction of jobs defined in the [Scheduler Job Data Model](../builder/scheduler-job-builder.md).
+construction of jobs defined in the [Scheduler Job Data Model](../model/scheduler-job-data-model.md).
 
 ## InternalEventDrivenJobBuilder
 ```java
