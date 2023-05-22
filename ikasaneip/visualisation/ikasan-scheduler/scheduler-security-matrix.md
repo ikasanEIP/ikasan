@@ -7,7 +7,7 @@ See [Ikasan Visualisation Dashboard Security](../dashboard/security.md) for gene
 
 The matrix below shows for a given policy, which features are available for users who are assigned a role with that policy.
 
-Roles with the scheduler-write, scheduler-read policies and scheduler-admin policies can only access agents and job plans they are provisioned to see.
+Roles with the scheduler-write, scheduler-read policies and scheduler-admin policies can only access agents and job plans that they are provisioned to see.
 
 ## General Scheduler Dashboard Features
 | Functionality                                                        |        Admin        |        Write        |                              Read                               | Description                                                                                                                    |
@@ -158,8 +158,8 @@ Roles with the scheduler-write, scheduler-read policies and scheduler-admin poli
 
 
 ## Global Event Job Instance Management Features
-| Functionality |        Admin        |        Write        |                              Read                               | Description                                                                                                                    |
-|---------------|:-------------------:|:-------------------:|:---------------------------------------------------------------:|--------------------------------------------------------------------------------------------------------------------------------|
-|               | **scheduler-admin** | **scheduler-write** |                       **scheduler-read**                        |                                                                                                                                |
-| Submit Job    |    :white_check_mark:    :white_check_mark:             |                     |                                               |       |
-| Skip Job      |    :white_check_mark:                 |  :white_check_mark:                   |                                               |       |
+| Functionality |        Admin        |         Write         |                              Read                               | Description                                                                                                                    |
+|---------------|:-------------------:|:---------------------:|:---------------------------------------------------------------:|--------------------------------------------------------------------------------------------------------------------------------|
+|               | **scheduler-admin** |  **scheduler-write**  |                       **scheduler-read**                        |                                                                                                                                |
+| Submit Job    |    :white_check_mark: |    :white_check_mark: |                     |                                               |       |
+| Skip Job      |    :white_check_mark:                 |  :white_check_mark:   |                                               |       |
