@@ -1,11 +1,10 @@
 package org.ikasan.job.orchestration.model.context;
 
+import org.ikasan.spec.scheduled.context.model.JobLock;
+import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
+
 import java.util.List;
 import java.util.Map;
-
-import org.ikasan.spec.scheduled.context.model.JobLock;
-import org.ikasan.spec.scheduled.job.model.SchedulerJob;
-import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
 
 public class JobLockImpl implements JobLock {
 
