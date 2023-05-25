@@ -5,12 +5,13 @@ import java.util.Map;
 
 import org.ikasan.spec.scheduled.context.model.JobLock;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
+import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
 
 public class JobLockImpl implements JobLock {
 
     private String name;
-    private int lockCount = 1;
-    private Map<String, List<SchedulerJob>> jobs;
+    private long lockCount = 1;
+    private Map<String, List<SchedulerJobLockParticipant>> jobs;
     private boolean exclusiveJobLock = false;
 
     @Override
@@ -24,22 +25,22 @@ public class JobLockImpl implements JobLock {
     }
 
     @Override
-    public void setLockCount(int lockCount) {
+    public void setLockCount(long lockCount) {
         this.lockCount = lockCount;
     }
 
     @Override
-    public int getLockCount() {
+    public long getLockCount() {
         return lockCount;
     }
 
     @Override
-    public void setJobs(Map<String, List<SchedulerJob>> jobs) {
+    public void setJobs(Map<String, List<SchedulerJobLockParticipant>> jobs) {
         this.jobs = jobs;
     }
 
     @Override
-    public Map<String, List<SchedulerJob>> getJobs() {
+    public Map<String, List<SchedulerJobLockParticipant>> getJobs() {
         return jobs;
     }
 

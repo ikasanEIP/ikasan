@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.context.model;
 
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
+import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
 
 import java.io.Serializable;
 import java.util.List;
@@ -23,31 +24,32 @@ public interface JobLock extends Serializable {
     String getName();
 
     /**
-     * Set the name of the lock count.
+     * Set the value of the lock count.
      *
      * @param lockCount
      */
-    void setLockCount(int lockCount);
+    void setLockCount(long lockCount);
 
     /**
-     * Get the name of the lock count.
+     * Get the value of the lock count.
+     *
      * @return
      */
-    int getLockCount();
+    long getLockCount();
 
     /**
      * Set the scheduler jobs.
      *
      * @param jobs
      */
-    void setJobs(Map<String, List<SchedulerJob>> jobs);
+    void setJobs(Map<String, List<SchedulerJobLockParticipant>> jobs);
 
     /**
      * Get the scheduler jobs.
      *
      * @return
      */
-    Map<String, List<SchedulerJob>> getJobs();
+    Map<String, List<SchedulerJobLockParticipant>> getJobs();
 
     /**
      * Add flag to indicate that a job lock is exclusive.
