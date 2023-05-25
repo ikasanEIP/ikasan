@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ikasan.job.orchestration.model.context.*;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.SchedulerJobImpl;
+import org.ikasan.job.orchestration.model.job.SchedulerJobLockParticipantImpl;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.scheduled.context.model.*;
@@ -22,6 +23,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
 
 public class ObjectMapperFactory {
 
@@ -61,6 +63,7 @@ public class ObjectMapperFactory {
             .addAbstractTypeMapping(LogicalOperator.class, LogicalOperatorImpl.class)
             .addAbstractTypeMapping(ContextInstance.class, ContextInstanceImpl.class)
             .addAbstractTypeMapping(SchedulerJobInstance.class, SchedulerJobInstanceImpl.class)
+            .addAbstractTypeMapping(SchedulerJobLockParticipant.class, SchedulerJobLockParticipantImpl.class)
             .addAbstractTypeMapping(ContextParameterInstance.class, ContextParameterInstanceImpl.class)
             .addAbstractTypeMapping(JobLock.class, JobLockImpl.class)
             .addAbstractTypeMapping(JobLockInstance.class, JobLockInstanceImpl.class)
