@@ -2,6 +2,7 @@ package org.ikasan.spec.scheduled.context.model;
 
 import org.ikasan.spec.scheduled.event.model.ContextualisedSchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
+import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
 
 import java.io.Serializable;
 import java.util.List;
@@ -31,14 +32,14 @@ public interface JobLockHolder extends Serializable {
      *
      * @return
      */
-    int getLockCount();
+    long getLockCount();
 
     /**
      * Set the lock count
      *
      * @param lockCount
      */
-    void setLockCount(int lockCount);
+    void setLockCount(long lockCount);
 
     /**
      * Add flag to indicate that a job lock is exclusive.
@@ -68,7 +69,7 @@ public interface JobLockHolder extends Serializable {
      *
      * @return
      */
-    Map<String, List<SchedulerJob>> getSchedulerJobs();
+    Map<String, List<SchedulerJobLockParticipant>> getSchedulerJobs();
 
     /**
      * Add jobs to the lock.
@@ -76,7 +77,7 @@ public interface JobLockHolder extends Serializable {
      * @param contextName
      * @param jobs
      */
-    void addSchedulerJobs(String contextName, List<SchedulerJob> jobs);
+    void addSchedulerJobs(String contextName, List<SchedulerJobLockParticipant> jobs);
 
     /**
      * Remove all scheduler jobs for a context.
