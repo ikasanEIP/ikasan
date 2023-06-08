@@ -34,31 +34,32 @@ On completion of this document the reader should have installed and configured a
 [Developer Pre-Requisiites](../../developer/docs/DeveloperPreRequisites.md)
 
 # Problem Definition
-This guide will take you through the process of deploying the Ikasan Enterprise Scheduler Dashboard and an Agent in order to 
-demonstrate a simple setup. It will then demonstrate the creation of a simle job plan and the deployment of it the Ikasan 
-Enterprise Scheduler.
+This guide will take you through the process of deploying the Ikasan Enterprise Scheduler Dashboard and an Ikasan Enterprise Scheduler Agent in order to 
+demonstrate a simple setup. It will then demonstrate the creation of a simple job plan and the deployment of it to the Ikasan Enterprise Scheduler.
 
 # Design
 
 # Implementation
 We will be using Maven, Java and IntelliJ for the rest of this demonstration.
 
-## Ikasan Enterprise Scheduler Agent Dashboard and Agent Deployment
+## Ikasan Enterprise Scheduler Dashboard and Ikasan Enterprise Scheduler Agent Deployment
 
+The first step to getting the Ikasan Enterprise Scheduler Platform set up on your machine is done via a 
+[Maven Archetype](https://maven.apache.org/archetype/index.html) that is available as part of the Ikasan Enterprise Scheduler Platform.
 See [ikasan-scheduler-distribution-deployment-demo-maven-plugin](./developer/mvn-archetypes/ikasan-scheduler-distribution-deployment-demo/Readme.md) for 
 more details.
+
+- Run the maven archetype. Make sure that the `-DarchetypeVersion` is set to the version of Ikasan you are working with.
 ```unix
-mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasan-scheduler-distribution-deployment-demo-maven-plugin -DarchetypeVersion=3.3.0-scheduler-SNAPSHOT -DgroupId=com.test -DartifactId=dist-demo1 -Dversion=1.0.0-SNAPSHOT
+mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasan-scheduler-distribution-deployment-demo-maven-plugin -DarchetypeVersion=3.3.0-scheduler-SNAPSHOT -DgroupId=com.test -DartifactId=ikasan-enterprise-scheduler-dist-demo -Dversion=1.0.0-SNAPSHOT
 ```
 
  - Now that the archetype has created the project go the new project directory created.
-
 ```unix
-cd dist-demo1/
+cd ikasan-enterprise-scheduler-dist-demo
 ```
 
  - You'll see a POM:
-
 ```unix 
 ls -la
 -rw-r--r--   1 mick  staff  5140  7 Jun 13:08 pom.xml
@@ -76,11 +77,16 @@ Dashboard and Agent will be deployed. These can be any valid location on the fil
 For the purpose of this demo we'll leave at ```.``` which will deploy the distributions under the project root.
 
 ### Build the project
+When this project is built all it does is downloads the Ikasan Enterprise Scheduler Dashboard and Ikasan Enterprise Scheduler Agent
+distributions and unzips them in the locations provide by the above mentioned properties.
+
+- Run mvn clean install:
 ```unix
 mvn clean install
 ```
 
-Here is what is created:
+- Here is what is created:
+
 ```unix
 ls -la
 drwxr-xr-x  12 mick  staff   384  7 Jun 13:11 ikasan-dashboard-distrbution-3.3.0-scheduler-SNAPSHOT
@@ -89,9 +95,55 @@ drwxr-xr-x  17 mick  staff   544  7 Jun 13:10 scheduler-agent-3.3.0-scheduler-SN
 ```
 
 
-### Start the dashboard
+### Starting the Ikasan Enterprise Scheduler Dashboard
+Let's take a look inside the Ikasan Enterprise Scheduler Dashboard Distribution.
 ```unix
 cd ikasan-dashboard-distrbution-3.3.0-scheduler-SNAPSHOT
+
+ls -la
+
+drwxr-xr-x   8 mick  staff   256  8 Jun 05:15 .
+drwxr-xr-x   6 mick  staff   192  8 Jun 08:44 ..
+-rw-r--r--   1 mick  staff  1577  8 Jun 04:49 LICENSE.txt
+-rw-r--r--   1 mick  staff  2066  8 Jun 04:49 README.txt
+drwxr-xr-x   3 mick  staff    96  8 Jun 05:15 config
+-rwxr-xr-x   1 mick  staff  4312  8 Jun 05:15 ikasan.sh
+drwxr-xr-x   4 mick  staff   128  8 Jun 05:15 lib
+drwxr-xr-x  14 mick  staff   448  8 Jun 05:15 solr
+```
+- ```ikasan.sh``` shell script allowing management of the Ikasan Enterprise Scheduler Dashboard
+- ```config``` directory contains the runtime application.properties
+- ```lib``` directory contains all binaries required to run the Ikasan Enterprise Scheduler Dashboard
+- ```solr``` directory containing the Ikasan Enterprise Scheduler Dashboard [Apache Solr](https://solr.apache.org/) distribution.
+
+Some transient directories get created once the Ikasan Enterprise Scheduler Dashboard is started for the first time.
+
+```unix
+drwxr-xr-x   3 mick  staff    96  7 Jun 13:11 ObjectStore
+drwxr-xr-x   5 mick  staff   160  8 Jun 04:19 bigqueue
+drwxr-xr-x   4 mick  staff   128  7 Jun 13:09 logs
+drwxr-xr-x   3 mick  staff    96  7 Jun 13:10 persistence
+```
+- ```ObjectStore``` directory containing files used by the transaction manager.
+- ```bigqueue``` directory containing all bigqueue data.
+- ```logs``` directory containing application.log and h2.lof files.
+- ```persistence``` directory containing h2 database file.
+
+The `ikasan.sh` Ikasan Enterprise Scheduler Dashboard shell management script can perform a number of operations.
+```unix
+MacBook-Pro-4:ikasan-dashboard-distrbution-3.3.0-scheduler-SNAPSHOT mick$ ./ikasan.sh -help
+Usage: run.sh <action>
+<action>  Specify action name,
+'start (start all) | start-h2 (start just h2) | start-solr (start just solr) | stop (stop all) | ps (list processes)'.
+```
+- ```start``` start all processes required by the Ikasan Enterprise Scheduler Dashboard (H2, Solr, and the Ikasan Enterprise Scheduler Dashboard).
+- ```start-h2``` start the H2 database only.
+- ```start-solr``` start Solr only.
+- ```stop``` stop all processes required by the Ikasan Enterprise Scheduler Dashboard (H2, Solr, and the Ikasan Enterprise Scheduler Dashboard).
+- ```ps``` show all the process ids for the various process running as part of the Ikasan Enterprise Scheduler Dashboard.
+
+Let's start the Ikasan Enterprise Scheduler Dashboard.
+```unix
 ./ikasan.sh start
 ```
 
@@ -100,10 +152,42 @@ Logs are written to ```./logs/application.log```. You will know that the Ikasan 
 2023-06-07 13:11:58.912  INFO 75397 --- [           main] org.ikasan.dashboard.Application         : Started Application in 138.477 seconds (JVM running for 140.449)
 ```
 
-### Now start the agent
+### Starting the Ikasan Enterprise Scheduler Agent
+Let's take a look inside the Ikasan Enterprise Scheduler Agent Distribution.
 
 ```unix
 cd ../scheduler-agent-3.3.0-scheduler-SNAPSHOT
+
+ls -la
+
+drwxr-xr-x  13 mick  staff   416  8 Jun 04:47 .
+drwxr-xr-x   6 mick  staff   192  8 Jun 08:44 ..
+drwxr-xr-x   4 mick  staff   128  8 Jun 04:47 config
+-rwxr-xr-x   1 mick  staff   130  8 Jun 04:47 config-service-env.bat
+-rwxr-xr-x   1 mick  staff   125  8 Jun 04:47 config-service-env.sh
+-rwxr-xr-x   1 mick  staff  3190  8 Jun 04:44 ikasan-config-service.bat
+-rwxr-xr-x   1 mick  staff  3053  8 Jun 04:44 ikasan-config-service.sh
+-rwxr-xr-x   1 mick  staff   229  8 Jun 04:47 ikasan-scheduler-agent.service
+-rwxr-xr-x   1 mick  staff  2646  8 Jun 04:44 ikasan-simple.bat
+-rwxr-xr-x   1 mick  staff  2557  8 Jun 04:44 ikasan-simple.sh
+drwxr-xr-x   5 mick  staff   160  8 Jun 04:47 lib
+-rwxr-xr-x   1 mick  staff    89  8 Jun 04:47 simple-env.bat
+-rwxr-xr-x   1 mick  staff    88  8 Jun 04:47 simple-env.sh
+```
+
+- ```config``` directory contains the runtime application.properties
+- ```lib``` directory contains all binaries required to run the Ikasan Enterprise Scheduler Dashboard
+
+
+The following additional directories are created on first execution of the demo.
+- ```logs``` directory contains the runtime output logs (std.out, std.err redirected) for the demo.
+- ```persistence``` the location of the h2 database file used by the Ikasan Enterprise Scheduler Dashboard.
+- ```bigqueue``` directory contains the runtime output logs (std.out, std.err redirected) for the demo.
+- ```process-logs``` the location of the h2 database file used by the Ikasan Enterprise Scheduler Dashboard.
+- ```pid``` the location of the h2 database file used by the Ikasan Enterprise Scheduler Dashboard.
+
+Let's start the Ikasan Enterprise Scheduler Agent. 
+```unix
 ./ikasan-simple.sh start
 ```
 
@@ -112,7 +196,9 @@ Logs are written to ```./logs/application.log```. You'll know that the Ikasan En
 2023-06-07 13:18:08,731 INFO org.springframework.boot.StartupInfoLogger [main] Started Application in 96.876 seconds (JVM running for 99.74)
 ```
 
-## Job Plan Demo
+## Ikasan Enterprise Scheduler Job Plan Demo
+The Job Plan Demo is a sample maven project that contains some classes that delegate to the [Ikasan Enterprise Scheduler Job Plan Builder](./job-orchestration/builder/readme.md)
+classes. It then uses the [Ikasan Enterprise Scheduler Provision Services](./rest/scheduler-provision-service.md) to deploy the sample job plan that is created.
 The Job Plan Demo is based on the archetype `ikasan-job-plan-builder-demo-maven-plugin`. See [ikasan-job-plan-builder-demo-maven-plugin](./developer/mvn-archetypes/ikasan-job-plan-builder-demo/Readme.md) for
 more details.
 
@@ -155,6 +241,8 @@ Lets run it!
 ![img.png](../images/log-capture.png)
 
 ### Creating the Job Plan Demo Archetype Using Command Line
+If you wish you can also ran all the commands to deploy a Job Plan from the command line as follows:
+
 - In a chosen location on your machine, run the following maven command.
 ```unix
 mvn archetype:generate -DarchetypeGroupId=org.ikasan -DarchetypeArtifactId=ikasan-job-plan-builder-demo-maven-plugin -DarchetypeVersion=3.3.0-scheduler-SNAPSHOT -DgroupId=org.test -DartifactId=mytest1 -Dversion=1.0.0-SNAPSHOT
