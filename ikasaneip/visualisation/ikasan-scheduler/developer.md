@@ -196,6 +196,11 @@ Logs are written to ```./logs/application.log```. You'll know that the Ikasan En
 2023-06-07 13:18:08,731 INFO org.springframework.boot.StartupInfoLogger [main] Started Application in 96.876 seconds (JVM running for 99.74)
 ```
 
+You now have a basic instance of the Ikasan Enterprise Scheduler Platform running on you local machine comprising the Ikasan Enterprise Scheduler Dashboard
+and one Ikasan Enterprise Scheduler Agent. 
+
+We'll now move onto getting a Job Plan deployed to the Ikasan Enterprise Scheduler Platform.
+
 ## Ikasan Enterprise Scheduler Job Plan Demo
 The Job Plan Demo is a sample maven project that contains some classes that delegate to the [Ikasan Enterprise Scheduler Job Plan Builder](./job-orchestration/builder/readme.md)
 classes. It then uses the [Ikasan Enterprise Scheduler Provision Services](./rest/scheduler-provision-service.md) to deploy the sample job plan that is created.
