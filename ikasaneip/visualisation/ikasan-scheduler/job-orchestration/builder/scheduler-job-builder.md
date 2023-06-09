@@ -74,6 +74,7 @@ InternalEventDrivenJobBuilder internalEventDrivenJobBuilder = new InternalEventD
 }
 ```
 ## QuartzScheduleDrivenJobBuilder
+The QuartzScheduleDrivenJobBuilder assists in building an instance of [QuartzScheduleDrivenJob](../model/scheduler-job-data-model.md#quartz-scheduled-driven-jobs).
 ```java
 QuartzScheduleDrivenJobBuilder quartzScheduleDrivenJobBuilder = new QuartzScheduleDrivenJobBuilder();
 
@@ -126,7 +127,8 @@ quartzScheduleDrivenJobBuilder.withCronExpression("cronExpression")
 ```
 
 ## FileEventDrivenJobBuilder
-The FileEventDrivenJobBuilder assists in building an instance of [FileEventDrivenJob](../model/scheduler-job-data-model.md#file-event-driven-jobs).
+The FileEventDrivenJobBuilder assists in building an instance of [FileEventDrivenJob](../model/scheduler-job-data-model.md#file-event-driven-jobs)
+otherwise known as a file watcher job.
 ```java
 FileEventDrivenJobBuilder fileEventDrivenJobBuilder = new FileEventDrivenJobBuilder();
 Map<String, String> passthroughProperties = new HashMap<>();
@@ -206,6 +208,7 @@ fileEventDrivenJobBuilder.withFilePath("filePath")
 ```
 
 ## GlobalEventJobBuilder
+The GlobalEventJobBuilder assists in building an instance of [GlobalEventJob](../model/scheduler-job-data-model.md#global-event-jobs).
 ```java
 GlobalEventJobBuilder globalEventJobBuilder = new GlobalEventJobBuilder();
 
