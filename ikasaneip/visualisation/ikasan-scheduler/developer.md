@@ -66,7 +66,7 @@ ls -la
 ```
 
 ### Deployment location config parameters
-Within the above pom file there are two configurable parameter that define the location that the Ikasan Enterprise Scheduler
+Within the above `pom.xml` file mentioned above, there are two configurable parameter that define the location that the Ikasan Enterprise Scheduler
 Dashboard and Agent will be deployed. These can be any valid location on the file system.
 
 ```xml
@@ -240,6 +240,9 @@ That's it, your project has been created.
 Lets run it!
 
 #### Running the Demo
+In order to run the demo, right click on `JobPlanProvisionApplication.java` and select run. This will start the application, 
+build the job plan bundle and deploy it to your new Ikasan Enterprise Scheduler Platform. Skip to the bottom section of this
+page to see how to access the Ikasan Enterprise Scheduler Dashboard in order to run the job plan.
 
 ![img.png](../images/run-application.png)
 

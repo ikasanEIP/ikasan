@@ -116,7 +116,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 
 ### Examples
 #### (a and b)	
-![and](./and.png)
+![and](../../../images/and.png)
 ```json
 "logicalGrouping": {
   "and": [
@@ -127,7 +127,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 ```
 
 #### (a or b)
-![or](./or.png)
+![or](../../../images/or.png)
 ```json
 "logicalGrouping": {
   "or": [
@@ -138,7 +138,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 ```
 
 #### ((a and b) or c)	
-![and-or](./and-or.png)
+![and-or](../../../images/and-or.png)
 ```json
 "logicalGrouping": {
   "and": [
@@ -152,7 +152,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 ```
 
 #### (((a and b) or c) and d)
-![nested-example-1](./nested-example-1.png)
+![nested-example-1](../../../images/nested-example-1.png)
 ```json
 "logicalGrouping": {
   "logicalGrouping": {
@@ -171,7 +171,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 ```
 
 #### (a and b) or (c and d)	
-![nested-example-2](./nested-example-2.png)
+![nested-example-2](../../../images/nested-example-2.png)
 ```json
 "logicalGrouping": {
     "or":[
@@ -193,7 +193,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 ```
 
 #### (a and b) and (c or d)
-![nested-example-3](./nested-example-3.png)
+![nested-example-3](../../../images/nested-example-3.png)
 ```json
 "logicalGrouping": {
     "and":[
@@ -235,7 +235,7 @@ support an individual business function or logically bound set of scheduled jobs
 | jobDependencies    | array([JobDependency](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/JobDependency.java)) | The contains a list of jobDependency objects, each of which define the logical relationships between jobs. |
 
 ### Examples
-![complex-example-1](./complex-example-1.png)
+![complex-example-1](../../../images/complex-example-1.png)
 ```json
 "jobDependencies": [
   {
@@ -290,7 +290,7 @@ support an individual business function or logically bound set of scheduled jobs
 ]
 ```
 
-![complex-example-2](./complex-example-2.png)
+![complex-example-2](../../../images/complex-example-2.png)
 ```json
 {
   "jobDependencies": [
@@ -342,7 +342,7 @@ array([ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ika
 ## Putting It All Together
 The example below provides a series of full job schedules along with associated visual representation of the jobs.
 
-![full-example](./full-example.png)
+![full-example](../../../images/full-example.png)
 ```json
 {
   "name": "Context1",
