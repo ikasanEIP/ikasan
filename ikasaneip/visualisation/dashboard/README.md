@@ -3,7 +3,7 @@
 # Ikasan Visualisation Dashboard
 
 - [ESB Dashboard](./dashboard.md)
-- [Scheduler Dashboard](../ikasan-scheduler/scheduler-dashboard.md)
+- [Scheduler Dashboard](../ikasan-scheduler/dashboard/scheduler-dashboard.md)
 - [Search](./search.md)
 - [Module, Flow and Business Stream Visualisation](./visualisation-screens.md)
 - [Scheduled Jobs](./scheduler.md)
