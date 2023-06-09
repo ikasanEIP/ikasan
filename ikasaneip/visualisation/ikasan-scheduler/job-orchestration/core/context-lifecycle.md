@@ -33,7 +33,7 @@ As each event is received and a state change occurs against the underlying job p
 is updated and persisted, as well as there being an audit record created for each transition in order to provide complete transparency 
 and auditability of the behaviour of the Ikasan Scheduler. 
 
-![context-machine](./context-machine.png)
+![context-machine](../../../images/context-machine.png)
 
 ## Why is a Job Plan Lifecycle Necessary?
 Ikasan employs a distributed micro service architecture, with which comes many benefits such as a highly decoupled system, robustness, 
@@ -59,14 +59,14 @@ File and time based events cannot fire until the agent has been provided with an
 
 ### Dashboard restart occurs prior to job plan start time window or after end time window
 
-![dashboaed-restart-happy-path](./dashboard-restart-happy-path.png)
+![dashboaed-restart-happy-path](../../../images/dashboard-restart-happy-path.png)
 
 ### Dashboard restart occurs after context start time window, but prior to job plan end time window
 
 In this case a context instance will already have been created and will exist in solr in either a WAITING or RUNNING state. 
 
-![dashboaed-restart-happy-path-2](./dashboard-restart-after-context-start.png)
+![dashboaed-restart-happy-path-2](../../../images/dashboard-restart-after-context-start.png)
 
 ### Agent restart occurs
 
-![agent-restart](./agent-restart.png)
+![agent-restart](../../../images/agent-restart.png)

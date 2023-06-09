@@ -78,10 +78,10 @@ internalEventDrivenJobBuilder
 #### Defining Parameters on a Job Using the Ikasan Dashboard
 Job parameters can also be added to a job using the Ikasan Scheduler Dashboard. Click the `PARAMETERS` button on the 
 Command Execution Job screen.
-![new-internal-event-job.png](new-internal-event-job.png)
+![new-internal-event-job.png](../../../images/new-internal-event-job.png)
 
 The job parameters and their default values can then be added.
-![job-parameters.png](job-parameters.png)
+![job-parameters.png](../../../images/job-parameters.png)
 
 ## How are job plan parameters populated and what is their precedence?
 Job parameters can be populated and provided to jobs in 4 possible ways with precedence in the following order.
@@ -92,14 +92,14 @@ Job parameters can be populated and provided to jobs in 4 possible ways with pre
 4. Job plan parameter values can be provided with a default value. If there is a default value defined on the parameter this will be used as the value when an instance of the job plan is created. This will take precedence if there is no value provided in a dashboard property file, updated on the job plan instance or when a user manually submits a job.
 
 ### Providing job plan parameters when manually submitting a command execution job.
-When the submit button is pressed from the command execution instance dialog or from any of the ![plane.png](plane.png) icons, the user is 
+When the submit button is pressed from the command execution instance dialog or from any of the ![plane.png](../../../images/plane.png) icons, the user is 
 presented with the command execution job submission dialog. User can provide or override the job parameters prior to submitting the job.
-![job-plan-instance-parameters-job-submission.png](job-plan-instance-parameters-job-submission.png)
+![job-plan-instance-parameters-job-submission.png](../../../images/job-plan-instance-parameters-job-submission.png)
 
 ### Providing job plan parameters for a job plan instance.
 Job plan parameters can be managed on the job plan instance. Select the "PARAMETERS" button on the "ACTIONS" popup in order to open
 the job plan instance parameter dialog.
-![job-plan-instance-parameters.png](job-plan-instance-parameters.png)
+![job-plan-instance-parameters.png](../../../images/job-plan-instance-parameters.png)
 
 All parameters associated with the job plan instance can be managed from job plan instance management dialog.
-![job-plan-instance-parameter-management.png](job-plan-instance-parameter-management.png)
+![job-plan-instance-parameter-management.png](../../../images/job-plan-instance-parameter-management.png)

@@ -1,10 +1,22 @@
 ![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-# Ikasan Enterprise Scheduler - Builder
+# Ikasan Enterprise Scheduler - Scheduler Job Builder
+In order to use the Ikasan Enterprise Scheduler Job Plan Builder include the following POM in your project:
+
+```xml
+<dependency>
+    <groupId>org.ikasan</groupId>
+    <artifactId>ikasan-job-orchestration-builder</artifactId>
+    <version>${version.ikasan}</version>
+</dependency>
+```
+
 The various job builder implementations allow for jobs to be easily created in Java code. These builder implementations assist in the 
 construction of jobs defined in the [Scheduler Job Data Model](../model/scheduler-job-data-model.md).
 
 ## InternalEventDrivenJobBuilder
+The InternalEventDrivenJobBuilder assists in building an instance of [InternalEventDrivenJob](../model/scheduler-job-data-model.md#internal-event-driven-jobs)
+otherwise known as a command execution job.
 ```java
 InternalEventDrivenJobBuilder internalEventDrivenJobBuilder = new InternalEventDrivenJobBuilder();
     internalEventDrivenJobBuilder
@@ -114,6 +126,7 @@ quartzScheduleDrivenJobBuilder.withCronExpression("cronExpression")
 ```
 
 ## FileEventDrivenJobBuilder
+The FileEventDrivenJobBuilder assists in building an instance of [FileEventDrivenJob](../model/scheduler-job-data-model.md#file-event-driven-jobs).
 ```java
 FileEventDrivenJobBuilder fileEventDrivenJobBuilder = new FileEventDrivenJobBuilder();
 Map<String, String> passthroughProperties = new HashMap<>();
