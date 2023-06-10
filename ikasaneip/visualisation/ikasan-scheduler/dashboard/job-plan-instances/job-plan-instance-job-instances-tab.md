@@ -4,6 +4,4 @@
 
 ![img.png](../../../images/job-plan-instance-job-instances-tab.png)
 
-[![Watch the video](https://img.youtube.com/vi/OkhtVy6qz5w/0.jpg)](https://youtu.be/OkhtVy6qz5w)
-
-https://github.com/ikasanEIP/ikasan/blob/3.3.x-scheduler-working-branch/ikasaneip/visualisation/video/ikasan-test.mp4
+[![Watch the video](https://img.youtube.com/vi/lVdYv0Q5wRY/1.jpg)](https://youtu.be/lVdYv0Q5wRY)
