@@ -4,4 +4,4 @@
 
 ![img.png](../../../images/job-plan-instance-job-instances-tab.png)
 
-[![Watch the video](../../../images/mr_squid_transparent.png)](../../../video/ikasan-test.mp4)
+<video src='../../../video/ikasan-test.mp4' width='180' />
