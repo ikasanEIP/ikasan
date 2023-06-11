@@ -1,6 +1,9 @@
 ![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-# Ikasan Enterprise Scheduler - Job Plan Templates Tab
+# Ikasan Enterprise Scheduler - Job Templates Tab
+The job plan, job template tab allows for all jobs within job plan to be managed.
+
+This [instructional video](https://youtu.be/MLcXoxZ1AJE) is available, which demonstrates how to use the Ikasan Enterprise Scheduler Job Template Tab.
 
 ![img.png](../../../images/job-plan-template-tab.png)
 
