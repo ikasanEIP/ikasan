@@ -3,12 +3,8 @@
 # Ikasan Enterprise Scheduler - Dashboard
 
 - [Scheduler Dashboard](./scheduler-dashboard.md)
+- [Job Plans](./job-plans/job-plan-templates.md)
+- [Job Plan Instances](./job-plan-instances/job-plan-instance.md)
 
-
-![img.png](../../images/scheduler-dashboard-job-plan-tab.png)
-
-![img_1.png](../../images/upload-job-plan.png)
-
-![img.png](../../images/quick-access.png)
 
 
