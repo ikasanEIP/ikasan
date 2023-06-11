@@ -3,7 +3,7 @@
 # Ikasan Enterprise Scheduler - Job Plan Templates
 
 ## Introduction
-The Ikasan Enterprise Scheduler Dashboard provides functionality that manages [Job Plan Data Models](../../job-orchestration/model/job-plan-data-model.md)
+The Ikasan Enterprise Scheduler Dashboard provides functionality that manages the [Job Plan Data Model](../../job-orchestration/model/job-plan-data-model.md)
 allowing developers and business users to extend and maintain job plans in an intuitive and visual manner.
 
 

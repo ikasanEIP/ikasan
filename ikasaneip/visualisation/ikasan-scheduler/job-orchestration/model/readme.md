@@ -4,3 +4,4 @@
 
 - [Job Plan Data Model](./job-plan-data-model.md)
 - [Job Plan Instance Data Model](./job-plan-instance-data-model.md)
+- [Scheduler Job Data Model](./scheduler-job-data-model.md)
