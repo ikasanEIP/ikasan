@@ -9,7 +9,7 @@
 The Ikasan Enterprise Scheduler Platform (IkasanES) provides a robust and scalable scheduling platform based on open technologies and standards.
 IkasanES can be adopted as little or as much as required to meet your scheduling needs.
 
-There is an accompanying [video tutorial](https://youtu.be/B3USYWW4wxE) for this developer guide.
+There is an accompanying [video tutorial](https://youtu.be/FWHOtUvGXNk) for this developer guide.
 
 ## About
 
