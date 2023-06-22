@@ -81,6 +81,11 @@
                   column="Description"
                   not-null="true"/>
 
+        <property name="applicationSecurityBaseDn"
+                  type="java.lang.String"
+                  column="ApplicationSecurityBaseDn"
+                  not-null="false"/>
+
         <property name="createdDateTime"
                   type="java.util.Date"
                   column="CreatedDateTime"

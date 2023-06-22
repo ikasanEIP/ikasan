@@ -52,6 +52,7 @@ public class IkasanPrincipal implements Principal
     private Long id;
     private String name;
     private String type;
+    private String applicationSecurityBaseDn;
     private String description;
     private Set<Role> roles;
 
@@ -192,8 +193,21 @@ public class IkasanPrincipal implements Principal
 		this.description = description;
 	}
 
+    /**
+     * @return the applicationSecurityBaseDn
+     */
+    public String getApplicationSecurityBaseDn() {
+        return applicationSecurityBaseDn;
+    }
 
-	public void addRole(Role role)
+    /**
+     * @param applicationSecurityBaseDn the applicationSecurityBaseDn to set
+     */
+    public void setApplicationSecurityBaseDn(String applicationSecurityBaseDn) {
+        this.applicationSecurityBaseDn = applicationSecurityBaseDn;
+    }
+
+    public void addRole(Role role)
     {
 		if(roles!=null)
         {
@@ -225,15 +239,17 @@ public class IkasanPrincipal implements Principal
         return name != null ? name.hashCode() : 0;
     }
 
-    /* (non-Javadoc)
-                     * @see java.lang.Object#toString()
-                     */
-	@Override
-	public String toString()
-	{
-		return "IkasanPrincipal [id=" + id + ", name=" + name + ", type="
-				+ type + ", description=" + description + ", roles=" + roles
-				+ ", createdDateTime=" + createdDateTime + ", updatedDateTime="
-				+ updatedDateTime + "]";
-	}
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", IkasanPrincipal.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("name='" + name + "'")
+            .add("type='" + type + "'")
+            .add("applicationSecurityBaseDn='" + applicationSecurityBaseDn + "'")
+            .add("description='" + description + "'")
+            .add("roles=" + roles)
+            .add("createdDateTime=" + createdDateTime)
+            .add("updatedDateTime=" + updatedDateTime)
+            .toString();
+    }
 }

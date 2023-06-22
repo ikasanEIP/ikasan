@@ -66,10 +66,8 @@ import javax.naming.directory.SearchControls;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetEncoder;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 
@@ -368,6 +366,7 @@ public class LdapServiceImpl implements LdapService
 
 			if(principal != null)
 			{
+                principal.setApplicationSecurityBaseDn(this.authenticationMethod.getApplicationSecurityBaseDn());
 				this.securityDao.saveOrUpdatePrincipal(principal);
 			}
 		}
@@ -455,7 +454,20 @@ public class LdapServiceImpl implements LdapService
                 user.setFirstName(ldapUser.firstName);
                 user.setSurname(ldapUser.surname);
                 user.setDepartment(ldapUser.department);
-                user.setPrincipals(new HashSet<IkasanPrincipal>(ikasanPrincipals));
+
+                Set<IkasanPrincipal> userPrincipals = user.getPrincipals();
+
+                if(userPrincipals == null) {
+                    userPrincipals = new HashSet<>();
+                }
+
+                userPrincipals = userPrincipals.stream()
+                    .filter(up -> up.getApplicationSecurityBaseDn() != null && !up.getApplicationSecurityBaseDn().equals(this.authenticationMethod.getApplicationSecurityBaseDn()))
+                    .collect(Collectors.toSet());
+
+                userPrincipals.addAll(ikasanPrincipals);
+
+                user.setPrincipals(userPrincipals);
 
                 this.userDao.save(user);
             }
