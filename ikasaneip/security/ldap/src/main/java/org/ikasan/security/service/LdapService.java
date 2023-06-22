@@ -53,9 +53,10 @@ public interface LdapService
 {
 
 	/**
-	 * 
+	 * Synchronize the local security DB against LDAP.
+     *
 	 * @throws LdapServiceException
 	 */
-	public void synchronize(AuthenticationMethod authenticationMethod) throws LdapServiceException;
+	void synchronize(AuthenticationMethod authenticationMethod) throws LdapServiceException;
 
 }

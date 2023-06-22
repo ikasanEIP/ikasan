@@ -22,5 +22,6 @@
     <!-- 3.3.x table drop -->
 
     <!-- 3.3.x table modify -->
+    <include file="db/alter/db-changeLog-alterSecurityPrincipalAddApplicationSecurityBaseDn.xml" relativeToChangelogFile="true" />
 
 </databaseChangeLog>
