@@ -119,6 +119,43 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
+    public void getModuleFlowStatesLegacy() throws Exception
+    {
+        Flow flow = new TestFlow("test Flow", "testModule", "stopped");
+        SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(module);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/flowStates/testModule")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito
+            .verify(moduleService).getModule("testModule");
+        Mockito.verifyNoMoreInteractions(moduleService);
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("{\"testModule-test Flow\":\"stopped\"}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void getModuleFlowStatesLegacyNull() throws Exception
+    {
+        Flow flow = new TestFlow("test Flow", "testModule", "stopped");
+        Mockito
+            .when(moduleService.getModule("testModule"))
+            .thenReturn(null);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/flowStates/testModule")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito
+            .verify(moduleService).getModule("testModule");
+        Mockito.verifyNoMoreInteractions(moduleService);
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("{}", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
     public void getFlowState() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
