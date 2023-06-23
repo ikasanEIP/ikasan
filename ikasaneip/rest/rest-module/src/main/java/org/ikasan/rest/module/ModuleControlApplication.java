@@ -257,11 +257,12 @@ public class ModuleControlApplication
     {
         HashMap<String, String> results = new HashMap<String, String>();
         Module<Flow> module = moduleService.getModule(moduleName);
-        List<Flow> flows = module.getFlows();
-        for (Flow flow : flows)
-        {
-            results.put(module.getName() + "-" + flow.getName()
-                , flow.getState());
+        if(module != null && module.getFlows() != null) {
+            List<Flow> flows = module.getFlows();
+            for (Flow flow : flows) {
+                results.put(module.getName() + "-" + flow.getName()
+                    , flow.getState());
+            }
         }
         return results;
     }
