@@ -66,4 +66,13 @@ public interface SchedulerJobInstanceDao {
      * @return
      */
     List<ContextInstanceAggregateJobStatus> getJobStatusCountForContextInstances(List<String> contextInstanceIds);
+
+    /**
+     * Get a list of scheduler context instance aggregate jobs statuses. This method takes into account jobs that appear
+     * in multiple child job plans.
+     *
+     * @param contextInstanceIds
+     * @return
+     */
+    List<ContextInstanceAggregateJobStatus> getJobStatusCountForContextInstancesConsiderNonTargetedDuplication(List<String> contextInstanceIds);
 }
