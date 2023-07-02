@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-ootb-module</artifactId>
-        <version>3.3.0-scheduler-SNAPSHOT</version>
+        <version>3.3.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -81,7 +81,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.3.0-scheduler-SNAPSHOT</version.ikasan>
+        <version.ikasan>3.3.0-SNAPSHOT</version.ikasan>
 <!--        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>-->
         <version.commons.compress>1.20</version.commons.compress>
         <version.com.h2database>1.4.200</version.com.h2database>
