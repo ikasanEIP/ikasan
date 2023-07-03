@@ -241,7 +241,11 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         }
         else
         {
-            return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
+            return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(),
+                path,
+                name,
+                fileConsumerConfiguration.getDirectoryDepth(),
+                this);
         }
     }
 
@@ -270,7 +274,7 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         {
             for(String filename : fileConsumerConfiguration.getFilenames())
             {
-                this.fileMatchers.add( getFileMatcher(filename, fileConsumerConfiguration.isDynamicFileName()) );
+                this.fileMatchers.add(getFileMatcher(filename, fileConsumerConfiguration.isDynamicFileName()) );
             }
         }
 
