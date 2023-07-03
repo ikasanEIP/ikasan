@@ -56,11 +56,6 @@ import java.nio.file.attribute.BasicFileAttributes;
  * DynamicFileMatcher which extends FileMatcher.
  *
  */
-// TODO David we have some work to do here and this is quite complicated. Basically this is using
-// SPEL to dynamically populate file names in files watcher jobs for the
-// scheduler with values that come from a specific context instance. Now that we manage
-// multiple context instances we need to make sure we are getting the value to replace in
-// the spel from the correct context instance.
 public class DynamicFileMatcher extends FileMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicFileMatcher.class);
 
@@ -83,6 +78,10 @@ public class DynamicFileMatcher extends FileMatcher {
     private final String spelExpression;
 
     private String correlatingIdentifier;
+
+    private String transientCorrelatingIdentifier = null;
+
+    private PathMatcher matcher;
 
     /**
      * Constructor
@@ -118,6 +117,21 @@ public class DynamicFileMatcher extends FileMatcher {
         }
 
         Path name = path.getFileName();
+
+        if(this.transientCorrelatingIdentifier == null ||
+            !this.transientCorrelatingIdentifier.equals(this.correlatingIdentifier)) {
+            this.transientCorrelatingIdentifier = correlatingIdentifier;
+            this.initialiseMatcher();
+        }
+
+        if (name != null && matcher != null && matcher.matches(name)) {
+            this.endpointListener.onMessage(path.toString());
+        }
+
+        return FileVisitResult.CONTINUE;
+    }
+
+    private void initialiseMatcher() {
         String dynamicFilePattern = this.fileNamePattern;
         if (spelExpression != null) {
             StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
@@ -135,13 +149,7 @@ public class DynamicFileMatcher extends FileMatcher {
 
         // create a new matcher every time as the fileNamePattern can change potentially every time
         LOG.debug("Attempting to locate file[{}]", dynamicFilePattern);
-        PathMatcher matcher = FileSystems.getDefault().getPathMatcher(REGEX + dynamicFilePattern);
-        if (name != null && matcher != null && matcher.matches(name)) {
-            this.endpointListener.onMessage(path.toString());
-        }
-
-
-        return FileVisitResult.CONTINUE;
+        this.matcher = FileSystems.getDefault().getPathMatcher(REGEX + dynamicFilePattern);
     }
 
     /**

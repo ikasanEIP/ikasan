@@ -200,6 +200,147 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
+    public void test_file_flow_success_without_aspect_changing_correlating_id() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setDynamicFileName(true);
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(5000);
+
+        flowTestRule.assertIsSatisfied();
+
+        String contextInstanceIdentifier2 = UUID.randomUUID().toString();
+
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier2));
+        flowTestRule.stopFlow();
+
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(5000);
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(2, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier2, event.getContextInstanceId());
+
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_file_flow_success_without_aspect_same_correlating_id() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
+        fileConsumerConfiguration.setDynamicFileName(true);
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(5000);
+
+        flowTestRule.assertIsSatisfied();
+
+
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+        flowTestRule.stopFlow();
+
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(5000);
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(2, outboundQueue.size());
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
     public void test_file_flow_success_without_aspect_no_correlating_identifier() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
