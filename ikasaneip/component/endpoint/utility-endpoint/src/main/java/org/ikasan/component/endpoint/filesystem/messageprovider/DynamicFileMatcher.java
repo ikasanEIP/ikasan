@@ -148,7 +148,7 @@ public class DynamicFileMatcher extends FileMatcher {
         }
 
         // create a new matcher every time as the fileNamePattern can change potentially every time
-        LOG.debug("Attempting to locate file[{}]", dynamicFilePattern);
+        LOG.info("Initialising path matcher with dynamicFilePattern[{}]", dynamicFilePattern);
         this.matcher = FileSystems.getDefault().getPathMatcher(REGEX + dynamicFilePattern);
     }
 
