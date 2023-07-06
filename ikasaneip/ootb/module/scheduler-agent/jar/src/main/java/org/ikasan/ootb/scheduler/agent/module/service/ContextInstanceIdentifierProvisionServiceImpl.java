@@ -41,10 +41,10 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
             List<String> scheduledFlows = filterFlowNamesThatContainTargetElement(allFlowsForPlanName, SCHEDULED_CONSUMER_PROFILE);
             List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElement(allFlowsForPlanName, FILE_CONSUMER_PROFILE);
 
+            ContextInstanceCache.instance().put(contextInstance.getId(), contextInstance);
+
             updateConsumerOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, contextInstance.getId());
             updateConsumerOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, contextInstance.getId());
-
-            ContextInstanceCache.instance().put(contextInstance.getId(), contextInstance);
         }
         catch (Exception e)
         {
@@ -91,10 +91,10 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
             List<String> scheduledFlows = filterFlowNamesThatContainTargetElement(allFlows, SCHEDULED_CONSUMER_PROFILE);
             List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElement(allFlows, FILE_CONSUMER_PROFILE);
 
+            ContextInstanceCache.instance().putAll(liveContextInstances);
+
             resetCorrelationIdsOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, sortedCorrelationIds);
             resetCorrelationIdsOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, sortedCorrelationIds);
-
-            ContextInstanceCache.instance().putAll(liveContextInstances);
         }
         catch (Exception e)
         {
