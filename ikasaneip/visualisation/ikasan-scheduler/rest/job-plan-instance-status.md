@@ -3,6 +3,9 @@
 # Job Plan and Job Instance Status Services
 Ikasan exposes a number of services that allows client to inspect the state of running job plans and job instances associated with those plans.
 
+- [Job Plan Status Service](#job-plan-status-service)
+- [Job Instance Status Service](#job-instance-status-service)
+
 ## Job Plan Status Service
 | Parameter                            | Value                                                                                                                                                              | 
 |--------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -22,6 +25,10 @@ curl -u <username>:<password> http://localhost:9090/rest/context/status/json/-17
 ```
 
 ### Sample Response
+<details>
+    <summary>Click to view the sample JSON payload response.</summary>
+<p>
+
 ```json
 {
     "contexts" : [ ],
@@ -103,6 +110,10 @@ curl -u <username>:<password> http://localhost:9090/rest/context/status/json/-17
     "heldJobs" : { }
 }
 ```
+
+</p>
+</details>
+
 ### Context Instance Implementation
 If your consuming client runs on the Java ecosystem, you can import an implementation of a [ContextInstance](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/instance/model/ContextInstance.java) into your project
 using the following pom.
@@ -139,6 +150,10 @@ curl -u <username>:<password> http://localhost:9090/rest/context/status/json/-17
 ```
 
 ### Sample Response
+<details>
+    <summary>Click to view the sample JSON payload response.</summary>
+<p>
+
 ```json
 {
     "agentName" : "scheduler-agent",
@@ -174,6 +189,9 @@ curl -u <username>:<password> http://localhost:9090/rest/context/status/json/-17
     "identifier" : "scheduler-agent-1799117601_ScheduledJob_13:45:00"
 }
 ```
+</p>
+</details>
+
 ### Context Instance Implementation
 If your consuming client runs on the Java ecosystem, you can import an implementation of a [SchedulerJobInstance](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/instance/model/SchedulerJobInstance.java) into your project
 using the following pom.

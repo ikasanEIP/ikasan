@@ -1,10 +1,10 @@
-package org.ikasan.ootb.scheduler.agent.rest;
+package org.ikasan.rest.module;
 
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.module.SimpleModule;
-import org.ikasan.ootb.scheduler.agent.rest.model.TestFlow;
+import org.ikasan.rest.module.model.TestFlow;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
@@ -49,7 +49,7 @@ import java.util.Set;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { SchedulerApplication.class, MockedUserServiceTestConfigWithConverter.class })
+@SpringBootTest(classes = { SchedulerApplication.class, MockedUserServiceTestConfig.class })
 public class SchedulerApplicationTest
 {
     @Rule

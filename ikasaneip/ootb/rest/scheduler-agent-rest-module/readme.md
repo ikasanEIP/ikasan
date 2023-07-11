@@ -22,7 +22,7 @@ The set of REST endpoints which allows you to:
 | Service Context | {module-root-context}/rest/moduleControl/{moduleName} |
 | Requires Path parameter moduleName | Module Name |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Returns | HTTP 200 status and  json serialised [ModuleDto](src/main/java/org/ikasan/rest/module/dto/ModuleDto.java) |
+| Returns | HTTP 200 status and json serialised [ModuleDto](src/main/java/org/ikasan/rest/module/dto/ModuleDto.java) |
  
  <details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>

@@ -1,8 +1,8 @@
-package org.ikasan.ootb.scheduler.agent.rest;
+package org.ikasan.rest.module;
 
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
+import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.scheduler.ScheduledComponent;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.flow.Flow;

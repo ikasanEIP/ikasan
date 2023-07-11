@@ -42,7 +42,6 @@ package org.ikasan.ootb.scheduler.agent.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.SerializationFeature;
-
 import org.ikasan.component.endpoint.bigqueue.service.BigQueueDirectoryManagementServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
 import org.ikasan.ootb.scheduler.agent.rest.service.BigQueueManagementAppServiceImpl;
@@ -66,11 +65,6 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     @Bean
     public SchedulerJobInitiationEventApplication schedulerJobInitiationEventApplication(){
         return new SchedulerJobInitiationEventApplication();
-    }
-
-    @Bean
-    public SchedulerApplication schedulerApplication(){
-        return new SchedulerApplication();
     }
 
     @Bean
