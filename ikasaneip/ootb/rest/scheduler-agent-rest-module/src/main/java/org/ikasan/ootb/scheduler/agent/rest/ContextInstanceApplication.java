@@ -48,6 +48,7 @@ import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,7 +90,7 @@ public class ContextInstanceApplication {
 
     @RequestMapping(path = "/save", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity save(@RequestBody ContextInstanceImpl contextInstance) {
+    public ResponseEntity save(@RequestBody ContextInstance contextInstance) {
         try {
             logger.info("Requested to save correlationId [" + contextInstance.getId() + "]");
             contextInstanceIdentifierProvisionService.provision(contextInstance);

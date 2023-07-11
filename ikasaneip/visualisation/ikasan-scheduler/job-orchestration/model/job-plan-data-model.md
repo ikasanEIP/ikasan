@@ -6,9 +6,11 @@
 This page describes how a job plan template data model is defined. This represents the scaffolding that defines how job plan 
 instantiations will be created, as well as underpinning the scheduler designs that are created within the Ikasan Dashboard.
 
-## Scheduler Context
+## Job Plan
 
-[ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java)
+A job plan is a JSON document that decribes how a group of jobs and nested job plans relate to one another in order provide the
+orchestration of a complex set of business processes. A job plan is module as [ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java)
+object with parent [Context](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/Context.java) whose attributes are as follows.
 
 | Field                         | Type            | Description                                                                                           |
 |-------------------------------|-----------------|-------------------------------------------------------------------------------------------------------|
@@ -23,9 +25,10 @@ instantiations will be created, as well as underpinning the scheduler designs th
 | isQuartzScheduleDrivenJobsDisabledForContext                              | boolean         | Flag to indicate if all quartz jobs are to be disabled when instances of the job plan are created.    |
 | treeViewExpandLevel                              | int             | Defines the job plan instance tree view is expanded by default.                                       |
 | disabled                      | boolean         | Flag to indicate if the job plan is disabled.                                                         |
+| ableToRunConcurrently                              | boolean         | Boolean flag to indicate if the job should run concurrently.                                          |
 
 
-## contextParameters
+## Context Parameters
 The context parameters represents the template that describes any values that are passed to a scheduler context instantiation. 
 
 Array of [ContextParameter](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextParameter.java)
@@ -53,8 +56,8 @@ Array of [ContextParameter](../../../../spec/service/scheduled/src/main/java/org
 ]
 ```
 	
-## scheduledJobs
-The scheduledJobs element represents an array of scheduledJob deifinitions. As scheduled job is defined as seeen below.
+## Scheduled Jobs
+The scheduledJobs element represents an array of scheduledJob definitions. As scheduled job is defined as seen below.
 
 Array of [SchedulerJob](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/job/model/SchedulerJob.java)
 

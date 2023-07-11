@@ -116,6 +116,11 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
         return new LogFileStreamApplication();
     }
 
+    @Bean
+    public SchedulerApplication schedulerApplication() {
+        return new SchedulerApplication();
+    }
+
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters){
 
