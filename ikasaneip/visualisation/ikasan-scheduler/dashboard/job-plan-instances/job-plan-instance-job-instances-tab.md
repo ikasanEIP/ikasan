@@ -5,5 +5,7 @@ The Job Instances tab provides a view onto all job instances associated with a J
 to users in a table that allows users to filter and sort the jobs based on various criteria. There are also various actions that can be performed
 against jobs within the table. Details of these actions can be found [here](./job-plan-instance-actions.md).
 
+A short video demonstrating the use of the features on this tab can be found [here](https://youtu.be/a90d9M4cYNk).
+
 ![img.png](../../../images/job-plan-instance-job-instances-tab.png)
 
