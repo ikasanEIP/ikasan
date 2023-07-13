@@ -4,7 +4,11 @@
 A Job Plan Instance is an instantiation of a Job Plan. More details of a Job Plan can be found [here](../job-plans/job-plan-templates.md).
 
 ## Job Plan Instance Tree View Tab
-[Job Plan Instance Tree View Tab](./job-plan-instance-tree-view-tab.md)
+This Job Plan Instance Tree View Tab provides a intuitive tree rendition of an instance of a Job Plan. The status of the job 
+plan can be easily understood as the status of a nested job plan wraps up to its parent, thus allowing for nested errors to be 
+easily identified.
+
+Click [here](./job-plan-instance-tree-view-tab.md) for more details of the Job Plan Instance Tree View Tab.
 
 ![img.png](../../../images/job-plan-instance-tree-view.png)
 
