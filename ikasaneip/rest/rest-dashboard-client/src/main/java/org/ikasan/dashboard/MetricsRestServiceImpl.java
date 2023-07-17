@@ -28,19 +28,30 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
     public static final String DASHBOARD_USERNAME_PROPERTY="ikasan.dashboard.rest.username";
     public static final String DASHBOARD_PASSWORD_PROPERTY="ikasan.dashboard.rest.password";
     public static final String DASHBOARD_REST_USERAGENT ="ikasan.dashboard.rest.useragent";
+    public static final String METRICS_PATH = "/rest/metrics";
+    public static final String PAGED_METRICS_PATH = "/rest/metrics/paged";
+    public static final String COUNT_METRICS_PATH = "/rest/metrics/count";
+    public static final String METRICS_BY_TIME = METRICS_PATH + "/{startTime}/{endTime}";
+    public static final String METRICS_BY_MODULE_AND_TIME = METRICS_PATH + "/{moduleName}/{startTime}/{endTime}";
+    public static final String METRICS_BY_MODULE_FLOW_AND_TIME = METRICS_PATH + "/{moduleName}/{flowName}/{startTime}/{endTime}";
+    public static final String METRICS_BY_TIME_PAGED = PAGED_METRICS_PATH + "/{startTime}/{endTime}/{offset}/{limit}";
+    public static final String METRICS_BY_MODULE_AND_TIME_PAGED = PAGED_METRICS_PATH + "/{moduleName}/{startTime}/{endTime}/{offset}/{limit}";
+    public static final String METRICS_BY_MODULE_FLOW_AND_TIME_PAGED = PAGED_METRICS_PATH + "/{moduleName}/{flowName}/{startTime}/{endTime}/{offset}/{limit}";
+    public static final String COUNT_METRICS_BY_TIME = COUNT_METRICS_PATH + "/{startTime}/{endTime}";
+    public static final String COUNT_METRICS_BY_MODULE_AND_TIME = COUNT_METRICS_PATH + "/{moduleName}/{startTime}/{endTime}";
+    public static final String COUNT_METRICS_BY_MODULE_FLOW_AND_TIME = COUNT_METRICS_PATH + "/{moduleName}/{flowName}/{startTime}/{endTime}";
 
     private String userAgent;
 
     private ObjectMapper mapper;
 
-    public MetricsRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
-                                  String path)
+    public MetricsRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
     {
         restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-        super.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
+        super.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY);
         super.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
         super.username = environment.getProperty(DASHBOARD_USERNAME_PROPERTY);
         super.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
@@ -52,63 +63,154 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
 
     @Override
     public List<FlowInvocationMetric> getMetrics(long startTime, long endTime) {
-        return this.getMetricsBase(null, null, startTime, endTime);
+        return this.getMetricsBase(new HashMap()
+            {{
+                put("startTime", String.valueOf(startTime));
+                put("endTime", String.valueOf(endTime));
+            }}
+            , METRICS_BY_TIME
+        );
     }
 
     @Override
     public List<FlowInvocationMetric> getMetrics(String moduleName, long startTime, long endTime) {
-        return this.getMetricsBase(moduleName, null, startTime, endTime);
+        return this.getMetricsBase(new HashMap()
+            {{
+                put("moduleName", moduleName);
+                put("startTime", String.valueOf(startTime));
+                put("endTime", String.valueOf(endTime));
+            }}
+            , METRICS_BY_MODULE_AND_TIME
+        );
     }
 
     @Override
     public List<FlowInvocationMetric> getMetrics(String moduleName, String flowName, long startTime, long endTime) {
-        return this.getMetricsBase(moduleName, flowName, startTime, endTime);
+        return this.getMetricsBase(new HashMap()
+            {{
+                put("moduleName", moduleName);
+                put("flowName", flowName);
+                put("startTime", String.valueOf(startTime));
+                put("endTime", String.valueOf(endTime));
+            }}
+            , METRICS_BY_MODULE_FLOW_AND_TIME
+        );
     }
 
-    private List<FlowInvocationMetric> getMetricsBase(String moduleName, String flowName, long startTime, long endTime){
+    @Override
+    public List<FlowInvocationMetric> getMetrics(long startTime, long endTime, int offset, int limit) {
+        return this.getMetricsBase(new HashMap()
+           {{
+               put("startTime", String.valueOf(startTime));
+               put("endTime", String.valueOf(endTime));
+               put("offset", String.valueOf(offset));
+               put("limit", String.valueOf(limit));
+           }}
+            , METRICS_BY_TIME_PAGED
+        );
+    }
+
+    @Override
+    public long count(long startTime, long endTime) {
+        return this.getCountBase(new HashMap()
+           {{
+               put("startTime", String.valueOf(startTime));
+               put("endTime", String.valueOf(endTime));
+           }}
+            , COUNT_METRICS_BY_TIME
+        );
+    }
+
+    @Override
+    public List<FlowInvocationMetric> getMetrics(String moduleName, long startTime, long endTime, int offset, int limit) {
+        return this.getMetricsBase(new HashMap()
+           {{
+               put("moduleName", moduleName);
+               put("startTime", String.valueOf(startTime));
+               put("endTime", String.valueOf(endTime));
+               put("offset", String.valueOf(offset));
+               put("limit", String.valueOf(limit));
+           }}
+            , METRICS_BY_MODULE_AND_TIME_PAGED
+        );
+    }
+
+    @Override
+    public long count(String moduleName, long startTime, long endTime) {
+        return this.getCountBase(new HashMap()
+             {{
+                 put("moduleName", moduleName);
+                 put("startTime", String.valueOf(startTime));
+                 put("endTime", String.valueOf(endTime));
+             }}
+            , COUNT_METRICS_BY_MODULE_AND_TIME
+        );
+    }
+
+    @Override
+    public List<FlowInvocationMetric> getMetrics(String moduleName, String flowName, long startTime, long endTime, int offset, int limit) {
+        return this.getMetricsBase(new HashMap()
+              {{
+                  put("moduleName", moduleName);
+                  put("flowName", flowName);
+                  put("startTime", String.valueOf(startTime));
+                  put("endTime", String.valueOf(endTime));
+                  put("offset", String.valueOf(offset));
+                  put("limit", String.valueOf(limit));
+              }}
+            , METRICS_BY_MODULE_FLOW_AND_TIME_PAGED
+        );
+    }
+
+    @Override
+    public long count(String moduleName, String flowName, long startTime, long endTime) {
+        return this.getCountBase(new HashMap()
+             {{
+                 put("moduleName", moduleName);
+                 put("flowName", flowName);
+                 put("startTime", String.valueOf(startTime));
+                 put("endTime", String.valueOf(endTime));
+             }}
+            , COUNT_METRICS_BY_MODULE_FLOW_AND_TIME
+        );
+    }
+
+    private List<FlowInvocationMetric> getMetricsBase(Map<String, String> parameters, String path){
         HttpHeaders headers = super.createHttpHeaders(userAgent);
         HttpEntity entity = new HttpEntity(headers);
         try
         {
             ResponseEntity<String> response;
-            if(moduleName != null && flowName != null ) {
-                Map<String, String> parameters = new HashMap()
-                {{
-                    put("moduleName", moduleName);
-                    put("flowName", flowName);
-                    put("startTime", String.valueOf(startTime));
-                    put("endTime", String.valueOf(endTime));
-                }};
-
-                response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class,parameters);
-            }
-            else if(moduleName != null) {
-                Map<String, String> parameters = new HashMap()
-                {{
-                    put("moduleName", moduleName);
-                    put("startTime", String.valueOf(startTime));
-                    put("endTime", String.valueOf(endTime));
-                }};
-
-                response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class,parameters);
-            }
-            else {
-                Map<String, String> parameters = new HashMap()
-                {{
-                    put("startTime", String.valueOf(startTime));
-                    put("endTime", String.valueOf(endTime));
-                }};
-                response = restTemplate.exchange(url, HttpMethod.GET, entity, String.class,parameters);
-            }
+            response = restTemplate.exchange(url+path, HttpMethod.GET, entity, String.class,parameters);
 
             return this.mapper.readValue(response.getBody()
                 , mapper.getTypeFactory().constructCollectionType(List.class, FlowInvocationMetricImpl.class));
         }
         catch (RestClientException | JsonProcessingException e)
         {
-            logger.warn("Issue getting metrics for url [" + url + "]  with response [{" + e
+            logger.warn("Issue getting metrics for url [" + url+path + "]  with response [{" + e
                 .getLocalizedMessage() + "}]");
-            return Collections.emptyList();
+            throw new RuntimeException("Issue getting metrics for url [" + url+path + "]  with response [{" + e
+            .getLocalizedMessage() + "}]", e);
+        }
+    }
+
+    private long getCountBase(Map<String, String> parameters, String path) {
+        HttpHeaders headers = super.createHttpHeaders(userAgent);
+        HttpEntity entity = new HttpEntity(headers);
+        try
+        {
+            ResponseEntity<String> response;
+            response = restTemplate.exchange(url+path, HttpMethod.GET, entity, String.class,parameters);
+
+            return Long.parseLong(response.getBody());
+        }
+        catch (Exception e)
+        {
+            logger.warn("Issue getting metrics for url [" + url+path + "]  with response [{" + e
+                .getLocalizedMessage() + "}]");
+            throw new RuntimeException("Issue getting count for metrics with url [" + url+path + "]  with response [{" + e
+                .getLocalizedMessage() + "}]", e);
         }
     }
 }
