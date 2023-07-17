@@ -64,10 +64,84 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory()
-            , "/rest/metrics/{startTime}/{endTime}");
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics(0, 100000L).size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_expected() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.getMetrics(0, 100000L);
+    }
+
+    @Test
+    public void get_metrics_time_period_paged() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics(0, 100000L, 0, 100).size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_paged_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.getMetrics(0, 100000L, 0, 100).size();
+    }
+
+    @Test
+    public void get_metrics_time_period_count() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.count(0, 100000L));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_count_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad number")
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.count(0, 100000L);
     }
 
     @Test
@@ -80,10 +154,84 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory()
-            , "/rest/metrics/{moduleName}/{startTime}/{endTime}");
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName",0, 100000L).size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_and_module_name_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName",0, 100000L).size());
+    }
+
+    @Test
+    public void get_metrics_time_period_and_module_name_paged() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName",0, 100000L, 0, 100).size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_and_module_name_paged_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.getMetrics("moduleName",0, 100000L, 0, 100);
+    }
+
+    @Test
+    public void get_metrics_time_period_and_module_name_count() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.count("moduleName",0, 100000L));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_and_module_name_count_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad number")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.count("moduleName",0, 100000L);
     }
 
     @Test
@@ -96,10 +244,84 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory()
-            , "/rest/metrics/{moduleName}/{flowName}/{startTime}/{endTime}");
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L).size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_module_name_and_flow_name_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L).size());
+    }
+
+    @Test
+    public void get_metrics_time_period_module_name_and_flow_name_paged() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/flowName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L, 0, 100).size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_module_name_and_flow_name_paged_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/flowName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.getMetrics("moduleName","flowName",0, 100000L, 0, 100);
+    }
+
+    @Test
+    public void get_metrics_time_period_module_name_and_flow_name_count() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.count("moduleName","flowName",0, 100000L));
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_metrics_time_period_module_name_and_flow_name_count_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad number")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.count("moduleName","flowName",0, 100000L);
     }
 
     protected String loadDataFile(String fileName) throws IOException

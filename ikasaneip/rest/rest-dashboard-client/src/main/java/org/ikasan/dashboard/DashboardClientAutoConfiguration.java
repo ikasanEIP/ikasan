@@ -119,10 +119,8 @@ public class DashboardClientAutoConfiguration
     public DashboardRestService configurationMetadataDashboardRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory,
         ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
     {
-
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, CONFIGURATION_METADATA_PATH,
             (Converter<Module, List>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
-
     }
 
     @Bean
