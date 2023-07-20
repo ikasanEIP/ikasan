@@ -43,18 +43,58 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-cli</artifactId>
+        <artifactId>ikasan-shell-parent</artifactId>
         <version>3.3.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>ikasan-shell-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Shell Parent</name>
+    <artifactId>ikasan-process-monitor</artifactId>
+    <packaging>jar</packaging>
+    <name>Ikasan Enterprise Integration Process Monitor</name>
 
-    <modules>
-        <module>process-monitor</module>
-        <module>jar</module>
-        <module>distribution</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>com.esotericsoftware</groupId>
+            <artifactId>kryo</artifactId>
+            <version>${version.kryo.cli}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.36</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+    </build>
 
 </project>

@@ -92,6 +92,8 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBrok
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
+import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
+import org.ikasan.cli.shell.operation.service.DefaultPersistenceServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
@@ -108,6 +110,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.List;
 
@@ -142,12 +145,14 @@ public class JobProcessingFlowComponentFactory {
 
     @Value("${big.queue.page.size:"+ BigArrayImpl.DEFAULT_DATA_PAGE_SIZE + "}")
     private int bigQueuePageSize;
-    
+
     @Resource
     private IBigQueue outboundQueue;
 
     @Resource
     BuilderFactory builderFactory;
+
+    String defaultPidDirectory = "." + FileSystems.getDefault().getSeparator() + "pid";
 
     /**
      * Get the big queue consumer
@@ -203,7 +208,7 @@ public class JobProcessingFlowComponentFactory {
      * @return
      */
     public Broker getJobStartingBroker() {
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(new DefaultPersistenceServiceImpl(new KryoProcessPersistenceImpl(defaultPidDirectory)));
         JobStartingBrokerConfiguration configuration = new JobStartingBrokerConfiguration();
         configuration.setEnvironmentToAddSpaceForEmptyContextParam(this.environmentToAddSpaceForEmptyContextParam);
         
@@ -220,7 +225,7 @@ public class JobProcessingFlowComponentFactory {
      */
     public Broker getJobMonitoringBroker()
     {
-        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker();
+        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker(new DefaultPersistenceServiceImpl(new KryoProcessPersistenceImpl(defaultPidDirectory)));
 
         JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(timeout);

@@ -46,6 +46,8 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
+import org.ikasan.cli.shell.operation.model.IkasanProcess;
+import org.ikasan.cli.shell.operation.service.PersistenceService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
@@ -73,6 +75,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(JobStartingBroker.class);
 
+    public static final String SCHEDULER_PROCESS_TYPE = "scheduler";
     public static final String LOG_FILE_PATH = "LOG_FILE_PATH";
     public static final String ERROR_LOG_FILE_PATH = "ERROR_LOG_FILE_PATH";
 
@@ -80,6 +83,11 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     private JobStartingBrokerConfiguration configuration;
     
     private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private PersistenceService persistenceService;
+
+    public JobStartingBroker(PersistenceService persistenceService) {
+        this.persistenceService = persistenceService;
+    }
 
     @Override
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
@@ -212,10 +220,27 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             logger.info(processStartString.toString());
 
             scheduledProcessEvent.setExecutionDetails(processStartString.toString());
-
-            Process process = processBuilder.start();
-            scheduledProcessEvent.setPid(process.pid());
-            scheduledProcessEvent.setProcess(process);
+            ProcessHandle processHandle = persistenceService.find(SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity());
+            IkasanProcess ikasanProcess = persistenceService.findIkasanProcess(SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity());
+            if (ikasanProcess != null) {
+                // This happens if the agent is recovering and a job start before it died is still running.
+                if (processHandle != null) {
+                    logger.info("Starting Broker Monitoring pre-existing process");
+                    scheduledProcessEvent.setProcessHandle(processHandle);
+                    scheduledProcessEvent.setPid(processHandle.pid());
+                } else {
+                    logger.info("Starting Broker Monitoring pre-existing but now complete process");
+                    scheduledProcessEvent.setDetachedAlreadyFinished(true);
+                    scheduledProcessEvent.setPid(ikasanProcess.getPid());
+                }
+                scheduledProcessEvent.setProcess(null);
+            } else {
+                logger.info("Starting Broker created new process");
+                Process process = processBuilder.start();
+                scheduledProcessEvent.setPid(process.pid());
+                scheduledProcessEvent.setProcess(process);
+                persistenceService.persist(SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity(), process);
+            }
         }
         catch (IOException e) {
             throw new EndpointException(e);

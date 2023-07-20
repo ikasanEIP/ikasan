@@ -11,6 +11,12 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
     @JsonIgnore
     private Process process;
     @JsonIgnore
+    private ProcessHandle processHandle;
+    @JsonIgnore
+    private boolean detached;                   // The Process is now detached, only ProcessHandle information is available
+    @JsonIgnore
+    private boolean detachedAlreadyFinished;    // The Process is now detached and has already completed.
+    @JsonIgnore
     private List<ContextParameterInstance> contextParameters;
 
     /**
@@ -31,6 +37,73 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
     @JsonIgnore
     public void setProcess(Process process) {
         this.process = process;
+    }
+
+    @JsonIgnore
+    public ProcessHandle getProcessHandle() {
+        return processHandle;
+    }
+
+    @JsonIgnore
+    public void setProcessHandle(ProcessHandle processHandle) {
+        this.processHandle = processHandle;
+        if (processHandle!=null) {
+            detached = true;
+        }
+    }
+
+    @JsonIgnore
+    public void setDetachedAlreadyFinished(boolean detachedAlreadyFinished) {
+        this.detached = detachedAlreadyFinished;
+        this.detachedAlreadyFinished = detachedAlreadyFinished;
+    }    
+    @JsonIgnore
+    public boolean isDetachedAlreadyFinished() {
+        return detachedAlreadyFinished;
+    }
+    @JsonIgnore
+    public void setDetached(boolean detached) {
+        this.detached = detached;
+    }    
+    @JsonIgnore
+    public boolean isDetached() {
+        return detached;
+    }
+
+    @JsonIgnore
+    /**
+     * The identity is used during persistence of the process details to assist restart after agent restart
+     */
+    public String getProcessIdentity() {
+        return getContextInstanceId() + getJobName();
+    }
+
+    @JsonIgnore
+    public void setDetailsFromProcess() {
+        ProcessHandle.Info info = null;
+
+        if (detachedAlreadyFinished) {
+            setUser("Detatched process");
+            setCommandLine("Detatched process");
+        } else {
+            if (isDetached()) {
+                info = processHandle.info();
+            } else {
+                info = process.info();
+            }
+
+            if(info != null && !info.user().isEmpty()) {
+                setUser( info.user().get() );
+            }
+
+            if(info != null && !info.commandLine().isEmpty()) {
+                setCommandLine( info.commandLine().get() );
+            }
+            else {
+                setCommandLine(getInternalEventDrivenJob().getCommandLine());
+            }
+
+        }
     }
 
     /**
@@ -55,36 +128,34 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
 
     @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("EnrichedContextualisedScheduledProcessEvent{");
-        sb.append("id=").append(id);
-        sb.append(", agentName='").append(agentName).append('\'');
-        sb.append(", agentHostname='").append(agentHostname).append('\'');
-        sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", jobGroup='").append(jobGroup).append('\'');
-        sb.append(", jobDescription='").append(jobDescription).append('\'');
-        sb.append(", commandLine='").append(commandLine).append('\'');
-        sb.append(", returnCode=").append(returnCode);
-        sb.append(", successful=").append(successful);
-        sb.append(", outcome=").append(outcome);
-        sb.append(", resultOutput='").append(resultOutput).append('\'');
-        sb.append(", resultError='").append(resultError).append('\'');
-        sb.append(", pid=").append(pid);
-        sb.append(", user='").append(user).append('\'');
-        sb.append(", fireTime=").append(fireTime);
-        sb.append(", nextFireTime=").append(nextFireTime);
-        sb.append(", completionTime=").append(completionTime);
-        sb.append(", harvested=").append(harvested);
-        sb.append(", harvestedDateTime=").append(harvestedDateTime);
-        sb.append(", dryRun=").append(dryRun);
-        sb.append(", jobStarting=").append(jobStarting);
-        sb.append(", dryRunParameters=").append(dryRunParameters);
-        if(contextParameters != null && !contextParameters.isEmpty()) {
-            sb.append(", contextParameters=[");
-            contextParameters.forEach(param -> sb.append(param).append(","));
-            sb.deleteCharAt(sb.length() - 1);
-            sb.append("]");
-        }
-        sb.append('}');
-        return sb.toString();
+        return "EnrichedContextualisedScheduledProcessEvent{" +
+            "process=" + process +
+            ", processHandle=" + processHandle +
+            ", detached=" + detached +
+            ", detachedAlreadyFinished=" + detachedAlreadyFinished +
+            ", contextParameters=" + contextParameters +
+            ", id=" + id +
+            ", agentName='" + agentName + '\'' +
+            ", agentHostname='" + agentHostname + '\'' +
+            ", jobName='" + jobName + '\'' +
+            ", jobGroup='" + jobGroup + '\'' +
+            ", jobDescription='" + jobDescription + '\'' +
+            ", commandLine='" + commandLine + '\'' +
+            ", returnCode=" + returnCode +
+            ", successful=" + successful +
+            ", outcome=" + outcome +
+            ", resultOutput='" + resultOutput + '\'' +
+            ", resultError='" + resultError + '\'' +
+            ", pid=" + pid +
+            ", user='" + user + '\'' +
+            ", fireTime=" + fireTime +
+            ", nextFireTime=" + nextFireTime +
+            ", completionTime=" + completionTime +
+            ", harvested=" + harvested +
+            ", harvestedDateTime=" + harvestedDateTime +
+            ", dryRun=" + dryRun +
+            ", jobStarting=" + jobStarting +
+            ", dryRunParameters=" + dryRunParameters +
+            '}';
     }
 }

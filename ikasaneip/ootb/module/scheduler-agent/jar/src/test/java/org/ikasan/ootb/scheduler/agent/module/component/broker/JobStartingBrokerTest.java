@@ -3,7 +3,9 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
+import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
+import org.ikasan.cli.shell.operation.service.PersistenceService;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
@@ -11,21 +13,29 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import static org.mockito.Mockito.when;
+
+@RunWith(MockitoJUnitRunner.class)
 public class JobStartingBrokerTest {
 
+    @Mock
+    private PersistenceService persistenceService;
+    @Mock
+    private ProcessHandle processHandle;
     @Test
     public void get_command_line_args()  {
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         String cmd = "source $HOME/.bash_profile;\necho \"some_cmd(\\\"code = 'code'\\\");\" | do_some_something - | blah.sh -\t\t\nblah1.sh -c some_param -i\n";
@@ -44,7 +54,7 @@ public class JobStartingBrokerTest {
 
     @Test
     public void get_command_line_args_execution_env_prop()  {
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         String executionEnvProp = "powershell.exe|-Command";
@@ -78,7 +88,7 @@ public class JobStartingBrokerTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
@@ -86,9 +96,9 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getProcess());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -114,7 +124,7 @@ public class JobStartingBrokerTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
@@ -122,9 +132,9 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getProcess());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -150,16 +160,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -187,16 +197,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -227,16 +237,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         final EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
@@ -271,16 +281,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
@@ -319,7 +329,7 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         JobStartingBrokerConfiguration configuration = getTestConfiguration();
         configuration.setEnvironmentToAddSpaceForEmptyContextParam(List.of("cmd.exe", "/bin/bash"));
         jobStartingBroker.setConfiguration(configuration);
@@ -328,16 +338,64 @@ public class JobStartingBrokerTest {
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         final EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
         Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> 
             Assert.assertEquals("Some .Value", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
     }
-    
+
+    @Test
+    public void test_job_start_when_recover_from_agent_crash_and_process_still_running() {
+        final String CONTEXT_ID = "AB1";
+        final String JOBNAME = "XYZ";
+        final Long pid = 999L;
+        final String processIdentity = CONTEXT_ID + JOBNAME;
+
+        when(processHandle.pid()).thenReturn(pid);
+        when(persistenceService.find(JobStartingBroker.SCHEDULER_PROCESS_TYPE, processIdentity)).thenReturn(processHandle);
+        when(persistenceService.findIkasanProcess(JobStartingBroker.SCHEDULER_PROCESS_TYPE, processIdentity)).thenReturn(new IkasanProcess(JobStartingBroker.SCHEDULER_PROCESS_TYPE, processIdentity, pid, "me"));
+        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
+            new EnrichedContextualisedScheduledProcessEvent();
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobInstanceDto.setCommandLine("dir");
+        }
+        else {
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
+        enrichedContextualisedScheduledProcessEvent.setResultError("err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
+        enrichedContextualisedScheduledProcessEvent.setContextInstanceId(CONTEXT_ID);
+        enrichedContextualisedScheduledProcessEvent.setJobName(JOBNAME);
+
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
+        jobStartingBroker.setConfiguration(getTestConfiguration());
+        jobStartingBroker.setConfiguredResourceId("test");
+        enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+
+        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getProcess());
+        Assert.assertEquals(999, enrichedContextualisedScheduledProcessEvent.getPid());
+        Assert.assertEquals(processHandle, enrichedContextualisedScheduledProcessEvent.getProcessHandle());
+
+        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+    }
+
     @Test(expected = EndpointException.class)
     public void test_exception_bad_command_line() throws IOException {
         EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
@@ -360,7 +418,7 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
@@ -390,7 +448,7 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
@@ -399,9 +457,9 @@ public class JobStartingBrokerTest {
         Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getProcess());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -428,16 +486,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -464,16 +522,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -500,16 +558,16 @@ public class JobStartingBrokerTest {
         enrichedContextualisedScheduledProcessEvent.setResultError("err");
         enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
-        JobStartingBroker jobStartingBroker = new JobStartingBroker();
+        JobStartingBroker jobStartingBroker = new JobStartingBroker(persistenceService);
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
         Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertEquals(true, enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertEquals(false, enrichedContextualisedScheduledProcessEvent.isDryRun());
+        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
@@ -551,7 +609,7 @@ public class JobStartingBrokerTest {
 
     protected String loadDataFile(String fileName) throws IOException
     {
-        String contentToSend = IOUtils.toString(loadDataFileStream(fileName), "UTF-8");
+        String contentToSend = IOUtils.toString(loadDataFileStream(fileName), StandardCharsets.UTF_8);
 
         return contentToSend;
     }

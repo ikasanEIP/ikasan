@@ -87,6 +87,11 @@ public class DefaultPersistenceServiceImpl implements PersistenceService
     }
 
     @Override
+    public IkasanProcess findIkasanProcess(String type, String name)
+    {
+        return processPersistenceDao.find(type, name);
+    }
+    @Override
     public void persist(String type, String name, Process process)
     {
         Optional<String> user = process.info().user();

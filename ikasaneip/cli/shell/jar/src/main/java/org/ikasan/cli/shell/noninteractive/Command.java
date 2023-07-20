@@ -36,7 +36,7 @@ public class Command
     {
         Path nonInteractiveCommandPath = Paths.get(tmpDir + System.currentTimeMillis());
         Path commandFilePath = Paths.get(nonInteractiveCommandPath + FileSystems.getDefault().getSeparator() + commands[0]);
-        String noninteractiveCommandContent = noninteractiveCommands.get(commands);
+        String noninteractiveCommandContent = noninteractiveCommands.get(commands[0]);
         if(noninteractiveCommandContent == null)
         {
             StringBuilder sb = new StringBuilder();
