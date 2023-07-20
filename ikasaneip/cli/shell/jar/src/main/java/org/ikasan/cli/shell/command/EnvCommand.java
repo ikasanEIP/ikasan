@@ -40,12 +40,22 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.model.ProcessType;
-import org.springframework.beans.factory.annotation.Value;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.AbstractEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.MutablePropertySources;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
+import org.springframework.shell.standard.ShellOption;
 
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Environment command.
@@ -55,53 +65,118 @@ import java.util.stream.Collectors;
 @ShellComponent
 public class EnvCommand extends AbstractCommand
 {
-    @Value("${module.name:null}")
-    String moduleName;
+    @Autowired
+    private Environment environment;
 
-    @Value("${module.jar.name:null}")
-    String moduleJarName;
-
-    @Value("${h2.jar.name:null}")
-    String h2JarName;
-
-    @Value("${h2.xms:null}")
-    String h2Xms;
-
-    @Value("${h2.xmx:null}")
-    String h2Xmx;
-
-    @Value("${module.xms:null}")
-    String moduleXms;
-
-    @Value("${module.xmx:null}")
-    String moduleXmx;
-
-    @Value("${h2.java.command:null}")
-    String h2JavaCommand;
-
-    @Value("${module.java.command:null}")
-    String moduleJavaCommand;
-
-    @ShellMethod(value = "Show environment details. Syntax: env", group = "Ikasan Commands", key = "env")
-    public String env()
+    @ShellMethod(value = "Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]", group = "Ikasan Commands", key = "env")
+    public String env(@ShellOption(defaultValue="") String variable,
+                      @ShellOption({"-n", "-name", "-names"}) boolean names,
+                      @ShellOption({"-v", "-value", "-values"}) boolean values,
+                      @ShellOption(value = "-no-expand") boolean noExpand,
+                      @ShellOption({"-l", "-list"}) boolean list)
     {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Environment Properties" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\th2.xms [" + h2Xms + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\th2.xmx [" + h2Xmx + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\th2.jar.name [" + h2JarName + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.xms [" + moduleXms + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.xmx [" + moduleXmx + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.name [" + moduleName + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.jar.name [" + moduleJarName + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\th2.java.command [" + h2JavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.java.command [" + moduleJavaCommand + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append(ProcessUtils.LINE_SEPARATOR);
-        sb.append("Processed Properties" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\th2.java.command Command List [" +
-            ProcessUtils.getCommands(h2JavaCommand).stream().collect(Collectors.joining(" ")) + "]" + ProcessUtils.LINE_SEPARATOR);
-        sb.append("\tmodule.java.command Command List [" +
-            ProcessUtils.getCommands(moduleJavaCommand).stream().collect(Collectors.joining(" ")) + "]"  + ProcessUtils.LINE_SEPARATOR);
-        return sb.toString();
+        Properties props = new Properties();
+        MutablePropertySources propSrcs = ((AbstractEnvironment) environment).getPropertySources();
+        StreamSupport.stream(propSrcs.spliterator(), false)
+            .filter(ps -> ps instanceof EnumerablePropertySource)
+            .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+            .flatMap(Arrays::<String>stream)
+            .forEach(propName -> props.setProperty(propName, environment.getProperty(propName)));
+
+        Properties matchedProperties = match(props, variable);
+        if(!noExpand)
+        {
+            matchedProperties = getExpandedPropertyValues(matchedProperties);
+        }
+
+        JSONObject jsonProps = new JSONObject(matchedProperties);
+        if(names)
+        {
+            JSONArray jsonArray = jsonProps.names();
+            if(list)
+            {
+                StringBuilder sb = new StringBuilder();
+                for(Object name:jsonArray.toList())
+                {
+                     sb.append(name);
+                     sb.append("\n");
+                }
+
+                return sb.toString();
+            }
+
+            return jsonArray.toString();
+        }
+
+        if(values)
+        {
+            Map<String,Object> jsonMap = jsonProps.toMap();
+            if(list)
+            {
+                StringBuilder sb = new StringBuilder();
+                for(Map.Entry<String,Object> entry:jsonMap.entrySet())
+                {
+                    sb.append(entry.getValue().toString());
+                    sb.append("\n");
+                }
+
+                return sb.toString();
+            }
+
+            JSONArray valueArray = new JSONArray();
+            for(Map.Entry<String,Object> entry:jsonMap.entrySet())
+            {
+                valueArray.put(entry.getValue());
+            }
+
+            return valueArray.toString();
+        }
+
+        if(list)
+        {
+            StringBuilder sb = new StringBuilder();
+            for(Map.Entry<String,Object> entry:jsonProps.toMap().entrySet())
+            {
+                sb.append(entry);
+                sb.append("\n");
+            }
+            return sb.toString();
+        }
+
+        return jsonProps.toString();
     }
+
+    Properties getExpandedPropertyValues(Properties properties)
+    {
+        Properties expandedProperties = new Properties( properties.size() );
+        for(Map.Entry entry : properties.entrySet())
+        {
+            expandedProperties.put(entry.getKey(), ProcessUtils.getCommands( (String)entry.getValue()).stream().collect(Collectors.joining(" ")));
+        }
+
+        return expandedProperties;
+    }
+
+    /**
+     * Match on specifically named properties.
+     * @param properties
+     * @param patternToMatch
+     * @return
+     */
+    protected Properties match(Properties properties, String patternToMatch)
+    {
+        Properties matchedProperties = new Properties();
+        Pattern pattern = Pattern.compile(patternToMatch, Pattern.CASE_INSENSITIVE);
+        for(Map.Entry entry : properties.entrySet())
+        {
+            Matcher matcher = pattern.matcher((String)entry.getKey());
+            if(matcher.find())
+            {
+                matchedProperties.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return matchedProperties;
+    }
+
 }

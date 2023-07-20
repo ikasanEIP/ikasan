@@ -19,30 +19,35 @@ public class Command
 
     static String tmpDir = System.getProperty("java.io.tmpdir") + FileSystems.getDefault().getSeparator();
 
-    /** supported non-interactive commands and script contents */
+    /** supported non-interactive commands and script contents for backward compatibility */
     static Map<String,String> noninteractiveCommands = Map.of(
-        "start-h2","start-h2",
-        "start-module","start-module",
         "start","start-h2\nstart-module",
-        "stop-h2","stop-h2",
-        "stop-module","stop-module",
-        "stop","stop-module\nstop-h2",
-        "ps", "ps");
-
+        "stop","stop-module\nstop-h2");
 
     public static String NON_INTERACTIVE_PREFIX = "@";
 
     /**
      * Return the non-interactive version of the command if this is a non-interactive version.
      *
-     * @param command
+     * @param commands
      * @return
      */
-    public static String getNonInterative(String command)
+    public static String getNonInterative(String[] commands)
     {
-        String nonInteractiveCommandPath = tmpDir + command;
-        Path commandFilePath = Paths.get(nonInteractiveCommandPath);
-        String noninteractiveCommandContent = noninteractiveCommands.get(command);
+        Path nonInteractiveCommandPath = Paths.get(tmpDir + System.currentTimeMillis());
+        Path commandFilePath = Paths.get(nonInteractiveCommandPath + FileSystems.getDefault().getSeparator() + commands[0]);
+        String noninteractiveCommandContent = noninteractiveCommands.get(commands);
+        if(noninteractiveCommandContent == null)
+        {
+            StringBuilder sb = new StringBuilder();
+            for(String command:commands)
+            {
+                sb.append(command);
+                sb.append(" ");
+            }
+
+            noninteractiveCommandContent = sb.toString();
+        }
 
         try
         {
@@ -50,19 +55,40 @@ public class Command
             {
                 if(Files.notExists(commandFilePath, new LinkOption[]{ LinkOption.NOFOLLOW_LINKS}) )
                 {
-                    Files.createFile(commandFilePath);
-                    Files.write(commandFilePath, noninteractiveCommandContent.getBytes());
+                    if(Files.notExists(nonInteractiveCommandPath, new LinkOption[]{ LinkOption.NOFOLLOW_LINKS}))
+                    {
+                        Files.createDirectories(nonInteractiveCommandPath);
+                    }
+
+                   Files.createFile(commandFilePath);
                 }
 
-                return NON_INTERACTIVE_PREFIX + nonInteractiveCommandPath;
+                Files.write(commandFilePath, noninteractiveCommandContent.getBytes());
+                return NON_INTERACTIVE_PREFIX + commandFilePath;
             }
         }
         catch(IOException e)
         {
-            logger.warn("Problem creating the non-interactive file script for " + command, e);
+            logger.warn("Problem creating the non-interactive file script for " + noninteractiveCommandContent, e);
         }
 
-        return command;
+        return noninteractiveCommandContent;
     }
 
+    /**
+     * Remove used command files.
+     * @param commandfile
+     */
+    public static void remove(String commandfile)
+    {
+        try
+        {
+            Path commandFilePath = Paths.get(commandfile);
+            Files.deleteIfExists(commandFilePath);
+        }
+        catch(IOException e)
+        {
+            logger.warn("Problem removing the non-interactive file script for " + commandfile, e);
+        }
+    }
 }
