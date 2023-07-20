@@ -18,9 +18,8 @@ List<File> invoke(org.quartz.JobExecutionContext context)
 ##### Supported Features
 The following Ikasan features are supported by this component.
 
-||| 
-| :----- | :------: | 
 | **Feature**| **Support** | 
+| :----- | :------: | 
 | Managed Lifecycle| Yes | 
 | Component Configuration| Yes | 
 | Event Resubmission| Yes | 
