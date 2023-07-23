@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder;
 
+import liquibase.integration.spring.SpringLiquibase;
 import org.ikasan.exceptionResolver.ExceptionConfig;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
@@ -52,11 +53,14 @@ import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
+import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+
+import javax.sql.DataSource;
 
 @Configuration
 @ImportResource( {
@@ -129,6 +133,45 @@ public class IkasanBaseAutoConfiguration
                                                                                     ));
         }
         return builder.build();
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "ikasan.datasource.liquibase")
+    public LiquibaseProperties ikasanDatasourceLiquibaseProperties(){
+        return new LiquibaseProperties();
+    }
+
+    @Bean
+    public SpringLiquibase ikasanSpringLiquibase(DataSource ikasanDatasource,
+                                                 LiquibaseProperties ikasanDatasourceLiquibaseProperties){
+        return springLiquibase(ikasanDatasource,ikasanDatasourceLiquibaseProperties);
+    }
+
+    @Bean
+    @ConfigurationProperties(prefix = "ikasan.transient.datasource.liquibase")
+    public LiquibaseProperties ikasanTransientDatasourceLiquibaseProperties(){
+        return new LiquibaseProperties();
+    }
+
+    @Bean
+    public SpringLiquibase ikasanTransientSpringLiquibase(DataSource ikasanTransientDatasource,
+                                                 LiquibaseProperties ikasanTransientDatasourceLiquibaseProperties){
+        return springLiquibase(ikasanTransientDatasource,ikasanTransientDatasourceLiquibaseProperties);
+    }
+
+
+    private static SpringLiquibase springLiquibase(DataSource datasource, LiquibaseProperties liquibaseProperties) {
+        SpringLiquibase springLiquibase = new SpringLiquibase();
+        springLiquibase.setDataSource(datasource);
+        springLiquibase.setChangeLog(liquibaseProperties.getChangeLog());
+        springLiquibase.setContexts(liquibaseProperties.getContexts());
+        springLiquibase.setDefaultSchema(liquibaseProperties.getDefaultSchema());
+        springLiquibase.setDropFirst(liquibaseProperties.isDropFirst());
+        springLiquibase.setShouldRun(liquibaseProperties.isEnabled());
+        springLiquibase.setLabels(liquibaseProperties.getLabels());
+        springLiquibase.setChangeLogParameters(liquibaseProperties.getParameters());
+        springLiquibase.setRollbackFile(liquibaseProperties.getRollbackFile());
+        return springLiquibase;
     }
 
 }

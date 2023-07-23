@@ -56,12 +56,20 @@
         <entry key="hibernate.criteria.literal_handling_mode" value="BIND"/>
     </util:map>
     
-    <bean id="dataSource" name="ikasan.xads ikasan.ds"
+    <bean id="ikasanDatasource" name="ikasan.xads ikasan.ds"
         class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver" />
         <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
         <property name="username" value="sa" />
         <property name="password" value="sa" />
     </bean>
-    
+
+    <bean id="ikasanTransientDatasource" name="ikasan.transient.xads ikasan.transient.ds"
+          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.h2.Driver" />
+        <property name="url" value="jdbc:h2:mem:testtransientdb;DB_CLOSE_DELAY=-1" />
+        <property name="username" value="sa" />
+        <property name="password" value="sa" />
+    </bean>
+
 </beans>

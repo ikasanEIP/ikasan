@@ -65,7 +65,7 @@
     
     <bean id="systemEventHibernateSessionFactory"
 		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.xads" />
+		<property name="dataSource" ref="ikasan.transient.xads" />
 		<property name="mappingResources">
 			<list>
 				<value>org/ikasan/systemevent/model/SystemEvent.hbm.xml</value>

@@ -59,7 +59,7 @@
         <entry key="hibernate.jdbc.batch_size" value="5"/>
     </util:map>
 
-    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
+    <bean id="ikasan.ds" name="ikasan.xads ikasan.transient.xads"
           class="org.springframework.jdbc.datasource.DriverManagerDataSource">
         <property name="driverClassName" value="org.h2.Driver" />
         <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />

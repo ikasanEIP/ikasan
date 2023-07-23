@@ -47,4 +47,35 @@
         </property>
     </bean>
 
+    <bean id="ikasanTransientDatasource" name="ikasan.transient.ds" class="org.apache.commons.dbcp2.BasicDataSource">
+        <property name="driverClassName" value="${transient.datasource.driver-class-name}"/>
+        <property name="url" value="${transient.datasource.url}" />
+        <property name="username" value="${transient.datasource.username}" />
+        <property name="password" value="${transient.datasource.password}" />
+        <property name="validationQuery" value="${transient.datasource.validationQuery}" />
+        <property name="initialSize" value="${transient.datasource.min.pool.size:0}" />
+        <property name="maxTotal" value="${transient.datasource.max.pool.size:8}" />
+        <property name="maxWaitMillis" value="${transient.datasource.max.wait.millis:30000}" />
+    </bean>
+
+
+    <bean id="ikasanTransientXADatasource" name="ikasan.transient.xads" primary="false" class="org.apache.commons.dbcp2.managed.BasicManagedDataSource">
+        <property name="driverClassName" value="${transient.datasource.xadriver-class-name}"/>
+        <property name="url" value="${transient.datasource.url}" />
+        <property name="username" value="${transient.datasource.username}" />
+        <property name="password" value="${transient.datasource.password}" />
+        <property name="xaDataSourceInstance" ref="ikasanXaDataSourceInstance" />
+        <property name="validationQuery" value="${transient.datasource.validationQuery}" />
+        <property name="initialSize" value="${transient.datasource.min.pool.size:0}" />
+        <property name="maxTotal" value="${transient.datasource.max.pool.size:8}" />
+        <property name="maxWaitMillis" value="${transient.datasource.max.wait.millis:30000}" />
+        <property name="defaultAutoCommit" value="false" />
+        <property name="transactionManager">
+            <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+                <property name="targetObject" ref="transactionManager" />
+                <property name="targetMethod" value="getTransactionManager" />
+            </bean>
+        </property>
+    </bean>
+
 </beans>

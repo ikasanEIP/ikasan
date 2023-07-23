@@ -50,7 +50,7 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
 
     <bean id="wiretapFlowEventListener"
-        class="org.ikasan.wiretap.listener.JobAwareFlowEventListener" depends-on="liquibase">
+        class="org.ikasan.wiretap.listener.JobAwareFlowEventListener" depends-on="ikasanSpringLiquibase">
         <constructor-arg name="flowEventJobs" ref="jobsMap"/>
         <constructor-arg name="triggerDao" ref="triggerDao"/>
         <constructor-arg name="moduleMetadataDashboardRestService" ref="moduleMetadataDashboardRestService"/>
@@ -85,7 +85,7 @@
 
 	<bean id="triggerDao"
 		class="org.ikasan.trigger.dao.HibernateTriggerDao">
-		<property name="sessionFactory" ref="wiretapHibernateSessionFactory" />
+		<property name="sessionFactory" ref="wiretapTriggerHibernateSessionFactory" />
 	</bean>
 
     <bean id="messageHistoryDao"
@@ -95,7 +95,7 @@
 
 	<bean id="messageHistoryXaHibernateSessionFactory"
           class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-        <property name="dataSource" ref="ikasan.xads" />
+        <property name="dataSource" ref="ikasan.transient.xads" />
         <property name="mappingResources">
             <list>
                 <value>org/ikasan/history/model/ComponentInvocationMetric.hbm.xml</value>
@@ -109,16 +109,27 @@
 
     <bean id="wiretapHibernateSessionFactory"
 		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.xads" />
+		<property name="dataSource" ref="ikasan.transient.xads" />
 		<property name="mappingResources">
 			<list>
                 <value>org/ikasan/wiretap/model/WiretapEventImpl.hbm.xml</value>
-				<value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
 			</list>
 		</property>
 		<property name="hibernateProperties" ref="platformHibernateProperties"/>
 	</bean>
-    
+
+    <bean id="wiretapTriggerHibernateSessionFactory"
+          class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+        <property name="dataSource" ref="ikasan.xads" />
+        <property name="mappingResources">
+            <list>
+                <value>org/ikasan/trigger/model/Trigger.hbm.xml</value>
+            </list>
+        </property>
+        <property name="hibernateProperties" ref="platformHibernateProperties"/>
+    </bean>
+
+
     <bean id="jobsMap" class="java.util.HashMap">
         <constructor-arg>
             <map>

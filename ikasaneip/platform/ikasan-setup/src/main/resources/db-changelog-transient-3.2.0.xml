@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd">
+
+    <property name="dateType" value="datetime" dbms="h2, mssql, sybase"/>
+    <property name="dateType" value="timestamp" dbms="mysql"/>
+
+    <property name="getDate" value="current_date()" dbms="h2"/>
+    <property name="getDate" value="getdate()" dbms="mssql, sybase"/>
+    <property name="getDate" value="current_timestamp" dbms="mysql"/>
+
+    <property name="identity" value="IDENTITY" dbms="h2"/>
+    <property name="identity" value="numeric(18)" dbms="mssql, sybase"/>
+    <property name="identity" value="BIGINT" dbms="mysql"/>
+
+    <property name="autoincrement" value="false" dbms="h2"/>
+    <property name="autoincrement" value="true" dbms="mysql, mssql, sybase"/>
+
+    <changeSet author="ikasan" id="1613856763872-3">
+        <createTable tableName="COMPONENTINVOCATIONMETRIC">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="MESSAGEHISTORYPK"/>
+            </column>
+            <column name="COMPONENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BEFOREEVENTIDENTIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="BEFORERELATEDEVENTIDENTIFIER" type="VARCHAR(255)"/>
+            <column name="AFTEREVENTIDENTIFIER" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="AFTERRELATEDEVENTIDENTIFIER" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="STARTTIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="ENDTIME" type="DECIMAL(18)"/>
+            <column name="FLOWINVOCATIONMETRICID" type="DECIMAL(18)"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="ikasan" id="1613856763872-15">
+        <createTable tableName="CUSTOMMETRIC">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="METRICPK"/>
+            </column>
+            <column name="COMPINVOCATIONMETRICID" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="VALUE" type="VARCHAR(1024)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="ikasan" id="1613856763872-21">
+        <createTable tableName="FLOWINVOCATIONMETRIC">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="FLOWINVOCATIONPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FINALACTION" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="STARTTIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="ENDTIME" type="DECIMAL(18)"/>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueBoolean="false" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ERRORURI" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+
+
+    <changeSet author="ikasan" id="1613856763872-32">
+        <createTable tableName="IKASANWIRETAP">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="IKASANWIRETAPPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMPONENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATEDEVENTID" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="EVENTTIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYLOADCONTENT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="ikasan" id="1613856763872-34">
+        <createTable tableName="METRICEVENT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="METRICEVENTPK"/>
+            </column>
+            <column name="MODULENAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="FLOWNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="COMPONENTNAME" type="VARCHAR(128)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EVENTID" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="RELATEDEVENTID" type="VARCHAR(255)"/>
+            <column defaultValueNumeric="0" name="EVENTTIMESTAMP" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="PAYLOADCONTENT" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="CREATEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet author="ikasan" id="1613856763872-47">
+        <createTable tableName="SYSTEMEVENT">
+            <column autoIncrement="true" name="ID" type="BIGINT(19)">
+                <constraints primaryKey="true" primaryKeyName="SYSTEMEVENTPK"/>
+            </column>
+            <column name="SUBJECT" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTION" type="CLOB">
+                <constraints nullable="false"/>
+            </column>
+            <column name="ACTOR" type="VARCHAR(64)"/>
+            <column name="TIMESTAMP" type="TIMESTAMP">
+                <constraints nullable="false"/>
+            </column>
+            <column name="EXPIRY" type="TIMESTAMP"/>
+            <column defaultValueComputed="0" name="HARVESTED" type="BOOLEAN(1)">
+                <constraints nullable="false"/>
+            </column>
+            <column defaultValueNumeric="0" name="HARVESTEDDATETIME" type="DECIMAL(18)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet author="ikasan" id="1613856763872-85">
+        <createIndex indexName="IX_FLOWINVOCATIONMETRIC_HARVESTEDDATETIME" tableName="FLOWINVOCATIONMETRIC">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-86">
+        <createIndex indexName="IX_FLOWINVOCATION_EXPIRY" tableName="FLOWINVOCATIONMETRIC">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-87">
+        <createIndex indexName="IX_FLOWINVOCATION_STARTTIMEMODULEFLOW" tableName="FLOWINVOCATIONMETRIC">
+            <column name="STARTTIME"/>
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-88">
+        <createIndex indexName="IX_IKASANWIRETAP_CREATEDDATETIME" tableName="IKASANWIRETAP">
+            <column name="CREATEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-89">
+        <createIndex indexName="IX_IKASANWIRETAP_EVENTID" tableName="IKASANWIRETAP">
+            <column name="EVENTID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-90">
+        <createIndex indexName="IX_IKASANWIRETAP_EXPIRY" tableName="IKASANWIRETAP">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-91">
+        <createIndex indexName="IX_IKASANWIRETAP_HARVESTEDDATETIME" tableName="IKASANWIRETAP">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-92">
+        <createIndex indexName="IX_IKASANWIRETAP_SEARCH" tableName="IKASANWIRETAP">
+            <column name="MODULENAME"/>
+            <column name="FLOWNAME"/>
+            <column name="COMPONENTNAME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-93">
+        <createIndex indexName="IX_METRICEVENT_EVENTID" tableName="METRICEVENT">
+            <column name="EVENTID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-94">
+        <createIndex indexName="IX_METRICEVENT_EXPIRY" tableName="METRICEVENT">
+            <column name="EXPIRY"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-95">
+        <createIndex indexName="IX_METRIC_MESSAGEHISTORYID" tableName="CUSTOMMETRIC">
+            <column name="COMPINVOCATIONMETRICID"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-97">
+        <createIndex indexName="IX_SYSTEMEVENT_HARVESTEDDATETIME" tableName="SYSTEMEVENT">
+            <column name="HARVESTEDDATETIME"/>
+        </createIndex>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-99">
+        <createIndex indexName="MHFLOWINVOCATION_FK_INDEX_1" tableName="COMPONENTINVOCATIONMETRIC">
+            <column name="FLOWINVOCATIONMETRICID"/>
+        </createIndex>
+    </changeSet>
+
+    <changeSet author="ikasan" id="1613856763872-123">
+        <addForeignKeyConstraint baseColumnNames="COMPINVOCATIONMETRICID" baseTableName="CUSTOMMETRIC" constraintName="MESSAGEHISTORYFK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="COMPONENTINVOCATIONMETRIC"/>
+    </changeSet>
+    <changeSet author="ikasan" id="1613856763872-124">
+        <addForeignKeyConstraint baseColumnNames="FLOWINVOCATIONMETRICID" baseTableName="COMPONENTINVOCATIONMETRIC" constraintName="MHFLOWINVOCATION_FK" deferrable="false" initiallyDeferred="false" onDelete="RESTRICT" onUpdate="RESTRICT" referencedColumnNames="ID" referencedTableName="FLOWINVOCATIONMETRIC"/>
+    </changeSet>
+
+
+</databaseChangeLog>

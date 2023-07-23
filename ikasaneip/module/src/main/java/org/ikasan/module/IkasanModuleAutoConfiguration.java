@@ -78,7 +78,7 @@ public class IkasanModuleAutoConfiguration
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
     @Bean
-    @DependsOn("liquibase")
+    @DependsOn("ikasanSpringLiquibase")
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
         HousekeepingSchedulerService housekeepingSchedulerService,
