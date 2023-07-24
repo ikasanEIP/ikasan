@@ -3,6 +3,9 @@ package org.ikasan.dashboard;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
+import org.ikasan.harvest.HarvestEvent;
+import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
@@ -17,6 +20,8 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
@@ -85,6 +90,38 @@ public class MetricsRestServiceTest
     }
 
     @Test
+    public void get_metrics_time_period_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics(0, 100000L).size());
+    }
+
+    @Test
     public void get_metrics_time_period_paged() throws IOException {
         stubFor(get(urlEqualTo("/rest/metrics/paged/0/100000/0/100"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
@@ -112,6 +149,39 @@ public class MetricsRestServiceTest
         uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.getMetrics(0, 100000L, 0, 100).size();
+    }
+
+    @Test
+    public void get_metrics_time_period_paged_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(401)
+            ));
+
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/paged/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics(0, 100000L, 0, 100).size());
     }
 
     @Test
@@ -145,6 +215,38 @@ public class MetricsRestServiceTest
     }
 
     @Test
+    public void get_metrics_time_period_count_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/count/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(200)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.count(0, 100000L));
+    }
+
+    @Test
     public void get_metrics_time_period_and_module_name() throws IOException {
         stubFor(get(urlEqualTo("/rest/metrics/moduleName/0/100000"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
@@ -166,6 +268,38 @@ public class MetricsRestServiceTest
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
                 .withBody("bad payload")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName",0, 100000L).size());
+    }
+
+    @Test
+    public void get_metrics_time_period_and_module_name_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
                 .withStatus(201)
             ));
 
@@ -205,6 +339,38 @@ public class MetricsRestServiceTest
     }
 
     @Test
+    public void get_metrics_time_period_and_module_name_paged_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName",0, 100000L, 0, 100).size());
+    }
+
+    @Test
     public void get_metrics_time_period_and_module_name_count() throws IOException {
         stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/0/100000"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
@@ -235,6 +401,38 @@ public class MetricsRestServiceTest
     }
 
     @Test
+    public void get_metrics_time_period_and_module_name_count_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.count("moduleName",0, 100000L));
+    }
+
+    @Test
     public void get_metrics_time_period_module_name_and_flow_name() throws IOException {
         stubFor(get(urlEqualTo("/rest/metrics/moduleName/flowName/0/100000"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
@@ -256,6 +454,38 @@ public class MetricsRestServiceTest
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
                 .withBody("bad payload")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L).size());
+    }
+
+    @Test
+    public void get_metrics_time_period_and_module_name_flow_name_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
                 .withStatus(201)
             ));
 
@@ -295,6 +525,38 @@ public class MetricsRestServiceTest
     }
 
     @Test
+    public void get_metrics_time_period_and_module_name_flow_name_paged_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/flowName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(201)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/paged/moduleName/flowName/0/100000/0/100"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/metrics.json"))
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L, 0, 100).size());
+    }
+
+    @Test
     public void get_metrics_time_period_module_name_and_flow_name_count() throws IOException {
         stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/flowName/0/100000"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
@@ -322,6 +584,38 @@ public class MetricsRestServiceTest
         uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.count("moduleName","flowName",0, 100000L);
+    }
+
+    @Test
+    public void get_metrics_time_period_and_module_name_flow_name_count_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/metrics/count/moduleName/flowName/0/100000"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("5")
+                .withStatus(201)
+            ));
+
+        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        assertEquals(5, uut.count("moduleName","flowName",0, 100000L));
     }
 
     protected String loadDataFile(String fileName) throws IOException
