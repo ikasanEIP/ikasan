@@ -14,6 +14,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
@@ -69,6 +70,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                 put("endTime", String.valueOf(endTime));
             }}
             , METRICS_BY_TIME
+            , true
         );
     }
 
@@ -81,6 +83,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                 put("endTime", String.valueOf(endTime));
             }}
             , METRICS_BY_MODULE_AND_TIME
+            , true
         );
     }
 
@@ -94,6 +97,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                 put("endTime", String.valueOf(endTime));
             }}
             , METRICS_BY_MODULE_FLOW_AND_TIME
+            , true
         );
     }
 
@@ -107,6 +111,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                put("limit", String.valueOf(limit));
            }}
             , METRICS_BY_TIME_PAGED
+            , true
         );
     }
 
@@ -118,6 +123,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                put("endTime", String.valueOf(endTime));
            }}
             , COUNT_METRICS_BY_TIME
+            , true
         );
     }
 
@@ -132,6 +138,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                put("limit", String.valueOf(limit));
            }}
             , METRICS_BY_MODULE_AND_TIME_PAGED
+            , true
         );
     }
 
@@ -144,6 +151,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                  put("endTime", String.valueOf(endTime));
              }}
             , COUNT_METRICS_BY_MODULE_AND_TIME
+            , true
         );
     }
 
@@ -159,6 +167,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                   put("limit", String.valueOf(limit));
               }}
             , METRICS_BY_MODULE_FLOW_AND_TIME_PAGED
+            , true
         );
     }
 
@@ -172,10 +181,11 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
                  put("endTime", String.valueOf(endTime));
              }}
             , COUNT_METRICS_BY_MODULE_FLOW_AND_TIME
+            , true
         );
     }
 
-    private List<FlowInvocationMetric> getMetricsBase(Map<String, String> parameters, String path){
+    private List<FlowInvocationMetric> getMetricsBase(Map<String, String> parameters, String path, boolean isFirst){
         HttpHeaders headers = super.createHttpHeaders(userAgent);
         HttpEntity entity = new HttpEntity(headers);
         try
@@ -186,6 +196,20 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
             return this.mapper.readValue(response.getBody()
                 , mapper.getTypeFactory().constructCollectionType(List.class, FlowInvocationMetricImpl.class));
         }
+        catch (HttpClientErrorException e)
+        {
+            if ( e.getRawStatusCode() == 401 && isFirst )
+            {
+                this.token = null;
+                if ( authenticate(this.userAgent) )
+                { return getMetricsBase(parameters, path, false); }
+            }
+
+            logger.warn("Issue getting metrics for url [" + url+path + "]  with response [{" + e
+                .getLocalizedMessage() + "}]");
+            throw new RuntimeException("Issue getting metrics for url [" + url+path + "]  with response [{" + e
+                .getLocalizedMessage() + "}]", e);
+        }
         catch (RestClientException | JsonProcessingException e)
         {
             logger.warn("Issue getting metrics for url [" + url+path + "]  with response [{" + e
@@ -195,7 +219,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
         }
     }
 
-    private long getCountBase(Map<String, String> parameters, String path) {
+    private long getCountBase(Map<String, String> parameters, String path, boolean isFirst) {
         HttpHeaders headers = super.createHttpHeaders(userAgent);
         HttpEntity entity = new HttpEntity(headers);
         try
@@ -205,9 +229,23 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
 
             return Long.parseLong(response.getBody());
         }
+        catch (HttpClientErrorException e)
+        {
+            if ( e.getRawStatusCode() == 401 && isFirst )
+            {
+                this.token = null;
+                if ( authenticate(this.userAgent) )
+                { return getCountBase(parameters, path, false); }
+            }
+
+            logger.warn("Issue getting count for metrics for url [" + url+path + "]  with response [{" + e
+                .getLocalizedMessage() + "}]");
+            throw new RuntimeException("Issue getting count for metrics for url [" + url+path + "]  with response [{" + e
+                .getLocalizedMessage() + "}]", e);
+        }
         catch (Exception e)
         {
-            logger.warn("Issue getting metrics for url [" + url+path + "]  with response [{" + e
+            logger.warn("Issue getting count for metrics for url [" + url+path + "]  with response [{" + e
                 .getLocalizedMessage() + "}]");
             throw new RuntimeException("Issue getting count for metrics with url [" + url+path + "]  with response [{" + e
                 .getLocalizedMessage() + "}]", e);
