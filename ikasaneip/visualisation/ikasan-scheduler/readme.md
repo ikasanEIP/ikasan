@@ -40,5 +40,5 @@
 - [Notifications](./notification/email-notification.md)
 - [Security](../dashboard/security.md) 
   - [Scheduler Dashboard Security Matrix](./scheduler-security-matrix.md)
-- [Deployment Guide](./deployment-guide.md)
+- [Deployment Guide](deployment-guide.md)
 - [Configuration Guide](./configuration-guide.md)
