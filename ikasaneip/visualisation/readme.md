@@ -49,5 +49,5 @@
   - [Notifications](./ikasan-scheduler/notification/email-notification.md)
   - [Security](./dashboard/security.md)
       - [Scheduler Dashboard Security Matrix](./ikasan-scheduler/scheduler-security-matrix.md)
-  - [Deployment Guide](./ikasan-scheduler/deployment-guide.md)
+  - [Deployment Guide](ikasan-scheduler/deployment-guide.md)
   - [Configuration Guide](./ikasan-scheduler/configuration-guide.md)
