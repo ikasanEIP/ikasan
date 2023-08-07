@@ -1,0 +1,1 @@
+Not able to be access by the REST API from LogFileStreamApplication

@@ -117,6 +117,11 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Bean
+    public DownloadLogFileApplication downloadLogFileApplication() {
+        return new DownloadLogFileApplication();
+    }
+
+    @Bean
     public SchedulerApplication schedulerApplication() {
         return new SchedulerApplication();
     }
