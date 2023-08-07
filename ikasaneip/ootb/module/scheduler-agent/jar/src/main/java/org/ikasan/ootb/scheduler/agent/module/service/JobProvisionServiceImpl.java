@@ -11,6 +11,7 @@ import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumer
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.module.ConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
@@ -20,6 +21,8 @@ import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.Sch
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.rest.module.util.UserUtil;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -56,6 +59,9 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
     @Autowired
     private ConfigurationService configurationService;
+
+    @Autowired
+    private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
     /**
      * This a map of context name to list of objects
@@ -150,12 +156,14 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     public void removeJobs(String contextName) {
         logger.info(String.format("Removing jobs for context[%s].", contextName));
         Module<Flow> module = this.moduleService.getModule(moduleName);
+        ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
+        ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
+
+        this.deleteComponentConfigurations(module.getFlows(), configuredModuleConfiguration);
+
         logger.info(String.format("Deactivating module [%s]", this.moduleName));
         moduleActivator.deactivate(module);
         logger.info(String.format("Deactivated module [%s]", this.moduleName));
-
-        ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
-        ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
 
         this.clearFlowConfig(configuredModuleConfiguration, contextName);
         this.configurationService.update(configuredModule);
@@ -181,27 +189,27 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         jobs.forEach(job -> {
             if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
                 SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
-                configuration.getFlowContextMap().put(job.getJobName(), job.getContextName());
+                configuration.getFlowContextMap().put(job.getAggregateJobName(), job.getContextName());
             }
             if(job instanceof FileEventDrivenJob) {
-                configuredModuleConfiguration.getFlowDefinitions().put(job.getJobName(), "MANUAL");
-                configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getJobName(), "FILE");
+                configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
+                configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.FILE);
             }
             else if(job instanceof QuartzScheduleDrivenJob) {
-                configuredModuleConfiguration.getFlowDefinitions().put(job.getJobName(), "MANUAL");
-                configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getJobName(), "QUARTZ");
+                configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
+                configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.QUARTZ);
             }
             else if(job instanceof InternalEventDrivenJob) {
-                configuredModuleConfiguration.getFlowDefinitions().put(job.getJobName(), "MANUAL");
-                configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getJobName(), "SCHEDULER_JOB");
+                configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
+                configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.SCHEDULER_JOB);
             }
         });
 
         configuredModuleConfiguration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "AUTOMATIC");
-        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
+        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", AgentFlowProfiles.OUTBOUND);
 
         configuredModuleConfiguration.getFlowDefinitions().put("Housekeep Log Files Flow", "AUTOMATIC");
-        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", "HOUSEKEEP_LOG");
+        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", AgentFlowProfiles.HOUSEKEEP_LOG);
     }
 
     private void clearFlowConfig(ConfiguredModuleConfiguration configuredModuleConfiguration, String contextName) {
@@ -239,9 +247,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param configuredModuleConfiguration
      */
     private void updateModuleConfigurationStartupType(List<SchedulerJob> jobs, ConfiguredModuleConfiguration configuredModuleConfiguration) {
-        jobs.forEach(job -> {
-            configuredModuleConfiguration.getFlowDefinitions().put(job.getJobName(), job.getStartupControlType());
-        });
+        jobs.forEach(job -> configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), job.getStartupControlType()));
     }
 
     /**
@@ -261,8 +267,29 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         });
     }
 
+    /**
+     * Delete all relevant component configurations.
+     *
+     * @param flows
+     * @param configuredModuleConfiguration
+     */
+    private void deleteComponentConfigurations(List<Flow> flows, ConfiguredModuleConfiguration configuredModuleConfiguration) {
+        if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+            SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
+            flows.forEach(flow -> {
+                if(configuration.getFlowDefinitionProfiles().containsKey(flow.getName())) {
+                    if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.FILE)) {
+                        this.deleteConfigurationsForFileEventDrivenFlowComponents(flow);
+                    } else if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.QUARTZ)) {
+                        this.deleteConfigurationsForQuartzScheduledFlowComponents(flow);
+                    }
+                }
+            });
+        }
+    }
+
     private void configureQuartzScheduledFlowComponents(Module<Flow> module, SchedulerJob job) {
-        Flow flow = module.getFlow(job.getJobName());
+        Flow flow = module.getFlow(job.getAggregateJobName());
         ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow
             .getFlowElement("Scheduled Consumer").getFlowComponent();
 
@@ -282,6 +309,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
         converterConfiguration.setContextName(job.getContextName());
         converterConfiguration.setChildContextNames(job.getChildContextNames());
+        converterConfiguration.setJobName(job.getJobName());
 
         this.configurationService.update(converter);
 
@@ -303,12 +331,59 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         this.configurationService.update(scheduledProcessEventFilter);
     }
 
+    private void deleteConfigurationsForQuartzScheduledFlowComponents(Flow flow) {
+        ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow
+            .getFlowElement("Scheduled Consumer").getFlowComponent();
+
+        Configuration configuration = this.configurationManagement.getConfiguration(consumer.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
+            .getFlowElement("Context Instance Active Filter").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(contextFilter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
+            .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(converter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter = (ConfiguredResource<BlackoutRouterConfiguration>)flow
+            .getFlowElement("Blackout Router").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(blackoutRouter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter = (ConfiguredResource<ScheduledProcessEventFilterConfiguration>)flow
+            .getFlowElement("Publish Scheduled Status").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(scheduledProcessEventFilter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+    }
+
     private void configureFileEventDrivenFlowComponents(Module<Flow> module, SchedulerJob job) {
-        Flow flow = module.getFlow(job.getJobName());
+        Flow flow = module.getFlow(job.getAggregateJobName());
         ConfiguredResource<CorrelatedFileConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedFileConsumerConfiguration>)flow
             .getFlowElement("File Consumer").getFlowComponent();
 
-        CorrelatedFileConsumerConfiguration configuration = (CorrelatedFileConsumerConfiguration)consumer.getConfiguration();
+        CorrelatedFileConsumerConfiguration configuration = consumer.getConfiguration();
         this.updateFileConsumerConfiguration((FileEventDrivenJob) job, configuration);
 
         this.configurationService.update(consumer);
@@ -318,7 +393,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         FileAgeFilterConfiguration filterConfiguration = filter.getConfiguration();
         filterConfiguration.setFileAgeSeconds(((FileEventDrivenJob) job).getMinFileAgeSeconds());
-        filterConfiguration.setJobName(job.getJobName());
+        filterConfiguration.setJobName(job.getAggregateJobName());
 
         this.configurationService.update(filter);
 
@@ -326,7 +401,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("Duplicate Message Filter").getFlowComponent();
 
         SchedulerFileFilterConfiguration schedulerFileFilterConfiguration = schedulerFileFilterConfigurationConfiguredResource.getConfiguration();
-        schedulerFileFilterConfiguration.setJobName(job.getJobName());
+        schedulerFileFilterConfiguration.setJobName(job.getAggregateJobName());
 
         this.configurationService.update(schedulerFileFilterConfigurationConfiguredResource);
 
@@ -337,6 +412,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
         converterConfiguration.setContextName(job.getContextName());
         converterConfiguration.setChildContextNames(job.getChildContextNames());
+        converterConfiguration.setJobName(job.getJobName());
 
         this.configurationService.update(converter);
 
@@ -362,9 +438,74 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
         moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob) job).getMoveDirectory());
-        moveFileBrokerConfiguration.setJobName(job.getJobName());
+        moveFileBrokerConfiguration.setJobName(job.getAggregateJobName());
 
         this.configurationService.update(broker);
+    }
+
+    private void deleteConfigurationsForFileEventDrivenFlowComponents(Flow flow) {
+        ConfiguredResource<CorrelatedFileConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedFileConsumerConfiguration>)flow
+            .getFlowElement("File Consumer").getFlowComponent();
+
+        Configuration configuration = this.configurationManagement.getConfiguration(consumer.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
+            .getFlowElement("File Age Filter").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(filter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<SchedulerFileFilterConfiguration> schedulerFileFilterConfigurationConfiguredResource = (ConfiguredResource<SchedulerFileFilterConfiguration>)flow
+            .getFlowElement("Duplicate Message Filter").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(schedulerFileFilterConfigurationConfiguredResource.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
+            .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(converter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter = (ConfiguredResource<BlackoutRouterConfiguration>)flow
+            .getFlowElement("Blackout Router").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(blackoutRouter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter = (ConfiguredResource<ScheduledProcessEventFilterConfiguration>)flow
+            .getFlowElement("Publish Scheduled Status").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(scheduledProcessEventFilter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+
+        ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
+            .getFlowElement("File Move Broker").getFlowComponent();
+
+        configuration = this.configurationManagement.getConfiguration(broker.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
     }
 
     /**
@@ -376,7 +517,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         String user = UserUtil.getUser();
         jobs.forEach(job -> {
             if(job.getStartupControlType().equals("AUTOMATIC")) {
-                this.moduleService.startFlow(job.getAgentName(), job.getJobName(), user);
+                this.moduleService.startFlow(job.getAgentName(), job.getAggregateJobName(), user);
             }
         });
     }
@@ -388,7 +529,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param scheduledConsumerConfiguration
      */
     private void updateScheduleConsumerConfiguration(QuartzScheduleDrivenJob job, ScheduledConsumerConfiguration scheduledConsumerConfiguration) {
-        scheduledConsumerConfiguration.setJobName(job.getJobName());
+        scheduledConsumerConfiguration.setJobName(job.getAggregateJobName());
         scheduledConsumerConfiguration.setJobGroupName(job.getJobGroup());
         scheduledConsumerConfiguration.setDescription(job.getJobDescription());
         scheduledConsumerConfiguration.setCronExpression(job.getCronExpression());
@@ -409,7 +550,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      */
     private void updateFileConsumerConfiguration(FileEventDrivenJob job, CorrelatedFileConsumerConfiguration fileConsumerConfiguration) {
         fileConsumerConfiguration.setFilenames(job.getFilenames());
-        fileConsumerConfiguration.setJobName(job.getJobName());
+        fileConsumerConfiguration.setJobName(job.getAggregateJobName());
         fileConsumerConfiguration.setJobGroupName(job.getJobGroup());
         fileConsumerConfiguration.setDescription(job.getJobDescription());
         fileConsumerConfiguration.setCronExpression(job.getCronExpression());
@@ -522,4 +663,5 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
         return null;
     }
+    
 }

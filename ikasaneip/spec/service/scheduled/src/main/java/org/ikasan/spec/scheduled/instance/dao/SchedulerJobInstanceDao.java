@@ -8,7 +8,7 @@ import java.util.List;
 public interface SchedulerJobInstanceDao {
 
     /**
-     * Get a scheduled context instance record by id.
+     * Get a scheduled job instance record by id.
      *
      * @param id
      * @return
@@ -16,7 +16,7 @@ public interface SchedulerJobInstanceDao {
     SchedulerJobInstanceRecord findById(String id);
 
     /**
-     * Save a scheduled context instance record.
+     * Save a scheduled job instance record.
      *
      * @param scheduledContextInstanceRecord
      */

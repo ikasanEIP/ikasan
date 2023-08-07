@@ -64,24 +64,19 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
     private static final Logger logger = LoggerFactory.getLogger(JobExecutionToContextualisedScheduledProcessEventConverter.class);
 
     private final String moduleName;
-    private final String jobName;
+
     private String configurationId;
     private ContextualisedConverterConfiguration configuration;
 
     /**
      * Constructor
      */
-    public JobExecutionToContextualisedScheduledProcessEventConverter(String moduleName, String jobName)
+    public JobExecutionToContextualisedScheduledProcessEventConverter(String moduleName)
     {
         this.moduleName = moduleName;
         if(moduleName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
-        }
-        this.jobName = jobName;
-        if(jobName == null)
-        {
-            throw new IllegalArgumentException("jobName cannot be 'null'");
         }
     }
 
@@ -97,7 +92,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
             ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
             scheduledProcessEvent.setFireTime(jobExecutionContext.getFireTime().getTime());
             scheduledProcessEvent.setAgentName(moduleName);
-            scheduledProcessEvent.setJobName(this.jobName);
+            scheduledProcessEvent.setJobName(this.configuration.getJobName());
             scheduledProcessEvent.setContextName(this.configuration.getContextName());
             scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
             scheduledProcessEvent.setSuccessful(true);

@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.configuration.ConfigurationService;
@@ -23,8 +24,8 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
     Logger logger = LoggerFactory.getLogger(ContextInstanceIdentifierProvisionServiceImpl.class);
     protected static final String SCHEDULED_CONSUMER = "Scheduled Consumer";
     protected static final String FILE_CONSUMER = "File Consumer";
-    protected static final String SCHEDULED_CONSUMER_PROFILE = "QUARTZ";
-    protected static final String FILE_CONSUMER_PROFILE = "FILE";
+    protected static final String SCHEDULED_CONSUMER_PROFILE = AgentFlowProfiles.QUARTZ;
+    protected static final String FILE_CONSUMER_PROFILE = AgentFlowProfiles.FILE;
     @Value( "${module.name}" )
     private String moduleName;
     @Autowired

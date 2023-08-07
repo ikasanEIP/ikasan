@@ -71,7 +71,7 @@ public class SchedulerJobInitiationEventApplicationTest
 
         Mockito.doNothing().when(this.inboundQueue).enqueue(any(byte[].class));
 
-        InboundJobQueueCache.instance().put("agentName-TEST-inbound-queue", this.inboundQueue);
+        InboundJobQueueCache.instance().put("agentName-TEST_contextName-inbound-queue", this.inboundQueue);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -91,7 +91,7 @@ public class SchedulerJobInitiationEventApplicationTest
 
         Mockito.doThrow(new RuntimeException("test exception")).when(this.inboundQueue).enqueue(any(byte[].class));
 
-        InboundJobQueueCache.instance().put("agentName-TEST-inbound-queue", this.inboundQueue);
+        InboundJobQueueCache.instance().put("agentName-TEST_contextName-inbound-queue", this.inboundQueue);
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
@@ -105,6 +105,7 @@ public class SchedulerJobInitiationEventApplicationTest
     {
         SchedulerJobInitiationEventDto dto = new SchedulerJobInitiationEventDto();
         dto.setAgentName("agentName");
+        dto.setContextName("contextName");
         dto.setJobName(event);
 
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();

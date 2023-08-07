@@ -57,7 +57,7 @@ public class SchedulerJobInitiationEventApplication
     {
         try {
             logger.info("Received - {}", schedulerJobInitiationEvent);
-            String queueName = schedulerJobInitiationEvent.getAgentName()+"-"+schedulerJobInitiationEvent.getJobName()+"-inbound-queue";
+            String queueName = schedulerJobInitiationEvent.getAgentName()+"-"+schedulerJobInitiationEvent.getJobName() + "_" + schedulerJobInitiationEvent.getContextName() +"-inbound-queue";
             IBigQueue inboundQueue = InboundJobQueueCache.instance().get(queueName);
 
             BigQueueMessage bigQueueMessage = new BigQueueMessageBuilder()

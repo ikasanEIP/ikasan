@@ -18,6 +18,14 @@ public interface ScheduledContextInstanceDao {
     ScheduledContextInstanceRecord findById(String id);
 
     /**
+     * Delete context instance record by id.
+     *
+     * @param id
+     * @return
+     */
+    void deleteById(String id);
+
+    /**
      * Save a scheduled context instance record.
      *
      * @param scheduledContextInstanceRecord

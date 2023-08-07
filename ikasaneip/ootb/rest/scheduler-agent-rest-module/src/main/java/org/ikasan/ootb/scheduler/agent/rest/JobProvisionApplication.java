@@ -99,7 +99,7 @@ public class JobProvisionApplication {
         }
         catch (Exception e) {
             e.printStackTrace();
-            logger.error(String.format("An error has occurred attempting to remove scheduler jobs for context[%s]!"), e);
+            logger.error(String.format("An error has occurred attempting to remove scheduler jobs for context[%s]!", contextName), e);
             return new ResponseEntity(
                 new ErrorDto(String.format("An error has occurred attempting to remove scheduler jobs for context[%s]! Error message [%s]"
                     , contextName, e.getMessage())), HttpStatus.BAD_REQUEST);

@@ -7,6 +7,32 @@ import java.util.List;
 public interface ContextInstanceRegistrationService {
 
     /**
+     * Method to prepare a future context instance.
+     *
+     * @param contextName
+     * @return
+     */
+    void prepareFutureContextInstance(String contextName);
+
+    /**
+     * Method to re-schedule a context. This will remove any scheduled triggers
+     * associated with the context and reschedule based on the new start time, timezone
+     * or blackout windows.
+     *
+     * @param contextName
+     * @return
+     */
+    void reSchedule(String contextName);
+
+    /**
+     * Method to register a context by name.
+     *
+     * @param contextName
+     * @return
+     */
+    void register(String contextName);
+
+    /**
      * Method to register a context by name.
      *
      * @param contextName
@@ -17,6 +43,7 @@ public interface ContextInstanceRegistrationService {
 
     /**
      * Method to deregister all context instance of the named context.
+     *
      * @param contextName
      */
     void deRegisterByName(String contextName);

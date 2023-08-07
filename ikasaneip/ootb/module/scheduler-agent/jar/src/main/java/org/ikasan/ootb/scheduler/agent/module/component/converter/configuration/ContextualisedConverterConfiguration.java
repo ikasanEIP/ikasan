@@ -5,6 +5,7 @@ import java.util.List;
 public class ContextualisedConverterConfiguration {
 
     private String contextName;
+    private String jobName;
     private List<String> childContextNames;
 
     public String getContextName() {
@@ -13,6 +14,14 @@ public class ContextualisedConverterConfiguration {
 
     public void setContextName(String contextName) {
         this.contextName = contextName;
+    }
+
+    public String getJobName() {
+        return jobName;
+    }
+
+    public void setJobName(String jobName) {
+        this.jobName = jobName;
     }
 
     public List<String> getChildContextNames() {
