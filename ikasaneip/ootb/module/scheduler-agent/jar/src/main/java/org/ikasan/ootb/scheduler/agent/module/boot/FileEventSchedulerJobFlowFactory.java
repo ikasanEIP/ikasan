@@ -89,7 +89,7 @@ public class FileEventSchedulerJobFlowFactory
             .filter("File Age Filter", componentFactory.getFileAgeFilter())
             .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter(jobName))
             .broker("File Move Broker", componentFactory.getMoveFileBroker())
-            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter(jobName))
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
             .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
                 .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))

@@ -16,12 +16,7 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_exception_constructor_null_agent_name() {
-        new FileListToContextualisedScheduledProcessEventConverter(null, "jobName");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_constructor_null_job_name() {
-        new FileListToContextualisedScheduledProcessEventConverter("agentName", null);
+        new FileListToContextualisedScheduledProcessEventConverter(null);
     }
 
     @Test
@@ -35,9 +30,10 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
         configuration.setContextName("contextName");
         configuration.setChildContextNames(List.of("childContextId1", "childContextId2"));
+        configuration.setJobName("jobName");
 
         FileListToContextualisedScheduledProcessEventConverter converter
-            = new FileListToContextualisedScheduledProcessEventConverter("agentName", "jobName");
+            = new FileListToContextualisedScheduledProcessEventConverter("agentName");
         converter.setConfiguration(configuration);
 
         List<File> files = List.of(new File("."));

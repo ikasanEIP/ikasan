@@ -61,8 +61,11 @@ public interface SolrInitialisationService
     /**
      * Initialise any solr standalone related services.
      *
-     * @param solrCloudUrl
+     * @param solrUrl
      * @param daysToKeep
+     * @param socketTimeoutMilli
+     * @param connectionTimeoutMilli
      */
-    public void initStandalone(String solrCloudUrl, int daysToKeep);
+    public void initStandalone(String solrUrl, int daysToKeep,
+                               int socketTimeoutMilli, int connectionTimeoutMilli);
 }

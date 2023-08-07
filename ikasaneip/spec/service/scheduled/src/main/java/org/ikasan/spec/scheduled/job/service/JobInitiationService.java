@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.job.service;
 
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 public interface JobInitiationService {
 
@@ -17,18 +18,18 @@ public interface JobInitiationService {
      *
      * @param contextUrl
      * @param agentName
-     * @param jobName
+     * @param job
      * @param correlationId used to uniquely identify the events raised e.g. for the dashboard this would be the contextInstanceId
      */
-    void raiseQuartzSchedulerJob(String contextUrl, String agentName, String jobName, String correlationId);
+    void raiseQuartzSchedulerJob(String contextUrl, String agentName, SchedulerJob job, String correlationId);
 
     /**
      * Raise a file event scheduler job.
      *
      * @param contextUrl
      * @param agentName
-     * @param jobName
+     * @param job
      * @param correlationId used to uniquely identify the events raised e.g. for the dashboard this would be the contextInstanceId
      */
-    void raiseFileEventSchedulerJob(String contextUrl, String agentName, String jobName, String correlationId);
+    void raiseFileEventSchedulerJob(String contextUrl, String agentName, SchedulerJob job, String correlationId);
 }

@@ -1,5 +1,7 @@
 package org.ikasan.spec.scheduled.job.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
@@ -129,4 +131,9 @@ public interface SchedulerJob extends Serializable {
      * @return
      */
     Map<String, Boolean> getHeldContexts();
+
+    @JsonIgnore
+    default String getAggregateJobName() {
+        return this.getJobName() + "_" + this.getContextName();
+    }
 }

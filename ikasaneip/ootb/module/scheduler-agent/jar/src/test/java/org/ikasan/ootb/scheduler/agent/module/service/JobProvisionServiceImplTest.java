@@ -15,6 +15,8 @@ import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.Sch
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.security.service.authentication.IkasanAuthentication;
+import org.ikasan.spec.configuration.Configuration;
+import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -36,6 +38,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.FILE;
+import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.QUARTZ;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -51,6 +55,9 @@ public class JobProvisionServiceImplTest {
 
     @Mock
     private ConfigurationService configurationService;
+
+    @Mock
+    private ConfigurationManagement configurationManagement;
 
     @Mock
     private SchedulerAgentConfiguredModuleConfiguration configureModuleConfiguration;
@@ -140,6 +147,24 @@ public class JobProvisionServiceImplTest {
     @Mock
     ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration;
 
+    @Mock
+    Flow flow1;
+
+    @Mock
+    Flow flow2;
+
+    @Mock
+    Flow flow3;
+
+    @Mock
+    FlowElement flowElement;
+
+    @Mock
+    ConfiguredResource configuredResource;
+
+    @Mock
+    Configuration configuration;
+
     @InjectMocks
     private JobProvisionServiceImpl service;
 
@@ -192,6 +217,7 @@ public class JobProvisionServiceImplTest {
         verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
 
         verify(converterConfiguration, times(2)).setContextName(anyString());
+        verify(converterConfiguration, times(2)).setJobName(anyString());
         verify(converterConfiguration, times(2)).setChildContextNames(anyList());
 
         verifyNoMoreInteractions(fileConsumerConfiguration);
@@ -249,24 +275,48 @@ public class JobProvisionServiceImplTest {
         SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
         configuration.setFlowContextMap(this.getJobContextMap());
         configuration.setFlowDefinitions(this.getJobContextMap());
-        configuration.setFlowDefinitionProfiles(this.getJobContextMap());
+        configuration.setFlowDefinitionProfiles(this.getJobProfileMap());
 
         Assert.assertEquals(3, configuration.getFlowContextMap().size());
         Assert.assertEquals(3, configuration.getFlowDefinitions().size());
-        Assert.assertEquals(3, configuration.getFlowDefinitionProfiles().size());
+        Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
 
         when(moduleService.getModule(null)).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configuration);
+        when(module.getFlows()).thenReturn(List.of(flow1, flow2, flow3));
+        when(flow1.getName()).thenReturn("fileEventDrivenJobName");
+        when(flow2.getName()).thenReturn("quartzScheduleDrivenJobName");
+        when(flow1.getFlowElement(anyString())).thenReturn(flowElement);
+        when(flow2.getFlowElement(anyString())).thenReturn(flowElement);
+        when(flowElement.getFlowComponent()).thenReturn(configuredResource);
+        when(configuredResource.getConfiguredResourceId()).thenReturn("id");
+        when(configurationManagement.getConfiguration(anyString())).thenReturn(this.configuration);
 
         this.service.removeJobs("contextName");
 
         verify(moduleActivator).deactivate(module);
         verify(moduleActivator).activate(module);
+        verify(flow1, times(2)).getName();
+        verify(flow2, times(3)).getName();
+        verify(flow3, times(1)).getName();
+        verify(flow1, times(7)).getFlowElement(anyString());
+        verify(flow2, times(5)).getFlowElement(anyString());
+        verify(flow3, times(0)).getFlowElement(anyString());
+        verify(flowElement, times(12)).getFlowComponent();
+        verify(configuredResource, times(12)).getConfiguredResourceId();
+        verify(configurationManagement, times(12)).getConfiguration(anyString());
+        verify(configurationManagement, times(12)).deleteConfiguration(any());
 
-        verifyNoMoreInteractions(fileConsumerConfiguration);
-        verifyNoMoreInteractions(moduleActivator);
-        verifyNoMoreInteractions(scheduledConsumerConfiguration);
-        verifyNoMoreInteractions(converterConfiguration);
+        verifyNoMoreInteractions(fileConsumerConfiguration
+            , moduleActivator
+            , scheduledConsumerConfiguration
+            , converterConfiguration
+            , flow1
+            , flow2
+            , flow3
+            , flowElement
+            , configuredResource
+            , configurationManagement);
 
         Assert.assertEquals(0, configuration.getFlowContextMap().size());
         Assert.assertEquals(0, configuration.getFlowDefinitions().size());
@@ -312,6 +362,15 @@ public class JobProvisionServiceImplTest {
         this.getJobs().forEach(job -> contextJobs.put(job.getJobName(), job.getContextName()));
 
         return contextJobs;
+    }
+
+    private Map<String, String> getJobProfileMap() {
+        Map<String, String> jobProfiles = new HashMap<>();
+
+        jobProfiles.put("fileEventDrivenJobName", FILE);
+        jobProfiles.put("quartzScheduleDrivenJobName", QUARTZ);
+
+        return jobProfiles;
     }
 
     private List<SchedulerJob> getJobs() {

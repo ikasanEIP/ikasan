@@ -93,22 +93,22 @@ public class SchedulerAgentFlowFactory implements FlowFactory
                 logger.info("Jobs with NULL profile are reverted to the legacy LEGACY profile");
             }
             switch (profile) {
-                case "FILE": {
+                case AgentFlowProfiles.FILE: {
                     return this.createFileEventFlows(jobName);
                 }
-                case "SCHEDULER_JOB": {
+                case AgentFlowProfiles.SCHEDULER_JOB: {
                     return this.createSchedulerJobFlows(jobName);
                 }
-                case "QUARTZ": {
+                case AgentFlowProfiles.QUARTZ: {
                     return this.createQuartzFlows(jobName);
                 }
-                case "LEGACY": {
+                case AgentFlowProfiles.LEGACY: {
                     return this.createLegacyEventFlows(jobName);
                 }
-                case "OUTBOUND": {
+                case AgentFlowProfiles.OUTBOUND: {
                     return this.createOutboundScheduledEventFlows();
                 }
-                case "HOUSEKEEP_LOG": {
+                case AgentFlowProfiles.HOUSEKEEP_LOG: {
                     return this.createHousekeepLogFilesFlows();
                 }
                 default: {

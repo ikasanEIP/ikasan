@@ -35,12 +35,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void test_exception_null_module_name_constructor() {
-        new JobExecutionToContextualisedScheduledProcessEventConverter(null, "jobName");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_jo_name_constructor() {
-        new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName", null);
+        new JobExecutionToContextualisedScheduledProcessEventConverter(null);
     }
 
     @Test
@@ -67,9 +62,10 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
         configuration.setChildContextNames(List.of("childContextId1", "childContextId2"));
         configuration.setContextName("contextName");
+        configuration.setJobName("jobName");
 
         JobExecutionToContextualisedScheduledProcessEventConverter converter
-            = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName", "jobName");
+            = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName");
         converter.setConfiguration(configuration);
 
         ContextualisedScheduledProcessEvent event = converter.convert(jobExecutionContext);
@@ -86,9 +82,9 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
     }
 
     @Test(expected = TransformationException.class)
-    public void test_convert_exception_null_configutation() {
+    public void test_convert_exception_null_configuration() {
         JobExecutionToContextualisedScheduledProcessEventConverter converter
-            = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName", "jobName");
+            = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName");
 
         converter.convert(jobExecutionContext);
     }

@@ -87,7 +87,7 @@ public class QuartzSchedulerJobEventFlowFactory
             )
             .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
             .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
-            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter(jobName))
+            .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
             .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
                 .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))

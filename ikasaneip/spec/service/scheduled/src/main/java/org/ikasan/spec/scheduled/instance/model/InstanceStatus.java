@@ -72,6 +72,12 @@ public enum InstanceStatus {
         public String getTranslationLabel() {
             return "status.LOCK_QUEUED";
         }
+    },
+    PREPARED{
+        @Override
+        public String getTranslationLabel() {
+            return "status.PREPARED";
+        }
     };
 
     public abstract String getTranslationLabel();

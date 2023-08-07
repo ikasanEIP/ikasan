@@ -235,10 +235,10 @@ public class FileEventSchedulerJobFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getFileEventToScheduledProcessEventConverter(String jobName) {
+    public Converter getFileEventToScheduledProcessEventConverter() {
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
         FileListToContextualisedScheduledProcessEventConverter converter
-            = new FileListToContextualisedScheduledProcessEventConverter(moduleName, jobName);
+            = new FileListToContextualisedScheduledProcessEventConverter(moduleName);
         converter.setConfiguration(configuration);
 
         return converter;

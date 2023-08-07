@@ -185,6 +185,55 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
         assertEquals(0, fileConsumerCorrelationIdList.size());
     }
 
+    @Test
+    public void test_reset_success() {
+        String existingCorrelationId = "CorrelationId0";
+        List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
+        List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
+
+        setupWhen(scheduledConsumerCorrelationIdList, fileConsumerCorrelationIdList);
+
+        service.reset(Map.of(contextInstance.getId(), contextInstance));
+
+        // Verify we DO stop/start the module
+        verify(scheduleConsumerFlow).getFlowElement(SCHEDULED_CONSUMER);
+        verify(scheduleConsumerFlow).stop();
+        verify(scheduleConsumerFlow).start();
+        verify(fileConsumerFlow).getFlowElement(FILE_CONSUMER);
+        verify(fileConsumerFlow).stop();
+        verify(fileConsumerFlow).start();
+        verifyNoMoreInteractions(scheduleConsumerFlow);
+        verifyNoMoreInteractions(fileConsumerFlow);
+
+        assertEquals(1, scheduledConsumerCorrelationIdList.size());
+        assertEquals("instance123", scheduledConsumerCorrelationIdList.get(0));
+    }
+
+    @Test
+    public void test_remove_success() {
+        String existingCorrelationId1 = "CorrelationId0";
+        String existingCorrelationId2 = "CorrelationId1";
+        List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId1, existingCorrelationId2));
+        List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId1, existingCorrelationId2));
+
+        setupWhen(scheduledConsumerCorrelationIdList, fileConsumerCorrelationIdList);
+
+        service.remove("CorrelationId0");
+
+        // Verify we DO stop/start the module
+        verify(scheduleConsumerFlow, times(2)).getFlowElement(SCHEDULED_CONSUMER);
+        verify(scheduleConsumerFlow).stop();
+        verify(scheduleConsumerFlow).start();
+        verify(fileConsumerFlow, times(2)).getFlowElement(FILE_CONSUMER);
+        verify(fileConsumerFlow).stop();
+        verify(fileConsumerFlow).start();
+        verifyNoMoreInteractions(scheduleConsumerFlow);
+        verifyNoMoreInteractions(fileConsumerFlow);
+
+        assertEquals(1, scheduledConsumerCorrelationIdList.size());
+        assertEquals(existingCorrelationId2, scheduledConsumerCorrelationIdList.get(0));
+    }
+
     private void setupWhen(List scheduledConsumerCorrelationIdList, List fileConsumerCorrelationIdList) {
 
         when(moduleService.getModule(moduleName)).thenReturn(module);

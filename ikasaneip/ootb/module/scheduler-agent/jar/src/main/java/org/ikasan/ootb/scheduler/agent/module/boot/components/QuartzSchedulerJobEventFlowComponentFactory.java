@@ -165,10 +165,10 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      *
      * @return the converter
      */
-    public Converter getJobExecutionConverter(String jobName) {
+    public Converter getJobExecutionConverter() {
         ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
         JobExecutionToContextualisedScheduledProcessEventConverter converter
-            = new JobExecutionToContextualisedScheduledProcessEventConverter(moduleName, jobName);
+            = new JobExecutionToContextualisedScheduledProcessEventConverter(moduleName);
         converter.setConfiguration(configuration);
 
         return converter;

@@ -58,7 +58,6 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
     , ConfiguredResource<ContextualisedConverterConfiguration>
 {
     private final String agentName;
-    private final String jobName;
     private String configurationId;
     private ContextualisedConverterConfiguration configuration;
 
@@ -66,17 +65,12 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
     /**
      * Constructor
      */
-    public FileListToContextualisedScheduledProcessEventConverter(String agentName, String jobName)
+    public FileListToContextualisedScheduledProcessEventConverter(String agentName)
     {
         this.agentName = agentName;
         if(agentName == null)
         {
             throw new IllegalArgumentException("moduleName cannot be 'null'");
-        }
-        this.jobName = jobName;
-        if(jobName == null)
-        {
-            throw new IllegalArgumentException("jobName cannot be 'null'");
         }
     }
 
@@ -86,7 +80,7 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
         ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setAgentName(this.agentName);
-        scheduledProcessEvent.setJobName(this.jobName);
+        scheduledProcessEvent.setJobName(this.configuration.getJobName());
         scheduledProcessEvent.setSuccessful(true);
         scheduledProcessEvent.setContextName(this.configuration.getContextName());
         scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
