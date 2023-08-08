@@ -1,15 +1,14 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker;
 
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerPersistenceService;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
 
 import java.io.IOException;
 
-import static org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
 
 public class DetachableProcess {
     private final SchedulerPersistenceService schedulerPersistenceService;
     private final String identity;
-
     private Process process;
     private ProcessHandle processHandle;
     private boolean detached;                   // The Process is now detached, only ProcessHandle information is available

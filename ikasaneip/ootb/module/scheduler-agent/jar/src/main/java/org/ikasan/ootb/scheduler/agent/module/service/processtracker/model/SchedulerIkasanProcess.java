@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker.model;
 
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
 

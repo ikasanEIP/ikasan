@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker.service;
 
 import org.ikasan.cli.shell.operation.service.PersistenceService;
 

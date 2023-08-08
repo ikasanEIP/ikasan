@@ -92,9 +92,9 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBrok
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao.ProcessStatusDaoFSImp;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.ProcessStatusDaoFSImp;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;

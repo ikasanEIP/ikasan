@@ -1,7 +1,10 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker;
 
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model.SchedulerIkasanProcess;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerPersistenceService;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.CommandProcessor;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

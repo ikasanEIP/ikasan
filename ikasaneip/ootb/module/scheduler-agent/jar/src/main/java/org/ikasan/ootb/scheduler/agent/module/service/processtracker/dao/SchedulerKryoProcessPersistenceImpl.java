@@ -1,9 +1,9 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,7 +22,7 @@ public class SchedulerKryoProcessPersistenceImpl extends KryoProcessPersistenceI
      */
     private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial( () -> {
         Kryo kryo = new Kryo();
-        kryo.register(org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model.SchedulerIkasanProcess.class);
+        kryo.register(SchedulerIkasanProcess.class);
         kryo.register(org.ikasan.cli.shell.operation.model.ProcessType.class);
         return kryo;
     });
