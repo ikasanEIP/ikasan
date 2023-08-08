@@ -53,7 +53,7 @@ import java.util.Optional;
 public class DefaultPersistenceServiceImpl implements PersistenceService
 {
     /** DAO handle */
-    ProcessPersistenceDao processPersistenceDao;
+    protected ProcessPersistenceDao processPersistenceDao;
 
     /**
      * Constructor

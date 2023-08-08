@@ -81,6 +81,7 @@ public class Command
      */
     public static void remove(String commandfile)
     {
+        commandfile = commandfile.replace(NON_INTERACTIVE_PREFIX,"");
         try
         {
             Path commandFilePath = Paths.get(commandfile);

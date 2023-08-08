@@ -40,18 +40,20 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
-import org.ikasan.cli.shell.operation.service.PersistenceService;
-import org.ikasan.spec.scheduled.event.model.Outcome;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -66,15 +68,11 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                                             ConfiguredResource<JobMonitoringBrokerConfiguration>
 {
     /** logger */
-    private static Logger logger = LoggerFactory.getLogger(JobMonitoringBroker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobMonitoringBroker.class);
+    public static final int DEFAULT_ERROR_RETURN_CODE = 1;
 
     private String configuredResourceId;
     private JobMonitoringBrokerConfiguration configuration;
-    private PersistenceService PersistenceService;
-
-    public JobMonitoringBroker(PersistenceService PersistenceService) {
-        this.PersistenceService = PersistenceService;
-    }
 
     @Override
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
@@ -107,69 +105,77 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
 
         try {
             // Process detached i.e. after agent restart, was still running.
-            if (scheduledProcessEvent.isDetached()) {
-                scheduledProcessEvent.setReturnCode(-1); // Indicate it wasn't successful
-                String executionDetails = scheduledProcessEvent.getExecutionDetails();
-                executionDetails += "\n\nThe process was detached so we can not be certain of the exit status.";
-                scheduledProcessEvent.setExecutionDetails(executionDetails);
-                if (!scheduledProcessEvent.isDetachedAlreadyFinished()) {
-                    ProcessHandle processHandle = scheduledProcessEvent.getProcessHandle();
+            LOGGER.info("Detached process" + scheduledProcessEvent.getDetachableProcess());
+
+            if (scheduledProcessEvent.getDetachableProcess().isDetached()) {
+
+                String executionDetails = scheduledProcessEvent.getExecutionDetails() != null ? scheduledProcessEvent.getExecutionDetails() : "";
+                executionDetails += "\n\nThe process was detached, the processHandle and output file will be used to determine the return value.";
+                if (!scheduledProcessEvent.getDetachableProcess().isDetachedAlreadyFinished()) {
+                    ProcessHandle processHandle = scheduledProcessEvent.getDetachableProcess().getProcessHandle();
+                    LOGGER.info("Waiting for detached process " + scheduledProcessEvent.getDetachableProcess().getPid() + " to complete");
                     try {
                         processHandle.onExit().get(configuration.getTimeout(), TimeUnit.MINUTES);
                     } catch (ExecutionException | TimeoutException ex) {
-                        String errorMessage = "Detatched Process was killed due to not finishing in the allowed time, handle was ["+ processHandle.toString() + "]" +
+                        String errorMessage = "Detatched Process was killed due to not finishing in the allowed time, handle was ["+ processHandle + "]" +
                             "Job Name [" + scheduledProcessEvent.getJobName() + "]" +
                             "ContextInstanceId [" + scheduledProcessEvent.getContextInstanceId() + "] " +
-                            "Timeout settings in minutes [{}] " + configuration.getTimeout() + "]";
+                            "Timeout settings in minutes [" + configuration.getTimeout() + "]";
                         if (processHandle.destroy()) {
-                            logger.error(errorMessage + ". The process was zombied and may need to be manually terminated.", ex);
+                            LOGGER.error(errorMessage + ". The process was zombied and may need to be manually terminated.", ex);
                         } else {
-                            logger.error(errorMessage, ex);
+                            LOGGER.error(errorMessage, ex);
                         }
                         // Add to the execution details.
                         executionDetails = scheduledProcessEvent.getExecutionDetails();
                         executionDetails += "\n\nThe detached process did not complete in "+configuration.getTimeout()+" minutes. Killing the process. " +
                             "If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally";
-                        scheduledProcessEvent.setExecutionDetails(executionDetails);
                     }
                 }
-                logger.info("Pre-existing process completed [" + scheduledProcessEvent+ "]");
+                LOGGER.info("Pre-existing process completed [" + scheduledProcessEvent+ "]");
+                // A detached process might have persisted its return value, look for it and set return code accordingly
+                String statusReturnCode = scheduledProcessEvent.getDetachableProcess().getReturnCode();
+                if (!NumberUtils.isParsable(statusReturnCode)) {
+                    executionDetails += "\n\nWARNING : There were problems getting the return status from the detached process, it will be treated as an error, issue was " + statusReturnCode;
+                }
+                scheduledProcessEvent.setExecutionDetails(executionDetails);
+                scheduledProcessEvent.setReturnCode(NumberUtils.toInt(statusReturnCode, DEFAULT_ERROR_RETURN_CODE));
             } else {
-                Process process = scheduledProcessEvent.getProcess();
+                Process process = scheduledProcessEvent.getDetachableProcess().getProcess();
+                String executionDetails = scheduledProcessEvent.getExecutionDetails() != null ? scheduledProcessEvent.getExecutionDetails() : "";
+                LOGGER.info("Waiting for new process " + process.pid() + " to complete");
                 boolean completedWithinTimeout = process.waitFor(configuration.getTimeout(), TimeUnit.MINUTES);
                 if (!completedWithinTimeout) {
                     process.destroy();
-                    logger.error("Process was killed due to not finishing in the allowed time [{}]. Job Name [{}], " +
-                        "ContextInstanceId [{}], Timeout settings in minutes [{}] ", process.toString(),
+                    LOGGER.error("Process was killed due to not finishing in the allowed time [{}]. Job Name [{}], " +
+                        "ContextInstanceId [{}], Timeout settings in minutes [{}] ", process,
                         scheduledProcessEvent.getJobName(), scheduledProcessEvent.getContextInstanceId(), configuration.getTimeout());
 
-                    scheduledProcessEvent.setReturnCode(-1); // Indicate it wasn't successful
+                    scheduledProcessEvent.setReturnCode(DEFAULT_ERROR_RETURN_CODE); // Indicate it wasn't successful
                     // Add to the execution details.
-                    String executionDetails = scheduledProcessEvent.getExecutionDetails();
                     executionDetails += "\n\nProcess did not complete in "+configuration.getTimeout()+" minutes. Killing the process. " +
                         "If more time is required, please raise this to the administrator to change the timeout setting.";
-                    scheduledProcessEvent.setExecutionDetails(executionDetails);
 
                 } else {
-                    scheduledProcessEvent.setReturnCode(process.exitValue());
+                    String statusReturnCode = scheduledProcessEvent.getDetachableProcess().getReturnCode();
+                    if (!NumberUtils.isParsable(statusReturnCode)) {
+                        executionDetails += "\n\nWARNING : There were problems getting the return status from the process, it will be treated as an error, issue was " + statusReturnCode;
+                    }
+                    scheduledProcessEvent.setReturnCode(NumberUtils.toInt(statusReturnCode, DEFAULT_ERROR_RETURN_CODE));
                 }
-                logger.info("New process completed [" + scheduledProcessEvent + "]");
+                scheduledProcessEvent.setExecutionDetails(executionDetails);
+                LOGGER.info("New process completed [" + scheduledProcessEvent + "]");
             }
             scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
-            if( (scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes() == null
-                || scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes().size() == 0)) {
-                if(scheduledProcessEvent.getReturnCode() == 0) {
-                    scheduledProcessEvent.setSuccessful(true);
-                }
-                else {
-                    scheduledProcessEvent.setSuccessful(false);
-                }
+            List<String> acceptableReturnCodes = scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes();
+            if( (acceptableReturnCodes == null || acceptableReturnCodes.isEmpty())) {
+                scheduledProcessEvent.setSuccessful(scheduledProcessEvent.getReturnCode() == 0);
             }
             else
             {
                 scheduledProcessEvent.setSuccessful(false);
-                for(String returnCode:scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes()) {
-                    if(Integer.parseInt(returnCode) == scheduledProcessEvent.getReturnCode()) {
+                for(String acceptableReturnCode:acceptableReturnCodes) {
+                    if(Integer.parseInt(acceptableReturnCode) == scheduledProcessEvent.getReturnCode()) {
                         scheduledProcessEvent.setSuccessful(true);
                         break;
                     }
@@ -177,12 +183,17 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
             }
 
             // Only clean up persistent pid if we were not interrupted by InterruptedException i.e. module shutdown
-            PersistenceService.remove(JobStartingBroker.SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity());
+            try {
+                scheduledProcessEvent.getDetachableProcess().removePersistedProcessData();
+            } catch (IOException ioe) {
+                LOGGER.warn("Attempt to tidy process and results file for " + scheduledProcessEvent.getJobName() +
+                    " with identity " + scheduledProcessEvent.getDetachableProcess().getIdentity() +
+                    " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe);
+            }
         }
         catch(InterruptedException e) {
             // If a job has failed we do not want to notify the orchestration that we have been successful.
-            scheduledProcessEvent = null;
-            logger.warn("process.waitFor interrupted, this could be due to the agent being stopped while processes are running, these should re-atached upon restart", e);
+            LOGGER.warn("process.waitFor interrupted, this could be due to the agent being stopped while processes are running, these should re-attached upon restart", e);
             throw new EndpointException(e);
         }
         scheduledProcessEvent.setDetailsFromProcess();
@@ -233,7 +244,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
         }
         catch (InterruptedException e) {
             // Not that much of a concern if we get an exception here.
-            logger.error("Error attempting to put thread to sleep when executing a dry run!", e);
+            LOGGER.error("Error attempting to put thread to sleep when executing a dry run!", e);
         }
 
         scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
