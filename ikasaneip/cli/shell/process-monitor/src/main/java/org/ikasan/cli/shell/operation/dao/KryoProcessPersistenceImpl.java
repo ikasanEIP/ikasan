@@ -124,10 +124,8 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     {
         Kryo kryo = kryoThreadLocal.get();
         String path = getPidFQN(type, name);
-
-        try
+        try (Input input = new Input(new FileInputStream(path)))
         {
-            Input input = new Input(new FileInputStream(path));
             return (IkasanProcess)kryo.readClassAndObject(input);
         }
         catch(FileNotFoundException e)
@@ -141,7 +139,6 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
     public void delete(String type, String name)
     {
         String path = getPidFQN(type, name);
-
         try
         {
             Files.delete(Path.of(path));

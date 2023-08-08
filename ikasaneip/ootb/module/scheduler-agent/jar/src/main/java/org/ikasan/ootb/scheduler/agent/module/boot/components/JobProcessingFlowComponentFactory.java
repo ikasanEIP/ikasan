@@ -92,8 +92,9 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBrok
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
-import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
-import org.ikasan.cli.shell.operation.service.DefaultPersistenceServiceImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao.ProcessStatusDaoFSImp;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
@@ -121,7 +122,7 @@ import java.util.List;
  */
 @Configuration
 public class JobProcessingFlowComponentFactory {
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Value( "${module.name}" )
     String moduleName;
 
@@ -208,7 +209,11 @@ public class JobProcessingFlowComponentFactory {
      * @return
      */
     public Broker getJobStartingBroker() {
-        JobStartingBroker jobStartingBroker = new JobStartingBroker(new DefaultPersistenceServiceImpl(new KryoProcessPersistenceImpl(defaultPidDirectory)));
+        JobStartingBroker jobStartingBroker =
+            new JobStartingBroker(
+                new SchedulerDefaultPersistenceServiceImpl(
+                    new SchedulerKryoProcessPersistenceImpl(defaultPidDirectory),
+                    new ProcessStatusDaoFSImp(defaultPidDirectory)));
         JobStartingBrokerConfiguration configuration = new JobStartingBrokerConfiguration();
         configuration.setEnvironmentToAddSpaceForEmptyContextParam(this.environmentToAddSpaceForEmptyContextParam);
         
@@ -225,7 +230,7 @@ public class JobProcessingFlowComponentFactory {
      */
     public Broker getJobMonitoringBroker()
     {
-        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker(new DefaultPersistenceServiceImpl(new KryoProcessPersistenceImpl(defaultPidDirectory)));
+        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker();
 
         JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(timeout);

@@ -41,18 +41,16 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import ch.qos.logback.core.util.FileUtil;
-
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
-import org.ikasan.cli.shell.operation.model.IkasanProcess;
-import org.ikasan.cli.shell.operation.service.PersistenceService;
-import org.ikasan.spec.configuration.ConfiguredResource;
-import org.ikasan.spec.scheduled.event.model.Outcome;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.DetachableProcess;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.DetachableProcessBuilder;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +58,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Map;
 
@@ -73,20 +70,18 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                                           ConfiguredResource<JobStartingBrokerConfiguration>
 {
     /** logger */
-    private static Logger logger = LoggerFactory.getLogger(JobStartingBroker.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(JobStartingBroker.class);
 
-    public static final String SCHEDULER_PROCESS_TYPE = "scheduler";
     public static final String LOG_FILE_PATH = "LOG_FILE_PATH";
     public static final String ERROR_LOG_FILE_PATH = "ERROR_LOG_FILE_PATH";
 
     private String configuredResourceId;
     private JobStartingBrokerConfiguration configuration;
     
-    private DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-    private PersistenceService persistenceService;
-
-    public JobStartingBroker(PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
+    private final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
+    private final SchedulerPersistenceService schedulerPersistenceService;
+    public JobStartingBroker(SchedulerPersistenceService schedulerPersistenceService) {
+        this.schedulerPersistenceService = schedulerPersistenceService;
     }
 
     @Override
@@ -109,71 +104,87 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             return scheduledProcessEvent;
         }
 
-        String[] commandLineArgs = getCommandLineArgs(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine(),
-            scheduledProcessEvent.getInternalEventDrivenJob().getExecutionEnvironmentProperties());
-        ProcessBuilder processBuilder = new ProcessBuilder();
-        processBuilder.command(commandLineArgs);
+        DetachableProcessBuilder detachableProcessBuilder =
+            new DetachableProcessBuilder(
+                schedulerPersistenceService,
+                new ProcessBuilder(),
+                StringUtils.split(scheduledProcessEvent.getInternalEventDrivenJob().getExecutionEnvironmentProperties(), "|"),
+                scheduledProcessEvent.getProcessIdentity()
+            );
+        scheduledProcessEvent.setDetachableProcess(detachableProcessBuilder.getDetachableProcess());
+        detachableProcessBuilder.command(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
 
+        File outputLog;
+        File errorLog;
 
-        // allow change of the new process working directory
-        if(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory() != null
-            && scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory().length() > 0) {
-            File workingDirectory = new File(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory());
-            processBuilder.directory(workingDirectory);
-        }
-
-        // We set up the std out and error log files and set them on the process builder.
-        String formattedDate = formatter.format(LocalDateTime.now());
-        File outputLog = new File(scheduledProcessEvent.getResultOutput());
-        if(outputLog.exists()) {
-            outputLog.renameTo(new File(scheduledProcessEvent.getResultOutput() + "." + formattedDate));
-        }
-
-        FileUtil.createMissingParentDirectories(outputLog);
-        processBuilder.redirectOutput(outputLog);
-        scheduledProcessEvent.setResultOutput(outputLog.getAbsolutePath());
-
-        File errorLog = new File(scheduledProcessEvent.getResultError());
-        if(errorLog.exists()) {
-            errorLog.renameTo(new File(scheduledProcessEvent.getResultError() + "." + formattedDate));
-        }
-
-        FileUtil.createMissingParentDirectories(errorLog);
-        processBuilder.redirectError(errorLog);
-        scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
-
-        // Some environments like cmd.exe will not persist an environment value if it is empty. This will identify
-        // based on a list of environments provided in the broker configuration if a space should be added to the 
-        // context parameter value if it empty 
-        boolean addSpaceToEmptyContextParamValue = false;
-        if (commandLineArgs.length > 0) {
-            String targetEnvironment = commandLineArgs[0];
-            if (configuration.getEnvironmentToAddSpaceForEmptyContextParam().contains(targetEnvironment)) {
-                addSpaceToEmptyContextParamValue = true;
+        if( ! scheduledProcessEvent.getDetachableProcess().isDetached()) {
+            // This is a new process, setup appropriately
+            if(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory() != null
+                && scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory().length() > 0) {
+                File workingDirectory = new File(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory());
+                detachableProcessBuilder.directory(workingDirectory);
             }
+            outputLog = new File(scheduledProcessEvent.getResultOutput());
+            FileUtil.createMissingParentDirectories(outputLog);
+            detachableProcessBuilder.setInitialResultOutput(outputLog.getAbsolutePath());
+            String formattedDate = formatter.format(LocalDateTime.now());
+            if(outputLog.exists()) {
+                String newFileName = scheduledProcessEvent.getResultOutput() + "." + formattedDate;
+                if (!outputLog.renameTo(new File(newFileName))) {
+                    LOGGER.warn("Rename of output file to " + newFileName + " failed.");
+                }
+            }
+            detachableProcessBuilder.redirectOutput(outputLog);
+
+            errorLog = new File(scheduledProcessEvent.getResultError());
+            FileUtil.createMissingParentDirectories(errorLog);
+            detachableProcessBuilder.setInitialErrorOutput(errorLog.getAbsolutePath());
+            if(errorLog.exists()) {
+                String newFileName = scheduledProcessEvent.getResultError() + "." + formattedDate;
+                if (!errorLog.renameTo(new File(newFileName))) {
+                    LOGGER.warn("Rename of error file to " + newFileName + " failed.");
+                }
+            }
+            detachableProcessBuilder.redirectError(errorLog);
+
+            // Some environments like cmd.exe will not persist an environment value if it is empty. This will identify
+            // based on a list of environments provided in the broker configuration if a space should be added to the
+            // context parameter value if it is empty
+            boolean addSpaceToEmptyContextParamValue =
+                configuration.getEnvironmentToAddSpaceForEmptyContextParam().contains(
+                    detachableProcessBuilder.getDetachableProcess().getCommandProcessor().getName());
+
+            Map<String, String> env = detachableProcessBuilder.environment();
+            env.put(LOG_FILE_PATH, scheduledProcessEvent.getResultOutput());
+            env.put(ERROR_LOG_FILE_PATH, scheduledProcessEvent.getResultError());
+
+            // Add job context parameters to the process environment if there are any.
+            if(scheduledProcessEvent.getContextParameters() != null
+                && !scheduledProcessEvent.getContextParameters().isEmpty()) {
+
+                final boolean finalAddSpaceToEmptyContextParamValue = addSpaceToEmptyContextParamValue; // required for lambda
+                scheduledProcessEvent.getContextParameters()
+                    .forEach(contextParameter -> {
+                        if(contextParameter.getValue() != null) {
+                            env.put(contextParameter.getName(),
+                                (("".equals(contextParameter.getValue()) && finalAddSpaceToEmptyContextParamValue) ? " " : contextParameter.getValue()));
+                        }
+                        else {
+                            LOGGER.warn("Context parameter[{}] could not be initialised on process as its value was NULL!"
+                                , contextParameter.getName());
+                        }
+                    });
+            }
+
+        } else {
+            // Once detached, configuration on the process must not change, most will have been deserialized already.
+            outputLog = new File(detachableProcessBuilder.getInitialResultOutput());
+            errorLog = new File(detachableProcessBuilder.getInitialErrorOutput());
         }
 
-        Map<String, String> env = processBuilder.environment();
-        env.put(LOG_FILE_PATH, scheduledProcessEvent.getResultOutput());
-        env.put(ERROR_LOG_FILE_PATH, scheduledProcessEvent.getResultError());
-
-        // Add job context parameters to the process environment if there are any.
-        if(scheduledProcessEvent.getContextParameters() != null
-            && !scheduledProcessEvent.getContextParameters().isEmpty()) {
-
-            final boolean finalAddSpaceToEmptyContextParamValue = addSpaceToEmptyContextParamValue; // required for lambda
-            scheduledProcessEvent.getContextParameters()
-                .forEach(contextParameter -> {
-                    if(contextParameter.getValue() != null) {
-                        env.put(contextParameter.getName(),
-                            (("".equals(contextParameter.getValue()) && finalAddSpaceToEmptyContextParamValue) ? " " : contextParameter.getValue()));
-                    }
-                    else {
-                        logger.warn("Context parameter[{}] could not be initialised on process as its value was NULL!"
-                            , contextParameter.getName());
-                    }
-                });
-        }
+        // These came from the event but may have been updated by a deserialized detached process, or fully qualified name.
+        scheduledProcessEvent.setResultOutput(outputLog.getAbsolutePath());
+        scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
 
         try {
             // Start the process and enrich the payload.
@@ -213,61 +224,26 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                 .append("\n");
 
             StringBuffer commandString = new StringBuffer("Process Command -> ").append("\n");
-            Arrays.stream(commandLineArgs).forEach(command -> commandString.append(command).append("\n"));
+            detachableProcessBuilder.command().stream().forEach(command -> commandString.append(command).append("\n\n"));
+            commandString.append("\n");
 
-            processStartString.append("\n").append(commandString);
+            commandString.append(detachableProcessBuilder.getScriptFilePath()).append(" ->").append("\n");
+            commandString.append(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine()).append("\n");
 
-            logger.info(processStartString.toString());
+            processStartString.append(commandString);
+
+            LOGGER.info(processStartString.toString());
 
             scheduledProcessEvent.setExecutionDetails(processStartString.toString());
-            ProcessHandle processHandle = persistenceService.find(SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity());
-            IkasanProcess ikasanProcess = persistenceService.findIkasanProcess(SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity());
-            if (ikasanProcess != null) {
-                // This happens if the agent is recovering and a job start before it died is still running.
-                if (processHandle != null) {
-                    logger.info("Starting Broker Monitoring pre-existing process");
-                    scheduledProcessEvent.setProcessHandle(processHandle);
-                    scheduledProcessEvent.setPid(processHandle.pid());
-                } else {
-                    logger.info("Starting Broker Monitoring pre-existing but now complete process");
-                    scheduledProcessEvent.setDetachedAlreadyFinished(true);
-                    scheduledProcessEvent.setPid(ikasanProcess.getPid());
-                }
-                scheduledProcessEvent.setProcess(null);
-            } else {
-                logger.info("Starting Broker created new process");
-                Process process = processBuilder.start();
-                scheduledProcessEvent.setPid(process.pid());
-                scheduledProcessEvent.setProcess(process);
-                persistenceService.persist(SCHEDULER_PROCESS_TYPE, scheduledProcessEvent.getProcessIdentity(), process);
-            }
+
+            DetachableProcess detachableProcess = detachableProcessBuilder.start();
+            scheduledProcessEvent.setPid(detachableProcess.getPid());
         }
         catch (IOException e) {
             throw new EndpointException(e);
         }
 
         return scheduledProcessEvent;
-    }
-
-    String[] getCommandLineArgs(String commandLine, String executionEnvironmentProperties) {
-        if(commandLine != null && commandLine.length() > 0) {
-            if (executionEnvironmentProperties != null && executionEnvironmentProperties.length() > 0) {
-                String[] processBuilderArgs = StringUtils.split(executionEnvironmentProperties, "|");
-                if (processBuilderArgs == null || processBuilderArgs.length == 0) {
-                    throw new EndpointException("Unable to split by | (pipe) [" + executionEnvironmentProperties + "] for executionEnvironmentProperties");
-                }
-                return ArrayUtils.add(processBuilderArgs, commandLine);
-            } else {
-                if (SystemUtils.OS_NAME.contains("Windows")) {
-                    return new String[]{"cmd.exe", "/c", commandLine};
-                } else {
-                    // assume unix flavour
-                    return new String[]{"/bin/bash", "-c", commandLine};
-                }
-            }
-        }
-
-        throw new EndpointException("Invalid commandLine [" + commandLine + "]");
     }
 
     @Override
