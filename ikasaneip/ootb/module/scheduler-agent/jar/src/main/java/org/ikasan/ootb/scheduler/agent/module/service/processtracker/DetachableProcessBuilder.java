@@ -1,8 +1,8 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker;
 
 import org.apache.commons.lang3.StringUtils;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model.SchedulerIkasanProcess;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerPersistenceService;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,6 +1,8 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
 
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerProcessPersistenceDao;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

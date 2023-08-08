@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao;
+package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

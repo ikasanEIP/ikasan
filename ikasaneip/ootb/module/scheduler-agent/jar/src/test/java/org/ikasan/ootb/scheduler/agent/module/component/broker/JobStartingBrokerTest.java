@@ -4,11 +4,11 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao.ProcessStatusDaoFSImp;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.model.SchedulerIkasanProcess;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.service.SchedulerPersistenceService;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.ProcessStatusDaoFSImp;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -33,7 +33,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static org.ikasan.ootb.scheduler.agent.module.component.broker.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
