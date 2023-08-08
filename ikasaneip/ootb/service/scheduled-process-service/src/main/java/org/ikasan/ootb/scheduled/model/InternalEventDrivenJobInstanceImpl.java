@@ -39,6 +39,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private Map<String, Boolean> heldContexts;
     private String executionEnvironmentProperties;
     private boolean jobRepeatable;
+    private int ordinal = -1;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -308,6 +309,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setJobRepeatable(boolean jobRepeatable) {
         this.jobRepeatable = jobRepeatable;
+    }
+
+    @Override
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    @Override
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
     }
 
     @Override

@@ -136,4 +136,18 @@ public interface SchedulerJob extends Serializable {
     default String getAggregateJobName() {
         return this.getJobName() + "_" + this.getContextName();
     }
+
+    /**
+     * Set the job ordinal.
+     *
+     * @param ordinal
+     */
+    void setOrdinal(int ordinal);
+
+    /**
+     * Get the job ordinal.
+     *
+     * @return
+     */
+    int getOrdinal();
 }
