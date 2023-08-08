@@ -129,4 +129,18 @@ public interface SchedulerJob extends Serializable {
      * @return
      */
     Map<String, Boolean> getHeldContexts();
+
+    /**
+     * Set the job ordinal.
+     *
+     * @param ordinal
+     */
+    void setOrdinal(int ordinal);
+
+    /**
+     * Get the job ordinal.
+     *
+     * @return
+     */
+    int getOrdinal();
 }
