@@ -31,7 +31,7 @@ public class DownloadLogFileApplication {
 
     @RequestMapping(method = RequestMethod.GET, path = {"/listLogFiles"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity listLogFiles() {
+    public ResponseEntity listLogFiles(@RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
 
         try {
             Path path = Path.of(System.getProperty("user.dir"), "logs");
@@ -46,7 +46,8 @@ public class DownloadLogFileApplication {
             Map<String, String> files = new HashMap<>();
             for (File file : filesList) {
                 if (file.getAbsoluteFile().isFile()) {
-                    if (StringUtils.containsAny(file.getName(), "application.log", "h2.log", "h2-server.log")) {
+                    if (StringUtils.containsAny(file.getName(), "application.log", "h2.log", "h2-server.log")
+                                && file.length() < maxFileSizeInBytes) {
                         files.put(file.getName(), file.getAbsoluteFile().toString());
                     }
                 }
@@ -74,11 +75,13 @@ public class DownloadLogFileApplication {
 
     @RequestMapping(method = RequestMethod.GET, path = {"/downloadLogFile"}, produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true, name = "fullFilePath") String fullFilePath) {
+    public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true, name = "fullFilePath") String fullFilePath,
+                                                                 @RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
         try {
             File file = new File(fullFilePath);
             String filename = file.getName();
-            if (StringUtils.containsAny(filename, "application.log", "h2.log", "h2-server.log")) {
+            if (StringUtils.containsAny(filename, "application.log", "h2.log", "h2-server.log")
+                        && file.length() < maxFileSizeInBytes) {
                 InputStream inputStream = new FileInputStream(file);
                 StreamingResponseBody body = outputStream -> FileCopyUtils.copy(inputStream, outputStream);
 
@@ -93,7 +96,8 @@ public class DownloadLogFileApplication {
                     .header("Content-Disposition", "attachment;filename=" + filename)
                     .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                     .body(outputStream -> {
-                        String errorMsg = "Not able to download the file for [" + filename + "]";
+                        String errorMsg = "Not able to download the file for [" + filename + "]. " +
+                            "Log file maybe too big to download. Maximum size allowed is " + maxFileSizeInBytes + " bytes.";
                         outputStream.write(errorMsg.getBytes());
                         outputStream.close();
                     });
