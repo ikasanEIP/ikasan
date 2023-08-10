@@ -4,8 +4,6 @@ import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.Sch
 
 import java.io.IOException;
 
-import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
-
 public class DetachableProcess {
     private final SchedulerPersistenceService schedulerPersistenceService;
     private final String identity;
@@ -43,7 +41,6 @@ public class DetachableProcess {
     }
 
     public void removePersistedProcessData() throws IOException {
-        schedulerPersistenceService.remove(SCHEDULER_PROCESS_TYPE, identity);
         schedulerPersistenceService.removeAll(identity, commandProcessor.getScriptFilePostfix());
     }
 

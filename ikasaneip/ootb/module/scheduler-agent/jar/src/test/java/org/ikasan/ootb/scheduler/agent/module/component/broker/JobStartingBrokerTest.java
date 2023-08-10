@@ -34,7 +34,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobStartingBrokerTest {
@@ -221,11 +221,6 @@ public class JobStartingBrokerTest {
 
     @Test
     public void test_job_start_success_with_empty_value_context_parameters() {
-        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
-            new EnrichedContextualisedScheduledProcessEvent();
-        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
-        internalEventDrivenJobInstanceDto.setAgentName("agent name");
-
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
         contextParameterInstance.setValue(""); // set to empty string, expecting this to change to a space based on config setEnvironmentToAddSpaceForEmptyContextParam
@@ -235,14 +230,6 @@ public class JobStartingBrokerTest {
         } else {
             internalEventDrivenJobInstanceDto.setCommandLine("echo Some$cmd.Value");
         }
-        internalEventDrivenJobInstanceDto.setContextName("contextId");
-        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
-        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
-        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
-        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
-        enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
-        enrichedContextualisedScheduledProcessEvent.setResultError("err");
-        enrichedContextualisedScheduledProcessEvent.setResultOutput("out");
 
         JobStartingBrokerConfiguration configuration = getTestConfiguration();
 
@@ -289,6 +276,9 @@ public class JobStartingBrokerTest {
         Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
         Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
         Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+
+        verify(schedulerPersistenceServiceMock, times(1)).find(SCHEDULER_PROCESS_TYPE, processIdentity);
+        verify(schedulerPersistenceServiceMock, times(1)).findIkasanProcess(SCHEDULER_PROCESS_TYPE, processIdentity);
     }
 
     @Test(expected = EndpointException.class)

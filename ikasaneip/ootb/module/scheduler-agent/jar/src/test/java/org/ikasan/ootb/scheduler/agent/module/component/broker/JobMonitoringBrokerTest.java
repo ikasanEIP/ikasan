@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -31,7 +32,8 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 
 import static org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker.DEFAULT_ERROR_RETURN_CODE;
-import static org.mockito.Mockito.when;
+import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class JobMonitoringBrokerTest {
@@ -227,7 +229,7 @@ public class JobMonitoringBrokerTest {
     }
 
     @Test
-    public void test_job_monitor_running_too_long() throws InterruptedException {
+    public void test_job_monitor_running_too_long() throws InterruptedException, IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         Long timeout = 1L;
         when(processMock.waitFor(timeout, TimeUnit.MINUTES)).thenReturn(false);
@@ -255,10 +257,13 @@ public class JobMonitoringBrokerTest {
         Assert.assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
 
         Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting."));
+
+        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
+        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
 
     @Test
-    public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_ends_inside_timeout() {
+    public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_ends_inside_timeout() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(schedulerPersistenceServiceMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
@@ -286,10 +291,13 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getDetachableProcess().isDetached());
         Assert.assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
         Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
+
+        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
+        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
 
     @Test
-    public void test_job_monitor_when_recovered_from_agent_crash_and_process_finished_during_agent_outage() {
+    public void test_job_monitor_when_recovered_from_agent_crash_and_process_finished_during_agent_outage() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(schedulerPersistenceServiceMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
@@ -316,9 +324,12 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getDetachableProcess().isDetached());
         Assert.assertTrue(event.getDetachableProcess().isDetachedAlreadyFinished());
         Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
+
+        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
+        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
     @Test
-    public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_does_not_end_within_timeout() throws ExecutionException, InterruptedException, TimeoutException {
+    public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_does_not_end_within_timeout() throws ExecutionException, InterruptedException, TimeoutException, IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(processHandleMock.onExit()).thenReturn(completableFutureMock);
@@ -347,6 +358,9 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getDetachableProcess().isDetached());
         Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally"));
         Assert.assertTrue(event.getExecutionDetails().contains("WARNING : There were problems getting the return status from the detached process, it will be treated as an error, issue was"));
+
+        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
+        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
 
     private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip
