@@ -159,4 +159,11 @@ public interface SchedulerJobInstanceService {
      * @return
      */
     List<SchedulerJobInstanceRecord> getJobsToReleaseWithinContext(ContextInstance contextInstance, String childContextName);
+
+    /**
+     * Delete all scheduler job instances for a context instance.
+     *
+     * @param contextInstanceId
+     */
+    void deleteSchedulerJobInstances(String contextInstanceId);
 }

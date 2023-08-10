@@ -75,4 +75,11 @@ public interface SchedulerJobInstanceDao {
      * @return
      */
     List<ContextInstanceAggregateJobStatus> getJobStatusCountForContextInstancesConsiderNonTargetedDuplication(List<String> contextInstanceIds);
+
+    /**
+     * Delete all scheduler job instances for a context instance.
+     *
+     * @param contextInstanceId
+     */
+    void deleteSchedulerJobInstances(String contextInstanceId);
 }
