@@ -145,7 +145,7 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         }
         catch(IOException e)
         {
-            logger.warn("Failed to delete [" + path + "] " + e.getMessage(), e);
+            logger.warn("Failed to delete [" + path + "] file may be missing or some other IO issue" + e.getMessage());
         }
     }
 
