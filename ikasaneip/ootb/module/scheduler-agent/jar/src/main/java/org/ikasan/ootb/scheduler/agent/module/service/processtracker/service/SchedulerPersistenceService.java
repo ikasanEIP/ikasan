@@ -10,7 +10,6 @@ public interface SchedulerPersistenceService extends PersistenceService {
 
     void removeAll(String processIdentity, String scriptPostfix) throws IOException;
 
-
     String getPersistedReturnCode(String processIdentity);
 
     String getResultAbsoluteFilePath(String processIdentity);
