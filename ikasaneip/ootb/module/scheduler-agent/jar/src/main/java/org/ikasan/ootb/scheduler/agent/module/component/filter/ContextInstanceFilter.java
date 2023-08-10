@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.component.filter;
 
+import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -42,10 +43,11 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 String correlationId = (String)jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID);
                 // If we have a trigger with a correlation ID not in the Cache - error
                 // If we have a trigger with a correlation ID in cache or correlation ID is blank (the scenario to prevent job going into recovery) - allow through
-                if (correlationId == null || correlationId.isEmpty()) {
+                if (correlationId == null || correlationId.isEmpty() || correlationId.equals(CorrelatingScheduledConsumer.EMPTY_CORRELATION_ID)) {
                     LOG.warn("The correlationId was [" + correlationId + "] for cron ID " +
                         jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID) + "] and job [" +
                         jobExecutionContext.getJobDetail().getDescription() + "]");
+                    return null;
                 } else if (!ContextInstanceCache.existsInCache(correlationId)) {
                     String error = String.format("Could not find correlationId [%s] in ContextInstanceCache," +
                         "maybe the dashboard restarted so this ID is no longer running, " +
@@ -57,6 +59,7 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 }
             } else {
                 LOG.info("Event of type " + event + " ignored");
+                return event;
             }
         }
         return event;

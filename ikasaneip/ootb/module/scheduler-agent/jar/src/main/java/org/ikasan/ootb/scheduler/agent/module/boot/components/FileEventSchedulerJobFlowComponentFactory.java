@@ -169,20 +169,6 @@ public class FileEventSchedulerJobFlowComponentFactory
     }
 
     /**
-     * Get the context instance filter.
-     *
-     * @return
-     */
-    public Filter getContextInstanceFilter() {
-        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
-        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
-
-        contextInstanceFilter.setConfiguration(configuration);
-
-        return contextInstanceFilter;
-    }
-
-    /**
      * Get the file age filter.
      *
      * @return
