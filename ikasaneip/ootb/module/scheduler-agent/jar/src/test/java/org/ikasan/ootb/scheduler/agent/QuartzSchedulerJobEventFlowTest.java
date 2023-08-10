@@ -72,6 +72,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
+import static org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer.EMPTY_CORRELATION_ID;
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -195,6 +196,37 @@ public class QuartzSchedulerJobEventFlowTest {
         flowTestRule.assertIsSatisfied();
 
         assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_filter_empty_context_instance_id() {
+        // Create cache but use a different correlationID
+        createContextAndPutInCache();
+        String contextInstanceId = EMPTY_CORRELATION_ID;
+
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
+
+        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
+        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .filter("Context Instance Active Filter");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        flowTestRule.sleep(2000);
+
+        flowTestRule.assertIsSatisfied();
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
         assertEquals(0, outboundQueue.size());
 
