@@ -17,7 +17,7 @@ import java.nio.file.Paths;
 public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessStatusDaoFSImp.class);
     protected static final String RESULTS_FILE_POSTFIX = "_results";
-    protected static final String SCRIPT_FILE_POSTFIX = "_results";
+    protected static final String SCRIPT_FILE_POSTFIX = "_script";
     /** persistence directory */
     String persistenceDir;
 
@@ -117,4 +117,11 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     public String getScriptFilePath(String processIdentity, String scriptPostfix)  {
         return persistenceDir + FileSystems.getDefault().getSeparator() + processIdentity + SCRIPT_FILE_POSTFIX + scriptPostfix;
     }
+
+    public String getScriptAbsoluteFilePath(String processIdentity, String scriptPostfix) {
+        String path = getScriptFilePath(processIdentity, scriptPostfix);
+        File file = new File(path);
+        return file.getAbsolutePath();
+    }
+
 }
