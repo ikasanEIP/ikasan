@@ -54,6 +54,7 @@
       <relativePath />
     </parent>
 
+
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-parent</artifactId>
     <version>3.3.0-SNAPSHOT</version>
