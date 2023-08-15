@@ -12,6 +12,10 @@ public interface InternalEventDrivenJobRecord {
 
     public void setJobName(String jobName);
 
+    String getDisplayName();
+
+    void setDisplayName(String displayName);
+
     String getContextName();
 
     void setContextName(String contextName);

@@ -77,6 +77,20 @@ public interface SchedulerJob extends Serializable {
     void setJobName(String jobName);
 
     /**
+     * Get the display name of this job.
+     *
+     * @return
+     */
+    String getDisplayName();
+
+    /**
+     * Set the display name of this job.
+     *
+     * @param displayName
+     */
+    void setDisplayName(String displayName);
+
+    /**
      * Get the description of this job.
      *
      * @return

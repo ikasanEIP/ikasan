@@ -23,6 +23,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private String identifier;
     private String agentName;
     private String jobName;
+    private String displayName;
     private String jobDescription;
     private String startupControlType;
     private List<Integer> daysOfWeekToRun;
@@ -149,6 +150,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setJobName(String jobName) {
         this.jobName = jobName;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     @Override
