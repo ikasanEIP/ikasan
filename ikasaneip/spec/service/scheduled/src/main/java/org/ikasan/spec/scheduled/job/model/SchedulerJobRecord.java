@@ -9,6 +9,8 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
 
     String getJobName();
 
+    String getDisplayName();
+
     String getContextName();
 
     T getJob();

@@ -10,6 +10,7 @@ public class SchedulerJobImpl implements SchedulerJob {
     protected String jobIdentifier;
     protected String agentName;
     protected String jobName;
+    protected String displayName;
     protected String contextName;
     protected List<String> childContextNames;
     protected String description;
@@ -66,6 +67,16 @@ public class SchedulerJobImpl implements SchedulerJob {
     @Override
     public void setJobName(String jobName) {
         this.jobName = jobName;
+    }
+
+    @Override
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    @Override
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
     }
 
     @Override
