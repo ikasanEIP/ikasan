@@ -31,6 +31,20 @@ public interface SchedulerJobInstanceRecord {
     void setJobName(String jobName);
 
     /**
+     * Get the job display name
+     *
+     * @return
+     */
+    String getDisplayName();
+
+    /**
+     * Set the job display name
+     *
+     * @param displayName
+     */
+    void setDisplayName(String displayName);
+
+    /**
      * Get the context name.
      *
      * @return

@@ -244,6 +244,20 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     void setQuartzScheduleDrivenJobsDisabledForContext(boolean isQuartzScheduleDrivenJobsDisabledForContext);
 
     /**
+     * Determine whether display name should be displayed on entities within the job plan.
+     *
+     * @return
+     */
+    boolean isUseDisplayName();
+
+    /**
+     * Set flag used to determine if display name should be displayed on entities within the job plan.
+     *
+     * @param useDisplayName
+     */
+    void setUseDisplayName(boolean useDisplayName);
+
+    /**
      * Get the tree view expand level. This assist with the UI tree view widget and the way it is presented.
      *
      * @return
