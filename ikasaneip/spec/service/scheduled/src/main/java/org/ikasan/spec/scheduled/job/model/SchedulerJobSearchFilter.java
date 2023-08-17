@@ -8,6 +8,10 @@ public interface SchedulerJobSearchFilter {
 
     public void setJobNameFilter(String jobNameFilter);
 
+    String getDisplayNameFilter();
+
+    void setDisplayNameFilter(String displayNameFilter);
+
     public List<String> getNotJobNameInFilter();
 
     public void setNotJobNameInFilter(List<String> notJobNameInFilter);
