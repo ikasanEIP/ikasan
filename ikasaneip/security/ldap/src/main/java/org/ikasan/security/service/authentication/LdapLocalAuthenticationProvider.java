@@ -40,19 +40,12 @@
  */
 package org.ikasan.security.service.authentication;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.UserService;
-import org.springframework.ldap.core.DirContextOperations;
+import org.ikasan.security.util.AuthoritiesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -60,6 +53,8 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.ldap.authentication.BindAuthenticator;
 import org.springframework.security.ldap.authentication.LdapAuthenticator;
+
+import java.util.List;
 
 /**
  * 
@@ -108,30 +103,10 @@ public class LdapLocalAuthenticationProvider implements AuthenticationProvider
 			throws AuthenticationException
 	{
 		// Authenticate, using the passed-in credentials.
-        DirContextOperations authAdapter = authenticator.authenticate(authentication);
+        authenticator.authenticate(authentication);
 
 		User user = this.userService.loadUserByUsername(authentication.getName());
-		Set<IkasanPrincipal> principals = user.getPrincipals();
-
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-
-		for(IkasanPrincipal principal: principals)
-		{
-			Set<Role> roles = principal.getRoles();
-			
-			for(Role role: roles)
-			{
-				Set<Policy> policies = role.getPolicies();
-				
-				for(Policy policy: policies)
-				{					
-					if(!authorities.contains(policy))
-					{
-						authorities.add(policy);
-					}
-				}
-			}
-		}
+        List<GrantedAuthority> authorities = AuthoritiesHelper.getGrantedAuthorities(user.getPrincipals());
 		
 		IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials()
 				, user.getPreviousAccessTimestamp());

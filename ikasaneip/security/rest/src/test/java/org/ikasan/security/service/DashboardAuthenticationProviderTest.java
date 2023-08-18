@@ -1,10 +1,8 @@
 package org.ikasan.security.service;
 
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 import org.ikasan.security.service.authentication.DashboardAuthenticationProvider;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +11,9 @@ import org.mockito.Mockito;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.junit.Assert.assertEquals;
 
@@ -44,7 +45,24 @@ public class DashboardAuthenticationProviderTest
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
         assertEquals(true, result.isAuthenticated());
-        assertEquals(25, result.getAuthorities().size());
+        assertEquals(45, result.getAuthorities().size());
+
+        AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
+        AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
+        result.getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                containsModuleAuthorities.set(true);
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                containsJobPlanAuthorities.set(true);
+            }
+        });
+
+        Assert.assertTrue(containsModuleAuthorities.get());
+        Assert.assertTrue(containsJobPlanAuthorities.get());
+
         Mockito.verify(dashboardUserService).authenticate("admin", "admin");
         Mockito.verify(dashboardUserService).loadUserByUsername("admin");
         Mockito.verifyNoMoreInteractions(dashboardUserService);
@@ -84,13 +102,36 @@ public class DashboardAuthenticationProviderTest
     {
         uut = new DashboardAuthenticationProvider(dashboardUserService, this.alternateUserService);
 
+        User testUser = this.setupUser("test-user");
+
         Mockito.when(dashboardUserService.authenticate("admin", "admin")).thenThrow(new RuntimeException());
         Mockito.when(alternateUserService.loadUserByUsername("admin")).thenReturn(this.user);
         Mockito.when(this.user.getPassword()).thenReturn("{SHA-1}d033e22ae348aeb5660fc2140aec35850c4da997");
+        Mockito.when(this.user.getPrincipals()).thenReturn(testUser.getPrincipals());
 
         Authentication authentication = new UsernamePasswordAuthenticationToken("admin", "admin");
         Authentication result = uut.authenticate(authentication);
         assertEquals(true, result.isAuthenticated());
+
+        assertEquals(true, result.isAuthenticated());
+        assertEquals(45, result.getAuthorities().size());
+
+        AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
+        AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
+        result.getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                containsModuleAuthorities.set(true);
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                containsJobPlanAuthorities.set(true);
+            }
+        });
+
+        Assert.assertTrue(containsModuleAuthorities.get());
+        Assert.assertTrue(containsJobPlanAuthorities.get());
+
         Mockito.verify(dashboardUserService).authenticate("admin", "admin");
         Mockito.verifyNoMoreInteractions(dashboardUserService);
         Mockito.verify(alternateUserService).loadUserByUsername("admin");
@@ -143,6 +184,16 @@ public class DashboardAuthenticationProviderTest
                 policy.setName("policy" + j + i);
                 policy.setDescription("description");
                 role.addPolicy(policy);
+
+                RoleModule roleModule = new RoleModule();
+                roleModule.setModuleName("role" + i + "moduleName");
+                roleModule.setRole(role);
+                role.setRoleModules(Set.of(roleModule));
+
+                RoleJobPlan roleJobPlan = new RoleJobPlan();
+                roleJobPlan.setJobPlanName("role" + i + "jobPlanName");
+                roleJobPlan.setRole(role);
+                role.setRoleJobPlans(Set.of(roleJobPlan));
             }
             principal.addRole(role);
         }

@@ -51,9 +51,9 @@ public class Role implements Comparable<Role>
     private Long id;
     private String name = "";
     private String description = "";
-    private Set<Policy> policies;
-    private Set<RoleModule> roleModules;
-    private Set<RoleJobPlan> roleJobPlans;
+    private Set<Policy> policies = new HashSet<>();
+    private Set<RoleModule> roleModules = new HashSet<>();
+    private Set<RoleJobPlan> roleJobPlans = new HashSet<>();
 
     /** The data time stamp when an instance was first created */
     private Date createdDateTime;

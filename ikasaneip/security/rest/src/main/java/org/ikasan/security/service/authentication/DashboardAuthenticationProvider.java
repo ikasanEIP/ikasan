@@ -40,25 +40,18 @@
  */
 package org.ikasan.security.service.authentication;
 
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
 import org.ikasan.security.model.User;
-import org.ikasan.security.service.DashboardUserServiceImpl;
 import org.ikasan.security.service.UserService;
+import org.ikasan.security.util.AuthoritiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  *
@@ -130,11 +123,8 @@ public class DashboardAuthenticationProvider implements AuthenticationProvider
         if(userService.authenticate(userName,password)){
 
             User user = userService.loadUserByUsername(userName);
-            List<GrantedAuthority> authorities = user.getPrincipals().stream()
-                .flatMap(principal -> principal.getRoles().stream())
-                .flatMap(r -> r.getPolicies().stream())
-                .distinct().
-                    collect(Collectors.toList());
+
+            List<GrantedAuthority> authorities = AuthoritiesHelper.getGrantedAuthorities(user.getPrincipals());
 
             IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials()
                 , user.getPreviousAccessTimestamp());

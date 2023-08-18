@@ -62,7 +62,7 @@
     <property name="enabled" column="Enabled" type="boolean" not-null="true"/>
     <property name="requiresPasswordChange" column="RequiresPasswordChange" type="boolean" not-null="true"/>
     <property name="previousAccessTimestamp" column="PreviousAccess" type="long" not-null="false"/>
-    <set name="principals" table="UserPrincipal" lazy="true ">
+    <set name="principals" table="UserPrincipal" lazy="false">
         <key column="UserId"/>
         <many-to-many column="PrincipalId" class="org.ikasan.security.model.IkasanPrincipal"/>
     </set>

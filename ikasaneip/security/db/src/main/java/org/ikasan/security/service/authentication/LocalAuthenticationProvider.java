@@ -42,6 +42,7 @@ package org.ikasan.security.service.authentication;
 
 import java.util.*;
 
+import org.ikasan.security.util.AuthoritiesHelper;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.Policy;
@@ -97,34 +98,14 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
     public Authentication authenticate(Authentication authentication)
         throws AuthenticationException
     {
-        String userName = ((UsernamePasswordAuthenticationToken)authentication).getName();
-        String password = ((String)((UsernamePasswordAuthenticationToken)authentication).getCredentials());
+        String userName = authentication.getName();
+        String password = ((String) authentication.getCredentials());
 
         User user = userService.loadUserByUsername(userName);
 
         if(encoder.matches(password,user.getPassword()))
         {
-            Set<IkasanPrincipal> principals = user.getPrincipals();
-
-            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-
-            for(IkasanPrincipal principal: principals)
-            {
-                Set<Role> roles = principal.getRoles();
-
-                for(Role role: roles)
-                {
-                    Set<Policy> policies = role.getPolicies();
-
-                    for(Policy policy: policies)
-                    {
-                        if(!authorities.contains(policy))
-                        {
-                            authorities.add(policy);
-                        }
-                    }
-                }
-            }
+            List<GrantedAuthority> authorities = AuthoritiesHelper.getGrantedAuthorities(user.getPrincipals());
 
             IkasanAuthentication ikasanAuthentication = new IkasanAuthentication(true, user, authorities, (String)authentication.getCredentials()
                 , user.getPreviousAccessTimestamp());

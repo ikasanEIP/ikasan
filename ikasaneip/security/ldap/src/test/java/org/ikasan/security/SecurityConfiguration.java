@@ -44,14 +44,14 @@ public class SecurityConfiguration
     @Bean
     public SecurityDao securityDao(){
         HibernateSecurityDao securityDao = new HibernateSecurityDao();
-        securityDao.setSessionFactory(securitySessionFactory().getObject());
+        securityDao.setSessionFactory(xaSecuritySessionFactory().getObject());
         return securityDao;
     }
 
     @Bean
     public UserDao userDao(){
         HibernateUserDao userDao = new HibernateUserDao();
-        userDao.setSessionFactory(securitySessionFactory().getObject());
+        userDao.setSessionFactory(xaSecuritySessionFactory().getObject());
         return userDao;
     }
 
@@ -78,7 +78,8 @@ public class SecurityConfiguration
             "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/Policy.hbm.xml",
             "/org/ikasan/security/model/User.hbm.xml", "/org/ikasan/security/model/Authority.hbm.xml",
             "/org/ikasan/security/model/AuthenticationMethod.hbm.xml", "/org/ikasan/security/model/PolicyLink.hbm.xml",
-            "/org/ikasan/security/model/PolicyLinkType.hbm.xml");
+            "/org/ikasan/security/model/PolicyLinkType.hbm.xml", "/org/ikasan/security/model/RoleModule.hbm.xml",
+            "/org/ikasan/security/model/RoleJobPlan.hbm.xml");
         Properties properties = new Properties();
         properties.putAll(platformHibernateProperties);
         sessionFactoryBean.setHibernateProperties(properties);
@@ -128,8 +129,7 @@ public class SecurityConfiguration
 
 
     @Bean
-    public LocalSessionFactoryBean xaSecuritySessionFactory(
-    )
+    public LocalSessionFactoryBean xaSecuritySessionFactory()
     {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(ikasanxads);
@@ -137,7 +137,8 @@ public class SecurityConfiguration
             "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/Policy.hbm.xml",
             "/org/ikasan/security/model/User.hbm.xml", "/org/ikasan/security/model/Authority.hbm.xml",
             "/org/ikasan/security/model/AuthenticationMethod.hbm.xml", "/org/ikasan/security/model/PolicyLink.hbm.xml",
-            "/org/ikasan/security/model/PolicyLinkType.hbm.xml");
+            "/org/ikasan/security/model/PolicyLinkType.hbm.xml", "/org/ikasan/security/model/RoleModule.hbm.xml",
+            "/org/ikasan/security/model/RoleJobPlan.hbm.xml");
         Properties properties = new Properties();
         properties.putAll(platformHibernateProperties);
         sessionFactoryBean.setHibernateProperties(properties);
