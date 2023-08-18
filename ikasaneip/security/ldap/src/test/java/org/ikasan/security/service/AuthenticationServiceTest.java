@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.service;
 
+import com.unboundid.ldap.listener.Base64PasswordEncoderOutputFormatter;
+import com.unboundid.ldap.listener.ClearInMemoryPasswordEncoder;
 import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
@@ -62,6 +64,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 
@@ -71,7 +74,6 @@ import java.util.Set;
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
-@Ignore
 public class AuthenticationServiceTest
 {
 	private InMemoryDirectoryServer inMemoryDirectoryServer;
@@ -112,17 +114,30 @@ public class AuthenticationServiceTest
             for(int j=0; j<10; j++)
             {
                 Policy policy = new Policy();
-                policy.setName("policy" + j + i);
+                policy.setName("role" + i + "policy" + j + i);
                 policy.setDescription("description");
                 this.securityDao.saveOrUpdatePolicy(policy);
                 policies.add(policy);
             }
 
             role.setPolicies(policies);
+
             role.setDescription("description");
             this.securityDao.saveOrUpdateRole(role);
             roles.add(role);
-            policies = new HashSet<Policy>();
+            policies = new HashSet<>();
+
+            RoleModule roleModule = new RoleModule();
+            roleModule.setModuleName("role" + i + "moduleName");
+            roleModule.setRole(role);
+            this.securityDao.saveRoleModule(roleModule);
+            role.setRoleModules(Set.of(roleModule));
+
+            RoleJobPlan roleJobPlan = new RoleJobPlan();
+            roleJobPlan.setJobPlanName("role" + i + "jobPlanName");
+            roleJobPlan.setRole(role);
+            this.securityDao.saveRoleJobPlan(roleJobPlan);
+            role.setRoleJobPlans(Set.of(roleJobPlan));
         }
 
         IkasanPrincipal principalGroup = new IkasanPrincipal();
@@ -134,17 +149,17 @@ public class AuthenticationServiceTest
         this.securityDao.saveOrUpdatePrincipal(principalGroup);
 
         IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setName("stewmi");
-        principal.setType("user");
+        principal.setName("svc-acc");
+        principal.setType("application");
         principal.setRoles(roles);
         principal.setDescription("description");
-        
+
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        User user = new User("stewmi", "password_local", "me@there.com", true);
+        User user = new User("llogan", "password_local", "me@there.com", true);
         this.userService.createUser(user);
         
-        user = this.userService.loadUserByUsername("stewmi");
+        user = this.userService.loadUserByUsername("llogan");
         
         Set<IkasanPrincipal> principals = new HashSet<IkasanPrincipal>();
         principals.add(principal);
@@ -213,11 +228,13 @@ public class AuthenticationServiceTest
     
     public void setupLdapServer() throws LDAPException, IOException
 	{
+        this.inMemoryDirectoryServerConfig.setPasswordEncoders(new ClearInMemoryPasswordEncoder("{CLEAR}", null),
+            new ClearInMemoryPasswordEncoder("{BASE64}", Base64PasswordEncoderOutputFormatter.getInstance()));
 		this.inMemoryDirectoryServer = new InMemoryDirectoryServer(this.inMemoryDirectoryServerConfig);
 		inMemoryDirectoryServer.importFromLDIF(
 				true,
 				new LDIFReader(new File(new File(".").getCanonicalPath() + "/src/test/resources/data.ldif")));
-		
+
 		inMemoryDirectoryServer.startListening();
 	}
     
@@ -244,12 +261,12 @@ public class AuthenticationServiceTest
 	public void testLocalLogin() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+        authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
 		
 		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
-		Authentication authentication = this.authenticationService.login("stewmi", "password_local");
+		Authentication authentication = this.authenticationService.login("llogan", "password_local");
 		
 		Assert.assertNotNull(authentication);
 	}
@@ -259,7 +276,7 @@ public class AuthenticationServiceTest
 	public void testLocalLoginFailBadPassword() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+        authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
 		
 		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
@@ -276,14 +293,31 @@ public class AuthenticationServiceTest
 	public void testLdapLoginFallingBackToLocal() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+        authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		
 		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
-		Authentication authentication = this.authenticationService.login("stewmi", "password_local");
+		Authentication authentication = this.authenticationService.login("llogan", "password_local");
 		
 		Assert.assertNotNull(authentication);
+
+        Assert.assertEquals(120, authentication.getAuthorities().size());
+        AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
+        AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
+        authentication.getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                containsModuleAuthorities.set(true);
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                containsJobPlanAuthorities.set(true);
+            }
+        });
+
+        Assert.assertTrue(containsModuleAuthorities.get());
+        Assert.assertTrue(containsJobPlanAuthorities.get());
 	}
 	
 	/**
@@ -295,8 +329,8 @@ public class AuthenticationServiceTest
 	public void testLdapLoginFallingBackToLocalFailBadPassword() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setOrder(1L);
 		
 		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
@@ -312,19 +346,37 @@ public class AuthenticationServiceTest
 	public void testLdapLogin() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		authMethod.setLdapServerUrl(ldapServerUrl);
-		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
+        authMethod.setOrder(1L);
+        authMethod.setEnabled(true);
+		authMethod.setLdapBindUserDn("cn=Directory Manager");
 		authMethod.setLdapBindUserPassword("password");
-		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
-		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+		authMethod.setLdapUserSearchBaseDn("ou=people,ou=IL-Sunset,dc=slidev,dc=org");
+		authMethod.setLdapUserSearchFilter("(uid={0})");
 		
 		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
-		Authentication authentication = this.authenticationService.login("stewmi", "password");
+		Authentication authentication = this.authenticationService.login("llogan", "password");
 		
 		Assert.assertNotNull(authentication);
+
+        Assert.assertEquals(120, authentication.getAuthorities().size());
+        AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
+        AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
+        authentication.getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                containsModuleAuthorities.set(true);
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                containsJobPlanAuthorities.set(true);
+            }
+        });
+
+        Assert.assertTrue(containsModuleAuthorities.get());
+        Assert.assertTrue(containsJobPlanAuthorities.get());
 	}
 	
 	/**
@@ -336,17 +388,17 @@ public class AuthenticationServiceTest
 	public void testLdapLoginFailBadPassword() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setId(SecurityConstants.AUTH_METHOD_ID);
+        authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		authMethod.setLdapServerUrl(ldapServerUrl);
-		authMethod.setLdapBindUserDn("CN=Stewart Michael,OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
-		authMethod.setLdapBindUserPassword("password");
-		authMethod.setLdapUserSearchBaseDn("OU=People,OU=Logins,DC=uk,DC=acme,DC=com");
-		authMethod.setLdapUserSearchFilter("(sAMAccountName={0})");
+        authMethod.setLdapBindUserDn("cn=Directory Manager");
+        authMethod.setLdapBindUserPassword("password");
+        authMethod.setLdapUserSearchBaseDn("ou=people,ou=IL-Sunset,dc=slidev,dc=org");
+        authMethod.setLdapUserSearchFilter("(uid={0})");
 		
 		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 		
-		this.authenticationService.login("stewmi", "bad password");
+		this.authenticationService.login("llogan", "bad password");
 	}
 	
 	@After
