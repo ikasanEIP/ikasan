@@ -46,6 +46,8 @@ import javax.annotation.Resource;
 
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
+import org.ikasan.security.model.JobPlanGrantedAuthority;
+import org.ikasan.security.model.ModuleGrantedAuthority;
 import org.ikasan.security.model.User;
 import org.junit.Assert;
 import org.junit.Before;
@@ -139,6 +141,32 @@ public class HibernateUserDaoTest
 		
 		Assert.assertTrue(users.size() == 1);
 	}
+
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
+     */
+    @Test
+    @DirtiesContext
+    public void testAuthorities()
+    {
+        List<User> users = this.xaUserDao.getUsers();
+
+        Assert.assertTrue(users.size() == 1);
+        Assert.assertTrue(users.get(0).getAuthorities().size() == 4);
+
+        users.get(0).getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertEquals("MODULE:sample module", grantedAuthority.getAuthority());
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertEquals("JOB_PLAN:sample job plan", grantedAuthority.getAuthority());
+            }
+            else {
+                Assert.assertTrue(grantedAuthority.getAuthority().equals("policy1") ||
+                    grantedAuthority.getAuthority().equals("policy2"));
+            }
+        });
+    }
 
 	/**
 	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#delete(org.ikasan.security.model.User)}.

@@ -43,6 +43,7 @@ package org.ikasan.security.model;
 import java.security.Principal;
 import java.util.*;
 
+import org.ikasan.security.util.AuthoritiesHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -128,25 +129,7 @@ public class User implements UserDetails, Principal
     {
 		Set<IkasanPrincipal> principals = this.getPrincipals();
 
-		List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
-
-		for(IkasanPrincipal principal: principals)
-		{
-			Set<Role> roles = principal.getRoles();
-
-			for(Role role: roles)
-			{
-				Set<Policy> policies = role.getPolicies();
-
-				for(Policy policy: policies)
-				{
-					if(!authorities.contains(policy))
-					{
-						authorities.add(policy);
-					}
-				}
-			}
-		}
+		List<GrantedAuthority> authorities = AuthoritiesHelper.getGrantedAuthorities(principals);
 
 		return authorities;
     }
