@@ -55,7 +55,7 @@ solutions for each use case.
 
 The solution is predicated on the following:
 
-File and time based events cannot fire until the agent has been provided with an active job plan instance.
+- File and time based events cannot fire until the agent has been provided with an active job plan instance.
 
 ### Dashboard restart occurs prior to job plan start time window or after end time window
 
@@ -68,5 +68,8 @@ In this case a context instance will already have been created and will exist in
 ![dashboaed-restart-happy-path-2](../../../images/dashboard-restart-after-context-start.png)
 
 ### Agent restart occurs
+
+In this case an agent needs to acquire the state of any running job plan instances in order for it to be able to fulfil its 
+role as a scheduler agent.
 
 ![agent-restart](../../../images/agent-restart.png)

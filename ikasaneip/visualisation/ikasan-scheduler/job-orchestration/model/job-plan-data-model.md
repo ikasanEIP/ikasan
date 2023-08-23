@@ -25,7 +25,8 @@ object with parent [Context](../../../../spec/service/scheduled/src/main/java/or
 | isQuartzScheduleDrivenJobsDisabledForContext                              | boolean         | Flag to indicate if all quartz jobs are to be disabled when instances of the job plan are created.    |
 | treeViewExpandLevel                              | int             | Defines the job plan instance tree view is expanded by default.                                       |
 | disabled                      | boolean         | Flag to indicate if the job plan is disabled.                                                         |
-| ableToRunConcurrently                              | boolean         | Boolean flag to indicate if the job should run concurrently.                                          |
+| ableToRunConcurrently                              | boolean         | Boolean flag to indicate if the job plan can have concurrent running instances.                       |
+| useDisplayName                              | boolean         | Boolean flag to indicate if the aliases will be used for jobs throughout the job plan.                |
 
 
 ## Context Parameters
