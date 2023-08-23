@@ -2,7 +2,8 @@
 
 # Ikasan Enterprise Scheduler - Scheduler Job Data Model
 
-The Ikasan Scheduler support 4 different job types. See [Scheduler Job Builder](../builder/scheduler-job-builder.md) for details of how to easily
+The Ikasan Scheduler support 4 different job types. The jobs are represented in json and there are support builder classes
+that assist in the construction of the jobs. See [Scheduler Job Builder](../builder/scheduler-job-builder.md) for details of how to easily
 build jobs using the builder implementation.
 
 ## File Event Driven Jobs
@@ -137,21 +138,24 @@ The Internal Event Driven Job is responsible for executing a job by creating an 
 job that is executed is generally a bash or some kind of shell script within a Windows or Linux environment.
 
 ### Configuration
-|Field Name|	Type|	Description|	Mandatory| 	Default Value |	Allowed Values|	Comments|
-|-----|-----|-----|----|----------------|-----|-----|
-|agentName| String The name of the agent that the job will run on.| yes| | | |
-|jobName |String| The name of the job itself.| yes| | | |
-|contextId| String| The id of the parent context that this job belongs to.| yes| | | |
-|childContextNames| List<String>|    A list containing the child context names of all of the contexts that the job is relevant in, within the parent context.| yes| | | |
-|startupControlType| String| The startup control of the Ikasan flow that manages this job.| yes| MANUAL |AUTOMATIC, MANUAL, DISABLED | |
-|successfulReturnCodes|List<String>|The list of return codes that indicate that a job executed successfully.|	yes	| | | |
-|workingDirectory| String| The directory from where the command is execiuted.| yes| | | |
-|commandLine| String| The command that is executed.| yes| | | |
-|minExecutionTime |long| The minimum amount of time that a job can execute for. |yes| | | |
-|maxExecutionTime| long| The maximum amoiunt of time that a job can execute for.| yes| | | |
-|contextParameters|List<ContextParameter>|The parameters that are contextualised and used by the job.|	no	| | | |
-|identifier| String |The unique job identifier within the Ikasan Scheduler.| yes| | | |
-|jobDescription | String |The description of the job. |yes| | | |
+|Field Name| 	Type                                                  | 	Description                                                                                                                             | 	Mandatory | 	Default Value |	Allowed Values|	Comments|
+|-----|--------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|------------|----------------|-----|-----|
+|agentName| String The name of the agent that the job will run on. | yes                                                                                                                                      |            |                | |
+|jobName | String                                                 | The name of the job itself.                                                                                                              | yes        |                | | |
+|contextId| String                                                 | The id of the parent context that this job belongs to.                                                                                   | yes        |                | | |
+|childContextNames| List<String>                                           | A list containing the child context names of all of the contexts that the job is relevant in, within the parent context.                 | yes        |                | | |
+|startupControlType| String                                                 | The startup control of the Ikasan flow that manages this job.                                                                            | yes        | MANUAL         |AUTOMATIC, MANUAL, DISABLED | |
+|successfulReturnCodes| List<String>                                           | The list of return codes that indicate that a job executed successfully.                                                                 | 	yes	      |                | | |
+|workingDirectory| String                                                 | The directory from where the command is execiuted.                                                                                       | yes        |                | | |
+|commandLine| String                                                 | The command that is executed.                                                                                                            | yes        |                | | |
+|minExecutionTime | long                                                   | The minimum amount of time that a job can execute for.                                                                                   | yes        |                | | |
+|maxExecutionTime| long                                                   | The maximum amoiunt of time that a job can execute for.                                                                                  | yes        |                | | |
+|contextParameters| List<ContextParameter>                                 | The parameters that are contextualised and used by the job.                                                                              | 	no	       |                | | |
+|identifier| String                                                 | The unique job identifier within the Ikasan Scheduler.                                                                                   | yes        |                | | |
+|jobDescription | String                                                 | The description of the job.                                                                                                              | yes        |                | | |
+|targetResidingContextOnly | boolean                                                | Flag to indicate that it will only fire in the child context it resides and the event produced will not impact any other child contexts. | yes        | false          | | |
+|participatesInLock | boolean                                                | Flag to indicate whether a job participates in a job lock or not.                                                                        | yes        | false      | | |
+|jobRepeatable | boolean                                                | Flag to indicate whether a job can be executed multiple times within the same job plan instance.                                         | yes        | false      | | |
 
 ### Sample
 ```json
@@ -188,30 +192,21 @@ Global Event Jobs allow for events to be raised in a job plan instance, and for 
 which can react to the Global Event if necessary.
 
 ### Configuration
-|Field Name|	Type|	Description|	Mandatory| 	Default Value |	Allowed Values|	Comments|
-|-----|-----|-----|----|----------------|-----|-----|
-|agentName| String The name of the agent that the job will run on.| yes| | | |
-|jobName |String| The name of the job itself.| yes| | | |
-|contextId| String| The id of the parent context that this job belongs to.| yes| | | |
-|childContextNames| List<String>|    A list containing the child context names of all of the contexts that the job is relevant in, within the parent context.| yes| | | |
-|startupControlType| String| The startup control of the Ikasan flow that manages this job.| yes| MANUAL |AUTOMATIC, MANUAL, DISABLED | |
-|successfulReturnCodes|List<String>|The list of return codes that indicate that a job executed successfully.|	yes	| | | |
-|workingDirectory| String| The directory from where the command is execiuted.| yes| | | |
-|commandLine| String| The command that is executed.| yes| | | |
-|minExecutionTime |long| The minimum amount of time that a job can execute for. |yes| | | |
-|maxExecutionTime| long| The maximum amoiunt of time that a job can execute for.| yes| | | |
-|contextParameters|List<ContextParameter>|The parameters that are contextualised and used by the job.|	no	| | | |
-|identifier| String |The unique job identifier within the Ikasan Scheduler.| yes| | | |
-|jobDescription | String |The description of the job. |yes| | | |
+|Field Name|	Type| 	Description                                                                                                             |	Mandatory| 	Default Value |	Allowed Values|	Comments|
+|-----|-----|--------------------------------------------------------------------------------------------------------------------------|----|----------------|-----|-----|
+|agentName| String The name of the agent that the job will run on.| yes                                                                                                                      | | | |
+|jobName |String| The name of the job itself.                                                                                              | yes| | | |
+|contextName| String| The name of the parent context that this job belongs to.                                                                 | yes| | | |
+|childContextNames| List<String>| A list containing the child context names of all of the contexts that the job is relevant in, within the parent context. | yes| | | |
+|jobDescription | String | The description of the job.                                                                                              |yes| | | |
 
 ### Sample
 ```json
 {
   "agentName" : "GLOBAL_EVENT",
   "jobName" : "jobName",
-  "contextName" : "contextId",
+  "contextName" : "contextName",
   "childContextNames" : [ "childContextId" ],
-  "startupControlType" : "MANUAL",
   "identifier" : "GLOBAL_EVENT-jobName",
   "jobDescription" : "description"
 }
