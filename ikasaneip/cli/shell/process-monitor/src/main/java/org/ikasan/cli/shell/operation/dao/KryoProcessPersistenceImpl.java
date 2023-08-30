@@ -133,6 +133,10 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
             logger.debug("File [" + path + "] not found", e);
             return null;
         }
+        catch(IndexOutOfBoundsException ioobe) {
+            logger.warn("An attempt to read the pid file has failed, if running new jars against old instance, this can be ignored");
+            return null;
+        }
     }
 
     @Override
