@@ -91,4 +91,18 @@ public class DetachableProcess {
     public void setDetachedAlreadyFinished(boolean detachedAlreadyFinished) {
         this.detachedAlreadyFinished = detachedAlreadyFinished;
     }
+
+    @Override
+    public String toString() {
+        return "DetachableProcess{" +
+            "schedulerPersistenceService=" + schedulerPersistenceService +
+            ", identity='" + identity + '\'' +
+            ", process=" + process +
+            ", processHandle=" + processHandle +
+            ", detached=" + detached +
+            ", detachedAlreadyFinished=" + detachedAlreadyFinished +
+            ", pid=" + pid +
+            ", commandProcessor=" + commandProcessor +
+            '}';
+    }
 }
