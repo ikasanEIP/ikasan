@@ -134,7 +134,7 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
             return null;
         }
         catch(IndexOutOfBoundsException ioobe) {
-            logger.warn("An attempt to read the pid file has failed, if running new jars against old instance, this can be ignored");
+            logger.error("An attempt to read the pid file has failed, if running new jars against old instance, this can be ignored");
             return null;
         }
     }
