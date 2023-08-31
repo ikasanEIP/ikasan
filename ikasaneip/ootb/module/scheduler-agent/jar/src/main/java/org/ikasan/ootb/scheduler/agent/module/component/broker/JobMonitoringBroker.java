@@ -46,6 +46,7 @@ import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedSchedu
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
@@ -70,9 +71,21 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     /** logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(JobMonitoringBroker.class);
     public static final int DEFAULT_ERROR_RETURN_CODE = 1;
-
     private String configuredResourceId;
     private JobMonitoringBrokerConfiguration configuration;
+    private ErrorReportingService errorReportingService;
+    private String flowName;
+
+    public JobMonitoringBroker(ErrorReportingService errorReportingService, String flowName) {
+        this.errorReportingService = errorReportingService;
+        if(this.errorReportingService == null) {
+            throw new IllegalArgumentException("errorReportingService cannot be null!");
+        }
+        this.flowName = flowName;
+        if(this.flowName == null) {
+            throw new IllegalArgumentException("flowName cannot be null!");
+        }
+    }
 
     @Override
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
@@ -189,6 +202,9 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                 LOGGER.warn("Attempt to tidy process and results file for " + scheduledProcessEvent.getJobName() +
                     " with identity " + scheduledProcessEvent.getDetachableProcess().getIdentity() +
                     " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe.getMessage());
+
+                // write this error to the error reporting service for visibility
+                this.errorReportingService.notify(this.flowName, scheduledProcessEvent, ioe);
             }
         }
         catch(InterruptedException e) {

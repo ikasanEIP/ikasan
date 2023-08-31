@@ -74,7 +74,7 @@ public class JobProcessingFlowFactory
             .producer("Status Producer", componentFactory.getStatusProducer());
 
         Route monitorRoute = builderFactory.getRouteBuilder()
-            .broker("Job Monitoring Broker", componentFactory.getJobMonitoringBroker())
+            .broker("Job Monitoring Broker", componentFactory.getJobMonitoringBroker(jobName +" Job Processing Flow"))
             .producer("Status Producer", componentFactory.getStatusProducer());
 
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)

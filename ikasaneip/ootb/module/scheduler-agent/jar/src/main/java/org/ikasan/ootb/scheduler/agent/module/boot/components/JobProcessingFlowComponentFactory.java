@@ -104,6 +104,7 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -152,6 +153,9 @@ public class JobProcessingFlowComponentFactory {
 
     @Resource
     BuilderFactory builderFactory;
+
+    @Resource
+    ErrorReportingService errorReportingService;
 
     String defaultPidDirectory = "." + FileSystems.getDefault().getSeparator() + "pid";
 
@@ -228,9 +232,9 @@ public class JobProcessingFlowComponentFactory {
      *
      * @return
      */
-    public Broker getJobMonitoringBroker()
+    public Broker getJobMonitoringBroker(String flowName)
     {
-        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker();
+        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker(this.errorReportingService, flowName);
 
         JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(timeout);

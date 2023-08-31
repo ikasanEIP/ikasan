@@ -11,6 +11,7 @@ import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.Sch
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.junit.Assert;
 import org.junit.Before;
@@ -46,6 +47,8 @@ public class JobMonitoringBrokerTest {
     private ProcessHandle processHandleMock;
     @Mock
     private CompletableFuture<ProcessHandle> completableFutureMock;
+    @Mock
+    private ErrorReportingService errorReportingService;
     @Rule
     public TemporaryFolder tmpFolder = new TemporaryFolder();
 
@@ -59,7 +62,7 @@ public class JobMonitoringBrokerTest {
     public void setUp() {
         configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(DEFAULT_TIMEOUT);
-        broker = new JobMonitoringBroker();
+        broker = new JobMonitoringBroker(this.errorReportingService, "flowName");
         broker.setConfiguration(configuration);
     }
 
@@ -85,6 +88,8 @@ public class JobMonitoringBrokerTest {
         event.getDetachableProcess().setProcess(processMock);
 
         event = broker.invoke(event);
+
+        verify(this.errorReportingService, times(1)).notify(anyString(), any(), any(Throwable.class));
 
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
         Assert.assertFalse(event.isJobStarting());
