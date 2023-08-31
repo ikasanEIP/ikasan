@@ -105,7 +105,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
 
         try {
             // Process detached i.e. after agent restart, was still running.
-            LOGGER.info("Detached process" + scheduledProcessEvent.getDetachableProcess());
+            LOGGER.info("Detached process " + scheduledProcessEvent.getDetachableProcess());
 
             if (scheduledProcessEvent.getDetachableProcess().isDetached()) {
 
@@ -188,7 +188,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
             } catch (IOException ioe) {
                 LOGGER.warn("Attempt to tidy process and results file for " + scheduledProcessEvent.getJobName() +
                     " with identity " + scheduledProcessEvent.getDetachableProcess().getIdentity() +
-                    " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe);
+                    " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe.getMessage());
             }
         }
         catch(InterruptedException e) {

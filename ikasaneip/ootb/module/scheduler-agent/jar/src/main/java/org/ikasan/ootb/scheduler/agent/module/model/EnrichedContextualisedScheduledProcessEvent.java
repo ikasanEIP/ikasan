@@ -9,7 +9,7 @@ import java.util.List;
 
 public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedScheduledProcessEventImpl {
     @JsonIgnore
-    private DetachableProcess detachableProcess;
+    private transient DetachableProcess detachableProcess;
 
     @JsonIgnore
     private List<ContextParameterInstance> contextParameters;
