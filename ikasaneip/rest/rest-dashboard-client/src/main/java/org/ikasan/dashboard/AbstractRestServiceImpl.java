@@ -32,6 +32,12 @@ public abstract class AbstractRestServiceImpl {
             {
                 ResponseEntity<JwtResponse> response = restTemplate
                     .exchange(authenticateUrl, HttpMethod.POST, entity, JwtResponse.class);
+                if(response.getBody() == null) {
+                    logger.warn("Issue while authenticating to dashboard [" + authenticateUrl + "]. No token is available" +
+                        " in the response body indicating that authentication has failed. Please confirm that the correct credentials" +
+                        " have been provided.");
+                    return false;
+                }
                 this.token = response.getBody().getToken();
                 return true;
             }

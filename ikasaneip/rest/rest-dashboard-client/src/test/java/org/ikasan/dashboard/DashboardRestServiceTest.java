@@ -128,6 +128,48 @@ public class DashboardRestServiceTest
     }
 
     @Test
+    public void pushWiretapReturns401_Followed_by_failed_authentication()
+    {
+        WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
+            1111l, "{event:content,as:json}", 222222l);
+        List<HarvestEvent> wiretaps = new ArrayList<>();
+        wiretaps.add(wiretap);
+        String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
+        mockery.checking(new Expectations()
+        {{
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false");
+            will(returnValue("true"));
+            atLeast(2).of(environment).getProperty(DashboardRestService.DASHBOARD_BASE_URL_PROPERTY);
+            will(returnValue(dashboardBaseUrl));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_USERNAME_PROPERTY);
+            will(returnValue("admin"));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_PASSWORD_PROPERTY);
+            will(returnValue("admin"));
+            oneOf(environment).getProperty(DashboardRestService.MODULE_NAME_PROPERTY);
+            will(returnValue("testModule"));
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false");
+            will(returnValue("false"));
+        }});
+        uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/wiretaps");
+        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withStatus(401)
+            ));
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse()
+                .withStatus(302)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        assertEquals(false, uut.publish(wiretaps));
+    }
+
+    @Test
     public void pushWiretapReturns400()
     {
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
