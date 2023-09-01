@@ -104,7 +104,7 @@ Array of [SchedulerJob](../../../../spec/service/scheduled/src/main/java/org/ika
 ]
 ```
 
-## logicalGrouping
+## Logical Grouping
 A logicalGrouping allows us to model the types of logical relationships that exists between scheduled jobs who are 
 dependant upon one another.
 
@@ -218,7 +218,7 @@ It is possible for a logicalGrouping to be nested allowing for complex logical c
 }
 ```
 
-## jobDependency
+## Job Dependency
 The jobDependency element defines the logical rules required to be fulfilled prior to the job being executed. If there 
 is no logicalGrouping element found, the job has no dependencies and can fire as scheduled.
 
@@ -230,7 +230,7 @@ is no logicalGrouping element found, the job has no dependencies and can fire as
 | logicalGrouping  | [LogicalGrouping](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/LogicalGrouping.java)       | The logicalGrouping field contains logical structure that must equate to true in order for the dependant job to execute. |
 
 
-## jobDependencies
+## Job Dependencies
 The jobDependencies array provides the opportunity to logically group a number of jobs and their dependencies that may 
 support an individual business function or logically bound set of scheduled jobs, within a given context. 
 
