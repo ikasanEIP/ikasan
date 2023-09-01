@@ -47,6 +47,16 @@ It is also important to understand the data structures within the Job Plan Data 
 - [Job Dependency](../model/job-plan-data-model.md#job-dependency)
 - [Job Dependencies](../model/job-plan-data-model.md#job-dependencies)
 
+### Logically, the ContextMachine works as follows
+
+1. Upon receipt of a ContextualisedScheduledProcessEvent, the ContextMachine recursively works its way through all sub Job Plans within the Job Plan Instance that it is managing.
+2. If the sub Job Plan contains any Job Dependencies, the ContextMachine iterates over each Job Dependency.
+3. For each Job Dependency, recursively work through the Logical Groupings contained within it.
+4. If a Logical Grouping contains an And, Or or Not element, assess the state of the jobs within the logical element using the AbstractLogicMachine (see below).
+5. If the assessment of all nested Logical Groupings resolves the true, then the job associated with the Job Dependency is flagged as able to have a ContextualisedSchedulerJobInitiationEvent raised for it.
+
+## AbstractLogicMachine
+The below code snippet has been provided, in order to assist in demonstrating how the Logical Groupings are recursively assessed. 
 ```java
 public class AbstractLogicMachine<STATEFUL_ENTITY extends StatefulEntity> {
 
