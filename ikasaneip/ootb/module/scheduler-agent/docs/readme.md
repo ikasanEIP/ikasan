@@ -6,23 +6,8 @@
 Scheduler agents are standardised out of the box Integration Modules pre-built and shipped with Ikasan.
 
 ## Design
-Each scheduled job managed within the Ikasan ESB employs a template flow. The consumer in the flow fires according to what ever [Quartz](http://www.quartz-scheduler.org/) cron expression is configured for the job. There is a router to determine if the job falls in a blackout window and a broker to execute the job along with endpoints to publish the execution status of the job. Scheduled jobs are configured and managed from within the [Ikasan Dashboard](../../../../visualisation/dashboard/scheduler.md). 
-                                                                           
-![IKASAN](../../../../developer/docs/quickstart-images/scheduler-agent-flow.png)
-
-#### Components
-|Route|Component|Description|
-|----|---------|-----------|
-|Main Route|Scheduled Consumer|consumer invoked from the Quartz scheduler callback|
-|Main Route|JobExecution to Scheduled Status Event|converter from the Quartz scheduled context to the Ikasan Scheduled Execution Event|
-|Main Route|Blackout Router|router to determine whether the scheduled callback has occurred within a black out window|
-|Outside Blackout Period Route|Process Execution Broker|execute the scheduled targeted job|
-|Outside Blackout Period Route|Scheduled Status Producer|publish the update Scheduled Execution Event|
-|Default Route|Publish Scheduled Status|filter (true/false) as to whether to continue to publish the Scheduled Execution Event when in a blackout period. Default is true|
-|Default Route|Blackout Scheduled Status Producer|publish the update Scheduled Execution Event|
-
-All management and configuration of the Scheduler Agent is undertaken through the 
-[Ikasan Dashboard Scheduler](../../../../visualisation/dashboard/scheduler.md) view.
+Please refer the [Ikasan Enterprise Scheduler Agent Guide](../../../../visualisation/ikasan-scheduler/agent/readme.md) for a deep dive 
+into the design of the Ikasan Enterprise Scheduler Agent.
 
 ## Deployment
 All Ikasan binaries are available for download at [Maven Central](https://search.maven.org/search?q=org.ikasan)
@@ -64,7 +49,7 @@ server.address=localhost
 .
 .
 # Dashboard data extraction settings
-ikasan.dashboard.extract.enabled=false
+ikasan.dashboard.extract.enabled=true
 ikasan.dashboard.extract.base.url=http://localhost:9080/ikasan-dashboard
 ikasan.dashboard.extract.username=
 ikasan.dashboard.extract.password=
@@ -75,9 +60,9 @@ ikasan.dashboard.extract.password=
 ```
 5. Log into the Ikasan Dashboard to confirm that the agent has registered itself with the dashboard.
 
-![scheduler dashboard](../../../../developer/docs/quickstart-images/scheduler-dashboard.png)
+![img.png](../../../../visualisation/images/scheduler-dashboard-view-active-instances.png)
 
-6. Once successfully registered it is possible to begin to create new [scheduled jobs](../../../../visualisation/dashboard/scheduler.md).
+6. Once successfully registered it is possible to begin to create new `job plans` and their associated `scheduled jobs`. Please refer to the [scheduler developer guide](../../../../visualisation/ikasan-scheduler/developer.md) for details on how to build and deploy your first `job plan`.
 
 ## Configuring as a Service
 All Ikasan Modules, including Scheduler Agents, can be easily configured as a service to be managed within the standard Operating System service constructs for starting and stopping.
@@ -243,6 +228,7 @@ To manage a service:
 #### Installation Steps
 1. Run a Windows command prompt as an administrator
 2. For installation using the UI type ```nssm install``` - this will bring up the nssm installer window
+
 ![img.png](nssm-install-window.png)
 
 For each process installed as a service we need to populate the Application tab with,

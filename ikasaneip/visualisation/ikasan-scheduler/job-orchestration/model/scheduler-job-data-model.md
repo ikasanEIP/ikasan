@@ -132,7 +132,7 @@ These jobs raise events based upon a time schedule.
 }
 ```
 
-## Internal Event Driven Jobs
+## Command Execution Jobs
 
 The Internal Event Driven Job is responsible for executing a job by creating an external process and managing it. The
 job that is executed is generally a bash or some kind of shell script within a Windows or Linux environment.
