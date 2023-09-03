@@ -24,8 +24,8 @@ filtered using the filter text box in the right top of the section.
 
 *Ikasan Enterprise Scheduler Agents*
 
-Double clicking any of the agents will open the agent dialog. From here the management console can be accessed by clicking on the
-agent link on the dialog. It is asle possible to access the logs associated with the agent by clicking on the `Download Log File` button.
+Double-clicking any of the agents will open the agent dialog. From here the management console can be accessed by clicking on the
+agent link on the dialog. It is also possible to access the logs associated with the agent by clicking on the `Download Log File` button.
 
 ![img.png](../../images/scheduler-dashboard-view-agent-details.png)
 
@@ -56,15 +56,15 @@ text field to find a specific job.
 
 ### Job Plan Instances
 The Job Plan Instances Card on the Ikasan Enterprise Scheduler Dashboard contains two tabs:
-- **Active Job Plan Instances Tab**: This tab contains a grid with all currently running job plan instances and displays the states for each job in the plan.
-- **Future Planned Job Plan Instances Tab**: This tab contains a prepared instance of each enabled job plan, that is the next instance of that job plan that is due to run in the future.
+- **Active Job Plan Instances Tab**: This tab contains a grid with all currently running `job plan instances` and displays the states for each job in the plan.
+- **Future Planned Job Plan Instances Tab**: This tab contains a prepared instance of each enabled `job plan`, that is the next instance of that `job plan` that is due to run in the future.
 
 #### Active Job Plan Instances Tab
-The Active Job Plan Instances Tab contains a grid with all currently running job plan instances and displays the states 
+The `Active Job Plan Instances Tab` contains a grid with all currently running `job plan instances` and displays the states 
 for each job in the plan. The grid can be filtered on the `Job Plan Name` and `Job Plan Instance Id`. The `Job Status Counts` 
-column contains a status count for all the jobs in the job plan instance, and all of the status icons can be clicked in
+column contains a status count for all the jobs in the `job plan instance`, and all the status icons can be clicked in
 order drill into more details of the `Job Plan Instance`. There are also general buttons that clear the grid filters and refresh
-the grid contents, as well as a button that opens the Job Plan Instances Card in full screen mode in a new browser tab.
+the grid contents, as well as a button that opens the `Job Plan Instances Card` in full screen mode in a new browser tab.
 
 ![img.png](../../images/active-job-plans.png)
 
@@ -72,9 +72,9 @@ the grid contents, as well as a button that opens the Job Plan Instances Card in
 
 #### Future Planned Job Plan Instances Tab
 
-The Future Planned Job Plan Instances Tab contains a grid with a prepared instance of each enabled `job plan`, that is the next 
+The `Future Planned Job Plan Instances Tab` contains a grid with a prepared instance of each enabled `job plan`, that is the next 
 instance of that job plan that is due to run in the future. This allows users to modify the state of the `job plan instance`
-prior to the `job plan` becoming active. For example, it may be desirable hold some or all jobs, or skip some of jobs in a `job plan instance`.
+prior to the `job plan` becoming active. For example, it may be desirable hold some or all jobs, or skip some jobs in a `job plan instance`.
 The grid can be filtered on the `Job Plan Name` and `Job Plan Instance Id` and sorted based on 
 the `Context Instance Start Date/Time`. There are also general buttons that clear the grid filters and refresh
 the grid contents, as well as a button that opens the Job Plan Instances Card in full screen mode in a new browser tab.
