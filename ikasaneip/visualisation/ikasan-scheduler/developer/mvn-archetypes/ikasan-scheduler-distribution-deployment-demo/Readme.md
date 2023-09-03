@@ -1,4 +1,4 @@
-![Problem Domain](../../docs/quickstart-images/Ikasan-title-transparent.png)
+![Problem Domain](../../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Enterprise Scheduler Distribution Deployment Demo
 
 This archetype creates a very simple maven project that assists in the deployment of the Ikasan Enterprise Scheduler
