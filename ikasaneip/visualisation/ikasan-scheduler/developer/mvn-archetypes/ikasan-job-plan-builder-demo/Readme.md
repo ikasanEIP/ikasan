@@ -1,4 +1,4 @@
-![Problem Domain](../../docs/quickstart-images/Ikasan-title-transparent.png)
+![Problem Domain](../../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Enterprise Scheduler Job Plan Builder Demo
 
 This archetype creates a project that provides 2 sample features:

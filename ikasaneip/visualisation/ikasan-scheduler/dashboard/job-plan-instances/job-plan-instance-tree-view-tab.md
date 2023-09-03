@@ -14,19 +14,32 @@ Tree View component.
 
 ![img.png](../../../images/job-plan-instance-tree-view.png)
 
+*Ikasan Enterprise Scheduler Dashboard job plan instance tree view*
+
+Any nodes in the tree can be expanded and the status of each of the jobs can be seen. The status at any node in the tree
+wraps up to its parent in order for jobs or various statuses to be easily navigated to.
+
 ![img.png](../../../images/job-plan-instance-tree-view-error.png)
+
+*Ikasan Enterprise Scheduler Dashboard job plan instance tree view with nodes in error*
 
 Clicking on the ![img.png](../../../images/output-logs-icon.png) icon next to a Command Execution Job instance will open the process log dialog enabling users to be able to 
 view any logging that is associated with the underlying job that is being executed.
 ![img.png](../../../images/process-output-logs.png)
 
+*Ikasan Enterprise Scheduler Dashboard job plan instance process output logs*
+
 Clicking on the ![img.png](../../../images/error-log-icon.png) icon next to a Command Execution Job instance will open the process error log dialog enabling users to be able to
 view any error logging that is associated with the underlying job that is being executed.
 ![img.png](../../../images/process-error-logs.png)
 
+*Ikasan Enterprise Scheduler Dashboard job plan instance tree view process error logs*
+
 Clicking on the ![img.png](../../../images/process-event-icon.png) icon next to a Command Execution Job instance will open the process event dialog enabling users to be able to
 view the process event that was received from the agent. The process event contains information about the process that was executed by the agent.
 ![img.png](../../../images/scheduled-process-event-dialog.png)
+
+*Ikasan Enterprise Scheduler Dashboard job plan instance tree view process event*
 
 Clicking on the ![img.png](../../../images/process-execution-details.png) icon next to a Command Execution Job instance will open the process execution dialog enabling users to be able to
 view the process execution environment. The process execution environment contains information about thow the process was seeded to run by the agent.
@@ -37,3 +50,5 @@ It contains the following information:
 - **Process Command**: The actual command that is being executed.
 
 ![img.png](../../../images/process-execution-details-dialog.png)
+
+*Ikasan Enterprise Scheduler Dashboard job plan instance tree view process execution details*
