@@ -118,7 +118,7 @@ ikasan-simple.[sh|bat]
  _| |_  | |\ \  |  ___  |  __\ \ |  ___  | | |\ ' |
 |_____| |_| \_\ |_|   |_| /____/ |_|   |_| |_| \__|
 ===================================================
-IkasanEIP  (v3.3.0-SNAPSHOT)
+IkasanEIP  (v3.3.0)
 Ikasan Shell:> env
 ```
 This will provide all environment variables and settings for your Ikasan processes.
@@ -137,7 +137,7 @@ Environment Properties
 
 Processed Properties
         h2.java.command Command List [java -Xms128m -Xmx256m -Dmodule.name=scheduler-agent -classpath ./lib/h2-1.4.200.jar: org.h2.tools.Server -ifNotExists -tcp -tcpAllowOthers -tcpPort 8082]
-        module.java.command Command List [java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=./persistence/scheduler-agent-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=scheduler-agent -jar ./lib/scheduler-agent-3.3.0-SNAPSHOT.jar]
+        module.java.command Command List [java -server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=./persistence/scheduler-agent-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=scheduler-agent -jar ./lib/scheduler-agent-3.3.0.jar]
 ```
 
 The two lines under Processed Properties show the full command for both the h2 process and the agent process.
@@ -280,7 +280,7 @@ Install the Ikasan Scheduler Agent database process by populating the Applicatio
 
 * Startup - ```C:\runtime\scheduler-agent-3.3.0```
 
-* Arguments - ```-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=./persistence/scheduler-agent-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=scheduler-agent -jar ./lib/scheduler-agent-3.3.0-SNAPSHOT.jar```
+* Arguments - ```-server -Xms256m -Xmx256m -XX:MaxMetaspaceSize=128m -Dspring.jta.logDir=./persistence/scheduler-agent-ObjectStore -Dorg.apache.activemq.SERIALIZABLE_PACKAGES=* -Dmodule.name=scheduler-agent -jar ./lib/scheduler-agent-3.3.0.jar```
 
 *NOTE: Arguments for the Scheduler Agent can be sourced via the Ikasan Shell ```env``` command as detailed above.*
 

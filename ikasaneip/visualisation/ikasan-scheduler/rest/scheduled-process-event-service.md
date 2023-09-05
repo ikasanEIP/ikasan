@@ -203,8 +203,8 @@ and enqueues it onto the inbound BiqQueue in order for it to be processed by the
     "returnCode" : 0,
     "successful" : false,
     "outcome" : "EXECUTION_INVOKED",
-    "resultOutput" : "/opt/platform/runtime/scheduler-agent-3.3.0-SNAPSHOT/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-out.log",
-    "resultError" : "/opt/platform/runtime/scheduler-agent-3.3.0-SNAPSHOT/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-err.log",
+    "resultOutput" : "/opt/platform/runtime/scheduler-agent-3.3.0/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-out.log",
+    "resultError" : "/opt/platform/runtime/scheduler-agent-3.3.0/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-err.log",
     "pid" : 2936,
     "user" : null,
     "fireTime" : 1689228002160,
@@ -249,7 +249,7 @@ and enqueues it onto the inbound BiqQueue in order for it to be processed by the
         "identifier" : null
     },
     "raisedDueToFailureResubmission" : false,
-    "executionDetails" : "\nExecuting Job -> Context Name[MyFirstJobPlan] Job Name[SampleCommandExecutionJob1]\n\nJob Parameters -> \nName[sample_param] Value[sample default value]\nName[LOG_FILE_PATH] Value[/opt/platform/runtime/scheduler-agent-3.3.0-SNAPSHOT/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-out.log]\nName[ERROR_LOG_FILE_PATH] Value[/opt/platform/runtime/scheduler-agent-3.3.0-SNAPSHOT/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-err.log]\n\nProcess Command -> \n/bin/bash\n-c\necho \"Running Job :- SampleCommandExecutionJob1\"\nls -la\nsleep 10\necho $sample_param\n",
+    "executionDetails" : "\nExecuting Job -> Context Name[MyFirstJobPlan] Job Name[SampleCommandExecutionJob1]\n\nJob Parameters -> \nName[sample_param] Value[sample default value]\nName[LOG_FILE_PATH] Value[/opt/platform/runtime/scheduler-agent-3.3.0/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-out.log]\nName[ERROR_LOG_FILE_PATH] Value[/opt/platform/runtime/scheduler-agent-3.3.0/./process-logs/MyFirstJobPlan-07427ffd-1dc9-412e-9611-3ed3f164cbb3-scheduler-agent-SampleCommandExecutionJob1-1689228002160-err.log]\n\nProcess Command -> \n/bin/bash\n-c\necho \"Running Job :- SampleCommandExecutionJob1\"\nls -la\nsleep 10\necho $sample_param\n",
     "catalystEvent" : {
         "id" : null,
         "agentName" : "scheduler-agent",
