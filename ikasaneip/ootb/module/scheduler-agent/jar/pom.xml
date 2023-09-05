@@ -24,43 +24,36 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-standalone</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>scheduled-process-service</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>dry-run-service</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-big-queue</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>scheduler-agent-ikasan-rest-module</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler-agent-rest-dashboard-client</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
@@ -71,7 +64,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-process-monitor</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
@@ -93,7 +85,6 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test-endpoint</artifactId>
-            <version>${version.ikasan}</version>
             <scope>test</scope>
         </dependency>
 
@@ -101,7 +92,6 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test</artifactId>
             <scope>test</scope>
-            <version>${version.ikasan}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.junit.vintage</groupId>
