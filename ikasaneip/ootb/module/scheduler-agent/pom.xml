@@ -81,7 +81,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.3.0-SNAPSHOT</version.ikasan>
         <version.commons.compress>1.20</version.commons.compress>
         <version.com.h2database>1.4.200</version.com.h2database>
         <maven.compiler.source>11</maven.compiler.source>
@@ -93,7 +92,7 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-eip-standalone-bom</artifactId>
-                <version>${version.ikasan}</version>
+                <version>3.3.0-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

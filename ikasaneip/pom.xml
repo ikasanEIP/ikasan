@@ -356,7 +356,7 @@
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
-        <version.big.queue>1.0.0-SNAPSHOT</version.big.queue>
+        <version.big.queue>1.0.0</version.big.queue>
         <version.expiring.map>0.5.10</version.expiring.map>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -1372,6 +1372,24 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-component-factory-spring-jms</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>dry-run-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-scheduler-agent-rest-dashboard-client</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-process-monitor</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
