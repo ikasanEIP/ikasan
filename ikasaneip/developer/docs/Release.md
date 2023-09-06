@@ -3,23 +3,23 @@
 # Release Instructions
 The following are the standard instructions for an Ikasan binary release.
  
-- Create new branch 'release/3.3.0' from the branch to be released. 
+- Create new branch 'release/3.4.0' from the branch to be released. 
   ```
-  git checkout -b release/3.3.0
+  git checkout -b release/3.4.0
   ```
-- Check you are on the correct release/3.3.0 branch
+- Check you are on the correct release/3.4.0 branch
 
   ```
   git branch -a -vvv
-  * release/3.3.0  
+  * release/3.4.0  
   ```
   
-- Update all references to 3.3.0-SNAPSHOT to version you are releasing ie. 3.3.0
+- Update all references to 3.4.0-SNAPSHOT to version you are releasing ie. 3.4.0
 
    ```
-   mvn versions:set -DnewVersion=3.3.0 -DprocessAllModules -DgenerateBackupPoms=false
+   mvn versions:set -DnewVersion=3.4.0 -DprocessAllModules -DgenerateBackupPoms=false
    ```
-- Update reference in md files by searching for 3.3.0-SNAPSHOT using an IDE's find/replaceAll.
+- Update reference in md files by searching for 3.4.0-SNAPSHOT using an IDE's find/replaceAll.
 
   Check to confirm the expected changes in all files
     ```
@@ -29,14 +29,14 @@ The following are the standard instructions for an Ikasan binary release.
 
 - Commit all changes 
   ```
-    git commit -a -m 'Update references to 3.3.0'
+    git commit -a -m 'Update references to 3.4.0'
    ``` 
 
 - Tag the changes and push to the remote repository. 
   ```
-    git tag -a ikasaneip-3.3.0 -m "tag 3.3.0"
+    git tag -a ikasaneip-3.4.0 -m "tag 3.4.0"
     git tag --list
-    git push origin ikasaneip-3.3.0
+    git push origin ikasaneip-3.4.0
    ``` 
    This new tag will be picked up by Travis and built and deployed to OSS.
 
@@ -51,9 +51,9 @@ The following are the standard instructions for an Ikasan binary release.
 - Update to the next SNAPSHOT version
    Update references in pom.xmls
     ```
-    mvn versions:set -DnewVersion=3.4.0-SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false
+    mvn versions:set -DnewVersion=3.5.0-SNAPSHOT -DprocessAllModules -DgenerateBackupPoms=false
     ```
-- Update reference in md files by searching for 3.3.0 using an IDE's find/replaceAll.
+- Update reference in md files by searching for 3.4.0 using an IDE's find/replaceAll.
 
 - Check to confirm the expected changes in all files
     ```
@@ -62,8 +62,8 @@ The following are the standard instructions for an Ikasan binary release.
 
 - Commit all changes
   ```
-  git commit -a -m 'Update references to 3.4.0-SNAPSHOT'
+  git commit -a -m 'Update references to 3.5.0-SNAPSHOT'
   push
   ```
 
-- In GitHub, rename the release/3.3.0 branch to 3.4.x and change to be the default branch
+- In GitHub, rename the release/3.4.0 branch to 3.5.x and change to be the default branch
