@@ -154,9 +154,6 @@ public class JobProcessingFlowComponentFactory {
     @Resource
     BuilderFactory builderFactory;
 
-    @Resource
-    ErrorReportingService errorReportingService;
-
     String defaultPidDirectory = "." + FileSystems.getDefault().getSeparator() + "pid";
 
     /**
@@ -234,7 +231,7 @@ public class JobProcessingFlowComponentFactory {
      */
     public Broker getJobMonitoringBroker(String flowName)
     {
-        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker(this.errorReportingService, flowName);
+        JobMonitoringBroker jobMonitoringBroker = new JobMonitoringBroker(flowName);
 
         JobMonitoringBrokerConfiguration configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(timeout);

@@ -62,8 +62,9 @@ public class JobMonitoringBrokerTest {
     public void setUp() {
         configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(DEFAULT_TIMEOUT);
-        broker = new JobMonitoringBroker(this.errorReportingService, "flowName");
+        broker = new JobMonitoringBroker("flowName");
         broker.setConfiguration(configuration);
+        broker.setErrorReportingService(this.errorReportingService);
     }
 
     @Test
@@ -89,7 +90,7 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        verify(this.errorReportingService, times(1)).notify(anyString(), any(), any(Throwable.class));
+        verify(this.errorReportingService, times(1)).notify(anyString(), any(), any(Throwable.class), anyString());
 
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
         Assert.assertFalse(event.isJobStarting());
