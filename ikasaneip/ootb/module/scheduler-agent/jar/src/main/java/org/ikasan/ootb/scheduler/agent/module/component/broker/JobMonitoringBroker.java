@@ -47,6 +47,7 @@ import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ import java.util.concurrent.TimeoutException;
  * @author Ikasan Development Team
  */
 public class JobMonitoringBroker implements Broker<EnrichedContextualisedScheduledProcessEvent, EnrichedContextualisedScheduledProcessEvent>,
-                                            ConfiguredResource<JobMonitoringBrokerConfiguration>
+                                            ConfiguredResource<JobMonitoringBrokerConfiguration>, IsErrorReportingServiceAware
 {
     /** logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(JobMonitoringBroker.class);
@@ -76,11 +77,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     private ErrorReportingService errorReportingService;
     private String flowName;
 
-    public JobMonitoringBroker(ErrorReportingService errorReportingService, String flowName) {
-        this.errorReportingService = errorReportingService;
-        if(this.errorReportingService == null) {
-            throw new IllegalArgumentException("errorReportingService cannot be null!");
-        }
+    public JobMonitoringBroker(String flowName) {
         this.flowName = flowName;
         if(this.flowName == null) {
             throw new IllegalArgumentException("flowName cannot be null!");
@@ -204,7 +201,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                     " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe.getMessage());
 
                 // write this error to the error reporting service for visibility
-                this.errorReportingService.notify(this.flowName, scheduledProcessEvent, ioe);
+                this.errorReportingService.notify(this.flowName, scheduledProcessEvent, ioe, "WARNING");
             }
         }
         catch(InterruptedException e) {
@@ -307,5 +304,10 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     @Override
     public void setConfiguration(JobMonitoringBrokerConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    @Override
+    public void setErrorReportingService(ErrorReportingService errorReportingService) {
+        this.errorReportingService = errorReportingService;
     }
 }
