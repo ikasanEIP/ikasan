@@ -105,6 +105,10 @@ public class AuthenticationServiceImpl implements AuthenticationService
 					AuthenticationProvider authProvider = authenticationProviderFactory.getAuthenticationProvider(authMethod);
 					
 					authentication = authProvider.authenticate(auth);
+
+                    if(authentication != null && authentication.isAuthenticated()) {
+                        break;
+                    }
 				}
 				catch (Exception e)
 				{
