@@ -378,6 +378,120 @@ public class AuthenticationServiceTest
         Assert.assertTrue(containsModuleAuthorities.get());
         Assert.assertTrue(containsJobPlanAuthorities.get());
 	}
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException
+     */
+    @Test
+    @DirtiesContext
+    public void testLdapLoginMultipleAuthMethods() throws AuthenticationServiceException
+    {
+        AuthenticationMethod authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setEnabled(true);
+        authMethod.setOrder(1L);
+
+        this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setEnabled(true);
+        authMethod.setOrder(2L);
+
+        this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setLdapServerUrl(ldapServerUrl);
+        authMethod.setOrder(3L);
+        authMethod.setEnabled(true);
+        authMethod.setLdapBindUserDn("cn=Directory Manager");
+        authMethod.setLdapBindUserPassword("password");
+        authMethod.setLdapUserSearchBaseDn("ou=people,ou=IL-Sunset,dc=slidev,dc=org");
+        authMethod.setLdapUserSearchFilter("(uid={0})");
+
+        this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        Authentication authentication = this.authenticationService.login("llogan", "password");
+
+        Assert.assertNotNull(authentication);
+
+        Assert.assertEquals(120, authentication.getAuthorities().size());
+        AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
+        AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
+        authentication.getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                containsModuleAuthorities.set(true);
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                containsJobPlanAuthorities.set(true);
+            }
+        });
+
+        Assert.assertTrue(containsModuleAuthorities.get());
+        Assert.assertTrue(containsJobPlanAuthorities.get());
+    }
+
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException
+     */
+    @Test
+    @DirtiesContext
+    public void testLdapLoginMultipleAuthMethodsReverseOrderOfAuthMethods() throws AuthenticationServiceException
+    {
+        AuthenticationMethod authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setEnabled(true);
+        authMethod.setOrder(3L);
+
+        this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setEnabled(true);
+        authMethod.setOrder(2L);
+
+        this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setLdapServerUrl(ldapServerUrl);
+        authMethod.setOrder(1L);
+        authMethod.setEnabled(true);
+        authMethod.setLdapBindUserDn("cn=Directory Manager");
+        authMethod.setLdapBindUserPassword("password");
+        authMethod.setLdapUserSearchBaseDn("ou=people,ou=IL-Sunset,dc=slidev,dc=org");
+        authMethod.setLdapUserSearchFilter("(uid={0})");
+
+        this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        Authentication authentication = this.authenticationService.login("llogan", "password");
+
+        Assert.assertNotNull(authentication);
+
+        Assert.assertEquals(120, authentication.getAuthorities().size());
+        AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
+        AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
+        authentication.getAuthorities().forEach(grantedAuthority -> {
+            if(grantedAuthority instanceof ModuleGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                containsModuleAuthorities.set(true);
+            }
+            else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
+                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                containsJobPlanAuthorities.set(true);
+            }
+        });
+
+        Assert.assertTrue(containsModuleAuthorities.get());
+        Assert.assertTrue(containsJobPlanAuthorities.get());
+    }
+
 	
 	/**
 	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
