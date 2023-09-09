@@ -42,7 +42,8 @@ instance fulfils the following functions:
 The diagram below provides a logical view of the components within the Ikasan Enterprise Scheduler and how they relate
 to one another.
 
-![architecture](../images/architecture.png)
+![architecture](../images/ikasan-enterprise-scheduler-architecture-white.png)
+
 *Ikasan Enterprise Scheduler Architecture Diagram*
 
 ## Understanding Ikasan Enterprise Scheduler Inter Process Communications and How Reliability is Achieved.
