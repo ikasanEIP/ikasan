@@ -61,10 +61,7 @@ registered with the embedded scheduler that will tear down the newly created ins
     "contextTtlMilliseconds" : 86400000,
     "timezone": "Europe/London",
     "ableToRunConcurrently": true,
-.
-.
-.
-.
+...
 ```
 The Ikasan Enterprise Scheduler supports concurrent execution of a `job plan`, a feature which can be enabled/disabled using the
 `ableToRunConcurrently` flag.
