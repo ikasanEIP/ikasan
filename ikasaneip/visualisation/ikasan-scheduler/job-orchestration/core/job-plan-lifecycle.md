@@ -11,17 +11,11 @@ There are a number of core concepts relating to the Ikasan Scheduler.
 ### Job Plan
 [Job Plan Data Model](../model/job-plan-data-model.md) outlines how complex job orchestrations are organised.
 
-For further details on the job plan data model see the Ikasan implementation - Ikasan context implementation.
-
 ### Job Plan Instance
 [Job Plan Instance Data Model](../model/job-plan-instance-data-model.md) outlines what a job plan looks like when it is instantiated.
 
-For further details on the job plan instance data model see the Ikasan implementation - Ikasan context instance implementation.
-
 ### Scheduler Jobs
 [Scheduler Job Data Model](../model/scheduler-job-data-model.md) outlines the different jobs that are supported by the Ikasan Scheduler.
-
-For further details on the scheduler job data model see the Ikasan implementation - Ikasan scheduler job implementation.
 
 ### Context Machine
 The ContextMachine is at the core of the Ikasan Scheduler. There is an individual context machine created for each job plan instance. 
@@ -33,7 +27,11 @@ As each event is received and a state change occurs against the underlying job p
 is updated and persisted, as well as there being an audit record created for each transition in order to provide complete transparency 
 and auditability of the behaviour of the Ikasan Scheduler. 
 
-![context-machine](../../../images/context-machine.png)
+The [job plan orchestration](./job-plan-orchestration.md) readme provides further details on how the context machine orchestrates job plans.
+
+![context-machine](../../../images/context-machine-white.png)
+
+*Ikasan Enterprise Scheduler context machine event processing*
 
 ## Why is a Job Plan Lifecycle Necessary?
 Ikasan employs a distributed micro service architecture, with which comes many benefits such as a highly decoupled system, robustness, 
@@ -44,8 +42,8 @@ However, a distributed system is also burdened with more complexity due to:
 - nodes in the architecture may need to send state to one another
 - nodes may need to adhere to certain startup and shut down protocols in order make sure that data integrity is maintaned.
 
-More specifically, the Ikasan Scheduler has some challenges relating to job plan instances and the way that details of a job plan instance
-, such as parameters are shared between the dashboard and it's agents. This is even more exaggerated by the fact two of the Ikasan Scheduler 
+More specifically, the Ikasan Scheduler has some challenges relating to job plan instances and the way that details of a job plan instance, 
+such as parameters are shared between the dashboard and it's agents. This is even more exaggerated by the fact two of the Ikasan Scheduler 
 jobs types, Quartz Driven Jobs and File Received Driven Jobs are completely decoupled from the lifecycle of the underlying job plan within 
 which they are being executed. 
 
@@ -59,17 +57,18 @@ The solution is predicated on the following:
 
 ### Dashboard restart occurs prior to job plan start time window or after end time window
 
-![dashboaed-restart-happy-path](../../../images/dashboard-restart-happy-path.png)
+![dashboaed-restart-happy-path](../../../images/dashboard-restart-lifecycle-white.png)
+
+*Ikasan Enterprise Scheduler Dashboard restart with job plan registration*
 
 ### Dashboard restart occurs after context start time window, but prior to job plan end time window
 
-In this case a context instance will already have been created and will exist in solr in either a WAITING or RUNNING state. 
+![dashboaed-restart-happy-path-2](../../../images/dashboard-restart-after-context-start-white.png)
 
-![dashboaed-restart-happy-path-2](../../../images/dashboard-restart-after-context-start.png)
+*Ikasan Enterprise Scheduler Dashboard restart with job plan recovery*
 
 ### Agent restart occurs
 
-In this case an agent needs to acquire the state of any running job plan instances in order for it to be able to fulfil its 
-role as a scheduler agent.
+![agent-restart](../../../images/agent-restart-white.png)
 
-![agent-restart](../../../images/agent-restart.png)
+*Ikasan Enterprise Scheduler Agent restart*
