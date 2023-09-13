@@ -46,7 +46,7 @@ to one another.
 
 *Ikasan Enterprise Scheduler Architecture Diagram*
 
-## Understanding Ikasan Enterprise Scheduler Inter Process Communications and How Reliability is Achieved.
+## Understanding Ikasan Enterprise Scheduler Inter Process Communications and How Reliability is Achieved
 At the external boundaries of all components within the Ikasan Enterprise Scheduler are rest services that facilitate the
 inter process communications.
 - [Ikasan Enterprise Scheduler Dashboard Inbound Service](./rest/scheduled-process-event-service.md)
