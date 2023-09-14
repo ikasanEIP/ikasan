@@ -49,8 +49,8 @@ public class JobStartingBrokerTest {
     private InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto;
 
     private static final String INSTANCE_ID = "AB1";
-    private static final String JOB_NAME = "XYZ";
-    final String IDENTITY = INSTANCE_ID + "-" + JOB_NAME;
+    private static final String JOB_NAME = "XYZ AA";
+    final String IDENTITY = INSTANCE_ID + "-" + "XYZ_AA";
     private String errorLog;
     private String outputLog;
 
@@ -263,7 +263,7 @@ public class JobStartingBrokerTest {
 
     @Test
     public void test_job_start_when_recover_from_agent_crash_and_process_still_running() {
-        final Long pid = 999L;
+        final long pid = 999L;
 
         jobStartingBroker = new JobStartingBroker(schedulerPersistenceServiceMock);
         jobStartingBroker.setConfiguration(getTestConfiguration());
