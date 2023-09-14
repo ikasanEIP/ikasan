@@ -49,8 +49,8 @@ public class JobStartingBrokerTest {
     private InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto;
 
     private static final String INSTANCE_ID = "AB1";
-    private static final String JOB_NAME = "XYZ AA";
-    final String IDENTITY = INSTANCE_ID + "-" + "XYZ_AA";
+    private static final String JOB_NAME = "XYZ AA B";
+    final String IDENTITY = INSTANCE_ID + "-" + "XYZ_AA_B";
     private String errorLog;
     private String outputLog;
 
