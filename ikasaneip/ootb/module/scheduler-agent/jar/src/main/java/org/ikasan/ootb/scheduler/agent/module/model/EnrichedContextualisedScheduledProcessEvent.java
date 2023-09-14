@@ -29,7 +29,8 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
      * The identity is used during persistence of the process details to assist restart after agent restart
      */
     public String getProcessIdentity() {
-        return getContextInstanceId() + "-" + getJobName();
+        String despacedJobName = getJobName() == null ? getJobName() : getJobName().replaceAll(" ", "_");
+        return getContextInstanceId() + "-" + despacedJobName;
     }
 
     @JsonIgnore
