@@ -3,9 +3,14 @@
 # Ikasan Enterprise Scheduler - Job Plan Instance Data Model
 
 ## Introduction
+This page describes how the job plan instance data model is defined.
 
-## Context Instance
-A [ContextInstance](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/instance/model/ContextInstance.java) is an extension
+## Job Plan Instance
+A job instance is an active job plan. It has a temporal nature to it that is governed by the cron expression that tells it when 
+to start, as well as a time to live value that defines how long the job plan instance will remain active. Users can interact 
+with a job plan instance via the Ikasan Enterprise Scheduler Dashboard and can perorm actions such as skipping or holding 
+jobs as well as monitor the status of the job plan instance as jobs are executed within the job plan instance.
+A job plan instance is modelled as a[ContextInstance](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/instance/model/ContextInstance.java) which is an extension
 of a [ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java) with the following
 additional fields.
 
