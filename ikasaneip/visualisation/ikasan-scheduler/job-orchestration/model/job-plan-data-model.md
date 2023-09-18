@@ -3,13 +3,14 @@
 # Ikasan Enterprise Scheduler - Job Plan Data Model
 
 ## Introduction
-This page describes how a job plan template data model is defined. This represents the scaffolding that defines how job plan 
+This page describes how the job plan template data model is defined. This represents the scaffolding that defines how job plan 
 instantiations will be created, as well as underpinning the scheduler designs that are created within the Ikasan Dashboard.
 
 ## Job Plan
 
-A job plan is a JSON document that decribes how a group of jobs and nested job plans relate to one another in order provide the
-orchestration of a complex set of business processes. A job plan is module as [ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java)
+A job plan is a JSON document that decribes how a group of jobs and nested job plans relate to one another in order provide the orchestration of a complex set of business processes. 
+It is modelled as a node and edge graph, with logical structures that define the way the jobs relate to one another. It is the 
+template for the creation of job plan instances. A job plan is modelled as a [ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java)
 object with parent [Context](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/Context.java) whose attributes are as follows.
 
 | Field                         | Type            | Description                                                                                           |
