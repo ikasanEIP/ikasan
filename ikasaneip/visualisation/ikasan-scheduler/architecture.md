@@ -2,8 +2,12 @@
 
 # Ikasan Enterprise Scheduler - Architecture
 ## Introduction
-Ikasan Enterprise Scheduler is a distributed software system. The Ikasan Enterprise Scheduler
-Dashboard provides management and orchestration features, and Ikasan Enterprise Scheduler
+The Ikasan Enterprise Scheduler is a distributed software system. It comprises two distinct software elments:
+
+- The Ikasan Enterprise Scheduler Dashboard
+- The Ikasan Enterprise Scheduler Agent
+  
+The Ikasan Enterprise Scheduler Dashboard provides management and orchestration features, and Ikasan Enterprise Scheduler
 Agents executes jobs and reports their states back to the dashboard. It is capable of running in
 both on-prem and cloud environments, or hybrid on-prem/cloud environments.
 
@@ -18,7 +22,7 @@ In a distributed software system, each node or server operates independently and
 - **Flexibility**: Different components of the system can be developed and updated independently, making it easier to adapt and evolve the system over time.
 
 ## Understanding the Ikasan Enterprise Scheduler Architecture
-The Ikasan Enterprise Scheduler Architecture comprises two distinct software elements.
+As previously mentioned, the Ikasan Enterprise Scheduler Architecture comprises two distinct software elements.
 
 ### Ikasan Enterprise Scheduler Dashboard
 The [Ikasan Enterprise Scheduler Dashboard](./dashboard/readme.md) is at the heart of the Ikasan Enterprise
