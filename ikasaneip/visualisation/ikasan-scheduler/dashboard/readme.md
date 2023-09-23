@@ -10,7 +10,7 @@ provides management and monitoring capabilities for all scheduler related featur
 - LDAP integration
 - [Security management](../../dashboard/security.md)
 - Core Ikasan service ([hospital](../../../hospital/Readme.md), [replay](../../../replay/Readme.md), [wiretap](../../../wiretap/Readme.md), [configuration](../../../configuration-service/Readme.md), [mapping](../../../mapping/Readme.md))
-- [Various rest services related to scheduler features](../rest/scheduler-dashboard-rest-services.md)
+- [Various rest services related to scheduler features](../rest/scheduler-dashboard-rest-services.md) including features to allow for job plans to be provisioned as well as other services that support the interprocess communications between the scheduler dashboard and agents
 - [Context machine cache](../job-orchestration/core/context-machine-cache.md) managing access to all running job plan instances
 
 
