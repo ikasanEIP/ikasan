@@ -6,7 +6,7 @@ The Ikasan Enterprise Scheduler Dashboard is a [Spring Boot](https://spring.io/p
 provides management and monitoring capabilities for all scheduler related features. These features include:
 - [Job plan template management](./job-plans/job-plan-templates.md)
 - [Job plan instance monitoring and management](./job-plans/job-plan-templates.md)
-- Scheduler agent monitoring and management
+- [Scheduler agent](../agent/readme.md) monitoring and management
 - LDAP integration
 - [Security management](../../dashboard/security.md)
 - Core Ikasan service ([hospital](../../../hospital/Readme.md), [replay](../../../replay/Readme.md), [wiretap](../../../wiretap/Readme.md), [configuration](../../../configuration-service/Readme.md), [mapping](../../../mapping/Readme.md))
