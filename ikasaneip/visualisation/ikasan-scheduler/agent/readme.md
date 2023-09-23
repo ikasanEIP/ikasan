@@ -11,7 +11,7 @@ It supports 3 jobs types:
 - File watcher jobs which monitor a directory and raise an event to the scheduler dashboard when a file arrives
 - Command execution jobs that executes native commands on the server that the agent is installed, monitors the process created and provides results of the command execution to the scheduler dashboard when the command is complete
 
-The `Ikasan Enterprise Scheduler Agent` maintains an internal `context instance cache` that contains a reference to all the running `context instances` that the agent is executing jobs on behalf of. 
+The `Ikasan Enterprise Scheduler Agent` maintains an internal `job plan instance cache` that contains a reference to all the running `job plan instances` that the agent is executing jobs on behalf of. 
 It also has rest services exposed that provide management interfaces as well as services that support interprocess communications between the scheduler dashboard and the agent. 
 
 ![img.png](../../images/agent-with-components-white.png)
