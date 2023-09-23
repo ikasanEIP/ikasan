@@ -11,6 +11,5 @@ The following [instructional video](https://youtu.be/WO386Mj-IOg) provides furth
 - [Ikasan Enterprise Scheduler Dashboard Job Plan Export Services](./job-plan-export-service.md)
 - [Ikasan Enterprise Scheduler Dashboard Scheduled Process Event Services](./scheduled-process-event-service.md)
 - [Ikasan Enterprise Scheduler Dashboard Job Plan Provision Services](./job-plan-provision-service.md)
-- 
 
 
