@@ -6,6 +6,24 @@
 The `Ikasan Enterprise Scheduler Agent` is a standard `Ikasan Enterprise Service Bus` module that has been extended to
 provide `No Code` features to the `Ikasan` platform.
 
+It supports 3 jobs types:
+- Schedule based jobs which fire at a point in time and raise an event to the scheduler dashboard at that point in time
+- File watcher jobs which monitor a directory and raise an event to the scheduler dashboard when a file arrives
+- Command execution jobs that executes native commands on the server that the agent is installed, monitors the process created and provides results of the command execution to the scheduler dashboard when the command is complete
+
+The `Ikasan Enterprise Scheduler Agent` maintains an internal `context instance cache` that contains a reference to all the running `context instances` that the agent is executing jobs on behalf of. 
+It also has rest services exposed that provide management interfaces as well as services that support interprocess communications between the scheduler dashboard and the agent. 
+
+![img.png](../../images/agent-with-components-white.png)
+
+*Ikasan Enterprise Scheduler Agent and associated components*
+
+The Ikasan Enterprise Scheduler Agent also delegates to the following software elements to provide the following features:
+
+- [H2](https://www.h2database.com/html/main.html) providing relational persistence of agent security features
+- [BigQueue](https://github.com/ikasanEIP/bigqueue) which provides disk backed messaging and persistence, providing reliable interprocess between the scheduler dashboard and the scheduler agents
+
+
 The Ikasan Enterprise Scheduler code base can be found [here](../../../ootb/module/scheduler-agent/docs/readme.md).
 
 ### What is No Code?

@@ -16,6 +16,8 @@ provides management and monitoring capabilities for all scheduler related featur
 
 ![img.png](../../images/ikasan-scheduler-dashboard-with-context-machine-cache-white.png)
 
+*Ikasan Enterprise Scheduler Dashboard and associated components*
+
 The Ikasan Enterprise Scheduler Dashboard also delegates to the following software elements to provide the following features:
 
 - [Solr](https://solr.apache.org/) providing scheduler artefact persistence, indexing and search features
