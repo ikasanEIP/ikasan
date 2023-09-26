@@ -813,6 +813,12 @@
         <dependencies>
 
             <dependency>
+                <groupId>org.eclipse.jgit</groupId>
+                <artifactId>org.eclipse.jgit</artifactId>
+                <version>6.7.0.202309050840-r</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-management</artifactId>
                 <version>${project.version}</version>

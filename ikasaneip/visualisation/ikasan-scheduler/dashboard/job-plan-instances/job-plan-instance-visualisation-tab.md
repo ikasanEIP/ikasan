@@ -2,4 +2,10 @@
 
 # Ikasan Enterprise Scheduler - Job Plan Instance Visualisation Tab
 
+The Job Plan Instance Visualisation Tab tab provides a visual representation of a job plan. The job plan is contains children
+job plans, and the children job plans contain the jobs. There are  various actions that can be performed
+against jobs within the visualisation screens. Details of these actions can be found [here](./job-plan-instance-actions.md).
+
+A short video demonstrating the use of the features on this tab can be found [here](https://youtu.be/a90d9M4cYNk).
+
 ![img.png](../../../images/job-plan-instance-visualisation-tab.png)
