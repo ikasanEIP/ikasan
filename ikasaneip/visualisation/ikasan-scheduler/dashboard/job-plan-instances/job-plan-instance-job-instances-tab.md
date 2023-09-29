@@ -9,3 +9,5 @@ A short video demonstrating the use of the features on this tab can be found [he
 
 ![img.png](../../../images/job-plan-instance-job-instances-tab.png)
 
+*Ikasan Enterprise Scheduler Dashboard job instances visualisation tab*
+
