@@ -4,8 +4,11 @@ import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.event.MessageListener;
 import org.ikasan.spec.serialiser.Serialiser;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class InboundQueueMessageRunner implements Runnable {
+    private static Logger logger = LoggerFactory.getLogger(InboundQueueMessageRunner.class);
     private IBigQueue iBigQueue;
     private MessageListener messageListener;
     private Serialiser serialiser;
@@ -36,8 +39,9 @@ public class InboundQueueMessageRunner implements Runnable {
             if(event == null) {
                 return;
             }
-
-            this.messageListener.onMessage(this.serialiser.deserialise(event));
+            Object payload = this.serialiser.deserialise(event);
+            logger.debug("Attempting to process inbound message message " + payload);
+            this.messageListener.onMessage(payload);
         }
         catch (Exception e) {
             if(this.endpointListener != null) {

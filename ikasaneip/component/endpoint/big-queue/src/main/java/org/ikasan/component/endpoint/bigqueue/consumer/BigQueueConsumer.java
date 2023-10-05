@@ -25,6 +25,7 @@ import javax.transaction.xa.Xid;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of a BigQueue consumer.
@@ -158,9 +159,11 @@ public class BigQueueConsumer<T>
 
     @Override
     public void start() {
-            this.bigQueueListenerExecutor = Executors.newSingleThreadExecutor();
-            this.addInboundListener();
-            this.isRunning = true;
+        logger.info("Starting BigQueueConsumer - " + this.configurationId);
+        this.bigQueueListenerExecutor = Executors.newSingleThreadExecutor();
+        this.addInboundListener();
+        this.isRunning = true;
+        logger.info("Started BigQueueConsumer - " + this.configurationId);
     }
 
     private void addInboundListener() {
@@ -178,16 +181,25 @@ public class BigQueueConsumer<T>
 
     @Override
     public void stop() {
+        logger.info("Stopping BigQueueConsumer - " + this.configurationId);
         this.isRunning = false;
         if(this.listenableFuture != null) {
-            this.listenableFuture.cancel(false);
+            this.listenableFuture.cancel(true);
+            logger.debug("future is cancelled" + this.listenableFuture.isCancelled());
+            logger.debug("future is done" + this.listenableFuture.isDone());
             this.listenableFuture = null;
         }
         if(this.bigQueueListenerExecutor != null) {
-            this.bigQueueListenerExecutor.shutdownNow();
+            try {
+                this.shutdownExecutor(this.bigQueueListenerExecutor);
+            }
+            catch (Exception e) {
+                logger.warn("Unable to shut down big queue executor!", e);
+            }
             this.bigQueueListenerExecutor = null;
         }
         this.isRunning = false;
+        logger.info("Stopped BigQueueConsumer - " + this.configurationId);
     }
 
     @Override
@@ -333,5 +345,21 @@ public class BigQueueConsumer<T>
     @Override
     public void start(Xid xid, int flags) throws XAException {
         logger.debug("start " + xid);
+    }
+
+    /**
+     * Helper method to shut down the executor.
+     * @param executor
+     */
+    private void shutdownExecutor(ExecutorService executor) {
+        executor.shutdown();
+        try {
+            if (!executor.awaitTermination(2000, TimeUnit.MILLISECONDS)) {
+                executor.shutdownNow();
+            }
+        }
+        catch (InterruptedException e) {
+            executor.shutdownNow();
+        }
     }
 }
