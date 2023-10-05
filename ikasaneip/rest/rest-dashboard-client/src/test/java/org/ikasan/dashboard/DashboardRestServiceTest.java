@@ -17,6 +17,7 @@ import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,8 @@ public class DashboardRestServiceTest
             oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false");
             will(returnValue("false"));
         }});
-        uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/wiretaps");
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+        uut = new DashboardRestServiceImpl(restTemplate, environment,"/rest/harvest/wiretaps");
 
     }
 
@@ -102,7 +104,9 @@ public class DashboardRestServiceTest
             oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false");
             will(returnValue("false"));
         }});
-        uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/wiretaps");
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+        uut = new DashboardRestServiceImpl(restTemplate, environment,"/rest/harvest/wiretaps");
+
         stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -150,7 +154,8 @@ public class DashboardRestServiceTest
             oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false");
             will(returnValue("false"));
         }});
-        uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/wiretaps");
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+        uut = new DashboardRestServiceImpl(restTemplate, environment,"/rest/harvest/wiretaps");
         stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -209,7 +214,8 @@ public class DashboardRestServiceTest
 
         httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
 
-        uut = new DashboardRestServiceImpl(new StandardEnvironment(), httpComponentsClientHttpRequestFactory, "/rest/harvest/wiretaps");
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+        uut = new DashboardRestServiceImpl(restTemplate, new StandardEnvironment(),"/rest/harvest/wiretaps");
 
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
             1111l, "{event:content,as:json}", 222222l);

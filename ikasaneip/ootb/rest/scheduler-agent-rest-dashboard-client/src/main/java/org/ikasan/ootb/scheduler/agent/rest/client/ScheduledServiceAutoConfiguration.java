@@ -41,10 +41,12 @@
 package org.ikasan.ootb.scheduler.agent.rest.client;
 
 import org.ikasan.dashboard.DashboardRestServiceImpl;
+import org.ikasan.dashboard.LoadBalancedDashboardRestServiceImpl;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Scheduler service related configuration required by the scheduler ootb module.
@@ -59,14 +61,14 @@ public class ScheduledServiceAutoConfiguration
     public DashboardRestService scheduleProcessEventsDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SCHEDULED_PROCESS_EVENTS_PATH);
+        return new DashboardRestServiceImpl(new RestTemplate(customHttpRequestFactory), environment, SCHEDULED_PROCESS_EVENTS_PATH);
     }
 
     @Bean
     public DashboardRestService scheduleProcessEventDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SCHEDULED_PROCESS_EVENT_PATH);
+        return new DashboardRestServiceImpl(new RestTemplate(customHttpRequestFactory), environment, SCHEDULED_PROCESS_EVENT_PATH);
     }
 
 }

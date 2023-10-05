@@ -1,16 +1,17 @@
 package org.ikasan.dashboard;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
-import org.ikasan.dashboard.model.JwtRequest;
-import org.ikasan.dashboard.model.JwtResponse;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.core.env.Environment;
-import org.springframework.http.*;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
@@ -22,38 +23,40 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
 {
     Logger logger = LoggerFactory.getLogger(DashboardRestServiceImpl.class);
 
-    private Converter converter;
+    protected Converter converter;
+    protected String moduleName;
+    protected boolean bubbleExceptionsUpToCaller;
 
-    private String url;
-
-    private String moduleName;
-
-    private boolean isEnabled;
-
-    private boolean bubbleExceptionsUpToCaller;
-
-    public DashboardRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
+    public DashboardRestServiceImpl(RestTemplate restTemplate, Environment environment,
                                     String path, Converter converter)
     {
-        this(environment, httpComponentsClientHttpRequestFactory, path);
+        this(restTemplate, environment, path);
         this.converter = converter;
     }
 
-    public DashboardRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
-                                    String path)
+    public DashboardRestServiceImpl(RestTemplate restTemplate, Environment environment, String path)
     {
-        this.restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
+        super(restTemplate, environment, path);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         this.restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-        this.isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
-        if ( isEnabled )
+    }
+
+    @Override
+    protected void initialise(Environment environment, String path) {
+        this.isEnabled = Boolean.valueOf(environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
+        if (this.isEnabled)
         {
-            this.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;
-            super.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
+            if(path != null) {
+                this.url = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY) + path;
+            }
+            else {
+                this.url = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY);
+            }
+            this.authenticateUrl = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
+            this.username = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_USERNAME_PROPERTY);
+            this.password = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_PASSWORD_PROPERTY);
             this.moduleName = environment.getProperty(MODULE_NAME_PROPERTY);
-            this.username = environment.getProperty(DASHBOARD_USERNAME_PROPERTY);
-            this.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
             this.bubbleExceptionsUpToCaller = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_EXCEPTIONS_PROPERTY, "false"));
         }
     }

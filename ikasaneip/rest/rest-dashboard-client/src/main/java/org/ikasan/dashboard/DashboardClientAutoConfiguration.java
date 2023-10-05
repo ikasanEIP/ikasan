@@ -6,13 +6,14 @@ import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
-import org.ikasan.spec.metrics.MetricsService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
@@ -40,8 +41,6 @@ public class DashboardClientAutoConfiguration
 
     public static final String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
 
-    public static final String METRICS_CONSUME_PATH = "/rest/metrics";
-
     @Bean
     @ConfigurationProperties(prefix = "module.rest.connection")
     public HttpComponentsClientHttpRequestFactory customHttpRequestFactory()
@@ -57,55 +56,96 @@ public class DashboardClientAutoConfiguration
         return httpComponentsClientHttpRequestFactory;
     }
 
+    @LoadBalanced
     @Bean
-    public DashboardRestService replyDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
-    {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, REPLAY_PATH);
+    public RestTemplate replyDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
     }
 
     @Bean
-    public DashboardRestService wiretapDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    public DashboardRestService replyDashboardRestService(RestTemplate replyDashboardRestServiceRestTemplate, Environment environment)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, WIRETAP_PATH);
+        return new LoadBalancedDashboardRestServiceImpl(replyDashboardRestServiceRestTemplate, environment, REPLAY_PATH);
+    }
 
+    @LoadBalanced
+    @Bean
+    public RestTemplate wiretapDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
     }
 
     @Bean
-    public DashboardRestService errorReportingDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    public DashboardRestService wiretapDashboardRestService(RestTemplate wiretapDashboardRestServiceRestTemplate, Environment environment)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, ERROR_PATH);
+        return new LoadBalancedDashboardRestServiceImpl(wiretapDashboardRestServiceRestTemplate, environment
+            , WIRETAP_PATH);
+
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate errorReportingDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
     }
 
     @Bean
-    public DashboardRestService exclusionDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    public DashboardRestService errorReportingDashboardRestService(RestTemplate errorReportingDashboardRestServiceRestTemplate, Environment environment)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, EXCLUSION_PATH);
+        return new LoadBalancedDashboardRestServiceImpl(errorReportingDashboardRestServiceRestTemplate,environment
+            , ERROR_PATH);
     }
 
-
+    @LoadBalanced
     @Bean
-    public DashboardRestService metricsDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
-    {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, METRICS_PATH);
-    }
-
-    @Bean
-    public DashboardRestService systemEventsDashboardRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
-    {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SYSTEM_EVENTS_PATH);
+    public RestTemplate exclusionDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
     }
 
     @Bean
-    public DashboardRestService moduleMetadataDashboardRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory,
-        ModuleMetadataConverter moduleMetadataConverter)
+    public DashboardRestService exclusionDashboardRestService(RestTemplate exclusionDashboardRestServiceRestTemplate, Environment environment)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, METADATA_PATH, moduleMetadataConverter);
+        return new LoadBalancedDashboardRestServiceImpl(exclusionDashboardRestServiceRestTemplate, environment, EXCLUSION_PATH);
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate metricsDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
+    }
+
+    @Bean
+    public DashboardRestService metricsDashboardRestService(RestTemplate metricsDashboardRestServiceRestTemplate, Environment environment
+        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    {
+        return new LoadBalancedDashboardRestServiceImpl(metricsDashboardRestServiceRestTemplate, environment
+            , METRICS_PATH);
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate systemEventsDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
+    }
+
+    @Bean
+    public DashboardRestService systemEventsDashboardRestService(RestTemplate systemEventsDashboardRestServiceRestTemplate, Environment environment)
+    {
+        return new LoadBalancedDashboardRestServiceImpl(systemEventsDashboardRestServiceRestTemplate, environment
+            , SYSTEM_EVENTS_PATH);
+    }
+
+    @LoadBalanced
+    @Bean
+    public RestTemplate moduleMetadataDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
+    }
+
+    @Bean
+    public DashboardRestService moduleMetadataDashboardRestService(RestTemplate moduleMetadataDashboardRestServiceRestTemplate
+        , Environment environment, ModuleMetadataConverter moduleMetadataConverter)
+    {
+        return new LoadBalancedDashboardRestServiceImpl(moduleMetadataDashboardRestServiceRestTemplate, environment
+            , METADATA_PATH, moduleMetadataConverter);
 
     }
 
@@ -115,19 +155,31 @@ public class DashboardClientAutoConfiguration
         return new ModuleMetadataConverter(jsonModuleMetaDataProvider,moduleService);
     }
 
+    @LoadBalanced
     @Bean
-    public DashboardRestService configurationMetadataDashboardRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory,
-        ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
-    {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, CONFIGURATION_METADATA_PATH,
-            (Converter<Module, List>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
+    public RestTemplate configurationMetadataDashboardRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
     }
 
     @Bean
-    public DashboardRestService flowCacheStateRestService(Environment environment
-        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    public DashboardRestService configurationMetadataDashboardRestService(RestTemplate configurationMetadataDashboardRestServiceRestTemplate
+        , Environment environment, ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
     {
-        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, FLOW_STATES_CACHE_PATH);
+        return new LoadBalancedDashboardRestServiceImpl(configurationMetadataDashboardRestServiceRestTemplate, environment
+            , CONFIGURATION_METADATA_PATH
+            , (Converter<Module, List>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
+    }
+
+    @Bean
+    public RestTemplate flowCacheStateRestServiceRestTemplate(HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
+        return new RestTemplate(customHttpRequestFactory);
+    }
+
+    @Bean
+    public DashboardRestService flowCacheStateRestService(RestTemplate flowCacheStateRestServiceRestTemplate, Environment environment)
+    {
+        return new DashboardRestServiceImpl(flowCacheStateRestServiceRestTemplate, environment
+            , FLOW_STATES_CACHE_PATH);
 
     }
 }

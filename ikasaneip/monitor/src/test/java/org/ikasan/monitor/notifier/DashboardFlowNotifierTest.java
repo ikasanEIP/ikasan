@@ -42,13 +42,14 @@ package org.ikasan.monitor.notifier;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.ikasan.dashboard.DashboardRestServiceImpl;
+import org.ikasan.dashboard.LoadBalancedDashboardRestServiceImpl;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mock.env.MockEnvironment;
+import org.springframework.web.client.RestTemplate;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.ikasan.spec.dashboard.DashboardRestService.DASHBOARD_BASE_URL_PROPERTY;
@@ -78,7 +79,7 @@ public class DashboardFlowNotifierTest
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port() ;
         environment.setProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "true");
         environment.setProperty(DASHBOARD_BASE_URL_PROPERTY, dashboardBaseUrl);
-        uut = new DashboardFlowNotifier(new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), FLOW_STATES_CACHE_PATH));
+        uut = new DashboardFlowNotifier(new LoadBalancedDashboardRestServiceImpl(new RestTemplate(new HttpComponentsClientHttpRequestFactory()), environment, FLOW_STATES_CACHE_PATH));
     }
 
     @Test

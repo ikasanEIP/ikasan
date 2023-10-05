@@ -44,6 +44,7 @@ import org.ikasan.spec.dashboard.ContextInstanceRestService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * Context instance service related configuration.
@@ -54,6 +55,6 @@ public class ContextInstanceRestServiceConfiguration {
 
     @Bean
     public ContextInstanceRestService contextInstanceRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
-        return new ContextInstanceRestServiceImpl(environment, customHttpRequestFactory, JOB_CONTEXT_PATH);
+        return new ContextInstanceRestServiceImpl(new RestTemplate(customHttpRequestFactory), environment, JOB_CONTEXT_PATH);
     }
 }

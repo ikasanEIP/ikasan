@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.dashboard.dto.FlowInvocationMetricImpl;
 import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.metrics.MetricsService;
+import org.springframework.cloud.loadbalancer.annotation.LoadBalancerClient;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,11 +24,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@LoadBalancerClient(value = "metrics", configuration = CustomLoadBalancerConfiguration.class)
 public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements MetricsService<FlowInvocationMetric> {
 
-    public static final String DASHBOARD_BASE_URL_PROPERTY="ikasan.dashboard.base.url";
-    public static final String DASHBOARD_USERNAME_PROPERTY="ikasan.dashboard.rest.username";
-    public static final String DASHBOARD_PASSWORD_PROPERTY="ikasan.dashboard.rest.password";
     public static final String DASHBOARD_REST_USERAGENT ="ikasan.dashboard.rest.useragent";
     public static final String METRICS_PATH = "/rest/metrics";
     public static final String PAGED_METRICS_PATH = "/rest/metrics/paged";
@@ -46,20 +45,33 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
 
     private ObjectMapper mapper;
 
-    public MetricsRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
+    public MetricsRestServiceImpl(RestTemplate restTemplate, Environment environment)
     {
-        restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
+        super(restTemplate, environment, null);
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
-        super.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY);
-        super.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
-        super.username = environment.getProperty(DASHBOARD_USERNAME_PROPERTY);
-        super.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
         this.userAgent = environment.getProperty(DASHBOARD_REST_USERAGENT);
 
         this.mapper = new ObjectMapper();
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    @Override
+    protected void initialise(Environment environment, String path) {
+        this.isEnabled = Boolean.valueOf(environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
+        if (this.isEnabled)
+        {
+            if(path != null) {
+                this.url = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY) + path;
+            }
+            else {
+                this.url = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY);
+            }
+            this.authenticateUrl = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
+            this.username = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_USERNAME_PROPERTY);
+            this.password = environment.getProperty(LoadBalancedDashboardRestServiceImpl.DASHBOARD_PASSWORD_PROPERTY);
+        }
     }
 
     @Override

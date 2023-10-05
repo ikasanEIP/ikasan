@@ -28,6 +28,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import org.springframework.web.client.RestTemplate;
 
 public class ContextInstanceRestServiceTest {
 
@@ -51,6 +52,8 @@ public class ContextInstanceRestServiceTest {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
 
         mockery.checking(new Expectations() {{
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false");
+            will(returnValue("true"));
             atLeast(2).of(environment).getProperty(DashboardRestService.DASHBOARD_BASE_URL_PROPERTY);
             will(returnValue(dashboardBaseUrl));
             oneOf(environment).getProperty(DashboardRestService.DASHBOARD_USERNAME_PROPERTY);
@@ -61,44 +64,9 @@ public class ContextInstanceRestServiceTest {
             will(returnValue(MODULE_NAME));
         }});
 
-        uut = new ContextInstanceRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/jobContext");
+        uut = new ContextInstanceRestServiceImpl(new RestTemplate(new HttpComponentsClientHttpRequestFactory()), environment, "/rest/jobContext");
     }
 
-    // @Mick, don't think we need these anymore
-//    @Test
-//    public void get_all_contexts() throws IOException {
-//        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
-//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-//            .willReturn(aResponse()
-//                .withBody(loadDataFile("/data/context/job-context-instance-all.json"))
-//                .withStatus(200)
-//            ));
-//
-//        Map<String, ContextInstance> all = uut.getAll();
-//        assertEquals(2, all.size());
-//
-//        ContextInstance contextInstance = all.get("COMPLEX_CONTEXT-1");
-//        List<ContextParameterInstance> params = contextInstance.getContextParameters();
-//        assertEquals(3, params.size());
-//        contextInstance = all.get("COMPLEX_CONTEXT-2");
-//        params = contextInstance.getContextParameters();
-//        assertEquals(3, params.size());
-//    }
-//
-//    @Test(expected = EndpointException.class)
-//    public void get_all_contexts_returns_error() {
-//        stubFor(get(urlEqualTo("/rest/jobContext/getAll"))
-//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-//            .willReturn(aResponse()
-//                .withBody("{500 Error}")
-//                .withStatus(500)
-//            ));
-//
-//        uut.getAll();
-//    }
-//
     @Test
     public void get_by_agent_name_contexts() throws IOException {
         stubFor(get(urlEqualTo("/rest/jobContext/getByAgentName?agentName="+AGENT_NAME))
@@ -132,38 +100,6 @@ public class ContextInstanceRestServiceTest {
 
         uut.getAllInstancesDashboardThinksAgentShouldHandle(AGENT_NAME);
     }
-
-    // @Mick, don't think we need these anymore
-//    @Test
-//    public void get_context() throws IOException {
-//        stubFor(get(urlEqualTo("/rest/jobContext/getByContextName?contextName=COMPLEX_CONTEXT"))
-//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-//            .willReturn(aResponse()
-//                .withBody(loadDataFile("/data/context/job-context-instance.json"))
-//                .withStatus(200)
-//            ));
-//
-//        Map<String, ContextInstance> complex_context = uut.getByContextId("COMPLEX_CONTEXT");
-//        assertEquals(1, complex_context.size());
-//
-//        ContextInstance contextInstance = complex_context.get("COMPLEX_CONTEXT");
-//        List<ContextParameterInstance> params = contextInstance.getContextParameters();
-//        assertEquals(3, params.size());
-//    }
-//
-//    @Test(expected = EndpointException.class)
-//    public void get_context_with_error() {
-//        stubFor(get(urlEqualTo("/rest/jobContext/getByContextName?contextName=COMPLEX_CONTEXT"))
-//            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-//            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-//            .willReturn(aResponse()
-//                .withBody("{403 Error}")
-//                .withStatus(403)
-//            ));
-//
-//        uut.getByContextId("COMPLEX_CONTEXT");
-//    }
 
     protected String loadDataFile(String fileName) throws IOException {
         return IOUtils.toString(loadDataFileStream(fileName), StandardCharsets.UTF_8);

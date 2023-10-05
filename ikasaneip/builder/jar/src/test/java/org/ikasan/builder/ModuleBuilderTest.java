@@ -119,6 +119,7 @@ public class ModuleBuilderTest
                 + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
                 + ",me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration"
                 + ",org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration"
+                + ",org.springframework.cloud.autoconfigure.ConfigurationPropertiesRebinderAutoConfiguration"
 
         };
 

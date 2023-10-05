@@ -17,6 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,15 +49,20 @@ public class MetricsRestServiceTest
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
         mockery.checking(new Expectations()
         {{
-            atLeast(2).of(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_BASE_URL_PROPERTY);
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false");
+            will(returnValue("true"));
+            atLeast(2).of(environment).getProperty(DashboardRestService.DASHBOARD_BASE_URL_PROPERTY);
             will(returnValue(dashboardBaseUrl));
-            oneOf(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_USERNAME_PROPERTY);
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_USERNAME_PROPERTY);
             will(returnValue(null));
-            oneOf(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_PASSWORD_PROPERTY);
+            oneOf(environment).getProperty(DashboardRestService.DASHBOARD_PASSWORD_PROPERTY);
             will(returnValue(null));
             oneOf(environment).getProperty(MetricsRestServiceImpl.DASHBOARD_REST_USERAGENT);
             will(returnValue("user agent"));
         }});
+
+        RestTemplate restTemplate = new RestTemplate(new HttpComponentsClientHttpRequestFactory());
+        uut = new MetricsRestServiceImpl(restTemplate, environment);
     }
 
     @Test
@@ -69,7 +75,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics(0, 100000L).size());
     }
@@ -84,7 +90,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.getMetrics(0, 100000L);
     }
@@ -116,7 +122,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics(0, 100000L).size());
     }
@@ -131,7 +137,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics(0, 100000L, 0, 100).size());
     }
@@ -146,7 +152,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.getMetrics(0, 100000L, 0, 100).size();
     }
@@ -179,7 +185,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics(0, 100000L, 0, 100).size());
     }
@@ -194,7 +200,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.count(0, 100000L));
     }
@@ -209,7 +215,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.count(0, 100000L);
     }
@@ -241,7 +247,7 @@ public class MetricsRestServiceTest
                 .withStatus(200)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.count(0, 100000L));
     }
@@ -256,7 +262,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName",0, 100000L).size());
     }
@@ -271,7 +277,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName",0, 100000L).size());
     }
@@ -303,7 +309,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName",0, 100000L).size());
     }
@@ -318,7 +324,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName",0, 100000L, 0, 100).size());
     }
@@ -333,7 +339,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.getMetrics("moduleName",0, 100000L, 0, 100);
     }
@@ -365,7 +371,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName",0, 100000L, 0, 100).size());
     }
@@ -380,7 +386,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.count("moduleName",0, 100000L));
     }
@@ -395,7 +401,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.count("moduleName",0, 100000L);
     }
@@ -427,7 +433,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.count("moduleName",0, 100000L));
     }
@@ -442,7 +448,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L).size());
     }
@@ -457,7 +463,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L).size());
     }
@@ -489,7 +495,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L).size());
     }
@@ -504,7 +510,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L, 0, 100).size());
     }
@@ -519,7 +525,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.getMetrics("moduleName","flowName",0, 100000L, 0, 100);
     }
@@ -551,7 +557,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.getMetrics("moduleName","flowName",0, 100000L, 0, 100).size());
     }
@@ -566,7 +572,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.count("moduleName","flowName",0, 100000L));
     }
@@ -581,7 +587,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.count("moduleName","flowName",0, 100000L);
     }
@@ -613,7 +619,7 @@ public class MetricsRestServiceTest
                 .withStatus(201)
             ));
 
-        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+//        uut = new MetricsRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         assertEquals(5, uut.count("moduleName","flowName",0, 100000L));
     }
