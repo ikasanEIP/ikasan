@@ -54,6 +54,10 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(mockJobDataMap));
                 exactly(1).of(mockJobDataMap).get(CorrelatingScheduledConsumer.CORRELATION_ID);
                 will(returnValue(null));
+                exactly(2).of(configuration).getSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
         CorrelatedFileList files = messageProviderInvoke();
@@ -74,6 +78,10 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(true));
                 exactly(2).of(configuration).getDirectoryDepth();
                 will(returnValue(1));
+                exactly(2).of(configuration).getSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
 
@@ -99,6 +107,8 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(true));
                 exactly(1).of(configuration).getDirectoryDepth();
                 will(returnValue(1));
+                exactly(1).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
 
@@ -124,10 +134,14 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(false));
                 exactly(1).of(configuration).isIgnoreFileRenameWhilstScanning();
                 will(returnValue(true));
+                exactly(1).of(configuration).getSpelExpression();
+                will(returnValue("spel expression"));
                 exactly(1).of(configuration).isLogMatchedFilenames();
                 will(returnValue(false));
                 exactly(1).of(configuration).getDirectoryDepth();
                 will(returnValue(1));
+                exactly(1).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
 
@@ -148,6 +162,10 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(true));
                 exactly(2).of(configuration).getDirectoryDepth();
                 will(returnValue(2));
+                exactly(2).of(configuration).getSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
 
