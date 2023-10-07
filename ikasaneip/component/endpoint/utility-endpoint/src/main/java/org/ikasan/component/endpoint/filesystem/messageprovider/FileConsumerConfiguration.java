@@ -55,7 +55,10 @@ import java.util.List;
 public class FileConsumerConfiguration extends ScheduledConsumerConfiguration implements IsValidationAware
 {
     /** filenames to be processed */
-    private List<String> filenames = new ArrayList<String>();
+    private List<String> filenames = new ArrayList<>();
+
+    /** path to where files expected */
+    private String filePath;
 
     /** encoding of the files */
     private String encoding;
@@ -92,6 +95,14 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
 
     public void setFilenames(List<String> filenames) {
         this.filenames = filenames;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
     }
 
     public String getEncoding() {
