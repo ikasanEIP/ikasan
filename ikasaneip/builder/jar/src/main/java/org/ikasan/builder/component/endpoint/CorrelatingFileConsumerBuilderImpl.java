@@ -153,6 +153,7 @@ public class CorrelatingFileConsumerBuilderImpl extends AbstractScheduledConsume
     public ScheduledConsumer build()
     {
         ScheduledConsumer scheduledConsumer = super.build();
+        scheduledConsumer.setCriticalOnStartup(true);
 
         CorrelatedFileConsumerConfiguration configuration = (CorrelatedFileConsumerConfiguration)scheduledConsumer
             .getConfiguration();

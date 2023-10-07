@@ -59,7 +59,7 @@ import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
  *
  * @author Ikasan Development Team
  */
-public class FileMessageProvider implements MessageProvider<List<File>>,
+public class FileMessageProvider extends AbstractFileMessageProvider implements MessageProvider<List<File>>,
         ManagedResource, Configured<FileConsumerConfiguration>, EndpointListener<String,IOException>
 {
     /** logger instance */
@@ -193,36 +193,6 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         }
     }
 
-    protected FileMatcher getFileMatcher(String fullyQualifiedFilename, boolean dynamicFileName)
-    {
-        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
-        if( !isWindows && !fullyQualifiedFilename.startsWith("/") && !fullyQualifiedFilename.startsWith("."))
-        {
-            // assume relative reference and prefix accordingly
-            fullyQualifiedFilename = "./" + fullyQualifiedFilename;
-        }
-        int lastIndexOffullPath = fullyQualifiedFilename.lastIndexOf(FQN_PATH_SEPARATOR);
-        String path = fullyQualifiedFilename.substring(0,lastIndexOffullPath);
-        String name = fullyQualifiedFilename.substring(++lastIndexOffullPath);
-
-        if (dynamicFileName)
-        {
-            return new DynamicFileMatcher(
-                this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(),
-                path,
-                name,
-                fileConsumerConfiguration.getDirectoryDepth(),
-                this,
-                fileConsumerConfiguration.getSpelExpression());
-        }
-        else
-        {
-            return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), path, name, fileConsumerConfiguration.getDirectoryDepth(), this);
-        }
-    }
-
-
-
     @Override
     public void onMessage(String filename)
     {
@@ -248,7 +218,9 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
         {
             for(String filename:fileConsumerConfiguration.getFilenames())
             {
-                this.fileMatchers.add( getFileMatcher(filename, fileConsumerConfiguration.isDynamicFileName()) );
+                this.fileMatchers.add( getFileMatcher(fileConsumerConfiguration.getFilePath(), filename, fileConsumerConfiguration.isDynamicFileName(),
+                    this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), this.fileConsumerConfiguration.getDirectoryDepth(),
+                    this.fileConsumerConfiguration.getSpelExpression()) );
             }
         }
 

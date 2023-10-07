@@ -61,7 +61,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public class CorrelatingFileMessageProvider implements MessageProvider<CorrelatedFileList>,
+public class CorrelatingFileMessageProvider extends AbstractFileMessageProvider implements MessageProvider<CorrelatedFileList>,
         ManagedResource, Configured<CorrelatedFileConsumerConfiguration>, EndpointListener<String,IOException>
 {
     /** logger instance */
@@ -211,44 +211,6 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         }
     }
 
-    /**
-     * Split fullyQualifiedFilename into its path and basename (filename), use these to create a matcher.
-     * @param fullyQualifiedFilename is a template i.e. /a/b/c/filePattern  path=/a/b/c  name=filePattern
-     * @param dynamicFileName return a DynamicFileMatcher instead of a FileMatcher
-     * @return the filematcher using the template provided by fullyQualifiedFilename
-     */
-    protected FileMatcher getFileMatcher(String fullyQualifiedFilename, boolean dynamicFileName)
-    {
-        boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
-        if( !isWindows && !fullyQualifiedFilename.startsWith("/") && !fullyQualifiedFilename.startsWith("."))
-        {
-            // assume relative reference and prefix accordingly
-            fullyQualifiedFilename = "./" + fullyQualifiedFilename;
-        }
-        int lastIndexOffullPath = fullyQualifiedFilename.lastIndexOf(FQN_PATH_SEPARATOR);
-        String path = fullyQualifiedFilename.substring(0,lastIndexOffullPath);
-        String name = fullyQualifiedFilename.substring(++lastIndexOffullPath);
-
-        if (dynamicFileName)
-        {
-            return new DynamicFileMatcher(
-                this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(),
-                path,
-                name,
-                fileConsumerConfiguration.getDirectoryDepth(),
-                this,
-                fileConsumerConfiguration.getSpelExpression());
-        }
-        else
-        {
-            return new FileMatcher(this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(),
-                path,
-                name,
-                fileConsumerConfiguration.getDirectoryDepth(),
-                this);
-        }
-    }
-
     @Override
     public void onMessage(String filename)
     {
@@ -274,7 +236,9 @@ public class CorrelatingFileMessageProvider implements MessageProvider<Correlate
         {
             for(String filename : fileConsumerConfiguration.getFilenames())
             {
-                this.fileMatchers.add(getFileMatcher(filename, fileConsumerConfiguration.isDynamicFileName()) );
+                this.fileMatchers.add(getFileMatcher(fileConsumerConfiguration.getFilePath(), filename, fileConsumerConfiguration.isDynamicFileName(),
+                    this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), this.fileConsumerConfiguration.getDirectoryDepth(),
+                    this.fileConsumerConfiguration.getSpelExpression()) );
             }
         }
 
