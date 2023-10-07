@@ -40,15 +40,18 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import org.junit.Assert;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.JobExecutionContext;
 
 import java.io.File;
+import java.nio.file.FileSystem;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +71,8 @@ public class FileMessageProviderTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
+
+    private static String DIRECTORY_NAME = "file_delivery";
 
     private JobExecutionContext context = mockery.mock(JobExecutionContext.class);
 
@@ -99,6 +104,10 @@ public class FileMessageProviderTest
                 will(returnValue(true));
                 exactly(2).of(configuration).isDynamicFileName();
                 will(returnValue(false));
+                exactly(2).of(configuration).getSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
 
@@ -135,6 +144,10 @@ public class FileMessageProviderTest
                 will(returnValue(true));
                 exactly(2).of(configuration).isDynamicFileName();
                 will(returnValue(false));
+                exactly(2).of(configuration).getSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
             }
         });
 
@@ -174,6 +187,50 @@ public class FileMessageProviderTest
         Assert.assertNull("Should have returned null", files);
 
         mockery.assertIsSatisfied();
+    }
+
+//    @Test
+//    public void testWindowsFileSystem() throws Exception {
+//        final List<String> filenames = new ArrayList<>();
+//        filenames.add("Trade_\\d{8}_\\d+_\\d{14}.txt");
+//
+//        // set test expectations
+//        mockery.checking(new Expectations() {
+//            {
+//                exactly(3).of(configuration).getFilenames();
+//                will(returnValue(filenames));
+//                exactly(2).of(configuration).getDirectoryDepth();
+//                // ensure we don't walk the subdirectory
+//                will(returnValue(1));
+//                exactly(1).of(configuration).isLogMatchedFilenames();
+//                will(returnValue(true));
+//                exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
+//                will(returnValue(true));
+//                exactly(2).of(configuration).isDynamicFileName();
+//                will(returnValue(false));
+//                exactly(2).of(configuration).getSpelExpression();
+//                will(returnValue("spel expression"));
+//                exactly(1).of(configuration).getFilePath();
+//                will(returnValue("src/test/resources/data/unit/"));
+//            }
+//        });
+//
+//
+//        FileMessageProvider messageProvider = new FileMessageProvider();
+//        messageProvider.setConfiguration(configuration);
+//        messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+//        messageProvider.startManagedResource();
+//        List<File> files = messageProvider.invoke(context);
+//        Assert.assertTrue("Should have returned 2 files, but returned " + files.size() + " files.", files.size() == 2);
+//
+//        mockery.assertIsSatisfied();
+//    }
+
+    private Path getPathToFile(FileSystem fileSystem) throws Exception {
+        Path path = fileSystem.getPath(DIRECTORY_NAME);
+        Files.createDirectory(path);
+
+        return path;
     }
 
 }
