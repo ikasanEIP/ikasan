@@ -550,6 +550,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      */
     private void updateFileConsumerConfiguration(FileEventDrivenJob job, CorrelatedFileConsumerConfiguration fileConsumerConfiguration) {
         fileConsumerConfiguration.setFilenames(job.getFilenames());
+        fileConsumerConfiguration.setFilePath(job.getFilePath());
         fileConsumerConfiguration.setJobName(job.getAggregateJobName());
         fileConsumerConfiguration.setJobGroupName(job.getJobGroup());
         fileConsumerConfiguration.setDescription(job.getJobDescription());
