@@ -35,7 +35,7 @@ public class SchedulerFilterEntryConverterTest {
         CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
         FilterEntry entry = converter.convert(correlatedFileList);
 
-        Assert.assertEquals((Integer) new File(".").getName().hashCode(), entry.getCriteria());
+        Assert.assertEquals((Integer) new File(".correlationIdentifier").getName().hashCode(), entry.getCriteria());
         Assert.assertEquals("configurationId", entry.getClientId());
     }
 
@@ -48,7 +48,7 @@ public class SchedulerFilterEntryConverterTest {
         CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
         FilterEntry entry = converter.convert(correlatedFileList);
 
-        Assert.assertEquals((Integer) new File(".").getName().hashCode(), entry.getCriteria());
+        Assert.assertEquals((Integer) new File(".correlationIdentifier").getName().hashCode(), entry.getCriteria());
         Assert.assertEquals("configurationId", entry.getClientId());
     }
 }
