@@ -204,6 +204,7 @@ public class JobProvisionServiceImplTest {
         verify(moveFileBrokerConfiguration, times(1)).setMoveDirectory((anyString()));
 
         verify(fileConsumerConfiguration, times(1)).setFilenames(anyList());
+        verify(fileConsumerConfiguration, times(1)).setFilePath(anyString());
         verify(fileConsumerConfiguration, times(1)).setDirectoryDepth(anyInt());
         verify(fileConsumerConfiguration, times(1)).setEncoding(anyString());
         verify(fileConsumerConfiguration, times(1)).setIgnoreFileRenameWhilstScanning(anyBoolean());
@@ -389,6 +390,7 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setContextName("contextName");
         fileEventDrivenJob.setChildContextNames(childIds);
         fileEventDrivenJob.setFilenames(new ArrayList<>());
+        fileEventDrivenJob.setFilePath("file-path");
         fileEventDrivenJob.setJobGroup("group");
         fileEventDrivenJob.setJobDescription("description");
         fileEventDrivenJob.setCronExpression("cronExpression");
