@@ -40,7 +40,10 @@ public class SchedulerFilterEntryConverter implements FilterEntryConverter<Corre
             logger.info("Received multiple files {}. Expecting only one.", filenames.toString());
         }
 
-        Integer criteria = correlatedFileList.getFileList().get(0).getName().hashCode();
+        Integer criteria;
+
+        criteria = (correlatedFileList.getFileList().get(0).getName() + correlatedFileList.getCorrelatingIdentifier()).hashCode();
+
         return new DefaultFilterEntry(criteria, configuredResourceId, filterTimeToLive);
     }
 }
