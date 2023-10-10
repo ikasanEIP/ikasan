@@ -4,6 +4,7 @@ public class MoveFileBrokerConfiguration {
 
     private String moveDirectory;
     private String jobName;
+    private boolean renameArchiveFile = true;
 
     public String getMoveDirectory() {
         return moveDirectory;
@@ -19,5 +20,13 @@ public class MoveFileBrokerConfiguration {
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
+    }
+
+    public boolean isRenameArchiveFile() {
+        return renameArchiveFile;
+    }
+
+    public void setRenameArchiveFile(boolean renameArchiveFile) {
+        this.renameArchiveFile = renameArchiveFile;
     }
 }
