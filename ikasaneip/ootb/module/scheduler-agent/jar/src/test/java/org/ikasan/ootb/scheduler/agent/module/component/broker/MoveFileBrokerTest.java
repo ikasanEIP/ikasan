@@ -62,6 +62,7 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/archive");
         configuration.setJobName("jobName");
+        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
@@ -83,6 +84,7 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/archive");
         configuration.setJobName("jobName");
+        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
@@ -103,6 +105,7 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/");
         configuration.setJobName("jobName");
+        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
@@ -118,6 +121,7 @@ public class MoveFileBrokerTest {
 
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setJobName("jobName");
+        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 

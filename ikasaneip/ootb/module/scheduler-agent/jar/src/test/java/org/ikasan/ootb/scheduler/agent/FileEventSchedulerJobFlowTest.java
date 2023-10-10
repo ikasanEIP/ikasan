@@ -42,27 +42,27 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
-import org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
-import org.ikasan.ootb.scheduler.agent.rest.dto.*;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
+import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
@@ -169,6 +169,7 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
@@ -214,6 +215,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
@@ -285,6 +287,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
@@ -351,6 +354,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer");
 
@@ -384,6 +388,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
@@ -433,6 +438,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
@@ -481,6 +487,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
@@ -529,6 +536,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
@@ -692,6 +700,7 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
