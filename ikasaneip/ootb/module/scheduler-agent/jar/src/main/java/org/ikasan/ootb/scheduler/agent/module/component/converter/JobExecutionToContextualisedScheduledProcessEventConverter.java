@@ -86,7 +86,7 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
             String contextInstanceIdentifier = (String)jobExecutionContext.getMergedJobDataMap()
                 .get(CorrelatingScheduledConsumer.CORRELATION_ID);
 
-            logger.info(CorrelatingScheduledConsumer.CORRELATION_ID
+            logger.debug(CorrelatingScheduledConsumer.CORRELATION_ID
                 + " " + contextInstanceIdentifier);
 
             ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
