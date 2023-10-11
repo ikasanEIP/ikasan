@@ -97,7 +97,7 @@ public class AgentRecoveryRunnable implements Runnable {
         try {
             Thread.sleep(sleepTime);
         } catch (InterruptedException ex) {
-            ex.printStackTrace();
+            LOG.error(ex.getMessage(), ex);
         }
     }
 }

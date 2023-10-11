@@ -49,7 +49,7 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             throw new ContextInstanceIdentifierProvisionServiceException(e);
         }
     }
