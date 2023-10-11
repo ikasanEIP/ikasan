@@ -296,8 +296,8 @@ public class JobProvisionServiceImplTest {
 
         verify(moduleActivator).deactivate(module);
         verify(moduleActivator).activate(module);
-        verify(flow1, times(2)).getName();
-        verify(flow2, times(3)).getName();
+        verify(flow1, times(3)).getName();
+        verify(flow2, times(4)).getName();
         verify(flow3, times(1)).getName();
         verify(flow1, times(7)).getFlowElement(anyString());
         verify(flow2, times(5)).getFlowElement(anyString());
@@ -322,6 +322,51 @@ public class JobProvisionServiceImplTest {
         Assert.assertEquals(0, configuration.getFlowDefinitions().size());
         Assert.assertEquals(0, configuration.getFlowDefinitionProfiles().size());
     }
+
+    @Test
+    public void test_remove_jobs_for_context_when_job_not_in_context() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
+        configuration.setFlowContextMap(this.getJobContextMap("anotherContext"));
+        configuration.setFlowDefinitions(this.getJobContextMap());
+        configuration.setFlowDefinitionProfiles(this.getJobProfileMap());
+
+        Assert.assertEquals(3, configuration.getFlowContextMap().size());
+        Assert.assertEquals(3, configuration.getFlowDefinitions().size());
+        Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
+
+        when(moduleService.getModule(null)).thenReturn(module);
+        when(module.getConfiguration()).thenReturn(configuration);
+        when(module.getFlows()).thenReturn(List.of(flow1, flow2, flow3));
+        when(flow1.getName()).thenReturn("fileEventDrivenJobName");
+        when(flow2.getName()).thenReturn("quartzScheduleDrivenJobName");
+
+        this.service.removeJobs("contextName");
+
+        verify(moduleActivator).deactivate(module);
+        verify(moduleActivator).activate(module);
+        verify(flow1, times(4)).getName();
+        verify(flow2, times(4)).getName();
+        verify(flow3, times(1)).getName();
+
+        verifyNoMoreInteractions(fileConsumerConfiguration
+            , moduleActivator
+            , scheduledConsumerConfiguration
+            , converterConfiguration
+            , flow1
+            , flow2
+            , flow3
+            , flowElement
+            , configuredResource
+            , configurationManagement);
+
+        Assert.assertEquals(3, configuration.getFlowContextMap().size());
+        Assert.assertEquals(3, configuration.getFlowDefinitions().size());
+        Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
+    }
+
+
 
     private void setupWhen() {
         when(moduleService.getModule(null)).thenReturn(module);
@@ -360,6 +405,14 @@ public class JobProvisionServiceImplTest {
         Map<String, String> contextJobs = new HashMap<>();
 
         this.getJobs().forEach(job -> contextJobs.put(job.getJobName(), job.getContextName()));
+
+        return contextJobs;
+    }
+
+    private Map<String, String> getJobContextMap(String contextName) {
+        Map<String, String> contextJobs = new HashMap<>();
+
+        this.getJobs().forEach(job -> contextJobs.put(job.getJobName(), contextName));
 
         return contextJobs;
     }

@@ -10,6 +10,8 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -19,6 +21,8 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJobParameter> {
+
+    private static Logger logger = LoggerFactory.getLogger(DryRunModeServiceImpl.class);
 
     @Value("${dry.run.map.size:1000}")
     private int maxMapSize;
@@ -100,7 +104,7 @@ public class DryRunModeServiceImpl implements DryRunModeService<DryRunFileListJo
             return Boolean.valueOf(isDryRunFlag);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             return false;
         }
     }
