@@ -233,8 +233,7 @@ public class BigQueueConsumer<T>
             this.eventListener.invoke(throwable);
         }
         else {
-            logger.error(throwable.getMessage());
-            throwable.printStackTrace();
+            logger.error(throwable.getMessage(), throwable);
         }
     }
 
