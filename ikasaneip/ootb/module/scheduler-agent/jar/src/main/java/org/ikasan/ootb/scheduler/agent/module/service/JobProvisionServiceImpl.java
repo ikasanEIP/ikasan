@@ -159,7 +159,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
         ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
 
-        this.deleteComponentConfigurations(module.getFlows(), configuredModuleConfiguration);
+        this.deleteComponentConfigurations(module.getFlows(), configuredModuleConfiguration, contextName);
 
         logger.info(String.format("Deactivating module [%s]", this.moduleName));
         moduleActivator.deactivate(module);
@@ -273,14 +273,17 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param flows
      * @param configuredModuleConfiguration
      */
-    private void deleteComponentConfigurations(List<Flow> flows, ConfiguredModuleConfiguration configuredModuleConfiguration) {
+    private void deleteComponentConfigurations(List<Flow> flows, ConfiguredModuleConfiguration configuredModuleConfiguration,
+                                               String contextName) {
         if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
             SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
             flows.forEach(flow -> {
                 if(configuration.getFlowDefinitionProfiles().containsKey(flow.getName())) {
-                    if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.FILE)) {
+                    if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.FILE)
+                        && configuration.getFlowContextMap().get(flow.getName()).equals(contextName)) {
                         this.deleteConfigurationsForFileEventDrivenFlowComponents(flow);
-                    } else if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.QUARTZ)) {
+                    } else if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.QUARTZ)
+                        && configuration.getFlowContextMap().get(flow.getName()).equals(contextName)) {
                         this.deleteConfigurationsForQuartzScheduledFlowComponents(flow);
                     }
                 }

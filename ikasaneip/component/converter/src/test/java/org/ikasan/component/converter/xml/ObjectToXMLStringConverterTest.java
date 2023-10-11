@@ -160,7 +160,6 @@ public class ObjectToXMLStringConverterTest
         }
         catch(TransformationException e)
         {
-            //e.printStackTrace();
             throw e;
         }
     }
