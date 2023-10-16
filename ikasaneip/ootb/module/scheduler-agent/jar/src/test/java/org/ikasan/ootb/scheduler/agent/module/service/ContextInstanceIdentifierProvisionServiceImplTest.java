@@ -11,6 +11,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
+import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,6 +86,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
         contextInstance = new ContextInstanceImpl();
         contextInstance.setName(ROOT_PLAN_NAME);
         contextInstance.setId(ROOT_PLAN_CONTEXT_INTANCE_ID);
+        contextInstance.setStatus(InstanceStatus.RUNNING);
     }
 
     @Test
@@ -196,12 +198,12 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
         service.reset(Map.of(contextInstance.getId(), contextInstance));
 
         // Verify we DO stop/start the module
-        verify(scheduleConsumerFlow).getFlowElement(SCHEDULED_CONSUMER);
-        verify(scheduleConsumerFlow).stop();
-        verify(scheduleConsumerFlow).start();
-        verify(fileConsumerFlow).getFlowElement(FILE_CONSUMER);
-        verify(fileConsumerFlow).stop();
-        verify(fileConsumerFlow).start();
+        verify(scheduleConsumerFlow, times(2)).getFlowElement(SCHEDULED_CONSUMER);
+        verify(scheduleConsumerFlow, times(2)).stop();
+        verify(scheduleConsumerFlow, times(2)).start();
+        verify(fileConsumerFlow, times(2)).getFlowElement(FILE_CONSUMER);
+        verify(fileConsumerFlow, times(2)).stop();
+        verify(fileConsumerFlow, times(2)).start();
         verifyNoMoreInteractions(scheduleConsumerFlow);
         verifyNoMoreInteractions(fileConsumerFlow);
 
