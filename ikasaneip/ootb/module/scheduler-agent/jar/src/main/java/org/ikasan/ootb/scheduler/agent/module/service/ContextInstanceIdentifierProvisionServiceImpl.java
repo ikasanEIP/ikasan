@@ -10,6 +10,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
+import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -85,17 +86,12 @@ public class ContextInstanceIdentifierProvisionServiceImpl implements ContextIns
      */
     public void reset(Map<String, ContextInstance> liveContextInstances) {
         try {
-            List<String> sortedCorrelationIds = new ArrayList<>(liveContextInstances.keySet());
-            Collections.sort(sortedCorrelationIds);
-
-            Set<String> allFlows = getModuleConfiguration().getFlowContextMap().keySet();
-            List<String> scheduledFlows = filterFlowNamesThatContainTargetElement(allFlows, SCHEDULED_CONSUMER_PROFILE);
-            List<String> fileWatcherFlows = filterFlowNamesThatContainTargetElement(allFlows, FILE_CONSUMER_PROFILE);
-
-            ContextInstanceCache.instance().putAll(liveContextInstances);
-
-            resetCorrelationIdsOnTargetFlows(SCHEDULED_CONSUMER, scheduledFlows, sortedCorrelationIds);
-            resetCorrelationIdsOnTargetFlows(FILE_CONSUMER, fileWatcherFlows, sortedCorrelationIds);
+            this.removeAll();
+            liveContextInstances.values().forEach(contextInstance -> {
+                if(!contextInstance.getStatus().equals(InstanceStatus.PREPARED)) {
+                    this.provision(contextInstance);
+                }
+            });
         }
         catch (Exception e)
         {
