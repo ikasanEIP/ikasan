@@ -34,8 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 
     @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception
     {
-        auth.authenticationProvider(ikasanAuthenticationProvider)
-            .userDetailsService(userService).passwordEncoder(passwordEncoder);
+        auth.authenticationProvider(ikasanAuthenticationProvider);
     }
 
 
