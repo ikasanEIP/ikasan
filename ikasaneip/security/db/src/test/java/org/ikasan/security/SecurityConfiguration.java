@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -61,9 +62,9 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public UserService userService()
+    public UserService userService(Environment environment)
     {
-        return new UserServiceImpl(userDao(), securityService(), passwordEncoder());
+        return new UserServiceImpl(userDao(), securityService(), passwordEncoder(), environment);
     }
 
 
@@ -107,9 +108,9 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public UserService xaUserService()
+    public UserService xaUserService(Environment environment)
     {
-        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder());
+        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), environment);
     }
 
 

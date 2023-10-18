@@ -42,6 +42,7 @@ package org.ikasan.security.service;
 
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.*;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -56,6 +57,12 @@ import java.util.List;
  */
 public class UserServiceImpl implements UserService
 {
+
+    /**
+     * Environment property used to enable local authentication. When set to false, allow local authentication.
+     */
+    private static final String DASHBOARD_EXTRACT_ENABLED_PROPERTY = "ikasan.dashboard.extract.enabled";
+
     /**
      * Data access object for <code>User</code>
      */
@@ -72,18 +79,24 @@ public class UserServiceImpl implements UserService
     private PasswordEncoder passwordEncoder;
 
     /**
+     * <code>Environment</code> for environment properties
+     */
+    private Environment environment;
+
+    /**
      * Constructor
      *
      * @param userDao
      * @param securityService
      * @param passwordEncoder
      */
-    public UserServiceImpl(UserDao userDao, SecurityService securityService, PasswordEncoder passwordEncoder)
+    public UserServiceImpl(UserDao userDao, SecurityService securityService, PasswordEncoder passwordEncoder, Environment environment)
     {
         super();
         this.userDao = userDao;
         this.securityService = securityService;
         this.passwordEncoder = passwordEncoder;
+        this.environment = environment;
     }
 
     /*
@@ -259,6 +272,9 @@ public class UserServiceImpl implements UserService
      */
     public User loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException
     {
+        if (Boolean.parseBoolean(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"))) {
+            throw new UsernameNotFoundException(DASHBOARD_EXTRACT_ENABLED_PROPERTY + "=true. Do not try to authenticate locally. Username : " + username);
+        }
         User user = userDao.getUser(username);
         if ( user == null )
         {
