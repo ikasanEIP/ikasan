@@ -313,7 +313,7 @@ public class UserServiceImpl implements UserService
     {
         User user = loadUserByUsername(username);
         Policy nongrantedPolicy = securityService.findPolicyByName(authority);
-        IkasanPrincipal userPrincipal = securityService.findPrincipalByName("user");
+        IkasanPrincipal userPrincipal = securityService.findPrincipalByName(user.getUsername());
         Role userRole = securityService.findRoleByName("User");
 
         user.addPrincipal(userPrincipal);
