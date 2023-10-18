@@ -125,7 +125,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 
     @Bean public UsersController usersController(Environment environment)
     {
-        return new UsersController(userService(),dashboardUserService(environment),environment);
+        return new UsersController(userService(environment),dashboardUserService(environment),environment);
     }
 
     @Bean public WiretapEventsSearchFormController wiretapEventsSearchFormController()
@@ -148,11 +148,11 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     }
 
     @Bean
-    public UserService userService()
+    public UserService userService(Environment environment)
     {
         HibernateUserDao userDao = new HibernateUserDao();
         userDao.setSessionFactory(securitySessionFactory().getObject());
-        return new UserServiceImpl(userDao, securityService(), passwordEncoder());
+        return new UserServiceImpl(userDao, securityService(), passwordEncoder(), environment);
     }
 
     @Bean
@@ -184,7 +184,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     @Bean
     public AuthenticationProvider ikasanAuthenticationProvider(Environment environment){
 
-        AuthenticationProviderFactory authenticationProviderFactory = new ModuleAuthenticationProviderFactoryImpl(userService(),dashboardUserService(environment),securityService(),environment);
+        AuthenticationProviderFactory authenticationProviderFactory = new ModuleAuthenticationProviderFactoryImpl(userService(environment),dashboardUserService(environment),securityService(),environment);
         AuthenticationService authenticationService = new AuthenticationServiceImpl(authenticationProviderFactory,securityService());
         return new CustomAuthenticationProvider(authenticationService);
 
