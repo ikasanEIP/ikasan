@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -62,9 +63,9 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public UserService userService()
+    public UserService userService(Environment environment)
     {
-        return new UserServiceImpl(userDao(), securityService(), passwordEncoder());
+        return new UserServiceImpl(userDao(), securityService(), passwordEncoder(), environment);
     }
 
 
@@ -88,16 +89,16 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public AuthenticationService authenticationService(){
+    public AuthenticationService authenticationService(Environment environment){
 
-        AuthenticationProviderFactory authenticationProviderFactory = new AuthenticationProviderFactoryImpl(userService(),securityService());
+        AuthenticationProviderFactory authenticationProviderFactory = new AuthenticationProviderFactoryImpl(userService(environment),securityService());
         return new AuthenticationServiceImpl(authenticationProviderFactory,securityService());
     }
 
     @Bean
-    public AuthenticationProvider ikasanAuthenticationProvider(){
+    public AuthenticationProvider ikasanAuthenticationProvider(Environment environment){
 
-        return new CustomAuthenticationProvider(authenticationService());
+        return new CustomAuthenticationProvider(authenticationService(environment));
 
     }
 
@@ -122,9 +123,9 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public UserService xaUserService()
+    public UserService xaUserService(Environment environment)
     {
-        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder());
+        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), environment);
     }
 
 
@@ -147,21 +148,21 @@ public class SecurityConfiguration
     }
 
     @Bean
-    public AuthenticationProviderFactory xaAuthenticationProviderFactory(){
+    public AuthenticationProviderFactory xaAuthenticationProviderFactory(Environment environment){
 
-        return new AuthenticationProviderFactoryImpl(xaUserService(),xaSecurityService());
+        return new AuthenticationProviderFactoryImpl(xaUserService(environment),xaSecurityService());
     }
 
     @Bean
-    public AuthenticationService xaAuthenticationService(){
+    public AuthenticationService xaAuthenticationService(Environment environment){
 
-        return new AuthenticationServiceImpl(xaAuthenticationProviderFactory(),xaSecurityService());
+        return new AuthenticationServiceImpl(xaAuthenticationProviderFactory(environment),xaSecurityService());
     }
 
     @Bean
-    public AuthenticationProvider xaIkasanAuthenticationProvider(){
+    public AuthenticationProvider xaIkasanAuthenticationProvider(Environment environment){
 
-        return new CustomAuthenticationProvider(xaAuthenticationService());
+        return new CustomAuthenticationProvider(xaAuthenticationService(environment));
 
     }
 
