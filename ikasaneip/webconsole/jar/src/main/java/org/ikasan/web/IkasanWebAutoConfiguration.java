@@ -53,6 +53,7 @@ import org.ikasan.web.controller.*;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -96,7 +97,8 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     @Qualifier("ikasan.ds")
     DataSource ikasands;
 
-
+    @Value("${ikasan.dashboard.extract.enabled:false}")
+    boolean preventLocalAuthentication;
 
     @Bean public AdminController adminController()
     {
@@ -152,7 +154,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     {
         HibernateUserDao userDao = new HibernateUserDao();
         userDao.setSessionFactory(securitySessionFactory().getObject());
-        return new UserServiceImpl(userDao, securityService(), passwordEncoder(), environment);
+        return new UserServiceImpl(userDao, securityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
 
     @Bean
