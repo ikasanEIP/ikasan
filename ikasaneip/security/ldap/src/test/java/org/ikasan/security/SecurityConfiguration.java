@@ -10,6 +10,7 @@ import org.ikasan.security.service.authentication.AuthenticationProviderFactoryI
 import org.ikasan.security.service.authentication.CustomAuthenticationProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -33,6 +34,9 @@ public class SecurityConfiguration
     @Autowired
     @Qualifier("ikasan.xads")
     DataSource ikasanxads;
+
+    @Value("${ikasan.dashboard.extract.enabled:false}")
+    boolean preventLocalAuthentication;
 
     @Resource
     Map platformHibernateProperties;
@@ -65,7 +69,7 @@ public class SecurityConfiguration
     @Bean
     public UserService userService(Environment environment)
     {
-        return new UserServiceImpl(userDao(), securityService(), passwordEncoder(), environment);
+        return new UserServiceImpl(userDao(), securityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
 
 
@@ -125,7 +129,7 @@ public class SecurityConfiguration
     @Bean
     public UserService xaUserService(Environment environment)
     {
-        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), environment);
+        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
 
 
