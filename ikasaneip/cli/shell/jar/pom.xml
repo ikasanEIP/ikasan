@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-shell-parent</artifactId>
-        <version>3.3.2-SNAPSHOT</version>
+        <version>3.3.2</version>
     </parent>
 
     <artifactId>ikasan-shell</artifactId>
@@ -56,7 +56,7 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-process-monitor</artifactId>
-            <version>3.3.2-SNAPSHOT</version>
+            <version>3.3.2</version>
         </dependency>
 
         <dependency>
