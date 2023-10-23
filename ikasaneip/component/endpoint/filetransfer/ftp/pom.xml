@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>3.3.2</version>
+        <version>3.3.3-SNAPSHOT</version>
    </parent>
 
     <artifactId>ikasan-ftp-endpoint</artifactId>

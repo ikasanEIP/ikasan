@@ -4,13 +4,13 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>sample-builder-pattern</artifactId>
-    <version>3.3.2</version>
+    <version>3.3.3-SNAPSHOT</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-spring-boot-parent</artifactId>
-        <version>3.3.2</version>
+        <version>3.3.3-SNAPSHOT</version>
     </parent>
 
     <properties>
