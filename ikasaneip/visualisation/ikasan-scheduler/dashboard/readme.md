@@ -5,11 +5,11 @@
 The Ikasan Enterprise Scheduler Dashboard is a [Spring Boot](https://spring.io/projects/spring-boot) web application. It 
 provides management and monitoring capabilities for all scheduler related features. These features include:
 - [Job plan template management](./job-plans/job-plan-templates.md)
-- [Job plan instance monitoring and management](./job-plans/job-plan-templates.md)
+- [Job plan instance monitoring and management](./job-plan-instances/job-plan-instance-management.md)
 - [Scheduler agent](../agent/readme.md) monitoring and management
 - LDAP integration
 - [Security management](../../dashboard/security.md)
-- Core Ikasan service ([hospital](../../../hospital/Readme.md), [replay](../../../replay/Readme.md), [wiretap](../../../wiretap/Readme.md), [configuration](../../../configuration-service/Readme.md), [mapping](../../../mapping/Readme.md))
+- Core Ikasan services ([hospital](../../../hospital/Readme.md), [replay](../../../replay/Readme.md), [wiretap](../../../wiretap/Readme.md), [configuration](../../../configuration-service/Readme.md), [mapping](../../../mapping/Readme.md))
 - [Various rest services related to scheduler features](../rest/scheduler-dashboard-rest-services.md) including features to allow for job plans to be provisioned as well as other services that support the interprocess communications between the scheduler dashboard and agents
 - [Context machine cache](../job-orchestration/core/context-machine-cache.md) managing access to all running job plan instances
 

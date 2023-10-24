@@ -102,11 +102,11 @@ Now that we have discussed how properties can be provided to the Ikasan Schedule
 various configuration parameters that can be passed to the application and how they affect the system.
 
 ### Core Job Orchestration Configuration Parameters 
-| Configuration Name | Type                              | Default | Description | Sample |
-|--------------------|-----------------------------------|---------|-------------|--------|
-|context.lifecycle.active                    | boolean                           | true    |             |        |
-|job.context.params.to.spel.calculators           | Map<String, String>               |         |             |        |
-|scheduled.job.context.queue.directory| String                            |         |             |        |
+| Configuration Name | Type                              | Default | Description          | Sample |
+|--------------------|-----------------------------------|---------|----------------------|--------|
+|context.lifecycle.active                    | boolean                           | true    | This flag determines |        |
+|job.context.params.to.spel.calculators           | Map<String, String>               |         |                      |        |
+|scheduled.job.context.queue.directory| String                            |         |                      |        |
 
 ### Notification Configuration Parameters
 | Configuration Name | Type                | Default | Description | Sample |
@@ -126,3 +126,25 @@ various configuration parameters that can be passed to the application and how t
 |--------------------|------|---------|-------------|--------|
 |file.job.submission.wait.time.seconds                   | int  | 3       |             |        |
 
+scheduled.job.context.queue.directory
+is.ikasan.enterprise.scheduler.instance
+
+scheduler.provision.jobs.on.upload
+job.plan.interval.multiple
+
+@Value("${scheduler.notification.file.overdue.tolerance.minutes:0}")
+private Integer fileArrivalToleranceInMinutes;
+
+mail.link.url
+notifications.enabled:true
+notifications.polling.interval.minutes:1
+
+context.lifecycle.active:true
+is.ikasan.enterprise.scheduler.instance:true
+job.context.params.to.spel.calculators
+
+solr.scheduler.instance.retention.days
+solr.joblockcacheaudit.retention.days
+solr.save.context.instance.audits
+solr.save.joblockcache.audits
+solr.save.context.instance.audit.deltas
