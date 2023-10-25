@@ -30,7 +30,7 @@ Clicking the `Release All Held Jobs` menu item will disable all `Scheduled Jobs`
 until they are re-enabled. `Scheduled Jobs` that were due to fire while they were disabled will not fire when `Scheduled Jobs` are re-enabled.
 
 ### Ignore Job Plan Duration
-Clicking the `Ignore Job Plan Duration` menu item will prevent the `Job Plan Instance` time to live to be ignored and the `Job Plan Instance` will remain active
+Clicking the `Ignore Job Plan Duration` menu item will cause the `Job Plan Instance` time to live to be ignored and the `Job Plan Instance` will remain active
 until it is manually ended. The following message will appear on the `Job Plan Instance` management screen.
 
 ![manually-end-message.png](../../../images/manually-end-message.png)
