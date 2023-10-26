@@ -2,6 +2,8 @@
             targetNamespace="urn:books"
             xmlns:bks="urn:books">
 
+    <xsd:include schemaLocation="book2.xsd"/>
+
     <xsd:element name="books" type="bks:BooksForm"/>
 
     <xsd:complexType name="BooksForm">

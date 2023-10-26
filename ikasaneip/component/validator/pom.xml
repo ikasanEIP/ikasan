@@ -47,6 +47,12 @@
             <artifactId>jaxb-impl</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.xmlresolver</groupId>
+            <artifactId>xmlresolver</artifactId>
+            <version>4.4.1</version>
+        </dependency>
+
         <!-- https://mvnrepository.com/artifact/com.sun.istack/istack-commons-runtime -->
         <dependency>
             <groupId>com.sun.istack</groupId>
