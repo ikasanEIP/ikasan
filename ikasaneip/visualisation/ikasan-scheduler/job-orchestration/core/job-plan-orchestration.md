@@ -1,6 +1,6 @@
 ![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 
-# Ikasan Enterprise Scheduler - Job Plan Instance Orchestration
+# Ikasan Enterprise Scheduler - The Context Machine - Job Plan Instance Orchestration
 
 ## Introduction
 Job Plan Instance Orchestration is performed by a component in the Ikasan Enterprise Scheduler called the ContextMachine. 
