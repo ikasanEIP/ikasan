@@ -1,7 +1,7 @@
 [../](../../Readme.md)
 ![IKASAN](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Replay Service
-<img src="../developer/docs/quickstart-images/replay.gif" width="200px" align="left"> 
+<img src="../developer/docs/quickstart-images/replay.gif" width="200px" align="left" style="padding-right: 20px; display: block; border: none;"> 
 The Replay Service provides a mechanism for recording and replaying data events. Flows can be configured to record events as they are received by the consumer of the flow, prior to any
 mutations within the flow. Replay events are serialised and persisted to the underlying datastore as well as the text index if one is configured. Once data events have been recorded, they
 can then be replayed back into the flow from which they were recorded, in either the same environment that they were recorded, or into another environment in which the same module/flow is 
