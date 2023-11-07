@@ -1,7 +1,7 @@
 [../](../../Readme.md)
 ![IKASAN](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Hospital Service
-<img src="../developer/docs/quickstart-images/hospital.gif" width="200px" align="left"> 
+<img src="../developer/docs/quickstart-images/hospital.gif" width="200px" align="left" style="padding-right: 20px; display: block; border: none;"> 
 The Ikasan Hospital Service provides Ikasan users with the ability to view and understand errors that have occurred on the Ikasan service bus. Depending upon the categorisation of the error, the user is
 able to remediate the error by resubmitting messages that have been excluded. Error within Ikasan are broadly categorised into to two types of errors. Firstly, there are technical errors. Technical
 errors are considered to be transient, and as such when one occurs, Ikasan will log the error to the error reporting component of the Hospital Service and then will rollback and attempt
