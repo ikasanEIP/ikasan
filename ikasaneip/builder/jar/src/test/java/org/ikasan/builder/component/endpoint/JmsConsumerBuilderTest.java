@@ -48,7 +48,7 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -59,9 +59,7 @@ import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
@@ -74,7 +72,7 @@ public class JmsConsumerBuilderTest {
      */
     private Mockery mockery = new Mockery() {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

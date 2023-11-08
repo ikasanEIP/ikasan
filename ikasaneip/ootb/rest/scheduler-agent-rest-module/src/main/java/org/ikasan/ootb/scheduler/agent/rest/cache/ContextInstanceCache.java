@@ -32,7 +32,7 @@ public class ContextInstanceCache {
             return;
         }
 
-        LOG.info(String.format("Adding correlationId [%s] to cache", correlationId));
+        LOG.info("Adding correlationId [%s] to cache".formatted(correlationId));
         this.contextInstanceMap.put(correlationId, instance);
     }
 
@@ -46,7 +46,7 @@ public class ContextInstanceCache {
         if (correlationId == null) {
             return;
         }
-        LOG.info(String.format("Removing correlationId [%s]", correlationId));
+        LOG.info("Removing correlationId [%s]".formatted(correlationId));
         this.contextInstanceMap.remove(correlationId);
     }
 
@@ -62,7 +62,7 @@ public class ContextInstanceCache {
 
     public ContextInstance getByCorrelationId(String correlationId) {
         if (correlationId != null) {
-            LOG.debug(String.format("Getting context parameters for correlationId [%s]", correlationId));
+            LOG.debug("Getting context parameters for correlationId [%s]".formatted(correlationId));
             return this.contextInstanceMap.get(correlationId);
         } else {
             return null;

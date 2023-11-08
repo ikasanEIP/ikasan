@@ -88,7 +88,7 @@ public class EmailProducerTest {
         wiser = new Wiser();
         int port = SocketUtils.findAvailableTcpPort();
         wiser.setPort(port);
-        logger.info(String.format("Attempting to start Wiser SMTP Server on port "+port));
+        logger.info(("Attempting to start Wiser SMTP Server on port " + port).formatted());
         wiser.start();
     }
 

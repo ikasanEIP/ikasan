@@ -115,10 +115,8 @@ public class ScheduledRetryAction implements ExceptionAction
     @Override
     public boolean equals(Object object)
     {
-        if(object instanceof ScheduledRetryAction)
+        if(object instanceof ScheduledRetryAction retryAction)
         {
-            // is same object type
-            ScheduledRetryAction retryAction = (ScheduledRetryAction) object;
             if(this.getCronExpression() == retryAction.getCronExpression() && this.getMaxRetries() == retryAction.getMaxRetries())
             {
                 return true;

@@ -92,20 +92,22 @@ public class UnorderedExpectation extends AbstractListExpectation
             return;
         }
         // @formatter:off
-        String format = "%n" +
-                "Expected FlowElement invocations in any order:%n" +
-                "  <%s>%n" +
-                "Actual FlowElement invocations:%n" +
-                "  <%s>%n" +
-                "FlowElements not invoked:%n" +
-                "  <%s>%n" +
-                "FlowElements invoked but not expected:%n" +
-                "  <%s>%n";
+        String format = """
+                %n\
+                Expected FlowElement invocations in any order:%n\
+                  <%s>%n\
+                Actual FlowElement invocations:%n\
+                  <%s>%n\
+                FlowElements not invoked:%n\
+                  <%s>%n\
+                FlowElements invoked but not expected:%n\
+                  <%s>%n\
+                """;
         // @formatter:on
-        String message = String
-                .format(format, formatList(expectations), formatList(captures),
-                        formatList(diff.getUnsatisfiedExpectations()),
-                        formatList(diff.getUnexpectedCaptures()));
+        String message = format
+            .formatted(formatList(expectations), formatList(captures),
+                formatList(diff.getUnsatisfiedExpectations()),
+                formatList(diff.getUnexpectedCaptures()));
         fail(message);
     }
 }

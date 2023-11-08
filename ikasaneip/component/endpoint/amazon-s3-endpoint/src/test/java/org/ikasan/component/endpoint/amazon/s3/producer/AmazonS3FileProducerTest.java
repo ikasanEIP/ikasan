@@ -61,8 +61,10 @@ public class AmazonS3FileProducerTest {
     @Test
     public void testWithNonNullConfigurationPropertiesMissing() {
         expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("Instance of AmazonS3Configuration has the following " +
-            "constraint violations :- [accessKey must not be null, defaultBucketName must not be null, secretKey must not be null]");
+        expectedException.expectMessage("""
+            Instance of AmazonS3Configuration has the following \
+            constraint violations :- [accessKey must not be null, defaultBucketName must not be null, secretKey must not be null]\
+            """);
         AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
         producerConfiguration.setRegion("Region");
         amazonS3FileProducer.setConfiguration(producerConfiguration);
@@ -71,8 +73,10 @@ public class AmazonS3FileProducerTest {
     @Test
     public void testWithNonNullPayloadPropertiesMissing() {
         expectedException.expect(InvalidAmazonS3PayloadException.class);
-        expectedException.expectMessage("Instance of AmazonS3FilePayload has the following constraint " +
-            "violations :- [filePath must not be null, keyName must not be null]");
+        expectedException.expectMessage("""
+            Instance of AmazonS3FilePayload has the following constraint \
+            violations :- [filePath must not be null, keyName must not be null]\
+            """);
         amazonS3FilePayload.setKeyName(null);
         amazonS3FilePayload.setFilePath(null);
         amazonS3FileProducer.invoke(amazonS3FilePayload);
@@ -90,8 +94,10 @@ public class AmazonS3FileProducerTest {
     @Test
     public void testAgainstWithBadAuthenticationDetails() {
         expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("com.amazonaws.services.s3.model.AmazonS3Exception: " +
-            "The AWS Access Key Id you provided does not exist in our records");
+        expectedException.expectMessage("""
+            com.amazonaws.services.s3.model.AmazonS3Exception: \
+            The AWS Access Key Id you provided does not exist in our records\
+            """);
         configuration.setSecretKey("wrong");
         configuration.setAccessKey("wrong");
         amazonS3FileProducer.startManagedResource();
@@ -150,8 +156,10 @@ public class AmazonS3FileProducerTest {
     @Ignore
     public void testAgainstS3EnvWithBadRegion() {
         expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("The configured default bucket ikasan-test-bucket does not " +
-            "live in configured region EU_WEST_1");
+        expectedException.expectMessage("""
+            The configured default bucket ikasan-test-bucket does not \
+            live in configured region EU_WEST_1\
+            """);
         configuration.setRegion("EU_WEST_1");
         amazonS3FileProducer.startManagedResource();
     }

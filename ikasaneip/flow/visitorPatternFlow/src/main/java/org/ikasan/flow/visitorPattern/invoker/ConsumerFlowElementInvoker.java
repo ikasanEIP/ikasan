@@ -133,9 +133,9 @@ public class ConsumerFlowElementInvoker extends AbstractFlowElementInvoker imple
      */
     protected Converter getAsConverter(Consumer consumer)
     {
-        if(consumer instanceof Converter)
+        if(consumer instanceof Converter converter1)
         {
-            return ((Converter)consumer);
+            return converter1;
         }
 
         return null;

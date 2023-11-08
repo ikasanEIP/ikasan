@@ -3,13 +3,10 @@ package org.ikasan.dashboard;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
-import org.ikasan.harvest.HarvestEvent;
-import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,8 +17,6 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.junit.Assert.assertEquals;
@@ -30,7 +25,7 @@ public class MetricsRestServiceTest
 {
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
     }};
 

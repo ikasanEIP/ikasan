@@ -132,9 +132,9 @@ public class SchematronValidator implements Broker<Document, ValidationResult<Do
             // unmarshal result into pojo for ease of processing
             Object o = marshaller.unmarshal(new DOMSource(svrlDocument));
             SchematronOutputType schematronOutputType;
-            if (o instanceof JAXBElement)
+            if (o instanceof JAXBElement element)
             {
-                schematronOutputType = (SchematronOutputType)((JAXBElement) o).getValue();
+                schematronOutputType = (SchematronOutputType)element.getValue();
             }
             else
             {
@@ -170,9 +170,9 @@ public class SchematronValidator implements Broker<Document, ValidationResult<Do
         // loop through the fired rules and possible failed asserts
         for (Object object : schematronOutputType.getActivePatternAndFiredRuleAndFailedAssert())
         {
-            if (object instanceof FailedAssert)
+            if (object instanceof FailedAssert assert1)
             {
-                String assertId = ((FailedAssert) object).getId();
+                String assertId = assert1.getId();
                 if (configuration.getRulesToIgnore() != null && configuration.getRulesToIgnore().contains(assertId))
                 {
                     logger.debug("Ignored failed Schematron assert rule: " + assertId);

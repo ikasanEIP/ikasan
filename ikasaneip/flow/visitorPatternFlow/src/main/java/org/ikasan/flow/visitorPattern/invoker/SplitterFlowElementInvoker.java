@@ -174,9 +174,9 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
             // Create a new event for each payload; if the payload is a FlowEvent then use that rather than creating another
             for (Object payload : payloads)
             {
-                if (payload instanceof FlowEvent)
+                if (payload instanceof FlowEvent event)
                 {
-                    eventList.add((FlowEvent)payload);
+                    eventList.add(event);
                 }
                 else
                 {
@@ -227,9 +227,9 @@ public class SplitterFlowElementInvoker extends AbstractFlowElementInvoker<Split
                 for (Object payload : payloads)
                 {
                     FlowEvent flowEventForPayload;
-                    if (payload instanceof FlowEvent)
+                    if (payload instanceof FlowEvent event)
                     {
-                        flowEventForPayload = (FlowEvent)payload;
+                        flowEventForPayload = event;
                     }
                     else
                     {

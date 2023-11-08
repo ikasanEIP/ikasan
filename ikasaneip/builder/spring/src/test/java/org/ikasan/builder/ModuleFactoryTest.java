@@ -100,20 +100,26 @@ public class ModuleFactoryTest {
 
     @Test
     public void testStartupTypeOnFlowsSetFromApplicationDotProperties() {
-        assertEquals("ID,MODULENAME,FLOWNAME,STARTUPTYPE,COMMENT\n" +
-                "1,moduleName,flowName,MANUAL,Setting in properties\n" +
-                "2,moduleName,scheduledBuilderFlow,AUTOMATIC,Startup Type set on Module Initialisation\n",
+        assertEquals("""
+                ID,MODULENAME,FLOWNAME,STARTUPTYPE,COMMENT
+                1,moduleName,flowName,MANUAL,Setting in properties
+                2,moduleName,scheduledBuilderFlow,AUTOMATIC,Startup Type set on Module Initialisation
+                """,
             sqlOperationsRunner.exportRowsToCsv("select * from STARTUPCONTROL order by ID ASC"));
     }
 
 
     @Test
     public void testWiretapTriggersSetFromApplicationDotProperties() {
-        assertEquals("ID,MODULENAME,FLOWNAME,RELATIONSHIP,FLOWELEMENTNAME,JOBNAME\n" +
-                "1,moduleName,flowName,after,producerAFlowElement,wiretapJob\n",
+        assertEquals("""
+                ID,MODULENAME,FLOWNAME,RELATIONSHIP,FLOWELEMENTNAME,JOBNAME
+                1,moduleName,flowName,after,producerAFlowElement,wiretapJob
+                """,
             sqlOperationsRunner.exportRowsToCsv("select * from FLOWEVENTTRIGGER order by ID ASC"));
-        assertEquals("TRIGGERID,PARAMNAME,PARAMVALUE\n" +
-                "1,timeToLive,601\n",
+        assertEquals("""
+                TRIGGERID,PARAMNAME,PARAMVALUE
+                1,timeToLive,601
+                """,
             sqlOperationsRunner.exportRowsToCsv("select * from FLOWEVENTTRIGGERPARAMETERS FLOWEVENTTRIGGERPARAMETERS order by TRIGGERID ASC"));
     }
 

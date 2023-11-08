@@ -316,7 +316,7 @@ public class ConfigurationManagementService
             String newConfigJson = mapper.writeValueAsString(configuration);
             this.systemEventService.logSystemEvent(
                 configuration.getConfigurationId(),
-                String.format("Configuration created, NewConfig [%s]", newConfigJson),
+                "Configuration created, NewConfig [%s]".formatted(newConfigJson),
                 getAuthentication().getName());
 
         }
@@ -344,7 +344,7 @@ public class ConfigurationManagementService
 
             this.systemEventService.logSystemEvent(
                 configuration.getConfigurationId(),
-                String.format("Configuration Updated OldConfig [%s] NewConfig [%s]", oldConfigJson, newConfigJson),
+                "Configuration Updated OldConfig [%s] NewConfig [%s]".formatted(oldConfigJson, newConfigJson),
                 getAuthentication().getName());
 
         }
@@ -368,7 +368,7 @@ public class ConfigurationManagementService
             String newConfigJson = mapper.writeValueAsString(configuration);
             this.systemEventService.logSystemEvent(
                 configuration.getConfigurationId(),
-                String.format("Configuration deleted, OldConfig [%s]", newConfigJson),
+                "Configuration deleted, OldConfig [%s]".formatted(newConfigJson),
                 getAuthentication().getName());
 
         }
@@ -420,9 +420,9 @@ public class ConfigurationManagementService
     private ConfiguredResource getModuleConfiguredResource(String moduleName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
-        if(module instanceof ConfiguredResource)
+        if(module instanceof ConfiguredResource resource)
         {
-            return (ConfiguredResource)module;
+            return resource;
         }
         else
         {

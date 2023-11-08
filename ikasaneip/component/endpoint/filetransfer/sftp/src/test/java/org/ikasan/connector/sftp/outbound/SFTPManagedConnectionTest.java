@@ -41,20 +41,19 @@
 package org.ikasan.connector.sftp.outbound;
 
 
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
-import  static org.junit.Assert.assertEquals;
-import  static org.junit.Assert.assertTrue;
-import  static org.junit.Assert.fail;
-
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
+
+import javax.transaction.xa.XAException;
+import javax.transaction.xa.XAResource;
+import javax.transaction.xa.Xid;
+
+import static org.junit.Assert.*;
 
 /**
  * Test class for the <code>SFTPManagedConnection</code>
@@ -68,7 +67,7 @@ public class SFTPManagedConnectionTest
     private Mockery classMockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

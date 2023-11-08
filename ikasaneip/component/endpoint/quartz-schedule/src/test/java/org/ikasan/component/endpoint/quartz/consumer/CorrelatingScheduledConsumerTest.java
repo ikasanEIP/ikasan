@@ -4,8 +4,8 @@ import org.ikasan.component.endpoint.quartz.recovery.service.ScheduledJobRecover
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.*;
@@ -21,7 +21,7 @@ public class CorrelatingScheduledConsumerTest {
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new Synchroniser());
         }
     };
@@ -135,13 +135,15 @@ public class CorrelatingScheduledConsumerTest {
             .sorted()
             .collect(Collectors.toList());
         Assert.assertEquals(
-            "[" +
-                    "Trigger 'jobGroupName.jobName_cor1_-165197414':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, " +
-                    "Trigger 'jobGroupName.jobName_cor1_-1962148773':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, " +
-                    "Trigger 'jobGroupName.jobName_cor1_1631753945':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, " +
-                    "Trigger 'jobGroupName.jobName_cor2_-165197414':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, " +
-                    "Trigger 'jobGroupName.jobName_cor2_-1962148773':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, " +
-                    "Trigger 'jobGroupName.jobName_cor2_1631753945':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null]",
+            """
+            [\
+            Trigger 'jobGroupName.jobName_cor1_-165197414':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, \
+            Trigger 'jobGroupName.jobName_cor1_-1962148773':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, \
+            Trigger 'jobGroupName.jobName_cor1_1631753945':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, \
+            Trigger 'jobGroupName.jobName_cor2_-165197414':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, \
+            Trigger 'jobGroupName.jobName_cor2_-1962148773':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, \
+            Trigger 'jobGroupName.jobName_cor2_1631753945':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null]\
+            """,
                 sortedTriggers.toString());
         // Sizes of the map data
         Assert.assertEquals("[3, 3, 3, 3, 3, 3]",

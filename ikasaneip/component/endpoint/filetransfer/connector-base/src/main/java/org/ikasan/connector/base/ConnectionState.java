@@ -72,22 +72,22 @@ public class ConnectionState implements Serializable
     protected final String description;
 
     /** Component state cannot be identified */
-    public static ConnectionState UNKNOWN = new ConnectionState(new Integer(0), "Unknown", "Cannot determine component status");
+    public static ConnectionState UNKNOWN = new ConnectionState(Integer.valueOf(0), "Unknown", "Cannot determine component status");
 
     /** Disconnected status */
-    public static ConnectionState DISCONNECTED = new ConnectionState(new Integer(1), "Disconnected", "Physical connection is not established");
+    public static ConnectionState DISCONNECTED = new ConnectionState(Integer.valueOf(1), "Disconnected", "Physical connection is not established");
 
     /** Connected status */
-    public static ConnectionState CONNECTED = new ConnectionState(new Integer(2), "Connected", "Physical connection is established, but without a session");
+    public static ConnectionState CONNECTED = new ConnectionState(Integer.valueOf(2), "Connected", "Physical connection is established, but without a session");
 
     /** Session established status */
-    public static ConnectionState SESSION_OPEN = new ConnectionState(new Integer(3), "Session Open", "Physical connection and session established");
+    public static ConnectionState SESSION_OPEN = new ConnectionState(Integer.valueOf(3), "Session Open", "Physical connection and session established");
 
     /**
      * Session closed is no different from simply being connected, but included
      * for convenience
      */
-    public static ConnectionState SESSION_CLOSED = new ConnectionState(new Integer(2), "Session Closed",
+    public static ConnectionState SESSION_CLOSED = new ConnectionState(Integer.valueOf(2), "Session Closed",
         "Physical connection is established, but without a session");
 
     /**

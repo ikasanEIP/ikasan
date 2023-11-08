@@ -80,7 +80,7 @@ public class WiretapSerialiserServiceTest
     public void test_successful_serialiser()
     {
         // create example object for serialisation
-        Integer integer = new Integer(10);
+        Integer integer = Integer.valueOf(10);
         
         // test the serialiser service
         Assert.assertTrue("10".equals( serialiserService.serialise(integer) ) );

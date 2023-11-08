@@ -90,7 +90,7 @@ public class EntityAgeFilterEntryConverterTest
         System.out.println(entry);
 
         System.out.println("Criteria = " + entry.getCriteria());
-        Assert.assertEquals(entry.getCriteria(), new Integer(65757));
+        Assert.assertEquals(entry.getCriteria(), Integer.valueOf(65757));
         Assert.assertEquals(entry.getClientId(), "test-client");
         Assert.assertEquals(entry.getCriteriaDescription(), "94694400000");
     }

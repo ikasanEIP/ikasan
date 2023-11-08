@@ -290,9 +290,9 @@ public abstract class EISManagedConnection implements ManagedConnection
             return;
         }
         Exception e = null;
-        if (thrown instanceof Exception)
+        if (thrown instanceof Exception exception)
         {
-            e = (Exception) thrown;
+            e = exception;
         }
         else
         {

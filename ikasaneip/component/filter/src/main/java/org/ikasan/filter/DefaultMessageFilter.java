@@ -106,9 +106,9 @@ public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Ob
     @Override
     public Object getConfiguration()
     {
-        if(this.filterRule instanceof Configured)
+        if(this.filterRule instanceof Configured configured)
         {
-            return ((Configured)this.filterRule).getConfiguration();
+            return configured.getConfiguration();
         }
 
         return null;
@@ -117,11 +117,11 @@ public class DefaultMessageFilter<T> implements Filter<T>, ConfiguredResource<Ob
     @Override
     public void setConfiguration(Object configuration)
     {
-        if(this.filterRule instanceof Configured)
+        if(this.filterRule instanceof Configured configured)
         {
             try
             {
-                ((Configured)this.filterRule).setConfiguration(configuration);
+                configured.setConfiguration(configuration);
             }
             catch(ClassCastException e)
             {

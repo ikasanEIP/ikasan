@@ -193,9 +193,9 @@ public class XMLValidator<SOURCE, TARGET>
     private String generateErrorMessage(SAXException e, SOURCE source)
     {
         String payload;
-        if (sourceToByteArrayInputStreamConverter == null && source instanceof String)
+        if (sourceToByteArrayInputStreamConverter == null && source instanceof String string)
         {
-            payload = (String) source;
+            payload = string;
         }
         else
         {
@@ -206,19 +206,19 @@ public class XMLValidator<SOURCE, TARGET>
             catch (IOException ioe)
             {
                 logger.error("Cannot convert to String", ioe);
-                payload = String.format("An exception occurred whilst converting the payload to a String: %s",
-                        ioe.getMessage());
+                payload = "An exception occurred whilst converting the payload to a String: %s".formatted(
+                    ioe.getMessage());
             }
         }
-        String errorMessage = String.format("XML validation error: %s\n\nXML:\n%s", e.getMessage(), payload);
+        String errorMessage = "XML validation error: %s\n\nXML:\n%s".formatted(e.getMessage(), payload);
         return errorMessage;
     }
 
     private ByteArrayInputStream createSourceAsBytes(SOURCE xml)
     {
-        if (sourceToByteArrayInputStreamConverter == null && xml instanceof String)
+        if (sourceToByteArrayInputStreamConverter == null && xml instanceof String string)
         {
-            return new ByteArrayInputStream(((String) xml).getBytes());
+            return new ByteArrayInputStream(string.getBytes());
         }
         else
         {
@@ -232,7 +232,7 @@ public class XMLValidator<SOURCE, TARGET>
         try
         {
             Class poolClass = Class.forName("org.apache.xerces.util.XMLGrammarPoolImpl");
-            Object grammarPool = poolClass.newInstance();
+            Object grammarPool = poolClass.getDeclaredConstructor().newInstance();
             factory.setValidating(true);
             factory.setNamespaceAware(true);
             SAXParser parser = factory.newSAXParser();

@@ -75,8 +75,8 @@ public class StreamingCsvResultSetExtractor
                 for (int i = 1; i <= columnCount; i++) {
                     final Object value = rs.getObject(i);
                     String strValue = "";
-                    if (value instanceof JdbcClob) {
-                        strValue = new BufferedReader(((Clob) value).getCharacterStream()).lines().collect(Collectors.joining());
+                    if (value instanceof JdbcClob clob) {
+                        strValue = new BufferedReader(clob.getCharacterStream()).lines().collect(Collectors.joining());
                     } else {
                         strValue = value == null ? "" : value.toString();
                     }

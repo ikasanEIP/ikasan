@@ -609,28 +609,28 @@ public class JmsStreamMessageDefaultImpl extends JmsMessageDefaultImpl implement
                 return this.dataIn.readUTF();
             }
             if (type == MarshallingSupport.LONG_TYPE) {
-                return new Long(this.dataIn.readLong()).toString();
+                return Long.valueOf(this.dataIn.readLong()).toString();
             }
             if (type == MarshallingSupport.INTEGER_TYPE) {
-                return new Integer(this.dataIn.readInt()).toString();
+                return Integer.valueOf(this.dataIn.readInt()).toString();
             }
             if (type == MarshallingSupport.SHORT_TYPE) {
-                return new Short(this.dataIn.readShort()).toString();
+                return Short.valueOf(this.dataIn.readShort()).toString();
             }
             if (type == MarshallingSupport.BYTE_TYPE) {
-                return new Byte(this.dataIn.readByte()).toString();
+                return Byte.valueOf(this.dataIn.readByte()).toString();
             }
             if (type == MarshallingSupport.FLOAT_TYPE) {
-                return new Float(this.dataIn.readFloat()).toString();
+                return Float.valueOf(this.dataIn.readFloat()).toString();
             }
             if (type == MarshallingSupport.DOUBLE_TYPE) {
-                return new Double(this.dataIn.readDouble()).toString();
+                return Double.valueOf(this.dataIn.readDouble()).toString();
             }
             if (type == MarshallingSupport.BOOLEAN_TYPE) {
                 return (this.dataIn.readBoolean() ? Boolean.TRUE : Boolean.FALSE).toString();
             }
             if (type == MarshallingSupport.CHAR_TYPE) {
-                return new Character(this.dataIn.readChar()).toString();
+                return Character.valueOf(this.dataIn.readChar()).toString();
             } else {
                 this.dataIn.reset();
                 throw new MessageFormatException(" not a String type");
@@ -800,10 +800,10 @@ public class JmsStreamMessageDefaultImpl extends JmsMessageDefaultImpl implement
                 return Byte.valueOf(this.dataIn.readByte());
             }
             if (type == MarshallingSupport.FLOAT_TYPE) {
-                return new Float(this.dataIn.readFloat());
+                return Float.valueOf(this.dataIn.readFloat());
             }
             if (type == MarshallingSupport.DOUBLE_TYPE) {
-                return new Double(this.dataIn.readDouble());
+                return Double.valueOf(this.dataIn.readDouble());
             }
             if (type == MarshallingSupport.BOOLEAN_TYPE) {
                 return this.dataIn.readBoolean() ? Boolean.TRUE : Boolean.FALSE;
@@ -1085,24 +1085,24 @@ public class JmsStreamMessageDefaultImpl extends JmsMessageDefaultImpl implement
             }
         } else if (value instanceof String) {
             writeString(value.toString());
-        } else if (value instanceof Character) {
-            writeChar(((Character)value).charValue());
-        } else if (value instanceof Boolean) {
-            writeBoolean(((Boolean)value).booleanValue());
-        } else if (value instanceof Byte) {
-            writeByte(((Byte)value).byteValue());
-        } else if (value instanceof Short) {
-            writeShort(((Short)value).shortValue());
-        } else if (value instanceof Integer) {
-            writeInt(((Integer)value).intValue());
-        } else if (value instanceof Float) {
-            writeFloat(((Float)value).floatValue());
-        } else if (value instanceof Double) {
-            writeDouble(((Double)value).doubleValue());
-        } else if (value instanceof byte[]) {
-            writeBytes((byte[])value);
-        }else if (value instanceof Long) {
-            writeLong(((Long)value).longValue());
+        } else if (value instanceof Character character) {
+            writeChar(character.charValue());
+        } else if (value instanceof Boolean boolean1) {
+            writeBoolean(boolean1.booleanValue());
+        } else if (value instanceof Byte byte1) {
+            writeByte(byte1.byteValue());
+        } else if (value instanceof Short short1) {
+            writeShort(short1.shortValue());
+        } else if (value instanceof Integer integer) {
+            writeInt(integer.intValue());
+        } else if (value instanceof Float float1) {
+            writeFloat(float1.floatValue());
+        } else if (value instanceof Double double1) {
+            writeDouble(double1.doubleValue());
+        } else if (value instanceof byte[] bytes) {
+            writeBytes(bytes);
+        }else if (value instanceof Long long1) {
+            writeLong(long1.longValue());
         }else {
             throw new MessageFormatException("Unsupported Object type: " + value.getClass());
         }

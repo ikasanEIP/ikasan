@@ -639,9 +639,9 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
         logger.debug("Called sendErrorEvent"); //$NON-NLS-1$
 
         Exception e = null;
-        if (thrown instanceof Exception)
+        if (thrown instanceof Exception exception)
         {
-            e = (Exception) thrown;
+            e = exception;
         }
         else
         {

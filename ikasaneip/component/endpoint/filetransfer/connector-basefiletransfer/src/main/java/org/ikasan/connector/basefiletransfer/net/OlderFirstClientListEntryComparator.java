@@ -53,7 +53,7 @@ public class OlderFirstClientListEntryComparator implements Comparator<ClientLis
 {
     public int compare(ClientListEntry cle1, ClientListEntry cle2)
     {
-        int mtimeComparison = new Long(cle1.getMtime()).compareTo(new Long(cle2.getMtime()));
+        int mtimeComparison = Long.valueOf(cle1.getMtime()).compareTo(Long.valueOf(cle2.getMtime()));
         if (mtimeComparison == 0)
         {
             if(cle1.getName()!=null&&cle2.getName()!=null)

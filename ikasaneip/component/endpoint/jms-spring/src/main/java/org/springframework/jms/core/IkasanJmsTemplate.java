@@ -125,9 +125,9 @@ public class IkasanJmsTemplate extends JmsTemplate
      */
     protected Object getPayload(Object message)
     {
-        if(message instanceof FlowEvent)
+        if(message instanceof FlowEvent event)
         {
-            return ((FlowEvent) message).getPayload();
+            return event.getPayload();
         }
 
         return message;

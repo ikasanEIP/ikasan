@@ -207,16 +207,16 @@ public class ModuleBuilder
 	    if(flowFactory != null)
         {
             module = new ConfiguredModuleImpl(this.name, this.version, this.flows, this.flowFactory, getUrl());
-            if(module instanceof ConfiguredResource)
+            if(module instanceof ConfiguredResource resource)
             {
-                ((ConfiguredResource)module).setConfiguredResourceId(this.name);
+                resource.setConfiguredResourceId(this.name);
                 if(configuration != null)
                 {
-                    ((ConfiguredResource)module).setConfiguration(configuration);
+                    resource.setConfiguration(configuration);
                 }
                 else
                 {
-                    ((ConfiguredResource)module).setConfiguration( new ConfiguredModuleConfiguration() );
+                    resource.setConfiguration( new ConfiguredModuleConfiguration() );
                 }
             }
         }

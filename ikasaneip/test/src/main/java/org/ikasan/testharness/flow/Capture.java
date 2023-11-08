@@ -87,9 +87,8 @@ public class Capture<T>
                 .append("[")
                 .append(order)
                 .append("] ");
-        if (actual instanceof FlowElement)
+        if (actual instanceof FlowElement flowElement)
         {
-            FlowElement flowElement = (FlowElement) actual;
             stringBuilder.append("FlowComponent[")
                     .append("name[")
                     .append(flowElement.getComponentName())

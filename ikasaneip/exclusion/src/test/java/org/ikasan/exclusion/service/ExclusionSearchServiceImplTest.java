@@ -40,25 +40,14 @@
  */
 package org.ikasan.exclusion.service;
 
-import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.exclusion.ExclusionSearchService;
-import org.ikasan.spec.exclusion.ExclusionService;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowInvocationContext;
-import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.util.Date;
 
 /**
@@ -76,7 +65,7 @@ public class ExclusionSearchServiceImplTest
      */
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     ExclusionEventDao<String,ExclusionEvent> exclusionServiceExclusionEventDao = mockery.mock(ExclusionEventDao.class,"mockDao");

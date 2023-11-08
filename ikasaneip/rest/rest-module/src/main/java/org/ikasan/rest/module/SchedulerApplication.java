@@ -129,10 +129,9 @@ public class SchedulerApplication
                 if (flowConfigurationConsumerFlowElement != null && flowConfigurationConsumerFlowElement.getFlowComponent() != null)
                 {
                     Consumer consumer = resolveProxiedComponent( flowConfigurationConsumerFlowElement.getFlowComponent());
-                    if (consumer instanceof ScheduledConsumer)
+                    if (consumer instanceof ScheduledConsumer scheduledConsumer)
                     {
                         LOG.info("Triggering module[{}], flow[{}] correlationId [{}] now!", moduleName, flowName, correlationId);
-                        ScheduledConsumer scheduledConsumer = (ScheduledConsumer) consumer;
                         JobDetail jobDetail = ((ScheduledComponent<JobDetail>) consumer).getJobDetail();
 
                         TriggerBuilder triggerBuilder = newTrigger()
@@ -167,9 +166,8 @@ public class SchedulerApplication
     {
         try
         {
-            if(AopUtils.isAopProxy(component) && component instanceof Advised)
+            if(AopUtils.isAopProxy(component) && component instanceof Advised advised)
             {
-                Advised advised = (Advised) component;
                 return (T) advised.getTargetSource().getTarget();
             }
         }

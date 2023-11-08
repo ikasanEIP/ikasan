@@ -44,7 +44,7 @@ import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,7 +72,7 @@ public class MapBlackListDaoTest
      */
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     /**

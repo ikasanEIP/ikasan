@@ -182,9 +182,8 @@ public class JmsContainerConsumer
     {
         try
         {
-            if(message instanceof IkasanListMessage && configuration.isAutoSplitBatch())
+            if(message instanceof IkasanListMessage msgs && configuration.isAutoSplitBatch())
             {
-                IkasanListMessage msgs = (IkasanListMessage)message;
                 for(Message msg : msgs)
                 {
                     Object lifeIdentifier, relatedLifeIdentifier = null;
@@ -234,9 +233,8 @@ public class JmsContainerConsumer
 
         try
         {
-            if(event instanceof IkasanListMessage && configuration.isAutoSplitBatch())
+            if(event instanceof IkasanListMessage msgs && configuration.isAutoSplitBatch())
             {
-                IkasanListMessage msgs = (IkasanListMessage)event;
                 for(Message msg:msgs)
                 {
                     FlowEvent<?,?> flowEvent = flowEventFactory.newEvent(
@@ -281,10 +279,9 @@ public class JmsContainerConsumer
         boolean recovered = false;
         try
         {
-            if ( messageProvider instanceof IkasanMessageListenerContainer
+            if ( messageProvider instanceof IkasanMessageListenerContainer imlc
                     && jmsException instanceof javax.jms.IllegalStateException)
             {
-                IkasanMessageListenerContainer imlc = (IkasanMessageListenerContainer)messageProvider;
                 imlc.recoverSharedConnection();
                 recovered = true;
             }
@@ -371,10 +368,10 @@ public class JmsContainerConsumer
                 return message;
             }
 
-            if(message instanceof IkasanListMessage)
+            if(message instanceof IkasanListMessage listMessage)
             {
                 List<Object> msgs = new ArrayList<>();
-                for(Message msg:(IkasanListMessage)message)
+                for(Message msg:listMessage)
                 {
                     msgs.add( JmsMessageConverter.extractContent(msg) );
                 }
@@ -393,8 +390,8 @@ public class JmsContainerConsumer
     @Override
     public void setExclusionService(ExclusionService exclusionService) {
 
-        if (messageProvider instanceof IsExclusionServiceAware) {
-            ((IsExclusionServiceAware) messageProvider).setExclusionService(exclusionService);
+        if (messageProvider instanceof IsExclusionServiceAware aware) {
+            aware.setExclusionService(exclusionService);
         }
 
         this.exclusionService = exclusionService;

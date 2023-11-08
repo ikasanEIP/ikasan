@@ -264,7 +264,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
                 {
                     return rowCountList.get(0);
                 }
-                return new Long(0);
+                return Long.valueOf(0);
             }
 
             /**
@@ -367,12 +367,12 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
             criteriaQuery.select(builder.count(root)).where(predicates.toArray(new Predicate[predicates.size()]));
             Query<Long> query = session.createQuery(criteriaQuery);
             List<Long> rowCountList = query.getResultList();
-            Long rowCount = new Long(0);
+            Long rowCount = Long.valueOf(0);
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);
             }
-            return new Boolean(rowCount > 0);
+            return Boolean.valueOf(rowCount > 0);
         });
     }
 
@@ -413,7 +413,7 @@ public class HibernateErrorReportingServiceDao extends HibernateDaoSupport
             criteriaQuery.select(builder.count(root)).where(predicates.toArray(new Predicate[predicates.size()]));
             Query<Long> query = session.createQuery(criteriaQuery);
             List<Long> rowCountList = query.getResultList();
-            Long rowCount = new Long(0);
+            Long rowCount = Long.valueOf(0);
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);

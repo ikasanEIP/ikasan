@@ -51,7 +51,7 @@ public interface SecurityConstants
 	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
 	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
     
-	public static final Long AUTH_METHOD_ID = new Long(1);
+	public static final Long AUTH_METHOD_ID = Long.valueOf(1);
 	
 	public static final String PRINCIPAL_ID = "principalId";
 	
@@ -60,15 +60,21 @@ public interface SecurityConstants
             " where  u.id = up.userId" +
             " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
 
-    public static final String GET_POLICY_WITH_ROLE_QUERY = "select p from Policy as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name = :name" ;
+    public static final String GET_POLICY_WITH_ROLE_QUERY = """
+        select p from Policy as p \
+         LEFT JOIN p.roles r \
+         where  r.name = :name\
+        """ ;
 
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = "select p from IkasanPrincipal as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name = :name" ;
+    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = """
+        select p from IkasanPrincipal as p \
+         LEFT JOIN p.roles r \
+         where  r.name = :name\
+        """ ;
 
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = "select distinct(p) from IkasanPrincipal as p " +
-        " LEFT JOIN p.roles r " +
-        " where  r.name in (:name)" ;
+    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = """
+        select distinct(p) from IkasanPrincipal as p \
+         LEFT JOIN p.roles r \
+         where  r.name in (:name)\
+        """ ;
 }

@@ -40,15 +40,15 @@
  */
 package org.ikasan.component.endpoint.rulecheck.broker;
 
+import org.ikasan.component.endpoint.rulecheck.RelativeTimeIntervalRuleConfiguration;
 import org.ikasan.component.endpoint.rulecheck.Rule;
 import org.ikasan.component.endpoint.rulecheck.RuleBreachException;
-import org.ikasan.component.endpoint.rulecheck.RelativeTimeIntervalRuleConfiguration;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
 import org.quartz.*;
 
@@ -66,7 +66,7 @@ public class ScheduledRuleCheckTest
      */
     private Mockery mockery = new Mockery()
     {{
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     /** Mock scheduler */

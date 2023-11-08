@@ -71,9 +71,9 @@ public class JndiUtils
         JndiTemplate jndiTemplate = getJndiTemplate(jndiProperties);
         JndiObjectFactoryBean jndiObjectFactoryBean = getObjectFactoryInstance(jndiTemplate, destinationJndiName);
         Object jndiObject = jndiObjectFactoryBean.getObject();
-        if(jndiObject instanceof Destination)
+        if(jndiObject instanceof Destination destination)
         {
-            return (Destination)jndiObject;
+            return destination;
         }
 
         throw new RuntimeException("Expected a Destination class, Found a [" + jndiObject.getClass().getName() + "]");
@@ -90,10 +90,10 @@ public class JndiUtils
     public static ConnectionFactory getAuthenticatedConnectionFactory(Map<String,String> jndiProperties, String connectionFactoryName, String username, String password)
     {
         ConnectionFactory connectionFactory = getConnectionFactory(jndiProperties, connectionFactoryName);
-        if(connectionFactory instanceof XAConnectionFactory)
+        if(connectionFactory instanceof XAConnectionFactory factory)
         {
             AuthenticatedXAConnectionFactory authenticatedXAConnectionFactory = new AuthenticatedXAConnectionFactory();
-            authenticatedXAConnectionFactory.setXAConnectionFactory((XAConnectionFactory)connectionFactory);
+            authenticatedXAConnectionFactory.setXAConnectionFactory(factory);
             authenticatedXAConnectionFactory.setUsername(username);
             authenticatedXAConnectionFactory.setPassword(password);
             return authenticatedXAConnectionFactory;
@@ -117,9 +117,9 @@ public class JndiUtils
         JndiTemplate jndiTemplate = getJndiTemplate(jndiProperties);
         JndiObjectFactoryBean jndiObjectFactoryBean = getObjectFactoryInstance(jndiTemplate, connectionFactoryName);
         Object jndiObject = jndiObjectFactoryBean.getObject();
-        if(jndiObject instanceof ConnectionFactory)
+        if(jndiObject instanceof ConnectionFactory factory)
         {
-            return (ConnectionFactory) jndiObject;
+            return factory;
         }
 
         throw new RuntimeException("Expected a ConnectionFactory class, Found a [" + jndiObject.getClass().getName() + "]");

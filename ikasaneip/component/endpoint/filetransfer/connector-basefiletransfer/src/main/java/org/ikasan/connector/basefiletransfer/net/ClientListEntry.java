@@ -473,7 +473,7 @@ public class ClientListEntry
         int dUri = this.uri.compareTo(e.getUri());
         int dLastModified = this.dtLastModified.compareTo(e.getDtLastModified());
         int dLastAccessed = this.dtLastAccessed.compareTo(e.getDtLastAccessed());
-        int dSize = (new Long(this.size)).compareTo(new Long(e.getSize()));
+        int dSize = (Long.valueOf(this.size)).compareTo(Long.valueOf(e.getSize()));
 
         if (dClientId == 0 && dUri == 0 && dLastModified == 0 && dLastAccessed == 0 && dSize == 0)
             return 0;

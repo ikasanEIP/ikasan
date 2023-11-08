@@ -120,17 +120,17 @@ public class XmlStringToObjectConverter<SOURCE,TARGET> implements Converter<SOUR
         try
         {
             String xml = null;
-            if (payload instanceof String){
-                xml = (String)payload;
-            } else if (payload instanceof byte[]){
-                xml = new String((byte[])payload);
+            if (payload instanceof String string){
+                xml = string;
+            } else if (payload instanceof byte[] bytes){
+                xml = new String(bytes);
             } else {
                 throw new TransformationException("Cannot get xml string from payload " + payload.toString());
             }
             result = marshaller.unmarshal(new StreamSource(new StringReader(xml)));
-            if(result instanceof JAXBElement && configuration.isAutoConvertElementToValue())
+            if(result instanceof JAXBElement element && configuration.isAutoConvertElementToValue())
             {
-                result = ((JAXBElement)result).getDeclaredType().cast(((JAXBElement) result).getValue());
+                result = element.getDeclaredType().cast(element.getValue());
                 return (TARGET)result;
             }
 

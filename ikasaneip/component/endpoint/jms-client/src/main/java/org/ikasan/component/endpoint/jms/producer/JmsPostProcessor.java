@@ -111,37 +111,37 @@ public class JmsPostProcessor<T> implements PostProcessor<T, Message>, Configure
             for(Map.Entry<String,?> entry : properties.entrySet())
             {
                 Object value = entry.getValue();
-                if(value instanceof String)
+                if(value instanceof String string)
                 {
-                    message.setStringProperty(entry.getKey(), (String)value);
+                    message.setStringProperty(entry.getKey(), string);
                 }
-                else if(value instanceof Integer)
+                else if(value instanceof Integer integer)
                 {
-                    message.setIntProperty(entry.getKey(), (Integer)value);
+                    message.setIntProperty(entry.getKey(), integer);
                 }
-                else if(value instanceof Boolean)
+                else if(value instanceof Boolean boolean1)
                 {
-                    message.setBooleanProperty(entry.getKey(), (Boolean)value);
+                    message.setBooleanProperty(entry.getKey(), boolean1);
                 }
-                else if(value instanceof Byte)
+                else if(value instanceof Byte byte1)
                 {
-                    message.setByteProperty(entry.getKey(), (Byte)value);
+                    message.setByteProperty(entry.getKey(), byte1);
                 }
-                else if(value instanceof Double)
+                else if(value instanceof Double double1)
                 {
-                    message.setDoubleProperty(entry.getKey(), (Double)value);
+                    message.setDoubleProperty(entry.getKey(), double1);
                 }
-                else if(value instanceof Float)
+                else if(value instanceof Float float1)
                 {
-                    message.setFloatProperty(entry.getKey(), (Float)value);
+                    message.setFloatProperty(entry.getKey(), float1);
                 }
-                else if(value instanceof Long)
+                else if(value instanceof Long long1)
                 {
-                    message.setLongProperty(entry.getKey(), (Long)value);
+                    message.setLongProperty(entry.getKey(), long1);
                 }
-                else if(value instanceof Short)
+                else if(value instanceof Short short1)
                 {
-                    message.setShortProperty(entry.getKey(), (Short)value);
+                    message.setShortProperty(entry.getKey(), short1);
                 }
                 else
                 {

@@ -319,11 +319,13 @@ public class ComponentBuilder
         }
         catch(NoClassDefFoundError e)
         {
-            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
-                    + "<dependency>\n"
-                    + "  <groupId>org.ikasan</groupId>\n"
-                    + "  <artifactId>ikasan-test-endpoint</artifactId>\n"
-                    + "</dependency>\n", e);
+            throw new RuntimeException("""
+                    Check your pom.xml dependencies to ensure you include
+                    <dependency>
+                      <groupId>org.ikasan</groupId>
+                      <artifactId>ikasan-test-endpoint</artifactId>
+                    </dependency>
+                    """, e);
         }
     }
 
@@ -341,11 +343,13 @@ public class ComponentBuilder
         }
         catch(NoClassDefFoundError e)
         {
-            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
-                + "<dependency>\n"
-                + "  <groupId>org.ikasan</groupId>\n"
-                + "  <artifactId>ikasan-big-queue</artifactId>\n"
-                + "</dependency>\n", e);
+            throw new RuntimeException("""
+                Check your pom.xml dependencies to ensure you include
+                <dependency>
+                  <groupId>org.ikasan</groupId>
+                  <artifactId>ikasan-big-queue</artifactId>
+                </dependency>
+                """, e);
         }
     }
 
@@ -362,11 +366,13 @@ public class ComponentBuilder
         }
         catch(NoClassDefFoundError e)
         {
-            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
-                + "<dependency>\n"
-                + "  <groupId>org.ikasan</groupId>\n"
-                + "  <artifactId>ikasan-big-queue</artifactId>\n"
-                + "</dependency>\n", e);
+            throw new RuntimeException("""
+                Check your pom.xml dependencies to ensure you include
+                <dependency>
+                  <groupId>org.ikasan</groupId>
+                  <artifactId>ikasan-big-queue</artifactId>
+                </dependency>
+                """, e);
         }
     }
 
@@ -382,11 +388,13 @@ public class ComponentBuilder
         }
         catch(NoClassDefFoundError e)
         {
-            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
-                    + "<dependency>\n"
-                    + "  <groupId>org.ikasan</groupId>\n"
-                    + "  <artifactId>ikasan-component-converter</artifactId>\n"
-                    + "</dependency>\n", e);
+            throw new RuntimeException("""
+                    Check your pom.xml dependencies to ensure you include
+                    <dependency>
+                      <groupId>org.ikasan</groupId>
+                      <artifactId>ikasan-component-converter</artifactId>
+                    </dependency>
+                    """, e);
         }
     }
 
@@ -402,11 +410,13 @@ public class ComponentBuilder
         }
         catch(NoClassDefFoundError e)
         {
-            throw new RuntimeException("Check your pom.xml dependencies to ensure you include\n"
-                    + "<dependency>\n"
-                    + "  <groupId>org.ikasan</groupId>\n"
-                    + "  <artifactId>ikasan-component-converter</artifactId>\n"
-                    + "</dependency>\n", e);
+            throw new RuntimeException("""
+                    Check your pom.xml dependencies to ensure you include
+                    <dependency>
+                      <groupId>org.ikasan</groupId>
+                      <artifactId>ikasan-component-converter</artifactId>
+                    </dependency>
+                    """, e);
         }
     }
 }

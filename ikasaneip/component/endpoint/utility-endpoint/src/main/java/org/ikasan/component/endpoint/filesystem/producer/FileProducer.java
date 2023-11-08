@@ -86,9 +86,9 @@ public class FileProducer<T> implements Producer<T>, ConfiguredResource<FileProd
     @Override
     public void invoke(T message) throws EndpointException
     {
-        if(message instanceof FlowEvent)
+        if(message instanceof FlowEvent event)
         {
-            this.process(((FlowEvent) message).getPayload());
+            this.process(event.getPayload());
         }
         else
         {
@@ -143,23 +143,23 @@ public class FileProducer<T> implements Producer<T>, ConfiguredResource<FileProd
      */
     protected void writeFile(File file, Object payload) throws IOException
     {
-        if(payload instanceof String)
+        if(payload instanceof String string)
         {
-            FileUtils.writeStringToFile(file, (String)payload, configuration.getEncoding());
+            FileUtils.writeStringToFile(file, string, configuration.getEncoding());
         }
-        else if(payload instanceof byte[])
+        else if(payload instanceof byte[] bytes)
         {
-            FileUtils.writeByteArrayToFile(file, (byte[])payload);
+            FileUtils.writeByteArrayToFile(file, bytes);
         }
-        if(payload instanceof Collection)
+        if(payload instanceof Collection collection)
         {
             if(configuration.getLineEnding() != null)
             {
-                FileUtils.writeLines(file, (Collection)payload, configuration.getLineEnding());
+                FileUtils.writeLines(file, collection, configuration.getLineEnding());
             }
             else
             {
-                FileUtils.writeLines(file, (Collection)payload);
+                FileUtils.writeLines(file, collection);
             }
         }
 

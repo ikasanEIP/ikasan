@@ -3,15 +3,13 @@ package org.ikasan.ootb.scheduler.agent.rest.client;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.ikasan.dashboard.DashboardRestServiceImpl;
-import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.ootb.scheduler.agent.rest.client.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,7 +29,7 @@ public class SchedulerAgentRestDashboardClientTest
 {
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
     }};
 

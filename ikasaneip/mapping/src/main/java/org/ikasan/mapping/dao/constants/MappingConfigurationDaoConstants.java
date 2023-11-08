@@ -129,35 +129,45 @@ public interface MappingConfigurationDaoConstants
             " and mc.targetContext = (select cc.id from ConfigurationContext as cc where cc.name = :" + TARGET_CONTEXT  + ")";
 
     public static final String NARROW_CONFIGURATION_TYPE_BASE_QUERY =
-            "select DISTINCT t from ConfigurationType as t, " +
-            "ConfigurationServiceClient as c, MappingConfiguration as mc " +
-            "where t.id = mc.configurationType " +
-            "and c.id = mc.configurationServiceClient ";
+            """
+            select DISTINCT t from ConfigurationType as t, \
+            ConfigurationServiceClient as c, MappingConfiguration as mc \
+            where t.id = mc.configurationType \
+            and c.id = mc.configurationServiceClient \
+            """;
 
     public static final String NARROW_SOURCE_CONFIGURATION_BASE_QUERY =
-            "select DISTINCT s from ConfigurationContext as s, ConfigurationType as t, " +
-            "ConfigurationServiceClient as c, MappingConfiguration as mc " +
-            "where t.id = mc.configurationType " +
-            "and c.id = mc.configurationServiceClient " +
-            "and s.id = mc.sourceContext ";
+            """
+            select DISTINCT s from ConfigurationContext as s, ConfigurationType as t, \
+            ConfigurationServiceClient as c, MappingConfiguration as mc \
+            where t.id = mc.configurationType \
+            and c.id = mc.configurationServiceClient \
+            and s.id = mc.sourceContext \
+            """;
 
     public static final String NARROW_TARGET_CONFIGURATION_BASE_QUERY =
-            "select DISTINCT tg from ConfigurationContext as tg, ConfigurationContext as s, ConfigurationType as t, " +
-            "ConfigurationServiceClient as c, MappingConfiguration as mc " +
-            "where t.id = mc.configurationType " +
-            "and c.id = mc.configurationServiceClient " +
-            "and s.id = mc.sourceContext " +
-            "and tg.id = mc.targetContext ";
+            """
+            select DISTINCT tg from ConfigurationContext as tg, ConfigurationContext as s, ConfigurationType as t, \
+            ConfigurationServiceClient as c, MappingConfiguration as mc \
+            where t.id = mc.configurationType \
+            and c.id = mc.configurationServiceClient \
+            and s.id = mc.sourceContext \
+            and tg.id = mc.targetContext \
+            """;
 
-    public static final String MAPPING_CONFIGURATION_BASE_QUERY = "select mc from ConfigurationType as t," +
-            " MappingConfiguration as mc, ConfigurationServiceClient as c" +
-            " where t.id = mc.configurationType" +
-            " and mc.configurationServiceClient = c.id";
+    public static final String MAPPING_CONFIGURATION_BASE_QUERY = """
+            select mc from ConfigurationType as t,\
+             MappingConfiguration as mc, ConfigurationServiceClient as c\
+             where t.id = mc.configurationType\
+             and mc.configurationServiceClient = c.id\
+            """;
 
-    public static final String MAPPING_CONFIGURATION_LITE_BASE_QUERY = "select mc from ConfigurationType as t," +
-            " MappingConfigurationLite as mc, ConfigurationServiceClient as c" +
-            " where t.id = mc.configurationType" +
-            " and mc.configurationServiceClient = c.id";
+    public static final String MAPPING_CONFIGURATION_LITE_BASE_QUERY = """
+            select mc from ConfigurationType as t,\
+             MappingConfigurationLite as mc, ConfigurationServiceClient as c\
+             where t.id = mc.configurationType\
+             and mc.configurationServiceClient = c.id\
+            """;
 
     public static final String CONFIGURATION_TYPE_PREDICATE = " and t.name = :" + CONFIGURATION_TYPE;
     public static final String SOURCE_SYSTEM_PREDICATE = " and s.name = :" + SOURCE_SYSTEM_VALUE;

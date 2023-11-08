@@ -300,9 +300,8 @@ public class FileTransferConnectionTemplate implements TransactionCommitFailureO
             connection = (Connection) ftpManagedConnection.getConnection(this.fileChunkDao,baseFileTransferDao, duplicatesFileCache);
             try
             {
-                if (connection instanceof BaseFileTransferConnection)
+                if (connection instanceof BaseFileTransferConnection sc)
                 {
-                    BaseFileTransferConnection sc = (BaseFileTransferConnection) connection;
                     TransactionalCommandConnection smc = sc.getManagedConnection();
                     transactionManager.getTransactionManager().getTransaction().enlistResource(smc);
                 }

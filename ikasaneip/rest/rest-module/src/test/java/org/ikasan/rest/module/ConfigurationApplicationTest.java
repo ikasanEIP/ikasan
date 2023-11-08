@@ -122,8 +122,11 @@ public class ConfigurationApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            "[{\"configurationId\":\"test_id\",\"description\":\"test descript\","
-                + "\"implementingClass\":\"TestClass\"," + "\"parameters\":[]}]",
+            """
+            [{"configurationId":"test_id","description":"test descript",\
+            "implementingClass":"TestClass",\
+            "parameters":[]}]\
+            """,
             result.getResponse().getContentAsString(), JSONCompareMode.LENIENT
                                );
 
@@ -157,8 +160,11 @@ public class ConfigurationApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"configurationId\":\"test_id\",\"description\":\"test descript\","
-                + "\"implementingClass\":\"TestClass\"," + "\"parameters\":[]}",
+            """
+            {"configurationId":"test_id","description":"test descript",\
+            "implementingClass":"TestClass",\
+            "parameters":[]}\
+            """,
             result.getResponse().getContentAsString(), JSONCompareMode.LENIENT
         );
 
@@ -190,8 +196,11 @@ public class ConfigurationApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"configurationId\":\"test_id\",\"description\":\"test descript\","
-                + "\"implementingClass\":\"TestClass\"," + "\"parameters\":[]}",
+            """
+            {"configurationId":"test_id","description":"test descript",\
+            "implementingClass":"TestClass",\
+            "parameters":[]}\
+            """,
             result.getResponse().getContentAsString(), JSONCompareMode.LENIENT
                                );
 

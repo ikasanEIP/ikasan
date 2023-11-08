@@ -43,7 +43,7 @@ package org.ikasan.component.endpoint.consumer;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -59,7 +59,7 @@ public class AbstractConsumerTest
      */
     private Mockery mockery = new Mockery()
     {{
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     private EventFactory eventFactory = mockery.mock(EventFactory.class);

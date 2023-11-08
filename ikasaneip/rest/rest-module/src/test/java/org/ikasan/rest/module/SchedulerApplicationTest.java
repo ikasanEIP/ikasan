@@ -146,10 +146,12 @@ public class SchedulerApplicationTest
         assertEquals(200, result.getResponse().getStatus());
 
         JSONAssert.assertEquals("JSON Result must equal!",
-            "[{\"group\":\"Group\",\"jobName\":\"Name\",\"jobGroup\":\"DEFAULT\",\"jobDataMap\":{},"
-                + "\"misfireInstruction\":0,\"priority\":5,\"repeatCount\":0,\"repeatInterval\":0,"
-                + "\"timesTriggered\":0,\"scheduleBuilder\":{},\"triggerBuilder\":{},\"jobKey\":{\"name\":\"Name\","
-                + "\"group\":\"DEFAULT\"},\"fullName\":\"Group.null\",\"fullJobName\":\"DEFAULT.Name\"}]",
+            """
+            [{"group":"Group","jobName":"Name","jobGroup":"DEFAULT","jobDataMap":{},\
+            "misfireInstruction":0,"priority":5,"repeatCount":0,"repeatInterval":0,\
+            "timesTriggered":0,"scheduleBuilder":{},"triggerBuilder":{},"jobKey":{"name":"Name",\
+            "group":"DEFAULT"},"fullName":"Group.null","fullJobName":"DEFAULT.Name"}]\
+            """,
             result.getResponse().getContentAsString(),
             JSONCompareMode.LENIENT);
 

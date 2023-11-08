@@ -51,7 +51,7 @@ import org.ikasan.spec.monitor.Monitor;
 import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
@@ -72,7 +72,7 @@ public class MonitorBuilderTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
     

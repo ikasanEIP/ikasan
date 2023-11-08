@@ -82,9 +82,9 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<Invoker
                     // try with flowEvent and if successful mark this producer
                     // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
                     Object o = broker.invoke(flowEvent);
-                    if (o instanceof FlowEvent)
+                    if (o instanceof FlowEvent event)
                     {
-                        flowEvent.replace((FlowEvent) o);
+                        flowEvent.replace(event);
                     }
                     else
                     {
@@ -104,9 +104,9 @@ public class BrokerFlowElementInvoker extends AbstractFlowElementInvoker<Invoker
                 {
                     // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
                     Object o = broker.invoke(flowEvent);
-                    if (o instanceof FlowEvent)
+                    if (o instanceof FlowEvent event)
                     {
-                        flowEvent.replace((FlowEvent) o);
+                        flowEvent.replace(event);
                     }
                     else
                     {

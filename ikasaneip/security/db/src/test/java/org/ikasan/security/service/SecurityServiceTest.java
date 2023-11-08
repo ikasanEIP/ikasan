@@ -634,7 +634,7 @@ public class SecurityServiceTest
     public void test_success_save_policy_link()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
-    	PolicyLink policyLink = new PolicyLink(plts.get(0),new Long(1), "name");
+    	PolicyLink policyLink = new PolicyLink(plts.get(0),Long.valueOf(1), "name");
     	
     	this.xaSecurityService.savePolicyLink(policyLink);
     	

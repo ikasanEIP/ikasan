@@ -35,7 +35,7 @@ public class BigQueueManagementApplication {
             return new ResponseEntity(queues, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to list queues. Error [%s]", e.getMessage());
+            String message = "Got exception trying to list queues. Error [%s]".formatted(e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -51,7 +51,7 @@ public class BigQueueManagementApplication {
             return new ResponseEntity(size, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to get size for queue [%s]. Error [%s]", queueName, e.getMessage());
+            String message = "Got exception trying to get size for queue [%s]. Error [%s]".formatted(queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -67,7 +67,7 @@ public class BigQueueManagementApplication {
             return new ResponseEntity(size, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to get size for all queue. Error [%s]", e.getMessage());
+            String message = "Got exception trying to get size for all queue. Error [%s]".formatted(e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -83,7 +83,7 @@ public class BigQueueManagementApplication {
             return new ResponseEntity(bigQueueMessage, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to peek queue for queue [%s]. Error [%s]", queueName, e.getMessage());
+            String message = "Got exception trying to peek queue for queue [%s]. Error [%s]".formatted(queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -99,7 +99,7 @@ public class BigQueueManagementApplication {
             return new ResponseEntity(messages, HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to get message for queue [%s]. Error [%s]", queueName, e.getMessage());
+            String message = "Got exception trying to get message for queue [%s]. Error [%s]".formatted(queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -117,7 +117,7 @@ public class BigQueueManagementApplication {
 
         } catch (Exception e) {
             String message
-                = String.format("Got exception trying to delete message for queue [%s] message [%s]. Error [%s]", queueName, messageId, e.getMessage());
+                = "Got exception trying to delete message for queue [%s] message [%s]. Error [%s]".formatted(queueName, messageId, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -134,7 +134,7 @@ public class BigQueueManagementApplication {
 
         } catch (Exception e) {
             String message
-                = String.format("Got exception trying to delete all messages for queue [%s]. Error [%s]", queueName, e.getMessage());
+                = "Got exception trying to delete all messages for queue [%s]. Error [%s]".formatted(queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }
@@ -150,7 +150,7 @@ public class BigQueueManagementApplication {
             return new ResponseEntity(HttpStatus.OK);
 
         } catch (Exception e) {
-            String message = String.format("Got exception trying to delete queue for queue [%s]. Error [%s]", queueName, e.getMessage());
+            String message = "Got exception trying to delete queue for queue [%s]. Error [%s]".formatted(queueName, e.getMessage());
             LOG.warn(message);
             return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
         }

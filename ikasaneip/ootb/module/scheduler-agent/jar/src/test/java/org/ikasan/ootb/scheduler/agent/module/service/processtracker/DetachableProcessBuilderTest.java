@@ -113,17 +113,21 @@ public class DetachableProcessBuilderTest {
         assertThat(commands.get(1)).isEqualTo(cp.getCommandArgs()[1]);
         if (cp.equals(CommandProcessor.UNIX_BASH)) {
             assertThat(commands.get(2)).isEqualTo(
-                "chmod +x XX\n" +
-                " XX\n" +
-                " RET=$?\n" +
-                " echo $RET > OutputFileName\n" +
-                " exit $RET");
+                """
+                chmod +x XX
+                 XX
+                 RET=$?
+                 echo $RET > OutputFileName
+                 exit $RET\
+                """);
         } else {
             assertThat(commands.get(2)).isEqualTo(
-                "& XX\r\n" +
-                " $RET=$LASTEXITCODE\r\n" +
-                " set-content -Encoding \"utf8\" OutputFileName $RET \r\n" +
-                " exit $RET");
+                """
+                & XX
+                 $RET=$LASTEXITCODE
+                 set-content -Encoding "utf8" OutputFileName $RET 
+                 exit $RET\
+                """);
         }
     }
 

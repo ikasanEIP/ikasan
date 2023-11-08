@@ -160,8 +160,10 @@ public class ReplayApplicationTest
             serialiser, systemEventService);
 
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"Could not get module from module container using name:  "
-            + "[testModule]\"}", result.getResponse().getContentAsString());
+        assertEquals("""
+            {"errorMessage":"Could not get module from module container using name:  \
+            [testModule]"}\
+            """, result.getResponse().getContentAsString());
 
     }
 
@@ -186,8 +188,10 @@ public class ReplayApplicationTest
         Mockito.verifyNoMoreInteractions(moduleContainer, flowConfiguration, resubmissionService, systemEventService);
 
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"Could not get flow from module container using name:  "
-            + "[testFlow]\"}", result.getResponse().getContentAsString());
+        assertEquals("""
+            {"errorMessage":"Could not get flow from module container using name:  \
+            [testFlow]"}\
+            """, result.getResponse().getContentAsString());
 
     }
 
@@ -213,8 +217,10 @@ public class ReplayApplicationTest
             serialiser, systemEventService);
 
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"Events cannot be replayed when the flow that is being "
-                + "replayed to is in a stopped state.  Module[testModule] Flow[testFlow]\"}",
+        assertEquals("""
+                {"errorMessage":"Events cannot be replayed when the flow that is being \
+                replayed to is in a stopped state.  Module[testModule] Flow[testFlow]"}\
+                """,
             result.getResponse().getContentAsString()
                     );
 
@@ -244,9 +250,11 @@ public class ReplayApplicationTest
             serialiser, systemEventService );
 
         assertEquals(400, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"The resubmission service on the flow you are "
-                + "resubmitting to is null. This is most likely due to the resubmission service not being set on the "
-                + "flow factory for the flow you are resubmitting to.\"}",
+        assertEquals("""
+                {"errorMessage":"The resubmission service on the flow you are \
+                resubmitting to is null. This is most likely due to the resubmission service not being set on the \
+                flow factory for the flow you are resubmitting to."}\
+                """,
             result.getResponse().getContentAsString()
                     );
 

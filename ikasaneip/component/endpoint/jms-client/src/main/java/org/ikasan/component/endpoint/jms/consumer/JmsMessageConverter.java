@@ -68,30 +68,29 @@ public class JmsMessageConverter
      */
     public static Object extractContent(Message message) throws JMSException
     {
-        if(message instanceof TextMessage)
+        if(message instanceof TextMessage textMessage)
         {
-            return ((TextMessage)message).getText();
+            return textMessage.getText();
         }
-        else if(message instanceof MapMessage)
+        else if(message instanceof MapMessage mapMessage)
         {
             Map<String,Object> content = new HashMap<String,Object>();
-            Enumeration<String> mapNames = ((MapMessage)message).getMapNames();
+            Enumeration<String> mapNames = mapMessage.getMapNames();
 
             while(mapNames.hasMoreElements())
             {
                 String mapName = mapNames.nextElement();
-                content.put(mapName, ((MapMessage)message).getObject(mapName));
+                content.put(mapName, mapMessage.getObject(mapName));
             }
 
             return content;
         }
-        else if(message instanceof ObjectMessage)
+        else if(message instanceof ObjectMessage objectMessage)
         {
-            return ((ObjectMessage)message).getObject();
+            return objectMessage.getObject();
         }
-        else if(message instanceof BytesMessage)
+        else if(message instanceof BytesMessage bytesMessage)
         {
-            BytesMessage bytesMessage = (BytesMessage) message;
             long bytesLength = bytesMessage.getBodyLength();
             if(bytesLength > 0)
             {

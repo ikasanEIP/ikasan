@@ -376,9 +376,9 @@ public class XsltConverter<SOURCE, TARGET> implements Converter<SOURCE, TARGET>,
 
     private String extractXml(SOURCE xml)
     {
-        if (xmlExtractor == null && xml instanceof String)
+        if (xmlExtractor == null && xml instanceof String string)
         {
-            return (String) xml;
+            return string;
         }
         else
         {

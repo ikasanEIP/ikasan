@@ -54,8 +54,8 @@ import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -72,7 +72,7 @@ import java.util.Map;
 public class ModuleActivatorDefaultImplTest
 {
     private Mockery mockery = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
     }};
 

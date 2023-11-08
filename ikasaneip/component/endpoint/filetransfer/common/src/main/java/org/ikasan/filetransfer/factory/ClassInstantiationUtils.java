@@ -127,7 +127,7 @@ public class ClassInstantiationUtils
                 + cls.getName() + "()] "); //$NON-NLS-1$
         try
         {
-            return cls.newInstance();
+            return cls.getDeclaredConstructor().newInstance();
         }
         catch (IllegalAccessException e)
         {

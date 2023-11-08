@@ -241,7 +241,7 @@ public class WiretapEventsSearchFormController
     public ModelAndView viewEvent(@RequestParam("eventId") long eventId, ModelMap modelMap)
     {
         this.logger.info("inside viewEvent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
+        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(Long.valueOf(eventId));
         modelMap.addAttribute("wiretapEvent", wiretapEvent);
         return new ModelAndView("events/viewWiretapEvent", modelMap);
     }
@@ -257,7 +257,7 @@ public class WiretapEventsSearchFormController
     public ModelAndView viewPrettyPayloadContent(@RequestParam("eventId") long eventId, HttpServletResponse response)
     {
         this.logger.info("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
-        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(new Long(eventId));
+        WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(Long.valueOf(eventId));
         if(wiretapEvent.getEvent() instanceof String)
         {
             response.setContentType("text/xml");

@@ -6,7 +6,7 @@ import org.ikasan.spec.systemevent.SystemEventService;
 import org.ikasan.systemevent.model.SystemEventImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +21,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
     "/systemevent-service-conf.xml", "/test-conf.xml"
@@ -36,7 +34,7 @@ public class SystemEventServiceImplTest
 
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     private SystemEventDao systemEventDao = mockery.mock(SystemEventDao.class, "mockSystemEventDao");
@@ -134,35 +132,37 @@ public class SystemEventServiceImplTest
     @Test
     public void logEvent_long_subject()
     {
-        this.systemEventService.logSystemEvent("aasdssssssssssadsadasdasdasdasdasdasdasdasdasdasddassadasd" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-            "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa",
+        this.systemEventService.logSystemEvent("""
+            aasdssssssssssadsadasdasdasdasdasdasdasdasdasdasddassadasd\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+            """,
             "action", "actor"
             );
 
@@ -173,35 +173,37 @@ public class SystemEventServiceImplTest
     @Test
     public void logEvent_long_subject_with_module_name()
     {
-        this.systemEventService.logSystemEvent("moduleName", "aasdssssssssssadsadasdasdasdasdasdasdasdasdasdasddassadasd" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa" +
-                "asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa",
+        this.systemEventService.logSystemEvent("moduleName", """
+                aasdssssssssssadsadasdasdasdasdasdasdasdasdasdasddassadasd\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                asdasdasasdasdasdasdafsgghdrtgwadfgadfadfasdfadsfadfasdfadsfasfadsfadfadfasdfasdfasdfasdfasdfadfadfadfa\
+                """,
             "action", "actor"
         );
 

@@ -92,7 +92,7 @@ public class WiretapEventFactoryDefaultImplTest
     public void test_newEvent_with_default_serialiser()
     {
         WiretapEventFactory wiretapEventFactory = new WiretapEventFactoryDefaultImpl(this.serialiser);
-        FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", new Integer(1));
+        FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", Integer.valueOf(1));
 
         // test the serialiser service
         WiretapEvent wiretapEvent = wiretapEventFactory.newEvent("moduleName", "flowName",
@@ -112,7 +112,7 @@ public class WiretapEventFactoryDefaultImplTest
     public void test_newEvent_with_overridden_default_serialiser()
     {
         WiretapEventFactory wiretapEventFactory = new WiretapEventFactoryDefaultImpl(this.serialiser);
-        FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", new Integer(1));
+        FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", Integer.valueOf(1));
 
         WiretapSerialiser serialiser = new NewDefaultSerialiser();
         wiretapEventFactory.setSerialiser(serialiser);
@@ -135,7 +135,7 @@ public class WiretapEventFactoryDefaultImplTest
     public void test_newEvent_with_registered_module_flow_component_serialiser()
     {
         WiretapEventFactory wiretapEventFactory = new WiretapEventFactoryDefaultImpl(this.serialiser);
-        FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", new Integer(1));
+        FlowEvent flowEvent = new GenericFlowEvent<String, Integer>("id", Integer.valueOf(1));
 
         WiretapSerialiser moduleSerialiser = new NewDefaultSerialiser();
         WiretapSerialiser componentSerialiser = new ComponentSerialiser();

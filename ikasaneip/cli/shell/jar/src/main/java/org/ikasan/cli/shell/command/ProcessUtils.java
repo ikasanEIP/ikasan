@@ -97,18 +97,18 @@ public class ProcessUtils
                 sb.append(type + " " + name + " process started");
             }
 
-            if(!processHandleInfo.command().isEmpty())
+            if(processHandleInfo.command().isPresent())
             {
                 sb.append(" [" + processHandleInfo.command().get() + "]");
             }
 
-            if(!processHandleInfo.user().isEmpty())
+            if(processHandleInfo.user().isPresent())
             {
                 sb.append(" as user[" + processHandleInfo.user().get() + "]");
             }
 
             Optional<String> commandLine = processHandleInfo.commandLine();
-            if(!commandLine.isEmpty())
+            if(commandLine.isPresent())
             {
                 sb.append(" Command Line[" + commandLine.get() + "]");
             }
