@@ -354,7 +354,7 @@ public class ModuleControlApplication
         {
             return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity(String.format("Module action[%s] successfully applied!", moduleActivationDto.getAction()), HttpStatus.OK);
+        return new ResponseEntity("Module action[%s] successfully applied!".formatted(moduleActivationDto.getAction()), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.GET,

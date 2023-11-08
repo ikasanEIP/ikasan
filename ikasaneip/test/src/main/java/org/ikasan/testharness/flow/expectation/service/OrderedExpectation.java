@@ -106,20 +106,22 @@ public class OrderedExpectation extends AbstractListExpectation
                 catch (AssertionError e)
                 {
                     // @formatter:off
-                    String format = "%n" +
-                            "Expected FlowElement invocations in order:%n" +
-                            "  <%s>%n" +
-                            "Actual FlowElements invocations are in a different order:%n" +
-                            "  <%s>%n" +
-                            "Unexpected FlowElement invocation at:%n" +
-                            "  <[%s]>%n" +
-                            "Expected FlowElement invocation:%n" +
-                            "  <%s>%n" +
-                            "FlowElement invoked:%n" +
-                            "  <%s>%n";
+                    String format = """
+                            %n\
+                            Expected FlowElement invocations in order:%n\
+                              <%s>%n\
+                            Actual FlowElements invocations are in a different order:%n\
+                              <%s>%n\
+                            Unexpected FlowElement invocation at:%n\
+                              <[%s]>%n\
+                            Expected FlowElement invocation:%n\
+                              <%s>%n\
+                            FlowElement invoked:%n\
+                              <%s>%n\
+                            """;
                     // @formatter:on
-                    String message = String
-                        .format(format, formatList(expectations), formatList(captures), expectation.getOrder(), expectation, capture);
+                    String message = format
+                        .formatted(formatList(expectations), formatList(captures), expectation.getOrder(), expectation, capture);
                     fail(message);
                 }
                 i++;
@@ -127,18 +129,20 @@ public class OrderedExpectation extends AbstractListExpectation
             return;
         }
         // @formatter:off
-        String format = "%n" +
-                "Expected FlowElement invocations in order:%n" +
-                "  <%s>%n" +
-                "Actual FlowElement invocations:%n" +
-                "  <%s>%n" +
-                "FlowElements not invoked:%n" +
-                "  <%s>%n" +
-                "FlowElements invoked but not expected:%n" +
-                "  <%s>%n";
+        String format = """
+                %n\
+                Expected FlowElement invocations in order:%n\
+                  <%s>%n\
+                Actual FlowElement invocations:%n\
+                  <%s>%n\
+                FlowElements not invoked:%n\
+                  <%s>%n\
+                FlowElements invoked but not expected:%n\
+                  <%s>%n\
+                """;
         // @formatter:on
-        String message = String
-            .format(format, formatList(expectations), formatList(captures), formatList(diff.getUnsatisfiedExpectations()),
+        String message = format
+            .formatted(formatList(expectations), formatList(captures), formatList(diff.getUnsatisfiedExpectations()),
                 formatList(diff.getUnexpectedCaptures()));
         fail(message);
     }

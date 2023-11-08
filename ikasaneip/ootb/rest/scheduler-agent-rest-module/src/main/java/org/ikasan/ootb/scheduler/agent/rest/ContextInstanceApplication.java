@@ -113,7 +113,7 @@ public class ContextInstanceApplication {
             e.printStackTrace();
             return new ResponseEntity(
                 new ErrorDto(
-                    String.format("An error has occurred attempting to remove correlationId [%s] Error message [%s]", correlationId, e.getMessage())),
+                    "An error has occurred attempting to remove correlationId [%s] Error message [%s]".formatted(correlationId, e.getMessage())),
                 HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
@@ -129,8 +129,7 @@ public class ContextInstanceApplication {
             e.printStackTrace();
             return new ResponseEntity(
                 new ErrorDto(
-                    String.format("An error has occurred attempting to remove all correlationIds. Error message [%s]"
-                        , e.getMessage())), HttpStatus.BAD_REQUEST);
+                    "An error has occurred attempting to remove all correlationIds. Error message [%s]".formatted(e.getMessage())), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
     }

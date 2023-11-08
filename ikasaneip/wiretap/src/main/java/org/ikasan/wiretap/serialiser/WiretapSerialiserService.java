@@ -69,9 +69,9 @@ public class WiretapSerialiserService implements WiretapSerialiser<Object, Strin
         WiretapSerialiser<Object,String> serialiser = this.serialisers.get(source.getClass());
         if (serialiser == null)
         {
-            if(source instanceof byte[])
+            if(source instanceof byte[] bytes)
             {
-                return new String( (byte[])source );
+                return new String( bytes );
             }
             return source.toString();
         }

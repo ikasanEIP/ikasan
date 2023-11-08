@@ -76,9 +76,9 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
             flowMetaData
                 .setConsumer(describeFlowElement(flowMetaData, configuration.getConsumerFlowElement(), triggers));
 
-            if ( flow instanceof ConfiguredResource )
+            if ( flow instanceof ConfiguredResource resource )
             {
-                flowMetaData.setConfigurationId(((ConfiguredResource) flow).getConfiguredResourceId());
+                flowMetaData.setConfigurationId(resource.getConfiguredResourceId());
             }
 
             if(startupControl != null) {

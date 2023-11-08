@@ -268,12 +268,11 @@ public class ModuleActivatorDefaultImpl implements ModuleActivator<Flow>
         }
 
         // remove any flows created from configuration as part of activation
-        if(module instanceof ConfiguredResource)
+        if(module instanceof ConfiguredResource configuredModule)
         {
-            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = (ConfiguredResource)module;
             if(module instanceof FlowFactoryCapable)
             {
-                ConfiguredModuleConfiguration configuration = configuredModule.getConfiguration();
+                ConfiguredModuleConfiguration configuration = (ConfiguredModuleConfiguration) configuredModule.getConfiguration();
                 if(configuration.getFlowDefinitions() != null)
                 {
                     for(Map.Entry<String, String> flowDefinition : configuration.getFlowDefinitions().entrySet())

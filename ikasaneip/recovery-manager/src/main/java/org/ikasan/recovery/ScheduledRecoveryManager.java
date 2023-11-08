@@ -232,9 +232,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         // simple delay retry action
-        else if(action instanceof RetryAction)
+        else if(action instanceof RetryAction retryAction)
         {
-            RetryAction retryAction = (RetryAction)action;
 
             this.consumer.stop();
             stopManagedResources();
@@ -275,9 +274,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         // cron expression based delay retry action
-        else if(action instanceof ScheduledRetryAction)
+        else if(action instanceof ScheduledRetryAction scheduledRetryAction)
         {
-            ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)action;
 
             this.consumer.stop();
             stopManagedResources();

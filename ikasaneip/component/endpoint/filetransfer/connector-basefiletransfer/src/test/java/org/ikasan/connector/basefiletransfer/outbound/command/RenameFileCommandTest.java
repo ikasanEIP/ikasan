@@ -40,9 +40,6 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import javax.resource.ResourceException;
-
-
 import org.ikasan.connector.base.command.AbstractTransactionalResourceCommand;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.XidImpl;
@@ -50,8 +47,10 @@ import org.ikasan.connector.basefiletransfer.net.ClientCommandRenameException;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
+
+import javax.resource.ResourceException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -66,7 +65,7 @@ public class RenameFileCommandTest
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

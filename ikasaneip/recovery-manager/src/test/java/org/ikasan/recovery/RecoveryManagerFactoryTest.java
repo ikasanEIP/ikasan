@@ -46,8 +46,8 @@ import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.Scheduler;
@@ -66,7 +66,7 @@ public class RecoveryManagerFactoryTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new Synchroniser());
         }
     };

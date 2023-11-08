@@ -54,8 +54,8 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             moduleMetaData.setContext(module.getContext());
             moduleMetaData.setHost(module.getHost());
 
-            if(module instanceof ConfiguredResource) {
-                moduleMetaData.setConfiguredResourceId(((ConfiguredResource)module).getConfiguredResourceId());
+            if(module instanceof ConfiguredResource resource) {
+                moduleMetaData.setConfiguredResourceId(resource.getConfiguredResourceId());
             }
 
             for(Flow flow: module.getFlows())

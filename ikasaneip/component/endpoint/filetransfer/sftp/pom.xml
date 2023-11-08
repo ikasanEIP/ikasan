@@ -24,20 +24,21 @@
 	NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE * USE OF THIS SOFTWARE, 
 	EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. * ==================================================================== 
 	* * Author: Ikasan Development Team * -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	
-	<modelVersion>4.0.0</modelVersion>
-	
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
 
     <groupId>org.ikasan</groupId>
-	<artifactId>ikasan-sftp-endpoint</artifactId>
-	<packaging>jar</packaging>
+    <artifactId>ikasan-sftp-endpoint</artifactId>
+    <packaging>jar</packaging>
 
     <dependencies>
 
@@ -46,11 +47,18 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-basefiletransfer</artifactId>
         </dependency>
+
         <!-- The SFTP library -->
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
@@ -99,7 +107,13 @@
 
         <dependency>
             <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
+            <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -132,7 +146,6 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 

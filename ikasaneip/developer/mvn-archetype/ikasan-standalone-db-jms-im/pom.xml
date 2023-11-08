@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-mvn-archetype</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-standalone-db-jms-im-maven-plugin</artifactId>
@@ -53,9 +53,9 @@
 
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.source>17</maven.compiler.source>
         <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.target>17</maven.compiler.target>
         <version.com.h2database>1.4.200</version.com.h2database>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.ikasan>3.2.2</version.ikasan>

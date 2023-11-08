@@ -47,8 +47,10 @@ public class WiretapTriggerConfigurationConverterTest {
 
     @Test
     public void test(){
-        WiretapTriggerConfiguration configuration = new WiretapTriggerConfigurationConverter().convert("flowName" +
-            ",BEFORE,componentName,301,INSERT");
+        WiretapTriggerConfiguration configuration = new WiretapTriggerConfigurationConverter().convert("""
+            flowName\
+            ,BEFORE,componentName,301,INSERT\
+            """);
         assertEquals("flowName", configuration.getFlowName());
         assertEquals("before", configuration.getRelationship());
         assertEquals("componentName", configuration.getComponentName());
@@ -58,8 +60,10 @@ public class WiretapTriggerConfigurationConverterTest {
 
     @Test
     public void testDefaultToInsertIfActionMiessing(){
-        WiretapTriggerConfiguration configuration = new WiretapTriggerConfigurationConverter().convert("flowName" +
-            ",BEFORE,componentName,301");
+        WiretapTriggerConfiguration configuration = new WiretapTriggerConfigurationConverter().convert("""
+            flowName\
+            ,BEFORE,componentName,301\
+            """);
         assertEquals("flowName", configuration.getFlowName());
         assertEquals("before", configuration.getRelationship());
         assertEquals("componentName", configuration.getComponentName());

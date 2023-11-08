@@ -82,9 +82,14 @@ public class HibernateBaseFileTransferDaoImplTest
 
     JdbcTemplate jdbcTemplate;
 
-    String insertSql = "insert \n" + "    into\n" + "        FTFileFilter\n"
-        + "        ( ClientId, Criteria, LastModified, LastAccessed, Size, CreatedDateTime) \n" + "    values\n"
-        + "        ( ?, ?, ?, ?, ?, ?)";
+    String insertSql = """
+        insert\s
+            into
+                FTFileFilter
+                ( ClientId, Criteria, LastModified, LastAccessed, Size, CreatedDateTime)\s
+            values
+                ( ?, ?, ?, ?, ?, ?)\
+        """;
 
     String deleteAllSql = "delete from FTFileFilter";
 

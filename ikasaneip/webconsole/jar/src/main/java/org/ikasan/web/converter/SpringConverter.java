@@ -108,9 +108,8 @@ public class SpringConverter implements Converter
         {
             return source;
         }
-        else if (source instanceof String)
+        else if (source instanceof String sourceStr)
         {
-            String sourceStr = (String)source;
             Map<String, String> map = new HashMap<String, String>();
 
             // remove toString paranthesis

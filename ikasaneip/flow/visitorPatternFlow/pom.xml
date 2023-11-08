@@ -43,7 +43,7 @@
 	<parent>
 		<groupId>org.ikasan</groupId>
 		<artifactId>ikasan-flow</artifactId>
-		<version>3.4.0-SNAPSHOT</version>
+		<version>4.0.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>ikasan-flow-visitorPattern</artifactId>
@@ -52,59 +52,71 @@
 	<description>Ikasan EIP Flow implementation based on the Visitor design pattern</description>
 
 	<dependencies>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-component</artifactId>
             <scope>provided</scope>
         </dependency>
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-flow</artifactId>
  			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-event</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-monitor</artifactId>
  			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-recovery-manager</artifactId>
  			<scope>provided</scope>
 		</dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-exclusion</artifactId>
             <scope>provided</scope>
         </dependency>
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-management</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
 		<dependency>
 			<groupId>org.ikasan</groupId>
 			<artifactId>ikasan-spec-configuration</artifactId>
 			<scope>provided</scope>
 		</dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-error-reporting</artifactId>
             <scope>provided</scope>
         </dependency>
+
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-resubmission</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-serialiser</artifactId>
         </dependency>
+
 		<dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-replay</artifactId>
@@ -138,10 +150,16 @@
             <artifactId>cloning</artifactId>
         </dependency>
 
-        <!-- used by replication factory -->
         <dependency>
-            <groupId>org.objenesis</groupId>
-            <artifactId>objenesis</artifactId>
+            <groupId>org.jmock</groupId>
+            <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -165,12 +183,6 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
             <scope>test</scope>
         </dependency>
 

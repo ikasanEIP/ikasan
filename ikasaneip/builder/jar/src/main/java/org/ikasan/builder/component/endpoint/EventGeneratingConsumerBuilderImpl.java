@@ -93,9 +93,9 @@ public class EventGeneratingConsumerBuilderImpl implements EventGeneratingConsum
         MessageListener messageListener = this.aopProxyProvider.applyPointcut("eventConsumer", eventConsumer);
         techEndpoint.setMessageListener(messageListener);
 
-        if(messageListener instanceof ExceptionListener)
+        if(messageListener instanceof ExceptionListener listener)
         {
-            techEndpoint.setExceptionListener( (ExceptionListener)messageListener );
+            techEndpoint.setExceptionListener( listener );
         }
 
         techEndpoint.setEventProvider(this.endpointEventProvider);

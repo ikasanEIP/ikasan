@@ -43,12 +43,13 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-filetransfer</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -87,10 +88,16 @@
         </dependency>
 
         <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib-nodep</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <!-- Used for ToStringBuilder and more -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -98,11 +105,11 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-			<groupId>joda-time</groupId>
-			<artifactId>joda-time</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
@@ -120,18 +127,26 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- TODO: Update to 2.5.1, Used for creating test objects -->
+
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
+            <artifactId>jmock-imposters</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Objenesis, used for testing assitance to jmock -->
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Objenesis, used for testing assistance to jmock -->
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
@@ -148,7 +163,6 @@
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
-
 
         <dependency>
             <groupId>org.dom4j</groupId>

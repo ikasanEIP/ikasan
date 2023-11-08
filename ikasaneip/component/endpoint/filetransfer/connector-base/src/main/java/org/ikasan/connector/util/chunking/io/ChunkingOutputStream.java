@@ -160,7 +160,7 @@ public class ChunkingOutputStream extends OutputStream {
 			handleable = trim(buffer, pointer);
 		}
 
-		chunkHandler.handleChunk(handleable, completedChunks, new Long(sequenceLength));
+		chunkHandler.handleChunk(handleable, completedChunks, Long.valueOf(sequenceLength));
 		
 		resetBuffer();
 		

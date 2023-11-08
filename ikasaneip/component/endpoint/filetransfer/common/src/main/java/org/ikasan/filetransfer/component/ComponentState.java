@@ -51,18 +51,18 @@ import org.slf4j.LoggerFactory;
 public enum ComponentState
 {
     /** Component state cannot be identified */
-    UNKNOWN(new Integer(0), "Unknown", "Cannot determine component status"), //$NON-NLS-1$ //$NON-NLS-2$
+    UNKNOWN(Integer.valueOf(0), "Unknown", "Cannot determine component status"), //$NON-NLS-1$ //$NON-NLS-2$
     /** Component stopped */
-    STOPPED(new Integer(10), "Stopped", "Component is not currently running"), //$NON-NLS-1$ //$NON-NLS-2$
+    STOPPED(Integer.valueOf(10), "Stopped", "Component is not currently running"), //$NON-NLS-1$ //$NON-NLS-2$
     /** Component running */
-    RUNNING(new Integer(20), "Running", "Component is running and happy"), //$NON-NLS-1$ //$NON-NLS-2$
+    RUNNING(Integer.valueOf(20), "Running", "Component is running and happy"), //$NON-NLS-1$ //$NON-NLS-2$
     /** Component running suspiciously */
-    RUNNING_SUSPICIOUS(new Integer(30), "Running Suspicious", //$NON-NLS-1$
+    RUNNING_SUSPICIOUS(Integer.valueOf(30), "Running Suspicious", //$NON-NLS-1$
             "Component is running, but acting suspiciously (ie. high number of exceptions)"), //$NON-NLS-1$
     /** Component recovering */
-    RECOVERING(new Integer(40), "Recovering", "Component is in a retry/recovery state"), //$NON-NLS-1$//$NON-NLS-2$
+    RECOVERING(Integer.valueOf(40), "Recovering", "Component is in a retry/recovery state"), //$NON-NLS-1$//$NON-NLS-2$
     /** Component error */
-    ERROR(new Integer(50), "Error", //$NON-NLS-1$
+    ERROR(Integer.valueOf(50), "Error", //$NON-NLS-1$
             "Component is running, but in an error state. It needs attention"), //$NON-NLS-1$
     ;
     /** Logger */

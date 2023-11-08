@@ -64,8 +64,10 @@ public class BindConfigurationHelper
     public static <T> T createConfigWithPrefixAndClassName(String prefix, Class<T> clazz, Environment env){
 
         if (StringUtils.isEmpty(prefix)){
-            logger.info("Request to create config without prefix for class [{}] wont bind to application properties, " +
-                            " will instantiate only and use defaults",
+            logger.info("""
+                            Request to create config without prefix for class [{}] wont bind to application properties, \
+                             will instantiate only and use defaults\
+                            """,
                     clazz.getSimpleName());
             try {
                 return clazz.getDeclaredConstructor().newInstance();

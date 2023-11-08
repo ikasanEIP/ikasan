@@ -63,7 +63,7 @@ public class HousekeepingJobImpl implements HousekeepingJob, MonitorSubject
             {
                 try
                 {
-                    this.batchDeleteSize = new Integer(houseKeepingBatchSize);
+                    this.batchDeleteSize = Integer.valueOf(houseKeepingBatchSize);
                     this.houseKeepService.setHousekeepingBatchSize(this.batchDeleteSize);
                 }
                 catch (NumberFormatException e)
@@ -87,7 +87,7 @@ public class HousekeepingJobImpl implements HousekeepingJob, MonitorSubject
             {
                 try
                 {
-                    this.transactionDeleteSize = new Integer(transactionBatchSize);
+                    this.transactionDeleteSize = Integer.valueOf(transactionBatchSize);
                     this.houseKeepService.setTransactionBatchSize(this.transactionDeleteSize);
                 }
                 catch (NumberFormatException e)
@@ -111,7 +111,7 @@ public class HousekeepingJobImpl implements HousekeepingJob, MonitorSubject
             {
                 try
                 {
-                    this.enabled = new Boolean(enabled);
+                    this.enabled = Boolean.valueOf(enabled);
                 } catch (Exception e)
                 {
                     this.enabled = true;
@@ -155,7 +155,7 @@ public class HousekeepingJobImpl implements HousekeepingJob, MonitorSubject
         {
             this.executionErrorMessage = e.getMessage();
             this.lastExecutionSuccessful = false;
-            logger.error(String.format("Could not execute housekeeping job[%s]. Error message[%s].", this.jobName, this.executionErrorMessage));
+            logger.error("Could not execute housekeeping job[%s]. Error message[%s].".formatted(this.jobName, this.executionErrorMessage));
             if(this.monitor!=null)this.monitor.invoke(HousekeepingJobState.ERROR);
         }
 

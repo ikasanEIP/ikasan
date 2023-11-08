@@ -25,7 +25,7 @@ public class BigQueueMessagePayloadToStringSerialiser implements Serialiser<Stri
             BigQueueMessage bigQueueMessage = OBJECT_MAPPER.readValue(new String(source), BigQueueMessageImpl.class);
             messageAsString = OBJECT_MAPPER.writeValueAsString(bigQueueMessage.getMessage());
         } catch (JsonProcessingException e) {
-            LOG.warn(String.format("Could not deserialise big queue message [%s] error [%s]", new String(source), e.getMessage()));
+            LOG.warn("Could not deserialise big queue message [%s] error [%s]".formatted(new String(source), e.getMessage()));
             throw new RuntimeException(e);
         }
 

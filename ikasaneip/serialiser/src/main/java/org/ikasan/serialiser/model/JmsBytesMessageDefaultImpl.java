@@ -464,22 +464,22 @@ public class JmsBytesMessageDefaultImpl extends JmsMessageDefaultImpl implements
             throw new NullPointerException();
         } else {
             this.initializeWriting();
-            if (value instanceof Boolean) {
-                this.writeBoolean(((Boolean)value).booleanValue());
-            } else if (value instanceof Character) {
-                this.writeChar(((Character)value).charValue());
-            } else if (value instanceof Byte) {
-                this.writeByte(((Byte)value).byteValue());
-            } else if (value instanceof Short) {
-                this.writeShort(((Short)value).shortValue());
-            } else if (value instanceof Integer) {
-                this.writeInt(((Integer)value).intValue());
-            } else if (value instanceof Long) {
-                this.writeLong(((Long)value).longValue());
-            } else if (value instanceof Float) {
-                this.writeFloat(((Float)value).floatValue());
-            } else if (value instanceof Double) {
-                this.writeDouble(((Double)value).doubleValue());
+            if (value instanceof Boolean boolean1) {
+                this.writeBoolean(boolean1.booleanValue());
+            } else if (value instanceof Character character) {
+                this.writeChar(character.charValue());
+            } else if (value instanceof Byte byte1) {
+                this.writeByte(byte1.byteValue());
+            } else if (value instanceof Short short1) {
+                this.writeShort(short1.shortValue());
+            } else if (value instanceof Integer integer) {
+                this.writeInt(integer.intValue());
+            } else if (value instanceof Long long1) {
+                this.writeLong(long1.longValue());
+            } else if (value instanceof Float float1) {
+                this.writeFloat(float1.floatValue());
+            } else if (value instanceof Double double1) {
+                this.writeDouble(double1.doubleValue());
             } else if (value instanceof String) {
                 this.writeUTF(value.toString());
             } else {

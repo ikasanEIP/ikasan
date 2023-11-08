@@ -46,8 +46,8 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.testharness.flow.FlowObserver;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Test;
 
 import java.util.List;
@@ -63,7 +63,7 @@ public class FlowEventListenerSubjectTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new Synchroniser());
         }
     };

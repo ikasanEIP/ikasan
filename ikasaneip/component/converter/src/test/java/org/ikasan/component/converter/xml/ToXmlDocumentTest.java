@@ -43,7 +43,7 @@ package org.ikasan.component.converter.xml;
 import org.ikasan.marshaller.Marshaller;
 import org.ikasan.spec.component.transformation.Converter;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
@@ -64,7 +64,7 @@ public class ToXmlDocumentTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

@@ -56,8 +56,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import static java.lang.String.format;
-
 /**
  * Command for comparing the calculated checksum of a delivered file with that
  * provided by the remote system, if any
@@ -143,7 +141,7 @@ public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactio
             if (ChecksumUtils.checksumMatch(deliveredFileChecksum, localPayloadChecksum))
             {
                 throw new ChecksumFailedException(
-                    format("Checksums do not match. Delivered file: '%s', checksum: '%s', local file checksum: '%s'",
+                    "Checksums do not match. Delivered file: '%s', checksum: '%s', local file checksum: '%s'".formatted(
                         deliveredFileChecksum, deliveredPath, localPayloadChecksum)); //$NON-NLS-1$
             }
         }

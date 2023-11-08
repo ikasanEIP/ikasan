@@ -215,7 +215,7 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
             {
                 return rowCountList.get(0);
             }
-            return new Long(0);
+            return Long.valueOf(0);
 
         });
 

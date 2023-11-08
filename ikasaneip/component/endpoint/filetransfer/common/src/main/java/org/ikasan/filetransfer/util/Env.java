@@ -330,11 +330,15 @@ public class Env implements CommonEnvironment
             while (!answer.equalsIgnoreCase("0"))
             {
                 // Which method would you like to test?
-                question = "Which method do you want to test?\n" + "  0. exit(Get outta here!!)\n"
-                        + "  1. expandEnvVar(String originalStr)\n"
-                        + "  2. expandEnvVar(String originalStr, boolean screamOnError)\n"
-                        + "  3. expandEnvVar(String originalStr, String startMarker, String endMarker)\n"
-                        + "  4. displaySystemProps()\n" + "  5. displaySystemEnv()\n";
+                question = """
+                        Which method do you want to test?
+                          0. exit(Get outta here!!)
+                          1. expandEnvVar(String originalStr)
+                          2. expandEnvVar(String originalStr, boolean screamOnError)
+                          3. expandEnvVar(String originalStr, String startMarker, String endMarker)
+                          4. displaySystemProps()
+                          5. displaySystemEnv()
+                        """;
                 answer = askQuestion(question);
                 if (!answer.matches("[1-9][0-9]*")) continue;
                 // We've got one of the above numbers
@@ -485,7 +489,7 @@ public class Env implements CommonEnvironment
     private static boolean getBoolean(boolean flag, String question)
     {
         String str = askQuestion(question, "" + flag);
-        return (new Boolean(str)).booleanValue();
+        return (Boolean.valueOf(str)).booleanValue();
     }
 
     /**

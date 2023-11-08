@@ -71,7 +71,7 @@ public class SpringConverterTest
     {
 
         Converter converter = new SpringConverter();
-        Object result = converter.convertSourceToTargetClass(new Integer(0), Map.class);
+        Object result = converter.convertSourceToTargetClass(Integer.valueOf(0), Map.class);
         Assert.assertNull("result should be null", result);
     }
 

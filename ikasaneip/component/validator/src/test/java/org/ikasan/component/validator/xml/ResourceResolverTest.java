@@ -3,7 +3,7 @@ package org.ikasan.component.validator.xml;
 
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.ls.LSInput;
@@ -23,7 +23,7 @@ public class ResourceResolverTest
     private Mockery classMockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

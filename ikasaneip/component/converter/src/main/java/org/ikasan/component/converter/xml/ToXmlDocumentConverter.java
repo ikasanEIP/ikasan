@@ -73,25 +73,25 @@ public class ToXmlDocumentConverter<T> implements Converter<T, Document>
     @Override
     public Document convert(T message) throws TransformationException
     {
-        if(message instanceof Document)
+        if(message instanceof Document document)
         {
-            return (Document)message;
+            return document;
         }
 
         try
         {
             DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
-            if(message instanceof byte[])
+            if(message instanceof byte[] bytes)
             {
-                return documentBuilder.parse(new ByteArrayInputStream((byte[])message));
+                return documentBuilder.parse(new ByteArrayInputStream(bytes));
             }
-            else if(message instanceof String)
+            else if(message instanceof String string)
             {
-                return documentBuilder.parse(new ByteArrayInputStream( ((String)message).getBytes() ));
+                return documentBuilder.parse(new ByteArrayInputStream( string.getBytes() ));
             }
-            else if(message instanceof File)
+            else if(message instanceof File file)
             {
-                return documentBuilder.parse((File)message);
+                return documentBuilder.parse(file);
             }
 
             throw new TransformationException("Unsupported incoming message type class[" + message.getClass().getName() + "]");

@@ -42,7 +42,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-spec</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-spec-component-factory</artifactId>

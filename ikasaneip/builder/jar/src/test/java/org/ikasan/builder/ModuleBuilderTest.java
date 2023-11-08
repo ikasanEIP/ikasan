@@ -50,7 +50,7 @@ import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -70,7 +70,7 @@ public class ModuleBuilderTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
     
@@ -114,11 +114,13 @@ public class ModuleBuilderTest
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
-            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
-                + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
-                + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
-                + ",me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration"
-                + ",org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration"
+            """
+            --spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration\
+            ,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration\
+            ,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration\
+            ,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration\
+            ,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration\
+            """
 
         };
 

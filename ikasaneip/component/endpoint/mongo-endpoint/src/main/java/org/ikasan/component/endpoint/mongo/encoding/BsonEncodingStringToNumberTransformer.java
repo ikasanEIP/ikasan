@@ -31,9 +31,8 @@ public class BsonEncodingStringToNumberTransformer implements Transformer
     public Object transform(Object o)
     {
         Object transformed = o;
-        if (o instanceof String)
+        if (o instanceof String str)
         {
-            String str = (String) o;
             if (numberRegExp.matcher(str).matches())
             {
                 transformed = transformToNumber(str);
@@ -66,7 +65,7 @@ public class BsonEncodingStringToNumberTransformer implements Transformer
         catch (NumberFormatException nfe)
         {
         }
-        logger.error(String.format("Unable to parse number [%1%s] into a Long or a Double will remain a string", str));
+        logger.error("Unable to parse number [%1%s] into a Long or a Double will remain a string".formatted(str));
         return transformed;
     }
 

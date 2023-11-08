@@ -13,7 +13,7 @@ import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,7 +34,7 @@ public class JsonConfigurationMetaDataProviderTest
      */
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
     ConfigurationManagement configurationManagement = mockery.mock(ConfigurationManagement.class);
 

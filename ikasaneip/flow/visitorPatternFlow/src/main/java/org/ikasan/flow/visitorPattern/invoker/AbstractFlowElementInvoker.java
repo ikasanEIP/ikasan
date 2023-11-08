@@ -218,17 +218,17 @@ public abstract class AbstractFlowElementInvoker<T> implements ConfiguredResourc
 
     void setInvocationOnComponent(FlowElementInvocation flowElementInvocation, Object component)
     {
-        if (component instanceof InvocationAware)
+        if (component instanceof InvocationAware aware)
         {
-            ((InvocationAware) component).setFlowElementInvocation(flowElementInvocation);
+            aware.setFlowElementInvocation(flowElementInvocation);
         }
     }
 
     void unsetInvocationOnComponent(FlowElementInvocation flowElementInvocation, Object component)
     {
-        if (component instanceof InvocationAware)
+        if (component instanceof InvocationAware aware)
         {
-            ((InvocationAware) component).unsetFlowElementInvocation(flowElementInvocation);
+            aware.unsetFlowElementInvocation(flowElementInvocation);
         }
     }
 

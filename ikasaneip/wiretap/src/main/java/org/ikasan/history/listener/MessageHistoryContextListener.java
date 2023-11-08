@@ -168,6 +168,6 @@ public class MessageHistoryContextListener<T> implements FlowInvocationContextLi
 	@Override
 	public void snapEvent(FlowElement flowElement, FlowEvent event) 
 	{
-		this.messageHistoryService.snapMetricEvent(event, flowElement.getComponentName(), this.moduleName, this.flowName, new Long(0));	
+		this.messageHistoryService.snapMetricEvent(event, flowElement.getComponentName(), this.moduleName, this.flowName, Long.valueOf(0));	
 	}
 }

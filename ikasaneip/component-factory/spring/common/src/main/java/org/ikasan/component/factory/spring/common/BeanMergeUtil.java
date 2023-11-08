@@ -71,10 +71,10 @@ public class BeanMergeUtil {
         for(java.beans.PropertyDescriptor pd : pds) {
             Object srcValue = src.getPropertyValue(pd.getName());
             if (srcValue == null) emptyNames.add(pd.getName());
-            else if (srcValue instanceof Collection && CollectionUtils.isEmpty((Collection)srcValue)){
+            else if (srcValue instanceof Collection collection && CollectionUtils.isEmpty(collection)){
                 emptyNames.add(pd.getName());
             }
-            else if (srcValue instanceof Map && MapUtils.isEmpty((Map)srcValue)){
+            else if (srcValue instanceof Map map && MapUtils.isEmpty(map)){
                 emptyNames.add(pd.getName());
             }
 

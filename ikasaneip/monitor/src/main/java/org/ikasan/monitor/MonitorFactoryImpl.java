@@ -71,9 +71,9 @@ public class MonitorFactoryImpl implements MonitorFactory
             throw new RuntimeException("Cannot get new Flow Monitor after destroy method called");
         }
         FlowMonitor monitor = new DefaultFlowMonitorImpl(executorService);
-        if(monitor instanceof Configured)
+        if(monitor instanceof Configured configured)
         {
-            ((Configured)monitor).setConfiguration(new MonitorConfiguration());
+            configured.setConfiguration(new MonitorConfiguration());
         }
 
         return monitor;
@@ -86,9 +86,9 @@ public class MonitorFactoryImpl implements MonitorFactory
             throw new RuntimeException("Cannot get new Job Monitor after destroy method called");
         }
         JobMonitor monitor = new DefaultJobMonitorImpl(executorService);
-        if(monitor instanceof Configured)
+        if(monitor instanceof Configured configured)
         {
-            ((Configured)monitor).setConfiguration(new MonitorConfiguration());
+            configured.setConfiguration(new MonitorConfiguration());
         }
 
         return monitor;

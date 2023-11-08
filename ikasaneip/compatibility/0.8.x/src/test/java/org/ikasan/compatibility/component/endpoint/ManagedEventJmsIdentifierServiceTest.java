@@ -40,12 +40,12 @@
  */
 package org.ikasan.compatibility.component.endpoint;
 
-import org.junit.Assert;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
+import org.junit.Assert;
 import org.junit.Test;
 
 import javax.jms.JMSException;
@@ -65,7 +65,7 @@ public class ManagedEventJmsIdentifierServiceTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

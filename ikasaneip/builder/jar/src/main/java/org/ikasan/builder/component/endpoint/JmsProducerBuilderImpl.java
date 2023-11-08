@@ -402,9 +402,9 @@ public class JmsProducerBuilderImpl implements JmsProducerBuilder
         jmsProducer.setConfiguredResourceId(configuredResourceId);
 
         this.ikasanJmsTemplate.setConnectionFactory( getConnectionFactory(this.ikasanJmsTemplate.getConnectionFactory(), username, password) );
-        if(jmsProducer instanceof ArjunaJmsTemplateProducer)
+        if(jmsProducer instanceof ArjunaJmsTemplateProducer producer)
         {
-            ((ArjunaJmsTemplateProducer) jmsProducer).setLocalTransactionManager(arjunaTransactionManager);
+            producer.setLocalTransactionManager(arjunaTransactionManager);
         }
         return jmsProducer;
     }

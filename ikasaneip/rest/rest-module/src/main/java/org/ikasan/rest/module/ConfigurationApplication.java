@@ -115,9 +115,8 @@ public class ConfigurationApplication
         Flow flow = module.getFlow(flowName);
         FlowElement<?> flowElement = flow.getFlowElement(componentName);
         Configuration configuration = null;
-        if ( flowElement instanceof ConfiguredResource )
+        if ( flowElement instanceof ConfiguredResource configuredResource )
         {
-            ConfiguredResource configuredResource = (ConfiguredResource) flowElement;
             String configurationId = moduleName + flowName + componentName + "_element";
             configuredResource.setConfiguredResourceId(configurationId);
             configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
@@ -149,9 +148,8 @@ public class ConfigurationApplication
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
         Configuration configuration = null;
-        if ( flow instanceof ConfiguredResource )
+        if ( flow instanceof ConfiguredResource configuredResource )
         {
-            ConfiguredResource configuredResource = (ConfiguredResource) flow;
             configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
             if ( configuration == null )
             {
@@ -187,8 +185,8 @@ public class ConfigurationApplication
     {
         Module<Flow> module = moduleService.getModules().get(0);
 
-        if(module instanceof ConfiguredResource) {
-            ConfigurationMetaData configuredResource = configurationMetaDataExtractor.getConfiguration((ConfiguredResource)module);
+        if(module instanceof ConfiguredResource resource) {
+            ConfigurationMetaData configuredResource = configurationMetaDataExtractor.getConfiguration(resource);
             return new ResponseEntity(configuredResource, HttpStatus.OK);
         }
 
@@ -338,7 +336,7 @@ public class ConfigurationApplication
 
             this.systemEventService.logSystemEvent(
                 configuration.getConfigurationId(),
-                String.format("Configuration Updated OldConfig [%s] NewConfig [%s]", oldConfigJson, newConfigJson),
+                "Configuration Updated OldConfig [%s] NewConfig [%s]".formatted(oldConfigJson, newConfigJson),
                 UserUtil.getUser());
         }
         catch (JsonProcessingException e)
@@ -392,7 +390,7 @@ public class ConfigurationApplication
         else if ( ConfigurationParameterLongImpl.class.getName().equals(metaData.getImplementingClass()) )
         {
             cp = new ConfigurationParameterLongImpl(metaData.getName(),
-                metaData.getValue() != null ? new Long(metaData.getValue().toString()) : null, metaData.getDescription()
+                metaData.getValue() != null ? Long.valueOf(metaData.getValue().toString()) : null, metaData.getDescription()
             );
         }
         else if ( ConfigurationParameterMaskedStringImpl.class.getName().equals(metaData.getImplementingClass()) )
@@ -427,7 +425,7 @@ public class ConfigurationApplication
 
                 this.systemEventService.logSystemEvent(
                     configuration.getConfigurationId(),
-                    String.format("Configuration Deleted OldConfig [%s]", deletedConfigJson),
+                    "Configuration Deleted OldConfig [%s]".formatted(deletedConfigJson),
                     UserUtil.getUser());
             }
             catch (JsonProcessingException e)

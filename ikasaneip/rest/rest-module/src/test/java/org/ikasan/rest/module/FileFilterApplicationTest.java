@@ -101,9 +101,11 @@ public class FileFilterApplicationTest
         assertEquals(200, result.getResponse().getStatus());
 
         JSONAssert.assertEquals("JSON Result must equal!",
-            "{\"pagedResults\":[{"
-                + "\"criteria\":\"test.log\",\"clientId\":\"testClientId\",\"size\":1000"
-                + "}],\"firstResultIndex\":0,\"resultSize\":1,\"lastResultIndex\":1,\"lastPage\":true}",
+            """
+            {"pagedResults":[{\
+            "criteria":"test.log","clientId":"testClientId","size":1000\
+            }],"firstResultIndex":0,"resultSize":1,"lastResultIndex":1,"lastPage":true}\
+            """,
             result.getResponse().getContentAsString(),
             JSONCompareMode.LENIENT);
 

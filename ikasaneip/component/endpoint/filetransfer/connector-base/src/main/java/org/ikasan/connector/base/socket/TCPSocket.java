@@ -73,10 +73,10 @@ public class TCPSocket extends java.net.Socket
     private boolean logSocketTraffic = false;
 
     /** timestamp in millis of last data successfully recv'd on the socket */
-    private Long recvActivity = new Long(0);
+    private Long recvActivity = Long.valueOf(0);
 
     /** timestamp in millis of last data successfully sent on the socket */
-    private Long sendActivity = new Long(0);
+    private Long sendActivity = Long.valueOf(0);
 
     // The necessary connection information. All timeout values are in
     // milliseconds.

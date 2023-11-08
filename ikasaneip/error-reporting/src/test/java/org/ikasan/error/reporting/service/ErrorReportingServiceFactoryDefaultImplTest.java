@@ -96,7 +96,7 @@ public class ErrorReportingServiceFactoryDefaultImplTest
     @Test
     public void test_errorReportingServiceFactory_getErrorReportingService()
     {
-        Assert.assertTrue("errorReportingService not correctly proxied through a pointcut", errorReportingService.getClass().getName().startsWith("com.sun.proxy.$Proxy"));
+        Assert.assertTrue("errorReportingService not correctly proxied through a pointcut", errorReportingService.getClass().getName().startsWith("jdk.proxy2.$Proxy"));
     }
 
 }

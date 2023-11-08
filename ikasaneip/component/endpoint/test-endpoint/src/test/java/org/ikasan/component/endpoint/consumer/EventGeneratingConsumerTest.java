@@ -43,10 +43,9 @@ package org.ikasan.component.endpoint.consumer;
 import org.ikasan.component.endpoint.consumer.api.spec.Endpoint;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
-import org.ikasan.spec.flow.FlowEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
 
 import java.util.concurrent.ExecutorService;
@@ -63,7 +62,7 @@ public class EventGeneratingConsumerTest
      */
     private Mockery mockery = new Mockery()
     {{
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     private EventFactory flowEventFactory = mockery.mock(EventFactory.class);

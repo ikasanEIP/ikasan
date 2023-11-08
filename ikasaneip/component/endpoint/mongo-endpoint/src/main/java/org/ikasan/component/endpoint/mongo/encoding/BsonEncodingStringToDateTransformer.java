@@ -43,9 +43,8 @@ public class BsonEncodingStringToDateTransformer implements Transformer
     public Object transform(Object o)
     {
         Object transformed = o;
-        if (o instanceof String)
+        if (o instanceof String str)
         {
-            String str = (String) o;
             if (dateTimeRegExp.matcher(str).matches())
             {
                 transformed = transformToDate(str, dateTimeFormatString);
@@ -66,8 +65,8 @@ public class BsonEncodingStringToDateTransformer implements Transformer
         }
         catch (ParseException e)
         {
-            logger.error(String.format(
-                "Unable to transform to date string [%1$s] using format [%2$s] will remain a string", str,
+            logger.error(
+                "Unable to transform to date string [%1$s] using format [%2$s] will remain a string".formatted(str,
                 dateTimeFormatString));
             logger.error("Error thrown", e);
         }

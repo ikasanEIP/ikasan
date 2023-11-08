@@ -33,7 +33,7 @@ public class InboundJobQueueCache
 
     public void put(String contextName, IBigQueue contextMachine)
     {
-        logger.debug(String.format("%s attempting to put key[%s]", this, contextName));
+        logger.debug("%s attempting to put key[%s]".formatted(this, contextName));
 
         this.cache.put(contextName, contextMachine);
     }
@@ -41,16 +41,15 @@ public class InboundJobQueueCache
 
     public IBigQueue get(String contextName)
     {
-        logger.debug(String.format("%s attempting to get context[%s]"
-            , this, contextName));
+        logger.debug("%s attempting to get context[%s]".formatted(this, contextName));
 
         return this.cache.get(contextName);
     }
 
     public boolean contains(String contextName)
     {
-        logger.debug(String.format("%s check contains[%s] - result [%s]",this
-            , contextName, this.cache.containsKey(contextName)));
+        logger.debug("%s check contains[%s] - result [%s]".formatted(this
+        , contextName, this.cache.containsKey(contextName)));
         return this.cache.containsKey(contextName);
     }
 

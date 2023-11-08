@@ -269,9 +269,8 @@ public class SftpProducer implements Producer<Payload>,
     private SFTPConnectionSpec createAlternateSpec(SftpProducerConfiguration sftpProducerConfiguration) {
 
         SFTPConnectionSpec alternateSpec = null;
-        if (sftpProducerConfiguration instanceof SftpProducerAlternateConfiguration)
+        if (sftpProducerConfiguration instanceof SftpProducerAlternateConfiguration alternateConfig)
         {
-            SftpProducerAlternateConfiguration alternateConfig = (SftpProducerAlternateConfiguration)sftpProducerConfiguration;
 
             alternateSpec = this.getConnectionSpec();
             alternateSpec.setClientID(alternateConfig.getClientID());

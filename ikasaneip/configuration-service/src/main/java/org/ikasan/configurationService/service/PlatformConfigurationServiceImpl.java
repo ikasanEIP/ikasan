@@ -93,9 +93,9 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
         
         for(ConfigurationParameter parameter: parameters)
         {
-        	if(parameter instanceof ConfigurationParameterMapImpl)
+        	if(parameter instanceof ConfigurationParameterMapImpl impl)
         	{
-        		parameterMap = (ConfigurationParameterMapImpl)parameter;
+        		parameterMap = impl;
         	}
         }
         
@@ -120,9 +120,9 @@ public class PlatformConfigurationServiceImpl implements PlatformConfigurationSe
 
 		for(ConfigurationParameter parameter: parameters)
 		{
-			if(parameter instanceof ConfigurationParameterMapImpl)
+			if(parameter instanceof ConfigurationParameterMapImpl impl)
 			{
-				parameterMap = (ConfigurationParameterMapImpl)parameter;
+				parameterMap = impl;
 			}
 		}
 

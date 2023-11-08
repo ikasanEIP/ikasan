@@ -751,12 +751,12 @@ public class FlowBuilder implements ApplicationContextAware
         Type[] types = configured.getClass().getGenericInterfaces();
         for(Type type:types)
         {
-            if (type instanceof ParameterizedType && Configured.class.isAssignableFrom(
-                (Class)((ParameterizedType) type).getRawType())) {
-                Type configurationType = ((ParameterizedType) type).getActualTypeArguments()[0];
+            if (type instanceof ParameterizedType parameterizedType && Configured.class.isAssignableFrom(
+                (Class)parameterizedType.getRawType())) {
+                Type configurationType = parameterizedType.getActualTypeArguments()[0];
                 try {
-                    if (configurationType instanceof Class)
-                        return ((Class)configurationType).getConstructor().newInstance();
+                    if (configurationType instanceof Class class1)
+                        return class1.getConstructor().newInstance();
                 } catch (InvocationTargetException | InstantiationException | IllegalAccessException
                     | NoSuchMethodException e) {
                 }
@@ -901,10 +901,10 @@ public class FlowBuilder implements ApplicationContextAware
             errorReportingService = errorReportingServiceFactory.getErrorReportingService();
         }
 
-        if(errorReportingService instanceof ErrorReportingServiceDefaultImpl)
+        if(errorReportingService instanceof ErrorReportingServiceDefaultImpl impl)
         {
-            ((ErrorReportingServiceDefaultImpl)errorReportingService).setModuleName(moduleName);
-            ((ErrorReportingServiceDefaultImpl)errorReportingService).setFlowName(flowName);
+            impl.setModuleName(moduleName);
+            impl.setFlowName(flowName);
         }
 
         if(this.errorReportingServiceTimeToLive != null)
@@ -917,19 +917,19 @@ public class FlowBuilder implements ApplicationContextAware
             recoveryManager = this.recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
         }
 
-        if(recoveryManager instanceof IsConsumerAware)
+        if(recoveryManager instanceof IsConsumerAware aware)
         {
-            ((IsConsumerAware)recoveryManager).setConsumer(((FlowElement<Consumer>) headFlowElement).getFlowComponent());
+            aware.setConsumer(((FlowElement<Consumer>) headFlowElement).getFlowComponent());
         }
 
-        if(recoveryManager instanceof IsExclusionServiceAware)
+        if(recoveryManager instanceof IsExclusionServiceAware aware)
         {
-            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+            aware.setExclusionService(exclusionService);
         }
 
-        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        if(recoveryManager instanceof IsErrorReportingServiceAware aware)
         {
-            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
+            aware.setErrorReportingService(errorReportingService);
         }
 
         if(exceptionResolver != null)
@@ -959,16 +959,16 @@ public class FlowBuilder implements ApplicationContextAware
         flow.setFlowListener(flowEventListener);
         flow.setTriggerService(triggerService);
 
-        if(flow instanceof ConfiguredResource)
+        if(flow instanceof ConfiguredResource resource)
         {
-            FlowPersistentConfiguration flowPersistentConfiguration = (FlowPersistentConfiguration)((ConfiguredResource)flow).getConfiguration();
+            FlowPersistentConfiguration flowPersistentConfiguration = (FlowPersistentConfiguration)resource.getConfiguration();
             flowPersistentConfiguration.setIsRecording(isRecording);
         }
 
         // pass handle to the error reporting service if flow needs to be aware of this
-        if(flow instanceof IsErrorReportingServiceAware)
+        if(flow instanceof IsErrorReportingServiceAware aware)
         {
-            ((IsErrorReportingServiceAware)flow).setErrorReportingService(errorReportingService);
+            aware.setErrorReportingService(errorReportingService);
         }
 
         if(monitor == null)
@@ -976,7 +976,7 @@ public class FlowBuilder implements ApplicationContextAware
             monitor = context.getBean(FlowMonitor.class);
         }
 
-        if(monitor != null && flow instanceof MonitorSubject)
+        if(monitor != null && flow instanceof MonitorSubject subject)
         {
             if(monitor.getEnvironment() == null)
             {
@@ -993,7 +993,7 @@ public class FlowBuilder implements ApplicationContextAware
                 monitor.setFlowName(flowName);
             }
 
-            ((MonitorSubject)flow).setMonitor(monitor);
+            subject.setMonitor(monitor);
         }
 
         // add a default MessageHistoryContextListener if necessary.

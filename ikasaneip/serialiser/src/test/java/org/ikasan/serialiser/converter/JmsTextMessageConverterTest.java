@@ -93,11 +93,11 @@ public class JmsTextMessageConverterTest {
         message.setBooleanProperty(BOOLEAN, true);
         message.setByteProperty(BYTE, (byte)'b');
         message.setDoubleProperty(DOUBLE, Double.valueOf(10));
-        message.setFloatProperty(FLOAT, new Float(12));
-        message.setIntProperty(INT, new Integer(14));
-        message.setLongProperty(LONG, new Long(16));
+        message.setFloatProperty(FLOAT, Float.valueOf(12));
+        message.setIntProperty(INT, Integer.valueOf(14));
+        message.setLongProperty(LONG, Long.valueOf(16));
         message.setObjectProperty(OBJECT, new String("test string"));
-        message.setShortProperty(SHORT, new Short( (short)18));
+        message.setShortProperty(SHORT, Short.valueOf((short)18));
         message.setStringProperty(STRING, "testStringAgain");
 
         // test

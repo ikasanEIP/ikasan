@@ -61,9 +61,9 @@ public class NotifierFactoryImpl implements NotifierFactory
     public FlowNotifier getEmailFlowNotifier()
     {
         FlowNotifier notifier = new EmailFlowNotifier();
-        if(notifier instanceof Configured)
+        if(notifier instanceof Configured configured)
         {
-            ((Configured)notifier).setConfiguration(new EmailNotifierConfiguration());
+            configured.setConfiguration(new EmailNotifierConfiguration());
         }
         return notifier;
     }
@@ -71,9 +71,9 @@ public class NotifierFactoryImpl implements NotifierFactory
     @Override
     public JobNotifier getEmailJobNotifier() {
         JobNotifier notifier = new EmailJobNotifier();
-        if(notifier instanceof Configured)
+        if(notifier instanceof Configured configured)
         {
-            ((Configured)notifier).setConfiguration(new EmailNotifierConfiguration());
+            configured.setConfiguration(new EmailNotifierConfiguration());
         }
         return notifier;
     }

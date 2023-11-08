@@ -57,8 +57,8 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.*;
@@ -81,7 +81,7 @@ public class ScheduledRecoveryManagerTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new Synchroniser());
         }
     };
@@ -982,19 +982,19 @@ public class ScheduledRecoveryManagerTest
      */
     private void setIsAware(RecoveryManager recoveryManager)
     {
-        if(recoveryManager instanceof IsConsumerAware)
+        if(recoveryManager instanceof IsConsumerAware aware)
         {
-            ((IsConsumerAware)recoveryManager).setConsumer(consumer);
+            aware.setConsumer(consumer);
         }
 
-        if(recoveryManager instanceof IsExclusionServiceAware)
+        if(recoveryManager instanceof IsExclusionServiceAware aware)
         {
-            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+            aware.setExclusionService(exclusionService);
         }
 
-        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        if(recoveryManager instanceof IsErrorReportingServiceAware aware)
         {
-            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
+            aware.setErrorReportingService(errorReportingService);
         }
     }
 

@@ -90,10 +90,16 @@ public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implem
     private final static String CREATED_DATE_TIME = "createdDateTime";
 
     public static final String FILE_FILTER_TO_SELECT_ONE_QUERY =
-        "select ff from FileFilter ff " + " where ff.id = :id ";
+        """
+        select ff from FileFilter ff \
+         where ff.id = :id \
+        """;
 
     public static final String HOUSEKEEP_FILE_FILTER_FROM =
-        "select ff from FileFilter ff " + " where ff.clientId=:clientId and createdDateTime < :createdDateTime";
+        """
+        select ff from FileFilter ff \
+         where ff.clientId=:clientId and createdDateTime < :createdDateTime\
+        """;
 
     public static final String COUNT_FILE_FILTER_FROM = "select count(ff) from FileFilter ff " + " where ";
 
@@ -464,9 +470,9 @@ public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implem
         // can have a restriction applied
         if ( restrictionValue != null )
         {
-            if ( restrictionValue instanceof Collection )
+            if ( restrictionValue instanceof Collection collection )
             {
-                if ( !((Collection) restrictionValue).isEmpty() )
+                if ( !collection.isEmpty() )
                 { return true; }
             }
             else

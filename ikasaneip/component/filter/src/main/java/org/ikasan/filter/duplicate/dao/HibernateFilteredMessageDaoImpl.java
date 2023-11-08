@@ -94,11 +94,15 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             " where se.id in(:" + EVENT_IDS + ")";
 
 
-    public static final String SEARCH_FILTER_ENTRIES_FROM = "select se from DefaultFilterEntry se " +
-        " where ";
+    public static final String SEARCH_FILTER_ENTRIES_FROM = """
+        select se from DefaultFilterEntry se \
+         where \
+        """;
 
-    public static final String COUNT_FILTER_ENTRIES_FROM = "select count(se) from DefaultFilterEntry se " +
-        " where ";
+    public static final String COUNT_FILTER_ENTRIES_FROM = """
+        select count(se) from DefaultFilterEntry se \
+         where \
+        """;
 
     public static final String SEARCH_FILTER_ENTRIES_CLIENT_PREDICATE = " se.id.clientId = :" + FilterEntry.CLIENT_ID_PROP_KEY;
 
@@ -166,7 +170,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
                 {
                     return rowCountList.get(0);
                 }
-                return new Long(0);
+                return Long.valueOf(0);
             }
 
             /**
@@ -399,13 +403,13 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
             criteriaQuery.select(builder.count(root)).where(predicates.toArray(new Predicate[predicates.size()]));
             org.hibernate.query.Query<Long> query = session.createQuery(criteriaQuery);
             List<Long> rowCountList = query.getResultList();
-            Long rowCount = new Long(0);
+            Long rowCount = Long.valueOf(0);
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);
             }
             logger.debug(rowCount+", MessageFilter housekeepables exist");
-            return new Boolean(rowCount > 0);
+            return Boolean.valueOf(rowCount > 0);
         });
     }
 
@@ -449,8 +453,8 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         // can have a restriction applied
         if (restrictionValue != null )
         {
-            if(restrictionValue instanceof Collection){
-                if (!((Collection)restrictionValue).isEmpty())
+            if(restrictionValue instanceof Collection collection){
+                if (!collection.isEmpty())
                     return true;
             }else{
 

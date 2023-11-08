@@ -29,13 +29,14 @@
  USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  ====================================================================
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-builder-parent</artifactId>
-        <version>3.4.0-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-builder-spring</artifactId>
@@ -43,7 +44,6 @@
     <name>ikasan :: builder :: spring</name>
 
     <dependencies>
-
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -92,13 +92,13 @@
         <dependency>
             <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
-             <scope>test</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-             <scope>test</scope>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -113,10 +113,16 @@
             <scope>test</scope>
         </dependency>
 
-		<dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
-           <version>${project.version}</version>
+            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
 

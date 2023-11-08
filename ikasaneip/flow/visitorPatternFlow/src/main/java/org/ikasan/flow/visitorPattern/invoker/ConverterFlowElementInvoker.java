@@ -93,9 +93,8 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
                     // IKASAN-706 Simple fix for Converter that returns a FlowEvent object
                     converter.getClass().getMethod("convert", FlowEvent.class);
                     Object o = converter.convert(flowEvent);
-                    if (o instanceof FlowEvent)
+                    if (o instanceof FlowEvent converterFlowEvent)
                     {
-                        FlowEvent converterFlowEvent = (FlowEvent) o;
                         flowEvent.setPayload(converterFlowEvent.getPayload());
                     }
                     else
@@ -116,9 +115,8 @@ public class ConverterFlowElementInvoker extends AbstractFlowElementInvoker<Invo
                 {
                     // IKASAN-706 Simple fix for Broker that returns a FlowEvent object
                     Object o = converter.convert(flowEvent);
-                    if (o instanceof FlowEvent)
+                    if (o instanceof FlowEvent converterFlowEvent)
                     {
-                        FlowEvent converterFlowEvent = (FlowEvent) o;
                         flowEvent.setPayload(converterFlowEvent.getPayload());
                     }
                     else

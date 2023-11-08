@@ -41,15 +41,15 @@
 package org.ikasan.wiretap.listener;
 
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.trigger.dao.TriggerDao;
 import org.ikasan.trigger.model.TriggerImpl;
-import org.ikasan.spec.module.Module;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,7 +80,7 @@ public class JobAwareFlowListenerTest
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

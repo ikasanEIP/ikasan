@@ -154,8 +154,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
         ExclusionEvent exclusionEvent = exclusionManagementService.find(errorUri);
         if(exclusionEvent == null) {
-            throw new RuntimeException(String.format("Could not locate exclusion event. Module Name[%s], Flow Name[%s], Error URI[%s]"
-                ,moduleName, flowName, errorUri));
+            throw new RuntimeException("Could not locate exclusion event. Module Name[%s], Flow Name[%s], Error URI[%s]".formatted(moduleName, flowName, errorUri));
         }
 
         Object deserialisedEvent = serialiser.deserialise(exclusionEvent.getEvent());
@@ -187,8 +186,10 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         if (resubmissionService == null)
         {
             throw new RuntimeException(
-                "The resubmission service on the flow you are resubmitting to is null. This is most liekly due to "
-                    + "the resubmission service not being set on the flow factory for the flow you are resubmitting to.");
+                """
+                The resubmission service on the flow you are resubmitting to is null. This is most liekly due to \
+                the resubmission service not being set on the flow factory for the flow you are resubmitting to.\
+                """);
         }
         return resubmissionService;
     }
@@ -215,8 +216,7 @@ public class HospitalServiceImpl implements HospitalService<byte[]>
         ExclusionEvent exclusionEvent = exclusionManagementService.find(errorUri);
 
         if(exclusionEvent == null) {
-            throw new RuntimeException(String.format("Could not locate exclusion event. Module Name[%s], Flow Name[%s], Error URI[%s]"
-                ,moduleName, flowName, errorUri));
+            throw new RuntimeException("Could not locate exclusion event. Module Name[%s], Flow Name[%s], Error URI[%s]".formatted(moduleName, flowName, errorUri));
         }
 
         ExclusionEventAction action = new ExclusionEventActionImpl(errorUri, userName, ExclusionEventActionImpl.IGNORED,

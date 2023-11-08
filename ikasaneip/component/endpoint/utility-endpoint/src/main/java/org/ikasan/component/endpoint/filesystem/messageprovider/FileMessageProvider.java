@@ -187,9 +187,9 @@ public class FileMessageProvider implements MessageProvider<List<File>>,
     public void setConfiguration(FileConsumerConfiguration fileConsumerConfiguration)
     {
         this.fileConsumerConfiguration = fileConsumerConfiguration;
-        if(messageProviderPostProcessor != null && messageProviderPostProcessor instanceof Configured)
+        if(messageProviderPostProcessor != null && messageProviderPostProcessor instanceof Configured configured)
         {
-            ((Configured)messageProviderPostProcessor).setConfiguration(this.fileConsumerConfiguration);
+            configured.setConfiguration(this.fileConsumerConfiguration);
         }
     }
 

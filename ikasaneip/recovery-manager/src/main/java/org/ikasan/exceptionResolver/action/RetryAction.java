@@ -127,10 +127,8 @@ public class RetryAction implements ExceptionAction
     @Override
     public boolean equals(Object object)
     {
-        if(object instanceof RetryAction)
+        if(object instanceof RetryAction retryAction)
         {
-            // is same object type
-            RetryAction retryAction = (RetryAction) object;
             if(this.getDelay() == retryAction.getDelay() && this.getMaxRetries() == retryAction.getMaxRetries())
             {
                 return true;

@@ -100,7 +100,7 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
                 e.getRawStatusCode(), e.getResponseBodyAsString());
 
             if(bubbleExceptionsUpToCaller) {
-                throw new RuntimeException(String.format("Issue while publishing events to dashboard [%s] with response [%s] [%s]", url,
+                throw new RuntimeException("Issue while publishing events to dashboard [%s] with response [%s] [%s]".formatted(url,
                     e.getRawStatusCode(), e.getResponseBodyAsString()), e);
             }
 
@@ -112,7 +112,7 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
                  e.getLocalizedMessage());
 
             if(bubbleExceptionsUpToCaller) {
-                throw new RuntimeException(String.format("Issue while publishing events to dashboard [%s] with response [%s]", url,
+                throw new RuntimeException("Issue while publishing events to dashboard [%s] with response [%s]".formatted(url,
                     e.getLocalizedMessage()), e);
             }
 

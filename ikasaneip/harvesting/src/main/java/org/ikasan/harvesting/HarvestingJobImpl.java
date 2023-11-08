@@ -76,7 +76,7 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
             {
                 try
                 {
-                    this.harvestSize = new Integer(houseKeepingBatchSize);
+                    this.harvestSize = Integer.valueOf(houseKeepingBatchSize);
                 }
                 catch (NumberFormatException e)
                 {
@@ -98,7 +98,7 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
             {
                 try
                 {
-                    this.enabled = new Boolean(enabled);
+                    this.enabled = Boolean.valueOf(enabled);
                 } catch (Exception e)
                 {
                     this.enabled = true;

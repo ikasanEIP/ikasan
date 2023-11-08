@@ -44,7 +44,7 @@ import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,7 +73,7 @@ public class ExclusionServiceFactoryTest
      */
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
     @Resource

@@ -134,22 +134,22 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
                         logger.warn("Ignoring unsupported configurationParameter class [" + cls.getName() + "].");
                     }
                 } else {
-                    if (value instanceof String) {
+                    if (value instanceof String string) {
                         if (isMasked(runtimeConfiguration, name)) {
-                            configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, (String) value));
+                            configuration.getParameters().add(new ConfigurationParameterMaskedStringImpl(name, string));
                         } else {
-                            configuration.getParameters().add(new ConfigurationParameterStringImpl(name, (String) value));
+                            configuration.getParameters().add(new ConfigurationParameterStringImpl(name, string));
                         }
-                    } else if (value instanceof Long) {
-                        configuration.getParameters().add(new ConfigurationParameterLongImpl(name, (Long) value));
-                    } else if (value instanceof Integer) {
-                        configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, (Integer) value));
-                    } else if (value instanceof Boolean) {
-                        configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, (Boolean) value));
-                    } else if (value instanceof List) {
-                        configuration.getParameters().add(new ConfigurationParameterListImpl(name, (List) value));
-                    } else if (value instanceof Map) {
-                        configuration.getParameters().add(new ConfigurationParameterMapImpl(name, (Map) value));
+                    } else if (value instanceof Long long1) {
+                        configuration.getParameters().add(new ConfigurationParameterLongImpl(name, long1));
+                    } else if (value instanceof Integer integer) {
+                        configuration.getParameters().add(new ConfigurationParameterIntegerImpl(name, integer));
+                    } else if (value instanceof Boolean boolean1) {
+                        configuration.getParameters().add(new ConfigurationParameterBooleanImpl(name, boolean1));
+                    } else if (value instanceof List list) {
+                        configuration.getParameters().add(new ConfigurationParameterListImpl(name, list));
+                    } else if (value instanceof Map map) {
+                        configuration.getParameters().add(new ConfigurationParameterMapImpl(name, map));
                     } else {
                         logger.warn("Ignoring unsupported configurationParameter class [" + value.getClass().getName() + "].");
                     }

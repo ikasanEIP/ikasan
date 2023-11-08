@@ -146,7 +146,7 @@ public class WiretapApplication
             this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
             systemEventService.logSystemEvent(
                 trigger.getModuleName(),
-                String.format("%s-%s:%s",trigger.getModuleName(),trigger.getFlowName(),trigger.toString()),
+                "%s-%s:%s".formatted(trigger.getModuleName(), trigger.getFlowName(), trigger.toString()),
                 "Create Wiretap",
                 userName);
             return new ResponseEntity(HttpStatus.CREATED);
@@ -197,7 +197,7 @@ public class WiretapApplication
             if(trigger!=null){
                 systemEventService.logSystemEvent(
                     trigger.getModuleName(),
-                    String.format("%s-%s:%s",trigger.getModuleName(),trigger.getFlowName(),trigger.toString()),
+                    "%s-%s:%s".formatted(trigger.getModuleName(), trigger.getFlowName(), trigger.toString()),
                     "Delete Wiretap",
                     UserUtil.getUser());
             }

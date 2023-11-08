@@ -50,7 +50,7 @@ import org.ikasan.spec.flow.FlowInvocationContext;
 public interface ExclusionService<ENTITY, IDENTIFIER>
 {
     /** one year default time to live */
-    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
+    public static final long DEFAULT_TIME_TO_LIVE = Long.valueOf(1000 * 60 * 60 * 24 * 365);
 
     /**
      * Is this identifier on the blacklist.

@@ -115,7 +115,7 @@ public class GenericKryoToBytesSerialiserTest
     	
     	SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl(serialisers, converters);    	
         // object for serialise/deserialise test
-        Integer myInt = new Integer(10);
+        Integer myInt = Integer.valueOf(10);
 
         // get a serialiser
         Serialiser<Integer,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
@@ -266,11 +266,11 @@ public class GenericKryoToBytesSerialiserTest
     	
         // object for serialise/deserialise test
     	HashMap<String, Object> hashMap = new HashMap<String, Object>();
-    	hashMap.put("string 1", new Integer(1));
-    	hashMap.put("string 2", new Long(1));
+    	hashMap.put("string 1", Integer.valueOf(1));
+    	hashMap.put("string 2", Long.valueOf(1));
     	hashMap.put("string 3", new String("1"));
-    	hashMap.put("string 4", new Integer(1));
-    	hashMap.put("string 5", new Character('1'));
+    	hashMap.put("string 4", Integer.valueOf(1));
+    	hashMap.put("string 5", Character.valueOf('1'));
 
         // get a serialiser
         Serialiser<HashMap<String, Object>,byte[]> serialiser = serialiserFactory.getDefaultSerialiser();
@@ -300,11 +300,11 @@ public class GenericKryoToBytesSerialiserTest
     	
         // object for serialise/deserialise test
     	ArrayList<Object> arrayList = new ArrayList<Object>();
-    	arrayList.add(new Integer(1));
-    	arrayList.add(new Long(1));
+    	arrayList.add(Integer.valueOf(1));
+    	arrayList.add(Long.valueOf(1));
     	arrayList.add(new String("1"));
-    	arrayList.add(new Integer(1));
-    	arrayList.add(new Character('1'));
+    	arrayList.add(Integer.valueOf(1));
+    	arrayList.add(Character.valueOf('1'));
     	arrayList.add(new Date());
 
         // get a serialiser
@@ -335,11 +335,11 @@ public class GenericKryoToBytesSerialiserTest
     	
         // object for serialise/deserialise test
     	Object[] array = new Object[6];
-    	array[0] = new Integer(1);
-    	array[1] = (new Long(1));
+    	array[0] = Integer.valueOf(1);
+    	array[1] = (Long.valueOf(1));
     	array[2] = (new String("1"));
-    	array[3] = (new Integer(1));
-    	array[4] = (new Character('1'));
+    	array[3] = (Integer.valueOf(1));
+    	array[4] = (Character.valueOf('1'));
     	array[5] = (new Date());
 
         // get a serialiser

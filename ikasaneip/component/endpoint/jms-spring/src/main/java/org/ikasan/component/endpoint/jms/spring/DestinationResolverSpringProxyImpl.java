@@ -74,13 +74,12 @@ public class DestinationResolverSpringProxyImpl implements DestinationResolver
     {
         try
         {
-            if(AopUtils.isAopProxy(destination) && destination instanceof Advised)
+            if(AopUtils.isAopProxy(destination) && destination instanceof Advised advised)
             {
-                Advised advised = (Advised) destination;
                 Object unwrappedObject = advised.getTargetSource().getTarget();
-                if(unwrappedObject instanceof Destination)
+                if(unwrappedObject instanceof Destination destination1)
                 {
-                    return (Destination)unwrappedObject;
+                    return destination1;
                 }
                 
                 throw new RuntimeException("Expected proxied object of Destination, but returned object [" 
