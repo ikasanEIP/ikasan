@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-endpoint-parent</artifactId>
-        <version>3.3.3-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-jms-spring-arjuna</artifactId>
@@ -63,7 +63,6 @@
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
         </dependency>
-
 
         <!-- Base Ikasan Jms Client -->
         <dependency>

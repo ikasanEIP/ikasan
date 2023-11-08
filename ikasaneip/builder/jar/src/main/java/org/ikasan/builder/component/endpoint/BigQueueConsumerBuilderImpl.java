@@ -112,9 +112,9 @@ public class BigQueueConsumerBuilderImpl implements BigQueueConsumerBuilder {
         MessageListener messageListener = this.aopProxyProvider.applyPointcut("bigQueueConsumer", consumer);
         inboundQueueMessageRunner.setMessageListener(messageListener);
 
-        if(messageListener instanceof EndpointListener)
+        if(messageListener instanceof EndpointListener listener)
         {
-            inboundQueueMessageRunner.setEndpointListener( (EndpointListener)messageListener );
+            inboundQueueMessageRunner.setEndpointListener( listener );
         }
 
         if(this.eventListener != null) {

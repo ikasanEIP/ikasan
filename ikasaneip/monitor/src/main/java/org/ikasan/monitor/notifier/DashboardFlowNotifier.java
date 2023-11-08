@@ -114,13 +114,11 @@ public class DashboardFlowNotifier implements FlowNotifier<String>
 
         if(success)
         {
-            logger.info(String.format("Notify Ikasan Dashboard SUCCESS. Flow Name[%s], State[%s]"
-                , flowName, state));
+            logger.info("Notify Ikasan Dashboard SUCCESS. Flow Name[%s], State[%s]".formatted(flowName, state));
         }
         else
         {
-            logger.info(String.format("Notify Ikasan Dashboard FAILED. Flow Name[%s], State[%s]"
-                , flowName, state));
+            logger.info("Notify Ikasan Dashboard FAILED. Flow Name[%s], State[%s]".formatted(flowName, state));
         }
     }
 }

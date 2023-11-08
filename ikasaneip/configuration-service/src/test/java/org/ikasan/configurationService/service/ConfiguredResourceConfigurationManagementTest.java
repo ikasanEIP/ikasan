@@ -40,33 +40,27 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import org.ikasan.configurationService.dao.ConfigurationDao;
-import org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterListImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterLongImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterMapImpl;
-import org.ikasan.configurationService.model.ConfigurationParameterStringImpl;
-import org.ikasan.configurationService.model.DefaultConfiguration;
+import org.ikasan.configurationService.model.*;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
@@ -83,7 +77,7 @@ public class ConfiguredResourceConfigurationManagementTest
      */
     private Mockery mockery = new Mockery()
     {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
     
     @Resource

@@ -40,7 +40,7 @@ public class BsonEncodingStringToNumberTransformerTest
     @Test
     public void testTransformLongPositive()
     {
-        String testNumberStr = (new Long(new Long(Integer.MAX_VALUE) + 1l)).toString();
+        String testNumberStr = (Long.valueOf(Long.valueOf(Integer.MAX_VALUE) + 1l)).toString();
         Object transformedNumber = bsonEncodingStringToNumberTransformer.transform(testNumberStr);
         assertEquals("The test number string should have been transformed", Long.parseLong(testNumberStr),
             transformedNumber);
@@ -49,7 +49,7 @@ public class BsonEncodingStringToNumberTransformerTest
     @Test
     public void testTransformLongNegative()
     {
-        String testNumberStr = (new Long(new Long(Integer.MIN_VALUE) - 1l)).toString();
+        String testNumberStr = (Long.valueOf(Long.valueOf(Integer.MIN_VALUE) - 1l)).toString();
         Object transformedNumber = bsonEncodingStringToNumberTransformer.transform(testNumberStr);
         assertEquals("The test long number string should have been transformed", Long.parseLong(testNumberStr),
             transformedNumber);

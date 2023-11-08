@@ -512,7 +512,7 @@ public class ScheduledConsumer<T>
         Integer eagerCallbacks = (Integer)trigger.getJobDataMap().get(EAGER_CALLBACK_COUNT);
         if(eagerCallbacks == null)
         {
-            eagerCallbacks = new Integer(0);
+            eagerCallbacks = Integer.valueOf(0);
         }
 
         // if data available and maxEagerCallbacks is not set or less than max
@@ -554,9 +554,9 @@ public class ScheduledConsumer<T>
      */
     protected boolean isPaused()
     {
-        if(eventListener instanceof Flow)
+        if(eventListener instanceof Flow flow)
         {
-            return ((Flow)eventListener).isPaused();
+            return flow.isPaused();
         }
         return false;
     }
@@ -743,9 +743,9 @@ public class ScheduledConsumer<T>
         this.consumerConfiguration = consumerConfiguration;
 
         // pass configuration to messageProvider if this is configured
-        if(messageProvider instanceof Configured)
+        if(messageProvider instanceof Configured configured)
         {
-            ((Configured)messageProvider).setConfiguration(consumerConfiguration);
+            configured.setConfiguration(consumerConfiguration);
         }
     }
 
@@ -759,9 +759,9 @@ public class ScheduledConsumer<T>
         this.messageProvider = messageProvider;
 
         // pass configuration to messageProvider if this is configured
-        if(messageProvider instanceof Configured && consumerConfiguration != null)
+        if(messageProvider instanceof Configured configured && consumerConfiguration != null)
         {
-            ((Configured)messageProvider).setConfiguration(consumerConfiguration);
+            configured.setConfiguration(consumerConfiguration);
         }
     }
 
@@ -805,26 +805,26 @@ public class ScheduledConsumer<T>
     @Override
     public void startManagedResource()
     {
-        if(messageProvider instanceof ManagedResource)
+        if(messageProvider instanceof ManagedResource resource)
         {
-            ((ManagedResource)messageProvider).startManagedResource();
+            resource.startManagedResource();
         }
-        else if(messageProvider instanceof ManagedLifecycle)
+        else if(messageProvider instanceof ManagedLifecycle lifecycle)
         {
-            ((ManagedLifecycle)messageProvider).start();
+            lifecycle.start();
         }
     }
 
     @Override
     public void stopManagedResource()
     {
-        if(messageProvider instanceof ManagedResource)
+        if(messageProvider instanceof ManagedResource resource)
         {
-            ((ManagedResource)messageProvider).stopManagedResource();
+            resource.stopManagedResource();
         }
-        else if(messageProvider instanceof ManagedLifecycle)
+        else if(messageProvider instanceof ManagedLifecycle lifecycle)
         {
-            ((ManagedLifecycle)messageProvider).stop();
+            lifecycle.stop();
         }
 
     }
@@ -833,9 +833,9 @@ public class ScheduledConsumer<T>
     public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager)
     {
         this.managedResourceRecoveryManager = managedResourceRecoveryManager;
-        if(messageProvider instanceof ManagedResource)
+        if(messageProvider instanceof ManagedResource resource)
         {
-            ((ManagedResource)messageProvider).setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+            resource.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         }
     }
 

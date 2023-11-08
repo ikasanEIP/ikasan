@@ -331,9 +331,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
             // configure any registered monitors marked as configured
             if(this.monitor != null)
             {
-                if(this.monitor instanceof ConfiguredResource)
+                if(this.monitor instanceof ConfiguredResource configuredMonitor)
                 {
-                    ConfiguredResource configuredMonitor = (ConfiguredResource)monitor;
                     if( configuredMonitor.getConfiguredResourceId() == null )
                     {
                         configuredMonitor.setConfiguredResourceId(this.moduleName + this.name + "_monitor");
@@ -351,9 +350,8 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 {
                     for(Notifier monitorNotifier : monitorNotifiers)
                     {
-                        if(monitorNotifier instanceof ConfiguredResource)
+                        if(monitorNotifier instanceof ConfiguredResource configuredMonitorNotifier)
                         {
-                            ConfiguredResource configuredMonitorNotifier = (ConfiguredResource)monitorNotifier;
                             if( configuredMonitorNotifier.getConfiguredResourceId() == null )
                             {
                                 configuredMonitorNotifier.setConfiguredResourceId(this.moduleName + this.name + "_monitor_notifier_" + monitorNotifier.getClass().getSimpleName());

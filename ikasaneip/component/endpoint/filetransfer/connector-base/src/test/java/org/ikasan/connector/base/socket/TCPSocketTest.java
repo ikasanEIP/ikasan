@@ -184,7 +184,7 @@ public class TCPSocketTest
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes)
         {
-            sb.append(String.format("%02X ", b));
+            sb.append("%02X ".formatted(b));
         }
         System.out.println(sb.toString());
     }

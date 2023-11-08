@@ -41,7 +41,7 @@
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -61,7 +61,7 @@ public class IkasanListMessageTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 
@@ -132,8 +132,8 @@ public class IkasanListMessageTest
         ikasanListMessage.setStringProperty("stringProperty", "stringProperty");
         Assert.assertTrue( ikasanListMessage.getStringProperty("stringProperty").equals("stringProperty") );
 
-        ikasanListMessage.setObjectProperty("objectProperty", new Integer(5));
-        Assert.assertTrue( ikasanListMessage.getObjectProperty("objectProperty").equals( new Integer(5) ) );
+        ikasanListMessage.setObjectProperty("objectProperty", Integer.valueOf(5));
+        Assert.assertTrue( ikasanListMessage.getObjectProperty("objectProperty").equals( Integer.valueOf(5) ) );
 
         ikasanListMessage.clearProperties();
     }

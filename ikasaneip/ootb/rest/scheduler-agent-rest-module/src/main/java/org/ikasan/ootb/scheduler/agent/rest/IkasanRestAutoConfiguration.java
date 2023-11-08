@@ -100,10 +100,10 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         converters.forEach(converter -> {
-            if(converter instanceof MappingJackson2HttpMessageConverter) {
-                ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().registerModule(ObjectMapperFactory.newSimpleModule());
-                ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            if(converter instanceof MappingJackson2HttpMessageConverter messageConverter) {
+                messageConverter.getObjectMapper().registerModule(ObjectMapperFactory.newSimpleModule());
+                messageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+                messageConverter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
             }
         });
     }

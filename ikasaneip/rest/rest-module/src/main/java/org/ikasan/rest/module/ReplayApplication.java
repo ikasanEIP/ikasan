@@ -121,9 +121,11 @@ public class ReplayApplication
             if ( resubmissionService == null )
             {
                 throw new RuntimeException(
-                    "The resubmission service on the flow you are resubmitting to is null. This is most liekly due to "
-                        + "the resubmission service not being set on the flow factory for the flow you are "
-                        + "resubmitting to.");
+                    """
+                    The resubmission service on the flow you are resubmitting to is null. This is most liekly due to \
+                    the resubmission service not being set on the flow factory for the flow you are \
+                    resubmitting to.\
+                    """);
             }
             Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
             Object deserialisedEvent = serialiser.deserialise(event);
@@ -183,10 +185,12 @@ public class ReplayApplication
             if ( resubmissionService == null )
             {
                 return new ResponseEntity(new ErrorDto(
-                    "The resubmission service on the flow you are resubmitting to is null. This is most likely due to "
-                        + "the resubmission service not being set on the flow factory for the flow you are "
-                        + "resubmitting "
-                        + "to."), HttpStatus.BAD_REQUEST);
+                    """
+                    The resubmission service on the flow you are resubmitting to is null. This is most likely due to \
+                    the resubmission service not being set on the flow factory for the flow you are \
+                    resubmitting \
+                    to.\
+                    """), HttpStatus.BAD_REQUEST);
             }
 
             Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
@@ -197,7 +201,7 @@ public class ReplayApplication
 
             systemEventService.logSystemEvent(
                 requestDto.getModuleName(),
-                String.format("%s-%s:%s",requestDto.getModuleName(),requestDto.getFlowName(),deserialisedEvent.toString()),
+                "%s-%s:%s".formatted(requestDto.getModuleName(), requestDto.getFlowName(), deserialisedEvent.toString()),
                 "Replaying Event",
                 userName);
             return new ResponseEntity(HttpStatus.OK);

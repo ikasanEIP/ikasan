@@ -467,9 +467,9 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
 
         if (messageProvider != null) {
 
-            if (messageProvider instanceof IkasanMessageListenerContainer)
+            if (messageProvider instanceof IkasanMessageListenerContainer container)
             {
-                ((IkasanMessageListenerContainer)messageProvider).setConnectionFactory( getConnectionFactory(connectionFactory, username, password) );
+                container.setConnectionFactory( getConnectionFactory(connectionFactory, username, password) );
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setMessageListener(aopProxiedMessageListener);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setErrorHandler(jmsConsumer);
                 ((ArjunaIkasanMessageListenerContainer) messageProvider).setExceptionListener(jmsConsumer);

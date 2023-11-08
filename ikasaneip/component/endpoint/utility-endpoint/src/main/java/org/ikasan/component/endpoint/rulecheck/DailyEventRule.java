@@ -83,8 +83,8 @@ public class DailyEventRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends RuleBrea
     public void setConfiguredResourceId(String id)
     {
         this.id = id;
-        if (dailyEventRuleStrategy instanceof ConfiguredResource)
-            ((ConfiguredResource) dailyEventRuleStrategy).setConfiguredResourceId(id);
+        if (dailyEventRuleStrategy instanceof ConfiguredResource resource)
+            resource.setConfiguredResourceId(id);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class DailyEventRule<PAYLOAD_TYPE, BREACH_EXCEPTION_TYPE extends RuleBrea
     public void setConfiguration(DailyEventRuleConfiguration configuration)
     {
         this.configuration = configuration;
-        if (dailyEventRuleStrategy instanceof ConfiguredResource)
-            ((ConfiguredResource) dailyEventRuleStrategy).setConfiguration(configuration);
+        if (dailyEventRuleStrategy instanceof ConfiguredResource resource)
+            resource.setConfiguration(configuration);
     }
 }

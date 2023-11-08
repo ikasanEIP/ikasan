@@ -48,7 +48,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-rest</artifactId>
-        <version>3.3.3-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -64,6 +64,7 @@
             <version>${version.javax.servlet}</version>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-autoconfigure</artifactId>
@@ -74,14 +75,17 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-exclusion</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-hospital</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-resubmission</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-metadata</artifactId>

@@ -197,7 +197,7 @@ public class FileChunk implements FileConstituentHandle
 
     public int compareTo(FileConstituentHandle other)
     {
-        return new Long(getOrdinal()).compareTo(new Long(other.getOrdinal()));
+        return Long.valueOf(getOrdinal()).compareTo(Long.valueOf(other.getOrdinal()));
     }
 
     @Override

@@ -40,11 +40,6 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.util.Map;
-
-import javax.resource.ResourceException;
-import javax.transaction.xa.Xid;
-
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.TransactionalResource;
 import org.ikasan.connector.base.command.XidImpl;
@@ -55,15 +50,12 @@ import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
+import javax.resource.ResourceException;
+import javax.transaction.xa.Xid;
+import java.util.Map;
 
 /**
  * Test class for the CleanupChunksCommand
@@ -90,7 +82,7 @@ public class CleanupChunksCommandTest
         Mockery classMockery = new Mockery()
         {
             {
-                setImposteriser(ClassImposteriser.INSTANCE);
+                setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             }
         };
         

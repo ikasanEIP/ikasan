@@ -222,9 +222,9 @@ public class GenericJmsConsumer
                 connection.setClientID(this.configuration.getClientId());
             }
 
-            if(messageListener instanceof ExceptionListener)
+            if(messageListener instanceof ExceptionListener listener)
             {
-                connection.setExceptionListener( (ExceptionListener)messageListener );
+                connection.setExceptionListener( listener );
             }
 
             this.session = connection.createSession(this.configuration.isTransacted(), this.configuration.getAcknowledgement());
@@ -239,15 +239,15 @@ public class GenericJmsConsumer
                 destination = destinationResolver.getDestination();
             }
             
-            if(destination instanceof Topic && this.configuration.isDurable())
+            if(destination instanceof Topic topic && this.configuration.isDurable())
             {
                 if(this.configuration.getSelector() != null)
                 {
-                    messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId(), this.configuration.getSelector(), this.configuration.isNoLocal());
+                    messageConsumer = session.createDurableSubscriber(topic, this.configuration.getSubscriberId(), this.configuration.getSelector(), this.configuration.isNoLocal());
                 }
                 else
                 {
-                    messageConsumer = session.createDurableSubscriber((Topic)destination, this.configuration.getSubscriberId());
+                    messageConsumer = session.createDurableSubscriber(topic, this.configuration.getSubscriberId());
                 }
             }
             else

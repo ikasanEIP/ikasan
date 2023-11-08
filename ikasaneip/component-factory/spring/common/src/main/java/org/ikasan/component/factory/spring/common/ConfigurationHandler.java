@@ -66,8 +66,10 @@ public class ConfigurationHandler<C> {
         try {
             configuration = BindConfigurationHelper.createConfigWithPrefixAndClassName(configPrefix, clazz, env);
         } catch (IkasanComponentFactoryException icfe){
-            logger.warn("Could not find properties with config prefix [{}] assuming all properties are shared with " +
-                    "prefix [{}]",configPrefix, sharedConfigPrefix);
+            logger.warn("""
+                    Could not find properties with config prefix [{}] assuming all properties are shared with \
+                    prefix [{}]\
+                    """,configPrefix, sharedConfigPrefix);
         }
         C sharedConfiguration = BindConfigurationHelper.createConfigWithPrefix(clazz,env, sharedConfigPrefix);
         try {

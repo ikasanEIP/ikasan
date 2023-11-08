@@ -45,7 +45,7 @@ import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.operation.service.PersistenceService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
@@ -69,7 +69,7 @@ class DefaultOperationImplTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

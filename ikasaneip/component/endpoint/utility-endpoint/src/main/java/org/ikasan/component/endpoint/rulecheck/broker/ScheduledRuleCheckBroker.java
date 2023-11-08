@@ -133,9 +133,9 @@ public class ScheduledRuleCheckBroker<EVENT> implements Broker<EVENT,EVENT>, Man
         try
         {
             // configure the rule is possible
-            if(rule instanceof Configured)
+            if(rule instanceof Configured configured)
             {
-                ((Configured)rule).setConfiguration(this.configuration);
+                configured.setConfiguration(this.configuration);
             }
 
             // reset the rule on start of the component

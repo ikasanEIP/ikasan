@@ -45,7 +45,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-endpoint-parent</artifactId>
-        <version>3.3.3-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>

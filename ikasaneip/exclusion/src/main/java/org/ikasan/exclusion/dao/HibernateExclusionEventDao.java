@@ -228,7 +228,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
                 {
                     return rowCountList.get(0);
                 }
-                return new Long(0);
+                return Long.valueOf(0);
             }
 
             /**
@@ -394,7 +394,7 @@ public class HibernateExclusionEventDao extends HibernateDaoSupport
             {
                 return rowCountList.get(0);
             }else{
-                return new Long(0);
+                return Long.valueOf(0);
             }
 
 

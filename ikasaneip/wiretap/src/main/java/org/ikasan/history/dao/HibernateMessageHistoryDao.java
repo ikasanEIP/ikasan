@@ -167,7 +167,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     return rowCountList.get(0);
                 }
-                return new Long(0);
+                return Long.valueOf(0);
             }
 
             /**
@@ -273,7 +273,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
                 {
                     return rowCountList.get(0);
                 }
-                return new Long(0);
+                return Long.valueOf(0);
             }
 
             /**
@@ -379,14 +379,14 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             Query<Long> query = session.createQuery(criteriaQuery);
             List<Long> rowCountList = query.getResultList();
-            Long rowCount = new Long(0);
+            Long rowCount = Long.valueOf(0);
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);
             }
 
             logger.debug(rowCount+", FlowInvocation housekeepables exist");
-            return new Boolean(rowCount>0);
+            return Boolean.valueOf(rowCount > 0);
         });
     }
 
@@ -407,7 +407,7 @@ public class HibernateMessageHistoryDao extends HibernateDaoSupport implements M
 
             Query<Long> query = session.createQuery(criteriaQuery);
             List<Long> rowCountList = query.getResultList();
-            Long rowCount = new Long(0);
+            Long rowCount = Long.valueOf(0);
             if (!rowCountList.isEmpty())
             {
                 rowCount = rowCountList.get(0);

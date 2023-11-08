@@ -87,7 +87,7 @@ public class JmsMapMessageConverterTest {
         message.setFloat(FLOAT, Float.valueOf(12));
         message.setInt(INT, Integer.valueOf(14));
         message.setLong(LONG, Long.valueOf(16));
-        message.setObject(OBJECT, new Double(100));
+        message.setObject(OBJECT, Double.valueOf(100));
         message.setShort(SHORT, Short.valueOf((short)18));
         message.setString(STRING, "testString");
 
@@ -103,7 +103,7 @@ public class JmsMapMessageConverterTest {
         assertTrue(Float.valueOf(12).floatValue() == result.getFloat(FLOAT));
         assertTrue(Integer.valueOf(14).intValue() == result.getInt(INT));
         assertTrue(Long.valueOf(16).longValue() == result.getLong(LONG));
-        assertEquals(new Double(100), result.getObject(OBJECT));
+        assertEquals(Double.valueOf(100), result.getObject(OBJECT));
         assertTrue(Short.valueOf((short)18).shortValue() == result.getShort(SHORT));
         assertEquals("testString", result.getString(STRING));
     }
@@ -115,11 +115,11 @@ public class JmsMapMessageConverterTest {
         message.setBooleanProperty(BOOLEAN, true);
         message.setByteProperty(BYTE, (byte)'b');
         message.setDoubleProperty(DOUBLE, Double.valueOf(10));
-        message.setFloatProperty(FLOAT, new Float(12));
-        message.setIntProperty(INT, new Integer(14));
-        message.setLongProperty(LONG, new Long(16));
+        message.setFloatProperty(FLOAT, Float.valueOf(12));
+        message.setIntProperty(INT, Integer.valueOf(14));
+        message.setLongProperty(LONG, Long.valueOf(16));
         message.setObjectProperty(OBJECT, new String("test string"));
-        message.setShortProperty(SHORT, new Short( (short)18));
+        message.setShortProperty(SHORT, Short.valueOf((short)18));
         message.setStringProperty(STRING, "testStringAgain");
 
         // test

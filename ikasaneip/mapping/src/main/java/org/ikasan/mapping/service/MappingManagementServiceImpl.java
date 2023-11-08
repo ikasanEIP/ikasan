@@ -386,7 +386,7 @@ public class MappingManagementServiceImpl implements MappingManagementService
 
         sequenceNumber = sequence.getSequenceNumber();
 
-        sequence.setSequenceNumber(new Long(sequence.getSequenceNumber() + 1));
+        sequence.setSequenceNumber(Long.valueOf(sequence.getSequenceNumber() + 1));
         dao.saveSourceConfigurationGroupSequence(sequence);
 
         return sequenceNumber;

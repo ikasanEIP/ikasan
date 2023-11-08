@@ -50,9 +50,9 @@ public interface Configured<T>
 {
     static void validate(Object configuration)
     {
-        if(configuration != null && configuration instanceof IsValidationAware)
+        if(configuration != null && configuration instanceof IsValidationAware aware)
         {
-            ((IsValidationAware)configuration).validate();
+            aware.validate();
         }
     }
 

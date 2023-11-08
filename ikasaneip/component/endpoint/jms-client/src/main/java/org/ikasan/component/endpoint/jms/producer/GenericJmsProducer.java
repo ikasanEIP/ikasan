@@ -161,16 +161,16 @@ public class GenericJmsProducer<T>
 
     protected Message convertToMessage(Object object)
     {
-        if(object instanceof Message)
+        if(object instanceof Message message)
         {
-            return (Message)object;
+            return message;
         }
 
-        if(object instanceof Map)
+        if(object instanceof Map map)
         {
             try
             {
-                return this.mapToMessageConverter.convert((Map)object);
+                return this.mapToMessageConverter.convert(map);
             }
             catch(ClassCastException e)
             {
@@ -179,17 +179,17 @@ public class GenericJmsProducer<T>
                         + " to JMS. Unable to find a registered converter!");
             }
         }
-        else if(object instanceof byte[])
+        else if(object instanceof byte[] bytes)
         {
-            return this.byteArrayToMessageConverter.convert((byte[])object);
+            return this.byteArrayToMessageConverter.convert(bytes);
         }
-        else if(object instanceof String)
+        else if(object instanceof String string)
         {
-            return this.stringToMessageConverter.convert((String)object);
+            return this.stringToMessageConverter.convert(string);
         }
-        else if(object instanceof Serializable)
+        else if(object instanceof Serializable serializable)
         {
-            return this.serializableToMessageConverter.convert((Serializable)object);
+            return this.serializableToMessageConverter.convert(serializable);
         }
 
         throw new EndpointException("Cannot publish message of type["
@@ -401,9 +401,9 @@ public class GenericJmsProducer<T>
      */
     protected Object getPayload(Object message)
     {
-        if(message instanceof FlowEvent)
+        if(message instanceof FlowEvent event)
         {
-            return ((FlowEvent) message).getPayload();
+            return event.getPayload();
         }
 
         return message;

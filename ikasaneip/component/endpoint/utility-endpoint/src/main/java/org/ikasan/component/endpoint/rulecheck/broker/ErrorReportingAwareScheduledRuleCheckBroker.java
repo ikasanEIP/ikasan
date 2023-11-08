@@ -22,7 +22,7 @@ public class ErrorReportingAwareScheduledRuleCheckBroker<EVENT, RULE extends IsE
     @Override
     public void setErrorReportingService(ErrorReportingService errorReportingService)
     {
-        if(rule instanceof IsErrorReportingServiceAware)
-            ((IsErrorReportingServiceAware) rule).setErrorReportingService(errorReportingService);
+        if(rule instanceof IsErrorReportingServiceAware aware)
+            aware.setErrorReportingService(errorReportingService);
     }
 }

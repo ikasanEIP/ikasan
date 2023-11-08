@@ -148,7 +148,7 @@ public class EmbeddedMongo
             configuration.setArchiveStorageDirectory((sysCustomMongoArchiveStorageDir));
         }
         if (sysCustomMongoPort != null){
-            configuration.setPort(new Integer(sysCustomMongoPort));
+            configuration.setPort(Integer.valueOf(sysCustomMongoPort));
         }
         if (sysHttpProxyHost != null){
             configuration.setHttpProxyHost(sysHttpProxyHost);

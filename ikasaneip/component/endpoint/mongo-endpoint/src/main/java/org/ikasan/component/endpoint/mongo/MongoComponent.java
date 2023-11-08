@@ -174,7 +174,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
             {
                 List<Transformer> transformers = bsonEncodingTransformerMap.get(c);
                 for(Transformer transformer : transformers){
-                    logger.debug(String.format("Adding bsonEncodingTransfomer [%1$s] for class [%2$s]", transformer, c));
+                    logger.debug("Adding bsonEncodingTransfomer [%1$s] for class [%2$s]".formatted(transformer, c));
                     BSON.addEncodingHook(c, transformer);
                 }
             }

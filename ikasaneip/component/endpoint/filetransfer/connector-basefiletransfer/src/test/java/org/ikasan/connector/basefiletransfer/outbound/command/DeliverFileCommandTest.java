@@ -38,6 +38,17 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import org.ikasan.connector.base.command.ExecutionContext;
+import org.ikasan.connector.base.command.ExecutionOutput;
+import org.ikasan.connector.base.command.XidImpl;
+import org.ikasan.connector.basefiletransfer.net.*;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
+import org.junit.Before;
+import org.junit.Test;
+
+import javax.resource.ResourceException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -45,27 +56,6 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import javax.resource.ResourceException;
-
-import org.ikasan.connector.base.command.ExecutionContext;
-import org.ikasan.connector.base.command.ExecutionOutput;
-import org.ikasan.connector.base.command.XidImpl;
-import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandCdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandMkdirException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandPutException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandPwdException;
-import org.ikasan.connector.basefiletransfer.net.ClientCommandRenameException;
-import org.ikasan.connector.basefiletransfer.net.ClientException;
-import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
-import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
-import org.jmock.Expectations;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Before;
-import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -142,7 +132,7 @@ public class DeliverFileCommandTest
     private Mockery classMockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
 
     };

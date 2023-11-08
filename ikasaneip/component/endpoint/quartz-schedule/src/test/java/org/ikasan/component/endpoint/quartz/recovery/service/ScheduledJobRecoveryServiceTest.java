@@ -42,11 +42,14 @@ package org.ikasan.component.endpoint.quartz.recovery.service;
 
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
-import org.quartz.*;
+import org.quartz.JobExecutionContext;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 
 import java.util.Date;
 
@@ -63,7 +66,7 @@ public class ScheduledJobRecoveryServiceTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new Synchroniser());
         }
     };

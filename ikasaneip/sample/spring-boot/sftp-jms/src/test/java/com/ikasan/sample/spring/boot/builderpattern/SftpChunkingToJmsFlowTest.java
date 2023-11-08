@@ -181,14 +181,18 @@ public class SftpChunkingToJmsFlowTest
 
         ActiveMQMapMessage mapMessage = (ActiveMQMapMessage) messageListenerVerifier.getCaptureResults().get(0);
         Object content = mapMessage.getContentMap().get("content");
-        Assert.assertTrue((content.toString()).startsWith("<?xml version=\"1.0\" encoding=\"UTF-8\" "
-            + "standalone=\"yes\"?><fileChunkHeader><chunkTimeStamp>"));
+        Assert.assertTrue((content.toString()).startsWith("""
+            <?xml version="1.0" encoding="UTF-8" \
+            standalone="yes"?><fileChunkHeader><chunkTimeStamp>\
+            """));
 
 
-        Assert.assertTrue((content.toString()).endsWith("</chunkTimeStamp><clientId"
-            + ">sftpToJmsFlow</clientId><fileName>bigTextFile"
-            + ".txt</fileName><id>1</id><internalMd5Hash>7e7972ac876df6b7528eb183e811bc99</internalMd5Hash"
-            + "><sequenceLength>11</sequenceLength></fileChunkHeader>"));
+        Assert.assertTrue((content.toString()).endsWith("""
+            </chunkTimeStamp><clientId\
+            >sftpToJmsFlow</clientId><fileName>bigTextFile\
+            .txt</fileName><id>1</id><internalMd5Hash>7e7972ac876df6b7528eb183e811bc99</internalMd5Hash\
+            ><sequenceLength>11</sequenceLength></fileChunkHeader>\
+            """));
         FileChunkHeader header = fileChunkDao.load(1l);
         Assert.assertEquals(Long.valueOf(11l),header.getSequenceLength());
         Assert.assertEquals("bigTextFile.txt",header.getFileName());

@@ -720,7 +720,7 @@ public class HibernateSecurityDaoTest
     public void test_success_save_policy_link()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityDao.getAllPolicyLinkTypes();
-    	PolicyLink policyLink = new PolicyLink(plts.get(0),new Long(1), "name");
+    	PolicyLink policyLink = new PolicyLink(plts.get(0),Long.valueOf(1), "name");
     	
     	this.xaSecurityDao.saveOrUpdatePolicyLink(policyLink);
     	

@@ -193,7 +193,7 @@ public class DefaultOperationImpl implements Operation
         if(username != null)
         {
             liveProcesses = liveProcesses
-                .filter(ph -> !ph.info().user().isEmpty()
+                .filter(ph -> ph.info().user().isPresent()
                     && ph.info().user().get().toLowerCase().equals(username.toLowerCase()));
         }
 
@@ -201,7 +201,7 @@ public class DefaultOperationImpl implements Operation
         if(processType.getCommandSignature() != null && processType.getCommandSignature().length() > 0)
         {
             liveProcesses = liveProcesses
-                .filter(ph -> !ph.info().commandLine().isEmpty()
+                .filter(ph -> ph.info().commandLine().isPresent()
                     && ph.info().commandLine().get().toLowerCase().contains(processType.getCommandSignature().toLowerCase()));
         }
 

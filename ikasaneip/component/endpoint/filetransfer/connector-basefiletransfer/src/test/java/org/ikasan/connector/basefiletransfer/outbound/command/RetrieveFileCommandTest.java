@@ -48,7 +48,7 @@ import org.ikasan.connector.basefiletransfer.net.*;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.joda.time.DateTimeUtils;
 import org.junit.After;
 import org.junit.Assert;
@@ -365,7 +365,7 @@ public class RetrieveFileCommandTest
         Mockery context = new Mockery()
         {
             {
-                setImposteriser(ClassImposteriser.INSTANCE);
+                setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             }
         };
         Mockery interfaceMockery = new Mockery();
@@ -434,7 +434,7 @@ public class RetrieveFileCommandTest
         Mockery context = new Mockery()
         {
             {
-                setImposteriser(ClassImposteriser.INSTANCE);
+                setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             }
         };
         Mockery interfaceMockery = new Mockery();
@@ -522,7 +522,7 @@ public class RetrieveFileCommandTest
         Mockery context = new Mockery()
         {
             {
-                setImposteriser(ClassImposteriser.INSTANCE);
+                setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             }
         };
         Mockery interfaceMockery = new Mockery();
@@ -597,7 +597,7 @@ public class RetrieveFileCommandTest
         Mockery context = new Mockery()
         {
             {
-                setImposteriser(ClassImposteriser.INSTANCE);
+                setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             }
         };
         Mockery interfaceMockery = new Mockery();

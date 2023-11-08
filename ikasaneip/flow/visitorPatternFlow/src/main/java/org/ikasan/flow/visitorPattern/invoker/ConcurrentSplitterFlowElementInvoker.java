@@ -182,9 +182,9 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         for (Object payload : payloads)
         {
             FlowEvent asyncFlowEvent;
-            if(payload instanceof FlowEvent)
+            if(payload instanceof FlowEvent event)
             {
-                asyncFlowEvent =  new FlowEventFactory().newEvent(((FlowEvent)payload).getIdentifier(), ((FlowEvent) payload).getPayload());
+                asyncFlowEvent =  new FlowEventFactory().newEvent(event.getIdentifier(), event.getPayload());
             }
             else
             {
@@ -238,9 +238,9 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
             }
 
             flowInvocationContext.combine(failedTaskFlowInvocationContext);
-            if(callbackException instanceof RuntimeException)
+            if(callbackException instanceof RuntimeException exception)
             {
-                throw (RuntimeException)callbackException;
+                throw exception;
             }
 
             throw new SplitterException(callbackException);
@@ -270,9 +270,9 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         {
             for (Object payload : subFlowPayloads)
             {
-                if(payload instanceof FlowEvent)
+                if(payload instanceof FlowEvent event)
                 {
-                    flowEvent = (FlowEvent)payload;
+                    flowEvent = event;
                 }
                 else
                 {
@@ -359,8 +359,7 @@ public class ConcurrentSplitterFlowElementInvoker extends AbstractFlowElementInv
         public void onFailure(Throwable thrown) {
             synchronized (mutex) {
                 if (callbackException == null) {
-                    if (thrown instanceof SplitFlowElementException) {
-                        SplitFlowElementException splitFlowElementException = (SplitFlowElementException) thrown;
+                    if (thrown instanceof SplitFlowElementException splitFlowElementException) {
                         callbackException = splitFlowElementException.getThrown();
                         failedTaskFlowInvocationContext = splitFlowElementException.getFlowInvocationContext();
                     } else {

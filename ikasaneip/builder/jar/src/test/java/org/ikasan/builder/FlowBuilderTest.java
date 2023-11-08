@@ -72,7 +72,7 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -103,7 +103,7 @@ public class FlowBuilderTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 
@@ -179,11 +179,13 @@ public class FlowBuilderTest
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
-            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
-            + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
-            + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
-            + ",me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration"
-            + ",org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration"
+            """
+            --spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration\
+            ,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration\
+            ,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration\
+            ,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration\
+            ,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration\
+            """
         };
 
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
@@ -1149,7 +1151,7 @@ public class FlowBuilderTest
     {
         setupMockExpectations();
 
-        Long timeToLive = new Long(100);
+        Long timeToLive = Long.valueOf(100);
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
                 .withDescription("flowDescription")

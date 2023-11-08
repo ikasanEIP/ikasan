@@ -321,7 +321,7 @@ public class ModulesController
             @RequestParam(FLOW_ELEMENT_NAME_PARAMETER_NAME) String flowElementName,
             @RequestParam(TRIGGER_ID_PARAMETER_NAME) String triggerId, ModelMap model) throws Exception
     {
-        this.jobAwareFlowEventListener.deleteDynamicTrigger(new Long(triggerId));
+        this.jobAwareFlowEventListener.deleteDynamicTrigger(Long.valueOf(triggerId));
         return viewFlowElement(moduleName, flowName, flowElementName, model);
     }
 

@@ -40,15 +40,17 @@
  */
 package org.ikasan.scheduler;
 
-import org.junit.Assert;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
+import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.*;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
 
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -64,7 +66,7 @@ public class CachingScheduledJobFactoryTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 
@@ -72,7 +74,7 @@ public class CachingScheduledJobFactoryTest
     final Scheduler scheduler = mockery.mock(Scheduler.class, "mockScheduler");
 
     /** Mock cache */
-    final Map mockCache = mockery.mock(Map.class, "mockCache");
+    final HashMap mockCache = mockery.mock(HashMap.class, "mockCache");
 
     /** Mock defaultJobFactory */
     final JobFactory mockDefaultJobFactory = mockery.mock(JobFactory.class, "mockDefaultJobFactory");

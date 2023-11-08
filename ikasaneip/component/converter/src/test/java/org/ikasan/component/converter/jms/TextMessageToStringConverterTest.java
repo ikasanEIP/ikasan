@@ -40,29 +40,15 @@
  */
 package org.ikasan.component.converter.jms;
 
-import org.ikasan.component.converter.xml.ExceptionThrowingErrorListener;
-import org.ikasan.component.converter.xml.XsltConverter;
-import org.ikasan.component.converter.xml.XsltConverterConfiguration;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.Before;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
-import org.xml.sax.InputSource;
 
 import javax.jms.JMSException;
 import javax.jms.TextMessage;
-import javax.xml.transform.*;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
+import javax.xml.transform.TransformerException;
 
 import static org.junit.Assert.assertEquals;
 
@@ -80,7 +66,7 @@ public class TextMessageToStringConverterTest
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

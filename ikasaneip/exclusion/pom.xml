@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-build</artifactId>
-        <version>3.3.3-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-exclusion-service</artifactId>
@@ -179,7 +179,13 @@
 
         <dependency>
             <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
+            <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
             <scope>test</scope>
         </dependency>
 

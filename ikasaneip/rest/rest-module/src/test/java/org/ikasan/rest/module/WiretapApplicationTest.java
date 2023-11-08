@@ -131,9 +131,11 @@ public class WiretapApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(403, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"An error has occurred trying to create a new trigger: "
-            + "[issue persisting rigger] for request[TriggerDto[moduleName='testModule', flowName='testFlow', "
-            + "flowElementName='component', relationship='after', jobType='wiretap', timeToLive='100']]\"}", result.getResponse().getContentAsString());
+        assertEquals("""
+            {"errorMessage":"An error has occurred trying to create a new trigger: \
+            [issue persisting rigger] for request[TriggerDto[moduleName='testModule', flowName='testFlow', \
+            flowElementName='component', relationship='after', jobType='wiretap', timeToLive='100']]"}\
+            """, result.getResponse().getContentAsString());
 
     }
 
@@ -182,8 +184,10 @@ public class WiretapApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(403, result.getResponse().getStatus());
-        assertEquals("{\"errorMessage\":\"An error has occurred trying to delete trigger: [issue "
-            + "persisting rigger] for request[1202]\"}", result.getResponse().getContentAsString());
+        assertEquals("""
+            {"errorMessage":"An error has occurred trying to delete trigger: [issue \
+            persisting rigger] for request[1202]"}\
+            """, result.getResponse().getContentAsString());
 
     }
 
@@ -207,8 +211,10 @@ public class WiretapApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
-        assertEquals("[{\"moduleName\":\"testModule\",\"flowName\":\"testFlow\",\"relationship\":\"AFTER\","
-            + "\"jobType\":\"Wiretap\",\"timeToLive\":\"200\"}]", result.getResponse().getContentAsString());
+        assertEquals("""
+            [{"moduleName":"testModule","flowName":"testFlow","relationship":"AFTER",\
+            "jobType":"Wiretap","timeToLive":"200"}]\
+            """, result.getResponse().getContentAsString());
 
     }
 

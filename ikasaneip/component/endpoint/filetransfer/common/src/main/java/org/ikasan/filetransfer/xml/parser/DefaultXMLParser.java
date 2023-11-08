@@ -206,7 +206,7 @@ public class DefaultXMLParser implements CommonXMLParser
      */
     public Boolean isValidating()
     {
-        return new Boolean(this.factory.isValidating());
+        return Boolean.valueOf(this.factory.isValidating());
     }
 
     /*
@@ -215,7 +215,7 @@ public class DefaultXMLParser implements CommonXMLParser
      */
     public Boolean isNamspaceAware()
     {
-        return new Boolean(this.factory.isNamespaceAware());
+        return Boolean.valueOf(this.factory.isNamespaceAware());
     }
 
     /*
@@ -254,12 +254,12 @@ public class DefaultXMLParser implements CommonXMLParser
         builder.setErrorHandler(new DefaultErrorHandler());
         // set entity resolver if defined
         if (this.entityResolver != null) builder.setEntityResolver(entityResolver);
-        if (xmlObject instanceof String)
+        if (xmlObject instanceof String string)
         {
             logger.debug("Parsing XML doc as URI [" + xmlObject + "]..."); //$NON-NLS-1$ //$NON-NLS-2$
-            return builder.parse((String) xmlObject);
+            return builder.parse(string);
         }
-        else if (xmlObject instanceof byte[])
+        else if (xmlObject instanceof byte[] bytes)
         {
             if (logger.isDebugEnabled())
             {
@@ -267,33 +267,33 @@ public class DefaultXMLParser implements CommonXMLParser
                 logger.debug("XML document content ="); //$NON-NLS-1$
                 logger.debug("[\n" + String.valueOf(xmlObject) + "\n]"); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            InputStream is = new ByteArrayInputStream((byte[]) xmlObject);
+            InputStream is = new ByteArrayInputStream(bytes);
             return builder.parse(is);
         }
-        else if (xmlObject instanceof File)
+        else if (xmlObject instanceof File file)
         {
             if (logger.isDebugEnabled())
             {
                 logger.debug("Parsing XML doc as file..."); //$NON-NLS-1$
                 logger.debug("XML document URI =[" //$NON-NLS-1$
-                        + ((File) xmlObject).toString() + "]."); //$NON-NLS-1$
+                        + file.toString() + "]."); //$NON-NLS-1$
             }
-            return builder.parse((File) xmlObject);
+            return builder.parse(file);
         }
-        else if (xmlObject instanceof InputStream)
+        else if (xmlObject instanceof InputStream stream)
         {
             logger.debug("Parsing XML doc as input stream..."); //$NON-NLS-1$
-            return builder.parse((InputStream) xmlObject);
+            return builder.parse(stream);
         }
-        else if (xmlObject instanceof InputSource)
+        else if (xmlObject instanceof InputSource source)
         {
             logger.debug("Parsing XML doc as input source..."); //$NON-NLS-1$
-            return builder.parse((InputSource) xmlObject);
+            return builder.parse(source);
         }
-        else if (xmlObject instanceof Document)
+        else if (xmlObject instanceof Document document)
         {
             logger.debug("Already Docuent object, returning..."); //$NON-NLS-1$
-            return (Document) xmlObject;
+            return document;
         }
         else
         {
@@ -374,9 +374,8 @@ public class DefaultXMLParser implements CommonXMLParser
         {
             throw new NullPointerException("Object that is holding XML document can't be null"); //$NON-NLS-1$
         }
-        else if (xmlObject instanceof Document)
+        else if (xmlObject instanceof Document doc)
         {
-            Document doc = (Document) xmlObject;
             Node node = doc.getDocumentElement();
             node.normalize();
             return node.getNodeName();
@@ -432,26 +431,26 @@ public class DefaultXMLParser implements CommonXMLParser
         // jun No need to validate an XML document at the moment
         // factory.setValidating(true);
         SAXParser saxParser = factory.newSAXParser();
-        if (xmlObject instanceof String)
+        if (xmlObject instanceof String string)
         {
-            saxParser.parse((String) xmlObject, handler);
+            saxParser.parse(string, handler);
         }
-        else if (xmlObject instanceof byte[])
+        else if (xmlObject instanceof byte[] bytes)
         {
-            InputStream is = new ByteArrayInputStream((byte[]) xmlObject);
+            InputStream is = new ByteArrayInputStream(bytes);
             saxParser.parse(is, handler);
         }
-        else if (xmlObject instanceof File)
+        else if (xmlObject instanceof File file)
         {
-            saxParser.parse((File) xmlObject, handler);
+            saxParser.parse(file, handler);
         }
-        else if (xmlObject instanceof InputStream)
+        else if (xmlObject instanceof InputStream stream)
         {
-            saxParser.parse((InputStream) xmlObject, handler);
+            saxParser.parse(stream, handler);
         }
-        else if (xmlObject instanceof InputSource)
+        else if (xmlObject instanceof InputSource source)
         {
-            saxParser.parse((InputSource) xmlObject, handler);
+            saxParser.parse(source, handler);
         }
         else
         {
@@ -730,6 +729,13 @@ public class DefaultXMLParser implements CommonXMLParser
      * 
      * TODO Unit Test
      */
-    private static String defaultXmlStr = "<?xml version='1.0'?>\n" + "<doc>\n" + "  <a>data_a1\n"
-            + "    <b>data_b1</b>\n" + "    <c>data_c1</c>\n" + "  </a>\n" + "</doc>";
+    private static String defaultXmlStr = """
+            <?xml version='1.0'?>
+            <doc>
+              <a>data_a1
+                <b>data_b1</b>
+                <c>data_c1</c>
+              </a>
+            </doc>\
+            """;
 }

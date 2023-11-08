@@ -84,15 +84,16 @@ public class BulkStartupTypeSetupService {
     public StartupControl setup(StartupControl flowStartupControl) {
         if (configuration != null && (configuration.getDefaultStartupType() != null ||
             configuration.getFlowStartupTypes() != null)) {
-            if (flowStartupControl instanceof StartupControlImpl) {
-                StartupControlImpl startupControl = (StartupControlImpl) flowStartupControl;
+            if (flowStartupControl instanceof StartupControlImpl startupControl) {
                 if (startupControl.getId() == null) {
                     logger.debug("StartupControl [{}] has not been persisted will update",
                         flowStartupControl.getFlowName());
                     return updateStartupTypeAndSave(startupControl);
                 } else if (Boolean.TRUE.equals(configuration.getAllowDbOverwrite())) {
-                    logger.debug("StartupControl [{}] *has* already been persisted but configuration " +
-                        "allows for Database overwrite so will update", flowStartupControl.getFlowName());
+                    logger.debug("""
+                        StartupControl [{}] *has* already been persisted but configuration \
+                        allows for Database overwrite so will update\
+                        """, flowStartupControl.getFlowName());
                     return updateStartupTypeAndSave(startupControl);
                 } else {
                     logger.debug("StartupControl [{}] has already been persisted so not doing anything",

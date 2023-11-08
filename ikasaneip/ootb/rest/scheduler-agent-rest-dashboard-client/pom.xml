@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-ootb-rest</artifactId>
-        <version>3.3.3-SNAPSHOT</version>
+        <version>4.0.0-SNAPSHOT</version>
     </parent>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-scheduler-agent-rest-dashboard-client</artifactId>
@@ -58,7 +58,6 @@
     <description>The scheduler agent rest dashboard client library for the Ikasan Enterprise Integration Platform</description>
 
     <dependencies>
-
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -127,7 +126,6 @@
         </dependency>
 
         <!-- Test Dependencies -->
-
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
@@ -154,7 +152,13 @@
 
         <dependency>
             <groupId>org.jmock</groupId>
-            <artifactId>jmock-legacy</artifactId>
+            <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
             <scope>test</scope>
         </dependency>
 

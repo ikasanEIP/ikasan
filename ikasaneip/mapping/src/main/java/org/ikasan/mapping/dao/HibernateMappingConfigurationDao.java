@@ -68,7 +68,7 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
  */
 public class HibernateMappingConfigurationDao extends HibernateDaoSupport implements MappingConfigurationDao
 {
-	private static final Long ID = new Long(1);
+	private static final Long ID = Long.valueOf(1);
 
     /* (non-Javadoc)
          * @see com.mizuho.cmi2.stateModel.dao.MappingConfigurationDao#getTargetConfigurationValue(java.lang.String, java.lang.String, java.lang.String, java.util.List)
@@ -96,7 +96,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
                 query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, numParams);
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
-                query.setParameter(MappingConfigurationDaoConstants.SIZE, new Long(sourceSystemValues.size()));
+                query.setParameter(MappingConfigurationDaoConstants.SIZE, Long.valueOf(sourceSystemValues.size()));
 
                 int i=0;
                 for(String sourceSystemValue: sourceSystemValues)
@@ -164,7 +164,7 @@ public class HibernateMappingConfigurationDao extends HibernateDaoSupport implem
                 query.setParameter(MappingConfigurationDaoConstants.TARGET_CONTEXT, targetSystem);
                 query.setParameter(MappingConfigurationDaoConstants.NUMBER_OF_PARAMS, numParams);
                 query.setParameter(MappingConfigurationDaoConstants.CONFIGURATION_SERVICE_CLIENT_NAME, clientName);
-                query.setParameter(MappingConfigurationDaoConstants.SIZE, new Long(sourceSystemValues.size()));
+                query.setParameter(MappingConfigurationDaoConstants.SIZE, Long.valueOf(sourceSystemValues.size()));
 
                 int i=0;
                 for(QueryParameter sourceSystemValue: sourceSystemValues)

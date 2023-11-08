@@ -254,7 +254,7 @@ public class HibernateErrorManagementDao extends HibernateDaoSupport implements 
             {
                 return rowCountList.get(0);
             }
-            return new Long(0);
+            return Long.valueOf(0);
 
         });
     }

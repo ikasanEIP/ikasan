@@ -197,12 +197,11 @@ public class ErrorReportingServiceDefaultImpl<EVENT> implements ErrorReportingSe
      */
     private ErrorOccurrence newErrorOccurrence(String flowElementName, EVENT event, Throwable throwable)
     {
-        if(event instanceof FlowEvent)
+        if(event instanceof FlowEvent flowEvent)
         {
-            FlowEvent<String,Object> flowEvent = (FlowEvent)event;
             ErrorOccurrence errorOccurrence = new ErrorOccurrenceImpl(this.moduleName, this.flowName, flowElementName, this.flattenThrowable(throwable), throwable.getMessage(), throwable.getClass().getName(), this.timeToLive, this.serialiser.serialise(flowEvent.getPayload()), flowEvent.getPayload().toString());
-            errorOccurrence.setEventLifeIdentifier(flowEvent.getIdentifier());
-            errorOccurrence.setEventRelatedIdentifier(flowEvent.getRelatedIdentifier());
+            errorOccurrence.setEventLifeIdentifier((String) flowEvent.getIdentifier());
+            errorOccurrence.setEventRelatedIdentifier((String) flowEvent.getRelatedIdentifier());
             return errorOccurrence;
         }
 

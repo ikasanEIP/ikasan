@@ -40,13 +40,6 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.resource.ResourceException;
-
 import com.google.common.cache.CacheBuilder;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -59,9 +52,14 @@ import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
+
+import javax.resource.ResourceException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -88,7 +86,7 @@ public class FileDiscoveryCommandTest
         Mockery clientMockery = new Mockery()
         {
             {
-                setImposteriser(ClassImposteriser.INSTANCE);
+                setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             }
         };
 

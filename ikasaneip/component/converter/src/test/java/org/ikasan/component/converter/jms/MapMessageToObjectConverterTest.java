@@ -43,7 +43,7 @@ package org.ikasan.component.converter.jms;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -67,7 +67,7 @@ public class MapMessageToObjectConverterTest
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 

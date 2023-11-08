@@ -201,9 +201,9 @@ public class JsonConfigurationMetaDataExtractor implements ConfigurationMetaData
         try
         {
 
-            if ( flow instanceof ConfiguredResource )
+            if ( flow instanceof ConfiguredResource resource )
             {
-                return this.getConfiguration((ConfiguredResource) flow);
+                return this.getConfiguration(resource);
             }
             else
             {

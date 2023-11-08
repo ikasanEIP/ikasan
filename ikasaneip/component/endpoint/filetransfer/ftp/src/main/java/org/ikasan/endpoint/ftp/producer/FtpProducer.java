@@ -300,9 +300,8 @@ public class FtpProducer implements Producer<Payload>, ManagedResource, Configur
     private FTPConnectionSpec createAlternateSpec(FtpProducerConfiguration configuration)
     {
         FTPConnectionSpec alternateSpec = null;
-        if (configuration instanceof FtpProducerAlternateConfiguration)
+        if (configuration instanceof FtpProducerAlternateConfiguration alternteConfig)
         {
-            FtpProducerAlternateConfiguration alternteConfig = (FtpProducerAlternateConfiguration) configuration;
             alternateSpec = this.getConnectionSpec();
             alternateSpec.setClientID(alternteConfig.getClientID());
             alternateSpec.setRemoteHostname(alternteConfig.getAlternateRemoteHost());

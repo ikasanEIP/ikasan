@@ -42,10 +42,9 @@ package org.ikasan.module.service;
 
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
-import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.*;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.module.*;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -84,7 +84,7 @@ public class EmailFlowNotifierTest
         for(int count = 0; count < 5; count++)
         	try {
                 wiser.setPort(2500);
-                logger.info(String.format("Attempting to start Wiser SMTP Server on port 2500"));
+                logger.info("Attempting to start Wiser SMTP Server on port 2500".formatted());
         		wiser.start();
         		break;
         	} catch (RuntimeException re){

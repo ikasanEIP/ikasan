@@ -209,9 +209,8 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
     @Override
     public boolean equals(Object obj)
     {
-        if (obj instanceof DefaultFilterEntry)
+        if (obj instanceof DefaultFilterEntry entry)
         {
-            DefaultFilterEntry entry = (DefaultFilterEntry) obj;
             if (this.criteria.equals(entry.getCriteria()) &&
                 this.clientId.equals(entry.getClientId()))
             {

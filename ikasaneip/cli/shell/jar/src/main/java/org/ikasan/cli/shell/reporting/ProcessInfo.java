@@ -165,18 +165,18 @@ public class ProcessInfo
             this.running = process.isAlive();
             this.pid = process.pid();
 
-            if (!process.info().command().isEmpty())
+            if (process.info().command().isPresent())
             {
                 this.command = process.info().command().get();
             }
 
-            if (!process.info().user().isEmpty())
+            if (process.info().user().isPresent())
             {
                 this.username = process.info().user().get();
             }
 
             Optional<String> commandLine = process.info().commandLine();
-            if (!commandLine.isEmpty())
+            if (commandLine.isPresent())
             {
                 this.commandLine = process.info().commandLine().get();
             }

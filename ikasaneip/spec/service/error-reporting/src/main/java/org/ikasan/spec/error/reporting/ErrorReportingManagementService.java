@@ -53,7 +53,7 @@ import java.util.List;
 public interface ErrorReportingManagementService<ACTIONED_EVENT, MODULE_ERROR_COUNT>
 {
     /** one year default time to live */
-    public static final long DEFAULT_TIME_TO_LIVE = new Long(1000 * 60 * 60 * 24 * 365);
+    public static final long DEFAULT_TIME_TO_LIVE = Long.valueOf(1000 * 60 * 60 * 24 * 365);
 
     /**
      * Find an actioned error reporting events based on a list of moduleName, flowName and flowElementName

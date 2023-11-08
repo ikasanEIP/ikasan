@@ -76,9 +76,11 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String EVENT_IDS = "eventIds";
 	public static final String NOW = "now";
 	
-	public static final String REPLAY_AUDIT_QUERY = "select DISTINCT ra from HibernateReplayAudit ra, HibernateReplayAuditEvent rae "
-			+ "where "
-			+ "ra.id = rae.id.replayAuditId";
+	public static final String REPLAY_AUDIT_QUERY = """
+            select DISTINCT ra from HibernateReplayAudit ra, HibernateReplayAuditEvent rae \
+            where \
+            ra.id = rae.id.replayAuditId\
+            """;
 	
 	public static final String MODULE_NAME_PREDICATE =  " and rae.moduleName IN :" + MODULE_NAME;
 	public static final String FLOW_NAME_PREDICATE =  " and rae.flowName IN :" + FLOW_NAME;
@@ -97,8 +99,10 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
 	public static final String REPLAY_AUDIT_EVENTS_TO_DELETE_QUERY = "select distinct rae.id.replayAuditId from HibernateReplayAuditEvent rae " +
 			" where rae.id.replayEventId in (:" + EVENT_IDS + ")";
 
-	public static final String REPLAY_AUDIT_DELETE_QUERY = "delete HibernateReplayAudit re " +
-			" where re.id not in(select distinct rae.id.replayAuditId from HibernateReplayAuditEvent rae)";
+	public static final String REPLAY_AUDIT_DELETE_QUERY = """
+            delete HibernateReplayAudit re \
+             where re.id not in(select distinct rae.id.replayAuditId from HibernateReplayAuditEvent rae)\
+            """;
 
 	public static final String REPLAY_AUDIT_EVENT_DELETE_QUERY = "delete HibernateReplayAuditEvent re " +
 			" where re.id.replayEventId in(:" + EVENT_IDS + ")";
@@ -411,7 +415,7 @@ public class HibernateReplayDao extends HibernateDaoSupport implements ReplayDao
             {
                 return rowCountList.get(0);
             }
-            return new Long(0);
+            return Long.valueOf(0);
         });
 	}
 

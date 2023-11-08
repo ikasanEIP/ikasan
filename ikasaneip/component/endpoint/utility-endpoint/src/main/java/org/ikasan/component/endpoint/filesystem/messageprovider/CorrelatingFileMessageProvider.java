@@ -114,8 +114,8 @@ public class CorrelatingFileMessageProvider extends AbstractFileMessageProvider 
             {
                 try
                 {
-                    if(fileMatcher instanceof DynamicFileMatcher) {
-                        ((DynamicFileMatcher) fileMatcher).setCorrelatingIdentifier(correlatingIdentifier);
+                    if(fileMatcher instanceof DynamicFileMatcher matcher) {
+                        matcher.setCorrelatingIdentifier(correlatingIdentifier);
                     }
 
                     // Note, this class is a listener, file matcher can invoke this.onMessage and thus update filenames.
@@ -205,9 +205,9 @@ public class CorrelatingFileMessageProvider extends AbstractFileMessageProvider 
     public void setConfiguration(CorrelatedFileConsumerConfiguration fileConsumerConfiguration)
     {
         this.fileConsumerConfiguration = fileConsumerConfiguration;
-        if(messageProviderPostProcessor != null && messageProviderPostProcessor instanceof Configured)
+        if(messageProviderPostProcessor != null && messageProviderPostProcessor instanceof Configured configured)
         {
-            ((Configured)messageProviderPostProcessor).setConfiguration(this.fileConsumerConfiguration);
+            configured.setConfiguration(this.fileConsumerConfiguration);
         }
     }
 

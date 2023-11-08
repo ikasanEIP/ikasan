@@ -173,11 +173,11 @@ public class DefaultDOMSerializer
         serializer.setOutputProperties(this.outputProps);
 
         StreamResult result = null;
-        if (obj instanceof File)
-            result = new StreamResult((File)obj);
+        if (obj instanceof File file)
+            result = new StreamResult(file);
         else
-        if (obj instanceof Writer)
-            result = new StreamResult((Writer)obj);
+        if (obj instanceof Writer writer)
+            result = new StreamResult(writer);
         else
             throw new IllegalArgumentException("Unknown result object: "
                                              + obj.getClass().getName());
@@ -318,10 +318,12 @@ public class DefaultDOMSerializer
             while (!answer.equalsIgnoreCase("0"))
             {
                 // Which method would you like to test?
-                question = "Which method do you want to test?\n"
-                    + "  0. exit(Get outta here!!)\n"
-                    + "  1. toFile(Document document, String fileName)\n"
-                    + "  2. toString(Document document)\n";
+                question = """
+                    Which method do you want to test?
+                      0. exit(Get outta here!!)
+                      1. toFile(Document document, String fileName)
+                      2. toString(Document document)
+                    """;
                 answer = askQuestion(question);
 
                 if (!answer.matches("[1-9][0-9]*")) continue;
@@ -370,8 +372,10 @@ public class DefaultDOMSerializer
                     }
                     else
                     {
-                        System.out.println("Invalid number! "
-                            + "Please select one of the following numbers.");
+                        System.out.println("""
+                            Invalid number! \
+                            Please select one of the following numbers.\
+                            """);
                     }
                 }
                 catch (Exception e)
@@ -420,7 +424,7 @@ public class DefaultDOMSerializer
     private static boolean getBoolean(boolean flag, String question)
     {
         String str = askQuestion(question, "" + flag);
-        return (new Boolean(str)).booleanValue();
+        return (Boolean.valueOf(str)).booleanValue();
     }
 
     /**
@@ -508,8 +512,10 @@ public class DefaultDOMSerializer
 
             Element root = defaultDoc.createElement("architectureTeam");
 
-            root.appendChild(defaultDoc.createComment("Actually we need "
-                                                    + "some hottiiiies!!"));
+            root.appendChild(defaultDoc.createComment("""
+                                                    Actually we need \
+                                                    some hottiiiies!!\
+                                                    """));
 
             Element element = defaultDoc.createElement("member");
             element.appendChild(defaultDoc.createTextNode("Jeff Mitchell"));

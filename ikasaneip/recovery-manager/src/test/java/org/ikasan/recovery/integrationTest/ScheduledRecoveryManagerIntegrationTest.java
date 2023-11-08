@@ -40,13 +40,6 @@
  */
 package org.ikasan.recovery.integrationTest;
 
-import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
-import org.ikasan.spec.component.IsConsumerAware;
-import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.search.PagedSearchResult;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.exceptionResolver.ExceptionGroup;
 import org.ikasan.exceptionResolver.ExceptionResolver;
@@ -56,20 +49,25 @@ import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.StopAction;
 import org.ikasan.exceptionResolver.matcher.MatcherBasedExceptionGroup;
-import org.ikasan.spec.recovery.RecoveryManagerFactory;
+import org.ikasan.recovery.ScheduledRecoveryManagerFactory;
 import org.ikasan.scheduler.CachingScheduledJobFactory;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.scheduler.SchedulerFactory;
+import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
+import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FinalAction;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.recovery.RecoveryManager;
+import org.ikasan.spec.recovery.RecoveryManagerFactory;
+import org.ikasan.spec.search.PagedSearchResult;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -77,6 +75,8 @@ import org.junit.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -100,7 +100,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
             setThreadingPolicy(new Synchroniser());
         }
     };
@@ -828,19 +828,19 @@ public class ScheduledRecoveryManagerIntegrationTest
      */
     private void setIsAware(RecoveryManager recoveryManager)
     {
-        if(recoveryManager instanceof IsConsumerAware)
+        if(recoveryManager instanceof IsConsumerAware aware)
         {
-            ((IsConsumerAware)recoveryManager).setConsumer(consumer);
+            aware.setConsumer(consumer);
         }
 
-        if(recoveryManager instanceof IsExclusionServiceAware)
+        if(recoveryManager instanceof IsExclusionServiceAware aware)
         {
-            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+            aware.setExclusionService(exclusionService);
         }
 
-        if(recoveryManager instanceof IsErrorReportingServiceAware)
+        if(recoveryManager instanceof IsErrorReportingServiceAware aware)
         {
-            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
+            aware.setErrorReportingService(errorReportingService);
         }
     }
 

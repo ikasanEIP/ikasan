@@ -187,9 +187,9 @@ public class FileMessageProvider extends AbstractFileMessageProvider implements 
     public void setConfiguration(FileConsumerConfiguration fileConsumerConfiguration)
     {
         this.fileConsumerConfiguration = fileConsumerConfiguration;
-        if(messageProviderPostProcessor != null && messageProviderPostProcessor instanceof Configured)
+        if(messageProviderPostProcessor != null && messageProviderPostProcessor instanceof Configured configured)
         {
-            ((Configured)messageProviderPostProcessor).setConfiguration(this.fileConsumerConfiguration);
+            configured.setConfiguration(this.fileConsumerConfiguration);
         }
     }
 

@@ -4,7 +4,7 @@ import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsume
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.JobDataMap;
@@ -23,7 +23,7 @@ public class CorrelatingFileMessageProviderTest {
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 
@@ -87,11 +87,12 @@ public class CorrelatingFileMessageProviderTest {
 
         CorrelatedFileList files = messageProviderInvoke();
         Assert.assertTrue("Should have returned 2 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 2);
-        Assert.assertEquals(files.toString(), "" +
-            "CorrelatedFileList{fileList=[" +
-            "./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, " +
-            "./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], " +
-            "correlatingIdentifier='TestCorrelatingId'}");
+        Assert.assertEquals(files.toString(), """
+            CorrelatedFileList{fileList=[\
+            ./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, \
+            ./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], \
+            correlatingIdentifier='TestCorrelatingId'}\
+            """);
         mockery.assertIsSatisfied();
     }
 

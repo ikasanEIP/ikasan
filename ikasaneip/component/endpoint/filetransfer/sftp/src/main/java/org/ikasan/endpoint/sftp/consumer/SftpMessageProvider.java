@@ -326,9 +326,8 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
     private SFTPConnectionSpec createAlternateSpec(SftpConsumerConfiguration sftpConsumerConfiguration)
     {
         SFTPConnectionSpec alternateSpec = null;
-        if (sftpConsumerConfiguration instanceof SftpConsumerAlternateConfiguration)
+        if (sftpConsumerConfiguration instanceof SftpConsumerAlternateConfiguration alternateCofnig)
         {
-            SftpConsumerAlternateConfiguration alternateCofnig = (SftpConsumerAlternateConfiguration)sftpConsumerConfiguration;
 
             alternateSpec = this.getConnectionSpec();
             alternateSpec.setClientID(alternateCofnig.getClientID());

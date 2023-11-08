@@ -99,8 +99,10 @@ public class WiretapTriggerSetupService {
     private void deleteTrigger(WiretapTriggerConfiguration triggerConfig, String moduleName) {
         Optional<Trigger> trigger = lookupTrigger(triggerConfig, moduleName);
         if (trigger.isPresent()) {
-            logger.warn("DELETING Wiretap trigger [{}]" +
-                " for module [{}]", triggerConfig, moduleName);
+            logger.warn("""
+                DELETING Wiretap trigger [{}]\
+                 for module [{}]\
+                """, triggerConfig, moduleName);
             wiretapTriggerService.deleteDynamicTrigger(trigger.get().getId());
         } else {
             logger.warn("NOT DELETING Wiretap Trigger config [{}] as doesnt exist in db for module [{}]",
@@ -111,8 +113,10 @@ public class WiretapTriggerSetupService {
     private void updateTrigger(WiretapTriggerConfiguration triggerConfig, String moduleName) {
         Optional<Trigger> trigger = lookupTrigger(triggerConfig, moduleName);
         if (trigger.isPresent()) {
-            logger.warn("UPDATING Wiretap trigger [{}]" +
-                " for module [{}]", triggerConfig, moduleName);
+            logger.warn("""
+                UPDATING Wiretap trigger [{}]\
+                 for module [{}]\
+                """, triggerConfig, moduleName);
             TriggerImpl triggerImpl = (TriggerImpl) (trigger.get());
             Map<String, String> params = triggerImpl.getParams();
             params.put(TIME_TO_LIVE_PARAMETER_NAME, triggerConfig.getTimeToLive());
@@ -127,16 +131,20 @@ public class WiretapTriggerSetupService {
         try {
             wiretapTriggerService.addDynamicTrigger(triggerImpl);
         } catch (org.springframework.web.client.RestClientException rce){
-            logger.error("There was an exception publishing the module meta data to the dashboard on " +
-                "the wiretap trigger save. PLEASE INVESTIGATE !!", rce);
+            logger.error("""
+                There was an exception publishing the module meta data to the dashboard on \
+                the wiretap trigger save. PLEASE INVESTIGATE !!\
+                """, rce);
         }
     }
 
     private void insertTrigger(WiretapTriggerConfiguration triggerConfig, String moduleName) {
         Optional<Trigger> trigger = lookupTrigger(triggerConfig, moduleName);
         if (trigger.isPresent()) {
-            logger.warn("NOT INSERTING Wiretap Trigger [{}] as alreay exists in db" +
-                " for module [{}]", triggerConfig, moduleName);
+            logger.warn("""
+                NOT INSERTING Wiretap Trigger [{}] as alreay exists in db\
+                 for module [{}]\
+                """, triggerConfig, moduleName);
         } else {
             logger.info("INSERTING Wiretap Trigger [{}] for module [{}]", triggerConfig,
                 moduleName);

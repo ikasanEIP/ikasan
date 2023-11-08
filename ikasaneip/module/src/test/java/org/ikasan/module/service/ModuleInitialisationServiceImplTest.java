@@ -50,8 +50,8 @@ import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.monitor.FlowMonitor;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.quartz.Scheduler;
@@ -70,7 +70,7 @@ import java.util.List;
  */
 public class ModuleInitialisationServiceImplTest {
     private Mockery mockery = new Mockery() {{
-        setImposteriser(ClassImposteriser.INSTANCE);
+        setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
     }};
 

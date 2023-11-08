@@ -95,8 +95,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred creating the Ikasan baseline " +
-					"persistence layer!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred creating the Ikasan baseline \
+                    persistence layer!\
+                    """, e);
 		}
 	}
 
@@ -115,8 +117,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred creating the Ikasan file transfer " +
-					"persistence layer!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred creating the Ikasan file transfer \
+                    persistence layer!\
+                    """, e);
 		}
 
 	}
@@ -136,8 +140,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred creating the Ikasan post baseline " +
-					"persistence layer!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred creating the Ikasan post baseline \
+                    persistence layer!\
+                    """, e);
 		}
 	}
 
@@ -157,8 +163,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred retrieving the Ikasan baseline " +
-					"persistence layer status!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred retrieving the Ikasan baseline \
+                    persistence layer status!\
+                    """, e);
 		}
 		
 		return out.toString();
@@ -180,8 +188,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred retrieving the Ikasan post baseline " +
-					"persistence layer status!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred retrieving the Ikasan post baseline \
+                    persistence layer status!\
+                    """, e);
 		}
 		
 		return out.toString();
@@ -211,8 +221,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred attempting to detect if " +
-					"baseline changes are required!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred attempting to detect if \
+                    baseline changes are required!\
+                    """, e);
 		}
 		
 		return false;
@@ -242,8 +254,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred attempting to detect if " +
-					"baseline changes are required!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred attempting to detect if \
+                    baseline changes are required!\
+                    """, e);
 		}
 		
 		return false;
@@ -273,8 +287,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred attempting to detect if " +
-					"baseline changes are required!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred attempting to detect if \
+                    baseline changes are required!\
+                    """, e);
 		}
 		
 		return false;
@@ -296,8 +312,10 @@ public class PersistenceServiceImpl implements PersistenceService
 		} 
 		catch (LiquibaseException e)
 		{
-			throw new PersistenceServiceException("An exception has occurred retrieving the Ikasan file transfer " +
-					"persistence layer status!", e);
+			throw new PersistenceServiceException("""
+                    An exception has occurred retrieving the Ikasan file transfer \
+                    persistence layer status!\
+                    """, e);
 		}
 		
 		return out.toString();

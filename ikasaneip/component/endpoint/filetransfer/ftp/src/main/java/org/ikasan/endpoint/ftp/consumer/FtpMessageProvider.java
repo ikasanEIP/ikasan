@@ -371,9 +371,8 @@ public class FtpMessageProvider implements Configured<FtpConsumerConfiguration>,
     private FTPConnectionSpec createAlternateSpec(FtpConsumerConfiguration ftpConsumerConfiguration)
     {
         FTPConnectionSpec alternateSpec = null;
-        if (ftpConsumerConfiguration instanceof FtpConsumerAlternateConfiguration)
+        if (ftpConsumerConfiguration instanceof FtpConsumerAlternateConfiguration alternateConfig)
         {
-            FtpConsumerAlternateConfiguration alternateConfig = (FtpConsumerAlternateConfiguration) ftpConsumerConfiguration;
             alternateSpec = this.getConnectionSpec();
             alternateSpec.setClientID(alternateConfig.getClientID());
             alternateSpec.setActive(alternateConfig.getAlternateActive());

@@ -60,8 +60,11 @@ import org.ikasan.spec.flow.FlowInvocationContextListener;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.*;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 
@@ -86,7 +89,7 @@ public class SampleFlowBuilderTest
     private Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
     
@@ -141,11 +144,13 @@ public class SampleFlowBuilderTest
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
-            "--spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration"
-                + ",org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration"
-                + ",org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration"
-                + ",me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration"
-                + ",org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration"
+            """
+            --spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration\
+            ,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration\
+            ,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration\
+            ,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration\
+            ,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration\
+            """
 
         };
 

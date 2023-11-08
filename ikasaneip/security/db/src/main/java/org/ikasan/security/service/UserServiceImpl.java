@@ -148,9 +148,8 @@ public class UserServiceImpl implements UserService
         String department = "";
         boolean requiredPasswordChange = false;
 
-        if ( userDetails instanceof User )
+        if ( userDetails instanceof User tempUser )
         {
-            User tempUser = (User) userDetails;
             email = tempUser.getEmail();
             firstName = tempUser.getFirstName();
             surname = tempUser.getSurname();
