@@ -56,143 +56,146 @@
     <packaging>jar</packaging>
     <name>ikasan :: webconsole : jar</name>
 
-    <dependencies>
+	<dependencies>
 
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-uber-spec</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-uber-spec</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-system-event</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-system-event</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-module</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-module</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-topology</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-topology</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-security-rest</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security-rest</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-hospital</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-hospital</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-replay</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-replay</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-wiretap</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-wiretap</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.ikasan</groupId>
+			<artifactId>ikasan-scheduler</artifactId>
+		</dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-scheduler</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>spring-js</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.webflow</groupId>
+					<artifactId>spring-js-resources</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-        <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-js</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.springframework.webflow</groupId>
-                    <artifactId>spring-js-resources</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-webflow</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-
-
-        <dependency>
-            <groupId>org.springframework.webflow</groupId>
-            <artifactId>spring-binding</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-webmvc</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-taglibs</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-web</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-config</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>spring-webflow</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-autoconfigure</artifactId>
+		</dependency>
 
 
-        <dependency>
-            <groupId>commons-codec</groupId>
-            <artifactId>commons-codec</artifactId>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework.webflow</groupId>
+			<artifactId>spring-binding</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-aspects</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-taglibs</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.persistence</groupId>
+			<artifactId>jakarta.persistence-api</artifactId>
+			<version>3.1.0.redhat-00002</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>6.0.0.redhat-00004</version>
+		</dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

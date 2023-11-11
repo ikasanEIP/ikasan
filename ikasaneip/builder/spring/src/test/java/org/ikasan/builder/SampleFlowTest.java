@@ -40,25 +40,21 @@
  */
 package org.ikasan.builder;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.sample.SampleConsumer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringRunner;
-
-import javax.annotation.Resource;
 
 /**
  * This test class supports the <code>FlowFactory</code> class.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {MyApplication.class},
                 webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class SampleFlowTest
@@ -71,8 +67,8 @@ public class SampleFlowTest
     public IkasanFlowTestRule ikasanFlowTestRule = new IkasanFlowTestRule();
 
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         ikasanFlowTestRule.withFlow(flow);
     }
@@ -81,7 +77,7 @@ public class SampleFlowTest
      * Test successful flow creation.
      */
     @Test
-    public void test_successful_flow_execution() throws InterruptedException
+    void test_successful_flow_execution() throws InterruptedException
     {
 
         ikasanFlowTestRule.withFlow(flow)

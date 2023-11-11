@@ -44,21 +44,23 @@ import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This test class supports the <code>ScheduledProcessEventFilter</code>.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventFilterTest
+class ScheduledProcessEventFilterTest
 {
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_no_drop_on_blackout()
+    void test_no_drop_on_blackout()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
@@ -66,14 +68,14 @@ public class ScheduledProcessEventFilterTest
 
         ScheduledProcessEventFilter filter  = new ScheduledProcessEventFilter();
         ((ConfiguredResource)filter).setConfiguration(configuration);
-        Assert.assertNotNull( filter.filter(scheduledProcessEvent) );
+        assertNotNull( filter.filter(scheduledProcessEvent) );
     }
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_drop_on_blackout()
+    void test_drop_on_blackout()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         ScheduledProcessEventFilterConfiguration configuration = new ScheduledProcessEventFilterConfiguration();
@@ -81,5 +83,5 @@ public class ScheduledProcessEventFilterTest
 
         ScheduledProcessEventFilter filter  = new ScheduledProcessEventFilter();
         ((ConfiguredResource)filter).setConfiguration(configuration);
-        Assert.assertNull( filter.filter(scheduledProcessEvent) );
+        assertNull( filter.filter(scheduledProcessEvent) );
     }}

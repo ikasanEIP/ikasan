@@ -48,17 +48,17 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -90,7 +90,6 @@ public class SystemEventLogController
      * Constructor
      * 
      */
-    @Autowired
     public SystemEventLogController(SystemEventService systemEventService)
     {
         this.systemEventService = systemEventService;
@@ -103,7 +102,7 @@ public class SystemEventLogController
      * 
      * @return - key to next view
      */
-    @RequestMapping(value="search.htm", method = RequestMethod.GET)
+    @GetMapping("search.htm")
     public String search(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch, 
             @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy,
             @RequestParam(required = false) Boolean orderAsc, 
@@ -209,7 +208,7 @@ public class SystemEventLogController
      * 
      * @return - key to next view
      */
-    @RequestMapping(value="housekeeping.htm", method = RequestMethod.POST)
+    @PostMapping("housekeeping.htm")
     public String housekeepnig(HttpServletRequest request, HttpServletResponse response, ModelMap model)
     {
     	systemEventService.housekeep();

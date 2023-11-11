@@ -92,11 +92,10 @@ public class ReplayApplication
      * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
      */
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/eventReplay/{moduleName}/{flowName}")
+    @PutMapping("/eventReplay/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity replay(@PathVariable("moduleName") String moduleName,
-                                 @PathVariable("flowName") String flowName, @RequestBody byte[] event)
+    public ResponseEntity replay(@PathVariable String moduleName,
+                                 @PathVariable String flowName, @RequestBody byte[] event)
     {
         try
         {
@@ -149,7 +148,7 @@ public class ReplayApplication
      * @param requestDto The event we are replaying.
      * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
      */
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity replay(@RequestBody ReplayRequestDto requestDto)
     {

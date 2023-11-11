@@ -1,5 +1,6 @@
 package org.ikasan.systemevent.service;
 
+import jakarta.annotation.Resource;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
 import org.ikasan.spec.systemevent.SystemEventService;
@@ -7,27 +8,24 @@ import org.ikasan.systemevent.model.SystemEventImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
-    "/systemevent-service-conf.xml", "/test-conf.xml"
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringJUnitConfig(locations = {"/h2-config.xml", "/transaction-conf.xml",
+                                                                               "/systemevent-service-conf.xml", "/test-conf.xml"
 })
 @Sql(scripts = "classpath:drop-system-event-table.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class SystemEventServiceImplTest
+class SystemEventServiceImplTest
 {
     @Resource
     private SystemEventService<SystemEvent> systemEventService;
@@ -41,14 +39,14 @@ public class SystemEventServiceImplTest
 
     private SystemEventServiceImpl uut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         uut = new SystemEventServiceImpl(systemEventDao, 100l);
     }
 
     @Test
-    public void harvest()
+    void harvest()
     {
         uut = new SystemEventServiceImpl(systemEventDao, 100l, new TestModuleContainer());
 
@@ -70,11 +68,11 @@ public class SystemEventServiceImplTest
 
         mockery.assertIsSatisfied();
 
-        events.forEach(systemEvent -> Assert.assertEquals("Module name equals!", "name", systemEvent.getModuleName()));
+        events.forEach(systemEvent -> assertEquals("name", systemEvent.getModuleName(), "Module name equals!"));
     }
 
     @Test
-    public void updateAsHarvested()
+    void updateAsHarvested()
     {
 
         List<SystemEvent> events = Arrays.asList();
@@ -92,7 +90,7 @@ public class SystemEventServiceImplTest
     }
 
     @Test
-    public void saveHarvestedRecord()
+    void saveHarvestedRecord()
     {
 
 
@@ -111,7 +109,7 @@ public class SystemEventServiceImplTest
     }
 
     @Test
-    public void logEvent()
+    void logEvent()
     {
 
 
@@ -130,7 +128,7 @@ public class SystemEventServiceImplTest
     }
 
     @Test
-    public void logEvent_long_subject()
+    void logEvent_long_subject()
     {
         this.systemEventService.logSystemEvent("""
             aasdssssssssssadsadasdasdasdasdasdasdasdasdasdasddassadasd\
@@ -166,12 +164,12 @@ public class SystemEventServiceImplTest
             "action", "actor"
             );
 
-        Assert.assertEquals(1024, this.systemEventService.listSystemEvents
+        assertEquals(1024, this.systemEventService.listSystemEvents
             (null, "actor", new Date(0L), new Date(System.currentTimeMillis()+10000000L)).get(0).getSubject().length());
     }
 
     @Test
-    public void logEvent_long_subject_with_module_name()
+    void logEvent_long_subject_with_module_name()
     {
         this.systemEventService.logSystemEvent("moduleName", """
                 aasdssssssssssadsadasdasdasdasdasdasdasdasdasdasddassadasd\
@@ -207,7 +205,7 @@ public class SystemEventServiceImplTest
             "action", "actor"
         );
 
-        Assert.assertEquals(1024, this.systemEventService.listSystemEvents
+        assertEquals(1024, this.systemEventService.listSystemEvents
             (null, "actor", new Date(0L), new Date(System.currentTimeMillis()+10000000L)).get(0).getSubject().length());
     }
 }

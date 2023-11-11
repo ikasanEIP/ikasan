@@ -24,8 +24,8 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.json.JSONException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class JsonConfigurationMetaDataExtractorTest
+class JsonConfigurationMetaDataExtractorTest
 {
 
     /**
@@ -49,8 +49,8 @@ public class JsonConfigurationMetaDataExtractorTest
 
     JsonConfigurationMetaDataExtractor uut;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
 
         uut = new JsonConfigurationMetaDataExtractor(configurationManagement);
 
@@ -63,7 +63,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getComponentsConfigurationOnFlowWithOneConfigurationElement() throws IOException, JSONException
+    void getComponentsConfigurationOnFlowWithOneConfigurationElement() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -83,7 +83,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getComponentsConfigurationOnFlowWithOneConfigurationElementWhenConfigurationDoesNotExist() throws IOException, JSONException
+    void getComponentsConfigurationOnFlowWithOneConfigurationElementWhenConfigurationDoesNotExist() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -106,7 +106,7 @@ public class JsonConfigurationMetaDataExtractorTest
 
 
     @Test
-    public void getComponentsConfigurationOnFlowWithTwoConfigurationElementWithSameId() throws IOException, JSONException
+    void getComponentsConfigurationOnFlowWithTwoConfigurationElementWithSameId() throws IOException, JSONException
     {
 
         FlowElement producer = new TestFlowElement(new ConfiguredProducer(), "Test Producer"
@@ -134,7 +134,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getComponentsConfigurationOnFlowWithTwoConfigurationElementWithDifferentId() throws IOException, JSONException
+    void getComponentsConfigurationOnFlowWithTwoConfigurationElementWithDifferentId() throws IOException, JSONException
     {
 
         FlowElement producer = new TestFlowElement(new ConfiguredProducer("diffrentId",new DummyConfiguration()), "Test Producer"
@@ -164,7 +164,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getComponentsConfigurationOnModuleWithOneConfigurationElement() throws IOException, JSONException
+    void getComponentsConfigurationOnModuleWithOneConfigurationElement() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -187,7 +187,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getComponentsConfigurationOnModuleWithOneConfigurationElementWhenConfigurationManagmentReturnsNull() throws IOException, JSONException
+    void getComponentsConfigurationOnModuleWithOneConfigurationElementWhenConfigurationManagmentReturnsNull() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -212,7 +212,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getInvokersConfigurationOnFlowWithOneConfigurationElement() throws IOException, JSONException
+    void getInvokersConfigurationOnFlowWithOneConfigurationElement() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -233,7 +233,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getInvokersConfigurationOnModuleWithOneConfigurationElement() throws IOException, JSONException
+    void getInvokersConfigurationOnModuleWithOneConfigurationElement() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -256,7 +256,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getFlowConfigurationWhenFlowDoesHaveConfiguration() throws IOException, JSONException
+    void getFlowConfigurationWhenFlowDoesHaveConfiguration() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -276,7 +276,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getFlowConfigurationOnModuleWithFlowDoesHaveConfiguration() throws IOException, JSONException
+    void getFlowConfigurationOnModuleWithFlowDoesHaveConfiguration() throws IOException, JSONException
     {
 
         Flow flow = createSimpleFlow();
@@ -299,7 +299,7 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     @Test
-    public void getIndividualConfiguredResourceConfiguration() throws IOException, JSONException
+    void getIndividualConfiguredResourceConfiguration() throws IOException, JSONException
     {
         Flow flow = createSimpleFlow();
         FlowElement flowElement = flow.getFlowElement("Test Consumer");

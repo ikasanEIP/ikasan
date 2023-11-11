@@ -48,15 +48,17 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Supports testing of the SequencerFlowElementInvoker
  */
-public class SequencerFlowElementInvokerTest
+class SequencerFlowElementInvokerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -83,7 +85,7 @@ public class SequencerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_sequencer_flowElementInvoker_single_sequence()
+    void test_sequencer_flowElementInvoker_single_sequence()
     {
         final List payloads = new ArrayList();
         payloads.add(payload);
@@ -128,7 +130,7 @@ public class SequencerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_sequencer_flowElementInvoker_single_sequence_invocation_aware()
+    void test_sequencer_flowElementInvoker_single_sequence_invocation_aware()
     {
         final List payloads = new ArrayList();
         payloads.add(payload);
@@ -174,7 +176,7 @@ public class SequencerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_sequencer_flowElementInvoker_multiple_sequences()
+    void test_sequencer_flowElementInvoker_multiple_sequences()
     {
         final List payloads = new ArrayList();
         payloads.add(payload);
@@ -223,7 +225,7 @@ public class SequencerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_sequencer_flowElementInvoker_no_sequences()
+    void test_sequencer_flowElementInvoker_no_sequences()
     {
         final List payloads = new ArrayList();
 
@@ -261,7 +263,7 @@ public class SequencerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_sequencer_flowElementInvoker_null_sequences()
+    void test_sequencer_flowElementInvoker_null_sequences()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -295,41 +297,43 @@ public class SequencerFlowElementInvokerTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = InvalidFlowException.class)
+    @Test
     @SuppressWarnings("unchecked")
-    public void test_sequencer_flowElementInvoker_null_flowElement()
+    void test_sequencer_flowElementInvoker_null_flowElement()
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(InvalidFlowException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(sequencer));
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(sequencer));
 
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(sequencer).sequence(payload);
-                will(returnValue(null));
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                    exactly(1).of(sequencer).sequence(payload);
+                    will(returnValue(null));
 
-                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-                will(returnValue(null));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-            }
+                    exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                    will(returnValue(null));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
         });
-
-        FlowElementInvoker flowElementInvoker = new SequencerFlowElementInvoker();
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
     }
 }

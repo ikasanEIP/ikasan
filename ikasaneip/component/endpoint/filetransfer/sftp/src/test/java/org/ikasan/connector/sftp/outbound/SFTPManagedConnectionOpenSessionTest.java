@@ -47,17 +47,18 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.apache.sshd.common.kex.BuiltinDHFactories.Constants.DIFFIE_HELLMAN_GROUP1_SHA1;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for the <code>SFTPManagedConnection</code>
@@ -65,7 +66,7 @@ import static org.apache.sshd.common.kex.BuiltinDHFactories.Constants.DIFFIE_HEL
  * @author Ikasan Development Team
  *
  */
-public class SFTPManagedConnectionOpenSessionTest
+class SFTPManagedConnectionOpenSessionTest
 {
     // Mock the
     private Mockery classMockery = new Mockery()
@@ -85,8 +86,8 @@ public class SFTPManagedConnectionOpenSessionTest
         = new SftpServerWithPassphraseProtectedPublickeyAuthenticator(SFTP_PORT_PASSPHRASE_PUBLICKEY);
 
 
-    @Before
-    public void setup() throws IOException
+    @BeforeEach
+    void setup() throws IOException
     {
         Path tempDir = Files.createTempDirectory("tempfiles");
         server= new SftpServerWithPasswordAuthenticator(SFTP_PORT_PASSWORD,tempDir);
@@ -95,8 +96,8 @@ public class SFTPManagedConnectionOpenSessionTest
         passphraseProtectedPublickeyAuthenticator.start();
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         server.stop();
         serverPublic.stop();
@@ -104,7 +105,7 @@ public class SFTPManagedConnectionOpenSessionTest
     }
 
     @Test
-    public void openSession_when_user_password_provided() throws ResourceException
+    void openSession_when_user_password_provided() throws ResourceException
     {
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
 
@@ -148,7 +149,7 @@ public class SFTPManagedConnectionOpenSessionTest
     }
 
     @Test
-    public void openSession_when_user_password_provided_and_recursive() throws ResourceException
+    void openSession_when_user_password_provided_and_recursive() throws ResourceException
     {
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
 
@@ -191,209 +192,220 @@ public class SFTPManagedConnectionOpenSessionTest
 
         classMockery.assertIsSatisfied();
     }
-    @Test(expected = ResourceException.class)
-    public void openSession_when_user_not_provided() throws ResourceException
+
+    @Test
+    void openSession_when_user_not_provided() throws ResourceException
     {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+        assertThrows(ResourceException.class, () -> {
+            final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
 
 
-        classMockery.checking(new Expectations()
-        {
+            classMockery.checking(new Expectations()
             {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue("localhost"));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(SFTP_PORT_PASSWORD));
-                exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue(null));
-                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(1));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue("password"));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-            }
-        });
+                {
+                    // Dont care what this returns
+                    atLeast(1).of(connectionRequestInfo).getClientID();
+                    will(returnValue("testClientId"));
+                    atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                    will(returnValue("localhost"));
+                    atLeast(1).of(connectionRequestInfo).getRemotePort();
+                    will(returnValue(SFTP_PORT_PASSWORD));
+                    exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                    will(returnValue(null));
+                    exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                    will(returnValue(1));
+                    atLeast(1).of(connectionRequestInfo).getUsername();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getPassword();
+                    will(returnValue("password"));
+                    atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                    will(returnValue("publickey,password,gssapi-with-mic"));
+                    atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                    will(returnValue(300000));
+                }
+            });
 
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
-                 connectionRequestInfo);
-
-        managedConnection.openSession();
-
-        classMockery.assertIsSatisfied();
-    }
-
-    @Test(expected = ResourceException.class)
-    public void openSession_when_host_not_provided() throws ResourceException
-    {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(SFTP_PORT_PASSWORD));
-                exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue(null));
-                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(1));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue("username"));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue("password"));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-            }
-        });
-
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+            SFTPManagedConnection managedConnection = new SFTPManagedConnection(
                 connectionRequestInfo);
 
-        managedConnection.openSession();
+            managedConnection.openSession();
 
-        classMockery.assertIsSatisfied();
-    }
-
-    @Test(expected = ResourceException.class)
-    public void openSession_when_password_not_provided() throws ResourceException
-    {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue("localhost"));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(SFTP_PORT_PASSWORD));
-                atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue(null));
-                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(1));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue("username"));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-            }
+            classMockery.assertIsSatisfied();
         });
-
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
-                 connectionRequestInfo);
-
-        managedConnection.openSession();
-
-        classMockery.assertIsSatisfied();
-    }
-
-    @Test(expected = ResourceException.class)
-    public void openSession_when_port_not_provided() throws ResourceException
-    {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue("localhost"));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue(null));
-                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(1));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue("username"));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue("password"));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-            }
-        });
-
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
-                connectionRequestInfo);
-
-        managedConnection.openSession();
-
-        classMockery.assertIsSatisfied();
-    }
-
-    @Test(expected = ResourceException.class)
-    public void openSession_when_max_retry_not_provided() throws ResourceException
-    {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
-
-        classMockery.checking(new Expectations()
-        {
-            {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue("localhost"));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(SFTP_PORT_PASSWORD));
-                atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue(null));
-                exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue("username"));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue("password"));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-            }
-        });
-
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
-                 connectionRequestInfo);
-
-        managedConnection.openSession();
-
-        classMockery.assertIsSatisfied();
     }
 
     @Test
-    public void openSession_when_user_privateKey_provided() throws ResourceException
+    void openSession_when_host_not_provided() throws ResourceException
+    {
+        assertThrows(ResourceException.class, () -> {
+            final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+
+            classMockery.checking(new Expectations()
+            {
+                {
+                    // Dont care what this returns
+                    atLeast(1).of(connectionRequestInfo).getClientID();
+                    will(returnValue("testClientId"));
+                    atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getRemotePort();
+                    will(returnValue(SFTP_PORT_PASSWORD));
+                    exactly(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                    will(returnValue(null));
+                    exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                    will(returnValue(1));
+                    atLeast(1).of(connectionRequestInfo).getUsername();
+                    will(returnValue("username"));
+                    atLeast(1).of(connectionRequestInfo).getPassword();
+                    will(returnValue("password"));
+                    atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                    will(returnValue("publickey,password,gssapi-with-mic"));
+                    atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                    will(returnValue(300000));
+                }
+            });
+
+            SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                connectionRequestInfo);
+
+            managedConnection.openSession();
+
+            classMockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    void openSession_when_password_not_provided() throws ResourceException
+    {
+        assertThrows(ResourceException.class, () -> {
+            final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+
+            classMockery.checking(new Expectations()
+            {
+                {
+                    // Dont care what this returns
+                    atLeast(1).of(connectionRequestInfo).getClientID();
+                    will(returnValue("testClientId"));
+                    atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                    will(returnValue("localhost"));
+                    atLeast(1).of(connectionRequestInfo).getRemotePort();
+                    will(returnValue(SFTP_PORT_PASSWORD));
+                    atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                    will(returnValue(null));
+                    exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                    will(returnValue(1));
+                    atLeast(1).of(connectionRequestInfo).getUsername();
+                    will(returnValue("username"));
+                    atLeast(1).of(connectionRequestInfo).getPassword();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                    will(returnValue("publickey,password,gssapi-with-mic"));
+                    atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                    will(returnValue(300000));
+                }
+            });
+
+            SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                connectionRequestInfo);
+
+            managedConnection.openSession();
+
+            classMockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    void openSession_when_port_not_provided() throws ResourceException
+    {
+        assertThrows(ResourceException.class, () -> {
+            final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+
+            classMockery.checking(new Expectations()
+            {
+                {
+                    // Dont care what this returns
+                    atLeast(1).of(connectionRequestInfo).getClientID();
+                    will(returnValue("testClientId"));
+                    atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                    will(returnValue("localhost"));
+                    atLeast(1).of(connectionRequestInfo).getRemotePort();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                    will(returnValue(null));
+                    exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                    will(returnValue(1));
+                    atLeast(1).of(connectionRequestInfo).getUsername();
+                    will(returnValue("username"));
+                    atLeast(1).of(connectionRequestInfo).getPassword();
+                    will(returnValue("password"));
+                    atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                    will(returnValue("publickey,password,gssapi-with-mic"));
+                    atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                    will(returnValue(300000));
+                }
+            });
+
+            SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                connectionRequestInfo);
+
+            managedConnection.openSession();
+
+            classMockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    void openSession_when_max_retry_not_provided() throws ResourceException
+    {
+        assertThrows(ResourceException.class, () -> {
+            final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+
+            classMockery.checking(new Expectations()
+            {
+                {
+                    // Dont care what this returns
+                    atLeast(1).of(connectionRequestInfo).getClientID();
+                    will(returnValue("testClientId"));
+                    atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                    will(returnValue("localhost"));
+                    atLeast(1).of(connectionRequestInfo).getRemotePort();
+                    will(returnValue(SFTP_PORT_PASSWORD));
+                    atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                    will(returnValue(null));
+                    exactly(1).of(connectionRequestInfo).getKnownHostsFilename();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getUsername();
+                    will(returnValue("username"));
+                    atLeast(1).of(connectionRequestInfo).getPassword();
+                    will(returnValue("password"));
+                    atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                    will(returnValue("publickey,password,gssapi-with-mic"));
+                    atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                    will(returnValue(300000));
+                }
+            });
+
+            SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                connectionRequestInfo);
+
+            managedConnection.openSession();
+
+            classMockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    void openSession_when_user_privateKey_provided() throws ResourceException
     {
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
 
@@ -437,7 +449,7 @@ public class SFTPManagedConnectionOpenSessionTest
     }
 
     @Test
-    public void openSession_when_user_passphrase_protected_privateKey_provided() throws ResourceException
+    void openSession_when_user_passphrase_protected_privateKey_provided() throws ResourceException
     {
         final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
 
@@ -480,48 +492,50 @@ public class SFTPManagedConnectionOpenSessionTest
         classMockery.assertIsSatisfied();
     }
 
-    @Test(expected = ResourceException.class)
-    public void openSession_exception_when_bad_user_passphrase_protected_privateKey_provided() throws ResourceException
+    @Test
+    void openSession_exception_when_bad_user_passphrase_protected_privateKey_provided() throws ResourceException
     {
-        final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
+        assertThrows(ResourceException.class, () -> {
+            final SFTPConnectionRequestInfo connectionRequestInfo = classMockery.mock(SFTPConnectionRequestInfo.class);
 
-        classMockery.checking(new Expectations()
-        {
+            classMockery.checking(new Expectations()
             {
-                // Dont care what this returns
-                atLeast(1).of(connectionRequestInfo).getClientID();
-                will(returnValue("testClientId"));
-                atLeast(1).of(connectionRequestInfo).getRemoteHostname();
-                will(returnValue("localhost"));
-                atLeast(1).of(connectionRequestInfo).getRemotePort();
-                will(returnValue(SFTP_PORT_PASSPHRASE_PUBLICKEY));
-                atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
-                will(returnValue("src/test/resources/auth/client/id_rsa_passphrase"));
-                atLeast(1).of(connectionRequestInfo).getPrivateKeyPassphrase();
-                will(returnValue("bad password"));
-                atLeast(1).of(connectionRequestInfo).getKnownHostsFilename();
-                will(returnValue("src/test/resources/auth/client/known_hosts_test"));
-                atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
-                will(returnValue(1));
-                atLeast(1).of(connectionRequestInfo).getUsername();
-                will(returnValue("username"));
-                atLeast(1).of(connectionRequestInfo).getPassword();
-                will(returnValue(null));
-                atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
-                will(returnValue("publickey,password,gssapi-with-mic"));
-                atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
-                will(returnValue(300000));
-                atLeast(1).of(connectionRequestInfo).getPreferredKeyExchangeAlgorithm();
-                will(returnValue(DIFFIE_HELLMAN_GROUP1_SHA1));
-            }
+                {
+                    // Dont care what this returns
+                    atLeast(1).of(connectionRequestInfo).getClientID();
+                    will(returnValue("testClientId"));
+                    atLeast(1).of(connectionRequestInfo).getRemoteHostname();
+                    will(returnValue("localhost"));
+                    atLeast(1).of(connectionRequestInfo).getRemotePort();
+                    will(returnValue(SFTP_PORT_PASSPHRASE_PUBLICKEY));
+                    atLeast(1).of(connectionRequestInfo).getPrivateKeyFilename();
+                    will(returnValue("src/test/resources/auth/client/id_rsa_passphrase"));
+                    atLeast(1).of(connectionRequestInfo).getPrivateKeyPassphrase();
+                    will(returnValue("bad password"));
+                    atLeast(1).of(connectionRequestInfo).getKnownHostsFilename();
+                    will(returnValue("src/test/resources/auth/client/known_hosts_test"));
+                    atLeast(1).of(connectionRequestInfo).getMaxRetryAttempts();
+                    will(returnValue(1));
+                    atLeast(1).of(connectionRequestInfo).getUsername();
+                    will(returnValue("username"));
+                    atLeast(1).of(connectionRequestInfo).getPassword();
+                    will(returnValue(null));
+                    atLeast(1).of(connectionRequestInfo).getPreferredAuthentications();
+                    will(returnValue("publickey,password,gssapi-with-mic"));
+                    atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
+                    will(returnValue(300000));
+                    atLeast(1).of(connectionRequestInfo).getPreferredKeyExchangeAlgorithm();
+                    will(returnValue(DIFFIE_HELLMAN_GROUP1_SHA1));
+                }
+            });
+
+            SFTPManagedConnection managedConnection = new SFTPManagedConnection(
+                connectionRequestInfo);
+
+            managedConnection.openSession();
+
+            classMockery.assertIsSatisfied();
         });
-
-        SFTPManagedConnection managedConnection = new SFTPManagedConnection(
-            connectionRequestInfo);
-
-        managedConnection.openSession();
-
-        classMockery.assertIsSatisfied();
     }
 }
 

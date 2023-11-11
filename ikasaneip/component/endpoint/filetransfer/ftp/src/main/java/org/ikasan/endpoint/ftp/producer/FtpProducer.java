@@ -59,9 +59,9 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
-import org.springframework.util.StringUtils;
+import org.springframework.util.ObjectUtils;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -161,7 +161,7 @@ public class FtpProducer implements Producer<Payload>, ManagedResource, Configur
             {
                 String relativePath = payload.getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
                 String outputDirectory = removeDoubleSlashIfPresent(configuration.getOutputDirectory());
-                if (!StringUtils.isEmpty(relativePath)){
+                if (!ObjectUtils.isEmpty(relativePath)){
                     outputDirectory = outputDirectory + "/" + relativePath;
                     logger.debug("relativePath is set on payload [{}] output directory will be [{}]", payload,
                         outputDirectory);

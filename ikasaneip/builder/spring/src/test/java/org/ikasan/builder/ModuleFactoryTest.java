@@ -40,21 +40,18 @@
  */
 package org.ikasan.builder;
 
+import jakarta.annotation.Resource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.ikasan.builder.test.dbutils.SqlOperationsRunner;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.annotation.Resource;
-
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -62,7 +59,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {MyApplication.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ModuleFactoryTest {
@@ -79,17 +75,17 @@ public class ModuleFactoryTest {
      * Test successful flow creation.
      */
     @Test
-    public void test_successful_moduleCreation() {
-        Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
-        Assert.assertTrue("module description should be 'moduleDescription'", "moduleDescription".equals(module.getDescription()));
-        Assert.assertNotNull("module should contain a flow named 'flowName''", module.getFlow("flowName"));
-        Assert.assertNotNull("module should contain a flow named 'scheduledBuilderFlow''", module.getFlow("scheduledBuilderFlow"));
+    void test_successful_moduleCreation() {
+        assertEquals("moduleName", module.getName(), "module name should be 'moduleName'");
+        assertEquals("moduleDescription", module.getDescription(), "module description should be 'moduleDescription'");
+        assertNotNull(module.getFlow("flowName"), "module should contain a flow named 'flowName''");
+        assertNotNull(module.getFlow("scheduledBuilderFlow"), "module should contain a flow named 'scheduledBuilderFlow''");
     }
 
     private SqlOperationsRunner sqlOperationsRunner;
 
-    @Before
-    public void setupSqlOperationsRunner() {
+    @BeforeEach
+    void setupSqlOperationsRunner() {
         PlatformTransactionManager platformTransactionManager =
             applicationContext.getBean(PlatformTransactionManager.class);
         BasicDataSource dataSource = applicationContext.getBean(IKASAN_XA_DATASOURCE, BasicDataSource.class);
@@ -99,7 +95,7 @@ public class ModuleFactoryTest {
     }
 
     @Test
-    public void testStartupTypeOnFlowsSetFromApplicationDotProperties() {
+    void testStartupTypeOnFlowsSetFromApplicationDotProperties() {
         assertEquals("""
                 ID,MODULENAME,FLOWNAME,STARTUPTYPE,COMMENT
                 1,moduleName,flowName,MANUAL,Setting in properties
@@ -110,7 +106,7 @@ public class ModuleFactoryTest {
 
 
     @Test
-    public void testWiretapTriggersSetFromApplicationDotProperties() {
+    void testWiretapTriggersSetFromApplicationDotProperties() {
         assertEquals("""
                 ID,MODULENAME,FLOWNAME,RELATIONSHIP,FLOWELEMENTNAME,JOBNAME
                 1,moduleName,flowName,after,producerAFlowElement,wiretapJob

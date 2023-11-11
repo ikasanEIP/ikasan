@@ -38,8 +38,7 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                 return event;
             }
 
-            if (event instanceof JobExecutionContextImpl) {
-                JobExecutionContextImpl jobExecutionContext = (JobExecutionContextImpl)event;
+            if (event instanceof JobExecutionContextImpl jobExecutionContext) {
                 String correlationId = (String)jobExecutionContext.getMergedJobDataMap().get(CORRELATION_ID);
                 // If we have a trigger with a correlation ID not in the Cache - error
                 // If we have a trigger with a correlation ID in cache or correlation ID is blank (the scenario to prevent job going into recovery) - allow through
@@ -49,9 +48,11 @@ public class ContextInstanceFilter<T> implements Filter<T>, ConfiguredResource<C
                         jobExecutionContext.getJobDetail().getDescription() + "]");
                     return null;
                 } else if (!ContextInstanceCache.existsInCache(correlationId)) {
-                    String error = String.format("Could not find correlationId [%s] in ContextInstanceCache," +
-                        "maybe the dashboard restarted so this ID is no longer running, " +
-                        "could only find correlationIds/plans [%s]. Try restarting the agent to clean the cache", correlationId, ContextInstanceCache.getCorrelationIds());
+                    String error = ("""
+                        Could not find correlationId [%s] in ContextInstanceCache,\
+                        maybe the dashboard restarted so this ID is no longer running, \
+                        could only find correlationIds/plans [%s]. Try restarting the agent to clean the cache\
+                        """).formatted(correlationId, ContextInstanceCache.getCorrelationIds());
                     LOG.error(error);
                     throw new ContextInstanceFilterException(error);
                 } else {

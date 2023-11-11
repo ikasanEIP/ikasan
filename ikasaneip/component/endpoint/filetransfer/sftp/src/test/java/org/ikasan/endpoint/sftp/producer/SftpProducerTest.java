@@ -48,16 +48,16 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for {@link SftpProducer}
@@ -66,7 +66,7 @@ import java.io.IOException;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-public class SftpProducerTest
+class SftpProducerTest
 {
     /** The mockery */
     private final Mockery mockery = new Mockery()
@@ -75,9 +75,6 @@ public class SftpProducerTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
 
     /** Mock ftpConfiguration */
@@ -96,22 +93,23 @@ public class SftpProducerTest
     private SftpProducer uut = new SftpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
 
     @Test
-    public void invoke_when_sftpTemplate_is_null() throws ResourceException {
-        // set up
-        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
-        final Payload payload = mockery.mock(Payload.class, "mockPayload");
+    void invoke_when_sftpTemplate_is_null() throws ResourceException {
+        assertThrows(SftpResourceNotStartedException.class, () -> {
+            // set up
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
+            final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
-        thrown.expect(SftpResourceNotStartedException.class);
-
-        // execute
-        uut.invoke(payload);
+            // execute
+            uut.invoke(payload);
+        });
     }
 
     /**
      * Test successful invocation based on a single file.
      * @throws EndpointException if error invoking the endpoint
      */
-    @Test public void test_successful_sftpPayloadProducer_invocation_single_file() throws ResourceException, IOException {
+    @Test
+    void test_successful_sftpPayloadProducer_invocation_single_file() throws ResourceException, IOException {
         uut.setConfiguration(sftpConfiguration);
         ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
@@ -177,7 +175,8 @@ public class SftpProducerTest
      * Test successful invocation based on a single file.
      * @throws EndpointException if error invoking the endpoint
      */
-    @Test public void test_successful_sftpPayloadProducer_invocation_single_file_dont_use_file_rename() throws ResourceException, IOException {
+    @Test
+    void test_successful_sftpPayloadProducer_invocation_single_file_dont_use_file_rename() throws ResourceException, IOException {
         uut.setConfiguration(sftpConfiguration);
         ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
@@ -244,80 +243,80 @@ public class SftpProducerTest
      * @throws EndpointException if error invoking endpoint
      */
     @Test
-    public void producer_fails_changes_to_alternate_connection_template() throws ResourceException, IOException {
-        uut.setConfiguration(sftpConfiguration);
-        ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-        ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
+    void producer_fails_changes_to_alternate_connection_template() throws ResourceException, IOException {
+        assertThrows(EndpointException.class, () -> {
+            uut.setConfiguration(sftpConfiguration);
+            ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
-		final String content = "content";
-        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
-		final String fileName = "fileName";
-		final String outputDirectory = "outputDirectory";
-		final boolean overwrite = true;
-		final String renameExtension = "renameExtension";
-		final boolean checksumDelivered = false;
-		final boolean unzip = false;
-		final boolean createParentDirectory = true;
-		final String tempFileName = "tempFileName";
+            final String content = "content";
+            final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
+            final String fileName = "fileName";
+            final String outputDirectory = "outputDirectory";
+            final boolean overwrite = true;
+            final String renameExtension = "renameExtension";
+            final boolean checksumDelivered = false;
+            final boolean unzip = false;
+            final boolean createParentDirectory = true;
+            final String tempFileName = "tempFileName";
 
-        final Payload payload = mockery.mock(Payload.class, "mockPayload");
+            final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
-        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+            final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
 
-        // Expectations
-        this.mockery.checking(new Expectations()
-        {
+            // Expectations
+            this.mockery.checking(new Expectations()
             {
-                oneOf(payload).getInputStream();
-                will(returnValue(contentInputStream));
-				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
-				will(returnValue(fileName));
-                oneOf(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
-                will(returnValue(null));
-				oneOf(sftpConfiguration).getOutputDirectory();
-				will(returnValue(outputDirectory));
-				oneOf(sftpConfiguration).getOverwrite();
-				will(returnValue(overwrite));
-                oneOf(sftpConfiguration).getDontUseFileRename();
-                will(returnValue(false));
-				oneOf(sftpConfiguration).getRenameExtension();
-				will(returnValue(renameExtension));
-				oneOf(sftpConfiguration).getChecksumDelivered();
-				will(returnValue(checksumDelivered));
-				oneOf(sftpConfiguration).getUnzip();
-				will(returnValue(unzip));
-				oneOf(sftpConfiguration).getCreateParentDirectory();
-				will(returnValue(createParentDirectory));
-				oneOf(sftpConfiguration).getTempFileName();
-				will(returnValue(tempFileName));
-                oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(equal(contentInputStream)),
-						with(equal(fileName)),
-						with(equal(outputDirectory)),
-						with(equal(overwrite)),
-						with(equal(renameExtension)),
-						with(equal(checksumDelivered)),
-						with(equal(unzip)),
-						with(equal(createParentDirectory)),
-						with(equal(tempFileName)));
-                will(throwException(exception));
+                {
+                    oneOf(payload).getInputStream();
+                    will(returnValue(contentInputStream));
+                    oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+                    will(returnValue(fileName));
+                    oneOf(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                    will(returnValue(null));
+                    oneOf(sftpConfiguration).getOutputDirectory();
+                    will(returnValue(outputDirectory));
+                    oneOf(sftpConfiguration).getOverwrite();
+                    will(returnValue(overwrite));
+                    oneOf(sftpConfiguration).getDontUseFileRename();
+                    will(returnValue(false));
+                    oneOf(sftpConfiguration).getRenameExtension();
+                    will(returnValue(renameExtension));
+                    oneOf(sftpConfiguration).getChecksumDelivered();
+                    will(returnValue(checksumDelivered));
+                    oneOf(sftpConfiguration).getUnzip();
+                    will(returnValue(unzip));
+                    oneOf(sftpConfiguration).getCreateParentDirectory();
+                    will(returnValue(createParentDirectory));
+                    oneOf(sftpConfiguration).getTempFileName();
+                    will(returnValue(tempFileName));
+                    oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+                        with(equal(contentInputStream)),
+                        with(equal(fileName)),
+                        with(equal(outputDirectory)),
+                        with(equal(overwrite)),
+                        with(equal(renameExtension)),
+                        with(equal(checksumDelivered)),
+                        with(equal(unzip)),
+                        with(equal(createParentDirectory)),
+                        with(equal(tempFileName)));
+                    will(throwException(exception));
+                }
+            });
+
+            try
+            {
+                this.uut.invoke(payload);
             }
+            catch (EndpointException e)
+            {
+                assertEquals(alternateFileTransferConnectionTemplate, this.uut.getActiveFileTransferConnectionTemplate());
+                throw e;
+            }
+            this.mockery.assertIsSatisfied();
+            fail("Unreachable code.");
         });
-
-        thrown.expect(EndpointException.class);
-
-        try
-        {
-            this.uut.invoke(payload);
-        }
-        catch (EndpointException e)
-        {
-            Assert.assertEquals(alternateFileTransferConnectionTemplate, this.uut.getActiveFileTransferConnectionTemplate());
-            throw e;
-        }
-        this.mockery.assertIsSatisfied();
-        Assert.fail("Unreachable code.");
     }
 
     /**
@@ -326,97 +325,98 @@ public class SftpProducerTest
      * @throws EndpointException if error invoking endpoint
      */
     @Test
-    public void producer_fails_changes_to_original_connection_template() throws ResourceException, IOException {
-        uut.setConfiguration(sftpConfiguration);
-        ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-        ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
+    void producer_fails_changes_to_original_connection_template() throws ResourceException, IOException {
+        assertThrows(EndpointException.class, () -> {
+            uut.setConfiguration(sftpConfiguration);
+            ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
-		final String content = "content";
-        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
-		final String fileName = "fileName";
-		final String outputDirectory = "outputDirectory";
-		final boolean overwrite = true;
-		final String renameExtension = "renameExtension";
-		final boolean checksumDelivered = false;
-		final boolean unzip = false;
-		final boolean createParentDirectory = true;
-		final String tempFileName = "tempFileName";
+            final String content = "content";
+            final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
+            final String fileName = "fileName";
+            final String outputDirectory = "outputDirectory";
+            final boolean overwrite = true;
+            final String renameExtension = "renameExtension";
+            final boolean checksumDelivered = false;
+            final boolean unzip = false;
+            final boolean createParentDirectory = true;
+            final String tempFileName = "tempFileName";
 
-        final Payload payload = mockery.mock(Payload.class, "mockPayload");
+            final Payload payload = mockery.mock(Payload.class, "mockPayload");
 
-        final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+            final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
 
-        // Expectations
-        this.mockery.checking(new Expectations()
-        {
+            // Expectations
+            this.mockery.checking(new Expectations()
             {
-				exactly(2).of(payload).getInputStream();
-				will(returnValue(contentInputStream));
-				exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
-				will(returnValue(fileName));
-                exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
-                will(returnValue(null));
-				exactly(2).of(sftpConfiguration).getOutputDirectory();
-				will(returnValue(outputDirectory));
-				exactly(2).of(sftpConfiguration).getOverwrite();
-				will(returnValue(overwrite));
-                exactly(2).of(sftpConfiguration).getDontUseFileRename();
-                will(returnValue(false));
-				exactly(2).of(sftpConfiguration).getRenameExtension();
-				will(returnValue(renameExtension));
-				exactly(2).of(sftpConfiguration).getChecksumDelivered();
-				will(returnValue(checksumDelivered));
-				exactly(2).of(sftpConfiguration).getUnzip();
-				will(returnValue(unzip));
-				exactly(2).of(sftpConfiguration).getCreateParentDirectory();
-				will(returnValue(createParentDirectory));
-				exactly(2).of(sftpConfiguration).getTempFileName();
-				will(returnValue(tempFileName));
-				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(equal(contentInputStream)),
-						with(equal(fileName)),
-						with(equal(outputDirectory)),
-						with(equal(overwrite)),
-						with(equal(renameExtension)),
-						with(equal(checksumDelivered)),
-						with(equal(unzip)),
-						with(equal(createParentDirectory)),
-						with(equal(tempFileName)));
-				will(throwException(exception));
-				oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
-						with(equal(contentInputStream)),
-						with(equal(fileName)),
-						with(equal(outputDirectory)),
-						with(equal(overwrite)),
-						with(equal(renameExtension)),
-						with(equal(checksumDelivered)),
-						with(equal(unzip)),
-						with(equal(createParentDirectory)),
-						with(equal(tempFileName)));
-				will(throwException(exception));
-            }
-        });
+                {
+                    exactly(2).of(payload).getInputStream();
+                    will(returnValue(contentInputStream));
+                    exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+                    will(returnValue(fileName));
+                    exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                    will(returnValue(null));
+                    exactly(2).of(sftpConfiguration).getOutputDirectory();
+                    will(returnValue(outputDirectory));
+                    exactly(2).of(sftpConfiguration).getOverwrite();
+                    will(returnValue(overwrite));
+                    exactly(2).of(sftpConfiguration).getDontUseFileRename();
+                    will(returnValue(false));
+                    exactly(2).of(sftpConfiguration).getRenameExtension();
+                    will(returnValue(renameExtension));
+                    exactly(2).of(sftpConfiguration).getChecksumDelivered();
+                    will(returnValue(checksumDelivered));
+                    exactly(2).of(sftpConfiguration).getUnzip();
+                    will(returnValue(unzip));
+                    exactly(2).of(sftpConfiguration).getCreateParentDirectory();
+                    will(returnValue(createParentDirectory));
+                    exactly(2).of(sftpConfiguration).getTempFileName();
+                    will(returnValue(tempFileName));
+                    oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+                        with(equal(contentInputStream)),
+                        with(equal(fileName)),
+                        with(equal(outputDirectory)),
+                        with(equal(overwrite)),
+                        with(equal(renameExtension)),
+                        with(equal(checksumDelivered)),
+                        with(equal(unzip)),
+                        with(equal(createParentDirectory)),
+                        with(equal(tempFileName)));
+                    will(throwException(exception));
+                    oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
+                        with(equal(contentInputStream)),
+                        with(equal(fileName)),
+                        with(equal(outputDirectory)),
+                        with(equal(overwrite)),
+                        with(equal(renameExtension)),
+                        with(equal(checksumDelivered)),
+                        with(equal(unzip)),
+                        with(equal(createParentDirectory)),
+                        with(equal(tempFileName)));
+                    will(throwException(exception));
+                }
+            });
 
-        thrown.expect(EndpointException.class);
-
-        try
-        {
-            this.uut.invoke(payload);        }
-        catch (Exception e)
-        {
-            Assert.assertEquals(this.uut.getActiveFileTransferConnectionTemplate(), alternateFileTransferConnectionTemplate);
             try
             {
                 this.uut.invoke(payload);
             }
-            catch (Exception e2)
+            catch (Exception e)
             {
-                Assert.assertEquals( this.activeFileTransferConnectionTemplate,this.uut.getActiveFileTransferConnectionTemplate());
-                throw e2;
+                assertEquals(this.uut.getActiveFileTransferConnectionTemplate(), alternateFileTransferConnectionTemplate);
+                try
+                {
+                    this.uut.invoke(payload);
+                }
+                catch (Exception e2)
+                {
+                    assertEquals(this.activeFileTransferConnectionTemplate, this.uut.getActiveFileTransferConnectionTemplate());
+                    throw e2;
+                }
             }
-        }
-        this.mockery.assertIsSatisfied();
-        Assert.fail("Unreachable code.");
+            this.mockery.assertIsSatisfied();
+            fail("Unreachable code.");
+        });
     }
 }

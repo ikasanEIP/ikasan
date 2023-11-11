@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
@@ -55,28 +56,24 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -93,8 +90,8 @@ public class ApplicationTest {
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
 
-    @BeforeClass
-    public static void setupObjectMapper() {
+    @BeforeAll
+    static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
@@ -105,8 +102,8 @@ public class ApplicationTest {
         objectMapper.registerModule(simpleModule);
     }
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeEach
+    void setup() throws IOException {
         outboundQueue.removeAll();
     }
 
@@ -115,7 +112,7 @@ public class ApplicationTest {
      */
     @Test
     @DirtiesContext
-    public void test_create_module_start_and_stop_flow() throws Exception {
+    void test_create_module_start_and_stop_flow() throws Exception {
         Flow flow = moduleUnderTest.getFlow("Scheduler Flow 3");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
@@ -174,7 +171,7 @@ public class ApplicationTest {
 
     @Test
     @DirtiesContext
-    public void test_housekeep_flow_success() throws IOException {
+    void test_housekeep_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Housekeep Log Files Flow"));
         flowTestRule.consumer("Scheduled Consumer")
             .producer("Log Files Process");
@@ -198,8 +195,8 @@ public class ApplicationTest {
         flowTestRule.stopFlow();
     }
 
-    @After
-    public void teardown() {
+    @AfterEach
+    void teardown() {
         // post-test teardown
     }
 }

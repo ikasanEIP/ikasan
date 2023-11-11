@@ -48,25 +48,25 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import javax.naming.Context;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class JmsProducerBuilderTest {
+class JmsProducerBuilderTest {
 
     /**
      * Mockery for mocking concrete classes
@@ -86,7 +86,7 @@ public class JmsProducerBuilderTest {
     final UserCredentialsConnectionFactoryAdapter mockedUserCredentialsConnectionFactoryAdapter = mockery.mock(UserCredentialsConnectionFactoryAdapter.class, "mockUserCredentialsConnectionFactoryAdapter");
 
     @Test
-    public void test_jmsproducerbuilder_build() {
+    void test_jmsproducerbuilder_build() {
 
         mockery.checking(new Expectations()
         {{
@@ -121,51 +121,62 @@ public class JmsProducerBuilderTest {
                 .setTimeToLive(2000l)
                 .setPostProcessor(postProcessor).build();
 
-        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        assertTrue(jmsProducer instanceof JmsTemplateProducer, "instance should be a JmsProducer");
         SpringMessageProducerConfiguration configuration = (
                 (ConfiguredResource< SpringMessageProducerConfiguration>) jmsProducer).getConfiguration();
-        assertEquals("DestinationJndiName should be 'jms.queue.test'", "jms.queue.test",
-                configuration.getDestinationJndiName());
-        assertEquals("ConnectionFactoryName should be 'TestConnectionFactory'", "TestConnectionFactory",
-                configuration.getConnectionFactoryName());
-        assertEquals("ConnectionFactoryUsername should be 'TestUsername'", "TestUsername",
-                configuration.getConnectionFactoryUsername());
-        assertEquals("ConnectionFactoryPassword should be 'TestPassword'", "TestPassword",
-                configuration.getConnectionFactoryPassword());
-        assertEquals("SessionAcknowledgeMode should be '2'", 2,
-                configuration.getSessionAcknowledgeMode().intValue());
-        assertEquals("SessionAcknowledgeModeName should be 'TRANSACTED'", "TRANSACTED",
-                configuration.getSessionAcknowledgeModeName());
-        assertTrue("SessionTransacted should be 'true'",
-                configuration.getSessionTransacted());
-        assertTrue("PubSubDomain should be 'true'",
-                configuration.getPubSubDomain());
-        assertTrue("DeliveryPersistent should be 'true'",
-                configuration.getDeliveryPersistent());
-        assertEquals("DeliveryMode should be 'true'",2,
-                configuration.getDeliveryMode().intValue());
-        assertEquals("DeliveryMode should be 'true'",2,
-                configuration.getDeliveryMode().intValue());
-        assertEquals("Priority should be 'true'",2,
-                configuration.getPriority().intValue());
-        assertTrue("ExplicitQosEnabled should be 'true'",
-                configuration.getExplicitQosEnabled());
-        assertTrue("MessageIdEnabled should be 'true'",
-                configuration.getMessageIdEnabled());
-        assertTrue("MessageTimestampEnabled should be 'true'",
-                configuration.getMessageTimestampEnabled());
-        assertTrue("PubSubNoLocal should be 'true'",
-                configuration.getPubSubNoLocal());
-        assertEquals("ReceiveTimeout should be 'true'",2000l,
-                configuration.getReceiveTimeout().longValue());
-        assertEquals("TimeToLive should be 'true'",2000l,
-                configuration.getTimeToLive().longValue());
+        assertEquals("jms.queue.test",
+                configuration.getDestinationJndiName(),
+                "DestinationJndiName should be 'jms.queue.test'");
+        assertEquals("TestConnectionFactory",
+                configuration.getConnectionFactoryName(),
+                "ConnectionFactoryName should be 'TestConnectionFactory'");
+        assertEquals("TestUsername",
+                configuration.getConnectionFactoryUsername(),
+                "ConnectionFactoryUsername should be 'TestUsername'");
+        assertEquals("TestPassword",
+                configuration.getConnectionFactoryPassword(),
+                "ConnectionFactoryPassword should be 'TestPassword'");
+        assertEquals(2,
+                configuration.getSessionAcknowledgeMode().intValue(),
+                "SessionAcknowledgeMode should be '2'");
+        assertEquals("TRANSACTED",
+                configuration.getSessionAcknowledgeModeName(),
+                "SessionAcknowledgeModeName should be 'TRANSACTED'");
+        assertTrue(configuration.getSessionTransacted(),
+                "SessionTransacted should be 'true'");
+        assertTrue(configuration.getPubSubDomain(),
+                "PubSubDomain should be 'true'");
+        assertTrue(configuration.getDeliveryPersistent(),
+                "DeliveryPersistent should be 'true'");
+        assertEquals(2,
+                configuration.getDeliveryMode().intValue(),
+                "DeliveryMode should be 'true'");
+        assertEquals(2,
+                configuration.getDeliveryMode().intValue(),
+                "DeliveryMode should be 'true'");
+        assertEquals(2,
+                configuration.getPriority().intValue(),
+                "Priority should be 'true'");
+        assertTrue(configuration.getExplicitQosEnabled(),
+                "ExplicitQosEnabled should be 'true'");
+        assertTrue(configuration.getMessageIdEnabled(),
+                "MessageIdEnabled should be 'true'");
+        assertTrue(configuration.getMessageTimestampEnabled(),
+                "MessageTimestampEnabled should be 'true'");
+        assertTrue(configuration.getPubSubNoLocal(),
+                "PubSubNoLocal should be 'true'");
+        assertEquals(2000l,
+                configuration.getReceiveTimeout().longValue(),
+                "ReceiveTimeout should be 'true'");
+        assertEquals(2000l,
+                configuration.getTimeToLive().longValue(),
+                "TimeToLive should be 'true'");
 
         this.mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_jmsproducerbuilder_with_connection_credentials_build() {
+    void test_jmsproducerbuilder_with_connection_credentials_build() {
 
         mockery.checking(new Expectations()
         {{
@@ -206,51 +217,62 @@ public class JmsProducerBuilderTest {
                 .setPostProcessor(postProcessor)
                 .build();
 
-        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        assertTrue(jmsProducer instanceof JmsTemplateProducer, "instance should be a JmsProducer");
         SpringMessageProducerConfiguration configuration = (
                 (ConfiguredResource< SpringMessageProducerConfiguration>) jmsProducer).getConfiguration();
-        assertEquals("DestinationJndiName should be 'jms.queue.test'", "jms.queue.test",
-                configuration.getDestinationJndiName());
-        assertEquals("ConnectionFactoryName should be 'TestConnectionFactory'", "TestConnectionFactory",
-                configuration.getConnectionFactoryName());
-        assertEquals("ConnectionFactoryUsername should be 'TestUsername'", "TestUsername",
-                configuration.getConnectionFactoryUsername());
-        assertEquals("ConnectionFactoryPassword should be 'TestPassword'", "TestPassword",
-                configuration.getConnectionFactoryPassword());
-        assertEquals("SessionAcknowledgeMode should be '2'", 2,
-                configuration.getSessionAcknowledgeMode().intValue());
-        assertEquals("SessionAcknowledgeModeName should be 'TRANSACTED'", "TRANSACTED",
-                configuration.getSessionAcknowledgeModeName());
-        assertTrue("SessionTransacted should be 'true'",
-                configuration.getSessionTransacted());
-        assertTrue("PubSubDomain should be 'true'",
-                configuration.getPubSubDomain());
-        assertTrue("DeliveryPersistent should be 'true'",
-                configuration.getDeliveryPersistent());
-        assertEquals("DeliveryMode should be 'true'",2,
-                configuration.getDeliveryMode().intValue());
-        assertEquals("DeliveryMode should be 'true'",2,
-                configuration.getDeliveryMode().intValue());
-        assertEquals("Priority should be 'true'",2,
-                configuration.getPriority().intValue());
-        assertTrue("ExplicitQosEnabled should be 'true'",
-                configuration.getExplicitQosEnabled());
-        assertTrue("MessageIdEnabled should be 'true'",
-                configuration.getMessageIdEnabled());
-        assertTrue("MessageTimestampEnabled should be 'true'",
-                configuration.getMessageTimestampEnabled());
-        assertTrue("PubSubNoLocal should be 'true'",
-                configuration.getPubSubNoLocal());
-        assertEquals("ReceiveTimeout should be 'true'",2000l,
-                configuration.getReceiveTimeout().longValue());
-        assertEquals("TimeToLive should be 'true'",2000l,
-                configuration.getTimeToLive().longValue());
+        assertEquals("jms.queue.test",
+                configuration.getDestinationJndiName(),
+                "DestinationJndiName should be 'jms.queue.test'");
+        assertEquals("TestConnectionFactory",
+                configuration.getConnectionFactoryName(),
+                "ConnectionFactoryName should be 'TestConnectionFactory'");
+        assertEquals("TestUsername",
+                configuration.getConnectionFactoryUsername(),
+                "ConnectionFactoryUsername should be 'TestUsername'");
+        assertEquals("TestPassword",
+                configuration.getConnectionFactoryPassword(),
+                "ConnectionFactoryPassword should be 'TestPassword'");
+        assertEquals(2,
+                configuration.getSessionAcknowledgeMode().intValue(),
+                "SessionAcknowledgeMode should be '2'");
+        assertEquals("TRANSACTED",
+                configuration.getSessionAcknowledgeModeName(),
+                "SessionAcknowledgeModeName should be 'TRANSACTED'");
+        assertTrue(configuration.getSessionTransacted(),
+                "SessionTransacted should be 'true'");
+        assertTrue(configuration.getPubSubDomain(),
+                "PubSubDomain should be 'true'");
+        assertTrue(configuration.getDeliveryPersistent(),
+                "DeliveryPersistent should be 'true'");
+        assertEquals(2,
+                configuration.getDeliveryMode().intValue(),
+                "DeliveryMode should be 'true'");
+        assertEquals(2,
+                configuration.getDeliveryMode().intValue(),
+                "DeliveryMode should be 'true'");
+        assertEquals(2,
+                configuration.getPriority().intValue(),
+                "Priority should be 'true'");
+        assertTrue(configuration.getExplicitQosEnabled(),
+                "ExplicitQosEnabled should be 'true'");
+        assertTrue(configuration.getMessageIdEnabled(),
+                "MessageIdEnabled should be 'true'");
+        assertTrue(configuration.getMessageTimestampEnabled(),
+                "MessageTimestampEnabled should be 'true'");
+        assertTrue(configuration.getPubSubNoLocal(),
+                "PubSubNoLocal should be 'true'");
+        assertEquals(2000l,
+                configuration.getReceiveTimeout().longValue(),
+                "ReceiveTimeout should be 'true'");
+        assertEquals(2000l,
+                configuration.getTimeToLive().longValue(),
+                "TimeToLive should be 'true'");
 
         this.mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_jmsproducerbuilder_build_verify_properties()
+    void test_jmsproducerbuilder_build_verify_properties()
     {
         mockery.checking(new Expectations()
         {{
@@ -274,44 +296,44 @@ public class JmsProducerBuilderTest {
                 .setConnectionFactoryJndiPropertyUrlPkgPrefixes("testurlpkg")
                 .build();
 
-        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        assertTrue(jmsProducer instanceof JmsTemplateProducer, "instance should be a JmsProducer");
         SpringMessageProducerConfiguration configuration = (
                 (ConfiguredResource< SpringMessageProducerConfiguration>) jmsProducer).getConfiguration();
-        assertEquals("ConnectionFactoryJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'",
-                "testinitialFactory",
-                configuration.getConnectionFactoryJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY));
-        assertEquals("ConnectionFactoryJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'",
-                "testurlpkg",
-                configuration.getConnectionFactoryJndiProperties().get(Context.URL_PKG_PREFIXES));
-        assertEquals("ConnectionFactoryJndiProperties(PROVIDER_URL) should be 'testiurl'",
-                "testiurl",
-                configuration.getConnectionFactoryJndiProperties().get(Context.PROVIDER_URL));
-        assertEquals("ConnectionFactoryJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'",
-                "testicredentails",
-                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_CREDENTIALS));
-        assertEquals("ConnectionFactoryJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'",
-                "testprinciple",
-                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_PRINCIPAL));
-        assertEquals("DestinationJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'",
-                "testinitialFactory",
-                configuration.getDestinationJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY));
-        assertEquals("DestinationJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'",
-                "testurlpkg",
-                configuration.getDestinationJndiProperties().get(Context.URL_PKG_PREFIXES));
-        assertEquals("DestinationJndiProperties(java.naming.provider.url) should be 'testurl'",
-                "testiurl",
-                configuration.getDestinationJndiProperties().get(Context.PROVIDER_URL));
-        assertEquals("DestinationJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'",
-                "testicredentails",
-                configuration.getDestinationJndiProperties().get(Context.SECURITY_CREDENTIALS));
-        assertEquals("DestinationJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'",
-                "testprinciple",
-                configuration.getDestinationJndiProperties().get(Context.SECURITY_PRINCIPAL));
+        assertEquals("testinitialFactory",
+                configuration.getConnectionFactoryJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY),
+                "ConnectionFactoryJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'");
+        assertEquals("testurlpkg",
+                configuration.getConnectionFactoryJndiProperties().get(Context.URL_PKG_PREFIXES),
+                "ConnectionFactoryJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'");
+        assertEquals("testiurl",
+                configuration.getConnectionFactoryJndiProperties().get(Context.PROVIDER_URL),
+                "ConnectionFactoryJndiProperties(PROVIDER_URL) should be 'testiurl'");
+        assertEquals("testicredentails",
+                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_CREDENTIALS),
+                "ConnectionFactoryJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'");
+        assertEquals("testprinciple",
+                configuration.getConnectionFactoryJndiProperties().get(Context.SECURITY_PRINCIPAL),
+                "ConnectionFactoryJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'");
+        assertEquals("testinitialFactory",
+                configuration.getDestinationJndiProperties().get(Context.INITIAL_CONTEXT_FACTORY),
+                "DestinationJndiProperties(INITIAL_CONTEXT_FACTORY) should be 'testinitialFactory'");
+        assertEquals("testurlpkg",
+                configuration.getDestinationJndiProperties().get(Context.URL_PKG_PREFIXES),
+                "DestinationJndiProperties(URL_PKG_PREFIXES) should be 'testurlpkg'");
+        assertEquals("testiurl",
+                configuration.getDestinationJndiProperties().get(Context.PROVIDER_URL),
+                "DestinationJndiProperties(java.naming.provider.url) should be 'testurl'");
+        assertEquals("testicredentails",
+                configuration.getDestinationJndiProperties().get(Context.SECURITY_CREDENTIALS),
+                "DestinationJndiProperties(SECURITY_CREDENTIALS) should be 'testicredentails'");
+        assertEquals("testprinciple",
+                configuration.getDestinationJndiProperties().get(Context.SECURITY_PRINCIPAL),
+                "DestinationJndiProperties(SECURITY_PRINCIPAL) should be 'testprinciple'");
 
     }
 
     @Test
-    public void test_jmsproducerbuilder_build_with_cf()
+    void test_jmsproducerbuilder_build_with_cf()
     {
         mockery.checking(new Expectations()
         {{
@@ -326,11 +348,11 @@ public class JmsProducerBuilderTest {
                 .setConnectionFactory(connectionFactory)
                 .build();
 
-        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        assertTrue(jmsProducer instanceof JmsTemplateProducer, "instance should be a JmsProducer");
     }
 
     @Test
-    public void test_jmsproducerbuilder_build_with_messageConverter()
+    void test_jmsproducerbuilder_build_with_messageConverter()
     {
         mockery.checking(new Expectations()
         {{
@@ -345,7 +367,7 @@ public class JmsProducerBuilderTest {
             .setMessageConverter(messageConverter)
             .build();
 
-        assertTrue("instance should be a JmsProducer", jmsProducer instanceof JmsTemplateProducer);
+        assertTrue(jmsProducer instanceof JmsTemplateProducer, "instance should be a JmsProducer");
     }
 
     class ExtendedJmsProducerBuilderImpl extends JmsProducerBuilderImpl

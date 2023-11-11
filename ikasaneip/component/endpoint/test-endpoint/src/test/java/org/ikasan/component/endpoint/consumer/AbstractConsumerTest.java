@@ -44,15 +44,16 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.EventListener;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for AbstractConsumer.
  * 
  * @author Ikasan Development Team
  */
-public class AbstractConsumerTest
+class AbstractConsumerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -69,13 +70,13 @@ public class AbstractConsumerTest
      * Test mutators on abstractConsumer
      */
     @Test
-    public void test_mutators()
+    void test_mutators()
     {
         StubbedAbstractConsumer consumer = new StubbedAbstractConsumer();
         consumer.setEventFactory(eventFactory);
         consumer.setListener(eventListener);
-        Assert.assertEquals(eventFactory, consumer.flowEventFactory);
-        Assert.assertEquals(eventListener, consumer.eventListener);
+        assertEquals(eventFactory, consumer.flowEventFactory);
+        assertEquals(eventListener, consumer.eventListener);
     }
 
     /**

@@ -40,6 +40,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
@@ -55,36 +56,34 @@ import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.env.MockEnvironment;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 import javax.sql.DataSource;
+
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>JmsSampleFlow</code> class.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class BigQueueSampleFlowTest {
     protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
@@ -94,8 +93,8 @@ public class BigQueueSampleFlowTest {
 
     private Logger logger = LoggerFactory.getLogger(BigQueueSampleFlowTest.class);
 
-    @Rule
-    public TestName name = new TestName();
+    
+    public String name;
 
     @Resource
     private Module<Flow> moduleUnderTest;
@@ -125,26 +124,30 @@ public class BigQueueSampleFlowTest {
     private DataSource ikasanxads;
 
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup(TestInfo testInfo) {
+        Optional<Method> testMethod = testInfo.getTestMethod();
+        if(testMethod.isPresent()) {
+            this.name = testMethod.get().getName();
+        }
         flowTestRule = new IkasanFlowTestRule();
         flowTestRule.withFlow(moduleUnderTest.getFlow("BigQueue Sample Flow"));
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
     }
 
-    @After
-    public void teardown() throws Exception {
-        System.out.println("In teardown method for test " + name.getMethodName());
+    @AfterEach
+    void teardown() throws Exception {
+        System.out.println("In teardown method for test " + name);
         removeAllMessages();
         clearDatabase();
         resetExceptionGeneratingBroker();
         resetDelayGeneratingBroker();
-        flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError"});
+        flowTestRule.stopFlowWithAwait( name, new String[]{"stopped","stoppedInError"});
     }
 
 
     @Test
-    public void test_BigQueue_Sample_Flow() throws Exception {
+    void test_BigQueue_Sample_Flow() throws Exception {
         this.removeAllMessages();
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -203,7 +206,7 @@ public class BigQueueSampleFlowTest {
     }
 
     @Test
-    public void test_exclusion() throws Exception {
+    void test_exclusion() throws Exception {
         this.removeAllMessages();
 
         // Prepare test data
@@ -255,7 +258,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Test
-    public void test_exclusion_followed_by_resubmission() throws Exception {
+    void test_exclusion_followed_by_resubmission() throws Exception {
         this.removeAllMessages();
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -341,7 +344,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Test
-    public void test_exclusion_followed_by_ignore() throws Exception {
+    void test_exclusion_followed_by_ignore() throws Exception {
         this.removeAllMessages();
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -410,7 +413,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Test
-    public void test_flow_in_recovery() throws Exception {
+    void test_flow_in_recovery() throws Exception {
         this.removeAllMessages();
         System.out.println("test_flow_in_recovery");
 
@@ -464,7 +467,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Test
-    public void test_flow_in_scheduled_recovery() throws Exception {
+    void test_flow_in_scheduled_recovery() throws Exception {
         this.removeAllMessages();
         System.out.println("test_flow_in_scheduled_recovery");
 
@@ -528,7 +531,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Test
-    public void test_flow_stopped_in_error() throws Exception {
+    void test_flow_stopped_in_error() throws Exception {
         this.removeAllMessages();
         System.out.println("test_flow_stopped_in_error");
 
@@ -581,7 +584,7 @@ public class BigQueueSampleFlowTest {
 
 
     @Test
-    public void test_transaction_timeout_stopped_in_error() throws Exception {
+    void test_transaction_timeout_stopped_in_error() throws Exception {
         this.removeAllMessages();
         System.out.println("test_transaction_timeout_stopped_in_error");
         // Prepare test data

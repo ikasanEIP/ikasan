@@ -40,14 +40,14 @@
 package org.ikasan.component.factory.spring.common;
 
 import org.ikasan.component.factory.spring.common.PropertyNameHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PropertyNameHelperTest {
+class PropertyNameHelperTest {
 
     @Test
-    public void test() {
+    void test() {
         Class clazz = JmsConsumerConfiguration.class;
         assertEquals("jms.consumer", PropertyNameHelper.classNameToPropertyPrefix(clazz));
         clazz = AmazonS3FileProducerConfiguration.class;

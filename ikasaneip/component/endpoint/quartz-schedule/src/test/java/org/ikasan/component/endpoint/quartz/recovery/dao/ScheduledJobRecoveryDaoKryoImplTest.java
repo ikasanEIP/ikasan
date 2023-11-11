@@ -41,46 +41,47 @@
 package org.ikasan.component.endpoint.quartz.recovery.dao;
 
 import org.ikasan.component.endpoint.quartz.recovery.model.ScheduledJobRecoveryModel;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>ScheduledJobRecoveryDaoKryoImpl</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledJobRecoveryDaoKryoImplTest
+class ScheduledJobRecoveryDaoKryoImplTest
 {
     static String persistentPath = "./tmp-" +System.currentTimeMillis();
     static File tmpTestDir = new File(persistentPath);
 
-    @BeforeClass
-    public static void setup()
+    @BeforeAll
+    static void setup()
     {
         tmpTestDir.mkdirs();
     }
 
-    @AfterClass
-    public static void teardown()
+    @AfterAll
+    static void teardown()
     {
         for(File file:tmpTestDir.listFiles())
         {
-            Assert.assertTrue("Failed to clean up files after test", file.delete() );
+            assertTrue(file.delete() , "Failed to clean up files after test");
         }
 
-        Assert.assertTrue("Failed to clean up tmp dir after test", tmpTestDir.delete() );
+        assertTrue(tmpTestDir.delete() , "Failed to clean up tmp dir after test");
     }
 
     /**
      * Test.
      */
     @Test
-    public void test_successful_kyro_save_and_find()
+    void test_successful_kyro_save_and_find()
     {
         Date fireTime = new Date();
         ScheduledJobRecoveryModel scheduledJobRecoveryModel = new ScheduledJobRecoveryModel();
@@ -94,16 +95,16 @@ public class ScheduledJobRecoveryDaoKryoImplTest
 
         scheduledJobRecoveryDao.save(scheduledJobRecoveryModel);
 
-        Assert.assertNull("Should not find anything with invalid group name",
-            scheduledJobRecoveryDao.find("anyGroupName", "myName") );
+        assertNull(scheduledJobRecoveryDao.find("anyGroupName", "myName") ,
+            "Should not find anything with invalid group name");
 
-        Assert.assertNull("Should not find anything with invalid name",
-            scheduledJobRecoveryDao.find("myGroupName", "myInvalidName") );
+        assertNull(scheduledJobRecoveryDao.find("myGroupName", "myInvalidName") ,
+            "Should not find anything with invalid name");
 
         ScheduledJobRecoveryModel foundModel = scheduledJobRecoveryDao.find("myName", "myGroupName");
-        Assert.assertTrue("Should have found the matching model groupName", foundModel.getGroup().equals("myGroupName"));
-        Assert.assertTrue("Should have found the matching model name", foundModel.getName().equals("myName"));
-        Assert.assertTrue("Should have found the matching model fireTime", foundModel.getFireTime().equals(fireTime));
-        Assert.assertTrue("Should have found the matching model nextFireTime", foundModel.getNextFireTime().equals(nextFireTime));
+        assertEquals("myGroupName", foundModel.getGroup(), "Should have found the matching model groupName");
+        assertEquals("myName", foundModel.getName(), "Should have found the matching model name");
+        assertEquals(foundModel.getFireTime(), fireTime, "Should have found the matching model fireTime");
+        assertEquals(foundModel.getNextFireTime(), nextFireTime, "Should have found the matching model nextFireTime");
     }
 }

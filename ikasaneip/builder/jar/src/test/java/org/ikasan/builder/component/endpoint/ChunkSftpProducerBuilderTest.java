@@ -50,20 +50,18 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ChunkSftpProducerBuilderTest
+class ChunkSftpProducerBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -73,9 +71,6 @@ public class ChunkSftpProducerBuilderTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -89,7 +84,7 @@ public class ChunkSftpProducerBuilderTest
      * Test successful builder creation with sftp producer Options.
      */
     @Test
-    public void chunkSftpProducer_build_when_configuration_sftp_conf_provided() {
+    void chunkSftpProducer_build_when_configuration_sftp_conf_provided() {
 
         ChunkSftpProducerBuilder chunkSftpProducerBuilder = new ChunkSftpProducerBuilderImpl( null, null, null, null);
 
@@ -117,36 +112,36 @@ public class ChunkSftpProducerBuilderTest
                 .setConfiguredResourceId("testConfigId")
                 .build();
 
-        assertTrue("instance should be a SftpProducer", chunkSftpProducer instanceof SftpProducer);
-        assertTrue("instance should be a ChunkSftpProducer", chunkSftpProducer instanceof ChunkSftpProducer);
+        assertTrue(chunkSftpProducer instanceof SftpProducer, "instance should be a SftpProducer");
+        assertTrue(chunkSftpProducer instanceof ChunkSftpProducer, "instance should be a ChunkSftpProducer");
 
         SftpProducerConfiguration configuration = ((ConfiguredResource<SftpProducerConfiguration>) chunkSftpProducer).getConfiguration();
-        assertTrue("checksum should be 'true'", configuration.getChecksumDelivered());
-        assertEquals("clientID should be 'testClientId'","testClientId", configuration.getClientID());
-        assertEquals("outputDirectory should be 'test/dir'","test/dir", configuration.getOutputDirectory());
-        assertEquals("renameExtension should be 'TMP'","TMP", configuration.getRenameExtension());
-        assertEquals("tempFileName should be 'testTmp'","testTmp", configuration.getTempFileName());
-        assertTrue("cleanUpChunks should be 'true'", configuration.getCleanUpChunks());
-        assertTrue("cleanupJournalOnComplete should be 'true'", configuration.getCleanupJournalOnComplete());
-        assertTrue("createParentDirectory should be 'true'", configuration.getCreateParentDirectory());
-        assertTrue("overwrite should be 'true'", configuration.getOverwrite());
-        assertTrue("unzip should be 'true'", configuration.getUnzip());
-        assertEquals("remoteHost should be 'testsftphost'","testsftphost", configuration.getRemoteHost());
-        assertEquals("privateKeyFilename should be 'testprivatekey'","testprivatekey", configuration.getPrivateKeyFilename());
-        assertEquals("maxRetryAttempts should be '3'",3, configuration.getMaxRetryAttempts().intValue());
-        assertEquals("remotePort should be '22'",22, configuration.getRemotePort().intValue());
-        assertEquals("knownHostsFilename should be 'testknownhost'","testknownhost", configuration.getKnownHostsFilename());
-        assertEquals("username should be 'testUser'","testUser", configuration.getUsername());
-        assertEquals("password should be 'testPassword'","testPassword", configuration.getPassword());
-        assertEquals("connectionTimeout should be '300'",300, configuration.getConnectionTimeout().intValue());
-        assertEquals("preferredKeyExchangeAlgorithm should be 'testalg'","testalg", configuration.getPreferredKeyExchangeAlgorithm());
+        assertTrue(configuration.getChecksumDelivered(), "checksum should be 'true'");
+        assertEquals("testClientId", configuration.getClientID(), "clientID should be 'testClientId'");
+        assertEquals("test/dir", configuration.getOutputDirectory(), "outputDirectory should be 'test/dir'");
+        assertEquals("TMP", configuration.getRenameExtension(), "renameExtension should be 'TMP'");
+        assertEquals("testTmp", configuration.getTempFileName(), "tempFileName should be 'testTmp'");
+        assertTrue(configuration.getCleanUpChunks(), "cleanUpChunks should be 'true'");
+        assertTrue(configuration.getCleanupJournalOnComplete(), "cleanupJournalOnComplete should be 'true'");
+        assertTrue(configuration.getCreateParentDirectory(), "createParentDirectory should be 'true'");
+        assertTrue(configuration.getOverwrite(), "overwrite should be 'true'");
+        assertTrue(configuration.getUnzip(), "unzip should be 'true'");
+        assertEquals("testsftphost", configuration.getRemoteHost(), "remoteHost should be 'testsftphost'");
+        assertEquals("testprivatekey", configuration.getPrivateKeyFilename(), "privateKeyFilename should be 'testprivatekey'");
+        assertEquals(3, configuration.getMaxRetryAttempts().intValue(), "maxRetryAttempts should be '3'");
+        assertEquals(22, configuration.getRemotePort().intValue(), "remotePort should be '22'");
+        assertEquals("testknownhost", configuration.getKnownHostsFilename(), "knownHostsFilename should be 'testknownhost'");
+        assertEquals("testUser", configuration.getUsername(), "username should be 'testUser'");
+        assertEquals("testPassword", configuration.getPassword(), "password should be 'testPassword'");
+        assertEquals(300, configuration.getConnectionTimeout().intValue(), "connectionTimeout should be '300'");
+        assertEquals("testalg", configuration.getPreferredKeyExchangeAlgorithm(), "preferredKeyExchangeAlgorithm should be 'testalg'");
 
         mockery.assertIsSatisfied();
     }
 
 
     @Test
-    public void chunkSftpProducer_build_when_configurationId_not_provided() {
+    void chunkSftpProducer_build_when_configurationId_not_provided() {
 
         ChunkSftpProducerBuilder sftpProducerBuilder = new ChunkSftpProducerBuilderImpl(null, null, null, null);
 

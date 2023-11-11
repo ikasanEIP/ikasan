@@ -43,8 +43,8 @@ import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.trigger.model.TriggerImpl;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
 import org.springframework.web.client.RestClientException;
@@ -54,11 +54,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class WiretapTriggerSetupServiceTest {
+class WiretapTriggerSetupServiceTest {
 
     private JobAwareFlowEventListener wiretapTriggerService = Mockito.mock(JobAwareFlowEventListener.class);
 
@@ -69,8 +69,8 @@ public class WiretapTriggerSetupServiceTest {
     private WiretapTriggerSetupService wiretapTriggerSetupService;
 
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         triggerConfiguration = new WiretapTriggerConfiguration();
         triggerConfiguration.setAction(WiretapTriggerAction.INSERT);
         triggerConfiguration.setComponentName("componentName");
@@ -84,7 +84,7 @@ public class WiretapTriggerSetupServiceTest {
     }
 
     @Test
-    public void testInsertTrigger() {
+    void testInsertTrigger() {
         wiretapTriggerSetupService.setup("moduleName");
         verify(wiretapTriggerService).addDynamicTrigger(triggerArgumentCaptor.capture());
         assertEquals("moduleName", triggerArgumentCaptor.getValue().getModuleName());
@@ -97,7 +97,7 @@ public class WiretapTriggerSetupServiceTest {
 
 
     @Test
-    public void testInsertTriggerThatAlreadyExistsInDb() {
+    void testInsertTriggerThatAlreadyExistsInDb() {
         Trigger existingTrigger = Mockito.mock(Trigger.class);
         when(existingTrigger.getJobName()).thenReturn("wiretapJob");
         when(wiretapTriggerService.getTriggers("moduleName", "flowName",
@@ -107,14 +107,14 @@ public class WiretapTriggerSetupServiceTest {
     }
 
     @Test
-    public void testUpdateTriggerThatDoesntExistInDb() {
+    void testUpdateTriggerThatDoesntExistInDb() {
         triggerConfiguration.setAction(WiretapTriggerAction.UPDATE);
         wiretapTriggerSetupService.setup("moduleName");
         verify(wiretapTriggerService, Mockito.times(0)).addDynamicTrigger(any(Trigger.class));
     }
 
     @Test
-    public void testUpdateTrigger() {
+    void testUpdateTrigger() {
         triggerConfiguration.setAction(WiretapTriggerAction.UPDATE);
         Trigger existingTrigger = existingWiretapTrigger();
         when(wiretapTriggerService.getTriggers("moduleName", "flowName",
@@ -125,14 +125,14 @@ public class WiretapTriggerSetupServiceTest {
     }
 
     @Test
-    public void testDeleteTriggerThatDoesntExistInDb() {
+    void testDeleteTriggerThatDoesntExistInDb() {
         triggerConfiguration.setAction(WiretapTriggerAction.DELETE);
         wiretapTriggerSetupService.setup("moduleName");
         verify(wiretapTriggerService, Mockito.times(0)).deleteDynamicTrigger(any(Long.class));
     }
 
     @Test
-    public void testDeleteTrigger() {
+    void testDeleteTrigger() {
         triggerConfiguration.setAction(WiretapTriggerAction.DELETE);
         Trigger existingTrigger = existingWiretapTrigger();
         when(wiretapTriggerService.getTriggers("moduleName", "flowName",
@@ -142,7 +142,7 @@ public class WiretapTriggerSetupServiceTest {
     }
 
     @Test
-    public void deleteAll(){
+    void deleteAll(){
         WiretapTriggerSetupServiceConfiguration configuration = new WiretapTriggerSetupServiceConfiguration();
         configuration.setDeleteAllTriggers(true);
         wiretapTriggerSetupService = new WiretapTriggerSetupService(configuration, wiretapTriggerService);
@@ -158,7 +158,7 @@ public class WiretapTriggerSetupServiceTest {
     }
 
     @Test
-    public void testRestClientExceptionCallingAddDynamicTrigger(){
+    void testRestClientExceptionCallingAddDynamicTrigger(){
         triggerConfiguration.setAction(WiretapTriggerAction.INSERT);
         doThrow(new RestClientException("test rest client exception")).when(
             wiretapTriggerService).addDynamicTrigger(any(TriggerImpl.class));

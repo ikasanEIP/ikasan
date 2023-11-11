@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.NoResultException;
+import jakarta.persistence.NoResultException;
 import java.util.*;
 
 /**

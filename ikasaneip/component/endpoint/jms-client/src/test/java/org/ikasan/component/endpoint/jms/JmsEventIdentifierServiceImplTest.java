@@ -47,19 +47,20 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageNotWriteableException;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageNotWriteableException;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for JmsEventIdentifierServiceImpl.
  *
  * @author Ikasan Development Team
  */
-public class JmsEventIdentifierServiceImplTest
+class JmsEventIdentifierServiceImplTest
 {
     private Mockery mockery = new Mockery()
     {{
@@ -73,7 +74,7 @@ public class JmsEventIdentifierServiceImplTest
     private JmsEventIdentifierServiceImpl jmsEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     @Test
-    public void test_getEventIdentifier_id_present() throws JMSException
+    void test_getEventIdentifier_id_present() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -81,12 +82,12 @@ public class JmsEventIdentifierServiceImplTest
             will(returnValue("id1"));
         }});
         String id = jmsEventIdentifierService.getEventIdentifier(message);
-        Assert.assertEquals("id1", id);
+        assertEquals("id1", id);
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_getEventIdentifier_id_not_present() throws JMSException
+    void test_getEventIdentifier_id_not_present() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -96,32 +97,36 @@ public class JmsEventIdentifierServiceImplTest
             will(returnValue("jmsMessageId"));
         }});
         String id = jmsEventIdentifierService.getEventIdentifier(message);
-        Assert.assertEquals("jmsMessageId", id);
+        assertEquals("jmsMessageId", id);
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = ManagedEventIdentifierException.class)
-    public void test_getEventIdentifier_jms_exception() throws JMSException
+    @Test
+    void test_getEventIdentifier_jms_exception() throws JMSException
     {
-        try
-        {
-            mockery.checking(new Expectations()
-            {{
-                oneOf(message).getStringProperty(ManagedEventIdentifierService.EVENT_LIFE_ID);
-                will(throwException(new JMSException("bang")));
-            }});
+        assertThrows(ManagedEventIdentifierException.class, () -> {
+            try
+            {
+                mockery.checking(new Expectations()
+                {
+                    {
+                        oneOf(message).getStringProperty(ManagedEventIdentifierService.EVENT_LIFE_ID);
+                        will(throwException(new JMSException("bang")));
+                    }
+                });
 
-            jmsEventIdentifierService.getEventIdentifier(message);
-            Assert.fail("exception should be thrown");
-        }
-        finally
-        {
-            mockery.assertIsSatisfied();
-        }
+                jmsEventIdentifierService.getEventIdentifier(message);
+                fail("exception should be thrown");
+            }
+            finally
+            {
+                mockery.assertIsSatisfied();
+            }
+        });
     }
 
     @Test
-    public void test_setEventIdentifier_id_present() throws JMSException
+    void test_setEventIdentifier_id_present() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -132,7 +137,7 @@ public class JmsEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_setEventIdentifier_message_not_writeable() throws JMSException
+    void test_setEventIdentifier_message_not_writeable() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -143,28 +148,32 @@ public class JmsEventIdentifierServiceImplTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = ManagedEventIdentifierException.class)
-    public void test_setEventIdentifier_jms_exception() throws JMSException
+    @Test
+    void test_setEventIdentifier_jms_exception() throws JMSException
     {
-        mockery.checking(new Expectations()
-        {{
-            oneOf(message).setStringProperty(ManagedEventIdentifierService.EVENT_LIFE_ID, "id1");
-            will(throwException(new JMSException("cannot write id")));
-        }});
-        try
-        {
-            jmsEventIdentifierService.setEventIdentifier("id1", message);
-            Assert.fail("exception should be thrown");
-        }
-        finally
-        {
-            mockery.assertIsSatisfied();
-        }
+        assertThrows(ManagedEventIdentifierException.class, () -> {
+            mockery.checking(new Expectations()
+            {
+                {
+                    oneOf(message).setStringProperty(ManagedEventIdentifierService.EVENT_LIFE_ID, "id1");
+                    will(throwException(new JMSException("cannot write id")));
+                }
+            });
+            try
+            {
+                jmsEventIdentifierService.setEventIdentifier("id1", message);
+                fail("exception should be thrown");
+            }
+            finally
+            {
+                mockery.assertIsSatisfied();
+            }
+        });
     }
 
 
     @Test
-    public void test_getRelatedEventIdentifier_id_present() throws JMSException
+    void test_getRelatedEventIdentifier_id_present() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -174,12 +183,12 @@ public class JmsEventIdentifierServiceImplTest
             will(returnValue("relatedId1"));
         }});
         String id = jmsEventIdentifierService.getRelatedEventIdentifier(message);
-        Assert.assertEquals("relatedId1", id);
+        assertEquals("relatedId1", id);
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_getRelatedEventIdentifier_id_not_present() throws JMSException
+    void test_getRelatedEventIdentifier_id_not_present() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -187,13 +196,13 @@ public class JmsEventIdentifierServiceImplTest
             will(returnValue(false));
         }});
         String id = jmsEventIdentifierService.getRelatedEventIdentifier(message);
-        Assert.assertNull("should be null", id);
+        assertNull(id, "should be null");
         mockery.assertIsSatisfied();
     }
 
 
     @Test
-    public void test_setRelatedEventIdentifier_id_present() throws JMSException
+    void test_setRelatedEventIdentifier_id_present() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -204,14 +213,14 @@ public class JmsEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_setRelatedEventIdentifier_id_null() throws JMSException
+    void test_setRelatedEventIdentifier_id_null() throws JMSException
     {
         jmsEventIdentifierService.setRelatedEventIdentifier(null, message);
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_setRelatedEventIdentifier_message_not_writeable() throws JMSException
+    void test_setRelatedEventIdentifier_message_not_writeable() throws JMSException
     {
         mockery.checking(new Expectations()
         {{
@@ -222,22 +231,26 @@ public class JmsEventIdentifierServiceImplTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = ManagedEventIdentifierException.class)
-    public void test_setRelatedEventIdentifier_jms_exception() throws JMSException
+    @Test
+    void test_setRelatedEventIdentifier_jms_exception() throws JMSException
     {
-        mockery.checking(new Expectations()
-        {{
-            oneOf(message).setStringProperty(ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID, "id1");
-            will(throwException(new JMSException("cannot write related id")));
-        }});
-        try
-        {
-            jmsEventIdentifierService.setRelatedEventIdentifier("id1", message);
-            Assert.fail("exception should be thrown");
-        }
-        finally
-        {
-            mockery.assertIsSatisfied();
-        }
+        assertThrows(ManagedEventIdentifierException.class, () -> {
+            mockery.checking(new Expectations()
+            {
+                {
+                    oneOf(message).setStringProperty(ManagedRelatedEventIdentifierService.RELATED_EVENT_LIFE_ID, "id1");
+                    will(throwException(new JMSException("cannot write related id")));
+                }
+            });
+            try
+            {
+                jmsEventIdentifierService.setRelatedEventIdentifier("id1", message);
+                fail("exception should be thrown");
+            }
+            finally
+            {
+                mockery.assertIsSatisfied();
+            }
+        });
     }
 }

@@ -41,17 +41,16 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import jakarta.annotation.Resource;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
@@ -59,16 +58,13 @@ import javax.annotation.Resource;
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
-        })
-
-public class ErrorReportingServiceFactoryDefaultImplTest
+})
+class ErrorReportingServiceFactoryDefaultImplTest
 {
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
@@ -76,27 +72,31 @@ public class ErrorReportingServiceFactoryDefaultImplTest
     @Resource
     ErrorReportingService errorReportingService;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_serialiserFactory()
+    @Test
+    void test_failed_constructor_null_serialiserFactory()
     {
-        new ErrorReportingServiceFactoryDefaultImpl(null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ErrorReportingServiceFactoryDefaultImpl(null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_errorReportingServiceDao()
+    @Test
+    void test_failed_constructor_null_errorReportingServiceDao()
     {
-        SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
-        new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            SerialiserFactory serialiserFactory = new SerialiserFactoryKryoImpl();
+            new ErrorReportingServiceFactoryDefaultImpl(serialiserFactory, null);
+        });
     }
 
     /**
      * Test notify
      */
     @DirtiesContext
-    @Test
-    public void test_errorReportingServiceFactory_getErrorReportingService()
+            @Test
+    void test_errorReportingServiceFactory_getErrorReportingService()
     {
-        Assert.assertTrue("errorReportingService not correctly proxied through a pointcut", errorReportingService.getClass().getName().startsWith("jdk.proxy2.$Proxy"));
+        assertTrue(errorReportingService.getClass().getName().startsWith("jdk.proxy2.$Proxy"), "errorReportingService not correctly proxied through a pointcut");
     }
 
 }

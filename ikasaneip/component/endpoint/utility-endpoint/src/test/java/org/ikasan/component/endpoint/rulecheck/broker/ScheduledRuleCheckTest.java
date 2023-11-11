@@ -49,17 +49,19 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for ScheduledRuleCheck.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledRuleCheckTest
+class ScheduledRuleCheckTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -96,19 +98,23 @@ public class ScheduledRuleCheckTest
     /**
      * Test failed constructor.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_due_to_null_scheduler()
+    @Test
+    void test_failed_constructor_due_to_null_scheduler()
     {
-        new ScheduledRuleCheckBroker(null,null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRuleCheckBroker(null, null);
+        });
     }
 
     /**
      * Test failed constructor.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_due_to_null_rule()
+    @Test
+    void test_failed_constructor_due_to_null_rule()
     {
-        new ScheduledRuleCheckBroker(scheduler,null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRuleCheckBroker(scheduler, null);
+        });
     }
 
     /**
@@ -116,7 +122,7 @@ public class ScheduledRuleCheckTest
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_start() throws SchedulerException
+    void test_successful_start() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
 
@@ -153,7 +159,7 @@ public class ScheduledRuleCheckTest
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_no_rule_breach() throws SchedulerException
+    void test_successful_no_rule_breach() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
 
@@ -195,7 +201,7 @@ public class ScheduledRuleCheckTest
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_rule_breach() throws SchedulerException
+    void test_successful_rule_breach() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
 

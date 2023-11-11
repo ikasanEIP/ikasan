@@ -10,8 +10,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
@@ -29,7 +29,7 @@ public class DownloadLogFileApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloadLogFileApplication.class);
 
-    @RequestMapping(method = RequestMethod.GET, path = {"/listLogFiles"}, produces = {MediaType.APPLICATION_JSON_VALUE})
+    @GetMapping( path = {"/listLogFiles"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity listLogFiles(@RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
 
@@ -73,9 +73,9 @@ public class DownloadLogFileApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET, path = {"/downloadLogFile"}, produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
+    @GetMapping( path = {"/downloadLogFile"}, produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true, name = "fullFilePath") String fullFilePath,
+    public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true) String fullFilePath,
                                                                  @RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
         try {
             File file = new File(fullFilePath);

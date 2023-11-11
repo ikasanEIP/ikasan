@@ -51,8 +51,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -76,18 +76,17 @@ public class ErrorApplication
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/")
+    @GetMapping("/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity get(
-        @RequestParam(value = "pageNumber",defaultValue = "0") int pageNumber,
-        @RequestParam(value = "pageSize",defaultValue = "20") int pageSize,
-        @RequestParam(value = "orderBy",defaultValue = "timestamp") String orderBy,
-        @RequestParam(value = "orderAscending",defaultValue = "false") boolean orderAscending,
-        @RequestParam(value = "flow",required = false) String flow,
-        @RequestParam(value = "componentName",required = false) String componentName,
-        @RequestParam(value= "fromDateTime",required = false) String fromDateTime,
-        @RequestParam(value= "untilDateTime",required = false) String untilDateTime
+        @RequestParam(defaultValue = "0") int pageNumber,
+        @RequestParam(defaultValue = "20") int pageSize,
+        @RequestParam(defaultValue = "timestamp") String orderBy,
+        @RequestParam(defaultValue = "false") boolean orderAscending,
+        @RequestParam(required = false) String flow,
+        @RequestParam(required = false) String componentName,
+        @RequestParam(required = false) String fromDateTime,
+        @RequestParam(required = false) String untilDateTime
         ) {
 
         String moduleName = moduleService.getModules().get(0).getName();

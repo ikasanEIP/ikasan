@@ -40,12 +40,11 @@
 package org.ikasan.component.factory.spring.jms.producer;
 
 
+import jakarta.annotation.Resource;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
 import org.ikasan.component.factory.spring.common.NonConfiguredResourceBaseComponentFactory;
 import org.ikasan.component.factory.spring.jms.JmsComponentFactory;
 import org.ikasan.component.factory.spring.jms.consumer.JmsConsumerComponentFactory;
-
-import javax.annotation.Resource;
 
 /**
  * Easily create JmsProducer components.

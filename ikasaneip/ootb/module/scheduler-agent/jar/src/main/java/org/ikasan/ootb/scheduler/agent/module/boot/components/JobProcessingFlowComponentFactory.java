@@ -80,6 +80,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.BigArrayImpl;
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.bigqueue.IBigQueue;
@@ -110,7 +111,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.util.Arrays;

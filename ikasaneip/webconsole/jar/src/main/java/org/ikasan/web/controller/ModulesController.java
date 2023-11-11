@@ -55,8 +55,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 /**
@@ -98,7 +98,6 @@ public class ModulesController
      * @param moduleService - The module service
      * @param monitor - A moitor of module's flows
      */
-    @Autowired
     public ModulesController(final ModuleService moduleService)
     {
         this.moduleService = moduleService;
@@ -167,7 +166,7 @@ public class ModulesController
      * @return "modules/viewModule"
      * @throws Exception - Exception if we cannot control the initiator
      */
-    @RequestMapping(value = "flowStartupControl.htm", method = RequestMethod.POST)
+    @PostMapping("flowStartupControl.htm")
     public String controlInitiator(
             @RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName,
@@ -205,11 +204,11 @@ public class ModulesController
      * @param action 
      * @return
      */
-    @RequestMapping(value = "flow.htm", method = RequestMethod.POST)
+    @PostMapping("flow.htm")
     @PreAuthorize("hasAnyAuthority('ALL','WriteBlueConsole')")
-    public String controlFlow(@RequestParam("moduleName")String moduleName,
-                            @RequestParam("flowName") String flowName,
-                            @RequestParam("action") String action)
+    public String controlFlow(@RequestParam String moduleName,
+                            @RequestParam String flowName,
+                            @RequestParam String action)
     {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         if (action.equalsIgnoreCase("start"))

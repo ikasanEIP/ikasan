@@ -43,24 +43,24 @@ import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class BulkStartupTypeSetupServiceTest {
+class BulkStartupTypeSetupServiceTest {
 
 
     private StartupControlDao startupControlDao = Mockito.mock(StartupControlDao.class);
 
 
     @Test
-    public void testInsertStartupTypeWhenNotPreviouslySaved() {
+    void testInsertStartupTypeWhenNotPreviouslySaved() {
         BulkStartupTypeSetupServiceConfiguration configuration = new BulkStartupTypeSetupServiceConfiguration();
         configuration.setDefaultStartupType(StartupType.AUTOMATIC);
         BulkStartupTypeSetupService bulkStartupTypeSetupService = new BulkStartupTypeSetupService(configuration,
@@ -77,7 +77,7 @@ public class BulkStartupTypeSetupServiceTest {
     }
 
     @Test
-    public void testInsertStartupTypeUsingFlowStartupConfiguration() {
+    void testInsertStartupTypeUsingFlowStartupConfiguration() {
         BulkStartupTypeSetupServiceConfiguration configuration = new BulkStartupTypeSetupServiceConfiguration();
         configuration.setDefaultStartupType(StartupType.AUTOMATIC);
         FlowStartupTypeConfiguration flowStartupTypeConfiguration = new FlowStartupTypeConfiguration();
@@ -100,7 +100,7 @@ public class BulkStartupTypeSetupServiceTest {
     }
 
     @Test
-    public void testInsertNotAllowedWithFlowsNotToSet() {
+    void testInsertNotAllowedWithFlowsNotToSet() {
         BulkStartupTypeSetupServiceConfiguration configuration = new BulkStartupTypeSetupServiceConfiguration();
         configuration.setDefaultStartupType(StartupType.AUTOMATIC);
         configuration.setFlowsNotToSet(Arrays.asList("flowName"));
@@ -118,7 +118,7 @@ public class BulkStartupTypeSetupServiceTest {
     }
 
     @Test
-    public void testUpdateStartupTypeWhenPreviouslySavedIsNotAllowed() {
+    void testUpdateStartupTypeWhenPreviouslySavedIsNotAllowed() {
         BulkStartupTypeSetupServiceConfiguration configuration = new BulkStartupTypeSetupServiceConfiguration();
         configuration.setDefaultStartupType(StartupType.AUTOMATIC);
         BulkStartupTypeSetupService bulkStartupTypeSetupService = new BulkStartupTypeSetupService(configuration,
@@ -136,7 +136,7 @@ public class BulkStartupTypeSetupServiceTest {
     }
 
     @Test
-    public void testUpdateStartupTypeWhenPreviouslySavedIsAllowed() {
+    void testUpdateStartupTypeWhenPreviouslySavedIsAllowed() {
         BulkStartupTypeSetupServiceConfiguration configuration = new BulkStartupTypeSetupServiceConfiguration();
         configuration.setDefaultStartupType(StartupType.AUTOMATIC);
         configuration.setAllowDbOverwrite(true); // This means are allowed to to update startup type if saved previously
@@ -156,7 +156,7 @@ public class BulkStartupTypeSetupServiceTest {
     }
 
     @Test
-    public void testDeleteAllOnlyIfConfigured() {
+    void testDeleteAllOnlyIfConfigured() {
         BulkStartupTypeSetupServiceConfiguration configuration = new BulkStartupTypeSetupServiceConfiguration();
         configuration.setDeleteAll(true);
         BulkStartupTypeSetupService bulkStartupTypeSetupService = new BulkStartupTypeSetupService(configuration,
@@ -175,7 +175,7 @@ public class BulkStartupTypeSetupServiceTest {
 
 
     @Test
-    public void testNoConfigurationSet() {
+    void testNoConfigurationSet() {
         BulkStartupTypeSetupService bulkStartupTypeSetupService = new BulkStartupTypeSetupService(null,
             startupControlDao);
         TestStartupControl testStartupControl = new TestStartupControl("moduleName", "flowName");

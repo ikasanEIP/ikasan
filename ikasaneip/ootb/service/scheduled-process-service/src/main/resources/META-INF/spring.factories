@@ -1,1 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.ikasan.ootb.scheduled.ScheduledServiceAutoConfiguration

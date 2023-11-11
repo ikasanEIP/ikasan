@@ -91,15 +91,14 @@ public class WiretapApplication
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
+    @PutMapping("/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
 
-    public ResponseEntity createTrigger(@PathVariable("moduleName") String moduleName,
-                                        @PathVariable("flowName") String flowName,
-                                        @PathVariable("flowElementName") String flowElementName,
-                                        @PathVariable("relationship") String relationship,
-                                        @PathVariable("jobType") String jobType, @RequestBody String timeToLive)
+    public ResponseEntity createTrigger(@PathVariable String moduleName,
+                                        @PathVariable String flowName,
+                                        @PathVariable String flowElementName,
+                                        @PathVariable String relationship,
+                                        @PathVariable String jobType, @RequestBody String timeToLive)
     {
         HashMap<String, String> params = new HashMap<String, String>();
 
@@ -124,8 +123,7 @@ public class WiretapApplication
         return new ResponseEntity("Trigger successfully created!", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/trigger")
+    @PutMapping("/trigger")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity createTrigger(@RequestBody TriggerDto triggerDto)
     {
@@ -163,8 +161,7 @@ public class WiretapApplication
     }
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/deleteTrigger")
+    @PutMapping("/deleteTrigger")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity deleteTrigger(@RequestBody Long triggerId)
     {
@@ -185,8 +182,7 @@ public class WiretapApplication
 
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/trigger/{triggerId}")
+    @DeleteMapping("/trigger/{triggerId}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity delete(@PathVariable Long triggerId)
     {
@@ -215,8 +211,7 @@ public class WiretapApplication
 
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/triggers")
+    @GetMapping("/triggers")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity get()
     {
@@ -244,28 +239,16 @@ public class WiretapApplication
         return dto;
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/")
+    @GetMapping("/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity get(@RequestParam(value = "pageNumber",
-                                            defaultValue = "0") int pageNumber, @RequestParam(value = "pageSize",
-                                                                                              defaultValue = "20") int pageSize,
-                              @RequestParam(value = "orderBy",
-                                            defaultValue = "identifier") String orderBy,
-                              @RequestParam(value = "orderAscending",
-                                            defaultValue = "true") boolean orderAscending, @RequestParam(value = "flow",
-                                                                                                         required =
+    public ResponseEntity get(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "20") int pageSize,
+                              @RequestParam(defaultValue = "identifier") String orderBy,
+                              @RequestParam(defaultValue = "true") boolean orderAscending, @RequestParam(required =
                                                                                                              false) String flow,
-                              @RequestParam(value = "componentName",
-                                            required = false) String componentName, @RequestParam(value = "payloadId",
-                                                                                                  required = false) String payloadId,
-                              @RequestParam(value = "eventId",
-                                            required = false) String eventId, @RequestParam(value = "payloadContent",
-                                                                                            required = false) String payloadContent,
-                              @RequestParam(value = "fromDateTime",
-                                            required = false) String fromDateTime,
-                              @RequestParam(value = "untilDateTime",
-                                            required = false) String untilDateTime)
+                              @RequestParam(required = false) String componentName, @RequestParam(required = false) String payloadId,
+                              @RequestParam(required = false) String eventId, @RequestParam(required = false) String payloadContent,
+                              @RequestParam(required = false) String fromDateTime,
+                              @RequestParam(required = false) String untilDateTime)
     {
 
         String moduleName = moduleService.getModules().get(0).getName();

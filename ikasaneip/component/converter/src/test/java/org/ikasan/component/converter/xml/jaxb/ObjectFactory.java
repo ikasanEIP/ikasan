@@ -8,7 +8,7 @@
 
 package org.ikasan.component.converter.xml.jaxb;
 
-import javax.xml.bind.annotation.XmlRegistry;
+import jakarta.xml.bind.annotation.XmlRegistry;
 
 
 /**

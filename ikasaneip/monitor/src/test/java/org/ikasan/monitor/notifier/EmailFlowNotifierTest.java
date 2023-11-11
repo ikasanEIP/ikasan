@@ -39,32 +39,32 @@
  * ====================================================================
  */
 package org.ikasan.monitor.notifier;
-
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.monitor.Notifier;
-import org.junit.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 
 import java.io.IOException;
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>EmailNotifier</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class EmailFlowNotifierTest
+class EmailFlowNotifierTest
 {
     String sender = "ikasanUnitTest@ikasan.org";
     String ccReceiver = "ccRecipient1@ikasan.org";
@@ -77,8 +77,8 @@ public class EmailFlowNotifierTest
     /** in memory SMTP server */
     Wiser wiser;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         wiser = new Wiser();
         for(int count = 0; count < 5; count++)
@@ -96,16 +96,17 @@ public class EmailFlowNotifierTest
         	}
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         wiser.stop();
     }
+
     /**
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_not_active()
+    void test_successful_notifier_when_not_active()
     {
         EmailNotifierConfiguration emailNotifierConfiguration = new EmailNotifierConfiguration();
         emailNotifierConfiguration.setActive(false);
@@ -116,14 +117,14 @@ public class EmailFlowNotifierTest
         notifier.invoke("env", "moduleName", "flowName", "stopped");
 
         List<WiserMessage> messages = wiser.getMessages();
-        Assert.assertTrue("no messages should have been published", messages.size() == 0);
+        assertEquals(0, messages.size(), "no messages should have been published");
     }
 
     /**
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_active() throws MessagingException, IOException {
+    void test_successful_notifier_when_active() throws MessagingException, IOException {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
 
         Notifier<String> notifier = new EmailFlowNotifier();
@@ -132,17 +133,17 @@ public class EmailFlowNotifierTest
         notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 3);
+        assertEquals(3, messages.size(), "Should be three messages - one per addressee");
         for(WiserMessage message:wiser.getMessages())
         {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart)mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
+            assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -150,7 +151,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_no_toRecipients() throws MessagingException, IOException {
+    void test_successful_notifier_no_toRecipients() throws MessagingException, IOException {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setToRecipients(new ArrayList<String>());
 
@@ -160,17 +161,17 @@ public class EmailFlowNotifierTest
         notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 2);
+        assertEquals(2, messages.size(), "Should be three messages - one per addressee");
         for(WiserMessage message:wiser.getMessages())
         {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart)mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
+            assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -178,7 +179,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_multi_toRecipients_in_one_line() throws MessagingException, IOException {
+    void test_successful_notifier_multi_toRecipients_in_one_line() throws MessagingException, IOException {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.getToRecipients().add("first@email.com,second@email.com third@email.com;forth@email.com, fifth@email.com");
         emailNotifierConfiguration.getBccRecipients().add("sixth@email.com , seventh@email.com; ;, ; ");
@@ -190,17 +191,17 @@ public class EmailFlowNotifierTest
         notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be eleven messages - one per addressee", messages.size() == 11);
+        assertEquals(11, messages.size(), "Should be eleven messages - one per addressee");
         for(WiserMessage message:wiser.getMessages())
         {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart)mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
+            assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -208,7 +209,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_null_toRecipients() throws MessagingException, IOException {
+    void test_successful_notifier_null_toRecipients() throws MessagingException, IOException {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setToRecipients(null);
 
@@ -218,17 +219,17 @@ public class EmailFlowNotifierTest
         notifier.invoke("env", "moduleName", "flowName", "stopped");
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 2);
+        assertEquals(2, messages.size(), "Should be three messages - one per addressee");
         for(WiserMessage message:wiser.getMessages())
         {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart)mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String)bodyPart.getContent();
-            Assert.assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
+            assertTrue(content.contains("Module[moduleName] Flow[flowName] is stopped"));
         }
     }
 
@@ -236,7 +237,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_no_ccRecipients()
+    void test_successful_notifier_no_ccRecipients()
     {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setCcRecipients(new ArrayList<String>());
@@ -251,7 +252,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_null_ccRecipients()
+    void test_successful_notifier_null_ccRecipients()
     {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setCcRecipients(null);
@@ -266,7 +267,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_no_bccRecipients()
+    void test_successful_notifier_no_bccRecipients()
     {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setBccRecipients(new ArrayList<String>());
@@ -281,7 +282,7 @@ public class EmailFlowNotifierTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_null_bccRecipients()
+    void test_successful_notifier_null_bccRecipients()
     {
         EmailNotifierConfiguration emailNotifierConfiguration = getConfiguration();
         emailNotifierConfiguration.setBccRecipients(null);

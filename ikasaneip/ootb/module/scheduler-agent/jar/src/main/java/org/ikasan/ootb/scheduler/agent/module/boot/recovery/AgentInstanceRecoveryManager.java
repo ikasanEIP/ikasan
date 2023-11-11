@@ -3,8 +3,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.recovery;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import javax.annotation.PostConstruct;
-
+import jakarta.annotation.PostConstruct;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;

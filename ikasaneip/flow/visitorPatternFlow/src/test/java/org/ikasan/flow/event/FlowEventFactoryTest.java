@@ -42,38 +42,41 @@ package org.ikasan.flow.event;
 
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.flow.FlowEvent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>FlowEventFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class FlowEventFactoryTest
+class FlowEventFactoryTest
 {
     /**
      * Test success FlowEventFactory flowEvent creation.
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void test_newEvent()
+    void test_newEvent()
     {
         long before = System.currentTimeMillis();
         EventFactory<FlowEvent<?,?>> eventFactory = new FlowEventFactory();
         FlowEvent flowEvent = eventFactory.newEvent("identifier", "original payload");
         long after = System.currentTimeMillis();
 
-        Assert.assertNotNull(flowEvent);
-        Assert.assertEquals("identifier", flowEvent.getIdentifier());
-        Assert.assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() <= after);
-        Assert.assertEquals("original payload", flowEvent.getPayload());
+        assertNotNull(flowEvent);
+        assertEquals("identifier", flowEvent.getIdentifier());
+        assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() <= after);
+        assertEquals("original payload", flowEvent.getPayload());
         
         flowEvent.setPayload("Im a new payload");
-        Assert.assertEquals("Im a new payload", flowEvent.getPayload());
+        assertEquals("Im a new payload", flowEvent.getPayload());
 
         flowEvent.setPayload(10);
-        Assert.assertEquals(10, flowEvent.getPayload());
+        assertEquals(10, flowEvent.getPayload());
     }
 
     /**
@@ -81,7 +84,7 @@ public class FlowEventFactoryTest
      */
     @Test
     @SuppressWarnings("unchecked")
-    public void test_replace()
+    void test_replace()
     {
         long before = System.currentTimeMillis();
         EventFactory<FlowEvent<?,?>> eventFactory = new FlowEventFactory();
@@ -92,9 +95,9 @@ public class FlowEventFactoryTest
 
         flowEvent.replace(replacementFlowEvent);
 
-        Assert.assertNotNull(flowEvent);
-        Assert.assertEquals("newId", flowEvent.getIdentifier());
-        Assert.assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() >= after);
-        Assert.assertEquals("new payload", flowEvent.getPayload());
+        assertNotNull(flowEvent);
+        assertEquals("newId", flowEvent.getIdentifier());
+        assertTrue(before <= flowEvent.getTimestamp() && flowEvent.getTimestamp() >= after);
+        assertEquals("new payload", flowEvent.getPayload());
     }
 }

@@ -157,8 +157,10 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                 boolean completedWithinTimeout = process.waitFor(configuration.getTimeout(), TimeUnit.MINUTES);
                 if (!completedWithinTimeout) {
                     process.destroy();
-                    LOGGER.error("Process was killed due to not finishing in the allowed time [{}]. Job Name [{}], " +
-                        "ContextInstanceId [{}], Timeout settings in minutes [{}] ", process,
+                    LOGGER.error("""
+                        Process was killed due to not finishing in the allowed time [{}]. Job Name [{}], \
+                        ContextInstanceId [{}], Timeout settings in minutes [{}] \
+                        """, process,
                         scheduledProcessEvent.getJobName(), scheduledProcessEvent.getContextInstanceId(), configuration.getTimeout());
 
                     scheduledProcessEvent.setReturnCode(DEFAULT_ERROR_RETURN_CODE); // Indicate it wasn't successful

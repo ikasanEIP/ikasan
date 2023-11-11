@@ -39,6 +39,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
+import jakarta.annotation.Resource;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
@@ -52,18 +53,19 @@ import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -74,14 +76,14 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test Sftp To JMS Flow.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -116,8 +118,8 @@ public class SftpChunkingToJmsFlowTest
 
     public MessageListenerVerifier messageListenerVerifier;
 
-    @Before
-    public void setup() throws IOException
+    @BeforeEach
+    void setup() throws IOException
     {
         FileTestUtil.deleteFile(new File(objectStoreDir));
         sftp.createDirectories("/source","/");
@@ -126,7 +128,8 @@ public class SftpChunkingToJmsFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp Chunking To Jms Flow"));
     }
 
-    @After public void teardown() throws  SQLException, IOException
+    @AfterEach
+    void teardown() throws  SQLException, IOException
     {
         sftp.deleteAllFilesAndDirectories();
         messageListenerVerifier.stop();
@@ -139,13 +142,13 @@ public class SftpChunkingToJmsFlowTest
 
     }
 
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
-    public void test_file_download() throws Exception
+    void test_file_download() throws Exception
     {
 
         // Upload data to fake SFTP
@@ -181,24 +184,24 @@ public class SftpChunkingToJmsFlowTest
 
         ActiveMQMapMessage mapMessage = (ActiveMQMapMessage) messageListenerVerifier.getCaptureResults().get(0);
         Object content = mapMessage.getContentMap().get("content");
-        Assert.assertTrue((content.toString()).startsWith("""
+        assertTrue((content.toString()).startsWith("""
             <?xml version="1.0" encoding="UTF-8" \
             standalone="yes"?><fileChunkHeader><chunkTimeStamp>\
             """));
 
 
-        Assert.assertTrue((content.toString()).endsWith("""
+        assertTrue((content.toString()).endsWith("""
             </chunkTimeStamp><clientId\
             >sftpToJmsFlow</clientId><fileName>bigTextFile\
             .txt</fileName><id>1</id><internalMd5Hash>7e7972ac876df6b7528eb183e811bc99</internalMd5Hash\
             ><sequenceLength>11</sequenceLength></fileChunkHeader>\
             """));
         FileChunkHeader header = fileChunkDao.load(1l);
-        Assert.assertEquals(Long.valueOf(11l),header.getSequenceLength());
-        Assert.assertEquals("bigTextFile.txt",header.getFileName());
+        assertEquals(Long.valueOf(11l),header.getSequenceLength());
+        assertEquals("bigTextFile.txt",header.getFileName());
 
         List<FileConstituentHandle> chunks = fileChunkDao.findChunks(header.getFileName(),header.getChunkTimeStamp(),header.getSequenceLength(),null);
-        Assert.assertEquals(11,chunks.size());
+        assertEquals(11,chunks.size());
     }
 
     private byte[] generateMassiveString()

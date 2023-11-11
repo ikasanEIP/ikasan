@@ -45,8 +45,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.*;
 
+import jakarta.annotation.Resource;
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
@@ -57,15 +58,12 @@ import org.ikasan.security.model.PolicyLinkType;
 import org.ikasan.security.model.Role;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Unit test for {@link SecurityService}
@@ -74,9 +72,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
-public class SecurityServiceTest
+@SpringJUnitConfig(classes = {SecurityConfiguration.class, TestImportConfig.class})
+class SecurityServiceTest
 {
 
  
@@ -89,7 +86,8 @@ public class SecurityServiceTest
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
      */
-    @Before public void setup()
+    @BeforeEach
+    void setup()
     {
         HashSet<Role> roles = new HashSet<Role>();
         HashSet<Policy> policies = new HashSet<Policy>();
@@ -192,58 +190,64 @@ public class SecurityServiceTest
         this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    @DirtiesContext
-    public void test_exception_null_dao_on_construction() 
+    @Test
+        @DirtiesContext
+    void test_exception_null_dao_on_construction()
     {
-        new SecurityServiceImpl(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SecurityServiceImpl(null);
+        });
     }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_get_principal_by_name() 
+    @Test
+        @DirtiesContext
+    void test_success_get_principal_by_name() 
     {
         IkasanPrincipal principal = this.xaSecurityService.findPrincipalByName("stewmi");
 
-        Assert.assertNotNull(principal);
+        assertNotNull(principal);
 
-        Assert.assertEquals(principal.getRoles().size(), 10);
+        assertEquals(10, principal.getRoles().size());
     }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_create_new_principal() 
+    @Test
+        @DirtiesContext
+    void test_success_create_new_principal() 
     {
         IkasanPrincipal principal = this.xaSecurityService.createNewPrincipal("stewmi2", "type");
 
         principal = this.xaSecurityService.findPrincipalByName("stewmi2");
 
-        Assert.assertNotNull(principal);
+        assertNotNull(principal);
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_create_new_principal_null_name() 
+    @Test
+        @DirtiesContext
+    void test_exception_create_new_principal_null_name()
     {
-        this.xaSecurityService.createNewPrincipal(null, "type");
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            this.xaSecurityService.createNewPrincipal(null, "type");
+        });
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_create_new_principal_null_type() 
+    @Test
+        @DirtiesContext
+    void test_exception_create_new_principal_null_type()
     {
-        this.xaSecurityService.createNewPrincipal("name", null);
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            this.xaSecurityService.createNewPrincipal("name", null);
+        });
     }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_add_role()
+    @Test
+        @DirtiesContext
+    void test_success_add_role()
     {
         IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
 
-        Assert.assertNotNull(principal);
+        assertNotNull(principal);
 
-        Assert.assertEquals(principal.getRoles().size(), 10);
+        assertEquals(10, principal.getRoles().size());
 
         Role role = new Role();
         role.setName("role_new");
@@ -269,43 +273,47 @@ public class SecurityServiceTest
 
         principal = this.xaSecurityDao.getPrincipalByName("stewmi");
 
-        Assert.assertNotNull(principal);
+        assertNotNull(principal);
 
-        Assert.assertEquals(principal.getRoles().size(), 11);
+        assertEquals(11, principal.getRoles().size());
     }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_create_new_role() 
+    @Test
+        @DirtiesContext
+    void test_success_create_new_role() 
     {
         Role role = this.xaSecurityService.createNewRole("testRole", "description");
 
-        Assert.assertNotNull(role);
+        assertNotNull(role);
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_create_new_role_null_name() 
+    @Test
+        @DirtiesContext
+    void test_exception_create_new_role_null_name()
     {
-        this.xaSecurityService.createNewRole(null, "description");
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            this.xaSecurityService.createNewRole(null, "description");
+        });
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_create_new_role_null_description() 
+    @Test
+        @DirtiesContext
+    void test_exception_create_new_role_null_description()
     {
-        this.xaSecurityService.createNewRole("role", null);
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            this.xaSecurityService.createNewRole("role", null);
+        });
     }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_remove_role()
+    @Test
+        @DirtiesContext
+    void test_success_remove_role()
     {
         IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
 
-        Assert.assertNotNull(principal);
+        assertNotNull(principal);
 
-        Assert.assertEquals(principal.getRoles().size(), 10);
+        assertEquals(10, principal.getRoles().size());
 
         Role role = new Role();
         role.setName("role_new");
@@ -316,123 +324,129 @@ public class SecurityServiceTest
 
         principal = this.xaSecurityDao.getPrincipalByName("stewmi");
 
-        Assert.assertNotNull(principal);
+        assertNotNull(principal);
 
-        Assert.assertEquals(principal.getRoles().size(), 0);
-    }
-
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_principal_no_name()
-    {
-        HashSet<Role> roles = new HashSet<Role>();
-        HashSet<Policy> policies = new HashSet<Policy>();
-
-        for(int i=0; i<10; i++)
-        {
-            Role role = new Role();
-            role.setName("role" + i);
-
-            for(int j=0; j<10; j++)
-            {
-                Policy policy = new Policy();
-                policy.setName("policy" + j + i);
-                this.xaSecurityDao.saveOrUpdatePolicy(policy);
-                policies.add(policy);
-            }
-
-            role.setPolicies(policies);
-            this.xaSecurityDao.saveOrUpdateRole(role);
-            roles.add(role);
-            policies = new HashSet<Policy>();
-        }
-
-        IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setType("type");
-        principal.setRoles(roles);
-
-        this.xaSecurityService.savePrincipal(principal);
-    }
-
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_principal_duplicate_name() 
-    {
-        IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setName("anotherPrincipal7");
-        principal.setType("type");
-
-        this.xaSecurityService.savePrincipal(principal);
+        assertEquals(0, principal.getRoles().size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_get_all_principals() 
+        @DirtiesContext
+    void test_exception_principal_no_name()
+    {
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            HashSet<Role> roles = new HashSet<Role>();
+            HashSet<Policy> policies = new HashSet<Policy>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Role role = new Role();
+                role.setName("role" + i);
+
+                for (int j = 0; j < 10; j++)
+                {
+                    Policy policy = new Policy();
+                    policy.setName("policy" + j + i);
+                    this.xaSecurityDao.saveOrUpdatePolicy(policy);
+                    policies.add(policy);
+                }
+
+                role.setPolicies(policies);
+                this.xaSecurityDao.saveOrUpdateRole(role);
+                roles.add(role);
+                policies = new HashSet<Policy>();
+            }
+
+            IkasanPrincipal principal = new IkasanPrincipal();
+            principal.setType("type");
+            principal.setRoles(roles);
+
+            this.xaSecurityService.savePrincipal(principal);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_exception_principal_duplicate_name()
+    {
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            IkasanPrincipal principal = new IkasanPrincipal();
+            principal.setName("anotherPrincipal7");
+            principal.setType("type");
+
+            this.xaSecurityService.savePrincipal(principal);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_get_all_principals() 
     {
         List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipals();
 
-        Assert.assertTrue(principals.size() == 8);
+        assertEquals(8, principals.size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_delete_principal()
+        @DirtiesContext
+    void test_delete_principal()
     {
         List<IkasanPrincipal> principals = this.xaSecurityDao.getAllPrincipals();
 
-        Assert.assertTrue(principals.size() == 8);
+        assertEquals(8, principals.size());
 
         this.xaSecurityService.deletePrincipal(principals.get(0));
 
         principals = this.xaSecurityDao.getAllPrincipals();
 
-        Assert.assertTrue(principals.size() == 7);
-    }
-
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_role_no_name()
-    {
-        HashSet<Role> roles = new HashSet<Role>();
-        HashSet<Policy> policies = new HashSet<Policy>();
-
-        for(int i=0; i<10; i++)
-        {
-            Role role = new Role();
-
-            for(int j=0; j<10; j++)
-            {
-                Policy policy = new Policy();
-                policy.setName("policy" + j + i);
-                this.xaSecurityDao.saveOrUpdatePolicy(policy);
-                policies.add(policy);
-            }
-
-            role.setPolicies(policies);
-            this.xaSecurityDao.saveOrUpdateRole(role);
-            roles.add(role);
-            policies = new HashSet<Policy>();
-        }
-
-        IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setType("type");
-        principal.setRoles(roles);
-
-        this.xaSecurityService.savePrincipal(principal);
+        assertEquals(7, principals.size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_get_all_roles() 
+        @DirtiesContext
+    void test_exception_role_no_name()
+    {
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            HashSet<Role> roles = new HashSet<Role>();
+            HashSet<Policy> policies = new HashSet<Policy>();
+
+            for (int i = 0; i < 10; i++)
+            {
+                Role role = new Role();
+
+                for (int j = 0; j < 10; j++)
+                {
+                    Policy policy = new Policy();
+                    policy.setName("policy" + j + i);
+                    this.xaSecurityDao.saveOrUpdatePolicy(policy);
+                    policies.add(policy);
+                }
+
+                role.setPolicies(policies);
+                this.xaSecurityDao.saveOrUpdateRole(role);
+                roles.add(role);
+                policies = new HashSet<Policy>();
+            }
+
+            IkasanPrincipal principal = new IkasanPrincipal();
+            principal.setType("type");
+            principal.setRoles(roles);
+
+            this.xaSecurityService.savePrincipal(principal);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_get_all_roles() 
     {
         List<Role> roles = this.xaSecurityService.getAllRoles();
 
-        Assert.assertTrue(roles.size() == 10);
+        assertEquals(10, roles.size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_delete_role()
+        @DirtiesContext
+    void test_delete_role()
     {
         Role role = new Role();
         role.setName("role_new");
@@ -454,101 +468,111 @@ public class SecurityServiceTest
 
         List<Role> roles = this.xaSecurityDao.getAllRoles();
 
-        Assert.assertTrue(roles.size() == 11);
+        assertEquals(11, roles.size());
 
         this.xaSecurityService.deleteRole(role);
 
         roles = this.xaSecurityDao.getAllRoles();
 
-        Assert.assertTrue(roles.size() == 10);
+        assertEquals(10, roles.size());
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_principal_policy_name() 
+    @Test
+        @DirtiesContext
+    void test_exception_principal_policy_name()
     {
-        Policy policy = new Policy();
-        policy.setName("policy11");
-        this.xaSecurityService.savePolicy(policy);
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            Policy policy = new Policy();
+            policy.setName("policy11");
+            this.xaSecurityService.savePolicy(policy);
+        });
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_policy_no_name()
+    @Test
+        @DirtiesContext
+    void test_exception_policy_no_name()
     {
-        HashSet<Role> roles = new HashSet<Role>();
-        HashSet<Policy> policies = new HashSet<Policy>();
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            HashSet<Role> roles = new HashSet<Role>();
+            HashSet<Policy> policies = new HashSet<Policy>();
 
-        for(int i=0; i<10; i++)
-        {
-            Role role = new Role();
-            role.setName("name");
-
-            for(int j=0; j<10; j++)
+            for (int i = 0; i < 10; i++)
             {
-                Policy policy = new Policy();
-                this.xaSecurityService.savePolicy(policy);
-                policies.add(policy);
+                Role role = new Role();
+                role.setName("name");
+
+                for (int j = 0; j < 10; j++)
+                {
+                    Policy policy = new Policy();
+                    this.xaSecurityService.savePolicy(policy);
+                    policies.add(policy);
+                }
+
+                role.setPolicies(policies);
+                this.xaSecurityDao.saveOrUpdateRole(role);
+                roles.add(role);
+                policies = new HashSet<Policy>();
             }
 
-            role.setPolicies(policies);
-            this.xaSecurityDao.saveOrUpdateRole(role);
-            roles.add(role);
-            policies = new HashSet<Policy>();
-        }
+            IkasanPrincipal principal = new IkasanPrincipal();
+            principal.setType("type");
+            principal.setRoles(roles);
 
-        IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setType("type");
-        principal.setRoles(roles);
-
-        this.xaSecurityService.savePrincipal(principal);
+            this.xaSecurityService.savePrincipal(principal);
+        });
     }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_create_new_policy() 
+    @Test
+        @DirtiesContext
+    void test_success_create_new_policy() 
     {
         Policy policy = this.xaSecurityService.createNewPolicy("testPolicy", "description");
 
-        Assert.assertNotNull(policy);
-    }
-
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_create_new_policy_null_name() 
-    {
-        this.xaSecurityService.createNewPolicy(null, "description");
-    }
-
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_create_new_policy_null_description() 
-    {
-        this.xaSecurityService.createNewPolicy("role", null);
-    }
-
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void test_exception_role_name() 
-    {
-        Role role = new Role();
-        role.setName("role1");
-
-        this.xaSecurityService.saveRole(role);
+        assertNotNull(policy);
     }
 
     @Test
-    @DirtiesContext
-    public void test_get_all_policies() 
+        @DirtiesContext
+    void test_exception_create_new_policy_null_name()
+    {
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            this.xaSecurityService.createNewPolicy(null, "description");
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_exception_create_new_policy_null_description()
+    {
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            this.xaSecurityService.createNewPolicy("role", null);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_exception_role_name()
+    {
+        assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
+            Role role = new Role();
+            role.setName("role1");
+
+            this.xaSecurityService.saveRole(role);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_get_all_policies() 
     {
         List<Policy> policies = this.xaSecurityService.getAllPolicies();
 
-        Assert.assertTrue(policies.size() == 100);
+        assertEquals(100, policies.size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_delete_policy() 
+        @DirtiesContext
+    void test_delete_policy() 
     {
         Policy policy = new Policy();
         policy.setName("blah");
@@ -557,149 +581,149 @@ public class SecurityServiceTest
 
         List<Policy> policies = this.xaSecurityDao.getAllPolicies();
 
-        Assert.assertTrue(policies.size() == 101);
+        assertEquals(101, policies.size());
 
         this.xaSecurityService.deletePolicy(policy);
 
         policies = this.xaSecurityDao.getAllPolicies();
 
-        Assert.assertTrue(policies.size() == 100);
+        assertEquals(100, policies.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_principal_with_role()
+        @DirtiesContext
+    void test_success_get_principal_with_role()
     {
     	List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipalsWithRole("role0");
-    	
-    	Assert.assertTrue(principals.size() == 8);
+
+        assertEquals(8, principals.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_principal_with_role_bad_role_name()
+        @DirtiesContext
+    void test_success_get_principal_with_role_bad_role_name()
     {
     	List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipalsWithRole("bad name");
-    	
-    	Assert.assertTrue(principals.size() == 0);
+
+        assertEquals(0, principals.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_principal_by_name_like()
+        @DirtiesContext
+    void test_success_get_principal_by_name_like()
     {    	
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalByNameLike("anotherPrincipal");
 
-    	Assert.assertTrue(principals.size() == 7);
+        assertEquals(7, principals.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_principal_by_name_like_bad_bname()
+        @DirtiesContext
+    void test_success_get_principal_by_name_like_bad_bname()
     {    	
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalByNameLike("bad name");
 
-    	Assert.assertTrue(principals.size() == 0);
+        assertEquals(0, principals.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_all_policy_link_types()
+        @DirtiesContext
+    void test_success_get_all_policy_link_types()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
 
-    	Assert.assertTrue(plts.size() == 3);
+        assertEquals(3, plts.size());
     }
- 
+
     @Test
-    @DirtiesContext
-    public void test_success_get_role_by_name_like()
+        @DirtiesContext
+    void test_success_get_role_by_name_like()
     {    	
     	List<Role> roles = this.xaSecurityService.getRoleByNameLike("role");
 
-    	Assert.assertTrue(roles.size() == 10);
+        assertEquals(10, roles.size());
     }
- 
+
     @Test
-    @DirtiesContext
-    public void test_success_get_policy_by_name_like()
+        @DirtiesContext
+    void test_success_get_policy_by_name_like()
     {    	
     	List<Policy> policies = this.xaSecurityService.getPolicyByNameLike("policy");
 
-    	Assert.assertTrue(policies.size() == 100);
+        assertEquals(100, policies.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_save_policy_link()
+        @DirtiesContext
+    void test_success_save_policy_link()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
     	PolicyLink policyLink = new PolicyLink(plts.get(0),Long.valueOf(1), "name");
     	
     	this.xaSecurityService.savePolicyLink(policyLink);
     	
-    	Assert.assertNotNull(policyLink.getId());
+    	assertNotNull(policyLink.getId());
     	
     	this.xaSecurityService.deletePolicyLink(policyLink);
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_policies_by_role()
+        @DirtiesContext
+    void test_success_get_policies_by_role()
     {    	
     	List<Policy> policies = this.xaSecurityService.getAllPoliciesWithRole("role1");
 
-    	Assert.assertTrue(policies.size() == 10);
+        assertEquals(10, policies.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_principal_by_names()
+        @DirtiesContext
+    void test_success_get_principal_by_names()
     {
     	ArrayList<String> names = new ArrayList<String>();
     	names.add("role1");
     	names.add("role2");
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalsByName(names);
 
-    	Assert.assertTrue(principals.size() == 8);
+        assertEquals(8, principals.size());
     }
-    
+
     @Test
-    @DirtiesContext
-    public void test_success_get_principal_by_names_empty_names()
+        @DirtiesContext
+    void test_success_get_principal_by_names_empty_names()
     {
     	ArrayList<String> names = new ArrayList<String>();
 
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalsByName(names);
-    	
-    	Assert.assertTrue(principals.size() == 0);
-    }
 
-    @Test 
-    @DirtiesContext
-    public void test_success_get_policy_by_name()
-    {
-        Policy policy = this.xaSecurityService.findPolicyByName("policy11");
-
-        Assert.assertNotNull(policy);
-
-        Assert.assertEquals(policy.getName(), "policy11");
-    }
-
-    @Test 
-    @DirtiesContext
-    public void test_success_get_role_by_name()
-    {
-        Role role = this.xaSecurityService.findRoleByName("role1");
-
-        Assert.assertNotNull(role);
-
-        Assert.assertEquals(role.getName(), "role1");
+        assertEquals(0, principals.size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_add_all_policies_to_role_with_different_policy_()
+        @DirtiesContext
+    void test_success_get_policy_by_name()
+    {
+        Policy policy = this.xaSecurityService.findPolicyByName("policy11");
+
+        assertNotNull(policy);
+
+        assertEquals("policy11", policy.getName());
+    }
+
+    @Test
+        @DirtiesContext
+    void test_success_get_role_by_name()
+    {
+        Role role = this.xaSecurityService.findRoleByName("role1");
+
+        assertNotNull(role);
+
+        assertEquals("role1", role.getName());
+    }
+
+    @Test
+        @DirtiesContext
+    void test_success_add_all_policies_to_role_with_different_policy_()
     {
         Role role = this.xaSecurityService.findRoleByName("role1");
 
@@ -721,8 +745,8 @@ public class SecurityServiceTest
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_confirm_deleting_role_does_not_delete_policies()
+        @DirtiesContext
+    void test_success_confirm_deleting_role_does_not_delete_policies()
     {
         Role role = this.xaSecurityService.findRoleByName("role1");
 
@@ -742,7 +766,7 @@ public class SecurityServiceTest
         List<Policy> policies2 = this.xaSecurityService.getAllPolicies();
 
         // Make sure deleting roles does not delete policies too.
-        Assert.assertEquals(policies.size(), policies2.size());
+        assertEquals(policies.size(), policies2.size());
     }
 
 }

@@ -42,9 +42,10 @@ package org.ikasan.endpoint.sftp.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
-import org.junit.Assert;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link SftpConsumerConfiguration}
@@ -52,162 +53,162 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-public class SftpConsumerAlternateConfigurationTest
+class SftpConsumerAlternateConfigurationTest
 {
     /**
      * Test sftpConfiguration bean defaults.
      */
     @Test
-    public void test_sftpConfiguration_defaults()
+    void test_sftpConfiguration_defaults()
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
 
-        Assert.assertNull(sftpConfiguration.getSourceDirectory());
-        Assert.assertNull(sftpConfiguration.getFilenamePattern());
-        Assert.assertNull(sftpConfiguration.getSourceDirectoryURLFactory());
-        Assert.assertTrue(sftpConfiguration.getFilterDuplicates().booleanValue());
-        Assert.assertTrue(sftpConfiguration.getFilterOnFilename().booleanValue());
-        Assert.assertTrue(sftpConfiguration.getFilterOnLastModifiedDate().booleanValue());
-        Assert.assertFalse(sftpConfiguration.getRenameOnSuccess().booleanValue());
-        Assert.assertNull(sftpConfiguration.getRenameOnSuccessExtension());
-        Assert.assertFalse(sftpConfiguration.getMoveOnSuccess().booleanValue());
-        Assert.assertNull(sftpConfiguration.getMoveOnSuccessNewPath());
-        Assert.assertFalse(sftpConfiguration.getChronological().booleanValue());
-        Assert.assertFalse(sftpConfiguration.getChunking().booleanValue());
-        Assert.assertEquals(Integer.valueOf(1048576), sftpConfiguration.getChunkSize());
-        Assert.assertFalse(sftpConfiguration.getChecksum().booleanValue());
-        Assert.assertEquals(Long.valueOf(120), sftpConfiguration.getMinAge());
-        Assert.assertFalse(sftpConfiguration.getDestructive().booleanValue());
-        Assert.assertEquals(Integer.valueOf(-1), sftpConfiguration.getMaxRows());
-        Assert.assertEquals(Integer.valueOf(-1), sftpConfiguration.getAgeOfFiles());
-        Assert.assertNull(sftpConfiguration.getClientID());
-        Assert.assertTrue(sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
-        Assert.assertEquals(String.valueOf("127.0.0.1"), sftpConfiguration.getRemoteHost());
-        Assert.assertEquals(String.valueOf("127.0.0.1"), sftpConfiguration.getAlternateRemoteHost());
-        Assert.assertNull(sftpConfiguration.getPrivateKeyFilename());
-        Assert.assertNull(sftpConfiguration.getAlternatePrivateKeyFilename());
-        Assert.assertEquals(Integer.valueOf(3), sftpConfiguration.getMaxRetryAttempts());
-        Assert.assertEquals(Integer.valueOf(3), sftpConfiguration.getAlternateMaxRetryAttempts());
-        Assert.assertEquals(Integer.valueOf(22), sftpConfiguration.getRemotePort());
-        Assert.assertEquals(Integer.valueOf(22), sftpConfiguration.getAlternateRemotePort());
-        Assert.assertNull(sftpConfiguration.getKnownHostsFilename());
-        Assert.assertNull(sftpConfiguration.getAlternateKnownHostsFilename());
-        Assert.assertNull(sftpConfiguration.getUsername());
-        Assert.assertNull(sftpConfiguration.getAlternateUsername());
-        Assert.assertNull(sftpConfiguration.getPassword());
-        Assert.assertNull(sftpConfiguration.getAlternatePassword());
-        Assert.assertEquals(Integer.valueOf(60000), sftpConfiguration.getConnectionTimeout());
-        Assert.assertEquals(Integer.valueOf(60000), sftpConfiguration.getAlternateConnectionTimeout());
+        assertNull(sftpConfiguration.getSourceDirectory());
+        assertNull(sftpConfiguration.getFilenamePattern());
+        assertNull(sftpConfiguration.getSourceDirectoryURLFactory());
+        assertTrue(sftpConfiguration.getFilterDuplicates().booleanValue());
+        assertTrue(sftpConfiguration.getFilterOnFilename().booleanValue());
+        assertTrue(sftpConfiguration.getFilterOnLastModifiedDate().booleanValue());
+        assertFalse(sftpConfiguration.getRenameOnSuccess().booleanValue());
+        assertNull(sftpConfiguration.getRenameOnSuccessExtension());
+        assertFalse(sftpConfiguration.getMoveOnSuccess().booleanValue());
+        assertNull(sftpConfiguration.getMoveOnSuccessNewPath());
+        assertFalse(sftpConfiguration.getChronological().booleanValue());
+        assertFalse(sftpConfiguration.getChunking().booleanValue());
+        assertEquals(Integer.valueOf(1048576), sftpConfiguration.getChunkSize());
+        assertFalse(sftpConfiguration.getChecksum().booleanValue());
+        assertEquals(Long.valueOf(120), sftpConfiguration.getMinAge());
+        assertFalse(sftpConfiguration.getDestructive().booleanValue());
+        assertEquals(Integer.valueOf(-1), sftpConfiguration.getMaxRows());
+        assertEquals(Integer.valueOf(-1), sftpConfiguration.getAgeOfFiles());
+        assertNull(sftpConfiguration.getClientID());
+        assertTrue(sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
+        assertEquals(String.valueOf("127.0.0.1"), sftpConfiguration.getRemoteHost());
+        assertEquals(String.valueOf("127.0.0.1"), sftpConfiguration.getAlternateRemoteHost());
+        assertNull(sftpConfiguration.getPrivateKeyFilename());
+        assertNull(sftpConfiguration.getAlternatePrivateKeyFilename());
+        assertEquals(Integer.valueOf(3), sftpConfiguration.getMaxRetryAttempts());
+        assertEquals(Integer.valueOf(3), sftpConfiguration.getAlternateMaxRetryAttempts());
+        assertEquals(Integer.valueOf(22), sftpConfiguration.getRemotePort());
+        assertEquals(Integer.valueOf(22), sftpConfiguration.getAlternateRemotePort());
+        assertNull(sftpConfiguration.getKnownHostsFilename());
+        assertNull(sftpConfiguration.getAlternateKnownHostsFilename());
+        assertNull(sftpConfiguration.getUsername());
+        assertNull(sftpConfiguration.getAlternateUsername());
+        assertNull(sftpConfiguration.getPassword());
+        assertNull(sftpConfiguration.getAlternatePassword());
+        assertEquals(Integer.valueOf(60000), sftpConfiguration.getConnectionTimeout());
+        assertEquals(Integer.valueOf(60000), sftpConfiguration.getAlternateConnectionTimeout());
     }
 
     /**
      * Test public getters and setters.
      */
     @Test
-    public void test_sftpConfiguration_mutators()
+    void test_sftpConfiguration_mutators()
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         
         sftpConfiguration.setSourceDirectory("sourceDirectory");
-        Assert.assertEquals("sourceDirectory", sftpConfiguration.getSourceDirectory());
+        assertEquals("sourceDirectory", sftpConfiguration.getSourceDirectory());
 
         sftpConfiguration.setFilenamePattern("filenamePattern");
-        Assert.assertEquals("filenamePattern", sftpConfiguration.getFilenamePattern());
+        assertEquals("filenamePattern", sftpConfiguration.getFilenamePattern());
 
         // TODO - find a way to test this mutator
         sftpConfiguration.setSourceDirectoryURLFactory(null);
-        Assert.assertNull("sourceDirectoryURLFactory", sftpConfiguration.getSourceDirectoryURLFactory());
+        assertNull(sftpConfiguration.getSourceDirectoryURLFactory(), "sourceDirectoryURLFactory");
 
         sftpConfiguration.setFilterDuplicates(Boolean.FALSE);
-        Assert.assertFalse("filterDuplicates", sftpConfiguration.getFilterDuplicates().booleanValue());
+        assertFalse(sftpConfiguration.getFilterDuplicates().booleanValue(), "filterDuplicates");
 
         sftpConfiguration.setFilterOnFilename(Boolean.FALSE);
-        Assert.assertFalse("filterOnFilename", sftpConfiguration.getFilterOnFilename().booleanValue());
+        assertFalse(sftpConfiguration.getFilterOnFilename().booleanValue(), "filterOnFilename");
 
         sftpConfiguration.setFilterOnLastModifiedDate(Boolean.FALSE);
-        Assert.assertFalse("filterOnLastModifiedDate", sftpConfiguration.getFilterOnLastModifiedDate().booleanValue());
+        assertFalse(sftpConfiguration.getFilterOnLastModifiedDate().booleanValue(), "filterOnLastModifiedDate");
 
         sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
-        Assert.assertTrue("renameOnSuccess", sftpConfiguration.getRenameOnSuccess().booleanValue());
+        assertTrue(sftpConfiguration.getRenameOnSuccess().booleanValue(), "renameOnSuccess");
 
         sftpConfiguration.setRenameOnSuccessExtension("renameOnSuccessExtension");
-        Assert.assertEquals("renameOnSuccessExtension", sftpConfiguration.getRenameOnSuccessExtension());
+        assertEquals("renameOnSuccessExtension", sftpConfiguration.getRenameOnSuccessExtension());
 
         sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
-        Assert.assertTrue("moveOnSuccess", sftpConfiguration.getMoveOnSuccess().booleanValue());
+        assertTrue(sftpConfiguration.getMoveOnSuccess().booleanValue(), "moveOnSuccess");
 
         sftpConfiguration.setMoveOnSuccessNewPath("moveOnSuccessNewPath");
-        Assert.assertEquals("moveOnSuccessNewPath", sftpConfiguration.getMoveOnSuccessNewPath());
+        assertEquals("moveOnSuccessNewPath", sftpConfiguration.getMoveOnSuccessNewPath());
 
         sftpConfiguration.setChronological(Boolean.TRUE);
-        Assert.assertTrue("chronological", sftpConfiguration.getChronological().booleanValue());
+        assertTrue(sftpConfiguration.getChronological().booleanValue(), "chronological");
 
         sftpConfiguration.setChunking(Boolean.TRUE);
-        Assert.assertTrue("chunking", sftpConfiguration.getChunking().booleanValue());
+        assertTrue(sftpConfiguration.getChunking().booleanValue(), "chunking");
 
         sftpConfiguration.setChunkSize(Integer.valueOf(10));
-        Assert.assertEquals("chunkSize", Integer.valueOf(10), sftpConfiguration.getChunkSize());
+        assertEquals(Integer.valueOf(10), sftpConfiguration.getChunkSize(), "chunkSize");
 
         sftpConfiguration.setChecksum(Boolean.TRUE);
-        Assert.assertTrue("checksum", sftpConfiguration.getChecksum().booleanValue());
+        assertTrue(sftpConfiguration.getChecksum().booleanValue(), "checksum");
 
         sftpConfiguration.setMinAge(Long.valueOf(10));
-        Assert.assertEquals("minAge", Long.valueOf(10), sftpConfiguration.getMinAge());
+        assertEquals(Long.valueOf(10), sftpConfiguration.getMinAge(), "minAge");
 
         sftpConfiguration.setDestructive(Boolean.TRUE);
-        Assert.assertTrue("destructive", sftpConfiguration.getDestructive().booleanValue());
+        assertTrue(sftpConfiguration.getDestructive().booleanValue(), "destructive");
 
         sftpConfiguration.setMaxRows(Integer.valueOf(10));
-        Assert.assertEquals("maxRows", Integer.valueOf(10), sftpConfiguration.getMaxRows());
+        assertEquals(Integer.valueOf(10), sftpConfiguration.getMaxRows(), "maxRows");
 
         sftpConfiguration.setAgeOfFiles(Integer.valueOf(10));
-        Assert.assertEquals("ageOfFiles", Integer.valueOf(10), sftpConfiguration.getAgeOfFiles());
+        assertEquals(Integer.valueOf(10), sftpConfiguration.getAgeOfFiles(), "ageOfFiles");
 
         sftpConfiguration.setClientID("clientID");
-        Assert.assertTrue("clientID", sftpConfiguration.getClientID().equals("clientID"));
+        assertEquals("clientID", sftpConfiguration.getClientID(), "clientID");
 
         sftpConfiguration.setCleanupJournalOnComplete(Boolean.FALSE);
-        Assert.assertFalse("cleanupJournalOnComplete", sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
+        assertFalse(sftpConfiguration.getCleanupJournalOnComplete().booleanValue(), "cleanupJournalOnComplete");
 
         sftpConfiguration.setRemoteHost("remoteHost");
-        Assert.assertTrue("remoteHost", sftpConfiguration.getRemoteHost().equals("remoteHost"));
+        assertEquals("remoteHost", sftpConfiguration.getRemoteHost(), "remoteHost");
         sftpConfiguration.setAlternateRemoteHost("alternateRemoteHost");
-        Assert.assertTrue("alternateRemoteHost", sftpConfiguration.getAlternateRemoteHost().equals("alternateRemoteHost"));
+        assertEquals("alternateRemoteHost", sftpConfiguration.getAlternateRemoteHost(), "alternateRemoteHost");
 
         sftpConfiguration.setPrivateKeyFilename("privateKeyFilename");
-        Assert.assertTrue("privateKeyFilename", sftpConfiguration.getPrivateKeyFilename().equals("privateKeyFilename"));
+        assertEquals("privateKeyFilename", sftpConfiguration.getPrivateKeyFilename(), "privateKeyFilename");
         sftpConfiguration.setAlternatePrivateKeyFilename("alernatePrivateKeyFilename");
-        Assert.assertTrue("alernatePrivateKeyFilename", sftpConfiguration.getAlternatePrivateKeyFilename().equals("alernatePrivateKeyFilename"));
+        assertEquals("alernatePrivateKeyFilename", sftpConfiguration.getAlternatePrivateKeyFilename(), "alernatePrivateKeyFilename");
 
         sftpConfiguration.setMaxRetryAttempts(Integer.valueOf(10));
-        Assert.assertEquals("maxRetryAttempts", Integer.valueOf(10), sftpConfiguration.getMaxRetryAttempts());
+        assertEquals(Integer.valueOf(10), sftpConfiguration.getMaxRetryAttempts(), "maxRetryAttempts");
         sftpConfiguration.setAlternateMaxRetryAttempts(Integer.valueOf(15));
-        Assert.assertEquals("alternateMaxRetryAttempts", Integer.valueOf(15), sftpConfiguration.getAlternateMaxRetryAttempts());
+        assertEquals(Integer.valueOf(15), sftpConfiguration.getAlternateMaxRetryAttempts(), "alternateMaxRetryAttempts");
 
         sftpConfiguration.setRemotePort(Integer.valueOf(21));
-        Assert.assertEquals("remotePort", Integer.valueOf(21), sftpConfiguration.getRemotePort());
+        assertEquals(Integer.valueOf(21), sftpConfiguration.getRemotePort(), "remotePort");
         sftpConfiguration.setAlternateRemotePort(Integer.valueOf(22));
-        Assert.assertEquals("alternateRemotePort", Integer.valueOf(22), sftpConfiguration.getAlternateRemotePort());
+        assertEquals(Integer.valueOf(22), sftpConfiguration.getAlternateRemotePort(), "alternateRemotePort");
 
         sftpConfiguration.setKnownHostsFilename("knownHostsFilename");
-        Assert.assertTrue("knownHostsFilename", sftpConfiguration.getKnownHostsFilename().equals("knownHostsFilename"));
+        assertEquals("knownHostsFilename", sftpConfiguration.getKnownHostsFilename(), "knownHostsFilename");
         sftpConfiguration.setAlternateKnownHostsFilename("alternateKnownHostsFilename");
-        Assert.assertTrue("alternateKnownHostsFilename", sftpConfiguration.getAlternateKnownHostsFilename().equals("alternateKnownHostsFilename"));
+        assertEquals("alternateKnownHostsFilename", sftpConfiguration.getAlternateKnownHostsFilename(), "alternateKnownHostsFilename");
 
         sftpConfiguration.setUsername("username");
-        Assert.assertTrue("username", sftpConfiguration.getUsername().equals("username"));
+        assertEquals("username", sftpConfiguration.getUsername(), "username");
         sftpConfiguration.setAlternateUsername("alternateUsername");
-        Assert.assertTrue("alternateUsername", sftpConfiguration.getAlternateUsername().equals("alternateUsername"));
+        assertEquals("alternateUsername", sftpConfiguration.getAlternateUsername(), "alternateUsername");
 
         sftpConfiguration.setPassword("password");
-        Assert.assertTrue("password", sftpConfiguration.getPassword().equals("password"));
+        assertEquals("password", sftpConfiguration.getPassword(), "password");
         sftpConfiguration.setAlternatePassword("alernatePassword");
-        Assert.assertTrue("alernatePassword", sftpConfiguration.getAlternatePassword().equals("alernatePassword"));
+        assertEquals("alernatePassword", sftpConfiguration.getAlternatePassword(), "alernatePassword");
 
         sftpConfiguration.setConnectionTimeout(Integer.valueOf(1500));
-        Assert.assertEquals("connectionTimeout", Integer.valueOf(1500), sftpConfiguration.getConnectionTimeout());
+        assertEquals(Integer.valueOf(1500), sftpConfiguration.getConnectionTimeout(), "connectionTimeout");
         sftpConfiguration.setAlternateConnectionTimeout(Integer.valueOf(1501));
-        Assert.assertEquals("alternateConnectionTimeout", Integer.valueOf(1501), sftpConfiguration.getAlternateConnectionTimeout());
+        assertEquals(Integer.valueOf(1501), sftpConfiguration.getAlternateConnectionTimeout(), "alternateConnectionTimeout");
     }
 
     /**
@@ -215,9 +216,9 @@ public class SftpConsumerAlternateConfigurationTest
      *
      **/
     @Test
-    public void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
+    void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
     {
-        Assert.assertTrue("Configuration doesnt implement IsValidationAware", new SftpConsumerAlternateConfiguration() instanceof IsValidationAware);
+        assertTrue(new SftpConsumerAlternateConfiguration() instanceof IsValidationAware, "Configuration doesnt implement IsValidationAware");
     }
 
     /**
@@ -225,55 +226,61 @@ public class SftpConsumerAlternateConfigurationTest
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_sftpConfiguration_validate_success() throws InvalidConfigurationException
+    void test_sftpConfiguration_validate_success() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setCronExpression("0/5 * * * * ?");
         sftpConfiguration.validate();
     }
-    
+
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of destructive and renameOnSuccess being true.
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
+    @Test
+    void test_sftpConfiguration_validate_failed_renameOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
-        SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
-        sftpConfiguration.setCronExpression("0/5 * * * * ?");
-        sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
-        sftpConfiguration.setDestructive(Boolean.TRUE);
-        sftpConfiguration.validate();
+        assertThrows(InvalidConfigurationException.class, () -> {
+            SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
+            sftpConfiguration.setCronExpression("0/5 * * * * ?");
+            sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
+            sftpConfiguration.setDestructive(Boolean.TRUE);
+            sftpConfiguration.validate();
+        });
     }
-    
+
     /**
      * Test property failed validate invocation based on mutually exclusive properties
      * of moveOnSuccess and renameOnSuccess being true.
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidConfigurationException
+    @Test
+    void test_sftpConfiguration_validate_failed_moveOnSuccess_and_renameOnSuccess_both_true() throws InvalidConfigurationException
     {
-        SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
-        sftpConfiguration.setCronExpression("0/5 * * * * ?");
-        sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
-        sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
-        sftpConfiguration.validate();
+        assertThrows(InvalidConfigurationException.class, () -> {
+            SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
+            sftpConfiguration.setCronExpression("0/5 * * * * ?");
+            sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
+            sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
+            sftpConfiguration.validate();
+        });
     }
-    
+
     /**
      * Test property failed validate invocation based a missing property when
      * of renameOnSuccess is true and renameOnSuccessExtension is missing.
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_sftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidConfigurationException
+    @Test
+    void test_sftpConfiguration_validate_failed_renameOnSuccess_and_renameOnSuccessExtension_null() throws InvalidConfigurationException
     {
-        SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
-        sftpConfiguration.setCronExpression("0/5 * * * * ?");
-        sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
-        sftpConfiguration.validate();
+        assertThrows(InvalidConfigurationException.class, () -> {
+            SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
+            sftpConfiguration.setCronExpression("0/5 * * * * ?");
+            sftpConfiguration.setRenameOnSuccess(Boolean.TRUE);
+            sftpConfiguration.validate();
+        });
     }
 
     /**
@@ -281,14 +288,16 @@ public class SftpConsumerAlternateConfigurationTest
      * of moveOnSuccess is true and destructive is true.
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
+    @Test
+    void test_sftpConfiguration_validate_failed_moveOnSuccess_and_destructive_both_true() throws InvalidConfigurationException
     {
-        SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
-        sftpConfiguration.setCronExpression("0/5 * * * * ?");
-        sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
-        sftpConfiguration.setDestructive(Boolean.TRUE);
-        sftpConfiguration.validate();
+        assertThrows(InvalidConfigurationException.class, () -> {
+            SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
+            sftpConfiguration.setCronExpression("0/5 * * * * ?");
+            sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
+            sftpConfiguration.setDestructive(Boolean.TRUE);
+            sftpConfiguration.validate();
+        });
     }
 
     /**
@@ -296,13 +305,15 @@ public class SftpConsumerAlternateConfigurationTest
      * of moveOnSuccess is true and moveOnSuccessNewPath is missing.
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
-    @Test(expected = InvalidConfigurationException.class)
-    public void test_sftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidConfigurationException
+    @Test
+    void test_sftpConfiguration_validate_failed_moveOnSuccess_and_moveOnSuccessNewPath_null() throws InvalidConfigurationException
     {
-        SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
-        sftpConfiguration.setCronExpression("0/5 * * * * ?");
-        sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
-        sftpConfiguration.validate();
+        assertThrows(InvalidConfigurationException.class, () -> {
+            SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
+            sftpConfiguration.setCronExpression("0/5 * * * * ?");
+            sftpConfiguration.setMoveOnSuccess(Boolean.TRUE);
+            sftpConfiguration.validate();
+        });
     }
 
     /**
@@ -310,7 +321,7 @@ public class SftpConsumerAlternateConfigurationTest
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_sftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidConfigurationException
+    void test_sftpConfiguration_validate_success_renameOnSuccess_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setCronExpression("0/5 * * * * ?");
@@ -324,7 +335,7 @@ public class SftpConsumerAlternateConfigurationTest
      * @throws InvalidConfigurationException if configuration instance is invalid
      */
     @Test
-    public void test_sftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidConfigurationException
+    void test_sftpConfiguration_validate_success_moveOnSuccess_true() throws InvalidConfigurationException
     {
         SftpConsumerAlternateConfiguration sftpConfiguration = new SftpConsumerAlternateConfiguration();
         sftpConfiguration.setCronExpression("0/5 * * * * ?");

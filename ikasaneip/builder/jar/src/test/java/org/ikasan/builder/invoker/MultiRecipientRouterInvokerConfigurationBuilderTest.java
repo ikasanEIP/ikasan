@@ -41,33 +41,34 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>MultiRecipientRouterInvokerConfigurationBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class MultiRecipientRouterInvokerConfigurationBuilderTest
+class MultiRecipientRouterInvokerConfigurationBuilderTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void MultiRecipientRouterInvokerConfigurationBuilder_test_properties_setters()
+    void MultiRecipientRouterInvokerConfigurationBuilder_test_properties_setters()
     {
         MultiRecipientRouterInvokerConfigurationBuilder mrricb = new MultiRecipientRouterInvokerConfigurationBuilder(new MultiRecipientRouterInvokerConfiguration());
 
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should have 4 properties", TestUtils.getFields(MultiRecipientRouterInvokerConfiguration.class).size() == 4);
-        Assert.assertFalse("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withDynamicConfiguration(false).build().isDynamicConfiguration());
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withDynamicConfiguration(true).build().isDynamicConfiguration());
-        Assert.assertFalse("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withCloneEventPerRoute(false).build().isCloneEventPerRoute());
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withCloneEventPerRoute(true).build().isCloneEventPerRoute());
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be true", mrricb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
-        Assert.assertTrue("MultiRecipientRouterInvokerConfiguration should be false", mrricb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+        assertEquals(4, TestUtils.getFields(MultiRecipientRouterInvokerConfiguration.class).size(), "MultiRecipientRouterInvokerConfiguration should have 4 properties");
+        assertFalse(mrricb.withDynamicConfiguration(false).build().isDynamicConfiguration(), "MultiRecipientRouterInvokerConfiguration should be false");
+        assertTrue(mrricb.withDynamicConfiguration(true).build().isDynamicConfiguration(), "MultiRecipientRouterInvokerConfiguration should be true");
+        assertFalse(mrricb.withCloneEventPerRoute(false).build().isCloneEventPerRoute(), "MultiRecipientRouterInvokerConfiguration should be false");
+        assertTrue(mrricb.withCloneEventPerRoute(true).build().isCloneEventPerRoute(), "MultiRecipientRouterInvokerConfiguration should be true");
+        assertTrue(mrricb.withCaptureMetrics(true).build().getCaptureMetrics(), "MultiRecipientRouterInvokerConfiguration should be true");
+        assertFalse(mrricb.withCaptureMetrics(false).build().getCaptureMetrics(), "MultiRecipientRouterInvokerConfiguration should be false");
+        assertTrue(mrricb.withSnapMetricsEvent(true).build().getSnapEvent(), "MultiRecipientRouterInvokerConfiguration should be true");
+        assertFalse(mrricb.withSnapMetricsEvent(false).build().getSnapEvent(), "MultiRecipientRouterInvokerConfiguration should be false");
 
     }
 

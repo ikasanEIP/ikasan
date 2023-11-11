@@ -45,14 +45,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.naming.Reference;
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionSpec;
-import javax.resource.cci.RecordFactory;
-import javax.resource.cci.ResourceAdapterMetaData;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
+import jakarta.resource.cci.ConnectionSpec;
+import jakarta.resource.cci.RecordFactory;
+import jakarta.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnectionFactory;
 import java.io.Serializable;
 
 /**
@@ -63,7 +63,7 @@ import java.io.Serializable;
  * 
  * @author Ikasan Development Team
  */
-public abstract class EISConnectionFactoryImpl implements EISConnectionFactory, Serializable, javax.resource.Referenceable
+public abstract class EISConnectionFactoryImpl implements EISConnectionFactory, Serializable, jakarta.resource.Referenceable
 {
     /** SerialVersion */
     private static final long serialVersionUID = 1L;

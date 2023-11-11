@@ -40,34 +40,34 @@
  */
 package org.ikasan.connector.base.command;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test the ExecutionOutput class
  * 
  * @author Ikasan Development Team
  */
-public class ExecutionOutputTest
+class ExecutionOutputTest
 {
 
     /**
      * Test the constructor
      */
     @Test
-    public void testConstructor(){
+    void testConstructor(){
         
         String value = "blah";
         ExecutionOutput output = new ExecutionOutput(value);
         
         assertEquals(value, output.getResult());
-        assertNull(value, output.getResultList());
+        assertNull(output.getResultList(), value);
         
         List<String> list= new ArrayList<String>();
         

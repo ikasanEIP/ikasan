@@ -49,7 +49,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import javax.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 

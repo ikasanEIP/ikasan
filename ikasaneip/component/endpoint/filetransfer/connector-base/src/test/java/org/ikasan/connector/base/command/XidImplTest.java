@@ -40,21 +40,21 @@
  */
 package org.ikasan.connector.base.command;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 
 
 import org.jmock.Expectations;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.jmock.Mockery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-
-import static org.junit.Assert.assertEquals;
 /**
  * Test class for XidImpl 
  * @author Ikasan Development Team
  *
  */
-public class XidImplTest
+class XidImplTest
 {
     /**
      * arbitrary global transaction id
@@ -70,20 +70,20 @@ public class XidImplTest
      * arbitrary format id
      */
     int formatId = 99;
-    
-    
+
+
     /**
      * tests the constructor
      */
     @Test
-    public void testConstructor_ByteArrayByteArrayInt()
+    void testConstructor_ByteArrayByteArrayInt()
     {
 
         XidImpl xidImpl = new XidImpl(globalTransactionId, branchQualifier, formatId);
         
-        assertEquals("first argument of constructor should set the global transaction id", globalTransactionId, xidImpl.getGlobalTransactionId());
-        assertEquals("second argument of constructor should set the branch qualifier ", branchQualifier, xidImpl.getBranchQualifier());
-        assertEquals("third argument of constructor should set the formatId ", formatId, xidImpl.getFormatId());
+        assertEquals(globalTransactionId, xidImpl.getGlobalTransactionId(), "first argument of constructor should set the global transaction id");
+        assertEquals(branchQualifier, xidImpl.getBranchQualifier(), "second argument of constructor should set the branch qualifier ");
+        assertEquals(formatId, xidImpl.getFormatId(), "third argument of constructor should set the formatId ");
 
     }
 
@@ -91,7 +91,7 @@ public class XidImplTest
      * tests the constructor
      */
     @Test
-    public void testConstructor_Xid()
+    void testConstructor_Xid()
     {
        Mockery interfaceMockery = new Mockery();
        final Xid otherXid = interfaceMockery.mock(Xid.class);
@@ -112,9 +112,9 @@ public class XidImplTest
        
        XidImpl xidImpl = new XidImpl(otherXid);
        
-       assertEquals("new XidImp global transaction id should be that of constructor argument", otherXid.getGlobalTransactionId(), xidImpl.getGlobalTransactionId());
-       assertEquals("new XidImp branch qualifier should be that of constructor argument", otherXid.getBranchQualifier(), xidImpl.getBranchQualifier());
-       assertEquals("new XidImp format id should be that of constructor argument", otherXid.getFormatId(), xidImpl.getFormatId());
+       assertEquals(otherXid.getGlobalTransactionId(), xidImpl.getGlobalTransactionId(), "new XidImp global transaction id should be that of constructor argument");
+       assertEquals(otherXid.getBranchQualifier(), xidImpl.getBranchQualifier(), "new XidImp branch qualifier should be that of constructor argument");
+       assertEquals(otherXid.getFormatId(), xidImpl.getFormatId(), "new XidImp format id should be that of constructor argument");
 
        
     }

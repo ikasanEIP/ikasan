@@ -50,20 +50,19 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.joda.time.DateTimeUtils;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.File;
 import java.net.URISyntaxException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * @author Ikasan Development Team
  */
-public class RetrieveFileCommandTest
+class RetrieveFileCommandTest
 {
 
     /**
@@ -71,7 +70,7 @@ public class RetrieveFileCommandTest
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
     @Test
-    public void testConstructor_FalseAllFlags()
+    void testConstructor_FalseAllFlags()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -90,10 +89,10 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertNull("When moveOnSuccess, renameOnSuccess, and destructive are all false, no exception should be thrown.", exception); //$NON-NLS-1$
-        assertEquals("The destructive flag is expected to be false.", command.isDestructive(), destructive);//$NON-NLS-1$
-        assertEquals("The renameOnSuccess flag is expected to be false.", command.isRenameOnSuccess(), rename);//$NON-NLS-1$
-        assertEquals("The moveOnSuccess flag is expected to be false.", command.isMoveOnSuccess(), move);//$NON-NLS-1$
+        assertNull(exception, "When moveOnSuccess, renameOnSuccess, and destructive are all false, no exception should be thrown."); //$NON-NLS-1$
+        assertEquals(command.isDestructive(), destructive, "The destructive flag is expected to be false.");//$NON-NLS-1$
+        assertEquals(command.isRenameOnSuccess(), rename, "The renameOnSuccess flag is expected to be false.");//$NON-NLS-1$
+        assertEquals(command.isMoveOnSuccess(), move, "The moveOnSuccess flag is expected to be false.");//$NON-NLS-1$
     }
 
     /**
@@ -101,7 +100,7 @@ public class RetrieveFileCommandTest
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
     @Test
-    public void testConstructor_TrueRename()
+    void testConstructor_TrueRename()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -120,10 +119,10 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertNull("When only renameOnSuccess is set to true, no exception should be thrown.", exception); //$NON-NLS-1$
-        assertEquals("The destructive flag is expected to be false.", command.isDestructive(), destructive);//$NON-NLS-1$
-        assertEquals("The renameOnSuccess flag is expected to be true.", command.isRenameOnSuccess(), rename);//$NON-NLS-1$
-        assertEquals("The moveOnSuccess flag is expected to be false.", command.isMoveOnSuccess(), move);//$NON-NLS-1$
+        assertNull(exception, "When only renameOnSuccess is set to true, no exception should be thrown."); //$NON-NLS-1$
+        assertEquals(command.isDestructive(), destructive, "The destructive flag is expected to be false.");//$NON-NLS-1$
+        assertEquals(command.isRenameOnSuccess(), rename, "The renameOnSuccess flag is expected to be true.");//$NON-NLS-1$
+        assertEquals(command.isMoveOnSuccess(), move, "The moveOnSuccess flag is expected to be false.");//$NON-NLS-1$
     }
 
     /**
@@ -131,7 +130,7 @@ public class RetrieveFileCommandTest
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
     @Test
-    public void testConstructor_TrueDestructive()
+    void testConstructor_TrueDestructive()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -150,10 +149,10 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertNull("When only destructive is set to true, no exception should be thrown.", exception); //$NON-NLS-1$
-        assertEquals("The destructive flag is expected to be true.", command.isDestructive(), destructive);//$NON-NLS-1$
-        assertEquals("The renameOnSuccess flag is expected to be false.", command.isRenameOnSuccess(), rename);//$NON-NLS-1$
-        assertEquals("The moveOnSuccess flag is expected to be false.", command.isMoveOnSuccess(), move);//$NON-NLS-1$
+        assertNull(exception, "When only destructive is set to true, no exception should be thrown."); //$NON-NLS-1$
+        assertEquals(command.isDestructive(), destructive, "The destructive flag is expected to be true.");//$NON-NLS-1$
+        assertEquals(command.isRenameOnSuccess(), rename, "The renameOnSuccess flag is expected to be false.");//$NON-NLS-1$
+        assertEquals(command.isMoveOnSuccess(), move, "The moveOnSuccess flag is expected to be false.");//$NON-NLS-1$
     }
 
     /**
@@ -161,7 +160,7 @@ public class RetrieveFileCommandTest
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
     @Test
-    public void testConstructor_TrueMove()
+    void testConstructor_TrueMove()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -180,10 +179,10 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertNull("When only moveOnSuccess is set to true, no exception should be thrown.", exception); //$NON-NLS-1$
-        assertEquals("The destructive flag is expected to be false.", command.isDestructive(), destructive);//$NON-NLS-1$
-        assertEquals("The renameOnSuccess flag is expected to be false.", command.isRenameOnSuccess(), rename);//$NON-NLS-1$
-        assertEquals("The moveOnSuccess flag is expected to be true.", command.isMoveOnSuccess(), move);//$NON-NLS-1$
+        assertNull(exception, "When only moveOnSuccess is set to true, no exception should be thrown."); //$NON-NLS-1$
+        assertEquals(command.isDestructive(), destructive, "The destructive flag is expected to be false.");//$NON-NLS-1$
+        assertEquals(command.isRenameOnSuccess(), rename, "The renameOnSuccess flag is expected to be false.");//$NON-NLS-1$
+        assertEquals(command.isMoveOnSuccess(), move, "The moveOnSuccess flag is expected to be true.");//$NON-NLS-1$
     }
 
     /**
@@ -191,7 +190,7 @@ public class RetrieveFileCommandTest
      * This path is expected to not throw any exceptions and successfully create a RetrieveFileCommand object
      */
     @Test
-    public void testConstructor_TrueRenameAndMoveAndDestructive()
+    void testConstructor_TrueRenameAndMoveAndDestructive()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -211,8 +210,8 @@ public class RetrieveFileCommandTest
             exception = e;
         }
         assertNotNull(
-                "When moveOnSuccess, renameOnSuccess, and destructive are all true,an IllegalArgumentException should be thrown.",
-                exception); //$NON-NLS-1$
+                exception,
+                "When moveOnSuccess, renameOnSuccess, and destructive are all true,an IllegalArgumentException should be thrown."); //$NON-NLS-1$
     }
 
     /**
@@ -220,7 +219,7 @@ public class RetrieveFileCommandTest
      * Expected to throw an IllegalArgumentException.
      */
     @Test
-    public void testConstructor_RenameNullextension()
+    void testConstructor_RenameNullextension()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -239,7 +238,7 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertTrue(exception.getMessage().equals("renameExtension has not been configured.")); //$NON-NLS-1$
+        assertEquals("renameExtension has not been configured.", exception.getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -247,7 +246,7 @@ public class RetrieveFileCommandTest
      * Expected to throw an IllegalArgumentException.
      */
     @Test
-    public void testConstructor_MoveNullNewPath()
+    void testConstructor_MoveNullNewPath()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -266,7 +265,7 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertTrue(exception.getMessage().equals("moveOnSuccessNewPath has not been configured.")); //$NON-NLS-1$
+        assertEquals("moveOnSuccessNewPath has not been configured.", exception.getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -274,7 +273,7 @@ public class RetrieveFileCommandTest
      * Expected to throw an IllegalArgumentException
      */
     @Test
-    public void testConstructor_TrueMoveAndRename()
+    void testConstructor_TrueMoveAndRename()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -293,7 +292,7 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertTrue(exception.getMessage().equals("Moving the file and renaming it are mutually exclusive.")); //$NON-NLS-1$
+        assertEquals("Moving the file and renaming it are mutually exclusive.", exception.getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -301,7 +300,7 @@ public class RetrieveFileCommandTest
      * Expected to throw an IllegalArgumentExcepton
      */
     @Test
-    public void testConstructor_TrueMoveAndDestrucive()
+    void testConstructor_TrueMoveAndDestrucive()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -320,7 +319,7 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertTrue(exception.getMessage().equals("Moving the file and Get Destructive are mutually exclusive.")); //$NON-NLS-1$
+        assertEquals("Moving the file and Get Destructive are mutually exclusive.", exception.getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -328,7 +327,7 @@ public class RetrieveFileCommandTest
      * Expected to throw an IllegalArgumentException.
      */
     @Test
-    public void testConstructor_TrueRenameAndDestrucive()
+    void testConstructor_TrueRenameAndDestrucive()
     {
         Mockery interfaceMockery = new Mockery();
         final BaseFileTransferDao dao = interfaceMockery.mock(BaseFileTransferDao.class);
@@ -347,7 +346,7 @@ public class RetrieveFileCommandTest
         {
             exception = e;
         }
-        assertTrue(exception.getMessage().equals("RenameOnSuccess and Get Destructive are mutually exclusive.")); //$NON-NLS-1$
+        assertEquals("RenameOnSuccess and Get Destructive are mutually exclusive.", exception.getMessage()); //$NON-NLS-1$
     }
 
     /**
@@ -359,8 +358,8 @@ public class RetrieveFileCommandTest
      * @throws URISyntaxException -
      */
     @Test
-    public void testExecute() throws ResourceException, ClientCommandCdException,
-            ClientCommandGetException, URISyntaxException
+    void testExecute() throws ResourceException, ClientCommandCdException,
+        ClientCommandGetException, URISyntaxException
     {
         Mockery context = new Mockery()
         {
@@ -396,9 +395,8 @@ public class RetrieveFileCommandTest
         // create the command
         RetrieveFileCommand command = new RetrieveFileCommand(dao,
              false, null, false, null, false);
-        assertEquals("command state should be initialised", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.INITIALISED_STATE.getName(), command
-                .getState());
+        assertEquals(AbstractTransactionalResourceCommand.INITIALISED_STATE.getName(), command
+                .getState(), "command state should be initialised");
         //create the ExecutionContext
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
@@ -409,11 +407,10 @@ public class RetrieveFileCommandTest
         // execute the command
         ExecutionOutput output = command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         BaseFileTransferMappedRecord result = (BaseFileTransferMappedRecord) output.getResult();
-        assertNotNull("result should not be null", result); //$NON-NLS-1$
-        assertEquals("result should be file defined above", file, result); //$NON-NLS-1$
-        assertEquals("command state should be executed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
-                .getState());
+        assertNotNull(result, "result should not be null"); //$NON-NLS-1$
+        assertEquals(file, result, "result should be file defined above"); //$NON-NLS-1$
+        assertEquals(AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
+                .getState(), "command state should be executed");
     }
 
     /**
@@ -426,10 +423,10 @@ public class RetrieveFileCommandTest
      * @throws ClientCommandRenameException -
      */
     @Test
-    public void testCommit_Rename() throws
-            ResourceException, ClientCommandCdException,
-            ClientCommandGetException, URISyntaxException,
-            ClientCommandRenameException
+    void testCommit_Rename() throws
+        ResourceException, ClientCommandCdException,
+        ClientCommandGetException, URISyntaxException,
+        ClientCommandRenameException
     {
         Mockery context = new Mockery()
         {
@@ -484,17 +481,15 @@ public class RetrieveFileCommandTest
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
 
-        assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
+        assertEquals(platformFriendly(srcPath), command.getSourcePath(), "source path stored in command should match that from the list entry"); //$NON-NLS-1$
 
-        assertEquals("command state should be executed", //$NON-NLS-1$
-                AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
-                        .getState());
+        assertEquals(AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
+                        .getState(), "command state should be executed");
         // commit the command
         command.commit();
 
-        assertEquals("command state should be committed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.COMPLETED_COMMITTING.getName(), command
-                .getState());
+        assertEquals(AbstractTransactionalResourceCommand.COMPLETED_COMMITTING.getName(), command
+                .getState(), "command state should be committed");
     }
 
     /**
@@ -504,7 +499,7 @@ public class RetrieveFileCommandTest
 		return new File(path).getPath();
 	}
 
-	/**
+    /**
      * Tests that the commit function works correctly with moving the file.
      *
      * @throws ResourceException -
@@ -514,7 +509,7 @@ public class RetrieveFileCommandTest
      * @throws ClientCommandRenameException -
      */
     @Test
-    public void testCommit_Move() throws
+    void testCommit_Move() throws
         ResourceException, ClientCommandCdException,
         ClientCommandGetException, URISyntaxException,
         ClientCommandRenameException
@@ -568,15 +563,13 @@ public class RetrieveFileCommandTest
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
 
-        assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
+        assertEquals(platformFriendly(srcPath), command.getSourcePath(), "source path stored in command should match that from the list entry"); //$NON-NLS-1$
 
-        assertEquals("command state should be executed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command.getState());
+        assertEquals(AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command.getState(), "command state should be executed");
         // commit the command
         command.commit();
 
-        assertEquals("command state should be committed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.COMPLETED_COMMITTING.getName(), command.getState());
+        assertEquals(AbstractTransactionalResourceCommand.COMPLETED_COMMITTING.getName(), command.getState(), "command state should be committed");
     }
 
     /**
@@ -589,10 +582,10 @@ public class RetrieveFileCommandTest
      * @throws ClientCommandRenameException -
      */
     @Test
-    public void testRollback() throws
-            ResourceException, ClientCommandCdException,
-            ClientCommandGetException, URISyntaxException,
-            ClientCommandRenameException
+    void testRollback() throws
+        ResourceException, ClientCommandCdException,
+        ClientCommandGetException, URISyntaxException,
+        ClientCommandRenameException
     {
         Mockery context = new Mockery()
         {
@@ -645,56 +638,56 @@ public class RetrieveFileCommandTest
         // execute the command
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
 
-        assertEquals("source path stored in command should match that from the list entry", platformFriendly(srcPath), command.getSourcePath()); //$NON-NLS-1$
+        assertEquals(platformFriendly(srcPath), command.getSourcePath(), "source path stored in command should match that from the list entry"); //$NON-NLS-1$
 
         command.rollback();
 
-        assertEquals("command state should be rolledback", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.ROLLED_BACK_STATE.getName(),
-            command.getState());
+        assertEquals(AbstractTransactionalResourceCommand.ROLLED_BACK_STATE.getName(),
+            command.getState(),
+            "command state should be rolledback");
     }
 
     @Test
-    public void testExpandExtension_yyyyMMdd()
+    void testExpandExtension_yyyyMMdd()
     {
         RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done./yyyyMMdd/", false, null, false);
         DateTimeUtils.setCurrentMillisFixed(1450177200000L);
         String extension = retrieveFileCommand.expandRenameExtension();
-        Assert.assertEquals(".done.20151215", extension);
+        assertEquals(".done.20151215", extension);
     }
 
     @Test
-    public void testExpandExtension_yyyyMMdd_in_bst()
+    void testExpandExtension_yyyyMMdd_in_bst()
     {
         RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done./yyyyMMdd/", false, null, false);
         DateTimeUtils.setCurrentMillisFixed(1439337600000L);
         String extension = retrieveFileCommand.expandRenameExtension();
-        Assert.assertEquals(".done.20150812", extension);
+        assertEquals(".done.20150812", extension);
     }
 
     @Test
-    public void testExpandExtension_yyyyMMdd_changeTo_yyyyMMddHHmmss()
+    void testExpandExtension_yyyyMMdd_changeTo_yyyyMMddHHmmss()
     {
         RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done./yyyyMMdd/", false, null, false);
         DateTimeUtils.setCurrentMillisFixed(1450177200000L);
         String extension = retrieveFileCommand.expandRenameExtension();
-        Assert.assertEquals(".done.20151215", extension);
+        assertEquals(".done.20151215", extension);
         retrieveFileCommand.setRenameExtension(".done./yyyyMMddHHmmss/");
         String extension2 = retrieveFileCommand.expandRenameExtension();
-        Assert.assertEquals(".done.20151215110000", extension2);
+        assertEquals(".done.20151215110000", extension2);
 
     }
 
     @Test
-    public void testExpandExtension_no_timestamp()
+    void testExpandExtension_no_timestamp()
     {
         RetrieveFileCommand retrieveFileCommand = new RetrieveFileCommand(null, true, ".done", false, null, false);
         String extension = retrieveFileCommand.expandRenameExtension();
-        Assert.assertEquals(".done", extension);
+        assertEquals(".done", extension);
     }
 
-    @After
-    public void after_test()
+    @AfterEach
+    void after_test()
     {
         // be nice to other tests
         DateTimeUtils.setCurrentMillisSystem();

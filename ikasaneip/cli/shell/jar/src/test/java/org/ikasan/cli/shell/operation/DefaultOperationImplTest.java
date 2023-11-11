@@ -46,15 +46,18 @@ import org.ikasan.cli.shell.operation.service.PersistenceService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>efaultOperationImpl</code> class.
@@ -113,7 +116,7 @@ class DefaultOperationImplTest
         Operation operation = new DefaultOperationImpl(persistenceService);
         Process process = operation.start(processType, commands, "sampleProcess");
         processes.add(process);
-        Assert.assertNotNull(process);
+        assertNotNull(process);
         mockery.assertIsSatisfied();
     }
 
@@ -144,7 +147,7 @@ class DefaultOperationImplTest
         Operation operation = new DefaultOperationImpl(persistenceService);
         Process process = operation.start(processType, commands, "sampleProcess");
         processes.add(process);
-        Assert.assertNotNull(process);
+        assertNotNull(process);
         mockery.assertIsSatisfied();
     }
 
@@ -181,7 +184,7 @@ class DefaultOperationImplTest
         Operation operation = new DefaultOperationImpl(persistenceService);
         Process process = operation.start(processType, commands, "sampleProcess");
         processes.add(process);
-        Assert.assertNotNull(process);
+        assertNotNull(process);
         mockery.assertIsSatisfied();
     }
 
@@ -202,7 +205,7 @@ class DefaultOperationImplTest
 
         Operation operation = new DefaultOperationImpl(persistenceService);
         List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name", "username");
-        Assert.assertTrue(processHandles.get(0).isAlive());
+        assertTrue(processHandles.get(0).isAlive());
         mockery.assertIsSatisfied();
     }
 
@@ -237,7 +240,7 @@ class DefaultOperationImplTest
 
         Operation operation = new DefaultOperationImpl(persistenceService);
         List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess", "username");
-        Assert.assertTrue(processHandles.size() == 0);
+        assertEquals(0, processHandles.size());
         mockery.assertIsSatisfied();
     }
 
@@ -272,7 +275,7 @@ class DefaultOperationImplTest
 
         Operation operation = new DefaultOperationImpl(persistenceService);
         List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess", "username");
-        Assert.assertTrue(processHandles.size() == 0);
+        assertEquals(0, processHandles.size());
         mockery.assertIsSatisfied();
     }
 
@@ -294,7 +297,7 @@ class DefaultOperationImplTest
         });
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        Assertions.assertThrows(IOException.class,
+        assertThrows(IOException.class,
             () -> operation.stop(processType, "name", "username"));
 
         mockery.assertIsSatisfied();
@@ -355,7 +358,7 @@ class DefaultOperationImplTest
 
         Operation operation = new DefaultOperationImpl(persistenceService);
 
-        Assertions.assertThrows(IOException.class,
+        assertThrows(IOException.class,
             () -> operation.kill(processType, "name", "username"));
 
         mockery.assertIsSatisfied();

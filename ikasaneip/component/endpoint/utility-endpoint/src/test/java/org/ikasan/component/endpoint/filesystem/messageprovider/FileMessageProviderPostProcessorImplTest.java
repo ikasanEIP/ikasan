@@ -40,22 +40,23 @@
  */
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
-import org.junit.Assert;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Functional unit test cases for <code>FileMessageProviderPostProcessorImpl</code>.
  * 
  * @author Ikasan Development Team
  */
-public class FileMessageProviderPostProcessorImplTest
+class FileMessageProviderPostProcessorImplTest
 {
     File file1;
     File file2;
@@ -63,8 +64,8 @@ public class FileMessageProviderPostProcessorImplTest
 
     List<File> files = new ArrayList<File>();
 
-    @Before
-    public void setUp() throws IOException, InterruptedException
+    @BeforeEach
+    void setUp() throws IOException, InterruptedException
     {
         file1 = new File("file1");
         file2 = new File("file2");
@@ -82,13 +83,13 @@ public class FileMessageProviderPostProcessorImplTest
         files.add(file3);
 
         // check order before test execution
-        Assert.assertTrue(files.get(0).getName().equals("file2"));
-        Assert.assertTrue(files.get(1).getName().equals("file1"));
-        Assert.assertTrue(files.get(2).getName().equals("file3"));
+        assertEquals("file2", files.get(0).getName());
+        assertEquals("file1", files.get(1).getName());
+        assertEquals("file3", files.get(2).getName());
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         file1.delete();
         file2.delete();
@@ -99,7 +100,7 @@ public class FileMessageProviderPostProcessorImplTest
      * Test successful return of a list of files.
      */
     @Test
-    public void test_successful_sorted_files_by_lastModifiedDate_ascending() throws IOException
+    void test_successful_sorted_files_by_lastModifiedDate_ascending() throws IOException
     {
         // configure
         FileConsumerConfiguration configuration = new FileConsumerConfiguration();
@@ -114,16 +115,16 @@ public class FileMessageProviderPostProcessorImplTest
         fileMessageProviderPostProcessor.invoke(files);
 
         // test order after sorting
-        Assert.assertTrue("expected file1 first, but found " + files.get(0).getName(), files.get(0).getName().equals("file1"));
-        Assert.assertTrue("expected file2 second, but found " + files.get(1).getName(), files.get(1).getName().equals("file2"));
-        Assert.assertTrue("expected file3 third, but found " + files.get(2).getName(), files.get(2).getName().equals("file3"));
+        assertEquals("file1", files.get(0).getName(), "expected file1 first, but found " + files.get(0).getName());
+        assertEquals("file2", files.get(1).getName(), "expected file2 second, but found " + files.get(1).getName());
+        assertEquals("file3", files.get(2).getName(), "expected file3 third, but found " + files.get(2).getName());
     }
 
     /**
      * Test successful return of a list of files.
      */
     @Test
-    public void test_successful_sorted_files_by_lastModifiedDate_descending() throws IOException
+    void test_successful_sorted_files_by_lastModifiedDate_descending() throws IOException
     {
         // configure
         FileConsumerConfiguration configuration = new FileConsumerConfiguration();
@@ -138,8 +139,8 @@ public class FileMessageProviderPostProcessorImplTest
         fileMessageProviderPostProcessor.invoke(files);
 
         // test order after sorting
-        Assert.assertTrue("expected file3 first, but found " + files.get(0).getName(), files.get(0).getName().equals("file3"));
-        Assert.assertTrue("expected file2 second, but found " + files.get(1).getName(), files.get(1).getName().equals("file2"));
-        Assert.assertTrue("expected file1 third, but found " + files.get(2).getName(), files.get(2).getName().equals("file1"));
+        assertEquals("file3", files.get(0).getName(), "expected file3 first, but found " + files.get(0).getName());
+        assertEquals("file2", files.get(1).getName(), "expected file2 second, but found " + files.get(1).getName());
+        assertEquals("file1", files.get(2).getName(), "expected file1 third, but found " + files.get(2).getName());
     }
 }

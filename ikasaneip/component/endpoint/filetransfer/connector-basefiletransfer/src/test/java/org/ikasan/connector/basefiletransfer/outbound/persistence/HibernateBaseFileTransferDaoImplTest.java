@@ -40,23 +40,21 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.persistence;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 
+import jakarta.annotation.Resource;
 import org.hibernate.SessionFactory;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.outbound.command.BaseFileTransferCommandJUnitHelper;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 import org.ikasan.spec.search.PagedSearchResult;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -67,12 +65,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.TimeZone;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(classes = { TestConfiguration.class })
-public class HibernateBaseFileTransferDaoImplTest
+@SpringJUnitConfig(classes = {TestConfiguration.class})
+class HibernateBaseFileTransferDaoImplTest
 {
     @Resource
     DataSource xaDataSource;
@@ -95,26 +91,26 @@ public class HibernateBaseFileTransferDaoImplTest
 
     String selectSql = "SELECT ClientId, Criteria, LastModified, LastAccessed, Size FROM  FTFileFilter";
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         jdbcTemplate = new JdbcTemplate(xaDataSource);
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         jdbcTemplate.update(deleteAllSql, new Object[] {}, new int[] {});
     }
 
     @Test
-    public void housekeep_when_nothing_to_process()
+    void housekeep_when_nothing_to_process()
     {
         uut.housekeep("clientId", 1, 1);
     }
 
     @Test
-    public void housekeep_when_single_file_to_be_deleted()
+    void housekeep_when_single_file_to_be_deleted()
     {
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         cal.add(Calendar.DATE, -30);
@@ -134,7 +130,7 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void housekeep_when_single_file__not_old_enough()
+    void housekeep_when_single_file__not_old_enough()
     {
         Calendar cal = Calendar.getInstance(TimeZone.getDefault());
         cal.add(Calendar.DATE, -1);
@@ -154,7 +150,7 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void persistClientListEntry() throws URISyntaxException
+    void persistClientListEntry() throws URISyntaxException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -169,7 +165,7 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void isDuplicateWhenFilteringOnFileNameAndModifiedDate() throws URISyntaxException
+    void isDuplicateWhenFilteringOnFileNameAndModifiedDate() throws URISyntaxException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -179,11 +175,11 @@ public class HibernateBaseFileTransferDaoImplTest
         // insert Test Data
         uut.persistClientListEntry(entry);
 
-        assertEquals(true, uut.isDuplicate(entry, true, true));
+        assertTrue(uut.isDuplicate(entry, true, true));
     }
 
     @Test
-    public void isDuplicateWhenFilteringOnFileNameAndModifiedDateAndLastModifiedIsDifferent()
+    void isDuplicateWhenFilteringOnFileNameAndModifiedDateAndLastModifiedIsDifferent()
         throws URISyntaxException, InterruptedException
     {
 
@@ -200,11 +196,11 @@ public class HibernateBaseFileTransferDaoImplTest
         entry2.setFullPath("logback-test.xml");
         entry2.setLongFilename("logback-test.xml");
 
-        assertEquals(false, uut.isDuplicate(entry2, true, true));
+        assertFalse(uut.isDuplicate(entry2, true, true));
     }
 
     @Test
-    public void isDuplicateWhenFilteringOnFileNameAndLastModifiedIsDifferent()
+    void isDuplicateWhenFilteringOnFileNameAndLastModifiedIsDifferent()
         throws URISyntaxException, InterruptedException
     {
 
@@ -221,11 +217,11 @@ public class HibernateBaseFileTransferDaoImplTest
         entry2.setFullPath("logback-test.xml");
         entry2.setLongFilename("logback-test.xml");
 
-        assertEquals(true, uut.isDuplicate(entry2, true, false));
+        assertTrue(uut.isDuplicate(entry2, true, false));
     }
 
     @Test
-    public void findById() throws URISyntaxException, InterruptedException
+    void findById() throws URISyntaxException, InterruptedException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -247,18 +243,18 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void findByIdWhenNoResults() throws URISyntaxException, InterruptedException
+    void findByIdWhenNoResults() throws URISyntaxException, InterruptedException
     {
 
         // do test
         FileFilter result = uut.findById(665);
 
-        assertEquals(null,result);
+        assertNull(result);
 
     }
 
     @Test
-    public void deleteById() throws URISyntaxException, InterruptedException
+    void deleteById() throws URISyntaxException, InterruptedException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -276,12 +272,12 @@ public class HibernateBaseFileTransferDaoImplTest
         //verify no data in db
         FileFilter result = uut.findById(fileFilter.getId());
 
-        assertEquals(null,result);
+        assertNull(result);
 
     }
 
     @Test
-    public void findByClientId() throws URISyntaxException, InterruptedException
+    void findByClientId() throws URISyntaxException, InterruptedException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -305,7 +301,7 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void findByFileName() throws URISyntaxException, InterruptedException
+    void findByFileName() throws URISyntaxException, InterruptedException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -329,7 +325,7 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void findByFileNameUsingLikeWildcard() throws URISyntaxException, InterruptedException
+    void findByFileNameUsingLikeWildcard() throws URISyntaxException, InterruptedException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
@@ -353,7 +349,7 @@ public class HibernateBaseFileTransferDaoImplTest
     }
 
     @Test
-    public void findWhenNoResult() throws URISyntaxException, InterruptedException
+    void findWhenNoResult() throws URISyntaxException, InterruptedException
     {
 
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");

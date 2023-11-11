@@ -4,19 +4,18 @@ import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Client;
 import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Configuration;
 import org.ikasan.component.endpoint.amazon.s3.validation.InvalidAmazonS3PayloadException;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
 /**
  * Provides integration tests (unignore to test against a live s3) and mocked tests
  */
-public class AmazonS3FileProducerTest {
+class AmazonS3FileProducerTest {
 
     private AmazonS3Configuration configuration;
 
@@ -24,8 +23,8 @@ public class AmazonS3FileProducerTest {
 
     private AmazonS3FilePayload amazonS3FilePayload;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         configuration = new AmazonS3Configuration();
         configuration.setDefaultBucketName(BUCKET_NAME);
         configuration.setAccessKey(ACCESS_KEY);
@@ -39,7 +38,7 @@ public class AmazonS3FileProducerTest {
     }
 
     @Test
-    public void testInvoke() {
+    void testInvoke() {
         AmazonS3Client amazonS3Client = Mockito.mock(AmazonS3Client.class);
 
         amazonS3FileProducer = new AmazonS3FileProducer(amazonS3Client);
@@ -55,56 +54,57 @@ public class AmazonS3FileProducerTest {
         verify(amazonS3Client).shutdown();
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Test
-    public void testWithNonNullConfigurationPropertiesMissing() {
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("""
+    void testWithNonNullConfigurationPropertiesMissing() {
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
+            producerConfiguration.setRegion("Region");
+            amazonS3FileProducer.setConfiguration(producerConfiguration);
+        });
+        assertTrue(exception.getMessage().contains("""
             Instance of AmazonS3Configuration has the following \
             constraint violations :- [accessKey must not be null, defaultBucketName must not be null, secretKey must not be null]\
-            """);
-        AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
-        producerConfiguration.setRegion("Region");
-        amazonS3FileProducer.setConfiguration(producerConfiguration);
+            """));
     }
 
     @Test
-    public void testWithNonNullPayloadPropertiesMissing() {
-        expectedException.expect(InvalidAmazonS3PayloadException.class);
-        expectedException.expectMessage("""
+    void testWithNonNullPayloadPropertiesMissing() {
+        Throwable exception = assertThrows(InvalidAmazonS3PayloadException.class, () -> {
+            amazonS3FilePayload.setKeyName(null);
+            amazonS3FilePayload.setFilePath(null);
+            amazonS3FileProducer.invoke(amazonS3FilePayload);
+        });
+        assertTrue(exception.getMessage().contains("""
             Instance of AmazonS3FilePayload has the following constraint \
             violations :- [filePath must not be null, keyName must not be null]\
-            """);
-        amazonS3FilePayload.setKeyName(null);
-        amazonS3FilePayload.setFilePath(null);
-        amazonS3FileProducer.invoke(amazonS3FilePayload);
+            """));
     }
 
     @Test
-    public void testWithFileNotExists() {
-        expectedException.expect(InvalidAmazonS3PayloadException.class);
-        expectedException.expectMessage("File at path idontexist does not exist");
-        amazonS3FilePayload.setKeyName("iwontbeused");
-        amazonS3FilePayload.setFilePath("idontexist");
-        amazonS3FileProducer.invoke(amazonS3FilePayload);
+    void testWithFileNotExists() {
+        Throwable exception = assertThrows(InvalidAmazonS3PayloadException.class, () -> {
+            amazonS3FilePayload.setKeyName("iwontbeused");
+            amazonS3FilePayload.setFilePath("idontexist");
+            amazonS3FileProducer.invoke(amazonS3FilePayload);
+        });
+        assertTrue(exception.getMessage().contains("File at path idontexist does not exist"));
     }
 
     @Test
-    public void testAgainstWithBadAuthenticationDetails() {
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("""
+    void testAgainstWithBadAuthenticationDetails() {
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            configuration.setSecretKey("wrong");
+            configuration.setAccessKey("wrong");
+            amazonS3FileProducer.startManagedResource();
+        });
+        assertTrue(exception.getMessage().contains("""
             com.amazonaws.services.s3.model.AmazonS3Exception: \
             The AWS Access Key Id you provided does not exist in our records\
-            """);
-        configuration.setSecretKey("wrong");
-        configuration.setAccessKey("wrong");
-        amazonS3FileProducer.startManagedResource();
+            """));
     }
 
     @Test
-    public void testWithComponentDisabled() {
+    void testWithComponentDisabled() {
         configuration.setSecretKey("wrong");
         configuration.setAccessKey("wrong");
         configuration.setRegion("Region");
@@ -126,25 +126,26 @@ public class AmazonS3FileProducerTest {
     private static final String BUCKET_NAME = "ikasan-test-bucket";
 
     @Test
-    @Ignore
-    public void testAgainstS3Env() {
+    @Disabled
+    void testAgainstS3Env() {
         amazonS3FileProducer.startManagedResource();
         amazonS3FileProducer.invoke(amazonS3FilePayload);
     }
 
     @Test
-    @Ignore
-    public void testAgainstS3EnvWithNonExistentBucket() {
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("The configured default bucket idontexist does not exist");
-        configuration.setDefaultBucketName("idontexist");
-        amazonS3FileProducer.startManagedResource();
-        amazonS3FileProducer.invoke(amazonS3FilePayload);
+    @Disabled
+    void testAgainstS3EnvWithNonExistentBucket() {
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            configuration.setDefaultBucketName("idontexist");
+            amazonS3FileProducer.startManagedResource();
+            amazonS3FileProducer.invoke(amazonS3FilePayload);
+        });
+        assertTrue(exception.getMessage().contains("The configured default bucket idontexist does not exist"));
     }
 
     @Test
-    @Ignore
-    public void testAgainstS3EnvWithBucketInPayloadAndUsingKeyPrefix() {
+    @Disabled
+    void testAgainstS3EnvWithBucketInPayloadAndUsingKeyPrefix() {
         configuration.setDefaultBucketName("ikasan-test-bucket-2");
         configuration.setKeyPrefix("this/is/a/subdirectory/");
         amazonS3FilePayload.setBucketName("ikasan-test-bucket");
@@ -153,15 +154,16 @@ public class AmazonS3FileProducerTest {
     }
 
     @Test
-    @Ignore
-    public void testAgainstS3EnvWithBadRegion() {
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("""
+    @Disabled
+    void testAgainstS3EnvWithBadRegion() {
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            configuration.setRegion("EU_WEST_1");
+            amazonS3FileProducer.startManagedResource();
+        });
+        assertTrue(exception.getMessage().contains("""
             The configured default bucket ikasan-test-bucket does not \
             live in configured region EU_WEST_1\
-            """);
-        configuration.setRegion("EU_WEST_1");
-        amazonS3FileProducer.startManagedResource();
+            """));
     }
 
 }

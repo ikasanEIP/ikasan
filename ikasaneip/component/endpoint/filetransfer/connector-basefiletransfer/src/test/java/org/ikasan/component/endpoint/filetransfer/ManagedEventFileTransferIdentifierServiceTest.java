@@ -44,16 +44,17 @@ import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * @author Ikasan Development Team
  * 
  */
-public class ManagedEventFileTransferIdentifierServiceTest
+class ManagedEventFileTransferIdentifierServiceTest
 {
 
     /**
@@ -70,7 +71,7 @@ public class ManagedEventFileTransferIdentifierServiceTest
      * ManagedEventFileTransferIdentifierService getEventIdentifier
      */
     @Test
-    public void test_successful_getEventId_with_modulePrefix() throws ResourceException
+    void test_successful_getEventId_with_modulePrefix() throws ResourceException
     {
         mockery.checking(new Expectations()
         {
@@ -84,7 +85,7 @@ public class ManagedEventFileTransferIdentifierServiceTest
                 new ManagedEventFileTransferIdentifierService("modulePrefix_");
 
         String id = identifierService.getEventIdentifier(payload);
-        Assert.assertTrue(id.equals("modulePrefix_fileName"));
+        assertEquals("modulePrefix_fileName", id);
         mockery.assertIsSatisfied();
     }
 
@@ -92,7 +93,7 @@ public class ManagedEventFileTransferIdentifierServiceTest
      * ManagedEventFileTransferIdentifierService getEventIdentifier
      */
     @Test
-    public void test_successful_getEventId_no_modulePrefix() throws ResourceException
+    void test_successful_getEventId_no_modulePrefix() throws ResourceException
     {
         mockery.checking(new Expectations()
         {
@@ -106,7 +107,7 @@ public class ManagedEventFileTransferIdentifierServiceTest
                 new ManagedEventFileTransferIdentifierService();
 
         String id = identifierService.getEventIdentifier(payload);
-        Assert.assertTrue(id.equals("fileName"));
+        assertEquals("fileName", id);
         mockery.assertIsSatisfied();
     }
 
@@ -114,7 +115,7 @@ public class ManagedEventFileTransferIdentifierServiceTest
      * ManagedEventFileTransferIdentifierService getEventIdentifier
      */
     @Test
-    public void test_successful_setEventId() throws ResourceException
+    void test_successful_setEventId() throws ResourceException
     {
         mockery.checking(new Expectations()
         {

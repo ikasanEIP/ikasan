@@ -39,7 +39,7 @@
 
 package org.ikasan.component.factory.spring.common;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,14 +49,15 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class BeanMergeUtilTest {
+class BeanMergeUtilTest {
 
     private static Logger logger = LoggerFactory.getLogger(BeanMergeUtilTest.class);
 
     @Test
-    public void test() throws InvocationTargetException, IllegalAccessException {
+    void test() throws InvocationTargetException, IllegalAccessException {
         BeanConfiguration sharedConfiguration = new BeanConfiguration();
         BeanConfiguration componentConfiguration = new BeanConfiguration();
 
@@ -78,7 +79,7 @@ public class BeanMergeUtilTest {
     }
 
     @Test
-    public void testWithEmptyMapInSource() throws InvocationTargetException, IllegalAccessException {
+    void testWithEmptyMapInSource() throws InvocationTargetException, IllegalAccessException {
         BeanConfiguration sharedConfiguration = new BeanConfiguration();
         BeanConfiguration componentConfiguration = new BeanConfiguration();
 
@@ -92,7 +93,7 @@ public class BeanMergeUtilTest {
     }
 
     @Test
-    public void testWithEmptyListInSource() throws InvocationTargetException, IllegalAccessException {
+    void testWithEmptyListInSource() throws InvocationTargetException, IllegalAccessException {
         BeanConfiguration sharedConfiguration = new BeanConfiguration();
         BeanConfiguration componentConfiguration = new BeanConfiguration();
 
@@ -112,14 +113,14 @@ public class BeanMergeUtilTest {
      * @throws IllegalAccessException
      */
     @Test
-    public void testBoolean() throws InvocationTargetException, IllegalAccessException {
+    void testBoolean() throws InvocationTargetException, IllegalAccessException {
         BeanConfiguration sharedConfiguration = new BeanConfiguration();
         BeanConfiguration componentConfiguration = new BeanConfiguration();
 
         sharedConfiguration.setAuthenticated(true);
         BeanMergeUtil.mergeSourceIntoTargetBean( componentConfiguration, sharedConfiguration);
         componentConfiguration = null;
-        assertEquals(true, sharedConfiguration.getAuthenticated());
-        assertEquals(true, sharedConfiguration.isAuthenticated());
+        assertTrue(sharedConfiguration.getAuthenticated());
+        assertTrue(sharedConfiguration.isAuthenticated());
     }
 }

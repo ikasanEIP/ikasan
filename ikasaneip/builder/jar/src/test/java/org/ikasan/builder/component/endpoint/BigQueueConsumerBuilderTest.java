@@ -9,16 +9,18 @@ import org.ikasan.spec.event.EventListener;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.serialiser.Serialiser;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
-public class BigQueueConsumerBuilderTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
+class BigQueueConsumerBuilderTest {
 
     @Mock
     TransactionManager transactionManager;
@@ -44,13 +46,13 @@ public class BigQueueConsumerBuilderTest {
     @Mock
     Serialiser<BigQueueMessage, byte[]> serialiser;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
     @Test
-    public void test_build_success() {
+    void test_build_success() {
         BigQueueConsumerBuilder builder = new BigQueueConsumerBuilderImpl(this.aopProxyProvider, this.transactionManager);
 
         BigQueueConsumer consumer = (BigQueueConsumer) builder.setInboundQueue(this.inboundQueue)
@@ -63,22 +65,26 @@ public class BigQueueConsumerBuilderTest {
             .setSerialiser(serialiser)
             .build();
 
-        Assert.assertEquals(this.inboundQueue, ReflectionTestUtils.getField(consumer, "inboundQueue"));
-        Assert.assertEquals(this.eventFactory, ReflectionTestUtils.getField(consumer, "flowEventFactory"));
-        Assert.assertEquals(this.relatedEventIdentifierService, ReflectionTestUtils.getField(consumer, "managedRelatedEventIdentifierService"));
-        Assert.assertEquals("configurationId", consumer.getConfiguredResourceId());
-        Assert.assertEquals(this.eventListener, ReflectionTestUtils.getField(consumer, "eventListener"));
-        Assert.assertEquals(this.resubmissionEventFactory, ReflectionTestUtils.getField(consumer, "resubmissionEventFactory"));
-        Assert.assertEquals(this.serialiser, ReflectionTestUtils.getField(consumer, "serialiser"));
+        assertEquals(this.inboundQueue, ReflectionTestUtils.getField(consumer, "inboundQueue"));
+        assertEquals(this.eventFactory, ReflectionTestUtils.getField(consumer, "flowEventFactory"));
+        assertEquals(this.relatedEventIdentifierService, ReflectionTestUtils.getField(consumer, "managedRelatedEventIdentifierService"));
+        assertEquals("configurationId", consumer.getConfiguredResourceId());
+        assertEquals(this.eventListener, ReflectionTestUtils.getField(consumer, "eventListener"));
+        assertEquals(this.resubmissionEventFactory, ReflectionTestUtils.getField(consumer, "resubmissionEventFactory"));
+        assertEquals(this.serialiser, ReflectionTestUtils.getField(consumer, "serialiser"));
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_aop_proxy() {
-        new BigQueueConsumerBuilderImpl(null, this.transactionManager);
+    @Test
+    void test_exception_null_aop_proxy() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BigQueueConsumerBuilderImpl(null, this.transactionManager);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_transaction_manager() {
-        new BigQueueConsumerBuilderImpl(this.aopProxyProvider, null);
+    @Test
+    void test_exception_null_transaction_manager() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BigQueueConsumerBuilderImpl(this.aopProxyProvider, null);
+        });
     }
 }

@@ -6,21 +6,24 @@ import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.List;
 
-public class FileListToContextualisedScheduledProcessEventConverterTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_constructor_null_agent_name() {
-        new FileListToContextualisedScheduledProcessEventConverter(null);
+class FileListToContextualisedScheduledProcessEventConverterTest {
+
+    @Test
+    void test_exception_constructor_null_agent_name() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new FileListToContextualisedScheduledProcessEventConverter(null);
+        });
     }
 
     @Test
-    public void test_convert_success() {
+    void test_convert_success() {
         ContextInstance contextInstance = new ContextInstanceImpl();
         contextInstance.setName("contextName");
         contextInstance.setId("contextInstanceId");
@@ -42,11 +45,11 @@ public class FileListToContextualisedScheduledProcessEventConverterTest {
 
         ContextualisedScheduledProcessEvent event = converter.convert(correlatedFileList);
 
-        Assert.assertEquals("agentName", event.getAgentName());
-        Assert.assertEquals("jobName", event.getJobName());
-        Assert.assertEquals("contextName", event.getContextName());
-        Assert.assertEquals("contextInstanceId", event.getContextInstanceId());
-        Assert.assertEquals(2, event.getChildContextNames().size());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals("agentName", event.getAgentName());
+        assertEquals("jobName", event.getJobName());
+        assertEquals("contextName", event.getContextName());
+        assertEquals("contextInstanceId", event.getContextInstanceId());
+        assertEquals(2, event.getChildContextNames().size());
+        assertTrue(event.isSuccessful());
     }
 }

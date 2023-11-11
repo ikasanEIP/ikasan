@@ -49,20 +49,18 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class FtpProducerBuilderTest
+class FtpProducerBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -72,9 +70,6 @@ public class FtpProducerBuilderTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -88,7 +83,7 @@ public class FtpProducerBuilderTest
      * Test successful builder creation with ftp producer Options.
      */
     @Test
-    public void ftpProducer_build_when_configuration_ftp_conf_provided() {
+    void ftpProducer_build_when_configuration_ftp_conf_provided() {
 
         FtpProducerBuilder ftpProducerBuilder = new FtpProducerBuilderImpl( null, null, null, null);
 
@@ -122,42 +117,42 @@ public class FtpProducerBuilderTest
                 .setFtpsPort(21)
                 .build();
 
-        assertTrue("instance should be a SftpProducer", ftpProducer instanceof FtpProducer);
+        assertTrue(ftpProducer instanceof FtpProducer, "instance should be a SftpProducer");
 
         FtpProducerConfiguration configuration = ((ConfiguredResource<FtpProducerConfiguration>) ftpProducer).getConfiguration();
-        assertTrue("checksum should be 'true'", configuration.getChecksumDelivered());
-        assertEquals("clientID should be 'testClientId'","testClientId", configuration.getClientID());
-        assertEquals("outputDirectory should be 'test/dir'","test/dir", configuration.getOutputDirectory());
-        assertEquals("renameExtension should be 'TMP'","TMP", configuration.getRenameExtension());
-        assertEquals("tempFileName should be 'testTmp'","testTmp", configuration.getTempFileName());
-        assertTrue("cleanupJournalOnComplete should be 'true'", configuration.getCleanupJournalOnComplete());
-        assertTrue("createParentDirectory should be 'true'", configuration.getCreateParentDirectory());
-        assertTrue("overwrite should be 'true'", configuration.getOverwrite());
-        assertTrue("active should be 'true'", configuration.getActive());
-        assertTrue("unzip should be 'true'", configuration.getUnzip());
-        assertEquals("remoteHost should be 'testsftphost'","testsftphost", configuration.getRemoteHost());
-        assertEquals("maxRetryAttempts should be '3'",3, configuration.getMaxRetryAttempts().intValue());
-        assertEquals("remotePort should be '22'",22, configuration.getRemotePort().intValue());
-        assertEquals("username should be 'testUser'","testUser", configuration.getUsername());
-        assertEquals("password should be 'testPassword'","testPassword", configuration.getPassword());
-        assertEquals("connectionTimeout should be '300'",300, configuration.getConnectionTimeout().intValue());
-        assertEquals("systemKey should be 'testSystemKey'","testSystemKey", configuration.getSystemKey());
-        assertEquals("socketTimeout should be '300'",300, configuration.getSocketTimeout().intValue());
-        assertEquals("dataTimeout should be '300'",300, configuration.getDataTimeout().intValue());
+        assertTrue(configuration.getChecksumDelivered(), "checksum should be 'true'");
+        assertEquals("testClientId", configuration.getClientID(), "clientID should be 'testClientId'");
+        assertEquals("test/dir", configuration.getOutputDirectory(), "outputDirectory should be 'test/dir'");
+        assertEquals("TMP", configuration.getRenameExtension(), "renameExtension should be 'TMP'");
+        assertEquals("testTmp", configuration.getTempFileName(), "tempFileName should be 'testTmp'");
+        assertTrue(configuration.getCleanupJournalOnComplete(), "cleanupJournalOnComplete should be 'true'");
+        assertTrue(configuration.getCreateParentDirectory(), "createParentDirectory should be 'true'");
+        assertTrue(configuration.getOverwrite(), "overwrite should be 'true'");
+        assertTrue(configuration.getActive(), "active should be 'true'");
+        assertTrue(configuration.getUnzip(), "unzip should be 'true'");
+        assertEquals("testsftphost", configuration.getRemoteHost(), "remoteHost should be 'testsftphost'");
+        assertEquals(3, configuration.getMaxRetryAttempts().intValue(), "maxRetryAttempts should be '3'");
+        assertEquals(22, configuration.getRemotePort().intValue(), "remotePort should be '22'");
+        assertEquals("testUser", configuration.getUsername(), "username should be 'testUser'");
+        assertEquals("testPassword", configuration.getPassword(), "password should be 'testPassword'");
+        assertEquals(300, configuration.getConnectionTimeout().intValue(), "connectionTimeout should be '300'");
+        assertEquals("testSystemKey", configuration.getSystemKey(), "systemKey should be 'testSystemKey'");
+        assertEquals(300, configuration.getSocketTimeout().intValue(), "socketTimeout should be '300'");
+        assertEquals(300, configuration.getDataTimeout().intValue(), "dataTimeout should be '300'");
 
-        assertTrue("Ftps should be 'true'", configuration.getFTPS());
-        assertTrue("FtpsIsImplicit should be 'false'", configuration.getFtpsIsImplicit());
-        assertEquals("ftpsKeyStoreFilePath should be 'testFtpsKeyStoreFilePath'","testFtpsKeyStoreFilePath", configuration.getFtpsKeyStoreFilePath());
-        assertEquals("ftpsKeyStoreFilePassword should be 'testFtpsKeyStoreFilePassword'","testFtpsKeyStoreFilePassword", configuration.getFtpsKeyStoreFilePassword());
-        assertEquals("ftpsProtocol should be 'FTPS'","FTPS", configuration.getFtpsProtocol());
-        assertEquals("ftpsPort should be '21'",21, configuration.getFtpsPort().intValue());
+        assertTrue(configuration.getFTPS(), "Ftps should be 'true'");
+        assertTrue(configuration.getFtpsIsImplicit(), "FtpsIsImplicit should be 'false'");
+        assertEquals("testFtpsKeyStoreFilePath", configuration.getFtpsKeyStoreFilePath(), "ftpsKeyStoreFilePath should be 'testFtpsKeyStoreFilePath'");
+        assertEquals("testFtpsKeyStoreFilePassword", configuration.getFtpsKeyStoreFilePassword(), "ftpsKeyStoreFilePassword should be 'testFtpsKeyStoreFilePassword'");
+        assertEquals("FTPS", configuration.getFtpsProtocol(), "ftpsProtocol should be 'FTPS'");
+        assertEquals(21, configuration.getFtpsPort().intValue(), "ftpsPort should be '21'");
 
         mockery.assertIsSatisfied();
     }
 
 
     @Test
-    public void ftpProducer_build_when_configurationId_not_provided() {
+    void ftpProducer_build_when_configurationId_not_provided() {
 
         FtpProducerBuilder ftpProducerBuilder = new FtpProducerBuilderImpl(null, null, null, null);
         ftpProducerBuilder.setOutputDirectory("test").build();

@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.HousekeepLogFilesProcess;
@@ -8,8 +9,6 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * File scheduler job event flow component factory.

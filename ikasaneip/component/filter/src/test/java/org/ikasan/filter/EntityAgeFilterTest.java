@@ -1,30 +1,27 @@
 package org.ikasan.filter;
 
-import org.junit.Assert;
+import jakarta.annotation.Resource;
 import org.ikasan.filter.configuration.EntityAgeFilterConfiguration;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.EntityAgeFilterEntryConverter;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.service.DefaultEntityAgeFilterService;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Ikasan Development Team on 10/07/2016.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/filter-service-conf.xml"
+@SpringJUnitConfig(locations = {
+    "/FilteredMessageDaoInMemDBTest-context.xml",
+    "/filter-service-conf.xml"
 })
-public class EntityAgeFilterTest
+class EntityAgeFilterTest
 {
     String xmlVeryOld = "<message><businessIdentifier>business-id-1</businessIdentifier><lastUpdated>1973-03-02T19:06:44.000Z</lastUpdated></message>";
     String xmlQuiteRecent = "<message><businessIdentifier>business-id-1</businessIdentifier><lastUpdated>2016-03-02T19:06:44.000Z</lastUpdated></message>";
@@ -37,8 +34,8 @@ public class EntityAgeFilterTest
     @Resource private FilteredMessageDao duplicateFilterDao;
     @Resource private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
 
         FilterEntry aMessage = new DefaultFilterEntry( "business-id-1".hashCode(), "client-d", "318384000000" /** 318384000000 == 02/03/1980 */, 30);
@@ -53,33 +50,39 @@ public class EntityAgeFilterTest
         duplicateFilterDao.save(aMessage);
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    @DirtiesContext
-    public void test_exception_constructor_null_service()
+    @Test
+        @DirtiesContext
+    void test_exception_constructor_null_service()
     {
-        new EntityAgeFilter<String>(null
-                , "client-d");
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    @DirtiesContext
-    public void test_exception_constructor_null_client()
-    {
-        new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
-                , null);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    @DirtiesContext
-    public void test_exception_constructor_empty_client()
-    {
-        new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
-                , "");
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilter<String>(null
+            , "client-d");
+        });
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_newer_message_existing_entity()
+        @DirtiesContext
+    void test_exception_constructor_null_client()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
+            , null);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_exception_constructor_empty_client()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
+            , "");
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void test_success_newer_message_existing_entity()
     {
         EntityAgeFilter<String> filter = new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
                 , "client-d");
@@ -96,13 +99,13 @@ public class EntityAgeFilterTest
 
         filter.stopManagedResource();
 
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
 
     @Test
-    @DirtiesContext
-    public void test_success_older_message_existing_entity()
+        @DirtiesContext
+    void test_success_older_message_existing_entity()
     {
         EntityAgeFilter<String> filter = new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
                 , "client-d");
@@ -119,12 +122,12 @@ public class EntityAgeFilterTest
 
         filter.stopManagedResource();
 
-        Assert.assertNull(result);
+        assertNull(result);
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_new_entity()
+        @DirtiesContext
+    void test_success_new_entity()
     {
         EntityAgeFilter<String> filter = new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
                 , "client-d");
@@ -141,12 +144,12 @@ public class EntityAgeFilterTest
 
         filter.stopManagedResource();
 
-        Assert.assertNotNull(result);
+        assertNotNull(result);
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_new_entity_followed_by_older_version_of_same_entity()
+        @DirtiesContext
+    void test_success_new_entity_followed_by_older_version_of_same_entity()
     {
         EntityAgeFilter<String> filter = new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
                 , "client-d");
@@ -160,17 +163,17 @@ public class EntityAgeFilterTest
         filter.startManagedResource();
 
         String result = filter.filter(xmlQuiteRecentNewEntity);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         result = filter.filter(xmlVeryOldNewEntity);
-        Assert.assertNull(result);
+        assertNull(result);
 
         filter.stopManagedResource();
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_new_entity_followed_by_newer_version_of_same_entity()
+        @DirtiesContext
+    void test_success_new_entity_followed_by_newer_version_of_same_entity()
     {
         EntityAgeFilter<String> filter = new EntityAgeFilter<String>(this.defaultEntityAgeFilterService
                 , "client-d");
@@ -184,10 +187,10 @@ public class EntityAgeFilterTest
         filter.startManagedResource();
 
         String result = filter.filter(xmlVeryOldNewEntity);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         result = filter.filter(xmlQuiteRecentNewEntity);
-        Assert.assertNotNull(result);
+        assertNotNull(result);
 
         filter.stopManagedResource();
     }

@@ -45,8 +45,11 @@ import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ProcessInfo</code> class.
@@ -80,15 +83,15 @@ class ProcessInfoTest
         processInfo.setName("name");
         processInfo.setPsOperation();
 
-        Assert.assertTrue(processInfo.getPid() == 12345L);
-        Assert.assertTrue(processInfo.isRunning());
-        Assert.assertEquals(processInfo.getProcessType(), ProcessType.getH2Instance());
-        Assert.assertEquals(processInfo.getUsername(), "username");
-        Assert.assertEquals(processInfo.getCommand(), "command");
-        Assert.assertEquals(processInfo.getCommandLine(), "commandLine");
-        Assert.assertNotNull(processInfo.getException());
-        Assert.assertEquals(processInfo.getName(), "name");
-        Assert.assertEquals(processInfo.getOperation(), "ps");
+        assertTrue(processInfo.getPid() == 12345L);
+        assertTrue(processInfo.isRunning());
+        assertEquals(processInfo.getProcessType(), ProcessType.getH2Instance());
+        assertEquals("username", processInfo.getUsername());
+        assertEquals("command", processInfo.getCommand());
+        assertEquals("commandLine", processInfo.getCommandLine());
+        assertNotNull(processInfo.getException());
+        assertEquals("name", processInfo.getName());
+        assertEquals("ps", processInfo.getOperation());
     }
 
     @Test
@@ -106,15 +109,15 @@ class ProcessInfoTest
         processInfo.setName("name");
         processInfo.setPsOperation();
 
-        Assert.assertTrue(processInfo.getPid() == 12345L);
-        Assert.assertTrue(processInfo.isRunning());
-        Assert.assertEquals(processInfo.getProcessType(), ProcessType.getModuleInstance());
-        Assert.assertEquals(processInfo.getUsername(), "username");
-        Assert.assertEquals(processInfo.getCommand(), "command");
-        Assert.assertEquals(processInfo.getCommandLine(), "commandLine");
-        Assert.assertNotNull(processInfo.getException());
-        Assert.assertEquals(processInfo.getName(), "name");
-        Assert.assertEquals(processInfo.getOperation(), "ps");
+        assertTrue(processInfo.getPid() == 12345L);
+        assertTrue(processInfo.isRunning());
+        assertEquals(processInfo.getProcessType(), ProcessType.getModuleInstance());
+        assertEquals("username", processInfo.getUsername());
+        assertEquals("command", processInfo.getCommand());
+        assertEquals("commandLine", processInfo.getCommandLine());
+        assertNotNull(processInfo.getException());
+        assertEquals("name", processInfo.getName());
+        assertEquals("ps", processInfo.getOperation());
     }
 
     @Test
@@ -132,15 +135,15 @@ class ProcessInfoTest
         processInfo.setName("name");
         processInfo.setPsOperation();
 
-        Assert.assertTrue(processInfo.getPid() == 12345L);
-        Assert.assertTrue(processInfo.isRunning());
-        Assert.assertEquals(processInfo.getProcessType(), ProcessType.getGenericInstance());
-        Assert.assertEquals(processInfo.getUsername(), "username");
-        Assert.assertEquals(processInfo.getCommand(), "command");
-        Assert.assertEquals(processInfo.getCommandLine(), "commandLine");
-        Assert.assertNotNull(processInfo.getException());
-        Assert.assertEquals(processInfo.getName(), "name");
-        Assert.assertEquals(processInfo.getOperation(), "ps");
+        assertTrue(processInfo.getPid() == 12345L);
+        assertTrue(processInfo.isRunning());
+        assertEquals(processInfo.getProcessType(), ProcessType.getGenericInstance());
+        assertEquals("username", processInfo.getUsername());
+        assertEquals("command", processInfo.getCommand());
+        assertEquals("commandLine", processInfo.getCommandLine());
+        assertNotNull(processInfo.getException());
+        assertEquals("name", processInfo.getName());
+        assertEquals("ps", processInfo.getOperation());
     }
 
     @Test
@@ -159,15 +162,15 @@ class ProcessInfoTest
         processInfo.setPsOperation();
 
         JSONObject json = processInfo.toJSON();
-        Assert.assertTrue(json.get("running").equals(Boolean.TRUE));
-        Assert.assertTrue(json.get("command").equals("command"));
-        Assert.assertTrue(json.get("pid").equals(12345L));
-        Assert.assertTrue(json.get("type").equals("H2"));
-        Assert.assertTrue(json.get("username").equals("username"));
-        Assert.assertTrue(json.get("command").equals("command"));
-        Assert.assertTrue(json.get("commandLine").equals("commandLine"));
-        Assert.assertTrue(json.get("name").equals("name"));
-        Assert.assertTrue(json.get("operation").equals("ps"));
+        assertEquals(Boolean.TRUE, json.get("running"));
+        assertEquals("command", json.get("command"));
+        assertEquals(12345L, json.get("pid"));
+        assertEquals("H2", json.get("type"));
+        assertEquals("username", json.get("username"));
+        assertEquals("command", json.get("command"));
+        assertEquals("commandLine", json.get("commandLine"));
+        assertEquals("name", json.get("name"));
+        assertEquals("ps", json.get("operation"));
     }
 }
 

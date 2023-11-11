@@ -46,7 +46,7 @@ import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 
 /**
  * Local Implementation of the <code>Xid</code> interface

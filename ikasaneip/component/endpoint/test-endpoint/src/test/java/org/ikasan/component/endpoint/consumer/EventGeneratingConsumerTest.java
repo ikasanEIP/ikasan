@@ -46,16 +46,18 @@ import org.ikasan.spec.event.EventListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutorService;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for EventGeneratingConsumer.
  * 
  * @author Ikasan Development Team
  */
-public class EventGeneratingConsumerTest
+class EventGeneratingConsumerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -73,26 +75,30 @@ public class EventGeneratingConsumerTest
     /**
      * Test failed constructor
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_executorService()
+    @Test
+    void test_failed_constructor_null_executorService()
     {
-        new EventGeneratingConsumer(null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EventGeneratingConsumer(null, null);
+        });
     }
 
     /**
      * Test failed constructor
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_messageListener()
+    @Test
+    void test_failed_constructor_null_messageListener()
     {
-        new EventGeneratingConsumer(executorService, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EventGeneratingConsumer(executorService, null);
+        });
     }
 
     /**
      * Test eventGenerator start
      */
     @Test
-    public void test_eventGenerator_start()
+    void test_eventGenerator_start()
     {
         EventGeneratingConsumer eventGeneratingConsumer = new EventGeneratingConsumer(executorService, apiEventProvider);
         eventGeneratingConsumer.setEventFactory(flowEventFactory);

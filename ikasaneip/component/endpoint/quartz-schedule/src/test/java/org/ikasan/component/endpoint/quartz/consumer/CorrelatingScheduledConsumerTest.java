@@ -6,15 +6,16 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class CorrelatingScheduledConsumerTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class CorrelatingScheduledConsumerTest {
     /**
      * Mockery for mocking concrete classes
      */
@@ -41,24 +42,28 @@ public class CorrelatingScheduledConsumerTest {
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_failure_NullScheduler()
+    @Test
+    void test_constructor_failure_NullScheduler()
     {
-        new CorrelatingScheduledConsumer(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CorrelatingScheduledConsumer(null);
+        });
     }
 
     /**
      * Test failed constructor for scheduled consumer due to null scheduledJobRecoveryService.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_failure_NullScheduledJobRecoveryService()
+    @Test
+    void test_constructor_failure_NullScheduledJobRecoveryService()
     {
-        new CorrelatingScheduledConsumer(mockScheduler, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CorrelatingScheduledConsumer(mockScheduler, null);
+        });
     }
 
     // For some use cases (e.g. scheduler) we don't initially have the correlating identifiers
     @Test
-    public void test_start_no_persisted_recovery_without_correlations_or_passthrough() throws SchedulerException {
+    void test_start_no_persisted_recovery_without_correlations_or_passthrough() throws SchedulerException {
         createStandardExpectations();
         mockery.checking(new Expectations()
         {
@@ -91,12 +96,13 @@ public class CorrelatingScheduledConsumerTest {
 
         StubbedCorrelatingScheduledConsumer stubbedCorrelatingScheduledConsumer = (StubbedCorrelatingScheduledConsumer) correlatingScheduledConsumer;
         // No correlating identifiers means no triggers i.e. the component is passive until correlating identifiers are added
-        Assert.assertEquals("Expected number of triggers not met", 3, stubbedCorrelatingScheduledConsumer.getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", stubbedCorrelatingScheduledConsumer.isReplace());
+        assertEquals(3, stubbedCorrelatingScheduledConsumer.getTriggers().size(), "Expected number of triggers not met");
+        assertTrue(stubbedCorrelatingScheduledConsumer.isReplace(), "Expected replacement of triggers");
         mockery.assertIsSatisfied();
     }
+
     @Test
-    public void test_start_no_persisted_recovery_with_correlations() throws SchedulerException {
+    void test_start_no_persisted_recovery_with_correlations() throws SchedulerException {
         createStandardExpectations();
         mockery.checking(new Expectations()
         {
@@ -128,13 +134,13 @@ public class CorrelatingScheduledConsumerTest {
         correlatingScheduledConsumer.start();
 
         StubbedCorrelatingScheduledConsumer stubbedCorrelatingScheduledConsumer = (StubbedCorrelatingScheduledConsumer) correlatingScheduledConsumer;
-        Assert.assertEquals("Expected number of triggers not met", stubbedCorrelatingScheduledConsumer.getTriggers().size(), 6);
-        Assert.assertTrue("Expected replacement of triggers", stubbedCorrelatingScheduledConsumer.isReplace());
+        assertEquals(6, stubbedCorrelatingScheduledConsumer.getTriggers().size(), "Expected number of triggers not met");
+        assertTrue(stubbedCorrelatingScheduledConsumer.isReplace(), "Expected replacement of triggers");
 
         List<Trigger> sortedTriggers = (List<Trigger>)stubbedCorrelatingScheduledConsumer.getTriggers().stream()
             .sorted()
             .collect(Collectors.toList());
-        Assert.assertEquals(
+        assertEquals(
             """
             [\
             Trigger 'jobGroupName.jobName_cor1_-165197414':  triggerClass: 'org.quartz.impl.triggers.CronTriggerImpl calendar: 'null' misfireInstruction: 2 nextFireTime: null, \
@@ -146,16 +152,16 @@ public class CorrelatingScheduledConsumerTest {
             """,
                 sortedTriggers.toString());
         // Sizes of the map data
-        Assert.assertEquals("[3, 3, 3, 3, 3, 3]",
+        assertEquals("[3, 3, 3, 3, 3, 3]",
             sortedTriggers.stream().map(t-> t.getJobDataMap().size()).collect(Collectors.toList()).toString()
         );
-        Assert.assertEquals("[cor1, cor1, cor1, cor2, cor2, cor2]",
+        assertEquals("[cor1, cor1, cor1, cor2, cor2, cor2]",
             sortedTriggers.stream().map(t->t.getJobDataMap().get(CorrelatingScheduledConsumer.CORRELATION_ID)).collect(Collectors.toList()).toString()
         );
-        Assert.assertEquals("[0/2 * * * * ?, 0/3 * * * * ?, 0/1 * * * * ?, 0/2 * * * * ?, 0/3 * * * * ?, 0/1 * * * * ?]",
+        assertEquals("[0/2 * * * * ?, 0/3 * * * * ?, 0/1 * * * * ?, 0/2 * * * * ?, 0/3 * * * * ?, 0/1 * * * * ?]",
             sortedTriggers.stream().map(t->t.getJobDataMap().get(CorrelatingScheduledConsumer.CRON_EXPRESSION)).collect(Collectors.toList()).toString()
         );
-        Assert.assertEquals("[propValue, propValue, propValue, propValue, propValue, propValue]",
+        assertEquals("[propValue, propValue, propValue, propValue, propValue, propValue]",
             sortedTriggers.stream().map(t->t.getJobDataMap().get(PASSTHROUGH_KEY)).collect(Collectors.toList()).toString()
         );
 
@@ -166,7 +172,7 @@ public class CorrelatingScheduledConsumerTest {
      * Test successful consumer start.
      */
     @Test
-    public void test_start_with_persisted_recovery_outside_tolerance() throws SchedulerException
+    void test_start_with_persisted_recovery_outside_tolerance() throws SchedulerException
     {
         createStandardExpectations();
         mockery.checking(new Expectations()
@@ -208,8 +214,8 @@ public class CorrelatingScheduledConsumerTest {
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCorrelatingScheduledConsumer)scheduledConsumer).getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedCorrelatingScheduledConsumer)scheduledConsumer).isReplace());
+        assertEquals(3, ((StubbedCorrelatingScheduledConsumer)scheduledConsumer).getTriggers().size(), "Expected number of triggers not met - should have 2 business and 1 recovery trigger ");
+        assertTrue(((StubbedCorrelatingScheduledConsumer)scheduledConsumer).isReplace(), "Expected replacement of triggers");
 
         mockery.assertIsSatisfied();
     }
@@ -218,7 +224,7 @@ public class CorrelatingScheduledConsumerTest {
      * Test successful consumer start.
      */
     @Test
-    public void test_start_with_persisted_recovery_inside_tolerance() throws SchedulerException
+    void test_start_with_persisted_recovery_inside_tolerance() throws SchedulerException
     {
         createStandardExpectations();
         mockery.checking(new Expectations()
@@ -262,8 +268,8 @@ public class CorrelatingScheduledConsumerTest {
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCorrelatingScheduledConsumer)scheduledConsumer).getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedCorrelatingScheduledConsumer)scheduledConsumer).isReplace());
+        assertEquals(3, ((StubbedCorrelatingScheduledConsumer)scheduledConsumer).getTriggers().size(), "Expected number of triggers not met - should have 2 business and 1 recovery trigger ");
+        assertTrue(((StubbedCorrelatingScheduledConsumer)scheduledConsumer).isReplace(), "Expected replacement of triggers");
 
         mockery.assertIsSatisfied();
     }
@@ -271,60 +277,64 @@ public class CorrelatingScheduledConsumerTest {
     /**
      * Test failed consumer start.
      */
-    @Test(expected = RuntimeException.class)
-    public void test_start_failure_due_to_schedulerException() throws SchedulerException
+    @Test
+    void test_start_failure_due_to_schedulerException() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        assertThrows(RuntimeException.class, () -> {
+            final JobKey jobKey = new JobKey("flowName", "moduleName");
 
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    exactly(1).of(mockJobDetail).getKey();
+                    will(returnValue(jobKey));
 
-                exactly(1).of(mockConsumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
+                    exactly(1).of(mockConsumerConfiguration).getCronExpression();
+                    will(returnValue("* * * * ? ?"));
 
-                // schedule the job
-                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
-                will(throwException(new SchedulerException()));
-            }
+                    // schedule the job
+                    exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
+                    will(throwException(new SchedulerException()));
+                }
+            });
+
+            ScheduledConsumer scheduledConsumer = new StubbedCorrelatingScheduledConsumer(mockScheduler);
+            scheduledConsumer.setConfiguration(mockConsumerConfiguration);
+            scheduledConsumer.start();
+            mockery.assertIsSatisfied();
         });
-
-        ScheduledConsumer scheduledConsumer = new StubbedCorrelatingScheduledConsumer(mockScheduler);
-        scheduledConsumer.setConfiguration(mockConsumerConfiguration);
-        scheduledConsumer.start();
-        mockery.assertIsSatisfied();
     }
 
     /**
      * Test failed consumer start.
      */
-    @Test(expected = RuntimeException.class)
-    public void test_start_failure_due_to_parserException() throws SchedulerException
+    @Test
+    void test_start_failure_due_to_parserException() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
+        assertThrows(RuntimeException.class, () -> {
+            final JobKey jobKey = new JobKey("flowName", "moduleName");
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+                {
+                    exactly(1).of(mockJobDetail).getKey();
+                    will(returnValue(jobKey));
 
-                exactly(1).of(mockConsumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
+                    exactly(1).of(mockConsumerConfiguration).getCronExpression();
+                    will(returnValue("* * * * ? ?"));
 
-                // schedule the job
-                exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
-                will(throwException(new ParseException("test",0)));
-            }
+                    // schedule the job
+                    exactly(1).of(mockScheduler).scheduleJob(mockJobDetail, mockTrigger);
+                    will(throwException(new ParseException("test", 0)));
+                }
+            });
+
+            ScheduledConsumer scheduledConsumer = new StubbedCorrelatingScheduledConsumer(mockScheduler);
+            scheduledConsumer.setConfiguration(mockConsumerConfiguration);
+            scheduledConsumer.start();
+            mockery.assertIsSatisfied();
         });
-
-        ScheduledConsumer scheduledConsumer = new StubbedCorrelatingScheduledConsumer(mockScheduler);
-        scheduledConsumer.setConfiguration(mockConsumerConfiguration);
-        scheduledConsumer.start();
-        mockery.assertIsSatisfied();
     }
 
     private void createStandardExpectations() throws SchedulerException {

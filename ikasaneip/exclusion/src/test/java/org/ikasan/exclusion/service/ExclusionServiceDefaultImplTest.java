@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.service;
 
+import jakarta.annotation.Resource;
 import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
@@ -50,14 +51,15 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for ExclusionServiceDefaultImpl based on
@@ -65,15 +67,12 @@ import javax.annotation.Resource;
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/exclusion-service-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
-        })
-
-public class ExclusionServiceDefaultImplTest
+})
+class ExclusionServiceDefaultImplTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -94,118 +93,128 @@ public class ExclusionServiceDefaultImplTest
     @Resource
     SerialiserFactory serialiserFactory;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_moduleName()
+    @Test
+    void test_failed_constructor_null_moduleName()
     {
-        new ExclusionServiceDefaultImpl(null, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceDefaultImpl(null, null, null, null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_flowName()
+    @Test
+    void test_failed_constructor_null_flowName()
     {
-        new ExclusionServiceDefaultImpl("moduleName", null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceDefaultImpl("moduleName", null, null, null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_blacklist_dao()
+    @Test
+    void test_failed_constructor_null_blacklist_dao()
     {
-        new ExclusionServiceDefaultImpl("moduleName", "flowName", null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceDefaultImpl("moduleName", "flowName", null, null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_exclusionEvent_dao()
+    @Test
+    void test_failed_constructor_null_exclusionEvent_dao()
     {
-        new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_serialiser()
+    @Test
+    void test_failed_constructor_null_serialiser()
     {
-        new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), exclusionServiceExclusionEventDao, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), exclusionServiceExclusionEventDao, null);
+        });
     }
 
     /**
      * Test exclusion add, contains, remove, get
      */
     @DirtiesContext
-    @Test
-    public void test_exclusionService_operations()
+            @Test
+    void test_exclusionService_operations()
     {
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
 
         final FlowEvent expiredFlowEvent = mockery.mock(FlowEvent.class, "expired-flow-event");
         final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
+        assertFalse(exclusionService.isBlackListed("123456"), "Should not be blacklisted");
         exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
+        assertTrue(exclusionService.isBlackListed("123456"), "Should be blacklisted");
 
         exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
+        assertTrue(exclusionService.isBlackListed("123456"), "Should be blacklisted");
 
         exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
+        assertTrue(exclusionService.isBlackListed("123456"), "Should be blacklisted");
 
         // this flowEvent should exist in blacklist
-        Assert.assertEquals("uri", exclusionService.getErrorUri("123456"));
+        assertEquals("uri", exclusionService.getErrorUri("123456"));
 
         // this flowEvent does not exist in blacklist
         String errorUri = exclusionService.getErrorUri("111111");
-        Assert.assertEquals(null, errorUri);
+        assertNull(errorUri);
 
         exclusionService.removeBlacklisted("123456");
         exclusionService.removeBlacklisted("123456");
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
+        assertFalse(exclusionService.isBlackListed("123456"), "Should not be blacklisted");
     }
 
     /**
      * Test exclusion housekeep
      */
     @DirtiesContext
-    @Test
-    public void test_exclusionService_housekeep_with_housekeepable()
+            @Test
+    void test_exclusionService_housekeep_with_housekeepable()
     {
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(-1L);
 
         final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
+        assertFalse(exclusionService.isBlackListed("123456"), "Should not be blacklisted");
 
         exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
+        assertTrue(exclusionService.isBlackListed("123456"), "Should be blacklisted");
 
         exclusionService.housekeep();
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
+        assertFalse(exclusionService.isBlackListed("123456"), "Should not be blacklisted");
     }
 
     /**
      * Test exclusion housekeep
      */
     @DirtiesContext
-    @Test
-    public void test_exclusionService_housekeep_without_housekeepable()
+            @Test
+    void test_exclusionService_housekeep_without_housekeepable()
     {
         ExclusionService exclusionService = new ExclusionServiceDefaultImpl("moduleName", "flowName", exclusionServiceBlacklistDaoFactory.getBlackListDao(), exclusionServiceExclusionEventDao, serialiserFactory.getDefaultSerialiser());
         exclusionService.setTimeToLive(10000L);
 
         final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
 
-        Assert.assertFalse("Should not be blacklisted", exclusionService.isBlackListed("123456"));
+        assertFalse(exclusionService.isBlackListed("123456"), "Should not be blacklisted");
 
         exclusionService.addBlacklisted("123456", "uri", flowInvocationContext);
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
+        assertTrue(exclusionService.isBlackListed("123456"), "Should be blacklisted");
 
         exclusionService.housekeep();
-        Assert.assertTrue("Should be blacklisted", exclusionService.isBlackListed("123456"));
+        assertTrue(exclusionService.isBlackListed("123456"), "Should be blacklisted");
     }
 
     /**
      * Test exclusion housekeep
      */
     @DirtiesContext
-    @Test
-    public void test_exclusionService_park()
+            @Test
+    void test_exclusionService_park()
     {
         final String payload = "this is payload content";
 
@@ -227,7 +236,7 @@ public class ExclusionServiceDefaultImplTest
         ExclusionEvent exclusionEvent = exclusionServiceExclusionEventDao.find("moduleName", "flowName", "123456");
         Object exclusionEventPayloadBytes = exclusionEvent.getEvent();
         Object exclusionEventPayload = serialiserFactory.getDefaultSerialiser().deserialise(exclusionEventPayloadBytes);
-        Assert.assertTrue("Should be equal", exclusionEventPayload.equals(payload));
+        assertEquals(exclusionEventPayload, payload, "Should be equal");
 
         this.mockery.assertIsSatisfied();
     }

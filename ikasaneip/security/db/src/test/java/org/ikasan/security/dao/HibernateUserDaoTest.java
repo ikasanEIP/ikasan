@@ -42,23 +42,19 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import jakarta.annotation.Resource;
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.JobPlanGrantedAuthority;
 import org.ikasan.security.model.ModuleGrantedAuthority;
 import org.ikasan.security.model.User;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
@@ -68,120 +64,119 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
+@SpringJUnitConfig(classes = {SecurityConfiguration.class, TestImportConfig.class})
 @Sql(scripts = {"/setupSecurityData.sql"}, executionPhase = BEFORE_TEST_METHOD)
 @Sql(scripts = {"/teardownSecurityData.sql"}, executionPhase = AFTER_TEST_METHOD)
-public class HibernateUserDaoTest
+class HibernateUserDaoTest
 {
 
 	@Resource
 	private UserDao xaUserDao;
 
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetUser()
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     */
+    @Test
+        @DirtiesContext
+    void testGetUser()
 	{
 		User user = this.xaUserDao.getUser("username");
 		
-		Assert.assertNotNull(user);
+		assertNotNull(user);
 		
 		user = this.xaUserDao.getUser("bad name");
 		
-		Assert.assertNull(user);
+		assertNull(user);
 	}
-	
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetUserByFirstNameLike()
+
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     */
+    @Test
+        @DirtiesContext
+    void testGetUserByFirstNameLike()
 	{
 		List<User> users = this.xaUserDao.getUserByFirstnameLike("first");
 		
-		Assert.assertNotNull(users.size() == 1);
+		assertNotNull(users.size() == 1);
 	}
-	
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetUserBySurnameLike()
+
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     */
+    @Test
+        @DirtiesContext
+    void testGetUserBySurnameLike()
 	{
 		List<User> users = this.xaUserDao.getUserBySurnameLike("sur");
 		
-		Assert.assertNotNull(users.size() == 1);
+		assertNotNull(users.size() == 1);
 	}
-	
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetUserByUsernameLike()
+
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     */
+    @Test
+        @DirtiesContext
+    void testGetUserByUsernameLike()
 	{
 		List<User> users = this.xaUserDao.getUserByUsernameLike("user");
 		
-		Assert.assertNotNull(users.size() == 1);
-	}
-
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetUsers()
-	{
-		List<User> users = this.xaUserDao.getUsers();
-		
-		Assert.assertTrue(users.size() == 1);
+		assertNotNull(users.size() == 1);
 	}
 
     /**
      * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
      */
     @Test
-    @DirtiesContext
-    public void testAuthorities()
+        @DirtiesContext
+    void testGetUsers()
+	{
+		List<User> users = this.xaUserDao.getUsers();
+
+        assertEquals(1, users.size());
+	}
+
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
+     */
+    @Test
+        @DirtiesContext
+    void testAuthorities()
     {
         List<User> users = this.xaUserDao.getUsers();
 
-        Assert.assertTrue(users.size() == 1);
-        Assert.assertTrue(users.get(0).getAuthorities().size() == 4);
+        assertEquals(1, users.size());
+        assertEquals(4, users.get(0).getAuthorities().size());
 
         users.get(0).getAuthorities().forEach(grantedAuthority -> {
             if(grantedAuthority instanceof ModuleGrantedAuthority) {
-                Assert.assertEquals("MODULE:sample module", grantedAuthority.getAuthority());
+                assertEquals("MODULE:sample module", grantedAuthority.getAuthority());
             }
             else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
-                Assert.assertEquals("JOB_PLAN:sample job plan", grantedAuthority.getAuthority());
+                assertEquals("JOB_PLAN:sample job plan", grantedAuthority.getAuthority());
             }
             else {
-                Assert.assertTrue(grantedAuthority.getAuthority().equals("policy1") ||
+                assertTrue(grantedAuthority.getAuthority().equals("policy1") ||
                     grantedAuthority.getAuthority().equals("policy2"));
             }
         });
     }
 
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#delete(org.ikasan.security.model.User)}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testDelete()
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#delete(org.ikasan.security.model.User)}.
+     */
+    @Test
+        @DirtiesContext
+    void testDelete()
 	{
 		User user = this.xaUserDao.getUser("username");
 		
 		this.xaUserDao.delete(user);
 		
 		List<User> users = this.xaUserDao.getUsers();
-		
-		Assert.assertTrue(users.size() == 0);
+
+        assertEquals(0, users.size());
 	}
 
 }

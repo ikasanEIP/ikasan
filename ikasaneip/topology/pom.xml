@@ -58,6 +58,9 @@
     <name>Ikasan Topology</name>
     <description>The topology library for the Ikasan Enterprise Integration Platform</description>
     <version>4.0.0-SNAPSHOT</version>
+    <properties>
+        <version.wiremock>2.27.2</version.wiremock>
+    </properties>
 
     <dependencies>
 
@@ -113,8 +116,9 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
+            <version>6.1.7.Final</version>
         </dependency>
 
         <dependency>
@@ -165,12 +169,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <scope>test</scope>
@@ -185,6 +183,11 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 

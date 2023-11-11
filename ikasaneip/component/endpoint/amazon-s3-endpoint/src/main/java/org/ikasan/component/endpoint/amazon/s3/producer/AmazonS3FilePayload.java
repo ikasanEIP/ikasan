@@ -1,6 +1,6 @@
 package org.ikasan.component.endpoint.amazon.s3.producer;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Use this to upload a file from the local fileSystem

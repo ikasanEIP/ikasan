@@ -1,7 +1,7 @@
 package org.ikasan.rest.module.sse;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -14,30 +14,30 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-public class MonitoringFileServiceThreadTest {
+class MonitoringFileServiceThreadTest {
 
     private final SseEmitter sseEmitter = mock(SseEmitter.class);
 
     private final String sampleLogFileStr = "target/tmp/data/log.sample";
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeEach
+    void setup() throws IOException {
         FileUtils.write(new File(sampleLogFileStr), "", StandardCharsets.UTF_8);
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterEach
+    void tearDown() throws IOException {
         FileUtils.forceDelete(new File(sampleLogFileStr));
     }
 
     @Test
-    public void test_monitoringService_monitorsForMessages_disconnects_timeout() throws Exception {
+    void test_monitoringService_monitorsForMessages_disconnects_timeout() throws Exception {
         MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 1, 10);
 
         monitoringFileService.start();
@@ -45,11 +45,11 @@ public class MonitoringFileServiceThreadTest {
         Thread.sleep(1000);
 
         verify(sseEmitter, times(1)).complete();
-        assertEquals(monitoringFileService.getState(), Thread.State.TERMINATED);
+        assertEquals(Thread.State.TERMINATED, monitoringFileService.getState());
     }
 
     @Test
-    public void test_monitoringService_monitorsForMessages_should_reset_atomic_count_if_file_deleted_and_send_new_messages() throws Exception {
+    void test_monitoringService_monitorsForMessages_should_reset_atomic_count_if_file_deleted_and_send_new_messages() throws Exception {
 
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
         MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
@@ -79,13 +79,13 @@ public class MonitoringFileServiceThreadTest {
         // verify has sent message 3
         verifySseEmiterAndCounter(3, 4, monitoringFileService);
 
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+        assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState());
 
         monitoringFileService.interrupt();
     }
 
     @Test
-    public void test_monitoringService_monitors_for_new_messages() throws IOException {
+    void test_monitoringService_monitors_for_new_messages() throws IOException {
 
         MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
 
@@ -96,12 +96,12 @@ public class MonitoringFileServiceThreadTest {
 
         verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+        assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState());
         monitoringFileService.interrupt();
     }
 
     @Test
-    public void test_monitoringService_sends_all_messages_when_started() throws IOException {
+    void test_monitoringService_sends_all_messages_when_started() throws IOException {
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
 
@@ -111,18 +111,18 @@ public class MonitoringFileServiceThreadTest {
 
         verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+        assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState());
         monitoringFileService.interrupt();
     }
 
     @Test
-    public void test_monitoringService_no_messages_to_send() throws IOException {
+    void test_monitoringService_no_messages_to_send() throws IOException {
         MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
 
         monitoringFileService.start();
 
         verifySseEmiterAndCounter(0, 0, monitoringFileService);
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+        assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState());
         monitoringFileService.interrupt();
     }
 

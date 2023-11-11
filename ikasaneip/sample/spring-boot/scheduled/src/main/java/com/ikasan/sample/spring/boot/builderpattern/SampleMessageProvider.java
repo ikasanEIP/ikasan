@@ -5,9 +5,9 @@ import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.quartz.JobExecutionContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.XAException;
+import jakarta.transaction.xa.XAResource;
+import jakarta.transaction.xa.Xid;
 
 public class SampleMessageProvider implements MessageProvider<String>, LastResourceCommitOptimisation {
 

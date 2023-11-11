@@ -44,13 +44,14 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 import javax.xml.transform.TransformerException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for {@link org.ikasan.component.converter.jms.TextMessageToStringConverter}
@@ -59,7 +60,7 @@ import static org.junit.Assert.assertEquals;
  * 
  */
 @SuppressWarnings("unqualified-field-access")
-public class TextMessageToStringConverterTest
+class TextMessageToStringConverterTest
 {
 
     /** Mockery for objects */
@@ -76,9 +77,8 @@ public class TextMessageToStringConverterTest
     private TextMessageToStringConverter uut = new TextMessageToStringConverter();
 
 
-
     @Test
-    public void convert_with_message() throws TransformerException, JMSException {
+    void convert_with_message() throws TransformerException, JMSException {
         final String message = "TextMessage";
         // Setup expectations
         this.mockery.checking(new Expectations()
@@ -97,22 +97,24 @@ public class TextMessageToStringConverterTest
         assertEquals(message,result);
     }
 
-    @Test(expected = TransformationException.class)
-    public void convert_with_message_throwing_JMSException() throws TransformerException, JMSException {
-        final String message = "TextMessage";
-        // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+    @Test
+    void convert_with_message_throwing_JMSException() throws TransformerException, JMSException {
+        assertThrows(TransformationException.class, () -> {
+            final String message = "TextMessage";
+            // Setup expectations
+            this.mockery.checking(new Expectations()
             {
-                exactly(1).of(textMessage).getText();
-                will(throwException(new JMSException("Failed to get textMessage")));
-            }
+                {
+                    exactly(1).of(textMessage).getText();
+                    will(throwException(new JMSException("Failed to get textMessage")));
+                }
+            });
+
+            // Run the test
+            String result = uut.convert(textMessage);
+
+            // Make assertions
+            this.mockery.assertIsSatisfied();
         });
-
-        // Run the test
-        String result = uut.convert(textMessage);
-
-        // Make assertions
-        this.mockery.assertIsSatisfied();
     }
 }

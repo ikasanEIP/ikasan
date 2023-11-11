@@ -40,15 +40,13 @@
  */
 package org.ikasan.hospital.dao;
 
-import javax.annotation.Resource;
-
+import jakarta.annotation.Resource;
 import org.ikasan.hospital.model.ExclusionEventActionImpl;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * 
@@ -56,28 +54,27 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hospital-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
+@SpringJUnitConfig(locations = {
+		"/hospital-conf.xml",
+		"/hsqldb-config.xml",
+		"/substitute-components.xml",
+		"/mock-components.xml"
 })
-public class HibernateHospitalDaoTest
+class HibernateHospitalDaoTest
 {
 
 	@Resource HospitalDao hospitalDao;
-	
+
 	@Test
-	public void testSaveExclusionEvent_success()
+	void testSaveExclusionEvent_success()
 	{
 		ExclusionEventAction action = new ExclusionEventActionImpl("errorUri", "actionedBy", "state", "event".getBytes(), "moduleName", "flowName");
 		
 		this.hospitalDao.saveOrUpdate(action);
 	}
 
-    @Test
-    public void testgetExclusionEventAction_success()
+	@Test
+	void testgetExclusionEventAction_success()
     {
         // setup
         ExclusionEventAction action = new ExclusionEventActionImpl("errorUri", "actionedBy", "state", "event".getBytes(), "moduleName", "flowName");
@@ -89,7 +86,7 @@ public class HibernateHospitalDaoTest
 
         ExclusionEventAction result = this.hospitalDao.getExclusionEventActionByErrorUri("errorUri");
 
-        Assert.assertEquals(action,result);
+        assertEquals(action,result);
 
 
 

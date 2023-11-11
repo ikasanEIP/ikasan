@@ -42,7 +42,7 @@ package org.ikasan.component.endpoint.jms.consumer;
 
 import org.ikasan.spec.configuration.Masked;
 
-import javax.jms.Session;
+import jakarta.jms.Session;
 
 /**
  * Implementation of a consumer configuration for a generic JMS consumer.

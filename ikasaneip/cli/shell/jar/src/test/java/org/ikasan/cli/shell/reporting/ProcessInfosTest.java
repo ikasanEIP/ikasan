@@ -40,8 +40,9 @@
  */
 package org.ikasan.cli.shell.reporting;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>ProcessInfos</code> class.
@@ -63,7 +64,7 @@ class ProcessInfosTest
         processInfos.add(processInfo1);
         processInfos.add(processInfo2);
 
-        Assert.assertTrue(processInfos.getProcessInfos().size() == 2);
+        assertEquals(2, processInfos.getProcessInfos().size());
 
         ProcessInfo processInfo3 = new ProcessInfo();
         processInfo2.setPid(12347L);
@@ -72,7 +73,7 @@ class ProcessInfosTest
         processInfos2.add(processInfo3);
         processInfos.add(processInfos2);
 
-        Assert.assertTrue(processInfos.getProcessInfos().size() == 3);
+        assertEquals(3, processInfos.getProcessInfos().size());
     }
 
 }

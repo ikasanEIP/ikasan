@@ -41,18 +41,18 @@
 package org.ikasan.error.reporting.service;
 
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
+import jakarta.annotation.Resource;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
@@ -60,15 +60,12 @@ import javax.annotation.Resource;
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/error-reporting-service-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
 })
-
-public class ErrorReportingServiceDefaultImplTest
+class ErrorReportingServiceDefaultImplTest
 {
     @Resource
     SerialiserFactory serialiserFactory;
@@ -76,38 +73,42 @@ public class ErrorReportingServiceDefaultImplTest
     @Resource
     ErrorReportingServiceDao errorReportingServiceDao;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_serialiser()
+    @Test
+    void test_failed_constructor_null_serialiser()
     {
-        new ErrorReportingServiceDefaultImpl(null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ErrorReportingServiceDefaultImpl(null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_dao()
+    @Test
+    void test_failed_constructor_null_dao()
     {
-        new ErrorReportingServiceDefaultImpl(serialiserFactory.getDefaultSerialiser(), null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ErrorReportingServiceDefaultImpl(serialiserFactory.getDefaultSerialiser(), null);
+        });
     }
 
     /**
      * Test notify
      */
     @DirtiesContext
-    @Test
-    public void test_errorReporting_notify_no_inflight_event()
+            @Test
+    void test_errorReporting_notify_no_inflight_event()
     {
         Serialiser serialiser = serialiserFactory.getDefaultSerialiser();
         ErrorReportingService<?,ErrorOccurrenceImpl> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
         String uri = errorReportingService.notify("flowElementName", new Exception("test"));
         ErrorOccurrenceImpl errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
+        assertNotNull(errorOccurrence, "Should not be null");
     }
 
     /**
      * Test notify
      */
     @DirtiesContext
-    @Test
-    public void test_errorReporting_notify_with_inflight_string_event()
+            @Test
+    void test_errorReporting_notify_with_inflight_string_event()
     {
         final String event = new String("string based event");
 
@@ -115,18 +116,18 @@ public class ErrorReportingServiceDefaultImplTest
         ErrorReportingService<String,ErrorOccurrenceImpl> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
         String uri = errorReportingService.notify("flowElementName", event, new Exception("test"));
         ErrorOccurrenceImpl errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
+        assertNotNull(errorOccurrence, "Should not be null");
         Object failedEventBytes = errorOccurrence.getEvent();
         Object failedEvent = serialiser.deserialise(failedEventBytes);
-        Assert.assertTrue("Should be equals", failedEvent.equals(event));
+        assertEquals(failedEvent, event, "Should be equals");
     }
 
     /**
      * Test error reporting housekeep
      */
     @DirtiesContext
-    @Test
-    public void test_exclusionService_housekeep()
+            @Test
+    void test_exclusionService_housekeep()
     {
         final String event = new String("string based event");
 
@@ -134,10 +135,10 @@ public class ErrorReportingServiceDefaultImplTest
         ErrorReportingService<String,ErrorOccurrenceImpl> errorReportingService = new ErrorReportingServiceDefaultImpl("moduleName", "flowName", serialiser, errorReportingServiceDao);
         String uri = errorReportingService.notify("flowElementName", event, new Exception("test"));
         ErrorOccurrenceImpl errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
+        assertNotNull(errorOccurrence, "Should not be null");
         errorReportingService.housekeep();
         errorOccurrence = errorReportingService.find(uri);
-        Assert.assertNotNull("Should not be null", errorOccurrence);
+        assertNotNull(errorOccurrence, "Should not be null");
     }
 
 }

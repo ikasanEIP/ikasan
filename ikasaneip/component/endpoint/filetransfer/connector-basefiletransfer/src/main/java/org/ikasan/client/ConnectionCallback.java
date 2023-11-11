@@ -40,8 +40,8 @@
  */
 package org.ikasan.client;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
 
 /**
  * Callback interface for JCA connection code. When used with ConnectionTemplate, code encapsulated

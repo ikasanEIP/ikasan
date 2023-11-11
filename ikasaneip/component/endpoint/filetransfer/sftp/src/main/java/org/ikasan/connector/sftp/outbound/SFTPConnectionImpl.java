@@ -67,8 +67,8 @@ import org.ikasan.filetransfer.util.checksum.Md5ChecksumSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.resource.ResourceException;
-import javax.xml.bind.JAXBException;
+import jakarta.resource.ResourceException;
+import jakarta.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
@@ -276,7 +276,7 @@ public class SFTPConnectionImpl extends BaseFileTransferConnectionImpl {
      * @param unzip if true, attempt to unzip the payload
      * @param cleanup if true, cleans up any chunked data
      *
-     * @throws javax.resource.ResourceException -
+     * @throws jakarta.resource.ResourceException -
      */
     public void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets, boolean overwrite,
                                String renameExtension, boolean checksumDelivered, boolean unzip, boolean cleanup) throws ResourceException

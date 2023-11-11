@@ -40,21 +40,24 @@
  */
 package org.ikasan.exclusion.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for BlackListLinkedHashMap.
  * 
  * @author Ikasan Development Team
  */
-public class BlackListLinkedHashMapTest
+class BlackListLinkedHashMapTest
 {
     /**
      * Test exclusion
      */
     @Test
-    public void test_blackList_rolloff()
+    void test_blackList_rolloff()
     {
         BlackListLinkedHashMap<String,String> blackList = new BlackListLinkedHashMap<String,String>(5);
         blackList.put("1", "one");
@@ -63,21 +66,21 @@ public class BlackListLinkedHashMapTest
         blackList.put("4", "four");
         blackList.put("5", "five");
 
-        Assert.assertTrue("Should be five entries", blackList.size() == 5);
-        Assert.assertTrue("Should contain entry 1", blackList.containsKey("1"));
-        Assert.assertTrue("Should contain entry 2", blackList.containsKey("2"));
-        Assert.assertTrue("Should contain entry 3", blackList.containsKey("3"));
-        Assert.assertTrue("Should contain entry 4", blackList.containsKey("4"));
-        Assert.assertTrue("Should contain entry 5", blackList.containsKey("5"));
+        assertEquals(5, blackList.size(), "Should be five entries");
+        assertTrue(blackList.containsKey("1"), "Should contain entry 1");
+        assertTrue(blackList.containsKey("2"), "Should contain entry 2");
+        assertTrue(blackList.containsKey("3"), "Should contain entry 3");
+        assertTrue(blackList.containsKey("4"), "Should contain entry 4");
+        assertTrue(blackList.containsKey("5"), "Should contain entry 5");
 
         blackList.put("6", "six");
-        Assert.assertTrue("Should be five entries", blackList.size() == 5);
-        Assert.assertFalse("Should not contain entry 1", blackList.containsKey("1"));
-        Assert.assertTrue("Should contain entry 2", blackList.containsKey("2"));
-        Assert.assertTrue("Should contain entry 3", blackList.containsKey("3"));
-        Assert.assertTrue("Should contain entry 4", blackList.containsKey("4"));
-        Assert.assertTrue("Should contain entry 5", blackList.containsKey("5"));
-        Assert.assertTrue("Should contain entry 6", blackList.containsKey("6"));
+        assertEquals(5, blackList.size(), "Should be five entries");
+        assertFalse(blackList.containsKey("1"), "Should not contain entry 1");
+        assertTrue(blackList.containsKey("2"), "Should contain entry 2");
+        assertTrue(blackList.containsKey("3"), "Should contain entry 3");
+        assertTrue(blackList.containsKey("4"), "Should contain entry 4");
+        assertTrue(blackList.containsKey("5"), "Should contain entry 5");
+        assertTrue(blackList.containsKey("6"), "Should contain entry 6");
 
     }
 

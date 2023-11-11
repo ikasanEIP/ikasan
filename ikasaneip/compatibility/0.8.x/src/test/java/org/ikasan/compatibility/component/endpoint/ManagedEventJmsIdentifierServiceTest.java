@@ -45,11 +45,13 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Functional unit test cases for
@@ -57,7 +59,7 @@ import javax.jms.MapMessage;
  * 
  * @author Ikasan Development Team
  */
-public class ManagedEventJmsIdentifierServiceTest
+class ManagedEventJmsIdentifierServiceTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -77,7 +79,7 @@ public class ManagedEventJmsIdentifierServiceTest
      * Test successful invocation
      */
     @Test
-    public void test_successful_setEventIdentifier() throws JMSException
+    void test_successful_setEventIdentifier() throws JMSException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -97,30 +99,32 @@ public class ManagedEventJmsIdentifierServiceTest
     /**
      * Test failed invocation
      */
-    @Test(expected = ManagedEventIdentifierException.class)
-    public void test_successful_convert_failed_setEventIdentifier() throws JMSException
+    @Test
+    void test_successful_convert_failed_setEventIdentifier() throws JMSException
     {
-        // set test expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(ManagedEventIdentifierException.class, () -> {
+            // set test expectations
+            mockery.checking(new Expectations()
             {
-                exactly(1).of(mapMessage).setString("EVENT_ID", "identifier");
-                will(throwException(new JMSException("test")));
-            }
+                {
+                    exactly(1).of(mapMessage).setString("EVENT_ID", "identifier");
+                    will(throwException(new JMSException("test")));
+                }
+            });
+
+            ManagedEventIdentifierService<String, MapMessage> identifierService =
+                    new ManagedEventJmsIdentifierService();
+            identifierService.setEventIdentifier("identifier", mapMessage);
+
+            mockery.assertIsSatisfied();
         });
-
-        ManagedEventIdentifierService<String,MapMessage> identifierService =
-                new ManagedEventJmsIdentifierService();
-        identifierService.setEventIdentifier("identifier", mapMessage);
-
-        mockery.assertIsSatisfied();
     }
 
     /**
      * Test successful invocation
      */
     @Test
-    public void test_successful_getEventIdentifier_i8() throws JMSException
+    void test_successful_getEventIdentifier_i8() throws JMSException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -142,7 +146,7 @@ public class ManagedEventJmsIdentifierServiceTest
      * Test successful invocation
      */
     @Test
-    public void test_successful_getEventIdentifier_i7() throws JMSException
+    void test_successful_getEventIdentifier_i7() throws JMSException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -166,7 +170,7 @@ public class ManagedEventJmsIdentifierServiceTest
      * Test successful invocation
      */
     @Test
-    public void test_successful_getEventIdentifier_is_null() throws JMSException
+    void test_successful_getEventIdentifier_is_null() throws JMSException
     {
         // set test expectations
         mockery.checking(new Expectations()
@@ -185,29 +189,31 @@ public class ManagedEventJmsIdentifierServiceTest
                 new ManagedEventJmsIdentifierService();
         String lastResort = identifierService.getEventIdentifier(mapMessage);
 
-        Assert.assertTrue("jmsMessageId".equals(lastResort));
+        assertEquals("jmsMessageId", lastResort);
         mockery.assertIsSatisfied();
     }
 
     /**
      * Test failed invocation
      */
-    @Test(expected = ManagedEventIdentifierException.class)
-    public void test_successful_convert_failed_getEventIdentifier() throws JMSException
+    @Test
+    void test_successful_convert_failed_getEventIdentifier() throws JMSException
     {
-        // set test expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(ManagedEventIdentifierException.class, () -> {
+            // set test expectations
+            mockery.checking(new Expectations()
             {
-                exactly(1).of(mapMessage).getString("EVENT_ID");
-                will(throwException(new JMSException("test")));
-            }
+                {
+                    exactly(1).of(mapMessage).getString("EVENT_ID");
+                    will(throwException(new JMSException("test")));
+                }
+            });
+
+            ManagedEventIdentifierService<String, MapMessage> identifierService =
+                    new ManagedEventJmsIdentifierService();
+            identifierService.getEventIdentifier(mapMessage);
+
+            mockery.assertIsSatisfied();
         });
-
-        ManagedEventIdentifierService<String,MapMessage> identifierService =
-                new ManagedEventJmsIdentifierService();
-        identifierService.getEventIdentifier(mapMessage);
-
-        mockery.assertIsSatisfied();
     }
 }

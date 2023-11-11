@@ -48,7 +48,7 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.util.JndiUtils;
 
-import javax.jms.*;
+import jakarta.jms.*;
 
 /**
  * Default JMS Producer component based on Spring JMS template.

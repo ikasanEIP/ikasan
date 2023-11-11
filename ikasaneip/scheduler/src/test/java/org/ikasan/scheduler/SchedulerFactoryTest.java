@@ -43,19 +43,21 @@ package org.ikasan.scheduler;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.ListenerManager;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerListener;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This test class supports the <code>SchedulerFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class SchedulerFactoryTest
+class SchedulerFactoryTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -78,7 +80,7 @@ public class SchedulerFactoryTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_getScheduler() throws SchedulerException
+    void test_getScheduler() throws SchedulerException
     {
 
         // expectations
@@ -94,28 +96,30 @@ public class SchedulerFactoryTest
         });
 
         SchedulerFactory schedulerFactory = new StubbedSchedulerFactory();
-        Assert.assertNotNull( schedulerFactory.getScheduler() );
+        assertNotNull( schedulerFactory.getScheduler() );
         mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test failed scheduler factory creation.
      * @throws SchedulerException 
      */
-    @Test(expected = RuntimeException.class)
-    public void test_failed_schedulerFactory_creation() throws SchedulerException
+    @Test
+    void test_failed_schedulerFactory_creation() throws SchedulerException
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(RuntimeException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                exactly(1).of(scheduler).setJobFactory(with(any(ScheduledJobFactory.class)));
-                will(throwException(new SchedulerException()));
-            }
-        });
+                {
+                    exactly(1).of(scheduler).setJobFactory(with(any(ScheduledJobFactory.class)));
+                    will(throwException(new SchedulerException()));
+                }
+            });
 
-        new StubbedSchedulerFactory();
-        mockery.assertIsSatisfied();
+            new StubbedSchedulerFactory();
+            mockery.assertIsSatisfied();
+        });
     }
     
     /**

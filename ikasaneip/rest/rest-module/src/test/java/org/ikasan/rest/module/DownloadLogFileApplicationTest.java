@@ -1,17 +1,17 @@
 package org.ikasan.rest.module;
 
 import org.hamcrest.core.IsInstanceOf;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -23,36 +23,34 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.request;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { DownloadLogFileApplication.class, MockedUserServiceTestConfig.class })
-public class DownloadLogFileApplicationTest {
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+@SpringBootTest(classes = {DownloadLogFileApplication.class, MockedUserServiceTestConfig.class})
+class DownloadLogFileApplicationTest {
 
     protected MockMvc mockMvc;
 
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
-    private final String userDir = System.getProperty("user.dir");;
+    private final String userDir = System.getProperty("user.dir");
 
-    @Before
-    public void setUp() throws IOException {
+    @BeforeEach
+    void setUp() throws IOException {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
-    @After
-    public void tearDown() throws IOException {
+    @AfterEach
+    void tearDown() throws IOException {
         System.setProperty("user.dir", userDir);
     }
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void listLogFilesTest() throws Exception {
+    void listLogFilesTest() throws Exception {
 
         System.setProperty("user.dir", String.valueOf(Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data")));
 
@@ -64,13 +62,13 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andReturn();
 
-        Assert.assertTrue(results.getResponse().getContentAsString().contains("application.log"));
-        Assert.assertTrue(results.getResponse().getContentAsString().contains("h2.log"));
+        assertTrue(results.getResponse().getContentAsString().contains("application.log"));
+        assertTrue(results.getResponse().getContentAsString().contains("h2.log"));
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void listLogFilesTestWithReadOnlyUser() throws Exception {
+    void listLogFilesTestWithReadOnlyUser() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
         System.setProperty("user.dir", String.valueOf(Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data")));
@@ -86,7 +84,7 @@ public class DownloadLogFileApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void listLogFilesTooBigTest() throws Exception {
+    void listLogFilesTooBigTest() throws Exception {
 
         System.setProperty("user.dir", String.valueOf(Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data")));
 
@@ -98,12 +96,12 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andReturn();
         //application.log is over 20 bytes (24bytes), so do not return
-        Assert.assertTrue(results.getResponse().getContentAsString().contains("h2.log"));
+        assertTrue(results.getResponse().getContentAsString().contains("h2.log"));
     }
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void downloadLogFileTest() throws Exception {
+    void downloadLogFileTest() throws Exception {
 
         Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
 
@@ -127,14 +125,14 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.OK.value()))
             .andReturn();
 
-        Assert.assertEquals(results.getResponse().getContentAsString(), "Some application logging");
-        Assert.assertEquals(results.getResponse().getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Assert.assertEquals(results.getResponse().getHeader("Content-Disposition"), "attachment;filename=application.log");
+        assertEquals("Some application logging", results.getResponse().getContentAsString());
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
+        assertEquals("attachment;filename=application.log", results.getResponse().getHeader("Content-Disposition"));
     }
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void downloadLogFileTooBigTest() throws Exception {
+    void downloadLogFileTooBigTest() throws Exception {
 
         Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
 
@@ -158,14 +156,14 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .andReturn();
 
-        Assert.assertEquals(results.getResponse().getContentAsString(), "Not able to download the file for [application.log]. Log file maybe too big to download. Maximum size allowed is 20 bytes.");
-        Assert.assertEquals(results.getResponse().getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Assert.assertEquals(results.getResponse().getHeader("Content-Disposition"), "attachment;filename=application.log");
+        assertEquals("Not able to download the file for [application.log]. Log file maybe too big to download. Maximum size allowed is 20 bytes.", results.getResponse().getContentAsString());
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
+        assertEquals("attachment;filename=application.log", results.getResponse().getHeader("Content-Disposition"));
     }
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void downloadLogFileNotAllowedTest() throws Exception {
+    void downloadLogFileNotAllowedTest() throws Exception {
 
         Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
         File[] filesList = new File(path.toUri()).listFiles();
@@ -188,14 +186,14 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .andReturn();
 
-        Assert.assertEquals(results.getResponse().getContentAsString(), "Not able to download the file for [some-random-file.txt]. Log file maybe too big to download. Maximum size allowed is 20971520 bytes.");
-        Assert.assertEquals(results.getResponse().getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Assert.assertEquals(results.getResponse().getHeader("Content-Disposition"), "attachment;filename=some-random-file.txt");
+        assertEquals("Not able to download the file for [some-random-file.txt]. Log file maybe too big to download. Maximum size allowed is 20971520 bytes.", results.getResponse().getContentAsString());
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
+        assertEquals("attachment;filename=some-random-file.txt", results.getResponse().getHeader("Content-Disposition"));
     }
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void downloadLogFileDoesNotExistTest() throws Exception {
+    void downloadLogFileDoesNotExistTest() throws Exception {
 
         Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
 
@@ -220,14 +218,14 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .andReturn();
 
-        Assert.assertTrue(results.getResponse().getContentAsString().contains("Something has gone wrong when trying to download the file"));
-        Assert.assertEquals(results.getResponse().getContentType(), MediaType.APPLICATION_OCTET_STREAM_VALUE);
-        Assert.assertEquals(results.getResponse().getHeader("Content-Disposition"), "attachment;filename=error.txt");
+        assertTrue(results.getResponse().getContentAsString().contains("Something has gone wrong when trying to download the file"));
+        assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
+        assertEquals("attachment;filename=error.txt", results.getResponse().getHeader("Content-Disposition"));
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void downloadLogFileTestReadOnly() throws Exception {
+    void downloadLogFileTestReadOnly() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
         Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");

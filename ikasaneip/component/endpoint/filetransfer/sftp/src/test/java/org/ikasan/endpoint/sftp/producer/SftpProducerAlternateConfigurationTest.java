@@ -40,10 +40,10 @@
  */
 package org.ikasan.endpoint.sftp.producer;
 
-import org.junit.Assert;
-
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link SftpProducerConfiguration}
@@ -51,112 +51,112 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-public class SftpProducerAlternateConfigurationTest
+class SftpProducerAlternateConfigurationTest
 {
     /**
      * Test sftpConfiguration bean defaults.
      */
     @Test
-    public void test_sftpConfiguration_defaults()
+    void test_sftpConfiguration_defaults()
     {
         SftpProducerAlternateConfiguration sftpConfiguration = new SftpProducerAlternateConfiguration();
         
-        Assert.assertNull(sftpConfiguration.getClientID());
-        Assert.assertTrue(sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
-        Assert.assertEquals("127.0.0.1", sftpConfiguration.getRemoteHost());
-        Assert.assertEquals("127.0.0.1", sftpConfiguration.getAlternateRemoteHost());
-        Assert.assertNull(sftpConfiguration.getPrivateKeyFilename());
-        Assert.assertNull(sftpConfiguration.getAlternatePrivateKeyFilename());
-        Assert.assertEquals(Integer.valueOf(3), sftpConfiguration.getMaxRetryAttempts());
-        Assert.assertEquals(Integer.valueOf(3), sftpConfiguration.getAlternateMaxRetryAttempts());
-        Assert.assertEquals(Integer.valueOf(22), sftpConfiguration.getRemotePort());
-        Assert.assertEquals(Integer.valueOf(22), sftpConfiguration.getAlternateRemotePort());
-        Assert.assertNull(sftpConfiguration.getKnownHostsFilename());
-        Assert.assertNull(sftpConfiguration.getAlternateKnownHostsFilename());
-        Assert.assertNull(sftpConfiguration.getUsername());
-        Assert.assertNull(sftpConfiguration.getAlternateUsername());
-        Assert.assertNull(sftpConfiguration.getPassword());
-        Assert.assertNull(sftpConfiguration.getAlternatePassword());
-        Assert.assertEquals(Integer.valueOf(60000), sftpConfiguration.getConnectionTimeout());
-        Assert.assertEquals(Integer.valueOf(60000), sftpConfiguration.getAlternateConnectionTimeout());
-        Assert.assertNull(sftpConfiguration.getOutputDirectory());
-        Assert.assertEquals(".tmp", sftpConfiguration.getRenameExtension());
-        Assert.assertFalse(sftpConfiguration.getOverwrite().booleanValue());
-        Assert.assertFalse(sftpConfiguration.getUnzip().booleanValue());
-        Assert.assertFalse(sftpConfiguration.getChecksumDelivered().booleanValue());
-        Assert.assertFalse(sftpConfiguration.getCreateParentDirectory().booleanValue());
+        assertNull(sftpConfiguration.getClientID());
+        assertTrue(sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
+        assertEquals("127.0.0.1", sftpConfiguration.getRemoteHost());
+        assertEquals("127.0.0.1", sftpConfiguration.getAlternateRemoteHost());
+        assertNull(sftpConfiguration.getPrivateKeyFilename());
+        assertNull(sftpConfiguration.getAlternatePrivateKeyFilename());
+        assertEquals(Integer.valueOf(3), sftpConfiguration.getMaxRetryAttempts());
+        assertEquals(Integer.valueOf(3), sftpConfiguration.getAlternateMaxRetryAttempts());
+        assertEquals(Integer.valueOf(22), sftpConfiguration.getRemotePort());
+        assertEquals(Integer.valueOf(22), sftpConfiguration.getAlternateRemotePort());
+        assertNull(sftpConfiguration.getKnownHostsFilename());
+        assertNull(sftpConfiguration.getAlternateKnownHostsFilename());
+        assertNull(sftpConfiguration.getUsername());
+        assertNull(sftpConfiguration.getAlternateUsername());
+        assertNull(sftpConfiguration.getPassword());
+        assertNull(sftpConfiguration.getAlternatePassword());
+        assertEquals(Integer.valueOf(60000), sftpConfiguration.getConnectionTimeout());
+        assertEquals(Integer.valueOf(60000), sftpConfiguration.getAlternateConnectionTimeout());
+        assertNull(sftpConfiguration.getOutputDirectory());
+        assertEquals(".tmp", sftpConfiguration.getRenameExtension());
+        assertFalse(sftpConfiguration.getOverwrite().booleanValue());
+        assertFalse(sftpConfiguration.getUnzip().booleanValue());
+        assertFalse(sftpConfiguration.getChecksumDelivered().booleanValue());
+        assertFalse(sftpConfiguration.getCreateParentDirectory().booleanValue());
     }
 
     /**
      * Test public getters and setters.
      */
     @Test
-    public void test_sftpConfiguration_mutators()
+    void test_sftpConfiguration_mutators()
     {
         SftpProducerAlternateConfiguration sftpConfiguration = new SftpProducerAlternateConfiguration();
         
         sftpConfiguration.setClientID("clientID");
-        Assert.assertEquals("clientID", sftpConfiguration.getClientID());
+        assertEquals("clientID", sftpConfiguration.getClientID());
 
         sftpConfiguration.setCleanupJournalOnComplete(Boolean.FALSE);
-        Assert.assertFalse("cleanupJournalOnComplete", sftpConfiguration.getCleanupJournalOnComplete().booleanValue());
+        assertFalse(sftpConfiguration.getCleanupJournalOnComplete().booleanValue(), "cleanupJournalOnComplete");
 
         sftpConfiguration.setRemoteHost("remoteHost");
-        Assert.assertEquals("remoteHost", sftpConfiguration.getRemoteHost());
+        assertEquals("remoteHost", sftpConfiguration.getRemoteHost());
         sftpConfiguration.setAlternateRemoteHost("alternateRemoteHost");
-        Assert.assertEquals("alternateRemoteHost", sftpConfiguration.getAlternateRemoteHost());
+        assertEquals("alternateRemoteHost", sftpConfiguration.getAlternateRemoteHost());
 
         sftpConfiguration.setPrivateKeyFilename("privateKeyFilename");
-        Assert.assertEquals("privateKeyFilename", sftpConfiguration.getPrivateKeyFilename());
+        assertEquals("privateKeyFilename", sftpConfiguration.getPrivateKeyFilename());
         sftpConfiguration.setPrivateKeyFilename("privateKeyFilename");
-        Assert.assertEquals("privateKeyFilename", sftpConfiguration.getPrivateKeyFilename());
+        assertEquals("privateKeyFilename", sftpConfiguration.getPrivateKeyFilename());
 
         sftpConfiguration.setMaxRetryAttempts(Integer.valueOf(10));
-        Assert.assertEquals("maxRetryAttempts", Integer.valueOf(10), sftpConfiguration.getMaxRetryAttempts());
+        assertEquals(Integer.valueOf(10), sftpConfiguration.getMaxRetryAttempts(), "maxRetryAttempts");
         sftpConfiguration.setAlternateMaxRetryAttempts(Integer.valueOf(5));
-        Assert.assertEquals("alternateMaxRetryAttempts", Integer.valueOf(5), sftpConfiguration.getAlternateMaxRetryAttempts());
+        assertEquals(Integer.valueOf(5), sftpConfiguration.getAlternateMaxRetryAttempts(), "alternateMaxRetryAttempts");
 
         sftpConfiguration.setRemotePort(Integer.valueOf(21));
-        Assert.assertEquals("remotePort", Integer.valueOf(21), sftpConfiguration.getRemotePort());
+        assertEquals(Integer.valueOf(21), sftpConfiguration.getRemotePort(), "remotePort");
         sftpConfiguration.setAlternateRemotePort(Integer.valueOf(20));
-        Assert.assertEquals("alternateRemotePort", Integer.valueOf(20), sftpConfiguration.getAlternateRemotePort());
+        assertEquals(Integer.valueOf(20), sftpConfiguration.getAlternateRemotePort(), "alternateRemotePort");
 
         sftpConfiguration.setKnownHostsFilename("knownHostsFilename");
-        Assert.assertEquals("knownHostsFilename", sftpConfiguration.getKnownHostsFilename());
+        assertEquals("knownHostsFilename", sftpConfiguration.getKnownHostsFilename());
         sftpConfiguration.setAlternateKnownHostsFilename("alternateKnownHostsFilename");
-        Assert.assertEquals("alternateKnownHostsFilename", sftpConfiguration.getAlternateKnownHostsFilename());
+        assertEquals("alternateKnownHostsFilename", sftpConfiguration.getAlternateKnownHostsFilename());
 
         sftpConfiguration.setUsername("username");
-        Assert.assertEquals("username", sftpConfiguration.getUsername());
+        assertEquals("username", sftpConfiguration.getUsername());
         sftpConfiguration.setAlternateUsername("alternatUsername");
-        Assert.assertEquals("alternatUsername", sftpConfiguration.getAlternateUsername());
+        assertEquals("alternatUsername", sftpConfiguration.getAlternateUsername());
 
         sftpConfiguration.setPassword("password");
-        Assert.assertEquals("password", sftpConfiguration.getPassword());
+        assertEquals("password", sftpConfiguration.getPassword());
         sftpConfiguration.setAlternatePassword("alternatePassword");
-        Assert.assertEquals("alternatePassword", sftpConfiguration.getAlternatePassword());
+        assertEquals("alternatePassword", sftpConfiguration.getAlternatePassword());
 
         sftpConfiguration.setConnectionTimeout(Integer.valueOf(1500));
-        Assert.assertEquals("connectionTimeout", Integer.valueOf(1500), sftpConfiguration.getConnectionTimeout());
+        assertEquals(Integer.valueOf(1500), sftpConfiguration.getConnectionTimeout(), "connectionTimeout");
         sftpConfiguration.setAlternateConnectionTimeout(Integer.valueOf(1501));
-        Assert.assertEquals("alernateConnectionTimeout", Integer.valueOf(1501), sftpConfiguration.getAlternateConnectionTimeout());
+        assertEquals(Integer.valueOf(1501), sftpConfiguration.getAlternateConnectionTimeout(), "alernateConnectionTimeout");
 
         sftpConfiguration.setOutputDirectory("outputDirectory");
-        Assert.assertEquals("outputDirectory", sftpConfiguration.getOutputDirectory());
+        assertEquals("outputDirectory", sftpConfiguration.getOutputDirectory());
 
         sftpConfiguration.setRenameExtension("renameExtension");
-        Assert.assertEquals("renameExtension", sftpConfiguration.getRenameExtension());
+        assertEquals("renameExtension", sftpConfiguration.getRenameExtension());
 
         sftpConfiguration.setOverwrite(Boolean.TRUE);
-        Assert.assertTrue("overwrite", sftpConfiguration.getOverwrite().booleanValue());
+        assertTrue(sftpConfiguration.getOverwrite().booleanValue(), "overwrite");
 
         sftpConfiguration.setUnzip(Boolean.TRUE);
-        Assert.assertTrue("unzip", sftpConfiguration.getUnzip().booleanValue());
+        assertTrue(sftpConfiguration.getUnzip().booleanValue(), "unzip");
 
         sftpConfiguration.setChecksumDelivered(Boolean.TRUE);
-        Assert.assertTrue("checksumDelivered", sftpConfiguration.getChecksumDelivered().booleanValue());
+        assertTrue(sftpConfiguration.getChecksumDelivered().booleanValue(), "checksumDelivered");
 
         sftpConfiguration.setCreateParentDirectory(Boolean.TRUE);
-        Assert.assertTrue("createParentDirectory", sftpConfiguration.getCreateParentDirectory().booleanValue());
+        assertTrue(sftpConfiguration.getCreateParentDirectory().booleanValue(), "createParentDirectory");
     }
 }

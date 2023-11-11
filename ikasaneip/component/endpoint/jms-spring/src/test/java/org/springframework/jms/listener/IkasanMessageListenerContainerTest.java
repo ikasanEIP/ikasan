@@ -46,19 +46,20 @@ import org.ikasan.spec.exclusion.ExclusionService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Functional unit test cases for <code>IkasanMessageListenerContainer</code>.
  * 
  * @author Ikasan Developmnet Team
  */
-public class IkasanMessageListenerContainerTest
+class IkasanMessageListenerContainerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -86,7 +87,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_no_batching_no_exclusions_no_split() throws JMSException
+    void test_successful_receive_no_batching_no_exclusions_no_split() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -104,8 +105,8 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertFalse(msg instanceof IkasanListMessage);
+        assertTrue(msg instanceof Message);
+        assertFalse(msg instanceof IkasanListMessage);
 
         mockery.assertIsSatisfied();
     }
@@ -114,7 +115,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_no_batching_with_exclusions_no_split() throws JMSException
+    void test_successful_receive_no_batching_with_exclusions_no_split() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -132,8 +133,8 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertFalse(msg instanceof IkasanListMessage);
+        assertTrue(msg instanceof Message);
+        assertFalse(msg instanceof IkasanListMessage);
 
         mockery.assertIsSatisfied();
     }
@@ -142,7 +143,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_no_batching_no_exclusions_with_split() throws JMSException
+    void test_successful_receive_no_batching_no_exclusions_with_split() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -160,8 +161,8 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertFalse(msg instanceof IkasanListMessage);
+        assertTrue(msg instanceof Message);
+        assertFalse(msg instanceof IkasanListMessage);
 
         mockery.assertIsSatisfied();
     }
@@ -170,7 +171,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_no_batching_with_exclusions_with_split() throws JMSException
+    void test_successful_receive_no_batching_with_exclusions_with_split() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -188,8 +189,8 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertFalse(msg instanceof IkasanListMessage);
+        assertTrue(msg instanceof Message);
+        assertFalse(msg instanceof IkasanListMessage);
 
         mockery.assertIsSatisfied();
     }
@@ -198,7 +199,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_with_batching_no_exclusions_no_split() throws JMSException
+    void test_successful_receive_with_batching_no_exclusions_no_split() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -225,9 +226,9 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertTrue(msg instanceof IkasanListMessage);
-        Assert.assertEquals("jmsId:1", msg.getJMSMessageID());
+        assertTrue(msg instanceof Message);
+        assertTrue(msg instanceof IkasanListMessage);
+        assertEquals("jmsId:1", msg.getJMSMessageID());
         mockery.assertIsSatisfied();
     }
 
@@ -235,7 +236,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_with_batching_no_exclusions_with_split() throws JMSException
+    void test_successful_receive_with_batching_no_exclusions_with_split() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -262,9 +263,9 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertTrue(msg instanceof IkasanListMessage);
-        Assert.assertEquals("jmsId:1", msg.getJMSMessageID());
+        assertTrue(msg instanceof Message);
+        assertTrue(msg instanceof IkasanListMessage);
+        assertEquals("jmsId:1", msg.getJMSMessageID());
         mockery.assertIsSatisfied();
     }
 
@@ -272,7 +273,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_with_batching_with_exclusions_no_split_batchLimitHit() throws JMSException
+    void test_successful_receive_with_batching_with_exclusions_no_split_batchLimitHit() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -308,9 +309,9 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertTrue(msg instanceof IkasanListMessage);
-        Assert.assertEquals("jmsId:2", msg.getJMSMessageID());
+        assertTrue(msg instanceof Message);
+        assertTrue(msg instanceof IkasanListMessage);
+        assertEquals("jmsId:2", msg.getJMSMessageID());
         mockery.assertIsSatisfied();
     }
 
@@ -318,7 +319,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_with_batching_with_exclusions_no_split_exclusionOnBlacklistHit() throws JMSException
+    void test_successful_receive_with_batching_with_exclusions_no_split_exclusionOnBlacklistHit() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -357,9 +358,9 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertTrue(msg instanceof IkasanListMessage);
-        Assert.assertEquals("jmsId:2", msg.getJMSMessageID());
+        assertTrue(msg instanceof Message);
+        assertTrue(msg instanceof IkasanListMessage);
+        assertEquals("jmsId:2", msg.getJMSMessageID());
         mockery.assertIsSatisfied();
     }
 
@@ -367,7 +368,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_with_batching_with_exclusions_with_split_batchLimitHit() throws JMSException
+    void test_successful_receive_with_batching_with_exclusions_with_split_batchLimitHit() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -393,9 +394,9 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertTrue(msg instanceof IkasanListMessage);
-        Assert.assertEquals("jmsId:1", msg.getJMSMessageID());
+        assertTrue(msg instanceof Message);
+        assertTrue(msg instanceof IkasanListMessage);
+        assertEquals("jmsId:1", msg.getJMSMessageID());
         mockery.assertIsSatisfied();
     }
 
@@ -403,7 +404,7 @@ public class IkasanMessageListenerContainerTest
      * Test
      */
     @Test
-    public void test_successful_receive_with_batching_with_exclusions_with_split_exclusionOnBlacklistHit() throws JMSException
+    void test_successful_receive_with_batching_with_exclusions_with_split_exclusionOnBlacklistHit() throws JMSException
     {
         mockery.checking(new Expectations()
         {
@@ -430,9 +431,9 @@ public class IkasanMessageListenerContainerTest
         listener.setConfiguration(configuration);
 
         Message msg = listener.receiveMessage(messageConsumer);
-        Assert.assertTrue(msg instanceof Message);
-        Assert.assertTrue(msg instanceof IkasanListMessage);
-        Assert.assertEquals("jmsId:1", msg.getJMSMessageID());
+        assertTrue(msg instanceof Message);
+        assertTrue(msg instanceof IkasanListMessage);
+        assertEquals("jmsId:1", msg.getJMSMessageID());
         mockery.assertIsSatisfied();
     }
 

@@ -44,7 +44,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

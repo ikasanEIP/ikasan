@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent.rest.client;
 
 import org.ikasan.dashboard.DashboardRestServiceImpl;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -49,6 +50,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 /**
  * Scheduler service related configuration required by the scheduler ootb module.
  */
+@AutoConfiguration
 public class ScheduledServiceAutoConfiguration
 {
     public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";

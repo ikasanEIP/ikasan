@@ -8,7 +8,7 @@ import org.ikasan.filetransfer.Payload;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -48,7 +48,7 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.springframework.jms.util.JndiUtils;
 
-import javax.jms.*;
+import jakarta.jms.*;
 
 /**
  * Extend DefaultMessageListenerContainer to ensure standard defaults are set on the container being instantiated.
@@ -211,7 +211,7 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
     /**
      * Attempt to recover a shared connection, if its used
      * @see #refreshSharedConnection()
-     * @throws javax.jms.JMSException if the underlying provider cannot re-establish itself
+     * @throws jakarta.jms.JMSException if the underlying provider cannot re-establish itself
      */
     public void recoverSharedConnection() throws JMSException
     {

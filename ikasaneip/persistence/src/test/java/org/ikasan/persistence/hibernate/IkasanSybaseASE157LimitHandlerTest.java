@@ -1,16 +1,17 @@
 package org.ikasan.persistence.hibernate;
 
 import org.hibernate.engine.spi.RowSelection;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by Ikasan Development Team on 29/12/2017.
  */
-public class IkasanSybaseASE157LimitHandlerTest
+class IkasanSybaseASE157LimitHandlerTest
 {
     @Test
-    public void test_no_first_row_no_max_rows()
+    void test_no_first_row_no_max_rows()
     {
         String sql = "select * from SomeTable";
 
@@ -20,11 +21,11 @@ public class IkasanSybaseASE157LimitHandlerTest
 
         String resultantSql = handler.processSql(sql, rowSelection);
 
-        Assert.assertEquals("Sql must equal", sql, resultantSql);
+        assertEquals(sql, resultantSql, "Sql must equal");
     }
 
     @Test
-    public void test_no_first_row_with_max_rows()
+    void test_no_first_row_with_max_rows()
     {
         String sql = "select * from SomeTable";
 
@@ -35,11 +36,11 @@ public class IkasanSybaseASE157LimitHandlerTest
 
         String resultantSql = handler.processSql(sql, rowSelection);
 
-        Assert.assertEquals("Sql must equal", "select top 1000 * from SomeTable", resultantSql);
+        assertEquals("select top 1000 * from SomeTable", resultantSql, "Sql must equal");
     }
 
     @Test
-    public void test_with_first_row_with_max_rows()
+    void test_with_first_row_with_max_rows()
     {
         String sql = "select * from SomeTable";
 
@@ -51,6 +52,6 @@ public class IkasanSybaseASE157LimitHandlerTest
 
         String resultantSql = handler.processSql(sql, rowSelection);
 
-        Assert.assertEquals("Sql must equal", "select top 1500 * from SomeTable", resultantSql);
+        assertEquals("select top 1500 * from SomeTable", resultantSql, "Sql must equal");
     }
 }

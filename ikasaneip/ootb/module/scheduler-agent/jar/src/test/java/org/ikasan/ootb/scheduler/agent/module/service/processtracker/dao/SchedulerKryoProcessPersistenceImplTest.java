@@ -12,13 +12,13 @@ import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class SchedulerKryoProcessPersistenceImplTest {
+class SchedulerKryoProcessPersistenceImplTest {
     private SchedulerProcessPersistenceDao schedulerKryoProcessPersistence;
     @TempDir
     File tempDir;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         schedulerKryoProcessPersistence = new SchedulerKryoProcessPersistenceImpl(tempDir.toString());
     }
 

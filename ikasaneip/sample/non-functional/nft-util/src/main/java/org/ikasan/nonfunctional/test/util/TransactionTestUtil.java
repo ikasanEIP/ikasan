@@ -53,7 +53,7 @@ public class TransactionTestUtil
      * @param xid
      * @return
      */
-    public static String getTransactionId(javax.transaction.xa.Xid xid)
+    public static String getTransactionId(jakarta.transaction.xa.Xid xid)
     {
         String trimLeft = xid.toString().substring(xid.toString().indexOf("tx_uid"));
         String trimRight = trimLeft.substring(7, trimLeft.indexOf(","));
@@ -65,7 +65,7 @@ public class TransactionTestUtil
      * @param xid
      * @return
      */
-    public static String getTransactionBranchId(javax.transaction.xa.Xid xid)
+    public static String getTransactionBranchId(jakarta.transaction.xa.Xid xid)
     {
         String trimLeft = xid.toString().substring(xid.toString().indexOf("branch_uid"));
         String trimRight = trimLeft.substring(11, trimLeft.indexOf(","));

@@ -54,7 +54,7 @@ import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
-import javax.jms.*;
+import jakarta.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

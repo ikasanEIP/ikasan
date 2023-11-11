@@ -292,6 +292,11 @@
             <groupId>com.github.ulisesbocchio</groupId>
             <artifactId>jasypt-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>3.1.0.redhat-00003</version>
+        </dependency>
 
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
@@ -318,11 +323,6 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring-arjuna</artifactId>
             <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
         </dependency>
 
         <dependency>
@@ -366,12 +366,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
         </dependency>
@@ -385,6 +379,11 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -41,19 +41,19 @@
 package org.ikasan.serialiser.converter;
 
 import org.apache.activemq.command.ActiveMQMapMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Session;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test JmsMapMessageConverter
  */
-public class JmsMapMessageConverterTest {
+class JmsMapMessageConverterTest {
 
     // Unit under test
     private JmsMapMessageConverter uut = new JmsMapMessageConverter();
@@ -71,7 +71,7 @@ public class JmsMapMessageConverterTest {
     String STRING = "string";
 
     @Test
-    public void convert_when_mapMessage_has_object() throws JMSException {
+    void convert_when_mapMessage_has_object() throws JMSException {
 
         MapMessage message = new ActiveMQMapMessage();
         message.setBoolean(BOOLEAN,true);
@@ -95,21 +95,21 @@ public class JmsMapMessageConverterTest {
         MapMessage result = uut.convert(message);
 
         //assert
-        assertEquals(true, result.getBoolean(BOOLEAN));
+        assertTrue(result.getBoolean(BOOLEAN));
         assertEquals(b, result.getByte(BYTE));
         assertEquals("test", new String(result.getBytes(BYTES)));
-        assertTrue('c' == result.getChar(CHAR));
-        assertTrue(Double.valueOf(10).doubleValue() == result.getDouble(DOUBLE));
-        assertTrue(Float.valueOf(12).floatValue() == result.getFloat(FLOAT));
-        assertTrue(Integer.valueOf(14).intValue() == result.getInt(INT));
-        assertTrue(Long.valueOf(16).longValue() == result.getLong(LONG));
+        assertEquals('c', result.getChar(CHAR));
+        assertEquals(Double.valueOf(10).doubleValue(), result.getDouble(DOUBLE));
+        assertEquals(Float.valueOf(12).floatValue(), result.getFloat(FLOAT));
+        assertEquals(Integer.valueOf(14).intValue(), result.getInt(INT));
+        assertEquals(Long.valueOf(16).longValue(), result.getLong(LONG));
         assertEquals(Double.valueOf(100), result.getObject(OBJECT));
-        assertTrue(Short.valueOf((short)18).shortValue() == result.getShort(SHORT));
+        assertEquals(Short.valueOf((short)18).shortValue(), result.getShort(SHORT));
         assertEquals("testString", result.getString(STRING));
     }
 
     @Test
-    public void convert_when_mapMessage_has_headerProperties() throws JMSException {
+    void convert_when_mapMessage_has_headerProperties() throws JMSException {
 
         MapMessage message = new ActiveMQMapMessage();
         message.setBooleanProperty(BOOLEAN, true);
@@ -126,19 +126,19 @@ public class JmsMapMessageConverterTest {
         MapMessage result = uut.convert(message);
 
         //assert
-        assertEquals(true, result.getBooleanProperty(BOOLEAN));
+        assertTrue(result.getBooleanProperty(BOOLEAN));
         assertEquals('b', result.getByteProperty(BYTE));
-        assertTrue(Double.valueOf(10).doubleValue() == result.getDoubleProperty(DOUBLE));
-        assertTrue(Float.valueOf(12).floatValue() == result.getFloatProperty(FLOAT));
-        assertTrue(Integer.valueOf(14).intValue() == result.getIntProperty(INT));
-        assertTrue(Long.valueOf(16).longValue() == result.getLongProperty(LONG));
+        assertEquals(Double.valueOf(10).doubleValue(), result.getDoubleProperty(DOUBLE));
+        assertEquals(Float.valueOf(12).floatValue(), result.getFloatProperty(FLOAT));
+        assertEquals(Integer.valueOf(14).intValue(), result.getIntProperty(INT));
+        assertEquals(Long.valueOf(16).longValue(), result.getLongProperty(LONG));
         assertEquals("test string", result.getObjectProperty(OBJECT));
-        assertTrue(Short.valueOf((short)18).shortValue() == result.getShortProperty(SHORT));
+        assertEquals(Short.valueOf((short)18).shortValue(), result.getShortProperty(SHORT));
         assertEquals("testStringAgain", result.getStringProperty(STRING));
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSCorrelationID() throws JMSException {
+    void convert_when_mapMessage_has_JMSCorrelationID() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
         MapMessage message = new ActiveMQMapMessage();
@@ -153,7 +153,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSCorrelationIDAsBytes() throws JMSException {
+    void convert_when_mapMessage_has_JMSCorrelationIDAsBytes() throws JMSException {
 
         String jmsCorrelationID = "TestJMSCorrelationID";
         MapMessage message = new ActiveMQMapMessage();
@@ -168,7 +168,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSDeliveryModes() throws JMSException {
+    void convert_when_mapMessage_has_JMSDeliveryModes() throws JMSException {
 
         int jmsDeliveryModes = Session.AUTO_ACKNOWLEDGE;
         MapMessage message = new ActiveMQMapMessage();
@@ -183,7 +183,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_jmsExpiration() throws JMSException {
+    void convert_when_mapMessage_has_jmsExpiration() throws JMSException {
 
         long jmsExpiration = 3600l;
         MapMessage message = new ActiveMQMapMessage();
@@ -198,7 +198,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSmessageId() throws JMSException {
+    void convert_when_mapMessage_has_JMSmessageId() throws JMSException {
 
         String jmsMessageId = "TestJMSMessageID";
         MapMessage message = new ActiveMQMapMessage();
@@ -214,7 +214,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSPriority() throws JMSException {
+    void convert_when_mapMessage_has_JMSPriority() throws JMSException {
 
         int jmsPriority = 1;
         MapMessage message = new ActiveMQMapMessage();
@@ -229,7 +229,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSRedelivery() throws JMSException {
+    void convert_when_mapMessage_has_JMSRedelivery() throws JMSException {
 
         boolean jmsRedelivered = true;
         MapMessage message = new ActiveMQMapMessage();
@@ -244,7 +244,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_jmsTimestamp() throws JMSException {
+    void convert_when_mapMessage_has_jmsTimestamp() throws JMSException {
 
         long jmsTimestamp = 3600l;
         MapMessage message = new ActiveMQMapMessage();
@@ -259,7 +259,7 @@ public class JmsMapMessageConverterTest {
     }
 
     @Test
-    public void convert_when_mapMessage_has_JMSType() throws JMSException {
+    void convert_when_mapMessage_has_JMSType() throws JMSException {
 
         String jmsType = "TestJMSType";
         MapMessage message = new ActiveMQMapMessage();

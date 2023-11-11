@@ -62,22 +62,21 @@ import org.ikasan.spec.event.MessageListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ComponentBuilderTest {
+class ComponentBuilderTest {
     /**
      * Mockery for mocking concrete classes
      */
@@ -106,7 +105,7 @@ public class ComponentBuilderTest {
     final MessageListener messageListener = mockery.mock(MessageListener.class, "mockMessageListener");
 
     @Test
-    public void test_successful_scheduledConsumer() {
+    void test_successful_scheduledConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -130,15 +129,15 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_emailProducer()
+    void test_successful_emailProducer()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
-        Assert.assertTrue(componentBuilder.emailProducer() instanceof EmailProducerBuilder);
+        assertTrue(componentBuilder.emailProducer() instanceof EmailProducerBuilder);
     }
 
 
     @Test
-    public void test_successful_fileConsumer()
+    void test_successful_fileConsumer()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
@@ -163,7 +162,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_fileProducer()
+    void test_successful_fileProducer()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
@@ -173,7 +172,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_sftpConsumer() {
+    void test_successful_sftpConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -210,7 +209,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_sftpProducer() {
+    void test_successful_sftpProducer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -238,7 +237,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_ftpConsumer() {
+    void test_successful_ftpConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -274,7 +273,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_ftpProducer() {
+    void test_successful_ftpProducer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -302,7 +301,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_jmsConsumer() {
+    void test_successful_jmsConsumer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -327,7 +326,7 @@ public class ComponentBuilderTest {
     }
 
     @Test
-    public void test_successful_jmsProducer() {
+    void test_successful_jmsProducer() {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
 
         // expectations
@@ -354,40 +353,40 @@ public class ComponentBuilderTest {
      * Test listSplitter.
      */
     @Test
-    public void test_successful_listSplitter()
+    void test_successful_listSplitter()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Splitter splitter = componentBuilder.listSplitter().build();
-        assertTrue("instance should be a Splitter", splitter instanceof Splitter);
+        assertTrue(splitter instanceof Splitter, "instance should be a Splitter");
     }
 
     /**
      * Test devNullProducer builder.
      */
     @Test
-    public void test_successful_devNullProducer()
+    void test_successful_devNullProducer()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Producer producer = componentBuilder.devNullProducer().build();
-        assertTrue("instance should be a Producer", producer instanceof Producer);
+        assertTrue(producer instanceof Producer, "instance should be a Producer");
     }
 
     /**
      * Test logProducer builder.
      */
     @Test
-    public void test_successful_logProducer()
+    void test_successful_logProducer()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Producer producer = componentBuilder.logProducer().build();
-        assertTrue("instance should be a Producer", producer instanceof Producer);
+        assertTrue(producer instanceof Producer, "instance should be a Producer");
     }
 
     /**
      * Test eventGeneratingConsumer builder.
      */
     @Test
-    public void test_successful_eventGeneratingConsumer()
+    void test_successful_eventGeneratingConsumer()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -403,36 +402,38 @@ public class ComponentBuilderTest {
 
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Consumer consumer = componentBuilder.eventGeneratingConsumer().build();
-        assertTrue("instance should be a Consumer", consumer instanceof Consumer);
+        assertTrue(consumer instanceof Consumer, "instance should be a Consumer");
         mockery.assertIsSatisfied();
     }
 
     /**
      * Test eventGeneratingConsumer builder.
      */
-    @Test(expected = RuntimeException.class)
-    public void test_successful_eventGeneratingConsumer_noClassDefFoundException()
+    @Test
+    void test_successful_eventGeneratingConsumer_noClassDefFoundException()
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(RuntimeException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                oneOf(applicationContext).getBean(AopProxyProvider.class);
-                will(throwException(new NoClassDefFoundError("class definition missing")));
-            }
-        });
+                {
+                    oneOf(applicationContext).getBean(AopProxyProvider.class);
+                    will(throwException(new NoClassDefFoundError("class definition missing")));
+                }
+            });
 
-        ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
-        Consumer consumer = componentBuilder.eventGeneratingConsumer().build();
-        assertTrue("instance should be a Consumer", consumer instanceof Consumer);
-        mockery.assertIsSatisfied();
+            ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
+            Consumer consumer = componentBuilder.eventGeneratingConsumer().build();
+            assertTrue(consumer instanceof Consumer, "instance should be a Consumer");
+            mockery.assertIsSatisfied();
+        });
     }
 
     /**
      * Test messageFilterBuilder.
      */
     @Test
-    public void test_successful_messageFilterBuilder_withConfiguration()
+    void test_successful_messageFilterBuilder_withConfiguration()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -446,34 +447,34 @@ public class ComponentBuilderTest {
 
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Filter filter = componentBuilder.messageFilter().setFilterEntryConverter(filterEntryConverter).setConfiguredResourceId("configuredResourceId").build();
-        assertTrue("instance should be a Filter", filter instanceof Filter);
+        assertTrue(filter instanceof Filter, "instance should be a Filter");
 
-        assertTrue("configuredResourceId should be 'configuredResourceId'",  "configuredResourceId".equals(((ConfiguredResource) filter).getConfiguredResourceId()));
+        assertEquals("configuredResourceId", ((ConfiguredResource)filter).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
     }
 
     /**
      * Test objectToXmlBuilder no config.
      */
     @Test
-    public void test_successful_objectToXmlConverterBuilder()
+    void test_successful_objectToXmlConverterBuilder()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Converter converter = componentBuilder.objectToXmlStringConverter().build();
-        assertTrue("instance should be a Converter", converter instanceof Converter);
+        assertTrue(converter instanceof Converter, "instance should be a Converter");
     }
 
     /**
      * Test objectToXmlBuilder with config.
      */
     @Test
-    public void test_successful_objectToXmlConverterBuilder_withConfiguration()
+    void test_successful_objectToXmlConverterBuilder_withConfiguration()
     {
         ComponentBuilder componentBuilder = new ComponentBuilder(applicationContext);
         Converter converter = componentBuilder.objectToXmlStringConverter()
                 .setConfiguration( new XmlConfiguration() )
                 .setConfiguredResourceId("myConfiguredResourceId")
                 .build();
-        assertTrue("instance should be a Converter", converter instanceof Converter);
-        assertTrue("configuredResourceId should be 'myConfiguredResourceId'",  "myConfiguredResourceId".equals(((ConfiguredResource) converter).getConfiguredResourceId()));
+        assertTrue(converter instanceof Converter, "instance should be a Converter");
+        assertEquals("myConfiguredResourceId", ((ConfiguredResource)converter).getConfiguredResourceId(), "configuredResourceId should be 'myConfiguredResourceId'");
     }
 }

@@ -61,9 +61,9 @@ package org.ikasan.serialiser.model;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.MessageFormatException;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageFormatException;
 import java.io.*;
 
 /**

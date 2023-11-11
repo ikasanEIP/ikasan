@@ -41,32 +41,33 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>VanillaInvokerConfigurationBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class VanillaInvokerConfigurationBuilderTest
+class VanillaInvokerConfigurationBuilderTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void vanillaInvokerConfigurationBuilder_test_properties_setters()
+    void vanillaInvokerConfigurationBuilder_test_properties_setters()
     {
         VanillaInvokerConfigurationBuilder ticb = new VanillaInvokerConfigurationBuilder(new InvokerConfiguration());
 
-        Assert.assertTrue("InvokerConfiguration should have 1 property", TestUtils.getFields(InvokerConfiguration.class).size() == 3);
-        Assert.assertFalse("InvokerConfiguration should be false", ticb.withDynamicConfiguration(false).build().isDynamicConfiguration());
-        Assert.assertTrue("InvokerConfiguration should be true", ticb.withDynamicConfiguration(true).build().isDynamicConfiguration());
+        assertEquals(3, TestUtils.getFields(InvokerConfiguration.class).size(), "InvokerConfiguration should have 1 property");
+        assertFalse(ticb.withDynamicConfiguration(false).build().isDynamicConfiguration(), "InvokerConfiguration should be false");
+        assertTrue(ticb.withDynamicConfiguration(true).build().isDynamicConfiguration(), "InvokerConfiguration should be true");
 
-        Assert.assertTrue("InvokerConfiguration should be true", ticb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
-        Assert.assertTrue("InvokerConfiguration should be false", ticb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
-        Assert.assertTrue("InvokerConfiguration should be true", ticb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
-        Assert.assertTrue("InvokerConfiguration should be false", ticb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+        assertTrue(ticb.withCaptureMetrics(true).build().getCaptureMetrics(), "InvokerConfiguration should be true");
+        assertFalse(ticb.withCaptureMetrics(false).build().getCaptureMetrics(), "InvokerConfiguration should be false");
+        assertTrue(ticb.withSnapMetricsEvent(true).build().getSnapEvent(), "InvokerConfiguration should be true");
+        assertFalse(ticb.withSnapMetricsEvent(false).build().getSnapEvent(), "InvokerConfiguration should be false");
 
     }
 

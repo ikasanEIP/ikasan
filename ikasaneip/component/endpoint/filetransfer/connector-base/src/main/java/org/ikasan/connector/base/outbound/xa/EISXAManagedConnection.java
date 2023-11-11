@@ -40,10 +40,10 @@
  */
 package org.ikasan.connector.base.outbound.xa;
 
-import javax.resource.ResourceException;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import jakarta.resource.ResourceException;
+import jakarta.transaction.xa.XAException;
+import jakarta.transaction.xa.XAResource;
+import jakarta.transaction.xa.Xid;
 
 import org.ikasan.connector.base.outbound.EISManagedConnection;
 

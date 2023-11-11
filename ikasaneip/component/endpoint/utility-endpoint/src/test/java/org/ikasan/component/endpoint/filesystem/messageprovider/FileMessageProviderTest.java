@@ -44,20 +44,22 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobExecutionContext;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 /**
  * Functional unit test cases for <code>FileMessageProvider</code>.
  * 
  * @author Ikasan Development Team
  */
-public class FileMessageProviderTest
+class FileMessageProviderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -79,7 +81,7 @@ public class FileMessageProviderTest
      * Test successful return of a list of files.
      */
     @Test
-    public void test_successful_list_of_files()
+    void test_successful_list_of_files()
     {
         final List<String> filenames = new ArrayList<>();
         filenames.add("src/test/resources/data/unit/Trade_\\d{8}_\\d+_\\d{14}.txt");
@@ -107,7 +109,7 @@ public class FileMessageProviderTest
         messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         messageProvider.startManagedResource();
         List<File> files = messageProvider.invoke(context);
-        Assert.assertTrue("Should have returned 2 files, but returned " + files.size() + " files.", files.size() == 2);
+        assertEquals(2, files.size(), "Should have returned 2 files, but returned " + files.size() + " files.");
 
         mockery.assertIsSatisfied();
     }
@@ -116,7 +118,7 @@ public class FileMessageProviderTest
      * Test successful return of a list of files.
      */
     @Test
-    public void test_successful_list_of_files_with_subdir()
+    void test_successful_list_of_files_with_subdir()
     {
         final List<String> filenames = new ArrayList<>();
         filenames.add("src/test/resources/data/unit/Trade_\\d{8}_\\d+_\\d{14}.txt");
@@ -143,7 +145,7 @@ public class FileMessageProviderTest
         messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         messageProvider.startManagedResource();
         List<File> files = messageProvider.invoke(context);
-        Assert.assertTrue("Should have returned 3 files, but returned " + files.size() + " files.", files.size() == 3);
+        assertEquals(3, files.size(), "Should have returned 3 files, but returned " + files.size() + " files.");
 
         mockery.assertIsSatisfied();
     }
@@ -152,7 +154,7 @@ public class FileMessageProviderTest
      * Test successful return of an empty list of files.
      */
     @Test
-    public void test_successful_empty_list_of_files()
+    void test_successful_empty_list_of_files()
     {
         final List<String> filenames = new ArrayList<>();
 
@@ -171,7 +173,7 @@ public class FileMessageProviderTest
         messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
         messageProvider.startManagedResource();
         List<File> files = messageProvider.invoke(context);
-        Assert.assertNull("Should have returned null", files);
+        assertNull(files, "Should have returned null");
 
         mockery.assertIsSatisfied();
     }

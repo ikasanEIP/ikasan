@@ -59,11 +59,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.cci.ConnectionSpec;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
+import jakarta.resource.cci.ConnectionSpec;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;

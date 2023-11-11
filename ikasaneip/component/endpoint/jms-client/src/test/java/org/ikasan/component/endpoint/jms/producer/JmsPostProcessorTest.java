@@ -46,17 +46,17 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.Message;
+import jakarta.jms.Message;
 
 /**
  * Test class for JmsPostProcessor.
  *
  * @author Ikasan Development Team
  */
-public class JmsPostProcessorTest
+class JmsPostProcessorTest
 {
     private Mockery mockery = new Mockery()
     {{
@@ -70,14 +70,14 @@ public class JmsPostProcessorTest
 
     private JmsPostProcessor jmsPostProcessor = new JmsPostProcessor();
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         jmsPostProcessor.setManagedEventIdentifierService(managedRelatedEventIdentifierService);
     }
 
     @Test
-    public void test_when_flowEvent()
+    void test_when_flowEvent()
     {
         mockery.checking(new Expectations()
         {{

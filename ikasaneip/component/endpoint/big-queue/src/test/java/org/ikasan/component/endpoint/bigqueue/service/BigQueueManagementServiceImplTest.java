@@ -9,9 +9,9 @@ import org.ikasan.component.endpoint.bigqueue.serialiser.TestEvent;
 import org.ikasan.component.endpoint.bigqueue.serialiser.TestParam;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BigQueueManagementServiceImplTest {
 
@@ -50,15 +50,15 @@ public class BigQueueManagementServiceImplTest {
         }
     }
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeEach
+    void setUp() throws Exception {
         bigQueue = new BigQueueImpl(QUEUE_DIR, QUEUE_NAME);
         bigQueue.removeAll();
         service = new TestBigQueueManagement(bigQueue);
     }
 
     @Test
-    public void list_queues_returns_queue_names() throws Exception {
+    void list_queues_returns_queue_names() throws Exception {
         // the setup creates an empty
         List<String> queues = service.listQueues(QUEUE_DIR);
         assertEquals(1, queues.size());
@@ -83,7 +83,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_queue() throws Exception {
+    void delete_queue() throws Exception {
         Path path = Paths.get(QUEUE_DIR + File.separator + QUEUE_NAME);
         assertTrue(Files.exists(path));
         service.deleteQueue(QUEUE_DIR, QUEUE_NAME);
@@ -91,13 +91,13 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_null_queue_should_not_npe() throws Exception {
+    void delete_null_queue_should_not_npe() throws Exception {
         service.deleteQueue(null, QUEUE_NAME);
         service.deleteQueue(QUEUE_DIR, null);
     }
 
     @Test
-    public void list_queues_returns_empty_if_unknown_directory() throws Exception {
+    void list_queues_returns_empty_if_unknown_directory() throws Exception {
         List<String> queues = service.listQueues(randomAlphabetic(10));
         assertTrue(queues.isEmpty());
 
@@ -106,7 +106,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_existing_message_id_by_two_threads() throws Exception {
+    void delete_existing_message_id_by_two_threads() throws Exception {
         assertEquals(0, service.size(QUEUE_NAME));
         String messageId = null;
         int numberOfMessages = 1_000_000;
@@ -150,7 +150,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_existing_message_id_100k_of_messages() throws Exception {
+    void delete_existing_message_id_100k_of_messages() throws Exception {
         BigQueueMessage bigQueueMessage;
         String messageId = null;
         int numberOfMessages = 100_000;
@@ -170,7 +170,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_existing_queue_existing_message_id_same_id() throws Exception {
+    void delete_existing_queue_existing_message_id_same_id() throws Exception {
         BigQueueMessage bigQueueMessage = createBigQueueMessage();
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
@@ -181,9 +181,9 @@ public class BigQueueManagementServiceImplTest {
         assertEquals(0, service.size(QUEUE_NAME));
     }
 
-    @Ignore //TODO FIX later when we better understand the issue with AbstractBigQueueManagementService.getMessages
+    @Disabled //TODO FIX later when we better understand the issue with AbstractBigQueueManagementService.getMessages
     @Test
-    public void delete_existing_queue_existing_message_id() throws Exception {
+    void delete_existing_queue_existing_message_id() throws Exception {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
@@ -211,7 +211,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_existing_queue_unknown_message_id() throws Exception {
+    void delete_existing_queue_unknown_message_id() throws Exception {
         String randomMessageId = randomAlphabetic(10);
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
@@ -241,7 +241,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_all_message_queue() throws Exception {
+    void delete_all_message_queue() throws Exception {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
@@ -256,7 +256,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_all_message_queue_different_queue_name() throws Exception {
+    void delete_all_message_queue_different_queue_name() throws Exception {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
@@ -271,7 +271,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void delete_unknown_queue_does_not_npe() throws Exception {
+    void delete_unknown_queue_does_not_npe() throws Exception {
         String randomString = randomAlphabetic(10);
         service.deleteMessage(QUEUE_NAME, randomString);
         validateNoQueueCreated(randomString);
@@ -283,7 +283,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void messages_non_empty_queue_returns_list() throws Exception {
+    void messages_non_empty_queue_returns_list() throws Exception {
         List<BigQueueMessage> messages = service.getMessages(QUEUE_NAME);
         assertTrue(messages.isEmpty());
 
@@ -311,7 +311,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void messages_empty_queue_returns_emptyList() throws Exception {
+    void messages_empty_queue_returns_emptyList() throws Exception {
         assertTrue(service.getMessages(QUEUE_NAME).isEmpty());
 
         assertTrue(service.getMessages(QUEUE_NAME).isEmpty());
@@ -320,14 +320,14 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void messages_unknown_queue_returns_emptyList() throws Exception {
+    void messages_unknown_queue_returns_emptyList() throws Exception {
         String randomString = randomAlphabetic(10);
         assertTrue(service.getMessages(randomString).isEmpty());
         validateNoQueueCreated(randomString);
     }
 
     @Test
-    public void peek_unknown_queue_returns_null() throws Exception {
+    void peek_unknown_queue_returns_null() throws Exception {
         String randomString = randomAlphabetic(10);
         assertNull(service.peek(randomString));
         validateNoQueueCreated(randomString);
@@ -338,12 +338,12 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void peek_empty_queue_returns_null() throws Exception {
+    void peek_empty_queue_returns_null() throws Exception {
         assertNull(service.peek(QUEUE_NAME));
     }
 
     @Test
-    public void peek_non_empty_queue_returns_top_of_queue() throws Exception {
+    void peek_non_empty_queue_returns_top_of_queue() throws Exception {
         assertNull(service.peek(QUEUE_NAME));
 
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
@@ -368,7 +368,7 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void size_unknown_queue_returns_zero() throws Exception {
+    void size_unknown_queue_returns_zero() throws Exception {
         String randomString = randomAlphabetic(10);
         assertEquals(0, service.size(randomString));
         validateNoQueueCreated(randomString);
@@ -379,12 +379,12 @@ public class BigQueueManagementServiceImplTest {
     }
 
     @Test
-    public void size_empty_queue() throws Exception {
+    void size_empty_queue() throws Exception {
         assertEquals(0, service.size(QUEUE_NAME));
     }
 
     @Test
-    public void size_non_empty_queue() throws Exception {
+    void size_non_empty_queue() throws Exception {
         assertEquals(0, service.size(QUEUE_NAME));
 
         bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));

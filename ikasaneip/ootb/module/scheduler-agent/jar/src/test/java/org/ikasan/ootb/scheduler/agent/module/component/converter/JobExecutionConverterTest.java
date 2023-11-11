@@ -45,8 +45,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
@@ -55,12 +54,15 @@ import org.quartz.TriggerKey;
 import java.util.Date;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * This test class supports the <code>JobExecutionConverter</code>.
  *
  * @author Ikasan Development Team
  */
-public class JobExecutionConverterTest
+class JobExecutionConverterTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -78,7 +80,7 @@ public class JobExecutionConverterTest
      * Test simple invocation.
      */
     @Test
-    public void test_successful_converter()
+    void test_successful_converter()
     {
         Converter<JobExecutionContext, ScheduledProcessEvent> converter = new JobExecutionConverter("moduleName");
         Date currentFireDate = new Date();
@@ -112,16 +114,16 @@ public class JobExecutionConverterTest
 
         ScheduledProcessEvent scheduledProcessEvent = converter.convert(jobExecutionContext);
 
-        Assert.assertEquals(scheduledProcessEvent.getFireTime(),currentFireDate.getTime());
-        Assert.assertEquals("moduleName", scheduledProcessEvent.getAgentName());
-        Assert.assertEquals("job description", scheduledProcessEvent.getJobDescription());
-        Assert.assertEquals("name", scheduledProcessEvent.getJobName());
-        Assert.assertEquals("group", scheduledProcessEvent.getJobGroup());
-        Assert.assertEquals(scheduledProcessEvent.getNextFireTime(),nextFireDate.getTime());
-        Assert.assertNull(scheduledProcessEvent.getCommandLine());
-        Assert.assertTrue(scheduledProcessEvent.getPid() == 0);
-        Assert.assertNull(scheduledProcessEvent.getCommandLine());
-        Assert.assertNull(scheduledProcessEvent.getUser());
+        assertEquals(scheduledProcessEvent.getFireTime(),currentFireDate.getTime());
+        assertEquals("moduleName", scheduledProcessEvent.getAgentName());
+        assertEquals("job description", scheduledProcessEvent.getJobDescription());
+        assertEquals("name", scheduledProcessEvent.getJobName());
+        assertEquals("group", scheduledProcessEvent.getJobGroup());
+        assertEquals(scheduledProcessEvent.getNextFireTime(),nextFireDate.getTime());
+        assertNull(scheduledProcessEvent.getCommandLine());
+        assertEquals(0, scheduledProcessEvent.getPid());
+        assertNull(scheduledProcessEvent.getCommandLine());
+        assertNull(scheduledProcessEvent.getUser());
 
         mockery.assertIsSatisfied();
     }

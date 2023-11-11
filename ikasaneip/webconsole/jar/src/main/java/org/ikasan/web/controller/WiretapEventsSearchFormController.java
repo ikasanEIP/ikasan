@@ -43,8 +43,8 @@ package org.ikasan.web.controller;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -55,15 +55,10 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.web.command.WiretapSearchCriteria;
 import org.ikasan.web.command.WiretapSearchCriteriaValidator;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -94,7 +89,6 @@ public class WiretapEventsSearchFormController
      * @param wiretapService - The wiretap service to use
      * @param moduleService - The module container to use
      */
-    @Autowired
     public WiretapEventsSearchFormController(WiretapService wiretapService, ModuleService moduleService)
     {
         super();
@@ -120,7 +114,7 @@ public class WiretapEventsSearchFormController
      * @param model The window
      * @return "events/wiretapEvents"
      */
-    @RequestMapping(value = "search.htm", method = RequestMethod.GET)
+    @GetMapping("search.htm")
     public String setupForm(HttpServletRequest request, ModelMap model)
     {
         WiretapSearchCriteria searchCriteria = (WiretapSearchCriteria) request.getSession().getAttribute(
@@ -141,9 +135,9 @@ public class WiretapEventsSearchFormController
      * @param result The place holder for the result
      * @return The window and its corresponding view (search results)
      */
-    @RequestMapping(value = "search.htm", method = RequestMethod.POST)
+    @PostMapping("search.htm")
     public String processSubmit(ModelMap modelMap,
-            @ModelAttribute("searchCriteria") WiretapSearchCriteria searchCriteria, BindingResult result)
+            @ModelAttribute WiretapSearchCriteria searchCriteria, BindingResult result)
     {
         this.validator.validate(searchCriteria, result);
         if (result.hasErrors())
@@ -238,7 +232,7 @@ public class WiretapEventsSearchFormController
      * @return The window and view representing the wiretap event
      */
     @RequestMapping("viewEvent.htm")
-    public ModelAndView viewEvent(@RequestParam("eventId") long eventId, ModelMap modelMap)
+    public ModelAndView viewEvent(@RequestParam long eventId, ModelMap modelMap)
     {
         this.logger.info("inside viewEvent, eventId=[" + eventId + "]");
         WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(Long.valueOf(eventId));
@@ -254,7 +248,7 @@ public class WiretapEventsSearchFormController
      * @return null
      */
     @RequestMapping("viewPrettyPayloadContent.htm")
-    public ModelAndView viewPrettyPayloadContent(@RequestParam("eventId") long eventId, HttpServletResponse response)
+    public ModelAndView viewPrettyPayloadContent(@RequestParam long eventId, HttpServletResponse response)
     {
         this.logger.info("inside viewPrettyPayloadContent, eventId=[" + eventId + "]");
         WiretapEvent wiretapEvent = this.wiretapService.getWiretapEvent(Long.valueOf(eventId));
@@ -278,7 +272,7 @@ public class WiretapEventsSearchFormController
      * 
      * @return a redirect to search form
      */
-    @RequestMapping(value = "housekeeping.htm", method = RequestMethod.POST)
+    @PostMapping("housekeeping.htm")
     public String housekeepWiretaps()
     {
         this.wiretapService.housekeep();

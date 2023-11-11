@@ -56,9 +56,9 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
-import javax.jms.*;
-import javax.jms.ExceptionListener;
-import javax.jms.MessageListener;
+import jakarta.jms.*;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.MessageListener;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

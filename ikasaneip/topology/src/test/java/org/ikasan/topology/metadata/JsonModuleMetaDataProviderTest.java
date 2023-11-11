@@ -19,8 +19,7 @@ import org.ikasan.topology.metadata.module.TestModule;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -31,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class JsonModuleMetaDataProviderTest
@@ -45,7 +44,7 @@ public class JsonModuleMetaDataProviderTest
 
 
     @Test
-    public void test_module_serialisation() throws IOException, JSONException
+    void test_module_serialisation() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
@@ -65,7 +64,7 @@ public class JsonModuleMetaDataProviderTest
 
 
     @Test
-    public void test_module_json_to_object() throws IOException
+    void test_module_json_to_object() throws IOException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
@@ -82,19 +81,19 @@ public class JsonModuleMetaDataProviderTest
 
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
-        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
-        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
-        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
-        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
-        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
-        Assert.assertEquals("Module type equals!", ModuleType.SCHEDULER_AGENT, moduleMetaData.getType());
-        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
-        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
-        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+        assertEquals("module name", moduleMetaData.getName(), "Module name equals!");
+        assertEquals(Integer.valueOf(8888), moduleMetaData.getPort(), "Port equals!");
+        assertEquals("context", moduleMetaData.getContext(), "Context equals!");
+        assertEquals("protocol", moduleMetaData.getProtocol(), "Protocol equals!");
+        assertEquals("host", moduleMetaData.getHost(), "Host equals!");
+        assertEquals(ModuleType.SCHEDULER_AGENT, moduleMetaData.getType(), "Module type equals!");
+        assertEquals("module description", moduleMetaData.getDescription(), "Module description equals!");
+        assertEquals("module version", moduleMetaData.getVersion(), "Module version equals!");
+        assertEquals(6, moduleMetaData.getFlows().size(), "Number of flows == 6!");
     }
 
     @Test
-    public void test_configured_module_json_to_object() throws IOException
+    void test_configured_module_json_to_object() throws IOException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         JsonModuleMetaDataProvider jsonModuleMetaDataProvider = new JsonModuleMetaDataProvider(jsonFlowMetaDataProvider);
@@ -111,20 +110,20 @@ public class JsonModuleMetaDataProviderTest
 
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
-        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
-        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
-        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
-        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
-        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
-        Assert.assertEquals("Module type equals!", ModuleType.SCHEDULER_AGENT, moduleMetaData.getType());
-        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
-        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
-        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
-        Assert.assertEquals("Configured resource id equals!", "configurationId", moduleMetaData.getConfiguredResourceId());
+        assertEquals("module name", moduleMetaData.getName(), "Module name equals!");
+        assertEquals(Integer.valueOf(8888), moduleMetaData.getPort(), "Port equals!");
+        assertEquals("context", moduleMetaData.getContext(), "Context equals!");
+        assertEquals("protocol", moduleMetaData.getProtocol(), "Protocol equals!");
+        assertEquals("host", moduleMetaData.getHost(), "Host equals!");
+        assertEquals(ModuleType.SCHEDULER_AGENT, moduleMetaData.getType(), "Module type equals!");
+        assertEquals("module description", moduleMetaData.getDescription(), "Module description equals!");
+        assertEquals("module version", moduleMetaData.getVersion(), "Module version equals!");
+        assertEquals(6, moduleMetaData.getFlows().size(), "Number of flows == 6!");
+        assertEquals("configurationId", moduleMetaData.getConfiguredResourceId(), "Configured resource id equals!");
     }
 
     @Test
-    public void test_module_json_to_object_disabled_startup_types() throws IOException
+    void test_module_json_to_object_disabled_startup_types() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
@@ -196,22 +195,22 @@ public class JsonModuleMetaDataProviderTest
 
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
-        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
-        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
-        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
-        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
-        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
-        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
-        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
-        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+        assertEquals("module name", moduleMetaData.getName(), "Module name equals!");
+        assertEquals(Integer.valueOf(8888), moduleMetaData.getPort(), "Port equals!");
+        assertEquals("context", moduleMetaData.getContext(), "Context equals!");
+        assertEquals("protocol", moduleMetaData.getProtocol(), "Protocol equals!");
+        assertEquals("host", moduleMetaData.getHost(), "Host equals!");
+        assertEquals("module description", moduleMetaData.getDescription(), "Module description equals!");
+        assertEquals("module version", moduleMetaData.getVersion(), "Module version equals!");
+        assertEquals(6, moduleMetaData.getFlows().size(), "Number of flows == 6!");
 
         moduleMetaData.getFlows().forEach(
-            flowMetaData -> assertEquals("Flow start up type equals!", StartupType.DISABLED.name(), flowMetaData.getFlowStartupType())
+            flowMetaData -> assertEquals(StartupType.DISABLED.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!")
         );
     }
 
     @Test
-    public void test_module_json_to_object_automatic_statup_types() throws IOException
+    void test_module_json_to_object_automatic_statup_types() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
@@ -283,22 +282,22 @@ public class JsonModuleMetaDataProviderTest
 
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
-        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
-        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
-        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
-        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
-        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
-        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
-        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
-        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+        assertEquals("module name", moduleMetaData.getName(), "Module name equals!");
+        assertEquals(Integer.valueOf(8888), moduleMetaData.getPort(), "Port equals!");
+        assertEquals("context", moduleMetaData.getContext(), "Context equals!");
+        assertEquals("protocol", moduleMetaData.getProtocol(), "Protocol equals!");
+        assertEquals("host", moduleMetaData.getHost(), "Host equals!");
+        assertEquals("module description", moduleMetaData.getDescription(), "Module description equals!");
+        assertEquals("module version", moduleMetaData.getVersion(), "Module version equals!");
+        assertEquals(6, moduleMetaData.getFlows().size(), "Number of flows == 6!");
 
         moduleMetaData.getFlows().forEach(
-            flowMetaData -> assertEquals("Flow start up type equals!", StartupType.AUTOMATIC.name(), flowMetaData.getFlowStartupType())
+            flowMetaData -> assertEquals(StartupType.AUTOMATIC.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!")
         );
     }
 
     @Test
-    public void test_module_json_to_object_manual_statup_types() throws IOException
+    void test_module_json_to_object_manual_statup_types() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
@@ -370,17 +369,17 @@ public class JsonModuleMetaDataProviderTest
 
         ModuleMetaData moduleMetaData = jsonModuleMetaDataProvider.deserialiseModule(json);
 
-        Assert.assertEquals("Module name equals!", "module name", moduleMetaData.getName());
-        Assert.assertEquals("Port equals!", Integer.valueOf(8888), moduleMetaData.getPort());
-        Assert.assertEquals("Context equals!", "context", moduleMetaData.getContext());
-        Assert.assertEquals("Protocol equals!", "protocol", moduleMetaData.getProtocol());
-        Assert.assertEquals("Host equals!", "host", moduleMetaData.getHost());
-        Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
-        Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
-        Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+        assertEquals("module name", moduleMetaData.getName(), "Module name equals!");
+        assertEquals(Integer.valueOf(8888), moduleMetaData.getPort(), "Port equals!");
+        assertEquals("context", moduleMetaData.getContext(), "Context equals!");
+        assertEquals("protocol", moduleMetaData.getProtocol(), "Protocol equals!");
+        assertEquals("host", moduleMetaData.getHost(), "Host equals!");
+        assertEquals("module description", moduleMetaData.getDescription(), "Module description equals!");
+        assertEquals("module version", moduleMetaData.getVersion(), "Module version equals!");
+        assertEquals(6, moduleMetaData.getFlows().size(), "Number of flows == 6!");
 
         moduleMetaData.getFlows().forEach(
-            flowMetaData -> assertEquals("Flow start up type equals!", StartupType.MANUAL.name(), flowMetaData.getFlowStartupType())
+            flowMetaData -> assertEquals(StartupType.MANUAL.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!")
         );
     }
 

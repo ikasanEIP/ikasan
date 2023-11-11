@@ -7,18 +7,18 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.JobDataMap;
 import org.quartz.Trigger;
 
 import java.util.UUID;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FileMessageProviderAspectTest {
+@ExtendWith(MockitoExtension.class)
+class FileMessageProviderAspectTest {
 
     @Mock
     private ProceedingJoinPoint proceedingJoinPoint;
@@ -30,7 +30,7 @@ public class FileMessageProviderAspectTest {
     private FileMessageProviderAspect fileMessageProviderAspect;
 
     @Test
-    public void shouldRunProceedingJoinPointIfNotInDryRunMode() throws Throwable {
+    void shouldRunProceedingJoinPointIfNotInDryRunMode() throws Throwable {
 
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
@@ -57,7 +57,7 @@ public class FileMessageProviderAspectTest {
     }
 
     @Test
-    public void shouldRunProceedingJoinPointInDryRunMode() throws Throwable {
+    void shouldRunProceedingJoinPointInDryRunMode() throws Throwable {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);
@@ -79,7 +79,7 @@ public class FileMessageProviderAspectTest {
     }
 
     @Test
-    public void shouldRunProceedingJoinPointInJobDryRunMode() throws Throwable {
+    void shouldRunProceedingJoinPointInJobDryRunMode() throws Throwable {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);

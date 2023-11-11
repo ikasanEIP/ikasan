@@ -59,13 +59,16 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ScheduledRecoveryManager</code> class.
@@ -73,7 +76,7 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-public class ScheduledRecoveryManagerTest
+class ScheduledRecoveryManagerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -137,44 +140,52 @@ public class ScheduledRecoveryManagerTest
     /**
      * Test failed constructor due to null scheduler.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullScheduler()
+    @Test
+    void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManager(null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRecoveryManager(null, null, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null scheduled job factory.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullScheduledJobFactory()
+    @Test
+    void test_failed_constructorDueToNullScheduledJobFactory()
     {
-        new ScheduledRecoveryManager(scheduler, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRecoveryManager(scheduler, null, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null flow name.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullFlowName()
+    @Test
+    void test_failed_constructorDueToNullFlowName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRecoveryManager(scheduler, scheduledJobFactory, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null module name.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullModuleName()
+    @Test
+    void test_failed_constructorDueToNullModuleName()
     {
-        new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", null);
+        });
     }
 
     /**
      * Test successful constructor due to null consumer.
      */
     @Test
-    public void test_successful_constructor()
+    void test_successful_constructor()
     {
         new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
     }
@@ -183,31 +194,20 @@ public class ScheduledRecoveryManagerTest
      * Test is consumer aware.
      */
     @Test
-    public void test_isConsumerAware()
+    void test_isConsumerAware()
     {
         ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
-        Assert.assertTrue( scheduledRecoveryManager instanceof IsConsumerAware);
+        assertTrue( scheduledRecoveryManager instanceof IsConsumerAware);
     }
 
     /**
      * Test successful instantiation.
      */
     @Test
-    public void test_isErrorReportingServiceAware()
+    void test_isErrorReportingServiceAware()
     {
         ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
-        Assert.assertTrue( scheduledRecoveryManager instanceof IsErrorReportingServiceAware);
-    }
-
-
-    /**
-     * Test successful instantiation.
-     */
-    @Test
-    public void test_isExclusionServiceAware()
-    {
-        ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
-        Assert.assertTrue( scheduledRecoveryManager instanceof IsExclusionServiceAware);
+        assertTrue( scheduledRecoveryManager instanceof IsErrorReportingServiceAware);
     }
 
 
@@ -215,7 +215,18 @@ public class ScheduledRecoveryManagerTest
      * Test successful instantiation.
      */
     @Test
-    public void test_successful_instantiation()
+    void test_isExclusionServiceAware()
+    {
+        ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        assertTrue( scheduledRecoveryManager instanceof IsExclusionServiceAware);
+    }
+
+
+    /**
+     * Test successful instantiation.
+     */
+    @Test
+    void test_successful_instantiation()
     {
         new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
     }
@@ -225,7 +236,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler setup fails
      */
     @Test
-    public void test_cancel_no_jobs() throws SchedulerException
+    void test_cancel_no_jobs() throws SchedulerException
     {
         System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
@@ -233,7 +244,7 @@ public class ScheduledRecoveryManagerTest
         ScheduledRecoveryManager scheduledRecoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flow", "module");
         setIsAware(scheduledRecoveryManager);
         scheduledRecoveryManager.cancelAll();
-        Assert.assertTrue("cancelAll called with no jobs", true);
+        assertTrue(true, "cancelAll called with no jobs");
     }
 
     /**
@@ -241,7 +252,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_stopAction_with_no_previousAction_noManagedResources() throws SchedulerException
+    void test_successful_recover_to_stopAction_with_no_previousAction_noManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         
@@ -273,10 +284,10 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Stop", e.getMessage());
+            assertEquals("Stop", e.getMessage());
         }
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+        assertEquals(0, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -286,7 +297,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_excludeAction() throws SchedulerException
+    void test_successful_recover_to_excludeAction() throws SchedulerException
     {
         final Exception exception = new Exception();
 
@@ -324,10 +335,10 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("ExcludeEvent", e.getMessage());
+            assertEquals("ExcludeEvent", e.getMessage());
         }
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+        assertEquals(0, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -337,7 +348,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_stopAction_with_no_previousAction_withManagedResources() throws SchedulerException
+    void test_successful_recover_to_stopAction_with_no_previousAction_withManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         final List managedResources = new ArrayList();
@@ -377,10 +388,10 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Stop", e.getMessage());
+            assertEquals("Stop", e.getMessage());
         }
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+        assertEquals(0, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -390,7 +401,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_ignoreAction_with_no_previousAction_noManagedResources() throws SchedulerException
+    void test_successful_recover_to_ignoreAction_with_no_previousAction_noManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         
@@ -417,7 +428,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_ignoreAction_with_no_previousAction_withManagedResources() throws SchedulerException
+    void test_successful_recover_to_ignoreAction_with_no_previousAction_withManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         final List managedResources = new ArrayList();
@@ -448,7 +459,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_retryAction_with_no_previousAction_noManagedResources() throws SchedulerException
+    void test_successful_recover_to_retryAction_with_no_previousAction_noManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
@@ -509,13 +520,13 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Retry", e.getMessage());
+            assertEquals("Retry", e.getMessage());
         }
 
-        Assert.assertTrue(recoveryManager.isRecovering());
-        
+        assertTrue(recoveryManager.isRecovering());
+
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager) recoveryManager).getRetryAttempts() == 1);
+        assertEquals(1, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -525,7 +536,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_retryAction_with_no_previousAction_withManagedResources() throws SchedulerException
+    void test_successful_recover_to_retryAction_with_no_previousAction_withManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         
@@ -593,13 +604,13 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Retry", e.getMessage());
+            assertEquals("Retry", e.getMessage());
         }
 
-        Assert.assertTrue(recoveryManager.isRecovering());
-        
+        assertTrue(recoveryManager.isRecovering());
+
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+        assertEquals(1, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -610,7 +621,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_noManagedResources() throws SchedulerException
+    void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_noManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         final long delay = 2000;
@@ -724,11 +735,11 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Retry", e.getMessage());
+            assertEquals("Retry", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+        assertEquals(1, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         try
         {
@@ -736,11 +747,11 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Retry", e.getMessage());
+            assertEquals("Retry", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
+        assertEquals(2, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         try
         {
@@ -748,13 +759,13 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+            assertEquals("Exhausted maximum retries.", e.getMessage());
         }
         
-        Assert.assertTrue(recoveryManager.isUnrecoverable());
+        assertTrue(recoveryManager.isUnrecoverable());
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+        assertEquals(0, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -765,7 +776,7 @@ public class ScheduledRecoveryManagerTest
      * @throws SchedulerException if the scheduler fails
      */
     @Test
-    public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_withManagedResources() throws SchedulerException
+    void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_withManagedResources() throws SchedulerException
     {
         final Exception exception = new Exception();
         final long delay = 2000;
@@ -894,11 +905,11 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Retry", e.getMessage());
+            assertEquals("Retry", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+        assertEquals(1, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         try
         {
@@ -906,11 +917,11 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Retry", e.getMessage());
+            assertEquals("Retry", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
+        assertEquals(2, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         try
         {
@@ -918,13 +929,13 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+            assertEquals("Exhausted maximum retries.", e.getMessage());
         }
         
-        Assert.assertTrue(recoveryManager.isUnrecoverable());
+        assertTrue(recoveryManager.isUnrecoverable());
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+        assertEquals(0, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
         mockery.assertIsSatisfied();
     }
@@ -933,7 +944,7 @@ public class ScheduledRecoveryManagerTest
      * Test failed recovery due to unsupported recovery action.
      */
     @Test
-    public void test_failed_recover_due_to_unsupported_recovery_action() throws SchedulerException
+    void test_failed_recover_due_to_unsupported_recovery_action() throws SchedulerException
     {
         final Exception exception = new Exception();
         
@@ -967,11 +978,11 @@ public class ScheduledRecoveryManagerTest
         }
         catch(RuntimeException e)
         {
-            Assert.assertEquals("UnsupportedExceptionAction", e.getMessage());
+            assertEquals("UnsupportedExceptionAction", e.getMessage());
         }
 
         // test aspects we cannot access through the interface
-        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+        assertEquals(0, ((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
         mockery.assertIsSatisfied();
     }
 

@@ -41,12 +41,11 @@
 package org.ikasan.monitor.notifier;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.ikasan.dashboard.DashboardRestServiceImpl;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.mock.env.MockEnvironment;
 
@@ -63,17 +62,14 @@ public class DashboardFlowNotifierTest
 {
     DashboardFlowNotifier uut;
 
-    @Rule public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
+    @RegisterExtension public WireMockExtension wireMockRule = WireMockExtension.newInstance().options(WireMockConfiguration.options().dynamicPort()).build();
 
     private String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
 
     private MockEnvironment environment = new MockEnvironment();
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port() ;
         environment.setProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "true");
@@ -82,7 +78,7 @@ public class DashboardFlowNotifierTest
     }
 
     @Test
-    public void test_running(){
+    void test_running(){
 
         stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
@@ -94,7 +90,7 @@ public class DashboardFlowNotifierTest
     }
 
     @Test
-    public void test_running_whenFlow_name_has_space(){
+    void test_running_whenFlow_name_has_space(){
 
         stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
@@ -107,7 +103,7 @@ public class DashboardFlowNotifierTest
     }
 
     @Test
-    public void test_when_rest_returns_404(){
+    void test_when_rest_returns_404(){
 
         stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()
@@ -122,7 +118,7 @@ public class DashboardFlowNotifierTest
     }
 
     @Test
-    public void test_when_rest_returns_500(){
+    void test_when_rest_returns_500(){
 
         stubFor(put(urlEqualTo(FLOW_STATES_CACHE_PATH))
             .willReturn(aResponse()

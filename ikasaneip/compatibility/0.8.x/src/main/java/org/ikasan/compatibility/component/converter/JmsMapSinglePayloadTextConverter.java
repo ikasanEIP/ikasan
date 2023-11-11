@@ -43,8 +43,8 @@ package org.ikasan.compatibility.component.converter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 /**
  * Extract a single payload XML from the incoming JMS Map message from i8 or i7 formats.

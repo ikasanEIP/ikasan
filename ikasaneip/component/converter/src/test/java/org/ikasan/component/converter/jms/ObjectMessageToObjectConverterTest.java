@@ -44,13 +44,14 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
 import javax.xml.transform.TransformerException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for {@link TextMessageToStringConverter}
@@ -76,9 +77,8 @@ public class ObjectMessageToObjectConverterTest
     private ObjectMessageToObjectConverter uut = new ObjectMessageToObjectConverter();
 
 
-
     @Test
-    public void convert_with_message_when_message_is_string() throws TransformerException, JMSException {
+    void convert_with_message_when_message_is_string() throws TransformerException, JMSException {
         final String message = "TextMessage";
         // Setup expectations
         this.mockery.checking(new Expectations()
@@ -116,23 +116,25 @@ public class ObjectMessageToObjectConverterTest
         assertEquals(message,result);
     }
 
-    @Test(expected = TransformationException.class)
-    public void convert_with_message_throwing_JMSException() throws TransformerException, JMSException {
-        final String message = "TextMessage";
-        // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+    @Test
+    void convert_with_message_throwing_JMSException() throws TransformerException, JMSException {
+        assertThrows(TransformationException.class, () -> {
+            final String message = "TextMessage";
+            // Setup expectations
+            this.mockery.checking(new Expectations()
             {
-                exactly(1).of(objectMessage).getObject();
-                will(throwException(new JMSException("Failed to get objectMessage")));
-            }
+                {
+                    exactly(1).of(objectMessage).getObject();
+                    will(throwException(new JMSException("Failed to get objectMessage")));
+                }
+            });
+
+            // Run the test
+            Object result = uut.convert(objectMessage);
+
+            // Make assertions
+            this.mockery.assertIsSatisfied();
         });
-
-        // Run the test
-        Object result = uut.convert(objectMessage);
-
-        // Make assertions
-        this.mockery.assertIsSatisfied();
     }
 
     private class SimplePojo{

@@ -44,7 +44,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

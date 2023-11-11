@@ -41,33 +41,37 @@
 package org.ikasan.component.router.multirecipient;
 
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Functional unit test cases for <code>RecipientListRouter</code>.
  * 
  * @author mitcje
  */
-public class RecipientListRouterTest
+class RecipientListRouterTest
 {
     /**
      * Test failed constructor.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor()
+    @Test
+    void test_failed_constructor()
     {
-        new RecipientListRouter(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new RecipientListRouter(null);
+        });
     }
 
     /**
      * Test successful return from a recipient list router.
      */
     @Test
-    public void test_successful_return_on_recipient_list_router()
+    void test_successful_return_on_recipient_list_router()
     {
         List<String> recipients = new ArrayList<String>();
         recipients.add("one");
@@ -76,10 +80,10 @@ public class RecipientListRouterTest
 
         MultiRecipientRouter router = new RecipientListRouter(recipients);
         List<String> results = router.route(new String("anything to trigger the return"));
-        Assert.assertTrue(results.size() == 3);
-        Assert.assertTrue(results.get(0).equals("one"));
-        Assert.assertTrue(results.get(1).equals("two"));
-        Assert.assertTrue(results.get(2).equals("three"));
+        assertEquals(3, results.size());
+        assertEquals("one", results.get(0));
+        assertEquals("two", results.get(1));
+        assertEquals("three", results.get(2));
     }
 
 }

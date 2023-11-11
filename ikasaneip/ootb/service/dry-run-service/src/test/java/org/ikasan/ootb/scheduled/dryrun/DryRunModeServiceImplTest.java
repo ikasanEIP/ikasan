@@ -7,24 +7,24 @@ import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DryRunModeServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class DryRunModeServiceImplTest {
 
     @Mock
     private ModuleService moduleService;
@@ -41,8 +41,8 @@ public class DryRunModeServiceImplTest {
     @InjectMocks
     private DryRunModeServiceImpl service;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         ReflectionTestUtils.setField(service, "maxMapSize", 1);
         ReflectionTestUtils.setField(service, "expirationInMillis", 250);
         ReflectionTestUtils.setField(service, "moduleName", "scheduler-agent");
@@ -50,7 +50,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldExpireEntriesInMap() throws InterruptedException {
+    void shouldExpireEntriesInMap() throws InterruptedException {
         DryRunFileListJobParameter job = createFileListJob("Job Name 1", "/some/bogus/file/bogus.txt");
 
         service.addDryRunFileList(List.of(job));
@@ -65,14 +65,14 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldNotAllowMoreThanMaxEntries() throws InterruptedException {
+    void shouldNotAllowMoreThanMaxEntries() throws InterruptedException {
         DryRunFileListJobParameter job1 = createFileListJob("Job Name 1", "/some/bogus/file/bogus1.txt");
         DryRunFileListJobParameter job2 = createFileListJob("Job Name 2", "/some/bogus/file/bogus2.txt");
 
         service.addDryRunFileList(List.of(job1, job2));
         Map<String, String> jobNameFileMap = (Map<String, String>) ReflectionTestUtils.getField(service, "jobNameFileMap");
 
-        assertEquals(jobNameFileMap.size(), 1);
+        assertEquals(1, jobNameFileMap.size());
         assertEquals("/some/bogus/file/bogus2.txt", jobNameFileMap.get("Job Name 2"));
 
         Thread.sleep(300);
@@ -86,7 +86,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldEmptyMapWhenSetDryRunToFalse() {
+    void shouldEmptyMapWhenSetDryRunToFalse() {
         when(moduleService.getModule("scheduler-agent")).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModule);
 
@@ -108,7 +108,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldNotEmptyMapWhenSetDryRunToTrue() {
+    void shouldNotEmptyMapWhenSetDryRunToTrue() {
         when(moduleService.getModule("scheduler-agent")).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModule);
 
@@ -126,7 +126,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldSetAndSaveDryRunMode() throws Exception {
+    void shouldSetAndSaveDryRunMode() throws Exception {
         when(moduleService.getModule("scheduler-agent")).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModule);
         doNothing().when(configureModule).setDryRunMode(true);
@@ -140,7 +140,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldReturnDryRunMode() {
+    void shouldReturnDryRunMode() {
         when(moduleService.getModule("scheduler-agent")).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModule);
         when(configureModule.isDryRunMode()).thenReturn(true);
@@ -149,7 +149,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldReturnFileNameIfJobNameInMapAndRemoveFromMap() {
+    void shouldReturnFileNameIfJobNameInMapAndRemoveFromMap() {
         DryRunFileListJobParameter job1 = createFileListJob("Job Name 1", "/some/bogus/file/bogus1.txt");
 
         service.addDryRunFileList(List.of(job1));
@@ -164,12 +164,12 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldReturnNullIfJobNameNotInMap() {
+    void shouldReturnNullIfJobNameNotInMap() {
         assertNull(service.getJobFileName("any"));
     }
 
     @Test
-    public void shouldSetAndSaveJobDryRunMode() throws Exception {
+    void shouldSetAndSaveJobDryRunMode() throws Exception {
         when(moduleService.getModule("scheduler-agent")).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModule);
         when(configureModule.getDryRunJobsMap()).thenReturn(new HashMap<>());
@@ -183,7 +183,7 @@ public class DryRunModeServiceImplTest {
     }
 
     @Test
-    public void shouldReturnJobDryRunMode() {
+    void shouldReturnJobDryRunMode() {
         HashMap<String, String> jobHashMap = new HashMap<>();
         jobHashMap.put("test", "true");
 

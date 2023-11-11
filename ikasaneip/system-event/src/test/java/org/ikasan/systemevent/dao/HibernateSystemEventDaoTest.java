@@ -42,42 +42,37 @@ package org.ikasan.systemevent.dao;
 
 import java.util.Date;
 import java.util.List;
-import javax.annotation.Resource;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import jakarta.annotation.Resource;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEventImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import static org.junit.Assert.assertEquals;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * @author Ikasan Development Team
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
-        "/systemevent-service-conf.xml", "/test-conf.xml"
+@SpringJUnitConfig(locations = {"/h2-config.xml", "/transaction-conf.xml",
+                                                                               "/systemevent-service-conf.xml", "/test-conf.xml"
 })
 @Sql(scripts = "classpath:drop-system-event-table.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
-public class HibernateSystemEventDaoTest
+class HibernateSystemEventDaoTest
 {
     /** Object being tested */
     @Resource private SystemEventDao systemEventDao;
 
 
-
-
     @Test
-    @DirtiesContext
-    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000()
+                                                                                   @DirtiesContext
+    void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000()
     {
         systemEventDao.setBatchHousekeepDelete(true);
         systemEventDao.setHousekeepingBatchSize(100);
@@ -101,10 +96,9 @@ public class HibernateSystemEventDaoTest
     }
 
 
-
     @Test
-    @DirtiesContext
-    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000()
+                                                                                   @DirtiesContext
+    void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000()
     {
         systemEventDao.setBatchHousekeepDelete(true);
         systemEventDao.setHousekeepingBatchSize(1000);
@@ -125,8 +119,8 @@ public class HibernateSystemEventDaoTest
 
 
     @Test
-    @DirtiesContext
-    public void test_harvesting()
+                                                                                   @DirtiesContext
+    void test_harvesting()
     {
         this.systemEventDao.setOrderHarvestQuery(true);
         for(int i=0; i< 20; i++)
@@ -146,8 +140,8 @@ public class HibernateSystemEventDaoTest
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvesting_no_order_by()
+                                                                                   @DirtiesContext
+    void test_harvesting_no_order_by()
     {
         this.systemEventDao.setOrderHarvestQuery(false);
         for(int i=0; i< 20; i++)
@@ -168,8 +162,8 @@ public class HibernateSystemEventDaoTest
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvesting_no_order_by_with_gap()
+                                                                                   @DirtiesContext
+    void test_harvesting_no_order_by_with_gap()
     {
         this.systemEventDao.setOrderHarvestQuery(false);
         for(int i=0; i< 20; i++)

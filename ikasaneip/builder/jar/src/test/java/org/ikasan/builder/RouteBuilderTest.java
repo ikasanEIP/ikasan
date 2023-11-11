@@ -61,9 +61,9 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
 
 import java.util.ArrayList;
@@ -75,8 +75,7 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-
-public class RouteBuilderTest
+class RouteBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -156,8 +155,8 @@ public class RouteBuilderTest
 
     IkasanApplication ikasanApplication;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
 
         String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
@@ -194,8 +193,8 @@ public class RouteBuilderTest
     }
 
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         ikasanApplication.close();
     }
@@ -206,7 +205,7 @@ public class RouteBuilderTest
      * NOTE: No tests to run - the fact it compiles means the method signatures are present.
      */
     @Test
-    public void test_successful_method_combinations()
+    void test_successful_method_combinations()
     {
         List<FlowElement> flowELements = new ArrayList<FlowElement>();
         RouteBuilder routeBuilder = new RouteBuilder( new RouteImpl(flowELements), eventFactory);

@@ -40,6 +40,7 @@
  */
 package org.ikasan.web;
 
+import jakarta.annotation.Resource;
 import org.ikasan.security.dao.HibernateSecurityDao;
 import org.ikasan.security.dao.HibernateUserDao;
 import org.ikasan.security.service.*;
@@ -53,6 +54,7 @@ import org.ikasan.web.controller.*;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -65,7 +67,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
@@ -163,6 +164,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
 
 
     @Bean
+    @DependsOnDatabaseInitialization
     public LocalSessionFactoryBean securitySessionFactory()
     {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();

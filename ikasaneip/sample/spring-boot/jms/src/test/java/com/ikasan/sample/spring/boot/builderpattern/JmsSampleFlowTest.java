@@ -39,6 +39,7 @@
 
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -52,39 +53,41 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
-import org.junit.rules.TestName;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mock.env.MockEnvironment;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 import javax.sql.DataSource;
+
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>JmsSampleFlow</code> class.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsSampleFlowTest {
     protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
@@ -94,8 +97,8 @@ public class JmsSampleFlowTest {
 
     private Logger logger = LoggerFactory.getLogger(JmsSampleFlowTest.class);
 
-    @Rule
-    public TestName name = new TestName();
+    
+    public String name;
 
     @Resource
     private Module<Flow> moduleUnderTest;
@@ -130,9 +133,12 @@ public class JmsSampleFlowTest {
     private BrowseMessagesOnQueueVerifier browseMessagesOnQueueVerifier;
 
 
-
-    @Before
-    public void setup() throws JMSException {
+    @BeforeEach
+    void setup(TestInfo testInfo) throws JMSException {
+        Optional<Method> testMethod = testInfo.getTestMethod();
+        if(testMethod.isPresent()) {
+            this.name = testMethod.get().getName();
+        }
         flowTestRule = new IkasanFlowTestRule();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
@@ -140,29 +146,27 @@ public class JmsSampleFlowTest {
         browseMessagesOnQueueVerifier.start();
     }
 
-    @After
-    public void teardown() throws Exception {
-        System.out.println("In teardown method for test " + name.getMethodName());
+    @AfterEach
+    void teardown() throws Exception {
+        System.out.println("In teardown method for test " + name);
         browseMessagesOnQueueVerifier.stop();
         removeAllMessages();
         clearDatabase();
         resetExceptionGeneratingBroker();
         resetDelayGeneratingBroker();
-        flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError"});
+        flowTestRule.stopFlowWithAwait( name, new String[]{"stopped","stoppedInError"});
 
     }
 
 
-
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 
 
-
     @Test
-    public void test_Jms_Sample_Flow() throws Exception {
+    void test_Jms_Sample_Flow() throws Exception {
         System.out.println("test_Jms_Sample_Flow");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -218,7 +222,7 @@ public class JmsSampleFlowTest {
     }
 
     @Test
-    public void test_exclusion() {
+    void test_exclusion() {
         System.out.println("test_exclusion");
 
         // Prepare test data
@@ -262,7 +266,7 @@ public class JmsSampleFlowTest {
 
 
     @Test
-    public void test_exclusion_followed_by_resubmission() {
+    void test_exclusion_followed_by_resubmission() {
         System.out.println("test_exclusion_followed_by_resubmission");
 
         // Prepare test data
@@ -337,7 +341,7 @@ public class JmsSampleFlowTest {
 
 
     @Test
-    public void test_exclusion_followed_by_ignore() {
+    void test_exclusion_followed_by_ignore() {
         System.out.println("test_exclusion_followed_by_ignore");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -395,7 +399,7 @@ public class JmsSampleFlowTest {
 
 
     @Test
-    public void test_flow_in_recovery() {
+    void test_flow_in_recovery() {
         System.out.println("test_flow_in_recovery");
 
         // Prepare test data
@@ -442,7 +446,7 @@ public class JmsSampleFlowTest {
 
 
     @Test
-    public void test_flow_in_scheduled_recovery() {
+    void test_flow_in_scheduled_recovery() {
         System.out.println("test_flow_in_scheduled_recovery");
 
         // Prepare test data
@@ -501,7 +505,7 @@ public class JmsSampleFlowTest {
 
 
     @Test
-    public void test_flow_stopped_in_error() {
+    void test_flow_stopped_in_error() {
         System.out.println("test_flow_stopped_in_error");
 
         // setup custom broker to throw an exception
@@ -549,7 +553,7 @@ public class JmsSampleFlowTest {
 
 
     @Test
-    public void test_transaction_timeout_stopped_in_error() {
+    void test_transaction_timeout_stopped_in_error() {
         System.out.println("test_transaction_timeout_stopped_in_error");
         // Prepare test data
         String message = SAMPLE_MESSAGE;

@@ -80,6 +80,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessagePayloadToStringSerialiser;
@@ -89,8 +90,6 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * Scheduled process event outbound flow component factory.

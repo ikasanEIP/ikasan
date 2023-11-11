@@ -191,12 +191,12 @@ public class ProcessExecutionBroker implements Broker<ScheduledProcessEvent, Sch
             }
 
             ProcessHandle.Info info = process.info();
-            if(info != null && !info.user().isEmpty())
+            if(info != null && info.user().isPresent())
             {
                 scheduledProcessEvent.setUser( info.user().get() );
             }
 
-            if(info != null && !info.commandLine().isEmpty())
+            if(info != null && info.commandLine().isPresent())
             {
                 scheduledProcessEvent.setCommandLine( info.commandLine().get() );
             }

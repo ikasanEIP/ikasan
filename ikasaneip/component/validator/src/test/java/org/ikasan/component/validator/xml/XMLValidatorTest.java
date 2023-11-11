@@ -5,9 +5,8 @@ import org.ikasan.component.validator.ValidationResult;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -18,11 +17,13 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Created by elliga on 18/11/2015.
  */
-@Ignore
-public class XMLValidatorTest
+@Disabled
+class XMLValidatorTest
 {
     private String xml =
             """
@@ -83,28 +84,30 @@ public class XMLValidatorTest
      */
     final XMLReader xmlReader = this.classMockery.mock(XMLReader.class, "xmlReader");
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_null_Parser_factory_on_construction()
-            throws ParserConfigurationException, IOException, SAXException
+    @Test
+    void test_null_Parser_factory_on_construction()
+        throws ParserConfigurationException, IOException, SAXException
     {
-        new XMLValidator(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new XMLValidator(null);
+        });
     }
 
     @Test
-    public void testParseValidate_against_classpath_xml_pass()
-            throws ParserConfigurationException, IOException, SAXException
+    void testParseValidate_against_classpath_xml_pass()
+        throws ParserConfigurationException, IOException, SAXException
     {
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
         XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
         validator.setConfiguration(configuration);
         validator.startManagedResource();
-        Assert.assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
+        assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
     }
 
     @Test
-    public void testParseValidate_against_classpath_xml_pass_return_validation_result()
-            throws ParserConfigurationException, IOException, SAXException
+    void testParseValidate_against_classpath_xml_pass_return_validation_result()
+        throws ParserConfigurationException, IOException, SAXException
     {
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -112,38 +115,40 @@ public class XMLValidatorTest
         XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
         validator.setConfiguration(configuration);
         validator.startManagedResource();
-        Assert.assertEquals(validator.convert(this.addSchemaToString(xml)).getClass(), ValidationResult.class);
+        assertEquals(ValidationResult.class, validator.convert(this.addSchemaToString(xml)).getClass());
     }
 
     @Test
-    public void testParseValidate_against_classpath_xml_pass_call_twice_to_make_sure_xml_readr_is_reused()
-            throws ParserConfigurationException, IOException, SAXException
+    void testParseValidate_against_classpath_xml_pass_call_twice_to_make_sure_xml_readr_is_reused()
+        throws ParserConfigurationException, IOException, SAXException
     {
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
         XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
         validator.setConfiguration(configuration);
         validator.startManagedResource();
-        Assert.assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
-        Assert.assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
-        Assert.assertTrue(validator.xmlReaders.size() == 1);
-    }
-
-    @Test(expected = ValidationException.class)
-    public void testParseValidate_against_classpath_xml_fail()
-            throws ParserConfigurationException, IOException, SAXException
-    {
-        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
-        configuration.setSkipValidation(false);
-        XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
-        validator.setConfiguration(configuration);
-        validator.startManagedResource();
-        validator.convert(this.addSchemaToString(xml_bad));
+        assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
+        assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
+        assertEquals(1, validator.xmlReaders.size());
     }
 
     @Test
-    public void testParseValidate_skip_validation_return_source()
-            throws ParserConfigurationException, IOException, SAXException
+    void testParseValidate_against_classpath_xml_fail()
+        throws ParserConfigurationException, IOException, SAXException
+    {
+        assertThrows(ValidationException.class, () -> {
+            XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+            configuration.setSkipValidation(false);
+            XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
+            validator.setConfiguration(configuration);
+            validator.startManagedResource();
+            validator.convert(this.addSchemaToString(xml_bad));
+        });
+    }
+
+    @Test
+    void testParseValidate_skip_validation_return_source()
+        throws ParserConfigurationException, IOException, SAXException
     {
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(true);
@@ -151,125 +156,131 @@ public class XMLValidatorTest
         XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
         validator.setConfiguration(configuration);
         validator.startManagedResource();
-        Assert.assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
+        assertEquals(validator.convert(this.addSchemaToString(xml)), this.addSchemaToString(xml));
     }
 
     @Test
-    public void testParseValidate_skip_validation_return_validation_result()
-            throws ParserConfigurationException, IOException, SAXException
+    void testParseValidate_skip_validation_return_validation_result()
+        throws ParserConfigurationException, IOException, SAXException
     {
-        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
-        configuration.setSkipValidation(true);
-        configuration.setReturnValidationResult(true);
-        XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
-        validator.setConfiguration(configuration);
-        validator.startManagedResource();
-        Assert.assertEquals(validator.convert(this.addSchemaToString(xml)).getClass(), ValidationResult.class);
-    }
-
-    @Test(expected = RuntimeException.class)
-    public void test_exception_parser_setup_exception() throws ParserConfigurationException, IOException, SAXException
-    {
-        this.classMockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(factory).setValidating(true);
-                exactly(1).of(factory).setNamespaceAware(true);
-                exactly(1).of(factory).newSAXParser();
-                will(throwException(new ParserConfigurationException("something went wrong!")));
-            }
-        });
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(true);
         configuration.setReturnValidationResult(true);
-        XMLValidator validator = new XMLValidator(factory);
+        XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
         validator.setConfiguration(configuration);
         validator.startManagedResource();
-    }
-
-    @Test(expected = ValidationException.class)
-    public void test_exception_parse_exception() throws ParserConfigurationException, IOException, SAXException
-    {
-        this.classMockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(factory).setValidating(true);
-                exactly(1).of(factory).setNamespaceAware(true);
-                exactly(1).of(factory).newSAXParser();
-                will(returnValue(saxParser));
-                exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                        "http://www.w3.org/2001/XMLSchema");
-                exactly(1).of(saxParser).getXMLReader();
-                will(returnValue(xmlReader));
-                exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
-                exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
-                exactly(1).of(factory).setValidating(true);
-                exactly(1).of(factory).setNamespaceAware(true);
-                exactly(1).of(factory).newSAXParser();
-                will(returnValue(saxParser));
-                exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                        "http://www.w3.org/2001/XMLSchema");
-                exactly(1).of(saxParser).getXMLReader();
-                will(returnValue(xmlReader));
-                exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
-                exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
-                exactly(1).of(xmlReader).parse(with(any(InputSource.class)));
-                will(throwException(new SAXException("something went wrong!")));
-            }
-        });
-        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
-        configuration.setSkipValidation(false);
-        configuration.setReturnValidationResult(false);
-        configuration.setThrowExceptionOnValidationFailure(true);
-        XMLValidator validator = new XMLValidator(factory);
-        validator.setConfiguration(configuration);
-        validator.startManagedResource();
-        validator.convert(this.addSchemaToString(xml));
-    }
-
-    @Test(expected = ValidationException.class)
-    public void test_exception_io_exception() throws ParserConfigurationException, IOException, SAXException
-    {
-        this.classMockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(factory).setValidating(true);
-                exactly(1).of(factory).setNamespaceAware(true);
-                exactly(1).of(factory).newSAXParser();
-                will(returnValue(saxParser));
-                exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                        "http://www.w3.org/2001/XMLSchema");
-                exactly(1).of(saxParser).getXMLReader();
-                will(returnValue(xmlReader));
-                exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
-                exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
-                exactly(1).of(factory).setValidating(true);
-                exactly(1).of(factory).setNamespaceAware(true);
-                exactly(1).of(factory).newSAXParser();
-                will(returnValue(saxParser));
-                exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
-                        "http://www.w3.org/2001/XMLSchema");
-                exactly(1).of(saxParser).getXMLReader();
-                will(returnValue(xmlReader));
-                exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
-                exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
-                exactly(1).of(xmlReader).parse(with(any(InputSource.class)));
-                will(throwException(new IOException("something went wrong!")));
-            }
-        });
-        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
-        configuration.setSkipValidation(false);
-        configuration.setReturnValidationResult(false);
-        configuration.setThrowExceptionOnValidationFailure(true);
-        XMLValidator validator = new XMLValidator(factory);
-        validator.setConfiguration(configuration);
-        validator.startManagedResource();
-        validator.convert(this.addSchemaToString(xml));
+        assertEquals(ValidationResult.class, validator.convert(this.addSchemaToString(xml)).getClass());
     }
 
     @Test
-    public void test_exception_io_exception_return_validation_result()
-            throws ParserConfigurationException, IOException, SAXException
+    void test_exception_parser_setup_exception() throws ParserConfigurationException, IOException, SAXException
+    {
+        assertThrows(RuntimeException.class, () -> {
+            this.classMockery.checking(new Expectations()
+            {
+                {
+                    exactly(1).of(factory).setValidating(true);
+                    exactly(1).of(factory).setNamespaceAware(true);
+                    exactly(1).of(factory).newSAXParser();
+                    will(throwException(new ParserConfigurationException("something went wrong!")));
+                }
+            });
+            XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+            configuration.setSkipValidation(true);
+            configuration.setReturnValidationResult(true);
+            XMLValidator validator = new XMLValidator(factory);
+            validator.setConfiguration(configuration);
+            validator.startManagedResource();
+        });
+    }
+
+    @Test
+    void test_exception_parse_exception() throws ParserConfigurationException, IOException, SAXException
+    {
+        assertThrows(ValidationException.class, () -> {
+            this.classMockery.checking(new Expectations()
+            {
+                {
+                    exactly(1).of(factory).setValidating(true);
+                    exactly(1).of(factory).setNamespaceAware(true);
+                    exactly(1).of(factory).newSAXParser();
+                    will(returnValue(saxParser));
+                    exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                        "http://www.w3.org/2001/XMLSchema");
+                    exactly(1).of(saxParser).getXMLReader();
+                    will(returnValue(xmlReader));
+                    exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
+                    exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
+                    exactly(1).of(factory).setValidating(true);
+                    exactly(1).of(factory).setNamespaceAware(true);
+                    exactly(1).of(factory).newSAXParser();
+                    will(returnValue(saxParser));
+                    exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                        "http://www.w3.org/2001/XMLSchema");
+                    exactly(1).of(saxParser).getXMLReader();
+                    will(returnValue(xmlReader));
+                    exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
+                    exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
+                    exactly(1).of(xmlReader).parse(with(any(InputSource.class)));
+                    will(throwException(new SAXException("something went wrong!")));
+                }
+            });
+            XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+            configuration.setSkipValidation(false);
+            configuration.setReturnValidationResult(false);
+            configuration.setThrowExceptionOnValidationFailure(true);
+            XMLValidator validator = new XMLValidator(factory);
+            validator.setConfiguration(configuration);
+            validator.startManagedResource();
+            validator.convert(this.addSchemaToString(xml));
+        });
+    }
+
+    @Test
+    void test_exception_io_exception() throws ParserConfigurationException, IOException, SAXException
+    {
+        assertThrows(ValidationException.class, () -> {
+            this.classMockery.checking(new Expectations()
+            {
+                {
+                    exactly(1).of(factory).setValidating(true);
+                    exactly(1).of(factory).setNamespaceAware(true);
+                    exactly(1).of(factory).newSAXParser();
+                    will(returnValue(saxParser));
+                    exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                        "http://www.w3.org/2001/XMLSchema");
+                    exactly(1).of(saxParser).getXMLReader();
+                    will(returnValue(xmlReader));
+                    exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
+                    exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
+                    exactly(1).of(factory).setValidating(true);
+                    exactly(1).of(factory).setNamespaceAware(true);
+                    exactly(1).of(factory).newSAXParser();
+                    will(returnValue(saxParser));
+                    exactly(1).of(saxParser).setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+                        "http://www.w3.org/2001/XMLSchema");
+                    exactly(1).of(saxParser).getXMLReader();
+                    will(returnValue(xmlReader));
+                    exactly(1).of(xmlReader).setErrorHandler(with(any(ErrorHandler.class)));
+                    exactly(1).of(xmlReader).setProperty(with(any(String.class)), with(any(Object.class)));
+                    exactly(1).of(xmlReader).parse(with(any(InputSource.class)));
+                    will(throwException(new IOException("something went wrong!")));
+                }
+            });
+            XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+            configuration.setSkipValidation(false);
+            configuration.setReturnValidationResult(false);
+            configuration.setThrowExceptionOnValidationFailure(true);
+            XMLValidator validator = new XMLValidator(factory);
+            validator.setConfiguration(configuration);
+            validator.startManagedResource();
+            validator.convert(this.addSchemaToString(xml));
+        });
+    }
+
+    @Test
+    void test_exception_io_exception_return_validation_result()
+        throws ParserConfigurationException, IOException, SAXException
     {
         this.classMockery.checking(new Expectations()
         {
@@ -306,14 +317,14 @@ public class XMLValidatorTest
         validator.setConfiguration(configuration);
         validator.startManagedResource();
         Object result = validator.convert(this.addSchemaToString(xml));
-        Assert.assertTrue(result instanceof ValidationResult);
-        Assert.assertTrue(((ValidationResult) result).getException() instanceof IOException);
-        Assert.assertTrue(((ValidationResult) result).getResult() == ValidationResult.Result.INVALID);
+        assertTrue(result instanceof ValidationResult);
+        assertTrue(((ValidationResult) result).getException() instanceof IOException);
+        assertTrue(((ValidationResult) result).getResult() == ValidationResult.Result.INVALID);
     }
 
     @Test
-    public void testParseValidate_against_url_with_catalog_xml_pass()
-            throws ParserConfigurationException, IOException, SAXException
+    void testParseValidate_against_url_with_catalog_xml_pass()
+        throws ParserConfigurationException, IOException, SAXException
     {
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -321,7 +332,7 @@ public class XMLValidatorTest
         XMLValidator validator = new XMLValidator(SAXParserFactory.newInstance());
         validator.setConfiguration(configuration);
         validator.startManagedResource();
-        Assert.assertEquals(validator.convert(xml_with_schema_url), xml_with_schema_url);
+        assertEquals(validator.convert(xml_with_schema_url), xml_with_schema_url);
     }
 
     private String addSchemaToString(String xml)

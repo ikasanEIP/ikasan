@@ -39,6 +39,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
+import jakarta.annotation.Resource;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
@@ -48,8 +49,11 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.testharness.flow.sftp.SftpRule;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,14 +62,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -76,14 +78,13 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This test Sftp To Log Flow.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -111,16 +112,16 @@ public class JmsToSftpFlowTest
     @Rule
     public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
 
-    @Before
-    public void setup() throws IOException
+    @BeforeEach
+    void setup() throws IOException
     {
         FileTestUtil.deleteFile(new File(objectStoreDir));
         sftp.createDirectories("/source");
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Flow"));
     }
 
-    @After
-    public void teardown() throws InterruptedException, SQLException, IOException
+    @AfterEach
+    void teardown() throws InterruptedException, SQLException, IOException
     {
         sftp.deleteAllFilesAndDirectories();
         String currentState = flowTestRule.getFlowState();
@@ -133,13 +134,13 @@ public class JmsToSftpFlowTest
         Thread.sleep(250);
     }
 
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
-    public void test_file_upload() throws Exception
+    void test_file_upload() throws Exception
     {
 
         //Update Sftp Consumer config

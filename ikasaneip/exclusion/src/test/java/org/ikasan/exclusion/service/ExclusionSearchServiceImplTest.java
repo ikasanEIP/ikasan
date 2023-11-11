@@ -46,7 +46,7 @@ import org.ikasan.spec.exclusion.ExclusionSearchService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 
@@ -56,7 +56,7 @@ import java.util.Date;
  * 
  * @author Ikasan Development Team
  */
-public class ExclusionSearchServiceImplTest
+class ExclusionSearchServiceImplTest
 {
 
 
@@ -71,7 +71,7 @@ public class ExclusionSearchServiceImplTest
     ExclusionEventDao<String,ExclusionEvent> exclusionServiceExclusionEventDao = mockery.mock(ExclusionEventDao.class,"mockDao");
 
     @Test
-    public void find()
+    void find()
     {
         ExclusionSearchService exclusionSearchService = new ExclusionSearchServiceImpl(exclusionServiceExclusionEventDao);
         String moduleName = "moduleName";

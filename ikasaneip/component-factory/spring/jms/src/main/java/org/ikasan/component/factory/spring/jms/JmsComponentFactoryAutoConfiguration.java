@@ -42,10 +42,10 @@ package org.ikasan.component.factory.spring.jms;
 
 import org.ikasan.component.factory.spring.jms.consumer.JmsConsumerComponentFactory;
 import org.ikasan.component.factory.spring.jms.producer.JmsProducerComponentFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 
-@Configuration
+@AutoConfiguration
 public class JmsComponentFactoryAutoConfiguration {
 
     @Bean

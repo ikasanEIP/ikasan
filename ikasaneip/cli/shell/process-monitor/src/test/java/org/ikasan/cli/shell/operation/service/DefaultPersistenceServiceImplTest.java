@@ -46,10 +46,11 @@ import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This test class supports the <code>DefaultPersistenceServiceImpl</code> class.
@@ -96,7 +97,7 @@ class DefaultPersistenceServiceImplTest
             }
         });
 
-        Assert.assertNull(persistenceService.find("type", "name"));
+        assertNull(persistenceService.find("type", "name"));
         mockery.assertIsSatisfied();
     }
 

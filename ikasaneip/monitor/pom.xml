@@ -50,8 +50,16 @@
     <artifactId>ikasan-monitor</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration Monitor Implementations</name>
+    <properties>
+        <version.wiremock>2.27.2</version.wiremock>
+    </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>jakarta.mail</groupId>
+            <artifactId>jakarta.mail-api</artifactId>
+            <version>2.1.2.redhat-00003</version>
+        </dependency>
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
@@ -65,14 +73,14 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
-         </dependency>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-rest-dashboard-client</artifactId>
         </dependency>
 
-		 <dependency>
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-management</artifactId>
         </dependency>
@@ -118,19 +126,8 @@
         </dependency>
 
         <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 
@@ -143,6 +140,11 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 

@@ -40,19 +40,19 @@
  */
 package org.ikasan.connector.basefiletransfer.net;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests OlderFirstClientListEntryComparator
  */
-public class OlderFirstClientListEntryComparatorTest
+class OlderFirstClientListEntryComparatorTest
 {
     private OlderFirstClientListEntryComparator uut = new OlderFirstClientListEntryComparator();
 
     @Test
-    public void compare_when_firstCEL_is_older(){
+    void compare_when_firstCEL_is_older(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1438155532);
         firstClientListEntry.setName("A");
@@ -67,7 +67,7 @@ public class OlderFirstClientListEntryComparatorTest
     }
 
     @Test
-    public void compare_when_secondCEL_is_older(){
+    void compare_when_secondCEL_is_older(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1439155532);
         firstClientListEntry.setName("A");
@@ -82,7 +82,7 @@ public class OlderFirstClientListEntryComparatorTest
     }
 
     @Test
-    public void compare_when_file_have_same_age(){
+    void compare_when_file_have_same_age(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1439155532);
         firstClientListEntry.setName("A");

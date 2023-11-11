@@ -41,22 +41,19 @@
 package org.ikasan.filter.duplicate.dao;
 
 import org.ikasan.spec.search.PagedSearchResult;
-import org.junit.Assert;
 
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link HibernateFilteredMessageDaoImpl} using an in memory
@@ -70,12 +67,11 @@ import static org.junit.Assert.*;
  * classpath:/org/ikasan/filter/duplicate/dao/MessagePersistenceDaoInMemDBTest-context.xml
  */
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/filter-service-conf.xml"
+@SpringJUnitConfig(locations = {
+    "/FilteredMessageDaoInMemDBTest-context.xml",
+    "/filter-service-conf.xml"
 })
-public class HibernateFilteredMessageDaoImplTest
+class HibernateFilteredMessageDaoImplTest
 {
     @Autowired
     private FilteredMessageDao duplicateFilterDao;
@@ -84,8 +80,8 @@ public class HibernateFilteredMessageDaoImplTest
      * Test case: DAO must return null since filter entry was not found in database
      */
     @Test
-    @DirtiesContext
-    public void filter_entry_not_found_returns_null()
+        @DirtiesContext
+    void filter_entry_not_found_returns_null()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
         this.duplicateFilterDao.save(aMessage);
@@ -100,8 +96,8 @@ public class HibernateFilteredMessageDaoImplTest
      * Test case: look for newly saved message; it must be found and must be the same!
      */
     @Test
-    @DirtiesContext
-    public void save_new_entry_find_returns_same_entry()
+        @DirtiesContext
+    void save_new_entry_find_returns_same_entry()
     {
         //Save the entry
         int timeToLive = 1;
@@ -112,14 +108,14 @@ public class HibernateFilteredMessageDaoImplTest
         FilterEntry newEntryReloaded = this.duplicateFilterDao.findMessage(newEntry);
 
         assertNotNull(newEntryReloaded);
-        Assert.assertEquals("test", newEntryReloaded.getClientId());
-        Assert.assertEquals("save_test".hashCode(), newEntryReloaded.getCriteria().intValue());
+        assertEquals("test", newEntryReloaded.getClientId());
+        assertEquals("save_test".hashCode(), newEntryReloaded.getCriteria().intValue());
 
         // created should be before expiry
-        Assert.assertTrue(newEntryReloaded.getCreatedDateTime() < newEntryReloaded.getExpiry());
+        assertTrue(newEntryReloaded.getCreatedDateTime() < newEntryReloaded.getExpiry());
 
         // created + TTL should equal expiry
-        Assert.assertTrue((newEntryReloaded.getCreatedDateTime() + (timeToLive * 24 * 3600 * 1000)) == newEntryReloaded.getExpiry());
+        assertEquals((newEntryReloaded.getCreatedDateTime() + (timeToLive * 24 * 3600 * 1000)), newEntryReloaded.getExpiry());
     }
 
     /**
@@ -128,8 +124,8 @@ public class HibernateFilteredMessageDaoImplTest
      * @throws InterruptedException
      */
     @Test
-    @DirtiesContext
-    public void bulk_delete_expired_entries() throws InterruptedException
+        @DirtiesContext
+    void bulk_delete_expired_entries() throws InterruptedException
     {
         FilterEntry one = new DefaultFilterEntry("one".hashCode(), "bulk_delete_test", 0);
         this.duplicateFilterDao.save(one);
@@ -159,8 +155,8 @@ public class HibernateFilteredMessageDaoImplTest
      * @throws InterruptedException
      */
     @Test
-    @DirtiesContext
-    public void bulk_batch_delete_expired_entries() throws InterruptedException
+        @DirtiesContext
+    void bulk_batch_delete_expired_entries() throws InterruptedException
     {
         for(int i=0; i<19768; i++)
         {
@@ -199,8 +195,8 @@ public class HibernateFilteredMessageDaoImplTest
      * @throws InterruptedException
      */
     @Test
-    @DirtiesContext
-    public void batch_delete_expired_entries() throws InterruptedException
+        @DirtiesContext
+    void batch_delete_expired_entries() throws InterruptedException
     {
         this.duplicateFilterDao.setBatchHousekeepDelete(false);
         this.duplicateFilterDao.setHousekeepingBatchSize(1);
@@ -224,26 +220,29 @@ public class HibernateFilteredMessageDaoImplTest
         found = this.duplicateFilterDao.findMessage(three);
         assertNotNull(found);
     }
+
     /**
      * Test case: try to save an already existing filter entry
      */
-    @Test(expected=DataIntegrityViolationException.class)
-    @DirtiesContext
-    public void save_duplicate_must_fail()
+    @Test
+        @DirtiesContext
+    void save_duplicate_must_fail()
     {
-        //Save the entry
-        int timeToLive = 1;
-        FilterEntry newEntry = new DefaultFilterEntry("save_duplicate_test".hashCode(), "test", timeToLive);
-        this.duplicateFilterDao.save(newEntry);
+        assertThrows(DataIntegrityViolationException.class, () -> {
+            //Save the entry
+            int timeToLive = 1;
+            FilterEntry newEntry = new DefaultFilterEntry("save_duplicate_test".hashCode(), "test", timeToLive);
+            this.duplicateFilterDao.save(newEntry);
 
-        //Now try to save it again
-        this.duplicateFilterDao.save(newEntry);
+            //Now try to save it again
+            this.duplicateFilterDao.save(newEntry);
+        });
     }
 
 
     @Test
-    @DirtiesContext
-    public void findMessagesByPage_with_filter_entry_in_db()
+        @DirtiesContext
+    void findMessagesByPage_with_filter_entry_in_db()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
         this.duplicateFilterDao.save(aMessage);
@@ -255,8 +254,8 @@ public class HibernateFilteredMessageDaoImplTest
     }
 
     @Test
-    @DirtiesContext
-    public void findMessagesByPage_with_filter_entry_in_db_by_clientId()
+        @DirtiesContext
+    void findMessagesByPage_with_filter_entry_in_db_by_clientId()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
         this.duplicateFilterDao.save(aMessage);
@@ -268,8 +267,8 @@ public class HibernateFilteredMessageDaoImplTest
     }
 
     @Test
-    @DirtiesContext
-    public void findMessagesByPage_with_filter_entry_in_db_searchBy_from_date()
+        @DirtiesContext
+    void findMessagesByPage_with_filter_entry_in_db_searchBy_from_date()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
         this.duplicateFilterDao.save(aMessage);
@@ -281,8 +280,8 @@ public class HibernateFilteredMessageDaoImplTest
     }
 
     @Test
-    @DirtiesContext
-    public void findMessagesByPage_with_filter_entry_in_db_searchBy_until_date()
+        @DirtiesContext
+    void findMessagesByPage_with_filter_entry_in_db_searchBy_until_date()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
         this.duplicateFilterDao.save(aMessage);
@@ -294,8 +293,8 @@ public class HibernateFilteredMessageDaoImplTest
     }
 
     @Test
-    @DirtiesContext
-    public void findMessagesByPage_with_filter_entry_in_db_search_by_until_date_no_result()
+        @DirtiesContext
+    void findMessagesByPage_with_filter_entry_in_db_search_by_until_date_no_result()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);
         this.duplicateFilterDao.save(aMessage);
@@ -309,8 +308,8 @@ public class HibernateFilteredMessageDaoImplTest
      * Test case: DAO must return null since filter entry was not found in database
      */
     @Test
-    @DirtiesContext
-    public void findMessages_by_clinetId_when_no_filter_entries_exist()
+        @DirtiesContext
+    void findMessages_by_clinetId_when_no_filter_entries_exist()
     {
         List<FilterEntry> result = this.duplicateFilterDao.findMessages("Not_existing_client_id");
         assertTrue(result.isEmpty());
@@ -318,8 +317,8 @@ public class HibernateFilteredMessageDaoImplTest
 
 
     @Test
-    @DirtiesContext
-    public void findMessages_by_clinetId_when_filter_entries_exist()
+        @DirtiesContext
+    void findMessages_by_clinetId_when_filter_entries_exist()
 
     {
         FilterEntry aMessage = new DefaultFilterEntry( "aMessage".hashCode(), "find_test", 1);

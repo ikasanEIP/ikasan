@@ -17,12 +17,10 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -33,7 +31,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -45,15 +42,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { ModuleControlApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = {ModuleControlApplication.class, MockedUserServiceTestConfig.class})
 @EnableWebMvc
-public class ModuleControlApplicationTest
+class ModuleControlApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -79,15 +73,15 @@ public class ModuleControlApplicationTest
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void searchWithReadOnlyUser() throws Exception
+    void searchWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/testModule")
@@ -97,7 +91,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleFlowStates() throws Exception
+    void getModuleFlowStates() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
@@ -119,7 +113,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleFlowStatesLegacy() throws Exception
+    void getModuleFlowStatesLegacy() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
@@ -138,7 +132,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleFlowStatesLegacyNull() throws Exception
+    void getModuleFlowStatesLegacyNull() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
         Mockito
@@ -156,7 +150,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getFlowState() throws Exception
+    void getFlowState() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
@@ -178,7 +172,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getFlowStateWhenFlowDoesntExist() throws Exception
+    void getFlowStateWhenFlowDoesntExist() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
@@ -201,7 +195,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void moduleControl() throws Exception
+    void moduleControl() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl")
             .content(createChangeStateDto("start"))
@@ -218,7 +212,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void moduleActivate() throws Exception
+    void moduleActivate() throws Exception
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
@@ -239,7 +233,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void moduleDeactivate() throws Exception
+    void moduleDeactivate() throws Exception
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
@@ -260,7 +254,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void moduleActivatorBadAction() throws Exception
+    void moduleActivatorBadAction() throws Exception
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
@@ -279,7 +273,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void moduleActivatorNoModuleFound() throws Exception
+    void moduleActivatorNoModuleFound() throws Exception
     {
         Mockito
             .when(moduleService.getModules())
@@ -298,7 +292,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleIsActivated() throws Exception
+    void getModuleIsActivated() throws Exception
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
@@ -321,7 +315,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleIsNotActivated() throws Exception
+    void getModuleIsNotActivated() throws Exception
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         Mockito
@@ -344,7 +338,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void changeFlowStartupMode() throws Exception
+    void changeFlowStartupMode() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
             .content(createChangeFlowStartupModeDto("automatic", "comment" ))
@@ -364,7 +358,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void changeFlowStartupMode_withInvalidStartupType() throws Exception
+    void changeFlowStartupMode_withInvalidStartupType() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
             .content(createChangeFlowStartupModeDto("invalid", "comment" ))
@@ -379,7 +373,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void changeFlowStartupMode_toDisabled_withoutComment() throws Exception
+    void changeFlowStartupMode_toDisabled_withoutComment() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
             .content(createChangeFlowStartupModeDto("disabled", "" ))
@@ -394,7 +388,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getFlowStartupMode_nullStartupControl() throws Exception
+    void getFlowStartupMode_nullStartupControl() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -417,7 +411,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getFlowStartupMode_manualStartupControl() throws Exception
+    void getFlowStartupMode_manualStartupControl() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -439,7 +433,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getFlowStartupMode_automaticStartupControl() throws Exception
+    void getFlowStartupMode_automaticStartupControl() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
             .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -460,7 +454,7 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getFlowStartupMode_disabledStartupControl() throws Exception
+    void getFlowStartupMode_disabledStartupControl() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/startupMode/testModule/testFlow")
             .accept(MediaType.APPLICATION_JSON_VALUE)

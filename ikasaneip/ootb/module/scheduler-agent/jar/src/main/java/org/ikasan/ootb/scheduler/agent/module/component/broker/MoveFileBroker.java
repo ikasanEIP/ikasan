@@ -37,13 +37,13 @@ public class MoveFileBroker implements Broker<CorrelatedFileList, CorrelatedFile
         try {
             for (File file : files.getFileList()) {
                 if(!configuration.getMoveDirectory().isEmpty() && !configuration.getMoveDirectory().equals(".")) {
-                    logger.info(String.format("Moving file[%s] to directory[%s]", file.getAbsolutePath(), configuration.getMoveDirectory()));
+                    logger.info("Moving file[%s] to directory[%s]".formatted(file.getAbsolutePath(), configuration.getMoveDirectory()));
                     FileUtils.moveFileToDirectory(file, new File(configuration.getMoveDirectory()), true);
                 }
             }
         }
         catch (Exception e) {
-            throw new EndpointException(String.format("Error moving files to dir %s.", configuration.getMoveDirectory(), e));
+            throw new EndpointException("Error moving files to dir %s.".formatted(configuration.getMoveDirectory(), e));
         }
 
         return files;

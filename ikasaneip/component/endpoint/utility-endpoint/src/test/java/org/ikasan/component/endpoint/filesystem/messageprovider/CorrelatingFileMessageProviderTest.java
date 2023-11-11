@@ -5,8 +5,7 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 
@@ -15,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class CorrelatingFileMessageProviderTest {
+import static org.junit.jupiter.api.Assertions.*;
+
+class CorrelatingFileMessageProviderTest {
 
     /**
      * Mockery for mocking concrete classes
@@ -42,7 +43,7 @@ public class CorrelatingFileMessageProviderTest {
         "./src/test/resources/data/unit/xxx_TradeLeg_20141212_99_20141212121212.txt");
 
     @Test
-    public void test_file_consumer_with_no_correlation_id_will_be_passive()
+    void test_file_consumer_with_no_correlation_id_will_be_passive()
     {
         setupStandardFilenameExpectations();
         mockery.checking(new Expectations() {
@@ -57,13 +58,13 @@ public class CorrelatingFileMessageProviderTest {
             }
         });
         CorrelatedFileList files = messageProviderInvoke();
-        Assert.assertNull(files);
+        assertNull(files);
 
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_list_of_files()
+    void test_successful_list_of_files()
     {
         // set test expectations
         setupCorrelationIdExpectations();
@@ -78,18 +79,18 @@ public class CorrelatingFileMessageProviderTest {
         });
 
         CorrelatedFileList files = messageProviderInvoke();
-        Assert.assertTrue("Should have returned 2 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 2);
-        Assert.assertEquals(files.toString(), """
+        assertEquals(2, files.getFileList().size(), "Should have returned 2 files, but returned " + files.getFileList().size() + " files.");
+        assertEquals("""
             CorrelatedFileList{fileList=[\
             ./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, \
             ./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], \
             correlatingIdentifier='TestCorrelatingId'}\
-            """);
+            """, files.toString());
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_list_of_files_dynamic_file_matcher()
+    void test_successful_list_of_files_dynamic_file_matcher()
     {
         // set test expectations
         setupCorrelationIdExpectations();
@@ -104,16 +105,15 @@ public class CorrelatingFileMessageProviderTest {
         });
 
         CorrelatedFileList files = messageProviderInvoke();
-        Assert.assertTrue("Should have returned 1 files, but returned " + files.getFileList().size() + " files."
-            , files.getFileList().size() == 1);
-        Assert.assertEquals(new File("./src/test/resources/data/unit/TestCorrelatingId_TradeLeg_20141212_99_20141212121212.txt")
+        assertEquals(1, files.getFileList().size(), "Should have returned 1 files, but returned " + files.getFileList().size() + " files.");
+        assertEquals(new File("./src/test/resources/data/unit/TestCorrelatingId_TradeLeg_20141212_99_20141212121212.txt")
             , files.getFileList().get(0));
-        Assert.assertEquals("TestCorrelatingId", files.getCorrelatingIdentifier());
+        assertEquals("TestCorrelatingId", files.getCorrelatingIdentifier());
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_unsuccessful_list_of_files()
+    void test_unsuccessful_list_of_files()
     {
         // set test expectations
         setupCorrelationIdExpectations();
@@ -133,12 +133,12 @@ public class CorrelatingFileMessageProviderTest {
         });
 
         CorrelatedFileList files = messageProviderInvoke();
-        Assert.assertNull("Should have returned null", files);
+        assertNull(files, "Should have returned null");
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_list_of_files_with_subdir()
+    void test_successful_list_of_files_with_subdir()
     {
         // set test expectations
         setupCorrelationIdExpectations();
@@ -154,12 +154,12 @@ public class CorrelatingFileMessageProviderTest {
 
         CorrelatedFileList files = messageProviderInvoke();
 
-        Assert.assertTrue("Should have returned 3 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 3);
-        Assert.assertTrue("Should have returned 3 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 3);
-        Assert.assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt")));
-        Assert.assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/subdir/Trade_20141212_99_20140000000000.txt")));
-        Assert.assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt")));
-        Assert.assertEquals("TestCorrelatingId", files.getCorrelatingIdentifier());
+        assertEquals(3, files.getFileList().size(), "Should have returned 3 files, but returned " + files.getFileList().size() + " files.");
+        assertEquals(3, files.getFileList().size(), "Should have returned 3 files, but returned " + files.getFileList().size() + " files.");
+        assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt")));
+        assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/subdir/Trade_20141212_99_20140000000000.txt")));
+        assertTrue(files.getFileList().contains(new File("./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt")));
+        assertEquals("TestCorrelatingId", files.getCorrelatingIdentifier());
         mockery.assertIsSatisfied();
     }
 
@@ -167,7 +167,7 @@ public class CorrelatingFileMessageProviderTest {
      * Test successful return of an empty list of files.
      */
     @Test
-    public void test_successful_empty_list_of_files()
+    void test_successful_empty_list_of_files()
     {
         // set test expectations
         setupCorrelationIdExpectations();
@@ -181,7 +181,7 @@ public class CorrelatingFileMessageProviderTest {
         });
 
         CorrelatedFileList files = messageProviderInvoke();
-        Assert.assertNull("Should have returned null", files);
+        assertNull(files, "Should have returned null");
 
         mockery.assertIsSatisfied();
     }

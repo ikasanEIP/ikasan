@@ -15,8 +15,8 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.json.JSONException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -24,9 +24,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class JsonConfigurationMetaDataProviderTest
+class JsonConfigurationMetaDataProviderTest
 {
 
     /**
@@ -40,13 +41,13 @@ public class JsonConfigurationMetaDataProviderTest
 
     JsonConfigurationMetaDataProvider uut;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         uut = new JsonConfigurationMetaDataProvider(configurationManagement);
     }
 
     @Test
-    public void describeComponentsOnFlowWithOneConfigurationElement() throws IOException, JSONException
+    void describeComponentsOnFlowWithOneConfigurationElement() throws IOException, JSONException
     {
 
         ConfiguredResource consumer = new ConfiguredConsumer();
@@ -65,7 +66,7 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
     @Test
-    public void describeConfiguredResourcesWithOneConfigurationResourceWhenConfigurationDoesNotExist() throws IOException, JSONException
+    void describeConfiguredResourcesWithOneConfigurationResourceWhenConfigurationDoesNotExist() throws IOException, JSONException
     {
 
        ConfiguredResource consumer = new ConfiguredConsumer();
@@ -86,10 +87,8 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
 
-
-
     @Test
-    public void ddescribeConfiguredResourceWithTwoConfigurationResources() throws IOException, JSONException
+    void ddescribeConfiguredResourceWithTwoConfigurationResources() throws IOException, JSONException
     {
 
         ConfiguredResource producer = new ConfiguredProducer("diffrentId",new DummyConfiguration());
@@ -114,7 +113,7 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
     @Test
-    public void describeConfiguredResourceWhenConfigurationManagementReturnsNull() throws IOException, JSONException
+    void describeConfiguredResourceWhenConfigurationManagementReturnsNull() throws IOException, JSONException
     {
 
         ConfiguredResource configuredResource = new ConfiguredConsumer();
@@ -136,10 +135,8 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
 
-
-
     @Test
-    public void describeConfiguredResource() throws IOException, JSONException
+    void describeConfiguredResource() throws IOException, JSONException
     {
 
         ConfiguredResource configuredResource = new ConfiguredConsumer();
@@ -158,13 +155,13 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
     @Test
-    public void deserialiseMetadataConfiguration() throws IOException, JSONException
+    void deserialiseMetadataConfiguration() throws IOException, JSONException
     {
 
         ConfigurationMetaData<List<ConfigurationParameterMetaData>> result = uut.deserialiseMetadataConfiguration(loadDataFile("/data/flowConfigurationMetadata.json"));
 
         assertEquals("configuredResourceId" , result.getConfigurationId());
-        assertEquals(null , result.getDescription());
+        assertNull(result.getDescription());
 
         assertEquals("name" , result.getParameters().get(0).getName());
         assertEquals("value" , result.getParameters().get(0).getValue());
@@ -194,7 +191,7 @@ public class JsonConfigurationMetaDataProviderTest
     }
 
     @Test
-    public void deserialiseMetadataConfigurations() throws IOException, JSONException
+    void deserialiseMetadataConfigurations() throws IOException, JSONException
     {
         List<ConfigurationMetaData> result = uut
             .deserialiseMetadataConfigurations(loadDataFile("/data/twoConfigurationMetadata.json"));

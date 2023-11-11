@@ -20,12 +20,10 @@ import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.systemevent.SystemEventService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -36,7 +34,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -50,15 +47,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { ConfigurationApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = {ConfigurationApplication.class, MockedUserServiceTestConfig.class})
 @EnableWebMvc
-public class ConfigurationApplicationTest
+class ConfigurationApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -83,15 +77,15 @@ public class ConfigurationApplicationTest
     @MockBean
     private ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataExtractor;
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void findConfigurationsWithReadOnlyUser() throws Exception
+    void findConfigurationsWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/configuration/flows")
@@ -101,7 +95,7 @@ public class ConfigurationApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testFindFlows() throws Exception
+    void testFindFlows() throws Exception
     {
         FlowConfiguration flowConfiguration = new TestFlowConfiguration(
             new TestFlowElement(new Object(), "test", null, new Object()));
@@ -138,7 +132,7 @@ public class ConfigurationApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testFindModule() throws Exception
+    void testFindModule() throws Exception
     {
         ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
         ConfiguredModuleConfiguration configuredModuleConfiguration = new ConfiguredModuleConfiguration();
@@ -176,7 +170,7 @@ public class ConfigurationApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testFindSingleFlows() throws Exception
+    void testFindSingleFlows() throws Exception
     {
         FlowConfiguration flowConfiguration = new TestFlowConfiguration(
             new TestFlowElement(new Object(), "test", "desc", new Object()));
@@ -211,7 +205,7 @@ public class ConfigurationApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testPutSingleConfiguration() throws Exception
+    void testPutSingleConfiguration() throws Exception
     {
 
         MvcResult mvcResult = mockMvc.perform(
@@ -238,7 +232,7 @@ public class ConfigurationApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testDeleteConfiguration() throws Exception
+    void testDeleteConfiguration() throws Exception
     {
         Configuration configuration = new DefaultConfiguration("testConfigId");
         Mockito.when(configurationManagement.getConfiguration("testConfigId")).thenReturn(configuration);
@@ -262,7 +256,7 @@ public class ConfigurationApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testDeleteConfigurationWhenConfigurationIdNotFound() throws Exception
+    void testDeleteConfigurationWhenConfigurationIdNotFound() throws Exception
     {
         Mockito.when(configurationManagement.getConfiguration("testConfigId")).thenReturn(null);
 

@@ -1,5 +1,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.converter.filetransfer.MapMessageToPayloadConverter;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -8,8 +9,6 @@ import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 @Configuration("JmsToSftpFlowFactory")
 public class JmsToSftpFlow

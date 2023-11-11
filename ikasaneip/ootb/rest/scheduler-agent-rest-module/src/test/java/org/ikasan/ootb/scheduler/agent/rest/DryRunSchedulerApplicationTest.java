@@ -13,19 +13,16 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunModeDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.JobDryRunModeDto;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -35,13 +32,9 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {DryRunSchedulerApplication.class, MockedUserServiceTestConfigWithConverter.class})
 @EnableWebMvc
-public class DryRunSchedulerApplicationTest {
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+class DryRunSchedulerApplicationTest {
 
     @MockBean
     protected DryRunModeService dryRunModeService;
@@ -53,14 +46,14 @@ public class DryRunSchedulerApplicationTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void dryRunModeWithReadOnlyUser() throws Exception {
+    void dryRunModeWithReadOnlyUser() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         DryRunModeDto dryRunParameterDto = new DryRunModeDto();
         dryRunParameterDto.setDryRunMode(true);
@@ -77,7 +70,7 @@ public class DryRunSchedulerApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void shouldAcceptDryRunMode() throws Exception {
+    void shouldAcceptDryRunMode() throws Exception {
 
         DryRunModeDto dryRunParameterDto = new DryRunModeDto();
         dryRunParameterDto.setDryRunMode(true);
@@ -93,7 +86,7 @@ public class DryRunSchedulerApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void jobDryRunModeWithReadOnlyUser() throws Exception {
+    void jobDryRunModeWithReadOnlyUser() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         DryRunModeDto dryRunParameterDto = new DryRunModeDto();
         dryRunParameterDto.setDryRunMode(true);
@@ -108,7 +101,7 @@ public class DryRunSchedulerApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void shouldAcceptJobDryRunMode() throws Exception {
+    void shouldAcceptJobDryRunMode() throws Exception {
 
         JobDryRunModeDto dryRunParameterDto = new JobDryRunModeDto();
         dryRunParameterDto.setIsDryRun(true);
@@ -137,7 +130,7 @@ public class DryRunSchedulerApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void dryRunModeFileListWithReadOnlyUser() throws Exception {
+    void dryRunModeFileListWithReadOnlyUser() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         DryRunFileListParameterDto dto = new DryRunFileListParameterDto();
 
@@ -153,7 +146,7 @@ public class DryRunSchedulerApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void shouldAcceptDryRunFileList() throws Exception {
+    void shouldAcceptDryRunFileList() throws Exception {
 
         DryRunFileListParameterDto dto = new DryRunFileListParameterDto();
 

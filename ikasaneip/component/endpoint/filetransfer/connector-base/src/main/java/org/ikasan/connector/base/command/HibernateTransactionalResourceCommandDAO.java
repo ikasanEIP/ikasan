@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;

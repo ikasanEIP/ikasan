@@ -41,6 +41,7 @@
 package org.ikasan.ootb.scheduler.agent.rest.client.context;
 
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -48,6 +49,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 /**
  * Context instance service related configuration.
  */
+@AutoConfiguration
 public class ContextInstanceRestServiceConfiguration {
 
     public static final String JOB_CONTEXT_PATH = "/rest/jobContext";

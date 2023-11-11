@@ -1,13 +1,12 @@
 package org.ikasan.security.service;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.commons.io.FileUtils;
 import org.ikasan.security.model.User;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.mockito.Mockito;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
@@ -18,24 +17,20 @@ import java.io.File;
 import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DashboardUserServiceImplTest
 {
 
     private Environment environment = Mockito.mock(Environment.class);
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(
-        WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
+    @RegisterExtension
+    public WireMockExtension wireMockRule = WireMockExtension.newInstance().options(WireMockConfiguration.options().dynamicPort()).build(); // No-args constructor defaults to port 8080
 
     private DashboardUserServiceImpl uut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
 
@@ -53,7 +48,7 @@ public class DashboardUserServiceImplTest
     }
 
     @Test
-    public void authenticate_successful()
+    void authenticate_successful()
     {
         stubFor(post(urlEqualTo("/authenticate"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
@@ -63,11 +58,11 @@ public class DashboardUserServiceImplTest
                 .withStatus(200)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
-        assertEquals(true, uut.authenticate("admin", "admin"));
+        assertTrue(uut.authenticate("admin", "admin"));
     }
 
     @Test
-    public void authenticate_bad_request()
+    void authenticate_bad_request()
     {
         stubFor(post(urlEqualTo("/authenticate"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
@@ -77,11 +72,11 @@ public class DashboardUserServiceImplTest
                 .withStatus(400)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
-        assertEquals(false, uut.authenticate("admin", "admin"));
+        assertFalse(uut.authenticate("admin", "admin"));
     }
 
     @Test
-    public void loadUserByUsername() throws IOException
+    void loadUserByUsername() throws IOException
     {
         stubFor(get(urlEqualTo("/rest/user?username=admin"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
@@ -100,53 +95,56 @@ public class DashboardUserServiceImplTest
     }
 
     @Test
-    public void loadUserByUsernameWhenUserIsDisabled() throws IOException
+    void loadUserByUsernameWhenUserIsDisabled() throws IOException
     {
-        stubFor(get(urlEqualTo("/rest/user?username=disabledUser"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
-            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withBody(readFile("disabled-user.json"))
-                                   .withStatus(200)
-                                   .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-                       ));
+        Throwable exception = assertThrows(UsernameNotFoundException.class, () -> {
+            stubFor(get(urlEqualTo("/rest/user?username=disabledUser"))
+                .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+                .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+                .willReturn(aResponse().withBody(readFile("disabled-user.json"))
+                    .withStatus(200)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                ));
 
-        thrown.expect(UsernameNotFoundException.class);
-        thrown.expectMessage("Given user: disabledUser is disabled. Contact administrator.");
+            uut.loadUserByUsername("disabledUser");
 
-        uut.loadUserByUsername("disabledUser");
+        });
+        assertTrue(exception.getMessage().contains("Given user: disabledUser is disabled. Contact administrator."));
 
     }
 
     @Test
-    public void loadUserByUsernameReturns400() throws IOException
+    void loadUserByUsernameReturns400() throws IOException
     {
-        thrown.expect(UsernameNotFoundException.class);
-        thrown.expectMessage("Unknown username : admin");
+        Throwable exception = assertThrows(UsernameNotFoundException.class, () -> {
 
-        stubFor(get(urlEqualTo("/rest/user?username=admin"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
-            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withBody("{}")
-                .withStatus(400)
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-            ));
-        uut.loadUserByUsername("admin");
+            stubFor(get(urlEqualTo("/rest/user?username=admin"))
+                .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+                .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+                .willReturn(aResponse().withBody("{}")
+                    .withStatus(400)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                ));
+            uut.loadUserByUsername("admin");
+        });
+        assertTrue(exception.getMessage().contains("Unknown username : admin"));
     }
 
     @Test
-    public void loadUserByUsernameReturns500() throws IOException
+    void loadUserByUsernameReturns500() throws IOException
     {
-        thrown.expect(UsernameNotFoundException.class);
-        thrown.expectMessage("Unknown username : admin");
+        Throwable exception = assertThrows(UsernameNotFoundException.class, () -> {
 
-        stubFor(get(urlEqualTo("/rest/user?username=admin"))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
-            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse().withBody("{}")
-                .withStatus(500)
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
-            ));
-        uut.loadUserByUsername("admin");
+            stubFor(get(urlEqualTo("/rest/user?username=admin"))
+                .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+                .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+                .willReturn(aResponse().withBody("{}")
+                    .withStatus(500)
+                    .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+                ));
+            uut.loadUserByUsername("admin");
+        });
+        assertTrue(exception.getMessage().contains("Unknown username : admin"));
     }
 
     private String readFile(String filePath) throws IOException

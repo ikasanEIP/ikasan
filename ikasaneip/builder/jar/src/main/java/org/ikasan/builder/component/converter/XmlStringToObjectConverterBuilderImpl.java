@@ -44,7 +44,7 @@ import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
 import org.ikasan.component.converter.xml.XmlStringToObjectConverter;
 import org.ikasan.spec.component.transformation.Converter;
 
-import javax.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEventHandler;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

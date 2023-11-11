@@ -11,12 +11,10 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.quartz.Scheduler;
@@ -33,7 +31,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -46,14 +43,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { SchedulerApplication.class, MockedUserServiceTestConfig.class })
-public class SchedulerApplicationTest
+@SpringBootTest(classes = {SchedulerApplication.class, MockedUserServiceTestConfig.class})
+class SchedulerApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -88,15 +82,15 @@ public class SchedulerApplicationTest
     protected FlowElement scheduledConsumerElement ;
 
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void searchWithReadOnlyUser() throws Exception
+    void searchWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/scheduler/")
@@ -106,7 +100,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void search() throws Exception
+    void search() throws Exception
     {
         Trigger trigger = new SimpleTriggerImpl();
         ((SimpleTriggerImpl) trigger).setGroup("Group");
@@ -159,7 +153,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getWhenSchedulerShutdown() throws Exception
+    void getWhenSchedulerShutdown() throws Exception
     {
 
         Mockito
@@ -188,7 +182,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void triggerNowWhenModuleNotFound() throws Exception
+    void triggerNowWhenModuleNotFound() throws Exception
     {
 
         Mockito
@@ -221,7 +215,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void triggerNowWhenFlowNotFound() throws Exception
+    void triggerNowWhenFlowNotFound() throws Exception
     {
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
@@ -256,7 +250,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void triggerNow() throws Exception
+    void triggerNow() throws Exception
     {
 
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
@@ -331,7 +325,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void triggerNow_null_job_name_etc() throws Exception
+    void triggerNow_null_job_name_etc() throws Exception
     {
 
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
@@ -406,7 +400,7 @@ public class SchedulerApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void triggerNow_empty_job_name_etc() throws Exception
+    void triggerNow_empty_job_name_etc() throws Exception
     {
 
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);

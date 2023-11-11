@@ -40,7 +40,7 @@ package org.ikasan.connector.basefiletransfer.outbound.command;
 
 import java.io.InputStream;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;

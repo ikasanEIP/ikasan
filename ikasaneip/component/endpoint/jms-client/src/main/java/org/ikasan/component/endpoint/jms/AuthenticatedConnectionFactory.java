@@ -43,9 +43,9 @@ package org.ikasan.component.endpoint.jms;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Properties;

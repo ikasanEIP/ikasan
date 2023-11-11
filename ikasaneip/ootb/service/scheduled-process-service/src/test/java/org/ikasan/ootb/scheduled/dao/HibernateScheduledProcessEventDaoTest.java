@@ -41,25 +41,23 @@
 package org.ikasan.ootb.scheduled.dao;
 
 import org.ikasan.spec.scheduled.event.model.Outcome;
+import jakarta.annotation.Resource;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.util.stream.IntStream;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml",
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringJUnitConfig(locations = {"/h2-config.xml",
     "/substitute-components.xml",
 })
-public class HibernateScheduledProcessEventDaoTest {
+class HibernateScheduledProcessEventDaoTest {
 
     @Resource
     private ScheduledProcessEventDao scheduledProcessEventDao;
@@ -68,47 +66,47 @@ public class HibernateScheduledProcessEventDaoTest {
     private LocalSessionFactoryBean sessionFactoryBean;
 
     @Test
-    @DirtiesContext
-    public void test() {
+        @DirtiesContext
+    void test() {
         ScheduledProcessEvent scheduledProcessEvent = this.getEvent();
 
         this.scheduledProcessEventDao.save(scheduledProcessEvent);
 
-        Assert.assertNotNull(((ScheduledProcessEventImpl)scheduledProcessEvent).getId());
+        assertNotNull(((ScheduledProcessEventImpl)scheduledProcessEvent).getId());
     }
 
     @Test
-    @DirtiesContext
-    public void test_records_to_harvest_exist() {
+        @DirtiesContext
+    void test_records_to_harvest_exist() {
         ScheduledProcessEvent scheduledProcessEvent = this.getEvent();
 
         this.scheduledProcessEventDao.save(scheduledProcessEvent);
 
-        Assert.assertTrue(this.scheduledProcessEventDao.harvestableRecordsExist());
+        assertTrue(this.scheduledProcessEventDao.harvestableRecordsExist());
     }
 
     @Test
-    @DirtiesContext
-    public void test_get_harvestable_records() {
+        @DirtiesContext
+    void test_get_harvestable_records() {
         IntStream.range(0, 10).forEach(i -> this.scheduledProcessEventDao.save(this.getEvent()));
 
-        Assert.assertEquals(5, this.scheduledProcessEventDao.harvest(5).size());
+        assertEquals(5, this.scheduledProcessEventDao.harvest(5).size());
     }
 
     @Test
-    @DirtiesContext
-    public void test_get_mark_as_harvested() {
+        @DirtiesContext
+    void test_get_mark_as_harvested() {
         IntStream.range(0, 10).forEach(i -> this.scheduledProcessEventDao.save(this.getEvent()));
 
         this.scheduledProcessEventDao.updateAsHarvested(this.scheduledProcessEventDao.harvest(5));
         this.scheduledProcessEventDao.updateAsHarvested(this.scheduledProcessEventDao.harvest(5));
 
-        Assert.assertFalse(this.scheduledProcessEventDao.harvestableRecordsExist());
+        assertFalse(this.scheduledProcessEventDao.harvestableRecordsExist());
     }
 
     @Test
-    @DirtiesContext
-    public void test_housekeep() {
+        @DirtiesContext
+    void test_housekeep() {
         IntStream.range(0, 10).forEach(i -> this.scheduledProcessEventDao.save(this.getEvent()));
 
         this.scheduledProcessEventDao.updateAsHarvested(this.scheduledProcessEventDao.harvest(5));
@@ -119,7 +117,7 @@ public class HibernateScheduledProcessEventDaoTest {
         HibernateScheduledProcessEventDao dao = new HibernateScheduledProcessEventDao();
         dao.setSessionFactory(this.sessionFactoryBean.getObject());
 
-        Assert.assertEquals(0, dao.findAll().size());
+        assertEquals(0, dao.findAll().size());
     }
 
 

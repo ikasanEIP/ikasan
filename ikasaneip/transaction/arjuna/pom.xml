@@ -55,6 +55,16 @@
     <description>Ikasan Transaction extensions to Transactions in standalone Container</description>
 
     <dependencies>
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+            <version>3.1.0.redhat-00003</version>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.transaction</groupId>
+            <artifactId>jakarta.transaction-api</artifactId>
+            <version>2.0.1.redhat-00004</version>
+        </dependency>
 
         <dependency>
             <groupId>me.snowdrop</groupId>
@@ -64,11 +74,6 @@
         <dependency>
             <groupId>javax.transaction</groupId>
             <artifactId>jta</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>javax.jms</groupId>
-            <artifactId>javax.jms-api</artifactId>
         </dependency>
 
 

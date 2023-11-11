@@ -45,16 +45,17 @@ import java.io.IOException;
 import org.ikasan.connector.util.chunking.ChunkTestUtils;
 import org.ikasan.connector.util.chunking.process.ChunkHandleException;
 import org.ikasan.connector.util.chunking.process.ChunkHandler;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
 /**
  * Test for ChunkingOutputStream
  * 
  * @author Ikasan Development Team
  */
-public class ChunkingOutputStreamTest extends IoJUnitHelper
+class ChunkingOutputStreamTest extends IoJUnitHelper
 {
 
     /**
@@ -63,7 +64,7 @@ public class ChunkingOutputStreamTest extends IoJUnitHelper
      * @throws IOException
      */
     @Test
-    public void testWriteInt() throws IOException
+    void testWriteInt() throws IOException
     {
         MockChunkHandler chunkHandler = new MockChunkHandler();
         int chunkSize = 100;
@@ -88,7 +89,7 @@ public class ChunkingOutputStreamTest extends IoJUnitHelper
      * tests that handle exceptions are caught and properly wrapped
      */
     @Test
-    public void testWriteInt_catchingHandleException()
+    void testWriteInt_catchingHandleException()
     {
 
         String exceptionMessage = "Houston, we have a problem"; //$NON-NLS-1$
@@ -113,8 +114,9 @@ public class ChunkingOutputStreamTest extends IoJUnitHelper
         }
         catch (IOException e)
         {
-            assertEquals("underlying exception should be the chunkHandleException", chunkHandleException.getMessage(), //$NON-NLS-1$
-                e.getMessage());
+            assertEquals(chunkHandleException.getMessage(), //$NON-NLS-1$
+                e.getMessage(), //$NON-NLS-1$
+                "underlying exception should be the chunkHandleException");
         }
 
         try
@@ -124,8 +126,9 @@ public class ChunkingOutputStreamTest extends IoJUnitHelper
         }
         catch (IOException e)
         {
-            assertEquals("underlying exception should be the chunkHandleException", chunkHandleException.getMessage(), //$NON-NLS-1$
-                e.getMessage());
+            assertEquals(chunkHandleException.getMessage(), //$NON-NLS-1$
+                e.getMessage(), //$NON-NLS-1$
+                "underlying exception should be the chunkHandleException");
         }
 
     }

@@ -50,17 +50,19 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Supports testing of the RouterFlowElementInvoker
  */
-public class MultiRecipientRouterFlowElementInvokerTest
+class MultiRecipientRouterFlowElementInvokerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -88,23 +90,27 @@ public class MultiRecipientRouterFlowElementInvokerTest
     private MultiRecipientRouteInvocationAware mrrInvocationAware = mockery.mock(MultiRecipientRouteInvocationAware.class, "mrrInvocationAware");
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     @SuppressWarnings("unchecked")
-    public void test_failed_constructor_null_replicationFactory()
+    void test_failed_constructor_null_replicationFactory()
     {
-        new MultiRecipientRouterFlowElementInvoker(null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    @SuppressWarnings("unchecked")
-    public void test_failed_constructor_null_configuration()
-    {
-        new MultiRecipientRouterFlowElementInvoker(replicationFactory, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new MultiRecipientRouterFlowElementInvoker(null, null);
+        });
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_single_target()
+    void test_failed_constructor_null_configuration()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new MultiRecipientRouterFlowElementInvoker(replicationFactory, null);
+        });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_router_flowElementInvoker_single_target()
     {
         final List<String> routes = new ArrayList<>();
         routes.add("one");
@@ -147,7 +153,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_multiple_targets()
+    void test_router_flowElementInvoker_multiple_targets()
     {
         final List<String> routes = new ArrayList<>();
         routes.add("one");
@@ -222,7 +228,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_multiple_targets_invocation_aware()
+    void test_router_flowElementInvoker_multiple_targets_invocation_aware()
     {
         final List<String> routes = new ArrayList<>();
         routes.add("one");
@@ -300,7 +306,7 @@ public class MultiRecipientRouterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_multiple_targets_no_cloning()
+    void test_router_flowElementInvoker_multiple_targets_no_cloning()
     {
         final List<String> routes = new ArrayList<>();
         routes.add("one");
@@ -361,185 +367,6 @@ public class MultiRecipientRouterFlowElementInvokerTest
                 will(returnValue(null));
                 exactly(1).of(invokerConfiguration).getSnapEvent();
                 will(returnValue(false));
-            }
-        });
-
-        FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
-    }
-
-    @Test(expected = InvalidFlowException.class)
-    @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_null_target()
-    {
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(router));
-                exactly(1).of(invokerConfiguration).getSnapEvent();
-                will(returnValue(false));
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(router).route(payload);
-                will(returnValue(null));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-            }
-        });
-
-        FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
-    }
-
-    @Test(expected = InvalidFlowException.class)
-    @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_no_target()
-    {
-        final List<String> routes = new ArrayList<>();
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(router));
-                exactly(1).of(invokerConfiguration).getSnapEvent();
-                will(returnValue(false));
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(router).route(payload);
-                will(returnValue(routes));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-            }
-        });
-
-        FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
-    }
-
-    @Test(expected = InvalidFlowException.class)
-    @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_no_next_flow_element_for_single_route()
-    {
-        final List<String> routes = new ArrayList<>();
-        routes.add("one");
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(router));
-
-                exactly(1).of(invokerConfiguration).getSnapEvent();
-                will(returnValue(false));
-
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(router).route(payload);
-                will(returnValue(routes));
-
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getTransition("one");
-                will(returnValue(null));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-            }
-        });
-
-        FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
-    }
-
-    @Test(expected = InvalidFlowException.class)
-    @SuppressWarnings("unchecked")
-    public void test_router_flowElementInvoker_no_next_flow_multiple_targets()
-    {
-        final List<String> routes = new ArrayList<>();
-        routes.add("one");
-        routes.add("two");
-
-        // expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(router));
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(router).route(payload);
-                will(returnValue(routes));
-
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getTransition("one");
-                will(returnValue(flowElement));
-                exactly(1).of(invokerConfiguration).isCloneEventPerRoute();
-                will(returnValue(true));
-                exactly(1).of(replicationFactory).replicate(flowEvent);
-                will(returnValue(flowEvent));
-
-                exactly(1).of(invokerConfiguration).getSnapEvent();
-                will(returnValue(false));
-
-                exactly(1).of(invokerConfiguration).getSnapEvent();
-                will(returnValue(false));
-
-                exactly(1).of(flowElement).getFlowElementInvoker();
-                will(returnValue(flowElementInvoker));
-                exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-                will(returnValue(null));
-
-                exactly(1).of(flowElement).getTransition("two");
-                will(returnValue(null));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
             }
         });
 
@@ -551,10 +378,197 @@ public class MultiRecipientRouterFlowElementInvokerTest
     }
 
     @Test
-    public void test_invoker_is_configurable()
+    @SuppressWarnings("unchecked")
+    void test_router_flowElementInvoker_null_target()
+    {
+        assertThrows(InvalidFlowException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
+            {
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(router));
+                    exactly(1).of(invokerConfiguration).getSnapEvent();
+                    will(returnValue(false));
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                    exactly(1).of(router).route(payload);
+                    will(returnValue(null));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_router_flowElementInvoker_no_target()
+    {
+        assertThrows(InvalidFlowException.class, () -> {
+            final List<String> routes = new ArrayList<>();
+
+            // expectations
+            mockery.checking(new Expectations()
+            {
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(router));
+                    exactly(1).of(invokerConfiguration).getSnapEvent();
+                    will(returnValue(false));
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                    exactly(1).of(router).route(payload);
+                    will(returnValue(routes));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_router_flowElementInvoker_no_next_flow_element_for_single_route()
+    {
+        assertThrows(InvalidFlowException.class, () -> {
+            final List<String> routes = new ArrayList<>();
+            routes.add("one");
+
+            // expectations
+            mockery.checking(new Expectations()
+            {
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(router));
+
+                    exactly(1).of(invokerConfiguration).getSnapEvent();
+                    will(returnValue(false));
+
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                    exactly(1).of(router).route(payload);
+                    will(returnValue(routes));
+
+                    exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                    exactly(1).of(flowElement).getTransition("one");
+                    will(returnValue(null));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    void test_router_flowElementInvoker_no_next_flow_multiple_targets()
+    {
+        assertThrows(InvalidFlowException.class, () -> {
+            final List<String> routes = new ArrayList<>();
+            routes.add("one");
+            routes.add("two");
+
+            // expectations
+            mockery.checking(new Expectations()
+            {
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(router));
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                    exactly(1).of(router).route(payload);
+                    will(returnValue(routes));
+
+                    exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                    exactly(1).of(flowElement).getTransition("one");
+                    will(returnValue(flowElement));
+                    exactly(1).of(invokerConfiguration).isCloneEventPerRoute();
+                    will(returnValue(true));
+                    exactly(1).of(replicationFactory).replicate(flowEvent);
+                    will(returnValue(flowEvent));
+
+                    exactly(1).of(invokerConfiguration).getSnapEvent();
+                    will(returnValue(false));
+
+                    exactly(1).of(invokerConfiguration).getSnapEvent();
+                    will(returnValue(false));
+
+                    exactly(1).of(flowElement).getFlowElementInvoker();
+                    will(returnValue(flowElementInvoker));
+                    exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                    will(returnValue(null));
+
+                    exactly(1).of(flowElement).getTransition("two");
+                    will(returnValue(null));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, invokerConfiguration);
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
+        });
+    }
+
+    @Test
+    void test_invoker_is_configurable()
     {
         FlowElementInvoker invoker = new MultiRecipientRouterFlowElementInvoker(replicationFactory, new MultiRecipientRouterInvokerConfiguration());
 
-        Assert.assertTrue("invoker is configurable resource", invoker instanceof ConfiguredResource);
+        assertTrue(invoker instanceof ConfiguredResource, "invoker is configurable resource");
     }
 }

@@ -2,9 +2,9 @@ package org.ikasan.connector.sftp.net;
 
 import org.ikasan.connector.basefiletransfer.net.*;
 import org.ikasan.connector.sftp.ssh.SftpServerWithPasswordAuthenticator;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
 
 import java.io.IOException;
@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.tuple;
 /**
  * Created by amajewski on 24/06/15.
  */
-public class SFTPClientTest
+class SFTPClientTest
 {
 
     private SftpServerWithPasswordAuthenticator server;
@@ -28,8 +28,8 @@ public class SFTPClientTest
     private Path tempDir;
     private Path dataFile;
 
-    @Before
-    public void before() throws ClientConnectionException, IOException
+    @BeforeEach
+    void before() throws ClientConnectionException, IOException
     {
         int passwordSftpServerPort = SocketUtils.findAvailableTcpPort();
         tempDir = Files.createTempDirectory("tempfiles");
@@ -45,8 +45,8 @@ public class SFTPClientTest
 
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
 
         server.stop();
@@ -54,7 +54,7 @@ public class SFTPClientTest
     }
 
     @Test
-    public void doList_when_dir_is_empty() throws URISyntaxException, ClientCommandLsException
+    void doList_when_dir_is_empty() throws URISyntaxException, ClientCommandLsException
     {
         List<ClientListEntry> result = uut.ls(".");
         assertThat(result).extracting(
@@ -66,7 +66,7 @@ public class SFTPClientTest
     }
 
     @Test
-    public void doList_when_dir_has_file() throws URISyntaxException, ClientCommandLsException, IOException
+    void doList_when_dir_has_file() throws URISyntaxException, ClientCommandLsException, IOException
     {
         Path tempFile = Files.createTempFile(tempDir, "tempfile1", ".tmp");
 
@@ -81,7 +81,7 @@ public class SFTPClientTest
     }
 
     @Test
-    public void doList_when_dir_has_two_files() throws URISyntaxException, ClientCommandLsException, IOException
+    void doList_when_dir_has_two_files() throws URISyntaxException, ClientCommandLsException, IOException
     {
         Path tempFile = Files.createTempFile(tempDir, "tempfile1", ".tmp");
         Path tempFile2 = Files.createTempFile(tempDir, "tempfile2", ".tmp");
@@ -99,7 +99,7 @@ public class SFTPClientTest
     }
 
     @Test
-    public void doList_when_has_file_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
+    void doList_when_has_file_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
     {
         Path tempDir2 = Files.createTempDirectory(tempDir, "subdir");
         Files.createTempFile(tempDir2, "tempfile1", ".tmp");
@@ -116,7 +116,7 @@ public class SFTPClientTest
     }
 
     @Test
-    public void doList_when_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
+    void doList_when_in_subdir() throws URISyntaxException, ClientCommandLsException, IOException
     {
         Path tempDir2 = Files.createTempDirectory(tempDir, "subdir");
         Path tempFile1 = Files.createTempFile(tempDir2, "tempfile1", ".tmp");
@@ -136,7 +136,7 @@ public class SFTPClientTest
     }
 
     @Test
-    public void putWithOutputStream_put_file_input_stream() throws IOException, ClientCommandLsException, ClientCommandMkdirException, ClientCommandPutException
+    void putWithOutputStream_put_file_input_stream() throws IOException, ClientCommandLsException, ClientCommandMkdirException, ClientCommandPutException
     {
         uut.putWithOutputStream("testdir/file", Files.newInputStream(dataFile));
         String writtenFileContents = new String(Files.readAllBytes(tempDir.resolve("testdir/file")));

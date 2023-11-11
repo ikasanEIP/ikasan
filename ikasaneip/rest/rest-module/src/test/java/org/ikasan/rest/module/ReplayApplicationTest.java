@@ -13,12 +13,10 @@ import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.ikasan.spec.systemevent.SystemEventService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +25,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -38,15 +35,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { ReplayApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = {ReplayApplication.class, MockedUserServiceTestConfig.class})
 @EnableWebMvc
-public class ReplayApplicationTest
+class ReplayApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -76,8 +70,8 @@ public class ReplayApplicationTest
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
@@ -85,7 +79,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void searchWithReadOnlyUser() throws Exception
+    void searchWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/replay")
@@ -97,7 +91,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void replayPUT() throws Exception
+    void replayPUT() throws Exception
     {
         Object deserialisedObject = new Object();
 
@@ -139,7 +133,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void replayPUT_when_module_notFound() throws Exception
+    void replayPUT_when_module_notFound() throws Exception
     {
 
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
@@ -169,7 +163,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void replayPUT_flow_not_found() throws Exception
+    void replayPUT_flow_not_found() throws Exception
     {
 
         Flow flow = new TestFlow("Invalid", "testModule", "running", flowConfiguration, serialiserFactory);
@@ -197,7 +191,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void replayPUT_when_flow_stopped() throws Exception
+    void replayPUT_when_flow_stopped() throws Exception
     {
 
         Flow flow = new TestFlow("testFlow", "testModule", "stopped", flowConfiguration, serialiserFactory);
@@ -228,7 +222,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void replayPUT_when_replay_service_is_null() throws Exception
+    void replayPUT_when_replay_service_is_null() throws Exception
     {
         Flow flow = new TestFlow("testFlow", "testModule", "running", flowConfiguration, serialiserFactory);
         SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
@@ -262,7 +256,7 @@ public class ReplayApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void replayPUT_when_resubmission_throws_exception() throws Exception
+    void replayPUT_when_resubmission_throws_exception() throws Exception
     {
         Object deserialisedObject = new Object();
 

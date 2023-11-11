@@ -40,21 +40,24 @@
  */
 package org.ikasan.error.reporting.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for ErrorOccurrencesLinkedHashMap.
  * 
  * @author Ikasan Development Team
  */
-public class ErrorOccurrencesLinkedHashMapTestImpl
+class ErrorOccurrencesLinkedHashMapTestImpl
 {
     /**
      * Test roilloff
      */
     @Test
-    public void test_rolloff()
+    void test_rolloff()
     {
         ErrorOccurrencesLinkedHashMap<String,String> errorOccurrences = new ErrorOccurrencesLinkedHashMap<String,String>(5);
         errorOccurrences.put("1", "one");
@@ -63,21 +66,21 @@ public class ErrorOccurrencesLinkedHashMapTestImpl
         errorOccurrences.put("4", "four");
         errorOccurrences.put("5", "five");
 
-        Assert.assertTrue("Should be five entries", errorOccurrences.size() == 5);
-        Assert.assertTrue("Should contain entry 1", errorOccurrences.containsKey("1"));
-        Assert.assertTrue("Should contain entry 2", errorOccurrences.containsKey("2"));
-        Assert.assertTrue("Should contain entry 3", errorOccurrences.containsKey("3"));
-        Assert.assertTrue("Should contain entry 4", errorOccurrences.containsKey("4"));
-        Assert.assertTrue("Should contain entry 5", errorOccurrences.containsKey("5"));
+        assertEquals(5, errorOccurrences.size(), "Should be five entries");
+        assertTrue(errorOccurrences.containsKey("1"), "Should contain entry 1");
+        assertTrue(errorOccurrences.containsKey("2"), "Should contain entry 2");
+        assertTrue(errorOccurrences.containsKey("3"), "Should contain entry 3");
+        assertTrue(errorOccurrences.containsKey("4"), "Should contain entry 4");
+        assertTrue(errorOccurrences.containsKey("5"), "Should contain entry 5");
 
         errorOccurrences.put("6", "six");
-        Assert.assertTrue("Should be five entries", errorOccurrences.size() == 5);
-        Assert.assertFalse("Should not contain entry 1", errorOccurrences.containsKey("1"));
-        Assert.assertTrue("Should contain entry 2", errorOccurrences.containsKey("2"));
-        Assert.assertTrue("Should contain entry 3", errorOccurrences.containsKey("3"));
-        Assert.assertTrue("Should contain entry 4", errorOccurrences.containsKey("4"));
-        Assert.assertTrue("Should contain entry 5", errorOccurrences.containsKey("5"));
-        Assert.assertTrue("Should contain entry 6", errorOccurrences.containsKey("6"));
+        assertEquals(5, errorOccurrences.size(), "Should be five entries");
+        assertFalse(errorOccurrences.containsKey("1"), "Should not contain entry 1");
+        assertTrue(errorOccurrences.containsKey("2"), "Should contain entry 2");
+        assertTrue(errorOccurrences.containsKey("3"), "Should contain entry 3");
+        assertTrue(errorOccurrences.containsKey("4"), "Should contain entry 4");
+        assertTrue(errorOccurrences.containsKey("5"), "Should contain entry 5");
+        assertTrue(errorOccurrences.containsKey("6"), "Should contain entry 6");
 
     }
 

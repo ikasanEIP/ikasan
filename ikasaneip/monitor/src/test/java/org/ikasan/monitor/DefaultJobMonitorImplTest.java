@@ -47,19 +47,20 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>DefaultMonitorImpl</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class DefaultJobMonitorImplTest
+class DefaultJobMonitorImplTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -78,7 +79,7 @@ public class DefaultJobMonitorImplTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_not_active()
+    void test_successful_notifier_when_not_active()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -99,7 +100,7 @@ public class DefaultJobMonitorImplTest
     }
 
     @Test
-    public void test_successful_monitor_after_destroy()
+    void test_successful_monitor_after_destroy()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -135,7 +136,7 @@ public class DefaultJobMonitorImplTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_active_no_notifiers()
+    void test_successful_notifier_when_active_no_notifiers()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -159,7 +160,7 @@ public class DefaultJobMonitorImplTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_active_with_notifiers_state_changes_only_false()
+    void test_successful_notifier_when_active_with_notifiers_state_changes_only_false()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -187,7 +188,7 @@ public class DefaultJobMonitorImplTest
     }
 
     @Test
-    public void test_successful_notifier_when_active_with_notifiers_state_changes_only_false_multiple_invocations()
+    void test_successful_notifier_when_active_with_notifiers_state_changes_only_false_multiple_invocations()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -222,7 +223,7 @@ public class DefaultJobMonitorImplTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_active_with_notifiers_state_changes_only_true()
+    void test_successful_notifier_when_active_with_notifiers_state_changes_only_true()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -253,7 +254,7 @@ public class DefaultJobMonitorImplTest
      * Test successful invoke.
      */
     @Test
-    public void test_successful_notifier_when_active_with_notifiers_state_changes_only_true_multiple_invokes()
+    void test_successful_notifier_when_active_with_notifiers_state_changes_only_true_multiple_invokes()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -300,7 +301,7 @@ public class DefaultJobMonitorImplTest
         @Override
         public void invoke(String env, String moduleName, String flowName, String notification)
         {
-            Assert.assertTrue(expectation.equals(notification));
+            assertEquals(expectation, notification);
         }
 
         @Override

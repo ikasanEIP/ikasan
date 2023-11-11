@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import jakarta.annotation.Resource;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.ikasan.bigqueue.IBigQueue;
@@ -72,22 +73,18 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDataMap;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
@@ -95,7 +92,6 @@ import static org.quartz.TriggerBuilder.newTrigger;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -111,7 +107,7 @@ public class HousekeepingLogFilesFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_housekeeping_file_flow_sucess() throws IOException {
+    void test_housekeeping_file_flow_sucess() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Housekeep Log Files Flow"));
 
         flowTestRule.consumer("Scheduled Consumer")

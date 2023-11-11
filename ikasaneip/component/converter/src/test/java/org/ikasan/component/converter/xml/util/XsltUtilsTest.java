@@ -45,13 +45,13 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
-import org.junit.Assert;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -61,7 +61,7 @@ import org.xml.sax.SAXException;
  * @author Ikasan Development Team
  *
  */
-public class XsltUtilsTest
+class XsltUtilsTest
 {
     /**
      * Test for {@link XsltUtils#serialize(org.w3c.dom.NodeList)}
@@ -73,7 +73,7 @@ public class XsltUtilsTest
      * @throws javax.xml.transform.TransformerException if an error serializing <code>nodeset</code> occurs.
      */
     @Test
-    public void test_serialize() throws SAXException, IOException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException
+    void test_serialize() throws SAXException, IOException, ParserConfigurationException, TransformerFactoryConfigurationError, TransformerException
     {
         String eol = System.getProperty("line.separator");
         String incomingXml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><test><group><value>whatever</value></group></test>";
@@ -83,6 +83,6 @@ public class XsltUtilsTest
         Document testXmlDom = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(is);
         String result = XsltUtils.serialize(testXmlDom.getChildNodes());
 
-        Assert.assertEquals(expected, result);
+        assertEquals(expected, result);
     }
 }

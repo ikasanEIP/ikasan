@@ -43,33 +43,29 @@ package org.ikasan.exclusion.dao;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
+import jakarta.annotation.Resource;
 import org.ikasan.exclusion.model.ExclusionEventImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * Test class for HibernateExclusionServiceDao.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/exclusion-service-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
-    })
-
-public class HibernateExclusionEventDaoTest
+})
+class HibernateExclusionEventDaoTest
 {
     @Resource
     ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
@@ -78,43 +74,43 @@ public class HibernateExclusionEventDaoTest
      * Test exclusion
      */
     @DirtiesContext
-    @Test
-    public void test_contains_save_find_delete_operations()
+            @Test
+    void test_contains_save_find_delete_operations()
     {
         ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+        assertNull(exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"), "Should not be found");
 
         exclusionEventDao.save(exclusionEvent);
-        Assert.assertTrue("Should be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier").equals(exclusionEvent));
+        assertEquals(exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"), exclusionEvent, "Should be found");
 
         exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+        assertNull(exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"), "Should not be found");
     }
 
     /**
      * Test exclusion
      */
     @DirtiesContext
-    @Test
-    public void test_contains_batch_save_find_delete_operations()
+            @Test
+    void test_contains_batch_save_find_delete_operations()
     {
         ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+        assertNull(exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"), "Should not be found");
 
         List<ExclusionEvent> events = new ArrayList<>();
         events.add(exclusionEvent);
         exclusionEventDao.save(events);
 
         exclusionEventDao.delete("moduleName", "flowName", "lifeIdentifier");
-        Assert.assertNull("Should not be found", exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"));
+        assertNull(exclusionEventDao.find("moduleName", "flowName", "lifeIdentifier"), "Should not be found");
     }
-    
+
     /**
      * Test exclusion
      */
     @DirtiesContext
-    @Test
-    public void test_find_by_various_criteria()
+            @Test
+    void test_find_by_various_criteria()
     {
         ExclusionEvent exclusionEvent = new ExclusionEventImpl("moduleName", "flowName", "lifeIdentifier", "event".getBytes(), "errorUri");
         exclusionEventDao.save(exclusionEvent);
@@ -138,23 +134,23 @@ public class HibernateExclusionEventDaoTest
         ArrayList<String> moduleNames = new ArrayList<String>();
         moduleNames.add("moduleName1");
         moduleNames.add("moduleName2");
-        
-        Assert.assertTrue("Should be found size == 2", exclusionEventDao.find(moduleNames, null, null, null, null, 100).size() == 2);
+
+        assertEquals(2, exclusionEventDao.find(moduleNames, null, null, null, null, 100).size(), "Should be found size == 2");
         
         ArrayList<String> flowNames = new ArrayList<String>();
         flowNames.add("flowName1");
         
-        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, null, 100).size());
+        assertEquals(1, exclusionEventDao.find(moduleNames, flowNames, null, null, null, 100).size(), "Should be found size == 1");
         
-        Assert.assertEquals("Should be found size == 1", 1, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier1", 100).size());
+        assertEquals(1, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier1", 100).size(), "Should be found size == 1");
         
-        Assert.assertEquals("Should be found size == 0", 0, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier2", 100).size());
+        assertEquals(0, exclusionEventDao.find(moduleNames, flowNames, null, null, "lifeIdentifier2", 100).size(), "Should be found size == 0");
 
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvest_success()
+            @DirtiesContext
+    void test_harvest_success()
     {
         this.exclusionEventDao.setHarvestQueryOrdered(true);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
@@ -167,16 +163,16 @@ public class HibernateExclusionEventDaoTest
             exclusionEvents.add(exclusionEvent);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.exclusionEventDao.getHarvestableRecords(5000).size(), 1000);
+        assertEquals(1000, this.exclusionEventDao.getHarvestableRecords(5000).size(), "Harvestable records == 1000");
 
         this.exclusionEventDao.updateAsHarvested(exclusionEvents);
 
-        Assert.assertEquals("Harvestable records == 0", this.exclusionEventDao.getHarvestableRecords(5000).size(), 0);
+        assertEquals(0, this.exclusionEventDao.getHarvestableRecords(5000).size(), "Harvestable records == 0");
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvest_success_no_order_by()
+            @DirtiesContext
+    void test_harvest_success_no_order_by()
     {
         this.exclusionEventDao.setHarvestQueryOrdered(false);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
@@ -189,16 +185,16 @@ public class HibernateExclusionEventDaoTest
             exclusionEvents.add(exclusionEvent);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.exclusionEventDao.getHarvestableRecords(5000).size(), 1000);
+        assertEquals(1000, this.exclusionEventDao.getHarvestableRecords(5000).size(), "Harvestable records == 1000");
 
         this.exclusionEventDao.updateAsHarvested(exclusionEvents);
 
-        Assert.assertEquals("Harvestable records == 0", this.exclusionEventDao.getHarvestableRecords(5000).size(), 0);
+        assertEquals(0, this.exclusionEventDao.getHarvestableRecords(5000).size(), "Harvestable records == 0");
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvest_success_no_order_by_with_gap()
+            @DirtiesContext
+    void test_harvest_success_no_order_by_with_gap()
     {
         this.exclusionEventDao.setHarvestQueryOrdered(false);
         List<ExclusionEvent> exclusionEvents = new ArrayList<>();
@@ -216,9 +212,9 @@ public class HibernateExclusionEventDaoTest
         this.exclusionEventDao.updateAsHarvested(List.of(events.get(1)));
 
         events = this.exclusionEventDao.getHarvestableRecords(3);
-        Assert.assertEquals("ID equals", Long.valueOf(1L), events.get(0).getId());
-        Assert.assertEquals("ID equals", Long.valueOf(3L), events.get(1).getId());
-        Assert.assertEquals("ID equals", Long.valueOf(4L), events.get(2).getId());
+        assertEquals(Long.valueOf(1L), events.get(0).getId(), "ID equals");
+        assertEquals(Long.valueOf(3L), events.get(1).getId(), "ID equals");
+        assertEquals(Long.valueOf(4L), events.get(2).getId(), "ID equals");
     }
 
 }

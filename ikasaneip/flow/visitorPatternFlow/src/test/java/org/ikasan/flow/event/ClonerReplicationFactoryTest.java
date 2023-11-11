@@ -44,17 +44,20 @@ import com.rits.cloning.Cloner;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ReplicationFactory;
 import org.ikasan.spec.flow.FlowEvent;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * This test class supports the <code>ClonerReplicationFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ClonerReplicationFactoryTest
+class ClonerReplicationFactoryTest
 {
     /** event factory */
     private EventFactory<FlowEvent<?,?>> eventFactory = new FlowEventFactory();
@@ -70,19 +73,20 @@ public class ClonerReplicationFactoryTest
     
     private boolean immutablePayload = Boolean.FALSE;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         flowEvent = eventFactory.newEvent("identifier", "payload");
     }
-    
+
     /**
      * Test successful replication of a flowEvent with a 
      * StringBuilder payload.
      */
+    // TODO: 07/11/2023 revist this test
     @Test
-    @Ignore // TODO: 07/11/2023 revist this test
-    public void test_replication_flowEvent_StringBuilderPayload()
+    @Disabled
+    void test_replication_flowEvent_StringBuilderPayload()
     {
         flowEvent.setPayload(new StringBuilder("this is a stringBuilder payload"));
         executeCommonAssertions(flowEvent, replicationFactory.replicate(flowEvent), mutablePayload);
@@ -93,7 +97,7 @@ public class ClonerReplicationFactoryTest
      * Integer payload.
      */
     @Test
-    public void test_replication_flowEvent_IntegerPayload()
+    void test_replication_flowEvent_IntegerPayload()
     {
         flowEvent.setPayload(Integer.valueOf(10));
         executeCommonAssertions(flowEvent, replicationFactory.replicate(flowEvent), immutablePayload);
@@ -107,21 +111,21 @@ public class ClonerReplicationFactoryTest
      */
     private void executeCommonAssertions(FlowEvent original, FlowEvent replicated, boolean mutablePayload)
     {
-        Assert.assertNotNull(replicated);
-        Assert.assertNotSame(original, replicated);
+        assertNotNull(replicated);
+        assertNotSame(original, replicated);
 
         // identifiers are Strings; Strings are immutable so no need to clone
-        Assert.assertSame(original.getIdentifier(), replicated.getIdentifier());
+        assertSame(original.getIdentifier(), replicated.getIdentifier());
 
-        Assert.assertNotSame(original.getTimestamp(), replicated.getTimestamp());
+        assertNotSame(original.getTimestamp(), replicated.getTimestamp());
 
         if(mutablePayload)
         {
-            Assert.assertNotSame(flowEvent.getPayload(), replicated.getPayload());
+            assertNotSame(flowEvent.getPayload(), replicated.getPayload());
         }
         else
         {
-            Assert.assertSame(flowEvent.getPayload(), replicated.getPayload());
+            assertSame(flowEvent.getPayload(), replicated.getPayload());
         }
     }
 }

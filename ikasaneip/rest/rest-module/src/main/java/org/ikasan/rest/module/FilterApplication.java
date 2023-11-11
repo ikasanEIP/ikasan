@@ -27,19 +27,18 @@ public class FilterApplication
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-    @RequestMapping(
-        method = RequestMethod.GET,
+    @GetMapping(
         value = "/search",
         produces = { MediaType.APPLICATION_JSON_VALUE }
     )
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity get(
-        @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
-        @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-        @RequestParam(value = "criteria", required = false) Integer criteria,
-        @RequestParam(value = "clientId", required = false) String clientId,
-        @RequestParam(value = "fromDateTime", required = false) String fromDateTime,
-        @RequestParam(value = "untilDateTime", required = false) String untilDateTime
+        @RequestParam(defaultValue = "0") int pageNumber,
+        @RequestParam(defaultValue = "20") int pageSize,
+        @RequestParam(required = false) Integer criteria,
+        @RequestParam(required = false) String clientId,
+        @RequestParam(required = false) String fromDateTime,
+        @RequestParam(required = false) String untilDateTime
     )
     {
         PagedSearchResult<FilterEntry> pagedResult = null;
@@ -56,37 +55,32 @@ public class FilterApplication
         }
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
+    @GetMapping(
         value = "/",
         produces = { MediaType.APPLICATION_JSON_VALUE }
     )
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity get(
-        @RequestParam(value = "criteria") Integer criteria,
-        @RequestParam(value = "clientId") String clientId
+        @RequestParam Integer criteria,
+        @RequestParam String clientId
     )
     {
         FilterEntry filterEntry = managementFilterService.find(criteria, clientId);
         return new ResponseEntity(filterEntry, HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.DELETE,
-        value = "/"
-    )
+    @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity delete(
-        @RequestParam(value = "criteria") Integer criteria,
-        @RequestParam(value = "clientId") String clientId
+        @RequestParam Integer criteria,
+        @RequestParam String clientId
     )
     {
         managementFilterService.delete(criteria, clientId);
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(
-        method = RequestMethod.POST,
+    @PostMapping(
         value = "/",
         consumes = { MediaType.APPLICATION_JSON_VALUE }
     )

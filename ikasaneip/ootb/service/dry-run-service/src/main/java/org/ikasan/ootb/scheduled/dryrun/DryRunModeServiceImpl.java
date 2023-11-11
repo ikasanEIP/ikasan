@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduled.dryrun;
 
+import jakarta.annotation.PostConstruct;
 import net.jodah.expiringmap.ExpirationPolicy;
 import net.jodah.expiringmap.ExpiringMap;
 import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
@@ -13,7 +14,6 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import javax.annotation.PostConstruct;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;

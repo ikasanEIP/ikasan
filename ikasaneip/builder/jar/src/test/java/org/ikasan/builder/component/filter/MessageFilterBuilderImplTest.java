@@ -46,18 +46,16 @@ import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>MessageFilterBuilderImpl</code> class.
  *
  * @author Ikasan Development Team
  */
-public class MessageFilterBuilderImplTest {
+class MessageFilterBuilderImplTest {
     /**
      * Mockery for mocking concrete classes
      */
@@ -66,9 +64,6 @@ public class MessageFilterBuilderImplTest {
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -79,24 +74,26 @@ public class MessageFilterBuilderImplTest {
     /**
      * Test successful builder creation.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void messageFilterBuilder_with_without_mandatory_configuration() {
+    @Test
+    void messageFilterBuilder_with_without_mandatory_configuration() {
+        assertThrows(IllegalArgumentException.class, () -> {
 
-        new MessageFilterBuilderImpl(duplicateFilterService).build();
+            new MessageFilterBuilderImpl(duplicateFilterService).build();
+        });
     }
 
     /**
      * Test successful builder creation.
      */
     @Test
-    public void messageFilterBuilder_with_minimum_configuration() {
+    void messageFilterBuilder_with_minimum_configuration() {
 
         Filter filter = new MessageFilterBuilderImpl(duplicateFilterService)
                 .setConfiguredResourceId("configuredResourceId")
                 .setFilterEntryConverter(filterEntryConverter).build();
 
-        assertTrue("instance should be a Filter", filter instanceof Filter);
-        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource) filter).getConfiguredResourceId()));
+        assertTrue(filter instanceof Filter, "instance should be a Filter");
+        assertEquals("configuredResourceId", ((ConfiguredResource)filter).getConfiguredResourceId(), "Filter configuredResourceId should be 'configuredResourceId'");
 
         mockery.assertIsSatisfied();
     }
@@ -105,15 +102,15 @@ public class MessageFilterBuilderImplTest {
      * Test successful builder creation.
      */
     @Test
-    public void messageFilterBuilder_with_configuration_instance_override() {
+    void messageFilterBuilder_with_configuration_instance_override() {
 
         Filter filter = new MessageFilterBuilderImpl(duplicateFilterService)
                 .setConfiguredResourceId("configuredResourceId")
                 .setConfiguration(new String("rule not configurable so this will be logged as ignored"))
                 .setFilterEntryConverter(filterEntryConverter).build();
 
-        assertTrue("instance should be a Filter", filter instanceof Filter);
-        assertTrue("Filter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource<Object>) filter).getConfiguredResourceId()));
+        assertTrue(filter instanceof Filter, "instance should be a Filter");
+        assertEquals("configuredResourceId", ((ConfiguredResource<Object>)filter).getConfiguredResourceId(), "Filter configuredResourceId should be 'configuredResourceId'");
 
         mockery.assertIsSatisfied();
     }

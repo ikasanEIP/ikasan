@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import jakarta.annotation.Resource;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
@@ -61,26 +62,25 @@ import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
 
 import static org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer.EMPTY_CORRELATION_ID;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -97,8 +97,8 @@ public class QuartzSchedulerJobEventFlowTest {
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
 
-    @BeforeClass
-    public static void setupObjectMapper() {
+    @BeforeAll
+    static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
@@ -109,14 +109,14 @@ public class QuartzSchedulerJobEventFlowTest {
         objectMapper.registerModule(simpleModule);
     }
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeEach
+    void setup() throws IOException {
         outboundQueue.removeAll();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_success_start_no_correlation_id() throws IOException {
+    void test_quartz_flow_success_start_no_correlation_id() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
         CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
             = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
@@ -139,7 +139,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_success() throws IOException {
+    void test_quartz_flow_success() throws IOException {
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
@@ -166,14 +166,14 @@ public class QuartzSchedulerJobEventFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceId, event.getContextInstanceId());
+        assertEquals(contextInstanceId, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_recovery_context_instance_not_found() {
+    void test_quartz_flow_recovery_context_instance_not_found() {
         // Create cache but use a different correlationID
         createContextAndPutInCache();
         String contextInstanceId = UUID.randomUUID().toString();
@@ -204,7 +204,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_filter_empty_context_instance_id() {
+    void test_quartz_flow_filter_empty_context_instance_id() {
         // Create cache but use a different correlationID
         createContextAndPutInCache();
         String contextInstanceId = EMPTY_CORRELATION_ID;
@@ -235,7 +235,7 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
+    void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
@@ -267,14 +267,14 @@ public class QuartzSchedulerJobEventFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceId, event.getContextInstanceId());
+        assertEquals(contextInstanceId, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_not_dropped_success() throws IOException {
+    void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_not_dropped_success() throws IOException {
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
@@ -307,14 +307,14 @@ public class QuartzSchedulerJobEventFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceId, event.getContextInstanceId());
+        assertEquals(contextInstanceId, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_dropped_success() {
+    void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_dropped_success() {
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
@@ -358,8 +358,8 @@ public class QuartzSchedulerJobEventFlowTest {
             , ContextualisedScheduledProcessEventImpl.class);
     }
 
-    @After
-    public void teardown() {
+    @AfterEach
+    void teardown() {
         // post-test teardown
     }
 

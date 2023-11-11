@@ -41,34 +41,35 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.TranslatorInvokerConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>TranslatorInvokerConfigurationBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class TranslatorInvokerConfigurationBuilderTest
+class TranslatorInvokerConfigurationBuilderTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void trasnslatorInvokerConfigurationBuilder_test_properties_setters()
+    void trasnslatorInvokerConfigurationBuilder_test_properties_setters()
     {
         TranslatorInvokerConfigurationBuilder ticb = new TranslatorInvokerConfigurationBuilder(new TranslatorInvokerConfiguration());
 
-        Assert.assertTrue("TranslatorInvokerConfiguration should have 4 properties", TestUtils.getFields(TranslatorInvokerConfiguration.class).size() == 4);
-        Assert.assertFalse("TranslatorInvokerConfiguration should be false", ticb.withDynamicConfiguration(false).build().isDynamicConfiguration());
-        Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withDynamicConfiguration(true).build().isDynamicConfiguration());
-        Assert.assertFalse("TranslatorInvokerConfiguration should be false", ticb.withApplyTranslator(false).build().isApplyTranslator());
-        Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withApplyTranslator(true).build().isApplyTranslator());
+        assertEquals(4, TestUtils.getFields(TranslatorInvokerConfiguration.class).size(), "TranslatorInvokerConfiguration should have 4 properties");
+        assertFalse(ticb.withDynamicConfiguration(false).build().isDynamicConfiguration(), "TranslatorInvokerConfiguration should be false");
+        assertTrue(ticb.withDynamicConfiguration(true).build().isDynamicConfiguration(), "TranslatorInvokerConfiguration should be true");
+        assertFalse(ticb.withApplyTranslator(false).build().isApplyTranslator(), "TranslatorInvokerConfiguration should be false");
+        assertTrue(ticb.withApplyTranslator(true).build().isApplyTranslator(), "TranslatorInvokerConfiguration should be true");
 
-        Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
-        Assert.assertTrue("TranslatorInvokerConfiguration should be false", ticb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
-        Assert.assertTrue("TranslatorInvokerConfiguration should be true", ticb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
-        Assert.assertTrue("TranslatorInvokerConfiguration should be false", ticb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+        assertTrue(ticb.withCaptureMetrics(true).build().getCaptureMetrics(), "TranslatorInvokerConfiguration should be true");
+        assertFalse(ticb.withCaptureMetrics(false).build().getCaptureMetrics(), "TranslatorInvokerConfiguration should be false");
+        assertTrue(ticb.withSnapMetricsEvent(true).build().getSnapEvent(), "TranslatorInvokerConfiguration should be true");
+        assertFalse(ticb.withSnapMetricsEvent(false).build().getSnapEvent(), "TranslatorInvokerConfiguration should be false");
 
     }
 

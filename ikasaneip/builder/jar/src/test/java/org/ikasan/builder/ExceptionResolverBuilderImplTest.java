@@ -44,21 +44,22 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.flow.visitorPattern.FlowElementImpl;
 import org.ikasan.spec.flow.FlowElement;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>ExceptionResolverBuilderImpl</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ExceptionResolverBuilderImplTest
+class ExceptionResolverBuilderImplTest
 {
     /**
      * Test.
      */
     @Test
-    public void test_successful_exceptionResolver_all_actions()
+    void test_successful_exceptionResolver_all_actions()
     {
         ExceptionResolverBuilder exceptionResolverBuilder = new ExceptionResolverBuilderImpl();
         exceptionResolverBuilder.addExceptionToAction(ExceptionOne.class, OnException.ignoreException());
@@ -71,41 +72,41 @@ public class ExceptionResolverBuilderImplTest
         ExceptionResolver exceptionResolver = exceptionResolverBuilder.build();
 
         ExceptionAction action = exceptionResolver.resolve(null, new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Ignore", action.equals(IgnoreAction.instance()));
+        assertEquals(action, IgnoreAction.instance(), "ExceptionAction should be Ignore");
 
         action = exceptionResolver.resolve(null, new ExceptionTwo());
-        Assert.assertTrue("ExceptionAction should be Stop", action.equals(StopAction.instance()));
+        assertEquals(action, StopAction.instance(), "ExceptionAction should be Stop");
 
         action = exceptionResolver.resolve(null, new ExceptionThree());
-        Assert.assertTrue("ExceptionAction should be Exclude", action.equals(ExcludeEventAction.instance()));
+        assertEquals(action, ExcludeEventAction.instance(), "ExceptionAction should be Exclude");
 
         RetryAction actualRetryAction = exceptionResolver.resolve(null, new ExceptionFour());
         RetryAction expectedRetryAction = new RetryAction();
-        Assert.assertTrue("ExceptionAction should be Retry with default delay", actualRetryAction.getDelay() == expectedRetryAction.getDelay());
-        Assert.assertTrue("ExceptionAction should be Retry with indefinite maxRetries", actualRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
+        assertEquals(actualRetryAction.getDelay(), expectedRetryAction.getDelay(), "ExceptionAction should be Retry with default delay");
+        assertEquals(actualRetryAction.getMaxRetries(), expectedRetryAction.getMaxRetries(), "ExceptionAction should be Retry with indefinite maxRetries");
 
         RetryAction actualRetryActionDelayOverride = exceptionResolver.resolve(null, new ExceptionFourDelayOverride());
         RetryAction expectedRetryActionDelayOverride = new RetryAction();
         expectedRetryActionDelayOverride.setDelay(1l);
-        Assert.assertTrue("ExceptionAction should be Retry with override delay", actualRetryActionDelayOverride.getDelay() == expectedRetryActionDelayOverride.getDelay());
-        Assert.assertTrue("ExceptionAction should be Retry with indefinite maxRetries", actualRetryActionDelayOverride.getMaxRetries() == expectedRetryActionDelayOverride.getMaxRetries());
+        assertEquals(actualRetryActionDelayOverride.getDelay(), expectedRetryActionDelayOverride.getDelay(), "ExceptionAction should be Retry with override delay");
+        assertEquals(actualRetryActionDelayOverride.getMaxRetries(), expectedRetryActionDelayOverride.getMaxRetries(), "ExceptionAction should be Retry with indefinite maxRetries");
 
         actualRetryAction = exceptionResolver.resolve(null, new ExceptionFive());
         expectedRetryAction = new RetryAction(1, 1);
-        Assert.assertTrue("ExceptionAction should be Retry with delay 1", actualRetryAction.getDelay() == expectedRetryAction.getDelay());
-        Assert.assertTrue("ExceptionAction should be Retry with maxRetries 1", actualRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
+        assertEquals(actualRetryAction.getDelay(), expectedRetryAction.getDelay(), "ExceptionAction should be Retry with delay 1");
+        assertEquals(actualRetryAction.getMaxRetries(), expectedRetryAction.getMaxRetries(), "ExceptionAction should be Retry with maxRetries 1");
 
         ScheduledRetryAction actualScheduledRetryAction = exceptionResolver.resolve(null, new ExceptionSix());
         ScheduledRetryAction expectedScheduldeRetryAction = new ScheduledRetryAction("0 * 14 * * ?", 1);
-        Assert.assertTrue("ExceptionAction should be ScheduledRetry with cron '0 * 14 * * ?'", actualScheduledRetryAction.getCronExpression().equals("0 * 14 * * ?"));
-        Assert.assertTrue("ExceptionAction should be ScheduledRetry with maxRetries 1", expectedScheduldeRetryAction.getMaxRetries() == expectedRetryAction.getMaxRetries());
+        assertEquals("0 * 14 * * ?", actualScheduledRetryAction.getCronExpression(), "ExceptionAction should be ScheduledRetry with cron '0 * 14 * * ?'");
+        assertEquals(expectedScheduldeRetryAction.getMaxRetries(), expectedRetryAction.getMaxRetries(), "ExceptionAction should be ScheduledRetry with maxRetries 1");
     }
 
     /**
      * Test.
      */
     @Test
-    public void test_successful_component_specific_exceptionResolver()
+    void test_successful_component_specific_exceptionResolver()
     {
         ExceptionResolverBuilder exceptionResolverBuilder = new ExceptionResolverBuilderImpl();
         exceptionResolverBuilder.addExceptionToAction("componentOne", ExceptionOne.class, OnException.ignoreException());
@@ -115,22 +116,22 @@ public class ExceptionResolverBuilderImplTest
 
         // specific action for componentTwo
         ExceptionAction action = exceptionResolver.resolve("componentTwo", new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Exclude", action.equals(ExcludeEventAction.instance()));
+        assertEquals(action, ExcludeEventAction.instance(), "ExceptionAction should be Exclude");
 
         // action for undefined component
         action = exceptionResolver.resolve(null, new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Stop", action.equals(StopAction.instance()));
+        assertEquals(action, StopAction.instance(), "ExceptionAction should be Stop");
 
         // specific action for componentOne
         action = exceptionResolver.resolve("componentOne", new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Ignore", action.equals(IgnoreAction.instance()));
+        assertEquals(action, IgnoreAction.instance(), "ExceptionAction should be Ignore");
     }
 
     /**
      * Test.
      */
     @Test
-    public void test_successful_component_specific_exceptionResolver_for_flowElement()
+    void test_successful_component_specific_exceptionResolver_for_flowElement()
     {
         FlowElement flowElement1 = new FlowElementImpl("componentOne", null, null);
         FlowElement flowElement2 = new FlowElementImpl("componentTwo", null, null);
@@ -143,22 +144,28 @@ public class ExceptionResolverBuilderImplTest
 
         // specific action for componentTwo
         ExceptionAction action = exceptionResolver.resolve("componentTwo", new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Exclude", action.equals(ExcludeEventAction.instance()));
+        assertEquals(action, ExcludeEventAction.instance(), "ExceptionAction should be Exclude");
 
         // action for undefined component
         action = exceptionResolver.resolve(null, new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Stop", action.equals(StopAction.instance()));
+        assertEquals(action, StopAction.instance(), "ExceptionAction should be Stop");
 
         // specific action for componentOne
         action = exceptionResolver.resolve("componentOne", new ExceptionOne());
-        Assert.assertTrue("ExceptionAction should be Ignore", action.equals(IgnoreAction.instance()));
+        assertEquals(action, IgnoreAction.instance(), "ExceptionAction should be Ignore");
     }
 
     class ExceptionOne extends Exception {}
+
     class ExceptionTwo extends Exception {}
+
     class ExceptionThree extends Exception {}
+
     class ExceptionFour extends Exception {}
+
     class ExceptionFourDelayOverride extends Exception {}
+
     class ExceptionFive extends Exception {}
+
     class ExceptionSix extends Exception {}
 }

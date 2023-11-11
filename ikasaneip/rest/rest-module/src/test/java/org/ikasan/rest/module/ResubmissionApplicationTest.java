@@ -12,12 +12,10 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.systemevent.SystemEventService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -28,7 +26,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -40,15 +37,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.security.Principal;
 import java.util.Arrays;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { ResubmissionApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = {ResubmissionApplication.class, MockedUserServiceTestConfig.class})
 @EnableWebMvc
-public class ResubmissionApplicationTest
+class ResubmissionApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -67,15 +61,15 @@ public class ResubmissionApplicationTest
     private ObjectMapper mapper = new ObjectMapper();
 
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void searchWithReadOnlyUser() throws Exception
+    void searchWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/resubmission")
@@ -87,7 +81,7 @@ public class ResubmissionApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void resubmissionPUT_when_actionIgnore() throws Exception
+    void resubmissionPUT_when_actionIgnore() throws Exception
     {
 
 
@@ -113,7 +107,7 @@ public class ResubmissionApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void resubmissionPUT_when_actionResubmission() throws Exception
+    void resubmissionPUT_when_actionResubmission() throws Exception
     {
 
 
@@ -139,7 +133,7 @@ public class ResubmissionApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void resubmissionPUT_when_actionNotKnown() throws Exception
+    void resubmissionPUT_when_actionNotKnown() throws Exception
     {
 
 

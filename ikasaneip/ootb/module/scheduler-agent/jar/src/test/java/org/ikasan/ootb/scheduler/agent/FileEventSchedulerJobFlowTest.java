@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -72,22 +73,22 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.quartz.JobDataMap;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 import static org.quartz.TriggerBuilder.newTrigger;
 
 /**
@@ -95,7 +96,6 @@ import static org.quartz.TriggerBuilder.newTrigger;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -115,8 +115,8 @@ public class FileEventSchedulerJobFlowTest {
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
 
-    @BeforeClass
-    public static void setupObjectMapper() {
+    @BeforeAll
+    static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
@@ -127,8 +127,8 @@ public class FileEventSchedulerJobFlowTest {
         objectMapper.registerModule(simpleModule);
     }
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeEach
+    void setup() throws IOException {
         outboundQueue.removeAll();
         if(new File("src/test/resources/data/archive/test.txt").exists()) {
             FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
@@ -140,8 +140,8 @@ public class FileEventSchedulerJobFlowTest {
         }
     }
 
-    @After
-    public void teardown() throws IOException {
+    @AfterEach
+    void teardown() throws IOException {
         outboundQueue.removeAll();
         if(new File("src/test/resources/data/archive/test.txt").exists()) {
             FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
@@ -155,7 +155,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect() throws IOException {
+    void test_file_flow_success_without_aspect() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -192,7 +192,7 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
 
         flowTestRule.stopFlow();
@@ -200,7 +200,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect_changing_correlating_id() throws IOException {
+    void test_file_flow_success_without_aspect_changing_correlating_id() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -258,12 +258,12 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier2, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier2, event.getContextInstanceId());
 
 
         flowTestRule.stopFlow();
@@ -271,7 +271,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect_same_correlating_id() throws IOException {
+    void test_file_flow_success_without_aspect_same_correlating_id() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -328,12 +328,12 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
 
         flowTestRule.stopFlow();
@@ -341,7 +341,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect_no_correlating_identifier() throws IOException {
+    void test_file_flow_success_without_aspect_no_correlating_identifier() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -371,7 +371,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
+    void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -413,14 +413,14 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success() throws IOException {
+    void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -463,14 +463,14 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filtered() throws IOException {
+    void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filtered() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -514,10 +514,10 @@ public class FileEventSchedulerJobFlowTest {
         flowTestRule.stopFlow();
     }
 
+    // TODO need to think about this case as may not be necessary.
     @Test
     @DirtiesContext
-    // TODO need to think about this case as may not be necessary.
-    public void test_file_flow_recovery_no_instance_in_cache() {
+    void test_file_flow_recovery_no_instance_in_cache() {
         // do not create the cache
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
@@ -558,7 +558,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_with_aspect() throws IOException {
+    void test_file_flow_success_with_aspect() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -605,19 +605,19 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_with_aspect_job_dry_run() throws IOException {
+    void test_file_flow_success_with_aspect_job_dry_run() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -667,19 +667,19 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_file_flow_with_filter() throws IOException {
+    void test_file_flow_with_filter() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
 
@@ -726,7 +726,7 @@ public class FileEventSchedulerJobFlowTest {
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
         // Confirm that the correlating identifier has been carried through.
-        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+        assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
 
         flowTestRule.stopFlow();
 
@@ -735,7 +735,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_aspect() {
+    void test_file_aspect() {
         JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
         Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
         context.setTrigger(trigger);

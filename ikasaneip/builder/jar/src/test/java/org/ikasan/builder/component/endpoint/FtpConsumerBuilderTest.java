@@ -55,23 +55,21 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class FtpConsumerBuilderTest
+class FtpConsumerBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -81,9 +79,6 @@ public class FtpConsumerBuilderTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -104,7 +99,7 @@ public class FtpConsumerBuilderTest
      * Test successful builder creation.
      */
     @Test
-    public void ftpConsumer_build_when_configuration_provided() {
+    void ftpConsumer_build_when_configuration_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -138,13 +133,13 @@ public class FtpConsumerBuilderTest
                 .setMessageProvider(messageProvider)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
-        assertTrue("eager should be 'true'", configuration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(configuration.isEager(), "eager should be 'true'");
+        assertTrue(configuration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(configuration.getTimezone() == "UTC", "Timezone should be 'true'");
 
         mockery.assertIsSatisfied();
     }
@@ -153,7 +148,7 @@ public class FtpConsumerBuilderTest
      * Test successful builder creation with sftp Options.
      */
     @Test
-    public void ftpConsumer_build_when_configuration_ftp_conf_provided() {
+    void ftpConsumer_build_when_configuration_ftp_conf_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -223,47 +218,47 @@ public class FtpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
-        assertEquals("sourceDirectory should be 'test/dir'","test/dir", configuration.getSourceDirectory());
-        assertEquals("filenamePattern should be '*.txt'","*.txt", configuration.getFilenamePattern());
-        assertTrue("filterDuplicates should be 'true'", configuration.getFilterDuplicates());
-        assertTrue("filterOnFilename should be 'true'", configuration.getFilterOnFilename());
-        assertTrue("filterOnFilename should be 'true'", configuration.getFilterOnFilename());
-        assertTrue("filterOnLastModifiedDate should be 'true'", configuration.getFilterOnLastModifiedDate());
-        assertTrue("renameOnSuccess should be 'true'", configuration.getRenameOnSuccess());
-        assertTrue("moveOnSuccess should be 'true'", configuration.getMoveOnSuccess());
-        assertEquals("renameOnSuccessExtension should be '.done'",".done", configuration.getRenameOnSuccessExtension());
-        assertEquals("moveOnSuccessNewPath should be 'done'","done", configuration.getMoveOnSuccessNewPath());
-        assertTrue("chronological should be 'true'", configuration.getChronological());
-        assertEquals("chunkSize should be '200'",200, configuration.getChunkSize().intValue());
-        assertTrue("checksum should be 'true'", configuration.getChecksum());
-        assertEquals("minAge should be '120'",120L, configuration.getMinAge().longValue());
-        assertTrue("destructive should be 'true'", configuration.getDestructive());
-        assertEquals("maxRows should be '20'",20, configuration.getMaxRows().intValue());
-        assertEquals("ageOfFiles should be '30'",30, configuration.getAgeOfFiles().intValue());
-        assertEquals("clientID should be 'testClientId'","testClientId", configuration.getClientID());
-        assertTrue("cleanupJournalOnComplete should be 'true'", configuration.getCleanupJournalOnComplete());
-        assertEquals("remoteHost should be 'testsftphost'","testsftphost", configuration.getRemoteHost());
-        assertEquals("maxRetryAttempts should be '3'",3, configuration.getMaxRetryAttempts().intValue());
-        assertEquals("remotePort should be '22'",22, configuration.getRemotePort().intValue());
-        assertEquals("username should be 'testUser'","testUser", configuration.getUsername());
-        assertEquals("password should be 'testPassword'","testPassword", configuration.getPassword());
-        assertEquals("connectionTimeout should be '300'",300, configuration.getConnectionTimeout().intValue());
-        assertTrue("isRecursive should be 'true'", configuration.getIsRecursive());
-        assertEquals("ftpsKeyStoreFilePassword should be 'ftpsKetStoreFilePass'","ftpsKetStoreFilePass", configuration.getFtpsKeyStoreFilePassword());
-        assertEquals("ftpsKeyStoreFilePath should be 'ftpsKetStoreFilePath'","ftpsKetStoreFilePath", configuration.getFtpsKeyStoreFilePath());
-        assertTrue("ftpsIsImplicit should be 'true'", configuration.getFtpsIsImplicit());
-        assertEquals("ftpsProtocol should be 'protocol'","protocol", configuration.getFtpsProtocol());
-        assertEquals("ftpsPort should be 'protocol'",24, configuration.getFtpsPort().intValue());
-        assertTrue("FTPS should be 'true'", configuration.getFTPS());
-        assertEquals("passwordFilePath should be 'testPasswordFilePath'", "testPasswordFilePath",configuration.getPasswordFilePath());
-        assertEquals("systemKey should be 'testKey'", "testKey",configuration.getSystemKey());
-        assertEquals("socketTimeout should be '6000'",6000, configuration.getSocketTimeout().intValue());
-        assertEquals("dataTimeout should be '60001'",60001, configuration.getDataTimeout().intValue());
-        assertTrue("active should be 'true'", configuration.getActive());
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
+        assertEquals("test/dir", configuration.getSourceDirectory(), "sourceDirectory should be 'test/dir'");
+        assertEquals("*.txt", configuration.getFilenamePattern(), "filenamePattern should be '*.txt'");
+        assertTrue(configuration.getFilterDuplicates(), "filterDuplicates should be 'true'");
+        assertTrue(configuration.getFilterOnFilename(), "filterOnFilename should be 'true'");
+        assertTrue(configuration.getFilterOnFilename(), "filterOnFilename should be 'true'");
+        assertTrue(configuration.getFilterOnLastModifiedDate(), "filterOnLastModifiedDate should be 'true'");
+        assertTrue(configuration.getRenameOnSuccess(), "renameOnSuccess should be 'true'");
+        assertTrue(configuration.getMoveOnSuccess(), "moveOnSuccess should be 'true'");
+        assertEquals(".done", configuration.getRenameOnSuccessExtension(), "renameOnSuccessExtension should be '.done'");
+        assertEquals("done", configuration.getMoveOnSuccessNewPath(), "moveOnSuccessNewPath should be 'done'");
+        assertTrue(configuration.getChronological(), "chronological should be 'true'");
+        assertEquals(200, configuration.getChunkSize().intValue(), "chunkSize should be '200'");
+        assertTrue(configuration.getChecksum(), "checksum should be 'true'");
+        assertEquals(120L, configuration.getMinAge().longValue(), "minAge should be '120'");
+        assertTrue(configuration.getDestructive(), "destructive should be 'true'");
+        assertEquals(20, configuration.getMaxRows().intValue(), "maxRows should be '20'");
+        assertEquals(30, configuration.getAgeOfFiles().intValue(), "ageOfFiles should be '30'");
+        assertEquals("testClientId", configuration.getClientID(), "clientID should be 'testClientId'");
+        assertTrue(configuration.getCleanupJournalOnComplete(), "cleanupJournalOnComplete should be 'true'");
+        assertEquals("testsftphost", configuration.getRemoteHost(), "remoteHost should be 'testsftphost'");
+        assertEquals(3, configuration.getMaxRetryAttempts().intValue(), "maxRetryAttempts should be '3'");
+        assertEquals(22, configuration.getRemotePort().intValue(), "remotePort should be '22'");
+        assertEquals("testUser", configuration.getUsername(), "username should be 'testUser'");
+        assertEquals("testPassword", configuration.getPassword(), "password should be 'testPassword'");
+        assertEquals(300, configuration.getConnectionTimeout().intValue(), "connectionTimeout should be '300'");
+        assertTrue(configuration.getIsRecursive(), "isRecursive should be 'true'");
+        assertEquals("ftpsKetStoreFilePass", configuration.getFtpsKeyStoreFilePassword(), "ftpsKeyStoreFilePassword should be 'ftpsKetStoreFilePass'");
+        assertEquals("ftpsKetStoreFilePath", configuration.getFtpsKeyStoreFilePath(), "ftpsKeyStoreFilePath should be 'ftpsKetStoreFilePath'");
+        assertTrue(configuration.getFtpsIsImplicit(), "ftpsIsImplicit should be 'true'");
+        assertEquals("protocol", configuration.getFtpsProtocol(), "ftpsProtocol should be 'protocol'");
+        assertEquals(24, configuration.getFtpsPort().intValue(), "ftpsPort should be 'protocol'");
+        assertTrue(configuration.getFTPS(), "FTPS should be 'true'");
+        assertEquals("testPasswordFilePath",configuration.getPasswordFilePath(),"passwordFilePath should be 'testPasswordFilePath'");
+        assertEquals("testKey",configuration.getSystemKey(),"systemKey should be 'testKey'");
+        assertEquals(6000, configuration.getSocketTimeout().intValue(), "socketTimeout should be '6000'");
+        assertEquals(60001, configuration.getDataTimeout().intValue(), "dataTimeout should be '60001'");
+        assertTrue(configuration.getActive(), "active should be 'true'");
 
         mockery.assertIsSatisfied();
     }
@@ -272,7 +267,7 @@ public class FtpConsumerBuilderTest
      * Test successful builder creation with sftp Options.
      */
     @Test
-    public void ftpConsumer_build_when_configuration_sftp_conf_provided_and_default_sftpMessageProvider_notsupplied() {
+    void ftpConsumer_build_when_configuration_sftp_conf_provided_and_default_sftpMessageProvider_notsupplied() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -307,15 +302,15 @@ public class FtpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
-        assertEquals("sourceDirectory should be 'test/dir'","test/dir", configuration.getSourceDirectory());
-        assertEquals("remoteHost should be 'testsftphost'","testsftphost", configuration.getRemoteHost());
-        assertEquals("remotePort should be '22'",22, configuration.getRemotePort().intValue());
-        assertEquals("username should be 'testUser'","testUser", configuration.getUsername());
-        assertEquals("password should be 'testPassword'","testPassword", configuration.getPassword());
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
+        assertEquals("test/dir", configuration.getSourceDirectory(), "sourceDirectory should be 'test/dir'");
+        assertEquals("testsftphost", configuration.getRemoteHost(), "remoteHost should be 'testsftphost'");
+        assertEquals(22, configuration.getRemotePort().intValue(), "remotePort should be '22'");
+        assertEquals("testUser", configuration.getUsername(), "username should be 'testUser'");
+        assertEquals("testPassword", configuration.getPassword(), "password should be 'testPassword'");
 
         mockery.assertIsSatisfied();
     }
@@ -324,7 +319,7 @@ public class FtpConsumerBuilderTest
      * Test successful builder creation.
      */
     @Test
-    public void ftpConsumer_build_when_no_aop_proxy() {
+    void ftpConsumer_build_when_no_aop_proxy() {
 
         final ScheduledConsumer emptyScheduleConsumer = new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -352,10 +347,10 @@ public class FtpConsumerBuilderTest
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
 
         mockery.assertIsSatisfied();
     }
@@ -364,7 +359,7 @@ public class FtpConsumerBuilderTest
      * Test successful builder creation.
      */
     @Test
-    public void ftpConsumer_build_when_jobName_and_jobGroup_set() {
+    void ftpConsumer_build_when_jobName_and_jobGroup_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -395,16 +390,16 @@ public class FtpConsumerBuilderTest
                 .setMessageProvider(messageProvider)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
 
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void ftpConsumer_build_when_jobName_not_set() {
+    void ftpConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -436,7 +431,7 @@ public class FtpConsumerBuilderTest
     }
 
     @Test
-    public void ftpConsumer_build_when_jobGroupName_not_set() {
+    void ftpConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         FtpConsumerBuilder ftpConsumerBuilder = new ExtendedFtpConsumerBuilderImpl(emptyScheduleConsumer, scheduler,

@@ -11,12 +11,12 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
@@ -25,11 +25,11 @@ import java.util.List;
 import java.util.Map;
 
 import static org.ikasan.ootb.scheduler.agent.module.service.ContextInstanceIdentifierProvisionServiceImpl.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class ContextInstanceIdentifierProvisionServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class ContextInstanceIdentifierProvisionServiceImplTest {
     private static final String SCHEDULE_CONSUMER_FLOW="Schedule Consumer Flow";
     private static final String FILE_CONSUMER_FLOW="File Consumer Flow";
     private static final String DUMMY_FLOW="Dummy Flow";
@@ -80,15 +80,16 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     private static final Map<String, String> PROFILE_FLOW_MAP = Map.of(
         FILE_CONSUMER_FLOW, FILE_CONSUMER_PROFILE, SCHEDULE_CONSUMER_FLOW, SCHEDULED_CONSUMER_PROFILE, DUMMY_FLOW, "DUMMY"
     );
-    @Before
-    public void setup() {
+
+    @BeforeEach
+    void setup() {
         contextInstance = new ContextInstanceImpl();
         contextInstance.setName(ROOT_PLAN_NAME);
         contextInstance.setId(ROOT_PLAN_CONTEXT_INTANCE_ID);
     }
 
     @Test
-    public void test_provision_instance_refresh_when_current_plan_has_no_correlation_ids() {
+    void test_provision_instance_refresh_when_current_plan_has_no_correlation_ids() {
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>();
         List<String> fileConsumerCorrelationIdList = new ArrayList<>();
 
@@ -113,7 +114,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_provision_refresh_when_another_instance_is_already_present() {
+    void test_provision_refresh_when_another_instance_is_already_present() {
         String existingCorrelationId = "CorrelationId0";
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
         List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
@@ -141,7 +142,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_provision_refresh_when_same_correlation_id_presented_twice() {
+    void test_provision_refresh_when_same_correlation_id_presented_twice() {
         String existingCorrelationId = ROOT_PLAN_CONTEXT_INTANCE_ID;
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
         List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
@@ -163,7 +164,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_remove_all() {
+    void test_remove_all() {
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>();
         List<String> fileConsumerCorrelationIdList = new ArrayList<>();
 
@@ -186,7 +187,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_reset_success() {
+    void test_reset_success() {
         String existingCorrelationId = "CorrelationId0";
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
         List<String> fileConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId));
@@ -210,7 +211,7 @@ public class ContextInstanceIdentifierProvisionServiceImplTest {
     }
 
     @Test
-    public void test_remove_success() {
+    void test_remove_success() {
         String existingCorrelationId1 = "CorrelationId0";
         String existingCorrelationId2 = "CorrelationId1";
         List<String> scheduledConsumerCorrelationIdList = new ArrayList<>(Arrays.asList(existingCorrelationId1, existingCorrelationId2));

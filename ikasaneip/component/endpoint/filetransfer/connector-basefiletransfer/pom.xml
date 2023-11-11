@@ -56,89 +56,99 @@
     <artifactId>ikasan-connector-basefiletransfer</artifactId>
     <packaging>jar</packaging>
 
-    <dependencies>
+  <dependencies>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-uber-spec</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-uber-spec</artifactId>
+    </dependency>
 
-        <!-- Used for the common connector functionality for the ikasan platform -->
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-connector-base</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-transaction-arjuna</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-persistence</artifactId>
-        </dependency>
+    <!-- Used for the common connector functionality for the ikasan platform -->
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-connector-base</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-transaction-arjuna</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.ikasan</groupId>
+      <artifactId>ikasan-persistence</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>com.google.guava</groupId>
+      <artifactId>guava</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.persistence</groupId>
+      <artifactId>jakarta.persistence-api</artifactId>
+      <version>3.1.0.redhat-00002</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.resource</groupId>
+      <artifactId>jakarta.resource-api</artifactId>
+      <version>2.1.0</version>
+    </dependency>
 
-        <dependency>
-            <groupId>jakarta.xml.bind</groupId>
-            <artifactId>jakarta.xml.bind-api</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>jakarta.xml.bind</groupId>
+      <artifactId>jakarta.xml.bind-api</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>cglib</groupId>
-            <artifactId>cglib-nodep</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>cglib</groupId>
+      <artifactId>cglib-nodep</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-        <!-- Used for ToStringBuilder and more -->
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <!-- Used for ToStringBuilder and more -->
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-            <scope>provided</scope>
-        </dependency>
+    <dependency>
+      <groupId>joda-time</groupId>
+      <artifactId>joda-time</artifactId>
+      <scope>provided</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context-support</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context-support</artifactId>
+    </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-        </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-orm</artifactId>
+    </dependency>
 
-        <!-- test -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <!-- test -->
 
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock</artifactId>
+      <scope>test</scope>
+    </dependency>
 
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-imposters</artifactId>
-            <scope>test</scope>
-        </dependency>
+    <dependency>
+      <groupId>org.jmock</groupId>
+      <artifactId>jmock-imposters</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <scope>test</scope>
+    </dependency>
 
         <dependency>
             <groupId>net.bytebuddy</groupId>

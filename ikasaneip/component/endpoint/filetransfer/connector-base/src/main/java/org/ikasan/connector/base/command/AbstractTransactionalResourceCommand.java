@@ -45,8 +45,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.resource.ResourceException;
-import javax.transaction.xa.Xid;
+import jakarta.resource.ResourceException;
+import jakarta.transaction.xa.Xid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -45,23 +45,24 @@ import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.Bla
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.*;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>BlackoutRouter</code>.
  *
  * @author Ikasan Development Team
  */
-public class BlackoutRouterTest
+class BlackoutRouterTest
 {
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_successful_router_cronExpression_outside_blackout_period()
+    void test_successful_router_cronExpression_outside_blackout_period()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
@@ -75,14 +76,14 @@ public class BlackoutRouterTest
         ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
         String result = blackoutRouter.route(scheduledProcessEvent);
 
-        Assert.assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
+        assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
     }
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_successful_router_cronExpression_inside_blackout_period()
+    void test_successful_router_cronExpression_inside_blackout_period()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
@@ -96,14 +97,14 @@ public class BlackoutRouterTest
         ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
         String result = blackoutRouter.route(scheduledProcessEvent);
 
-        Assert.assertEquals(result, BlackoutRouter.INSIDE_BLACKOUT_PERIOD);
+        assertEquals(result, BlackoutRouter.INSIDE_BLACKOUT_PERIOD);
     }
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_successful_router_dateRange_inside_blackout_period()
+    void test_successful_router_dateRange_inside_blackout_period()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
@@ -125,14 +126,14 @@ public class BlackoutRouterTest
         ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
         String result = blackoutRouter.route(scheduledProcessEvent);
 
-        Assert.assertEquals(result, BlackoutRouter.INSIDE_BLACKOUT_PERIOD);
+        assertEquals(result, BlackoutRouter.INSIDE_BLACKOUT_PERIOD);
     }
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_successful_router_dateRange_outside_before_blackout_period()
+    void test_successful_router_dateRange_outside_before_blackout_period()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
@@ -154,14 +155,14 @@ public class BlackoutRouterTest
         ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
         String result = blackoutRouter.route(scheduledProcessEvent);
 
-        Assert.assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
+        assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
     }
 
     /**
      * Test simple invocation.
      */
     @Test
-    public void test_successful_router_dateRange_outside_after_blackout_period()
+    void test_successful_router_dateRange_outside_after_blackout_period()
     {
         ScheduledProcessEvent scheduledProcessEvent = new ScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
@@ -183,6 +184,6 @@ public class BlackoutRouterTest
         ((ConfiguredResource)blackoutRouter).setConfiguration(configuration);
         String result = blackoutRouter.route(scheduledProcessEvent);
 
-        Assert.assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
+        assertEquals(result, BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD);
     }
 }

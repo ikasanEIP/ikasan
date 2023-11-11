@@ -40,18 +40,24 @@
  */
 package org.ikasan.connector.base.socket;
 
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.BufferedOutputStream;
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * TCP Socket Test Class
  *
  * @author Ikasan Development Team
  */
-public class TCPSocketTest
+class TCPSocketTest
 {
     private static byte START_MARKER = '|';
 
@@ -91,14 +97,16 @@ public class TCPSocketTest
     /**
      * Setup before each test
      */
-    @Before public void setUp()
+    @BeforeEach
+    void setUp()
     {
         System.out.println("setUp");
         uut = new TCPSocket();
         ReflectionTestUtils.setField(uut, "bons", mockOutputStream);
     }
 
-    @Test public void test_send_when_no_characterset_was_set() throws IOException
+    @Test
+    void test_send_when_no_characterset_was_set() throws IOException
     {
         String input = "sampleData";
         final byte[] data = input.getBytes();
@@ -106,14 +114,14 @@ public class TCPSocketTest
         uut.send(data, START_MARKER, END_MARKER);
         // assert
         final byte[] expectedData = "|sampleData|".getBytes();
-        Assert.assertTrue(isMockedFlushHit);
+        assertTrue(isMockedFlushHit);
         System.out.println("Expected:" + new String(expectedData));
         System.out.println("Actual:" + new String(mockedOutputStreamWriteResult));
-        Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
+        assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
     @Test
-    public void test_send_when_characterset_was_set_to_iso88591() throws IOException
+    void test_send_when_characterset_was_set_to_iso88591() throws IOException
     {
         // set uut iso
         uut.setAcceptedCharsetName(CHARSET_ISO_88591);
@@ -122,14 +130,14 @@ public class TCPSocketTest
         uut.send(input, START_MARKER, END_MARKER);
         // assert
         final byte[] expectedData = "|sampleData|".getBytes();
-        Assert.assertTrue(isMockedFlushHit);
+        assertTrue(isMockedFlushHit);
         System.out.println("Expected:" + new String(expectedData, CHARSET_ISO_88591));
         System.out.println("Actual:" + new String(mockedOutputStreamWriteResult, CHARSET_ISO_88591));
-        Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
+        assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
     @Test
-    public void test_send_when_characterset_was_set_to_iso88591_and_input_has_complex_characters() throws IOException
+    void test_send_when_characterset_was_set_to_iso88591_and_input_has_complex_characters() throws IOException
     {
         // set uut iso
         uut.setAcceptedCharsetName(CHARSET_ISO_88591);
@@ -139,15 +147,15 @@ public class TCPSocketTest
         // assert
         final byte[] expectedData = "|{|}~¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñò|"
                 .getBytes(CHARSET_ISO_88591);
-        Assert.assertTrue(isMockedFlushHit);
+        assertTrue(isMockedFlushHit);
         System.out.println("Expected:" + new String(expectedData, CHARSET_ISO_88591));
         System.out.println("Actual--:" + new String(mockedOutputStreamWriteResult, CHARSET_ISO_88591));
-        Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
+        assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void test_send_when_characterset_was_set_to_utf8_and_input_has_complex_characters() throws IOException
+    void test_send_when_characterset_was_set_to_utf8_and_input_has_complex_characters() throws IOException
     {
         // set uut iso
         uut.setAcceptedCharsetName(CHARSET_UTF8);
@@ -157,14 +165,14 @@ public class TCPSocketTest
         // assert
         final byte[] expectedData = "|{|}~¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñò|"
                 .getBytes();
-        Assert.assertTrue(isMockedFlushHit);
+        assertTrue(isMockedFlushHit);
         System.out.println("Expected:" + new String(expectedData, CHARSET_UTF8));
         System.out.println("Actual--:" + new String(mockedOutputStreamWriteResult, CHARSET_UTF8));
-        Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
+        assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
     @Test
-    public void test_send_when_characterset_was_set_to_invalid_value() throws IOException
+    void test_send_when_characterset_was_set_to_invalid_value() throws IOException
     {
         // set uut iso
         uut.setAcceptedCharsetName(CHARSET_INVALID);
@@ -173,10 +181,10 @@ public class TCPSocketTest
         uut.send(input, START_MARKER, END_MARKER);
         // assert
         final byte[] expectedData = "|simpleData|".getBytes();
-        Assert.assertTrue(isMockedFlushHit);
+        assertTrue(isMockedFlushHit);
         System.out.println("Expected:" + new String(expectedData));
         System.out.println("Actual--:" + new String(mockedOutputStreamWriteResult));
-        Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
+        assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
     private void printByteArrays(byte[] bytes)
@@ -192,7 +200,8 @@ public class TCPSocketTest
     /**
      * Tear down after each test
      */
-    @After public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         // nothing to tear down
         System.out.println("tearDown");

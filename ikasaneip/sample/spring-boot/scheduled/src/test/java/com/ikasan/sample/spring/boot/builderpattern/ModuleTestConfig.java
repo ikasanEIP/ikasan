@@ -47,8 +47,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 
-import javax.annotation.Resource;
-
 @Configuration
 public class ModuleTestConfig
 {

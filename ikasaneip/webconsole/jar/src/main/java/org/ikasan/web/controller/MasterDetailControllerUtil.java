@@ -39,7 +39,7 @@ package org.ikasan.web.controller;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.ikasan.spec.search.PagedSearchResult;
 import org.springframework.ui.ModelMap;

@@ -52,9 +52,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
@@ -62,14 +60,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>FileConsumerBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class FileConsumerBuilderTest {
+class FileConsumerBuilderTest {
     /**
      * Mockery for mocking concrete classes
      */
@@ -78,9 +76,6 @@ public class FileConsumerBuilderTest {
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -95,7 +90,7 @@ public class FileConsumerBuilderTest {
      * Test successful builder creation.
      */
     @Test
-    public void scheduledConsumer_build_when_configuration_provided() {
+    void scheduledConsumer_build_when_configuration_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -141,26 +136,26 @@ public class FileConsumerBuilderTest {
                 .setSortByModifiedDateTime(true)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledFileConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledFileConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
-        assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
-        assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertTrue("configuredResourceId should be 'configuredResourceId'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId().equals("configuredResourceId"));
-        assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
-        assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
-        assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
-        assertTrue("criticalOnStartup should be 'true'", ((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup());
-        assertTrue("Encoding should be 'UTF-16'", fileConsumerConfiguration.getEncoding().equals("UTF-16"));
-        assertTrue("isIncludeHeader should be 'true'", fileConsumerConfiguration.isIncludeHeader());
-        assertTrue("isIncludeTrailer should be 'true'", fileConsumerConfiguration.isIncludeTrailer());
-        assertTrue("logMatchedFilenames should be 'true'", fileConsumerConfiguration.isLogMatchedFilenames());
+        assertEquals("121212", fileConsumerConfiguration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(fileConsumerConfiguration.isEager(), "eager should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(fileConsumerConfiguration.getTimezone() == "UTC", "Timezone should be 'true'");
+        assertEquals("configuredResourceId", ((ScheduledConsumer)scheduledFileConsumer).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
+        assertEquals("filename", fileConsumerConfiguration.getFilenames().get(0), "Filenames should be 'filename'");
+        assertEquals(2, fileConsumerConfiguration.getDirectoryDepth(), "DirectoryDepth should be '2'");
+        assertFalse(fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), "ignoreFileNameRenameWhilstScanning should be 'false'");
+        assertTrue(((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup(), "criticalOnStartup should be 'true'");
+        assertEquals("UTF-16", fileConsumerConfiguration.getEncoding(), "Encoding should be 'UTF-16'");
+        assertTrue(fileConsumerConfiguration.isIncludeHeader(), "isIncludeHeader should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIncludeTrailer(), "isIncludeTrailer should be 'true'");
+        assertTrue(fileConsumerConfiguration.isLogMatchedFilenames(), "logMatchedFilenames should be 'true'");
 
         FileMessageProvider fileMsgProvider = (FileMessageProvider)((ScheduledConsumer)scheduledFileConsumer).getMessageProvider();
-        assertNotNull("messageProviderPostProcessor should not be 'null'", fileMsgProvider.getMessageProviderPostProcessor());
+        assertNotNull(fileMsgProvider.getMessageProviderPostProcessor(), "messageProviderPostProcessor should not be 'null'");
 
         mockery.assertIsSatisfied();
     }
@@ -169,7 +164,7 @@ public class FileConsumerBuilderTest {
      * Test successful builder creation.
      */
     @Test
-    public void scheduledConsumer_build_when_no_aop_proxy() {
+    void scheduledConsumer_build_when_no_aop_proxy() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -211,26 +206,26 @@ public class FileConsumerBuilderTest {
                 .setSortByModifiedDateTime(true)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledFileConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledFileConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
-        assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
-        assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertTrue("configuredResourceId should be 'configuredResourceId'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId().equals("configuredResourceId"));
-        assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
-        assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
-        assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
-        assertTrue("criticalOnStartup should be 'true'", ((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup());
-        assertTrue("Encoding should be 'UTF-16'", fileConsumerConfiguration.getEncoding().equals("UTF-16"));
-        assertTrue("isIncludeHeader should be 'true'", fileConsumerConfiguration.isIncludeHeader());
-        assertTrue("isIncludeTrailer should be 'true'", fileConsumerConfiguration.isIncludeTrailer());
-        assertTrue("logMatchedFilenames should be 'true'", fileConsumerConfiguration.isLogMatchedFilenames());
+        assertEquals("121212", fileConsumerConfiguration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(fileConsumerConfiguration.isEager(), "eager should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(fileConsumerConfiguration.getTimezone() == "UTC", "Timezone should be 'true'");
+        assertEquals("configuredResourceId", ((ScheduledConsumer)scheduledFileConsumer).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
+        assertEquals("filename", fileConsumerConfiguration.getFilenames().get(0), "Filenames should be 'filename'");
+        assertEquals(2, fileConsumerConfiguration.getDirectoryDepth(), "DirectoryDepth should be '2'");
+        assertFalse(fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), "ignoreFileNameRenameWhilstScanning should be 'false'");
+        assertTrue(((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup(), "criticalOnStartup should be 'true'");
+        assertEquals("UTF-16", fileConsumerConfiguration.getEncoding(), "Encoding should be 'UTF-16'");
+        assertTrue(fileConsumerConfiguration.isIncludeHeader(), "isIncludeHeader should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIncludeTrailer(), "isIncludeTrailer should be 'true'");
+        assertTrue(fileConsumerConfiguration.isLogMatchedFilenames(), "logMatchedFilenames should be 'true'");
 
         FileMessageProvider fileMsgProvider = (FileMessageProvider)((ScheduledConsumer)scheduledFileConsumer).getMessageProvider();
-        assertNotNull("messageProviderPostProcessor should not be 'null'", fileMsgProvider.getMessageProviderPostProcessor());
+        assertNotNull(fileMsgProvider.getMessageProviderPostProcessor(), "messageProviderPostProcessor should not be 'null'");
 
         mockery.assertIsSatisfied();
     }
@@ -238,8 +233,9 @@ public class FileConsumerBuilderTest {
     /**
      * Test successful builder creation.
      */
-    @Test //(expected = IllegalArgumentException.class)
-    public void scheduledConsumer_build_when_jobName_and_jobGroup_set() {
+    //(expected = IllegalArgumentException.class)
+    @Test
+    void scheduledConsumer_build_when_jobName_and_jobGroup_set() {
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
         FileConsumerBuilder fileConsumerBuilder = new ExtendedFileConsumerBuilderImpl(emptyScheduleConsumer, scheduler,
@@ -282,32 +278,33 @@ public class FileConsumerBuilderTest {
                 .setSortByModifiedDateTime(true)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledFileConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledFileConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
-        assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
-        assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertTrue("configuredResourceId should be 'configuredResourceId'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId().equals("configuredResourceId"));
-        assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
-        assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
-        assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
-        assertTrue("criticalOnStartup should be 'true'", ((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup());
-        assertTrue("Encoding should be 'UTF-16'", fileConsumerConfiguration.getEncoding().equals("UTF-16"));
-        assertTrue("isIncludeHeader should be 'true'", fileConsumerConfiguration.isIncludeHeader());
-        assertTrue("isIncludeTrailer should be 'true'", fileConsumerConfiguration.isIncludeTrailer());
-        assertTrue("logMatchedFilenames should be 'true'", fileConsumerConfiguration.isLogMatchedFilenames());
+        assertEquals("121212", fileConsumerConfiguration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(fileConsumerConfiguration.isEager(), "eager should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(fileConsumerConfiguration.getTimezone() == "UTC", "Timezone should be 'true'");
+        assertEquals("configuredResourceId", ((ScheduledConsumer)scheduledFileConsumer).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
+        assertEquals("filename", fileConsumerConfiguration.getFilenames().get(0), "Filenames should be 'filename'");
+        assertEquals(2, fileConsumerConfiguration.getDirectoryDepth(), "DirectoryDepth should be '2'");
+        assertFalse(fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), "ignoreFileNameRenameWhilstScanning should be 'false'");
+        assertTrue(((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup(), "criticalOnStartup should be 'true'");
+        assertEquals("UTF-16", fileConsumerConfiguration.getEncoding(), "Encoding should be 'UTF-16'");
+        assertTrue(fileConsumerConfiguration.isIncludeHeader(), "isIncludeHeader should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIncludeTrailer(), "isIncludeTrailer should be 'true'");
+        assertTrue(fileConsumerConfiguration.isLogMatchedFilenames(), "logMatchedFilenames should be 'true'");
 
         FileMessageProvider fileMsgProvider = (FileMessageProvider)((ScheduledConsumer)scheduledFileConsumer).getMessageProvider();
-        assertNotNull("messageProviderPostProcessor should not be 'null'", fileMsgProvider.getMessageProviderPostProcessor());
+        assertNotNull(fileMsgProvider.getMessageProviderPostProcessor(), "messageProviderPostProcessor should not be 'null'");
 
         mockery.assertIsSatisfied();
     }
 
-    @Test //(expected = IllegalArgumentException.class)
-    public void scheduledConsumer_build_when_jobName_not_set() {
+    //(expected = IllegalArgumentException.class)
+    @Test
+    void scheduledConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -352,31 +349,32 @@ public class FileConsumerBuilderTest {
                 .setSortByModifiedDateTime(true)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledFileConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledFileConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
-        assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
-        assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertTrue("configuredResourceId should be 'configuredResourceId'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId().equals("configuredResourceId"));
-        assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
-        assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
-        assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
-        assertTrue("criticalOnStartup should be 'true'", ((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup());
-        assertTrue("Encoding should be 'UTF-16'", fileConsumerConfiguration.getEncoding().equals("UTF-16"));
-        assertTrue("isIncludeHeader should be 'true'", fileConsumerConfiguration.isIncludeHeader());
-        assertTrue("isIncludeTrailer should be 'true'", fileConsumerConfiguration.isIncludeTrailer());
-        assertTrue("logMatchedFilenames should be 'true'", fileConsumerConfiguration.isLogMatchedFilenames());
+        assertEquals("121212", fileConsumerConfiguration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(fileConsumerConfiguration.isEager(), "eager should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(fileConsumerConfiguration.getTimezone() == "UTC", "Timezone should be 'true'");
+        assertEquals("configuredResourceId", ((ScheduledConsumer)scheduledFileConsumer).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
+        assertEquals("filename", fileConsumerConfiguration.getFilenames().get(0), "Filenames should be 'filename'");
+        assertEquals(2, fileConsumerConfiguration.getDirectoryDepth(), "DirectoryDepth should be '2'");
+        assertFalse(fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), "ignoreFileNameRenameWhilstScanning should be 'false'");
+        assertTrue(((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup(), "criticalOnStartup should be 'true'");
+        assertEquals("UTF-16", fileConsumerConfiguration.getEncoding(), "Encoding should be 'UTF-16'");
+        assertTrue(fileConsumerConfiguration.isIncludeHeader(), "isIncludeHeader should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIncludeTrailer(), "isIncludeTrailer should be 'true'");
+        assertTrue(fileConsumerConfiguration.isLogMatchedFilenames(), "logMatchedFilenames should be 'true'");
 
         FileMessageProvider fileMsgProvider = (FileMessageProvider)((ScheduledConsumer)scheduledFileConsumer).getMessageProvider();
-        assertNotNull("messageProviderPostProcessor should not be 'null'", fileMsgProvider.getMessageProviderPostProcessor());
+        assertNotNull(fileMsgProvider.getMessageProviderPostProcessor(), "messageProviderPostProcessor should not be 'null'");
 
         mockery.assertIsSatisfied();    }
 
-    @Test //(expected = IllegalArgumentException.class)
-    public void scheduledConsumer_build_when_jobGroupName_not_set() {
+    //(expected = IllegalArgumentException.class)
+    @Test
+    void scheduledConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -421,31 +419,31 @@ public class FileConsumerBuilderTest {
                 .setSortByModifiedDateTime(true)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledFileConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledFileConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
-        assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
-        assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertTrue("configuredResourceId should be 'configuredResourceId'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId().equals("configuredResourceId"));
-        assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
-        assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
-        assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
-        assertTrue("criticalOnStartup should be 'true'", ((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup());
-        assertTrue("Encoding should be 'UTF-16'", fileConsumerConfiguration.getEncoding().equals("UTF-16"));
-        assertTrue("isIncludeHeader should be 'true'", fileConsumerConfiguration.isIncludeHeader());
-        assertTrue("isIncludeTrailer should be 'true'", fileConsumerConfiguration.isIncludeTrailer());
-        assertTrue("logMatchedFilenames should be 'true'", fileConsumerConfiguration.isLogMatchedFilenames());
+        assertEquals("121212", fileConsumerConfiguration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(fileConsumerConfiguration.isEager(), "eager should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(fileConsumerConfiguration.getTimezone() == "UTC", "Timezone should be 'true'");
+        assertEquals("configuredResourceId", ((ScheduledConsumer)scheduledFileConsumer).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
+        assertEquals("filename", fileConsumerConfiguration.getFilenames().get(0), "Filenames should be 'filename'");
+        assertEquals(2, fileConsumerConfiguration.getDirectoryDepth(), "DirectoryDepth should be '2'");
+        assertFalse(fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), "ignoreFileNameRenameWhilstScanning should be 'false'");
+        assertTrue(((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup(), "criticalOnStartup should be 'true'");
+        assertEquals("UTF-16", fileConsumerConfiguration.getEncoding(), "Encoding should be 'UTF-16'");
+        assertTrue(fileConsumerConfiguration.isIncludeHeader(), "isIncludeHeader should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIncludeTrailer(), "isIncludeTrailer should be 'true'");
+        assertTrue(fileConsumerConfiguration.isLogMatchedFilenames(), "logMatchedFilenames should be 'true'");
 
         FileMessageProvider fileMsgProvider = (FileMessageProvider)((ScheduledConsumer)scheduledFileConsumer).getMessageProvider();
-        assertNotNull("messageProviderPostProcessor should not be 'null'", fileMsgProvider.getMessageProviderPostProcessor());
+        assertNotNull(fileMsgProvider.getMessageProviderPostProcessor(), "messageProviderPostProcessor should not be 'null'");
 
         mockery.assertIsSatisfied();    }
 
     @Test
-    public void scheduledConsumer_build_when_configurationId_not_provided() {
+    void scheduledConsumer_build_when_configurationId_not_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         final FileMessageProvider fileMessageProvider = new FileMessageProvider();
@@ -490,26 +488,26 @@ public class FileConsumerBuilderTest {
                 .setSortByModifiedDateTime(true)
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledFileConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledFileConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
-        assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
-        assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
-        assertNull("configuredResourceId should be 'null'", ((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId());
-        assertTrue("Filenames should be 'filename'", fileConsumerConfiguration.getFilenames().get(0).equals("filename"));
-        assertTrue("DirectoryDepth should be '2'", fileConsumerConfiguration.getDirectoryDepth() == 2);
-        assertFalse("ignoreFileNameRenameWhilstScanning should be 'false'", fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning());
-        assertTrue("criticalOnStartup should be 'true'", ((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup());
-        assertTrue("Encoding should be 'UTF-16'", fileConsumerConfiguration.getEncoding().equals("UTF-16"));
-        assertTrue("isIncludeHeader should be 'true'", fileConsumerConfiguration.isIncludeHeader());
-        assertTrue("isIncludeTrailer should be 'true'", fileConsumerConfiguration.isIncludeTrailer());
-        assertTrue("logMatchedFilenames should be 'true'", fileConsumerConfiguration.isLogMatchedFilenames());
+        assertEquals("121212", fileConsumerConfiguration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(fileConsumerConfiguration.isEager(), "eager should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(fileConsumerConfiguration.getTimezone() == "UTC", "Timezone should be 'true'");
+        assertNull(((ScheduledConsumer) scheduledFileConsumer).getConfiguredResourceId(), "configuredResourceId should be 'null'");
+        assertEquals("filename", fileConsumerConfiguration.getFilenames().get(0), "Filenames should be 'filename'");
+        assertEquals(2, fileConsumerConfiguration.getDirectoryDepth(), "DirectoryDepth should be '2'");
+        assertFalse(fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), "ignoreFileNameRenameWhilstScanning should be 'false'");
+        assertTrue(((ScheduledConsumer) scheduledFileConsumer).isCriticalOnStartup(), "criticalOnStartup should be 'true'");
+        assertEquals("UTF-16", fileConsumerConfiguration.getEncoding(), "Encoding should be 'UTF-16'");
+        assertTrue(fileConsumerConfiguration.isIncludeHeader(), "isIncludeHeader should be 'true'");
+        assertTrue(fileConsumerConfiguration.isIncludeTrailer(), "isIncludeTrailer should be 'true'");
+        assertTrue(fileConsumerConfiguration.isLogMatchedFilenames(), "logMatchedFilenames should be 'true'");
 
         FileMessageProvider fileMsgProvider = (FileMessageProvider)((ScheduledConsumer)scheduledFileConsumer).getMessageProvider();
-        assertNotNull("messageProviderPostProcessor should not be 'null'", fileMsgProvider.getMessageProviderPostProcessor());
+        assertNotNull(fileMsgProvider.getMessageProviderPostProcessor(), "messageProviderPostProcessor should not be 'null'");
 
         mockery.assertIsSatisfied();
     }

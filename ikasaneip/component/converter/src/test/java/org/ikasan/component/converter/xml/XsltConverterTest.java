@@ -45,10 +45,9 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.InputSource;
 
 import javax.xml.transform.*;
@@ -61,6 +60,9 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Test class for {@link org.ikasan.component.converter.xml.XsltConverter}
  * 
@@ -68,8 +70,8 @@ import java.util.Map;
  * 
  */
 @SuppressWarnings("unqualified-field-access")
-@Ignore
-public class XsltConverterTest
+@Disabled
+class XsltConverterTest
 {
     private final static String CLASSPATH_URL_PREFIX = "classpath:";
 
@@ -106,7 +108,8 @@ public class XsltConverterTest
     /**
      * Setup common objects used to prepare each test case
      */
-    @Before public void setup()
+    @BeforeEach
+    void setup()
     {
         // Setup test objects
 
@@ -120,10 +123,12 @@ public class XsltConverterTest
      * Creating a XsltConverter will fail if injected {@link javax.xml.transform.TransformerFactory} is null.
      */
     @SuppressWarnings("unused")
-    @Test(expected=IllegalArgumentException.class)
-    public void construction_fails_null_transformerFactory()
+    @Test
+    void construction_fails_null_transformerFactory()
     {
-        new XsltConverter(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new XsltConverter(null);
+        });
     }
 
     /**
@@ -133,7 +138,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transformation_successful_with_default_setup() throws TransformerException
+    void transformation_successful_with_default_setup() throws TransformerException
     {
         // Setup expectations
         this.mockery.checking(new Expectations()
@@ -171,7 +176,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transformation_successful_without_using_translets() throws TransformerException
+    void transformation_successful_without_using_translets() throws TransformerException
     {
         // Changing the configuration to test other branch of code
         this.defaultConfig.setUseTranslets(false);
@@ -210,7 +215,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transformation_successful_with_extra_tranformationParams_configured() throws TransformerException
+    void transformation_successful_with_extra_tranformationParams_configured() throws TransformerException
     {
         // Setup test objects
         final Map<String, String> transformationParams = new HashMap<String, String>();
@@ -259,7 +264,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transformation_successful_with_custom_uriResolver() throws TransformerException
+    void transformation_successful_with_custom_uriResolver() throws TransformerException
     {
         // Setup test objects
         final URIResolver mockURIResolver = this.mockery.mock(URIResolver.class, "customURIResolver");
@@ -303,39 +308,44 @@ public class XsltConverterTest
      * 
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
-    @Test(expected=TransformationException.class)
-    public void transformation_fail() throws TransformerException
+    @Test
+    void transformation_fail() throws TransformerException
     {
-        // Setup test objects
-        final TransformerException expectedException = new TransformerException("Transformation fail for some reason or another.");
+        assertThrows(TransformationException.class, () -> {
+            // Setup test objects
+            final TransformerException expectedException = new TransformerException("Transformation fail for some reason or another.");
 
-        // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+            // Setup expectations
+            this.mockery.checking(new Expectations()
             {
-                // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+                {
+                    // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                    one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
-                // Because using translets was switched on, create Templates from factory
-                one(mockTransformerFactory).newTemplates(with(any(Source.class))); will(returnValue(mockTemplates));
+                    // Because using translets was switched on, create Templates from factory
+                    one(mockTransformerFactory).newTemplates(with(any(Source.class)));
+                    will(returnValue(mockTemplates));
 
-                // Create a new Transformer instance
-                one(mockTemplates).newTransformer(); will(returnValue(mockTransformer));
+                    // Create a new Transformer instance
+                    one(mockTemplates).newTransformer();
+                    will(returnValue(mockTransformer));
 
-                // Transformer instance needs its own ErrorListener to control error handling for tranformations
-                one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+                    // Transformer instance needs its own ErrorListener to control error handling for tranformations
+                    one(mockTransformer).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
-                // The transformation itself
-                one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));will(throwException(expectedException));
-            }
+                    // The transformation itself
+                    one(mockTransformer).transform(with(any(Source.class)), with(any(Result.class)));
+                    will(throwException(expectedException));
+                }
+            });
+
+            // Run the test:
+            this.uut = new XsltConverter(this.mockTransformerFactory);
+            this.runTest();
+
+            // Make assertions
+            this.mockery.assertIsSatisfied();
         });
-
-        // Run the test:
-        this.uut = new XsltConverter(this.mockTransformerFactory);
-        this.runTest();
-
-        // Make assertions
-        this.mockery.assertIsSatisfied();
     }
 
     /**
@@ -344,54 +354,58 @@ public class XsltConverterTest
      * 
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
-    @Test(expected=TransformationException.class)
-    public void transformation_fail_at_start_time_to_create_transformer_xsl_not_found() throws TransformerException
+    @Test
+    void transformation_fail_at_start_time_to_create_transformer_xsl_not_found() throws TransformerException
     {
-        // Setup test objects
-        this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
+        assertThrows(TransformationException.class, () -> {
+            // Setup test objects
+            this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
 
-        final TransformerConfigurationException expectedException = new TransformerConfigurationException();
+            final TransformerConfigurationException expectedException = new TransformerConfigurationException();
 
-        // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+            // Setup expectations
+            this.mockery.checking(new Expectations()
             {
-                // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+                {
+                    // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                    one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
-                // Create a Templates
-                one(mockTransformerFactory).newTemplates(with(any(Source.class)));will(throwException(expectedException));
+                    // Create a Templates
+                    one(mockTransformerFactory).newTemplates(with(any(Source.class)));
+                    will(throwException(expectedException));
 
-                //Creating templates failed, so transformer tries to create Transformer from factory
-                // but fails since stylesheet location is a malformed uril: classpath is not a supported scheme!
-                one(mockTransformerFactory).newTransformer(with(any(Source.class)));will(throwException(expectedException));
+                    //Creating templates failed, so transformer tries to create Transformer from factory
+                    // but fails since stylesheet location is a malformed uril: classpath is not a supported scheme!
+                    one(mockTransformerFactory).newTransformer(with(any(Source.class)));
+                    will(throwException(expectedException));
+                }
+            });
+
+            // Run the test:
+            this.uut = new XsltConverter(this.mockTransformerFactory);
+            // As this transformer is a ConfiguredResource, set the configuration object
+            this.uut.setConfiguration(this.defaultConfig);
+            // As this transformer is a ManagedResource, start it
+            try
+            {
+                this.uut.startManagedResource();
             }
-        });
-
-        // Run the test:
-        this.uut = new XsltConverter(this.mockTransformerFactory);
-        // As this transformer is a ConfiguredResource, set the configuration object
-        this.uut.setConfiguration(this.defaultConfig);
-        // As this transformer is a ManagedResource, start it
-        try
-        {
-            this.uut.startManagedResource();
-        }
-        catch (RuntimeException e)
-        {
-            /*
+            catch (RuntimeException e)
+            {
+                /*
              * This is mimicing how Flow handles failures of starting a managed resource;
              * it is swallowed. Pushing data through to the component will fail throwing an
              * exception that is handled by exception handler.
              */
-        }
-        // Push data through
-        this.uut.convert(this.testEvent);
-        // Now stop it
-        this.uut.stopManagedResource();
+            }
+            // Push data through
+            this.uut.convert(this.testEvent);
+            // Now stop it
+            this.uut.stopManagedResource();
 
-        // Make assertions
-        this.mockery.assertIsSatisfied();
+            // Make assertions
+            this.mockery.assertIsSatisfied();
+        });
     }
 
     /**
@@ -400,33 +414,35 @@ public class XsltConverterTest
      * 
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
-    @Test(expected=TransformationException.class)
-    public void transformation_fail_at_transform_time_to_create_transformer_xsl_not_found() throws TransformerException
+    @Test
+    void transformation_fail_at_transform_time_to_create_transformer_xsl_not_found() throws TransformerException
     {
-        // Setup test objects
-        this.defaultConfig.setUseTranslets(false);
-        this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
+        assertThrows(TransformationException.class, () -> {
+            // Setup test objects
+            this.defaultConfig.setUseTranslets(false);
+            this.defaultConfig.setStylesheetLocation("classpath:doesnotexist.xsl");
 
-        final TransformerConfigurationException expectedException = new TransformerConfigurationException();
+            final TransformerConfigurationException expectedException = new TransformerConfigurationException();
 
-        // Setup expectations
-        this.mockery.checking(new Expectations() {
-            {
-                // Must setup a custom ErrorListener to control error handling for processing stylesheet
-                one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
+            // Setup expectations
+            this.mockery.checking(new Expectations() {
+                {
+                    // Must setup a custom ErrorListener to control error handling for processing stylesheet
+                    one(mockTransformerFactory).setErrorListener(with(any(ExceptionThrowingErrorListener.class)));
 
-                // Create a new Transformer instance (using translets is switched off)
-                one(mockTransformerFactory).newTransformer(with(any(Source.class)));
-                will(throwException(expectedException));
-            }
+                    // Create a new Transformer instance (using translets is switched off)
+                    one(mockTransformerFactory).newTransformer(with(any(Source.class)));
+                    will(throwException(expectedException));
+                }
+            });
+
+            // Run the test:
+            this.uut = new XsltConverter(this.mockTransformerFactory);
+            this.runTest();
+
+            // Make assertions
+            this.mockery.assertIsSatisfied();
         });
-
-        // Run the test:
-        this.uut = new XsltConverter(this.mockTransformerFactory);
-        this.runTest();
-
-        // Make assertions
-        this.mockery.assertIsSatisfied();
     }
 
     /**
@@ -435,7 +451,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transform_testXmlToXml_xsl() throws TransformerException
+    void transform_testXmlToXml_xsl() throws TransformerException
     {
         // setup test
         XsltConverter<String,String> uut = new XsltConverter<String,String>(org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance());
@@ -455,7 +471,7 @@ public class XsltConverterTest
         String result = uut.convert(new String(inboundPayloadContent));
 
         // Make assertions
-        Assert.assertEquals(outboundPayloadContent, result);
+        assertEquals(outboundPayloadContent, result);
 
     }
 
@@ -465,7 +481,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transform_testXmlToText_xsl() throws TransformerException
+    void transform_testXmlToText_xsl() throws TransformerException
     {
         // setup test
         XsltConverter<String,String> uut = new XsltConverter<String,String>(org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance());
@@ -482,7 +498,7 @@ public class XsltConverterTest
         String result = uut.convert(inboundPayloadContent);
 
         // Make assertions
-        Assert.assertEquals(outboundPayloadContent, result);
+        assertEquals(outboundPayloadContent, result);
     }
 
     /**
@@ -491,7 +507,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void nativeTransformer_testXmlToXml_xsl() throws TransformerException
+    void nativeTransformer_testXmlToXml_xsl() throws TransformerException
     {
         TransformerFactory transformerFactory = org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance();
 
@@ -519,7 +535,7 @@ public class XsltConverterTest
         // check result
         byte[] outputBytes = outputDataStream.toByteArray();
         
-        Assert.assertEquals(expectedOutput, new String(outputBytes));
+        assertEquals(expectedOutput, new String(outputBytes));
     }
 
     /**
@@ -528,7 +544,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void nativeTransformer_testXmlToText_xsl() throws TransformerException
+    void nativeTransformer_testXmlToText_xsl() throws TransformerException
     {
         TransformerFactory transformerFactory = org.apache.xalan.xsltc.trax.TransformerFactoryImpl.newInstance();
 
@@ -556,7 +572,7 @@ public class XsltConverterTest
         // check result
         byte[] outputBytes = outputDataStream.toByteArray();
         
-        Assert.assertEquals(expectedOutput, new String(outputBytes));
+        assertEquals(expectedOutput, new String(outputBytes));
     }
 
     /**
@@ -566,7 +582,7 @@ public class XsltConverterTest
      * @throws javax.xml.transform.TransformerException Thrown if error transforming event content.
      */
     @Test
-    public void transformation_successful_with_xsltconverterconfiguration_parameters_injected() throws TransformerException
+    void transformation_successful_with_xsltconverterconfiguration_parameters_injected() throws TransformerException
     {
         final Converter<XsltConverterConfiguration, Map<String, String>> configurationParameterConverter = mockery.mock(Converter.class);
         final Map<String, String> convertedConfig = new HashMap<>();

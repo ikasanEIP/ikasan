@@ -40,14 +40,13 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.OnException;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
-
-import javax.annotation.Resource;
 
 /**
  *

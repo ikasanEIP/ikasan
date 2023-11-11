@@ -15,12 +15,10 @@ import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobWrapper;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -28,7 +26,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -42,18 +39,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verifyNoInteractions;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { JobProvisionApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = {JobProvisionApplication.class, MockedUserServiceTestConfig.class})
 @EnableWebMvc
-public class JobProvisionApplicationTest {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
+class JobProvisionApplicationTest {
 
     protected MockMvc mockMvc;
 
@@ -65,8 +58,8 @@ public class JobProvisionApplicationTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 
         PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
@@ -101,7 +94,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void test_exception_job_provision_jobs_put() throws Exception {
+    void test_exception_job_provision_jobs_put() throws Exception {
         doThrow(new RuntimeException("error provisioning jobs!"))
             .when(jobProvisionService).provisionJobs(anyList(), anyString());
 
@@ -119,7 +112,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void test_success_job_provision_jobs_put() throws Exception {
+    void test_success_job_provision_jobs_put() throws Exception {
         String payload = createSchedulerJobWrapper();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/jobProvision")
@@ -134,7 +127,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void test_success_job_initiation_event_put_read_only() throws Exception {
+    void test_success_job_initiation_event_put_read_only() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         String payload = createSchedulerJobWrapper();
 
@@ -148,7 +141,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void test_success_job_remove_delete() throws Exception {
+    void test_success_job_remove_delete() throws Exception {
         String payload = "contextName";
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/jobProvision/remove")
@@ -163,7 +156,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void test_execption_job_remove_delete_read_only() throws Exception {
+    void test_execption_job_remove_delete_read_only() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         String payload = "contextName";
 

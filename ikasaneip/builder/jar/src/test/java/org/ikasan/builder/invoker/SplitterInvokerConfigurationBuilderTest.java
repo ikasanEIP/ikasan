@@ -41,47 +41,48 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.SplitterInvokerConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>SplitterInvokerConfigurationBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class SplitterInvokerConfigurationBuilderTest
+class SplitterInvokerConfigurationBuilderTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void splitterInvokerConfigurationBuilder_test_properties_setters()
+    void splitterInvokerConfigurationBuilder_test_properties_setters()
     {
         SplitterInvokerConfigurationBuilder sicb = new SplitterInvokerConfigurationBuilder(new SplitterInvokerConfiguration());
 
-        Assert.assertTrue("SplitterInvokerConfiguration should have 4 properties", TestUtils.getFields(SplitterInvokerConfiguration.class).size() == 4);
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.withDynamicConfiguration(false).build().isDynamicConfiguration());
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
+        assertEquals(4, TestUtils.getFields(SplitterInvokerConfiguration.class).size(), "SplitterInvokerConfiguration should have 4 properties");
+        assertFalse(sicb.withDynamicConfiguration(false).build().isDynamicConfiguration(), "SplitterInvokerConfiguration should be false");
+        assertTrue(sicb.withDynamicConfiguration(true).build().isDynamicConfiguration(), "SplitterInvokerConfiguration should be true");
 
         // default behaviour
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.build().isSplitEventToIndividualEvents());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfPayloads());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfEvents());
+        assertTrue(sicb.build().isSplitEventToIndividualEvents(), "SplitterInvokerConfiguration should be true");
+        assertFalse(sicb.build().isSplitEventToListOfPayloads(), "SplitterInvokerConfiguration should be false");
+        assertFalse(sicb.build().isSplitEventToListOfEvents(), "SplitterInvokerConfiguration should be false");
 
         // overrride with list of payloads
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSplitAsEventWithListOfPayloads().build().isSplitEventToListOfPayloads());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfEvents());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToIndividualEvents());
+        assertTrue(sicb.withSplitAsEventWithListOfPayloads().build().isSplitEventToListOfPayloads(), "SplitterInvokerConfiguration should be true");
+        assertFalse(sicb.build().isSplitEventToListOfEvents(), "SplitterInvokerConfiguration should be false");
+        assertFalse(sicb.build().isSplitEventToIndividualEvents(), "SplitterInvokerConfiguration should be false");
 
         // overrride with list of events
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSplitAsEventWithListOfEvents().build().isSplitEventToListOfEvents());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToListOfPayloads());
-        Assert.assertFalse("SplitterInvokerConfiguration should be false", sicb.build().isSplitEventToIndividualEvents());
+        assertTrue(sicb.withSplitAsEventWithListOfEvents().build().isSplitEventToListOfEvents(), "SplitterInvokerConfiguration should be true");
+        assertFalse(sicb.build().isSplitEventToListOfPayloads(), "SplitterInvokerConfiguration should be false");
+        assertFalse(sicb.build().isSplitEventToIndividualEvents(), "SplitterInvokerConfiguration should be false");
 
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
-        Assert.assertTrue("SplitterInvokerConfiguration should be false", sicb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
-        Assert.assertTrue("SplitterInvokerConfiguration should be true", sicb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
-        Assert.assertTrue("SplitterInvokerConfiguration should be false", sicb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+        assertTrue(sicb.withCaptureMetrics(true).build().getCaptureMetrics(), "SplitterInvokerConfiguration should be true");
+        assertFalse(sicb.withCaptureMetrics(false).build().getCaptureMetrics(), "SplitterInvokerConfiguration should be false");
+        assertTrue(sicb.withSnapMetricsEvent(true).build().getSnapEvent(), "SplitterInvokerConfiguration should be true");
+        assertFalse(sicb.withSnapMetricsEvent(false).build().getSnapEvent(), "SplitterInvokerConfiguration should be false");
 
     }
 

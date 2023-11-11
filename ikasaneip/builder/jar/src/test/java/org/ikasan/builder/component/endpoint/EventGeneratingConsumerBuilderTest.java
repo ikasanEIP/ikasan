@@ -48,16 +48,14 @@ import org.ikasan.spec.event.MessageListener;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test class supports the <code>EventGeneratingConsumerBuilderImpl</code> class.
  *
  * @author Ikasan Development Team
  */
-public class EventGeneratingConsumerBuilderTest
+class EventGeneratingConsumerBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -67,9 +65,6 @@ public class EventGeneratingConsumerBuilderTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -81,7 +76,7 @@ public class EventGeneratingConsumerBuilderTest
      * Test successful builder creation.
      */
     @Test
-    public void eventGeneratingConsumer_build()
+    void eventGeneratingConsumer_build()
     {
         EventGeneratingConsumerBuilder eventGeneratingConsumerBuilder = new EventGeneratingConsumerBuilderImpl(aopProxyProvider);
 

@@ -1,5 +1,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.*;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -10,8 +11,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-
-import javax.annotation.Resource;
 
 @Configuration
 @ImportResource( {

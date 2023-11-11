@@ -40,7 +40,6 @@
 */
 package org.ikasan.marshaller.xml;
 
-import org.junit.Assert;
 import net.sf.json.JSON;
 import net.sf.json.JSONObject;
 import net.sf.json.xml.XMLSerializer;
@@ -48,7 +47,7 @@ import org.custommonkey.xmlunit.*;
 import org.ikasan.marshaller.Marshaller;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -56,13 +55,16 @@ import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Functional unit test cases for
  * <code>XmlStringJsonMarhsller</code>.
  * 
  * @author Ikasan Development Team
  */
-public class XmlStringJsonMarshallerTest extends XMLTestCase
+class XmlStringJsonMarshallerTest extends XMLTestCase
 {
     static {{ XMLUnit.setIgnoreWhitespace(true); }}
 
@@ -82,20 +84,20 @@ public class XmlStringJsonMarshallerTest extends XMLTestCase
      * Test successful marshalling of XML to JSON
      */
     @Test
-    public void test_successful_marshall_xmlStringToJson()
+    void test_successful_marshall_xmlStringToJson()
     {
         Marshaller<String,JSON> marshaller = new XmlStringJsonMarshaller(new XMLSerializer());
         JSON json = marshaller.marshall(xml);
 
         String result = json.toString();
-        Assert.assertEquals("XML to JSON failed", "{" + '"' + "elementOne" + '"' + ":" + '"' + "valueOne" + '"' + "}", result);
+        assertEquals("{" + '"' + "elementOne" + '"' + ":" + '"' + "valueOne" + '"' + "}", result, "XML to JSON failed");
     }
 
     /**
      * Test successful marshalling (XML to JSON) and unmarshalling (JSON to XML)
      */
     @Test
-    public void test_successful_unmarshall_jsonToXml()
+    void test_successful_unmarshall_jsonToXml()
             throws IOException, SAXException
     {
         XmlJsonMarshaller marshaller = new XmlStringJsonMarshaller(new XMLSerializer());
@@ -107,7 +109,7 @@ public class XmlStringJsonMarshallerTest extends XMLTestCase
         json.put("elementOne", "valueOne");
 
         Diff diff = new Diff(xml, marshaller.unmarshall(json));
-        assertTrue(diff.toString(), diff.similar());
+        assertTrue(diff.similar(), diff.toString());
     }
 
     /**

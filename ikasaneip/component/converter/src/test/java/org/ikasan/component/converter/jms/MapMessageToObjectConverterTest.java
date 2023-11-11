@@ -44,14 +44,15 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 import javax.xml.transform.TransformerException;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for {@link org.ikasan.component.converter.jms.MapMessageToObjectConverterTest}
@@ -60,7 +61,7 @@ import static org.junit.Assert.assertEquals;
  * 
  */
 @SuppressWarnings("unqualified-field-access")
-public class MapMessageToObjectConverterTest
+class MapMessageToObjectConverterTest
 {
 
     /** Mockery for objects */
@@ -78,8 +79,8 @@ public class MapMessageToObjectConverterTest
     /** The test object */
     private MapMessageToObjectConverter uut = new MapMessageToObjectConverter();
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         MapMessageToObjectConverterConfiguration configuration = new MapMessageToObjectConverterConfiguration();
         configuration.setAttributeName(ATTRIBUTE_NAME);
         uut.setConfiguration(configuration);
@@ -87,7 +88,7 @@ public class MapMessageToObjectConverterTest
 
 
     @Test
-    public void convert_with_message_when_message_is_string() throws TransformerException, JMSException {
+    void convert_with_message_when_message_is_string() throws TransformerException, JMSException {
         final String message = "TextMessage";
         // Setup expectations
         this.mockery.checking(new Expectations()
@@ -107,7 +108,7 @@ public class MapMessageToObjectConverterTest
     }
 
     @Test
-    public void convert_with_message_when_message_is_array() throws TransformerException, JMSException {
+    void convert_with_message_when_message_is_array() throws TransformerException, JMSException {
         final byte[] message = "TextMessage".getBytes();
         // Setup expectations
         this.mockery.checking(new Expectations()
@@ -127,22 +128,24 @@ public class MapMessageToObjectConverterTest
     }
 
 
-    @Test(expected = TransformationException.class)
-    public void convert_with_message_throwing_JMSException() throws TransformerException, JMSException {
-        final String message = "TextMessage";
-        // Setup expectations
-        this.mockery.checking(new Expectations()
-        {
+    @Test
+    void convert_with_message_throwing_JMSException() throws TransformerException, JMSException {
+        assertThrows(TransformationException.class, () -> {
+            final String message = "TextMessage";
+            // Setup expectations
+            this.mockery.checking(new Expectations()
             {
-                exactly(1).of(mapMessage).getObject(ATTRIBUTE_NAME);
-                will(throwException(new JMSException("Failed to get mapMessage")));
-            }
+                {
+                    exactly(1).of(mapMessage).getObject(ATTRIBUTE_NAME);
+                    will(throwException(new JMSException("Failed to get mapMessage")));
+                }
+            });
+
+            // Run the test
+            Object result = uut.convert(mapMessage);
+
+            // Make assertions
+            this.mockery.assertIsSatisfied();
         });
-
-        // Run the test
-        Object result = uut.convert(mapMessage);
-
-        // Make assertions
-        this.mockery.assertIsSatisfied();
     }
 }

@@ -41,11 +41,11 @@
 package org.ikasan.connector.base.command;
 
 import java.util.*;
-import javax.resource.ResourceException;
-import javax.resource.spi.ResourceAdapterInternalException;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ResourceAdapterInternalException;
+import jakarta.transaction.xa.XAException;
+import jakarta.transaction.xa.XAResource;
+import jakarta.transaction.xa.Xid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +97,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     /**
      * Extra work for when the txn starts, in this case do nothing
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#start(javax.transaction.xa.Xid,
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#start(jakarta.transaction.xa.Xid,
      *      int)
      */
     @Override
@@ -145,7 +145,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     /**
      * Deal with any specific end tasks for the txn, in this case do nothing
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#end(javax.transaction.xa.Xid,
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#end(jakarta.transaction.xa.Xid,
      *      int)
      */
     @Override
@@ -245,7 +245,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     /**
      * Rollback the transaction, deal with the get and put cases
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#rollback(javax.transaction.xa.Xid)
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#rollback(jakarta.transaction.xa.Xid)
      */
     @Override
     public void rollback(Xid pXid) throws XAException
@@ -312,7 +312,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     /**
      * Perform the commit, performs special processing for the get and put cases
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#commit(javax.transaction.xa.Xid,
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#commit(jakarta.transaction.xa.Xid,
      *      boolean)
      */
     @Override
@@ -556,7 +556,7 @@ public abstract class TransactionalCommandConnection implements LastResourceComm
     /**
      * Prepare for the commit, in this case do nothing, return 0 always
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#prepare(javax.transaction.xa.Xid)
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#prepare(jakarta.transaction.xa.Xid)
      * @return 0
      */
     @Override

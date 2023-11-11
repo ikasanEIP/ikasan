@@ -40,33 +40,29 @@
  */
 package org.ikasan.exclusion.service;
 
+import jakarta.annotation.Resource;
 import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for ExclusionServiceFactory.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/exclusion-service-conf.xml",
         "/substitute-components.xml",
         "/h2db-datasource-conf.xml"
-        })
-
-public class ExclusionServiceFactoryTest
+})
+class ExclusionServiceFactoryTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -85,32 +81,38 @@ public class ExclusionServiceFactoryTest
     @Resource
     SerialiserFactory serialiserFactory;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_blacklist_dao()
+    @Test
+    void test_failed_constructor_null_blacklist_dao()
     {
-        new ExclusionServiceFactory(null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceFactory(null, null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_exclusionEvent_dao()
+    @Test
+    void test_failed_constructor_null_exclusionEvent_dao()
     {
-        new ExclusionServiceFactory(blackListDaoFactory, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceFactory(blackListDaoFactory, null, null);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_null_serialiser()
+    @Test
+    void test_failed_constructor_null_serialiser()
     {
-        new ExclusionServiceFactory(blackListDaoFactory, exclusionEventDao, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ExclusionServiceFactory(blackListDaoFactory, exclusionEventDao, null);
+        });
     }
 
     /**
      * Test exclusion
      */
     @Test
-    public void test_exclusionServiceFactory_operations()
+    void test_exclusionServiceFactory_operations()
     {
         ExclusionServiceFactory exclusionServiceFactory = new ExclusionServiceFactory(blackListDaoFactory, exclusionEventDao, serialiserFactory);
-        Assert.assertNotNull("Should not be null", exclusionServiceFactory.getExclusionService("moduleName", "flowName"));
+        assertNotNull(exclusionServiceFactory.getExclusionService("moduleName", "flowName"), "Should not be null");
         this.mockery.assertIsSatisfied();
     }
 }

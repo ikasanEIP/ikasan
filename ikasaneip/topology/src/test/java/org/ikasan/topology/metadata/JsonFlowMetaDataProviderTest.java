@@ -19,9 +19,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.json.JSONException;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
@@ -32,7 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JsonFlowMetaDataProviderTest
 {
@@ -49,7 +47,7 @@ public class JsonFlowMetaDataProviderTest
 
 
     @Test
-    public void test_simple_flow() throws IOException, JSONException
+    void test_simple_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createSimpleFlow(), null);
@@ -58,7 +56,7 @@ public class JsonFlowMetaDataProviderTest
     }
 
     @Test
-    public void test_multi_recipient_flow() throws IOException, JSONException
+    void test_multi_recipient_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), null);
@@ -67,7 +65,7 @@ public class JsonFlowMetaDataProviderTest
     }
 
     @Test
-    public void test_single_recipient_flow() throws IOException, JSONException
+    void test_single_recipient_flow() throws IOException, JSONException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createSingleRecipientListFlow(), null);
@@ -76,25 +74,25 @@ public class JsonFlowMetaDataProviderTest
     }
 
     @Test
-    public void test_single_json_to_object() throws IOException
+    void test_single_json_to_object() throws IOException
     {
         JsonFlowMetaDataProvider jsonFlowMetaDataProvider = new JsonFlowMetaDataProvider();
         String json = jsonFlowMetaDataProvider.describeFlow(createMultiRecipientListFlow(), null);
 
         FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
 
-        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
-        assertEquals("Flow start up type equals!", StartupType.MANUAL.name(), flowMetaData.getFlowStartupType());
-        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
-        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
-        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
-        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
-        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+        assertEquals("Flow Name", flowMetaData.getName(), "Flow name equals!");
+        assertEquals(StartupType.MANUAL.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!");
+        assertEquals("Test Consumer", flowMetaData.getConsumer().getComponentName(), "Consumer name equals!");
+        assertEquals("org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType(), "Consumer component type equals!");
+        assertEquals("CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId(), "Consumer configuration id equals!");
+        assertEquals(8, flowMetaData.getFlowElements().size(), "Number of flow elements equals!");
+        assertEquals(7, flowMetaData.getTransitions().size(), "Number of transitions equals!");
 
     }
 
     @Test
-    public void test_single_json_to_object_disabled_startup_type() throws IOException
+    void test_single_json_to_object_disabled_startup_type() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
@@ -148,18 +146,18 @@ public class JsonFlowMetaDataProviderTest
 
         FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
 
-        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
-        assertEquals("Flow start up type equals!", StartupType.DISABLED.name(), flowMetaData.getFlowStartupType());
-        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
-        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
-        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
-        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
-        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+        assertEquals("Flow Name", flowMetaData.getName(), "Flow name equals!");
+        assertEquals(StartupType.DISABLED.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!");
+        assertEquals("Test Consumer", flowMetaData.getConsumer().getComponentName(), "Consumer name equals!");
+        assertEquals("org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType(), "Consumer component type equals!");
+        assertEquals("CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId(), "Consumer configuration id equals!");
+        assertEquals(8, flowMetaData.getFlowElements().size(), "Number of flow elements equals!");
+        assertEquals(7, flowMetaData.getTransitions().size(), "Number of transitions equals!");
 
     }
 
     @Test
-    public void test_single_json_to_object_automatic_startup_type() throws IOException
+    void test_single_json_to_object_automatic_startup_type() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
@@ -213,18 +211,18 @@ public class JsonFlowMetaDataProviderTest
 
         FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
 
-        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
-        assertEquals("Flow start up type equals!", StartupType.AUTOMATIC.name(), flowMetaData.getFlowStartupType());
-        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
-        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
-        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
-        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
-        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+        assertEquals("Flow Name", flowMetaData.getName(), "Flow name equals!");
+        assertEquals(StartupType.AUTOMATIC.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!");
+        assertEquals("Test Consumer", flowMetaData.getConsumer().getComponentName(), "Consumer name equals!");
+        assertEquals("org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType(), "Consumer component type equals!");
+        assertEquals("CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId(), "Consumer configuration id equals!");
+        assertEquals(8, flowMetaData.getFlowElements().size(), "Number of flow elements equals!");
+        assertEquals(7, flowMetaData.getTransitions().size(), "Number of transitions equals!");
 
     }
 
     @Test
-    public void test_single_json_to_object_manual_startup_type() throws IOException
+    void test_single_json_to_object_manual_startup_type() throws IOException
     {
         StartupControl startupControl = new StartupControl() {
             @Override
@@ -278,13 +276,13 @@ public class JsonFlowMetaDataProviderTest
 
         FlowMetaData flowMetaData = jsonFlowMetaDataProvider.deserialiseFlow(json);
 
-        assertEquals("Flow name equals!", "Flow Name", flowMetaData.getName());
-        assertEquals("Flow start up type equals!", StartupType.MANUAL.name(), flowMetaData.getFlowStartupType());
-        assertEquals("Consumer name equals!", "Test Consumer", flowMetaData.getConsumer().getComponentName());
-        assertEquals("Consumer component type equals!", "org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType());
-        assertEquals("Consumer configuration id equals!", "CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId());
-        assertEquals("Number of flow elements equals!", 8, flowMetaData.getFlowElements().size());
-        assertEquals("Number of transitions equals!", 7, flowMetaData.getTransitions().size());
+        assertEquals("Flow Name", flowMetaData.getName(), "Flow name equals!");
+        assertEquals(StartupType.MANUAL.name(), flowMetaData.getFlowStartupType(), "Flow start up type equals!");
+        assertEquals("Test Consumer", flowMetaData.getConsumer().getComponentName(), "Consumer name equals!");
+        assertEquals("org.ikasan.spec.component.endpoint.Consumer", flowMetaData.getConsumer().getComponentType(), "Consumer component type equals!");
+        assertEquals("CONFIGURATION_ID", flowMetaData.getConsumer().getConfigurationId(), "Consumer configuration id equals!");
+        assertEquals(8, flowMetaData.getFlowElements().size(), "Number of flow elements equals!");
+        assertEquals(7, flowMetaData.getTransitions().size(), "Number of transitions equals!");
 
     }
 

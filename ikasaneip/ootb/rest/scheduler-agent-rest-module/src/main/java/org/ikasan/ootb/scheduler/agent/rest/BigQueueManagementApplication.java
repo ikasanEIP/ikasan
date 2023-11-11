@@ -25,7 +25,7 @@ public class BigQueueManagementApplication {
     @Autowired
     private BigQueueDirectoryManagementService bigQueueDirectoryManagementService;
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -41,11 +41,11 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/size/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity size(@PathVariable("queueName") String queueName) {
+    public ResponseEntity size(@PathVariable String queueName) {
         try {
             long size = bigQueueDirectoryManagementService.size(queueName);
             return new ResponseEntity(size, HttpStatus.OK);
@@ -57,11 +57,11 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/size",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity size(@RequestParam(value="includeZeros", required = false, defaultValue = "true") boolean includeZeros) {
+    public ResponseEntity size(@RequestParam(required = false, defaultValue = "true") boolean includeZeros) {
         try {
             Map<String, Long> size = bigQueueDirectoryManagementService.size(includeZeros);
             return new ResponseEntity(size, HttpStatus.OK);
@@ -73,11 +73,11 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/peek/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity peek(@PathVariable("queueName") String queueName) {
+    public ResponseEntity peek(@PathVariable String queueName) {
         try {
             BigQueueMessage bigQueueMessage = bigQueueDirectoryManagementService.peek(queueName);
             return new ResponseEntity(bigQueueMessage, HttpStatus.OK);
@@ -89,11 +89,11 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/messages/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity messages(@PathVariable("queueName") String queueName) {
+    public ResponseEntity messages(@PathVariable String queueName) {
         try {
             List<BigQueueMessage> messages = bigQueueDirectoryManagementService.getMessages(queueName);
             return new ResponseEntity(messages, HttpStatus.OK);
@@ -105,12 +105,12 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,
+    @DeleteMapping(
         value = "/delete/{queueName}/{messageId}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteMessageId(@PathVariable("queueName") String queueName,
-                                          @PathVariable("messageId") String messageId) {
+    public ResponseEntity deleteMessageId(@PathVariable String queueName,
+                                          @PathVariable String messageId) {
         try {
             bigQueueDirectoryManagementService.deleteMessage(queueName, messageId);
             return new ResponseEntity(HttpStatus.OK);
@@ -123,11 +123,11 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,
+    @DeleteMapping(
         value = "/delete/allMessages/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteAllMessages(@PathVariable("queueName") String queueName) {
+    public ResponseEntity deleteAllMessages(@PathVariable String queueName) {
         try {
             bigQueueDirectoryManagementService.deleteAllMessage(queueName);
             return new ResponseEntity(HttpStatus.OK);
@@ -140,11 +140,11 @@ public class BigQueueManagementApplication {
         }
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,
+    @DeleteMapping(
         value = "/delete/{queueName}",
         produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteQueue(@PathVariable("queueName") String queueName) {
+    public ResponseEntity deleteQueue(@PathVariable String queueName) {
         try {
             bigQueueDirectoryManagementService.deleteQueue(queueName);
             return new ResponseEntity(HttpStatus.OK);

@@ -2,10 +2,12 @@ package org.ikasan.component.converter.json;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.test.JSONAssert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class JsonSerialiserConverterTest
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+class JsonSerialiserConverterTest
 {
     private static final String ID_FIELD = "id1";
 
@@ -17,7 +19,8 @@ public class JsonSerialiserConverterTest
 
     private String serialisedPojo;
 
-    @Before public void setup()
+    @BeforeEach
+    void setup()
     {
         uut = new JsonSerialiserConverter<>();
         testPojo = new TestPojo();
@@ -26,17 +29,19 @@ public class JsonSerialiserConverterTest
         serialisedPojo = "{\"id\":\"" + ID_FIELD + "\",\"value\":" + VALUE_FIELD + "}";
     }
 
-    @Test public void test_serialise_with_non_default_mapper()
+    @Test
+    void test_serialise_with_non_default_mapper()
     {
         uut = new JsonSerialiserConverter<>(new ObjectMapper());
         String result = uut.convert(testPojo);
-        JSONAssert.assertEquals(serialisedPojo, result);
+        assertEquals(serialisedPojo, result);
     }
 
-    @Test public void test_serialise()
+    @Test
+    void test_serialise()
     {
         String result = uut.convert(testPojo);
-        JSONAssert.assertEquals(serialisedPojo, result);
+        assertEquals(serialisedPojo, result);
     }
 
     public static class TestPojo

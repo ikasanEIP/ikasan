@@ -62,10 +62,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -280,7 +280,7 @@ public class JmsContainerConsumer
         try
         {
             if ( messageProvider instanceof IkasanMessageListenerContainer imlc
-                    && jmsException instanceof javax.jms.IllegalStateException)
+                    && jmsException instanceof jakarta.jms.IllegalStateException)
             {
                 imlc.recoverSharedConnection();
                 recovered = true;

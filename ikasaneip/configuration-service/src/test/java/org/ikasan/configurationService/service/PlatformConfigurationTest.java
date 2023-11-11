@@ -43,30 +43,26 @@ package org.ikasan.configurationService.service;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import jakarta.annotation.Resource;
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * 
  * @author Ikasan Development Team
  *
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(classes = {TestConfiguration.class})
-public class PlatformConfigurationTest
+@SpringJUnitConfig(classes = {TestConfiguration.class})
+class PlatformConfigurationTest
 {
 	
 	@Resource
@@ -74,9 +70,9 @@ public class PlatformConfigurationTest
 	
 	@Resource
     PlatformConfigurationService platformConfigurationService;
-	
-	@Before
-	public void setup()
+
+    @BeforeEach
+    void setup()
 	{
 		PlatformConfigurationConfiguredResource platformConfigurationConfiguredResource = new PlatformConfigurationConfiguredResource();
 		
@@ -109,18 +105,18 @@ public class PlatformConfigurationTest
     	
 		configurationService.saveConfiguration(platformConfiguration);      
 	}
-	
-	@Test
-    @DirtiesContext
-    public void test_platform_configuration_map_1()
+
+    @Test
+        @DirtiesContext
+    void test_platform_configuration_map_1()
     {
-		Assert.assertEquals(platformConfigurationService.getConfigurationValue("value1"), "value1");
+        assertEquals("value1", platformConfigurationService.getConfigurationValue("value1"));
     }
-	
-	@Test
-    @DirtiesContext
-    public void test_platform_configuration_map_2()
+
+    @Test
+        @DirtiesContext
+    void test_platform_configuration_map_2()
     {
-		Assert.assertEquals(platformConfigurationService.getConfigurationValue("value2"), "value2");
+        assertEquals("value2", platformConfigurationService.getConfigurationValue("value2"));
     }
 }

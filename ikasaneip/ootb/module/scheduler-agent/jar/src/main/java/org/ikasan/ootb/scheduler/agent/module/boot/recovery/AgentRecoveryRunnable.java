@@ -82,8 +82,10 @@ public class AgentRecoveryRunnable implements Runnable {
             }
             if (runtimeException != null) {
                 String message
-                    = String.format("Could not recover instances for agent in %d minutes. " +
-                    "This is a fatal problem that needs to be resolved! Exception was %s", minutesToKeepRetrying, runtimeException.getMessage());
+                    = ("""
+                    Could not recover instances for agent in %d minutes. \
+                    This is a fatal problem that needs to be resolved! Exception was %s\
+                    """).formatted(minutesToKeepRetrying, runtimeException.getMessage());
                 LOG.error(message);
                 throw new EndpointException(message);
             }

@@ -56,6 +56,9 @@
     <packaging>jar</packaging>
     <name>Ikasan Rest Dashboard Client</name>
     <description>The rest dashboard client library for the Ikasan Enterprise Integration Platform</description>
+    <properties>
+        <version.wiremock>2.27.2</version.wiremock>
+    </properties>
 
     <dependencies>
 
@@ -126,12 +129,6 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>
             <scope>test</scope>
@@ -140,6 +137,11 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-imposters</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
         </dependency>
 

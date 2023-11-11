@@ -49,22 +49,20 @@ import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Test class for {@link SftpMessageProvider}
  *
  * @author Ikasan Development Team
  */
-public class SftpMessageProviderTest
+class SftpMessageProviderTest
 {
 
     private SftpMessageProvider uut;
@@ -76,9 +74,6 @@ public class SftpMessageProviderTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
@@ -94,38 +89,39 @@ public class SftpMessageProviderTest
     private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
 
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         uut = new SftpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO);
         uut.setConfiguration(configuration);
     }
 
     @Test
-    public void invoke_when_activeFileTransferConnectionTemplate_is_null() throws ResourceException {
+    void invoke_when_activeFileTransferConnectionTemplate_is_null() throws ResourceException {
+        assertThrows(SftpResourceNotStartedException.class, () -> {
 
-        ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,null);
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
 
-        thrown.expect(SftpResourceNotStartedException.class);
+            final String directory = "directory";
 
-        final String directory = "directory";
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    exactly(1).of(configuration).getSourceDirectoryURLFactory();
+                    will(returnValue(null));
+                    exactly(1).of(configuration).getSourceDirectory();
+                    will(returnValue(directory));
 
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(1).of(configuration).getSourceDirectoryURLFactory();
-                will(returnValue(null));
-                exactly(1).of(configuration).getSourceDirectory();
-                will(returnValue(directory));
+                }
+            });
 
-            }
+            uut.invoke(jobExecutionContext);
+
         });
-
-        uut.invoke(jobExecutionContext);
 
     }
 
     @Test
-    public void invoke_when_activeFileTransferConnectionTemplate_returns_payload() throws ResourceException {
+    void invoke_when_activeFileTransferConnectionTemplate_returns_payload() throws ResourceException {
 
         ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,activeFileTransferConnectionTemplate);
         final String directory = "directory";
@@ -185,7 +181,7 @@ public class SftpMessageProviderTest
     }
 
     @Test
-    public void invoke_when_activeFileTransferConnectionTemplate_returns_null() throws ResourceException {
+    void invoke_when_activeFileTransferConnectionTemplate_returns_null() throws ResourceException {
 
         ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut,"fileTransferConnectionTemplate" ,fileTransferConnectionTemplate);

@@ -8,17 +8,17 @@ import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProc
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ScheduledProcessEventToBigQueueMessageSerialiserTest {
+class ScheduledProcessEventToBigQueueMessageSerialiserTest {
 
     @Test
-    public void serialise_should_return_big_queue_message_as_bytes() throws Exception {
+    void serialise_should_return_big_queue_message_as_bytes() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
         ScheduledProcessEventToBigQueueMessageSerialiser serialiser = new ScheduledProcessEventToBigQueueMessageSerialiser();
@@ -43,7 +43,7 @@ public class ScheduledProcessEventToBigQueueMessageSerialiserTest {
     }
 
     @Test
-    public void deserialise_should_return_scheduled_process_event() throws Exception {
+    void deserialise_should_return_scheduled_process_event() throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         ScheduledProcessEventToBigQueueMessageSerialiser serialiser = new ScheduledProcessEventToBigQueueMessageSerialiser();
 

@@ -40,7 +40,7 @@
  */
 package org.ikasan.configurationService.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.Assert;
 
 import java.lang.reflect.InvocationTargetException;
@@ -50,10 +50,10 @@ import java.util.Map;
  * Sample configuration class for testing
  * Ikasan Development Team.
  */
-public class ReflectionUtilsTest
+class ReflectionUtilsTest
 {
     @Test
-    public void test_reflection_on_method() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException
+    void test_reflection_on_method() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, NoSuchFieldException
     {
         ReflectionUtilsExtendedExampleConfiguration persistedConfiguration = new ReflectionUtilsExtendedExampleConfiguration();
         persistedConfiguration.setInty(10);

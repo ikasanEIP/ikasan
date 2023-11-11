@@ -41,35 +41,36 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.ConcurrentSplitterInvokerConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>ConcurrentSplitterInvokerConfigurationBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ConcurrentSplitterInvokerConfigurationBuilderTest
+class ConcurrentSplitterInvokerConfigurationBuilderTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void ConcurrentSplitterInvokerConfigurationBuilder_test_properties_setters()
+    void ConcurrentSplitterInvokerConfigurationBuilder_test_properties_setters()
     {
         ConcurrentSplitterInvokerConfigurationBuilder csicb = new ConcurrentSplitterInvokerConfigurationBuilder(new ConcurrentSplitterInvokerConfiguration());
 
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should have 5 properties", TestUtils.getFields(ConcurrentSplitterInvokerConfiguration.class).size() == 5);
-        Assert.assertFalse("ConcurrentSplitterInvokerConfiguration should be false", csicb.withDynamicConfiguration(false).build().isDynamicConfiguration());
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withDynamicConfiguration(true).build().isDynamicConfiguration());
-        Assert.assertFalse("ConcurrentSplitterInvokerConfiguration should be false", csicb.withSendSplitsAsSinglePayload(false).build().isSendSplitsAsSinglePayload());
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withSendSplitsAsSinglePayload(true).build().isSendSplitsAsSinglePayload());
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 5", csicb.build().getConcurrentThreads() == 5);
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be 2", csicb.setConcurrentThreads(2).build().getConcurrentThreads() == 2);
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be false", csicb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be true", csicb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
-        Assert.assertTrue("ConcurrentSplitterInvokerConfiguration should be false", csicb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+        assertEquals(5, TestUtils.getFields(ConcurrentSplitterInvokerConfiguration.class).size(), "ConcurrentSplitterInvokerConfiguration should have 5 properties");
+        assertFalse(csicb.withDynamicConfiguration(false).build().isDynamicConfiguration(), "ConcurrentSplitterInvokerConfiguration should be false");
+        assertTrue(csicb.withDynamicConfiguration(true).build().isDynamicConfiguration(), "ConcurrentSplitterInvokerConfiguration should be true");
+        assertFalse(csicb.withSendSplitsAsSinglePayload(false).build().isSendSplitsAsSinglePayload(), "ConcurrentSplitterInvokerConfiguration should be false");
+        assertTrue(csicb.withSendSplitsAsSinglePayload(true).build().isSendSplitsAsSinglePayload(), "ConcurrentSplitterInvokerConfiguration should be true");
+        assertEquals(5, csicb.build().getConcurrentThreads(), "ConcurrentSplitterInvokerConfiguration should be 5");
+        assertEquals(2, csicb.setConcurrentThreads(2).build().getConcurrentThreads(), "ConcurrentSplitterInvokerConfiguration should be 2");
+        assertTrue(csicb.withCaptureMetrics(true).build().getCaptureMetrics(), "ConcurrentSplitterInvokerConfiguration should be true");
+        assertFalse(csicb.withCaptureMetrics(false).build().getCaptureMetrics(), "ConcurrentSplitterInvokerConfiguration should be false");
+        assertTrue(csicb.withSnapMetricsEvent(true).build().getSnapEvent(), "ConcurrentSplitterInvokerConfiguration should be true");
+        assertFalse(csicb.withSnapMetricsEvent(false).build().getSnapEvent(), "ConcurrentSplitterInvokerConfiguration should be false");
     }
 
 }

@@ -6,11 +6,10 @@ import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
@@ -20,10 +19,11 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
+@ExtendWith(MockitoExtension.class)
+class JobExecutionToContextualisedScheduledProcessEventConverterTest {
 
     @Mock
     JobExecutionContext jobExecutionContext;
@@ -33,13 +33,15 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
 
     TriggerKey triggerKey = new TriggerKey("name", "group");
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_module_name_constructor() {
-        new JobExecutionToContextualisedScheduledProcessEventConverter(null);
+    @Test
+    void test_exception_null_module_name_constructor() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new JobExecutionToContextualisedScheduledProcessEventConverter(null);
+        });
     }
 
     @Test
-    public void test_convert_success() {
+    void test_convert_success() {
         Date fireTime = new Date();
         Date nextFireTime = new Date(System.currentTimeMillis() + 600000);
 
@@ -70,23 +72,25 @@ public class JobExecutionToContextualisedScheduledProcessEventConverterTest {
 
         ContextualisedScheduledProcessEvent event = converter.convert(jobExecutionContext);
 
-        Assert.assertEquals(fireTime.getTime(), event.getFireTime());
-        Assert.assertEquals(nextFireTime.getTime(), event.getNextFireTime());
-        Assert.assertEquals("moduleName", event.getAgentName());
-        Assert.assertEquals("jobName", event.getJobName()); // IKASAN-2174 - return jobName provided to the component.
-        Assert.assertEquals("contextName", event.getContextName());
-        Assert.assertEquals(correaltionID, event.getContextInstanceId());
-        Assert.assertTrue(event.isSuccessful());
-        Assert.assertEquals("description", event.getJobDescription());
-        Assert.assertEquals("group", event.getJobGroup());
+        assertEquals(fireTime.getTime(), event.getFireTime());
+        assertEquals(nextFireTime.getTime(), event.getNextFireTime());
+        assertEquals("moduleName", event.getAgentName());
+        assertEquals("jobName", event.getJobName()); // IKASAN-2174 - return jobName provided to the component.
+        assertEquals("contextName", event.getContextName());
+        assertEquals(correaltionID, event.getContextInstanceId());
+        assertTrue(event.isSuccessful());
+        assertEquals("description", event.getJobDescription());
+        assertEquals("group", event.getJobGroup());
     }
 
-    @Test(expected = TransformationException.class)
-    public void test_convert_exception_null_configuration() {
-        JobExecutionToContextualisedScheduledProcessEventConverter converter
-            = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName");
+    @Test
+    void test_convert_exception_null_configuration() {
+        assertThrows(TransformationException.class, () -> {
+            JobExecutionToContextualisedScheduledProcessEventConverter converter
+                = new JobExecutionToContextualisedScheduledProcessEventConverter("moduleName");
 
-        converter.convert(jobExecutionContext);
+            converter.convert(jobExecutionContext);
+        });
     }
 
 }

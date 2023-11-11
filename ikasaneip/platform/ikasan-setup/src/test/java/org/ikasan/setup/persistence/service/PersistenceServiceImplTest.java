@@ -40,24 +40,22 @@
  */
 package org.ikasan.setup.persistence.service;
 
-import javax.annotation.Resource;
-
+import jakarta.annotation.Resource;
 import org.jmock.Mockery;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.junit.jupiter.api.Test;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * JUnit based test class for testing HibernatePointToPointFlowProfileDao
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "/h2-datasource-conf.xml", "/providers-conf.xml"})
-public class PersistenceServiceImplTest
+@SpringJUnitConfig(locations = {"/h2-datasource-conf.xml", "/providers-conf.xml"})
+class PersistenceServiceImplTest
 {
     /**
      * The context that the tests run in, allows for mocking actual concrete
@@ -73,48 +71,46 @@ public class PersistenceServiceImplTest
     @Resource
     PersistenceService persistenceService;
 
-    /**
-     * Test
-     * @throws PersistenceServiceException 
-     */
-    @Test
-    public void test_baseline_install_and_status() throws PersistenceServiceException
+	/**
+	* Test
+	* @throws PersistenceServiceException 
+	*/
+	@Test
+	void test_baseline_install_and_status() throws PersistenceServiceException
     {
     	boolean status = this.persistenceService.baselinePersistenceChangesRequired();
     	
-    	Assert.assertTrue(status);
+    	assertTrue(status);
         persistenceService.createBaselinePersistence();
         
         status = this.persistenceService.baselinePersistenceChangesRequired();
-    	Assert.assertFalse(status);
+    	assertFalse(status);
     }
-    
-    /**
-     * Test
-     * @throws PersistenceServiceException 
-     */
-    @Test
-    public void test_post_baseline_install_and_status() throws PersistenceServiceException
+	/**
+	 * Test
+	 * @throws PersistenceServiceException 
+	 */
+	@Test
+	void test_post_baseline_install_and_status() throws PersistenceServiceException
     {
     	// Please note this test will need to change after post baseline changes are made.
     	boolean status = this.persistenceService.postBaselinePersistenceChangesRequired();
     	
-    	Assert.assertFalse(status);
+    	assertFalse(status);
     }
-    
-    /**
-     * Test
-     * @throws PersistenceServiceException 
-     */
-    @Test
-    public void test_file_transfer_persistence_install_and_status() throws PersistenceServiceException
+	/**
+	 * Test
+	 * @throws PersistenceServiceException 
+	 */
+	@Test
+	void test_file_transfer_persistence_install_and_status() throws PersistenceServiceException
     {
     	boolean status = this.persistenceService.fileTransferPersistenceChangesRequired();
     	
-    	Assert.assertTrue(status);
+    	assertTrue(status);
         persistenceService.createFileTransferPersistence();
         
         status = this.persistenceService.fileTransferPersistenceChangesRequired();
-    	Assert.assertFalse(status);
+    	assertFalse(status);
     }
 }

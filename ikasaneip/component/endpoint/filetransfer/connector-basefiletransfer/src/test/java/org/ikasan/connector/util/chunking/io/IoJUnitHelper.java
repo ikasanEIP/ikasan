@@ -40,9 +40,7 @@
  */
 package org.ikasan.connector.util.chunking.io;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 /**
@@ -65,7 +63,7 @@ public abstract class IoJUnitHelper
         for (int i = 0; i < cs.length; i++)
         {
             byte b = cs[i];
-            assertEquals(message, expected, b);
+            assertEquals(expected, b, message);
         }
     }
 
@@ -78,7 +76,7 @@ public abstract class IoJUnitHelper
     protected void assertChunkHandlerResults(MockChunkHandler chunkHandler, int sequenceLength)
     {
         // assert that the handler get the chunks right
-        assertEquals("chunk handler should have collected 11 chunks", sequenceLength, chunkHandler.getChunks().size()); //$NON-NLS-1$
+        assertEquals(sequenceLength, chunkHandler.getChunks().size(), "chunk handler should have collected 11 chunks"); //$NON-NLS-1$
 
         // assert that each of the first 10 chunks only contains bytes that
         // equal that chunk's ordinal
@@ -89,8 +87,8 @@ public abstract class IoJUnitHelper
 
         // check that the last chunk is only 1 byte long and contains a 1
         byte[] lastChunk = chunkHandler.getChunks().get(10);
-        assertEquals("last chunk size should be 1 byte", 1, lastChunk.length); //$NON-NLS-1$
-        assertEquals("single byte in last chunk should be 1, as per the test data", (byte) 1, lastChunk[0]); //$NON-NLS-1$
+        assertEquals(1, lastChunk.length, "last chunk size should be 1 byte"); //$NON-NLS-1$
+        assertEquals((byte) 1, lastChunk[0], "single byte in last chunk should be 1, as per the test data"); //$NON-NLS-1$
     }
 
 }

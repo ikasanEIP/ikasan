@@ -5,12 +5,10 @@ import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.service.ManagementFilterService;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.rest.module.util.DateTimeConverter;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -21,7 +19,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -32,14 +29,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { FilterApplication.class, MockedUserServiceTestConfig.class })
-public class FilterApplicationTest
+@SpringBootTest(classes = {FilterApplication.class, MockedUserServiceTestConfig.class})
+class FilterApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -58,8 +52,8 @@ public class FilterApplicationTest
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         filterApplication.setManagementFilterService(managementFilterService);
@@ -67,7 +61,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void searchWithReadOnlyUser() throws Exception
+    void searchWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/filter/search?clientId=Test")
@@ -77,7 +71,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void searchByClientId() throws Exception
+    void searchByClientId() throws Exception
     {
         DefaultFilterEntry filterEntry = new DefaultFilterEntry(11221, "test", 1);
         filterEntry.setCreatedDateTime(1l);
@@ -106,7 +100,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void searchByTime() throws Exception
+    void searchByTime() throws Exception
     {
         DefaultFilterEntry filterEntry = new DefaultFilterEntry(11221, "test", 1);
         filterEntry.setCreatedDateTime(1l);
@@ -139,7 +133,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void searchByTimeInvalidDate() throws Exception
+    void searchByTimeInvalidDate() throws Exception
     {
         DefaultFilterEntry filterEntry = new DefaultFilterEntry(11221, "test", 1);
         filterEntry.setCreatedDateTime(1l);
@@ -165,7 +159,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void testFindByClientIdAndCriteriaWithWrongUser() throws Exception
+    void testFindByClientIdAndCriteriaWithWrongUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
@@ -173,7 +167,7 @@ public class FilterApplicationTest
             .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-        Mockito.verifyZeroInteractions(managementFilterService);
+        Mockito.verifyNoInteractions(managementFilterService);
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -182,7 +176,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testFindByClientIdAndCriteria() throws Exception
+    void testFindByClientIdAndCriteria() throws Exception
     {
         DefaultFilterEntry filterEntry = new DefaultFilterEntry(11221, "test", 1);
         filterEntry.setCreatedDateTime(1l);
@@ -208,11 +202,11 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void deleteByClientIdAndCriteriaWithWrongUser() throws Exception
+    void deleteByClientIdAndCriteriaWithWrongUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
-        Mockito.verifyZeroInteractions(managementFilterService);
+        Mockito.verifyNoInteractions(managementFilterService);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/filter/?criteria=111&clientId=Test")
             .accept(MediaType.APPLICATION_JSON_VALUE);
@@ -224,7 +218,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void deleteByClientIdAndCriteria() throws Exception
+    void deleteByClientIdAndCriteria() throws Exception
     {
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/filter/?criteria=111&clientId=Test")
@@ -240,7 +234,7 @@ public class FilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testCreate() throws Exception
+    void testCreate() throws Exception
     {
         DefaultFilterEntry filterEntry = new DefaultFilterEntry(11221, "test", 1);
         filterEntry.setCreatedDateTime(1l);

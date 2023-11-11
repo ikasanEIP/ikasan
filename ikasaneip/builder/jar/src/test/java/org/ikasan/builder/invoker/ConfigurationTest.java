@@ -41,123 +41,124 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.*;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>Configuration</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ConfigurationTest
+class ConfigurationTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_consumerInvoker_instantiation()
+    void Configuration_test_consumerInvoker_instantiation()
     {
-        Assert.assertTrue("ConsumerInvoker should create a VanillaInvokerConfigurationBuilder", Configuration.consumerInvoker() instanceof VanillaInvokerConfigurationBuilder);
-        Assert.assertTrue("ConsumerInvokerBuilder should create an InvokerConfiguration", Configuration.consumerInvoker().build() instanceof InvokerConfiguration);
+        assertTrue(Configuration.consumerInvoker() instanceof VanillaInvokerConfigurationBuilder, "ConsumerInvoker should create a VanillaInvokerConfigurationBuilder");
+        assertTrue(Configuration.consumerInvoker().build() instanceof InvokerConfiguration, "ConsumerInvokerBuilder should create an InvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_producerInvoker_instantiation()
+    void Configuration_test_producerInvoker_instantiation()
     {
-        Assert.assertTrue("ProducerInvoker should create a VanillaInvokerConfigurationBuilder", Configuration.producerInvoker() instanceof VanillaInvokerConfigurationBuilder);
-        Assert.assertTrue("ProducerInvokerBuilder should create an InvokerConfiguration", Configuration.producerInvoker().build() instanceof InvokerConfiguration);
+        assertTrue(Configuration.producerInvoker() instanceof VanillaInvokerConfigurationBuilder, "ProducerInvoker should create a VanillaInvokerConfigurationBuilder");
+        assertTrue(Configuration.producerInvoker().build() instanceof InvokerConfiguration, "ProducerInvokerBuilder should create an InvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_converterInvoker_instantiation()
+    void Configuration_test_converterInvoker_instantiation()
     {
-        Assert.assertTrue("ConverterInvoker should create a VanillaInvokerConfigurationBuilder", Configuration.converterInvoker() instanceof VanillaInvokerConfigurationBuilder);
-        Assert.assertTrue("ConverterInvokerBuilder should create an InvokerConfiguration", Configuration.converterInvoker().build() instanceof InvokerConfiguration);
+        assertTrue(Configuration.converterInvoker() instanceof VanillaInvokerConfigurationBuilder, "ConverterInvoker should create a VanillaInvokerConfigurationBuilder");
+        assertTrue(Configuration.converterInvoker().build() instanceof InvokerConfiguration, "ConverterInvokerBuilder should create an InvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_brokerInvoker_instantiation()
+    void Configuration_test_brokerInvoker_instantiation()
     {
-        Assert.assertTrue("BrokerInvoker should create a VanillaInvokerConfigurationBuilder", Configuration.brokerInvoker() instanceof VanillaInvokerConfigurationBuilder);
-        Assert.assertTrue("BrokerInvokerBuilder should create an InvokerConfiguration", Configuration.brokerInvoker().build() instanceof InvokerConfiguration);
+        assertTrue(Configuration.brokerInvoker() instanceof VanillaInvokerConfigurationBuilder, "BrokerInvoker should create a VanillaInvokerConfigurationBuilder");
+        assertTrue(Configuration.brokerInvoker().build() instanceof InvokerConfiguration, "BrokerInvokerBuilder should create an InvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_sequencerInvoker_instantiation()
+    void Configuration_test_sequencerInvoker_instantiation()
     {
-        Assert.assertTrue("SequencerInvoker should create a VanillaInvokerConfigurationBuilder", Configuration.sequencerInvoker() instanceof VanillaInvokerConfigurationBuilder);
-        Assert.assertTrue("SequencerInvokerBuilder should create an InvokerConfiguration", Configuration.sequencerInvoker().build() instanceof InvokerConfiguration);
+        assertTrue(Configuration.sequencerInvoker() instanceof VanillaInvokerConfigurationBuilder, "SequencerInvoker should create a VanillaInvokerConfigurationBuilder");
+        assertTrue(Configuration.sequencerInvoker().build() instanceof InvokerConfiguration, "SequencerInvokerBuilder should create an InvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_translatorInvoker_instantiation()
+    void Configuration_test_translatorInvoker_instantiation()
     {
-        Assert.assertTrue("TranslatorInvoker should create a TranslatorInvokerConfigurationBuilder", Configuration.translatorInvoker() instanceof TranslatorInvokerConfigurationBuilder);
-        Assert.assertTrue("TranslatorInvokerBuilder should create an TranslatorInvokerConfiguration", Configuration.translatorInvoker().build() instanceof TranslatorInvokerConfiguration);
+        assertTrue(Configuration.translatorInvoker() instanceof TranslatorInvokerConfigurationBuilder, "TranslatorInvoker should create a TranslatorInvokerConfigurationBuilder");
+        assertTrue(Configuration.translatorInvoker().build() instanceof TranslatorInvokerConfiguration, "TranslatorInvokerBuilder should create an TranslatorInvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_singleRecipientRouterInvoker_instantiation()
+    void Configuration_test_singleRecipientRouterInvoker_instantiation()
     {
-        Assert.assertTrue("SingleRecipientRouterInvoker should create a VanillaInvokerConfigurationBuilder", Configuration.singleRecipientRouterInvoker() instanceof VanillaInvokerConfigurationBuilder);
-        Assert.assertTrue("SingleRecipientRouterInvokerBuilder should create an InvokerConfiguration", Configuration.singleRecipientRouterInvoker().build() instanceof InvokerConfiguration);
+        assertTrue(Configuration.singleRecipientRouterInvoker() instanceof VanillaInvokerConfigurationBuilder, "SingleRecipientRouterInvoker should create a VanillaInvokerConfigurationBuilder");
+        assertTrue(Configuration.singleRecipientRouterInvoker().build() instanceof InvokerConfiguration, "SingleRecipientRouterInvokerBuilder should create an InvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_multiRecipientRouterInvoker_instantiation()
+    void Configuration_test_multiRecipientRouterInvoker_instantiation()
     {
-        Assert.assertTrue("MultiRecipientRouterInvoker should create a MultiRecipientRouterInvokerConfigurationBuilder", Configuration.multiRecipientRouterInvoker() instanceof MultiRecipientRouterInvokerConfigurationBuilder);
-        Assert.assertTrue("MultiRecipientRouterInvokerBuilder should create an MultiRecipientRouterInvokerConfiguration", Configuration.multiRecipientRouterInvoker().build() instanceof MultiRecipientRouterInvokerConfiguration);
+        assertTrue(Configuration.multiRecipientRouterInvoker() instanceof MultiRecipientRouterInvokerConfigurationBuilder, "MultiRecipientRouterInvoker should create a MultiRecipientRouterInvokerConfigurationBuilder");
+        assertTrue(Configuration.multiRecipientRouterInvoker().build() instanceof MultiRecipientRouterInvokerConfiguration, "MultiRecipientRouterInvokerBuilder should create an MultiRecipientRouterInvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_filterInvoker_instantiation()
+    void Configuration_test_filterInvoker_instantiation()
     {
-        Assert.assertTrue("FilterInvoker should create a FilterInvokerConfigurationBuilder", Configuration.filterInvoker() instanceof FilterInvokerConfigurationBuilder);
-        Assert.assertTrue("FilterInvokerBuilder should create an FilterInvokerConfiguration", Configuration.filterInvoker().build() instanceof FilterInvokerConfiguration);
+        assertTrue(Configuration.filterInvoker() instanceof FilterInvokerConfigurationBuilder, "FilterInvoker should create a FilterInvokerConfigurationBuilder");
+        assertTrue(Configuration.filterInvoker().build() instanceof FilterInvokerConfiguration, "FilterInvokerBuilder should create an FilterInvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_splitterInvoker_instantiation()
+    void Configuration_test_splitterInvoker_instantiation()
     {
-        Assert.assertTrue("SplitterInvoker should create a SplitterInvokerConfigurationBuilder", Configuration.splitterInvoker() instanceof SplitterInvokerConfigurationBuilder);
-        Assert.assertTrue("SplitterInvokerBuilder should create an SplitterInvokerConfiguration", Configuration.splitterInvoker().build() instanceof SplitterInvokerConfiguration);
+        assertTrue(Configuration.splitterInvoker() instanceof SplitterInvokerConfigurationBuilder, "SplitterInvoker should create a SplitterInvokerConfigurationBuilder");
+        assertTrue(Configuration.splitterInvoker().build() instanceof SplitterInvokerConfiguration, "SplitterInvokerBuilder should create an SplitterInvokerConfiguration");
     }
 
     /**
      * Test successful builder.
      */
     @Test
-    public void Configuration_test_concurrentSplitterInvoker_instantiation()
+    void Configuration_test_concurrentSplitterInvoker_instantiation()
     {
-        Assert.assertTrue("ConcurrentSplitterInvoker should create a ConcurrentSplitterInvokerConfigurationBuilder", Configuration.concurrentSplitterInvoker() instanceof ConcurrentSplitterInvokerConfigurationBuilder);
-        Assert.assertTrue("ConcurrentSplitterInvokerBuilder should create an ConcurrentSplitterInvokerConfiguration", Configuration.concurrentSplitterInvoker().build() instanceof ConcurrentSplitterInvokerConfiguration);
+        assertTrue(Configuration.concurrentSplitterInvoker() instanceof ConcurrentSplitterInvokerConfigurationBuilder, "ConcurrentSplitterInvoker should create a ConcurrentSplitterInvokerConfigurationBuilder");
+        assertTrue(Configuration.concurrentSplitterInvoker().build() instanceof ConcurrentSplitterInvokerConfiguration, "ConcurrentSplitterInvokerBuilder should create an ConcurrentSplitterInvokerConfiguration");
     }
 }

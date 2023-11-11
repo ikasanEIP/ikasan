@@ -45,9 +45,10 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
-import org.junit.Assert;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ClientCommandLsException;
@@ -55,13 +56,13 @@ import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the AbstractBaseFileTransferTransactionalResourceCommand class
  * @author Ikasan Development Team
  */
-public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
+class AbstractBaseFileTransferTransactionalResourceCommandTest extends
         AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** Mockery for mocking test objects */
@@ -78,8 +79,8 @@ public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
      * @throws URISyntaxException Could not locate file
      */
     @Test
-    public void testFindFile_withExactlyMatchingPath() throws ResourceException, ClientCommandLsException,
-            URISyntaxException
+    void testFindFile_withExactlyMatchingPath() throws ResourceException, ClientCommandLsException,
+        URISyntaxException
     {
         setTransactionalResource(fileTransferClient);
         final String directoryPath = "parentDir"+File.pathSeparator+"subDir";
@@ -96,8 +97,7 @@ public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
             }
         });
         ClientListEntry identifiedFile = findFile(directoryPath + "/" + fileName);
-        Assert.assertEquals("file identified by findFile should be the one that matches on path and filename",
-            clientListEntry, identifiedFile);
+        assertEquals(clientListEntry, identifiedFile, "file identified by findFile should be the one that matches on path and filename");
     }
 
     /**
@@ -111,8 +111,8 @@ public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
      * @throws URISyntaxException Could not locate file
      */
     @Test
-    public void testFindFile_withSimilarlyEndingPath() throws ResourceException, ClientCommandLsException,
-            URISyntaxException
+    void testFindFile_withSimilarlyEndingPath() throws ResourceException, ClientCommandLsException,
+        URISyntaxException
     {
         setTransactionalResource(fileTransferClient);
         final String directoryPath = "parentDir"+File.separator+"subDir";
@@ -129,10 +129,9 @@ public class AbstractBaseFileTransferTransactionalResourceCommandTest extends
             }
         });
         ClientListEntry identifiedFile = findFile(directoryPath + "/" + fileName);
-        Assert
-            .assertNull(
-                "no file should be identified when the only dir entry is one with a file name ending with the requested file name, but not matching it",
-                identifiedFile);
+        assertNull(
+                identifiedFile,
+                "no file should be identified when the only dir entry is one with a file name ending with the requested file name, but not matching it");
     }
 
     @Override

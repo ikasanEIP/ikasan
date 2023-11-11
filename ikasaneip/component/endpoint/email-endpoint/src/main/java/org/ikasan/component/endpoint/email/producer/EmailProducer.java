@@ -47,11 +47,11 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
-import javax.activation.DataHandler;
-import javax.activation.DataSource;
-import javax.mail.*;
-import javax.mail.internet.*;
-import javax.mail.util.ByteArrayDataSource;
+import jakarta.activation.DataHandler;
+import jakarta.activation.DataSource;
+import jakarta.mail.*;
+import jakarta.mail.internet.*;
+import jakarta.mail.util.ByteArrayDataSource;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -222,7 +222,7 @@ public class EmailProducer implements Producer<EmailPayload>, ManagedResource, C
         else
         {
             session = Session.getInstance(mailProperties,
-                    new javax.mail.Authenticator() {
+                    new jakarta.mail.Authenticator() {
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(
                                     configuration.getUser(), configuration.getPassword());

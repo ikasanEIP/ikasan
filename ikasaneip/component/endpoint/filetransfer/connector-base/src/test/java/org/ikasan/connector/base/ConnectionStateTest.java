@@ -39,12 +39,13 @@
  * ====================================================================
  */
 package org.ikasan.connector.base;
-
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Connector State Test Class
@@ -52,63 +53,68 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-public class ConnectionStateTest
+class ConnectionStateTest
 {
     /** Logger */
     private static Logger logger = LoggerFactory.getLogger(ConnectionStateTest.class);
-    
+
     /**
      * Setup before each test
      */
-    @Before public void setUp()
+    @BeforeEach
+    void setUp()
     {
         // nothing to setup
         logger.info("setUp");
     }
-    
+
     /**
      * Test the isDisconnected method
      */
-    @Test public void testIsDisconnected()
+    @Test
+    void testIsDisconnected()
     {
         ConnectionState state = ConnectionState.DISCONNECTED;
-        Assert.assertEquals(state.isDisconnected(), true);
-        Assert.assertEquals(state.isConnectionOpen(), false);
-        Assert.assertEquals(state.isConnectionClosed(), true);
-        Assert.assertEquals(state.isSessionOpen(), false);
-        Assert.assertEquals(state.isSessionClosed(), true);
+        assertTrue(state.isDisconnected());
+        assertFalse(state.isConnectionOpen());
+        assertTrue(state.isConnectionClosed());
+        assertFalse(state.isSessionOpen());
+        assertTrue(state.isSessionClosed());
     }
 
     /**
      * Test the isConnected method
      */
-    @Test public void testIsConnected()
+    @Test
+    void testIsConnected()
     {
         ConnectionState state = ConnectionState.CONNECTED;
-        Assert.assertEquals(state.isDisconnected(), false);
-        Assert.assertEquals(state.isConnectionOpen(), true);
-        Assert.assertEquals(state.isConnectionClosed(), false);
-        Assert.assertEquals(state.isSessionOpen(), false);
-        Assert.assertEquals(state.isSessionClosed(), true);
+        assertFalse(state.isDisconnected());
+        assertTrue(state.isConnectionOpen());
+        assertFalse(state.isConnectionClosed());
+        assertFalse(state.isSessionOpen());
+        assertTrue(state.isSessionClosed());
     }
 
     /**
      * Test the isSessionOpen method
      */
-    @Test public void testIsSessionOpen()
+    @Test
+    void testIsSessionOpen()
     {
         ConnectionState state = ConnectionState.SESSION_OPEN;
-        Assert.assertEquals(state.isDisconnected(), false);
-        Assert.assertEquals(state.isConnectionOpen(), true);
-        Assert.assertEquals(state.isConnectionClosed(), false);
-        Assert.assertEquals(state.isSessionOpen(), true);
-        Assert.assertEquals(state.isSessionClosed(), false);
+        assertFalse(state.isDisconnected());
+        assertTrue(state.isConnectionOpen());
+        assertFalse(state.isConnectionClosed());
+        assertTrue(state.isSessionOpen());
+        assertFalse(state.isSessionClosed());
     }
 
     /**
      * Tear down after each test
      */
-    @After public void tearDown()
+    @AfterEach
+    void tearDown()
     {
         // nothing to tear down
         logger.info("tearDown");

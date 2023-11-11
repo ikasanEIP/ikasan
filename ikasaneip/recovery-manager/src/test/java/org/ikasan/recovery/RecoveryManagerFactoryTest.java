@@ -48,17 +48,19 @@ import org.ikasan.spec.recovery.RecoveryManagerFactory;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>RecoveryManagerFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class RecoveryManagerFactoryTest
+class RecoveryManagerFactoryTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -89,19 +91,23 @@ public class RecoveryManagerFactoryTest
     /**
      * Test failed constructor due to null scheduler.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullScheduler()
+    @Test
+    void test_failed_constructorDueToNullScheduler()
     {
-        new ScheduledRecoveryManagerFactory(null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRecoveryManagerFactory(null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null scheduledJobFactory.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullScheduledJobFactory()
+    @Test
+    void test_failed_constructorDueToNullScheduledJobFactory()
     {
-        new ScheduledRecoveryManagerFactory(scheduler, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ScheduledRecoveryManagerFactory(scheduler, null);
+        });
     }
 
     /**
@@ -109,10 +115,10 @@ public class RecoveryManagerFactoryTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_successful_getRecovery_instance() throws SchedulerException
+    void test_successful_getRecovery_instance() throws SchedulerException
     {
         RecoveryManagerFactory recoveryManagerFactory = new ScheduledRecoveryManagerFactory(scheduler, scheduledJobFactory);
-        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName") instanceof ScheduledRecoveryManager);
+        assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName") instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }
@@ -122,10 +128,10 @@ public class RecoveryManagerFactoryTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_successful_getRecovery_instance_with_resolver() throws SchedulerException
+    void test_successful_getRecovery_instance_with_resolver() throws SchedulerException
     {
         RecoveryManagerFactory recoveryManagerFactory = new ScheduledRecoveryManagerFactory(scheduler, scheduledJobFactory);
-        Assert.assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName") instanceof ScheduledRecoveryManager);
+        assertTrue(recoveryManagerFactory.getRecoveryManager("flowName", "moduleName") instanceof ScheduledRecoveryManager);
         
         mockery.assertIsSatisfied();
     }

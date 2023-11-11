@@ -45,11 +45,13 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Functional unit test cases for
@@ -57,7 +59,7 @@ import javax.jms.MapMessage;
  *
  * @author Ikasan Development Team
  */
-public class JmsMapSinglePayloadConverterTest
+class JmsMapSinglePayloadConverterTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -78,7 +80,7 @@ public class JmsMapSinglePayloadConverterTest
      * Test successful invocation of the converter
      */
     @Test
-    public void test_successful_convert_payload_present() throws JMSException
+    void test_successful_convert_payload_present() throws JMSException
     {
         final String payload = "payload";
 
@@ -92,7 +94,7 @@ public class JmsMapSinglePayloadConverterTest
         });
 
         Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
-        Assert.assertEquals("payload", new String(converter.convert(mapMessage)));
+        assertEquals("payload", new String(converter.convert(mapMessage)));
 
         mockery.assertIsSatisfied();
     }
@@ -100,9 +102,39 @@ public class JmsMapSinglePayloadConverterTest
     /**
      * Test successful invocation of the converter
      */
-    @Test(expected = TransformationException.class)
-    public void test_successful_convert_payload_completely_missing() throws JMSException
+    @Test
+    void test_successful_convert_payload_completely_missing() throws JMSException
     {
+        assertThrows(TransformationException.class, () -> {
+            // set test expectations
+            mockery.checking(new Expectations()
+            {
+                {
+                    // try i8 first
+                    exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
+                    will(returnValue(null));
+
+                    // try i7 next
+                    exactly(1).of(mapMessage).getBytes("payload_0_content");
+                    will(returnValue(null));
+                }
+            });
+
+            Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
+            converter.convert(mapMessage);
+
+            mockery.assertIsSatisfied();
+        });
+    }
+
+    /**
+     * Test successful invocation of the converter
+     */
+    @Test
+    void test_successful_convert_i8_payload_missing() throws JMSException
+    {
+        final String payload = "payload";
+
         // set test expectations
         mockery.checking(new Expectations()
         {
@@ -113,7 +145,7 @@ public class JmsMapSinglePayloadConverterTest
 
                 // try i7 next
                 exactly(1).of(mapMessage).getBytes("payload_0_content");
-                will(returnValue(null));
+                will(returnValue(payload.getBytes()));
             }
         });
 
@@ -127,49 +159,23 @@ public class JmsMapSinglePayloadConverterTest
      * Test successful invocation of the converter
      */
     @Test
-    public void test_successful_convert_i8_payload_missing() throws JMSException
+    void test_successful_convert_failed_with_JMSException() throws JMSException
     {
-        final String payload = "payload";
-
-        // set test expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(TransformationException.class, () -> {
+            // set test expectations
+            mockery.checking(new Expectations()
             {
-                // try i8 first
-                exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
-                will(returnValue(null));
+                {
+                    exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
+                    will(throwException(new JMSException("test")));
+                }
+            });
 
-                // try i7 next
-                exactly(1).of(mapMessage).getBytes("payload_0_content");
-                will(returnValue(payload.getBytes()));
-            }
+            Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
+            converter.convert(mapMessage);
+
+            mockery.assertIsSatisfied();
         });
-
-        Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
-        converter.convert(mapMessage);
-
-        mockery.assertIsSatisfied();
-    }
-
-    /**
-     * Test successful invocation of the converter
-     */
-    @Test(expected = TransformationException.class)
-    public void test_successful_convert_failed_with_JMSException() throws JMSException
-    {
-        // set test expectations
-        mockery.checking(new Expectations()
-        {
-            {
-                exactly(1).of(mapMessage).getBytes("PAYLOAD_0_CONTENT");
-                will(throwException(new JMSException("test")));
-            }
-        });
-
-        Converter<MapMessage, byte[]> converter = new JmsMapSinglePayloadConverter();
-        converter.convert(mapMessage);
-
-        mockery.assertIsSatisfied();
     }
 
 }

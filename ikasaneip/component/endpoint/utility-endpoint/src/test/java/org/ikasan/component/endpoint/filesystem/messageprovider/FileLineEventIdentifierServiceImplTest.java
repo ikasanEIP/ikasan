@@ -41,20 +41,21 @@
 package org.ikasan.component.endpoint.filesystem.messageprovider;
 
 import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Functional unit test cases for <code>FileLineEventIdentifierServiceImpl</code>.
  *
  * @author Ikasan Development Team
  */
-public class FileLineEventIdentifierServiceImplTest
+class FileLineEventIdentifierServiceImplTest
 {
     private File file = Mockito.mock(File.class);
 
@@ -62,7 +63,7 @@ public class FileLineEventIdentifierServiceImplTest
      * Test single file getIndentifier.
      */
     @Test
-    public void test_get_identifier_single_file()
+    void test_get_identifier_single_file()
     {
         String expectedIdentifier = "my_prefix_filename";
         final List<File> filenames = new ArrayList<File>();
@@ -76,7 +77,7 @@ public class FileLineEventIdentifierServiceImplTest
             "my_prefix");
         String identifier = managedEventIdentifierService.getEventIdentifier(filenames);
 
-        Assert.assertTrue(identifier.equals(expectedIdentifier));
+        assertEquals(identifier, expectedIdentifier);
         Mockito.verify(file).getName();
         Mockito.verifyNoMoreInteractions(file);
     }
@@ -85,7 +86,7 @@ public class FileLineEventIdentifierServiceImplTest
      * Test single file getIndentifier.
      */
     @Test
-    public void test_get_identifier_multiple_files()
+    void test_get_identifier_multiple_files()
     {
         String expectedIdentifier = "my_prefix_filename1_filename2_filename3";
         final List<File> filenames = new ArrayList<File>();
@@ -106,7 +107,7 @@ public class FileLineEventIdentifierServiceImplTest
             "my_prefix");
         String identifier = managedEventIdentifierService.getEventIdentifier(filenames);
 
-        Assert.assertTrue(identifier.equals(expectedIdentifier));
+        assertEquals(identifier, expectedIdentifier);
         Mockito.verify(file,Mockito.times(3)).getName();
         Mockito.verifyNoMoreInteractions(file);
     }
@@ -115,7 +116,7 @@ public class FileLineEventIdentifierServiceImplTest
      * Test single file getIndentifier.
      */
     @Test
-    public void test_get_identifier_no_files()
+    void test_get_identifier_no_files()
     {
         String expectedIdentifier = "my_prefix";
         final List<File> filenames = new ArrayList<File>();
@@ -127,7 +128,7 @@ public class FileLineEventIdentifierServiceImplTest
             "my_prefix");
         String identifier = managedEventIdentifierService.getEventIdentifier(filenames);
 
-        Assert.assertTrue(identifier.equals(expectedIdentifier));
+        assertEquals(identifier, expectedIdentifier);
         Mockito.verifyNoMoreInteractions(file);
     }
 

@@ -52,19 +52,21 @@ import org.ikasan.spec.monitor.Notifier;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * This test class supports the <code>MonitorBuilder</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class MonitorBuilderTest
+class MonitorBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -100,35 +102,41 @@ public class MonitorBuilderTest
     /**
      * Test failed constructor.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_no_monitorFactory()
+    @Test
+    void test_failed_constructor_no_monitorFactory()
     {
-        new MonitorBuilder(null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new MonitorBuilder(null, null, null);
+        });
     }
 
     /**
      * Test failed constructor.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_no_notifierFactory()
+    @Test
+    void test_failed_constructor_no_notifierFactory()
     {
-        new MonitorBuilder(monitorFactory, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new MonitorBuilder(monitorFactory, null, null);
+        });
     }
 
     /**
      * Test failed constructor.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructor_no_platform_configuration()
+    @Test
+    void test_failed_constructor_no_platform_configuration()
     {
-        new MonitorBuilder(monitorFactory, notifierFactory, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new MonitorBuilder(monitorFactory, notifierFactory, null);
+        });
     }
 
     /**
      * Test successful monitor with dashboard notifier.
      */
     @Test
-    public void test_successful_flowStateChangeMonitor_withDashboardNotifier()
+    void test_successful_flowStateChangeMonitor_withDashboardNotifier()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
         notifiers.add(dashboardNotifier);
@@ -157,7 +165,7 @@ public class MonitorBuilderTest
         MonitorBuilder monitorBuilder = builderFactory.getMonitorBuilder();
         Monitor monitor = monitorBuilder.withFlowStateChangeMonitor()
                 .withDashboardNotifier().build();
-        Assert.assertNotNull("monitor cannot be 'null'", monitor);
+        assertNotNull(monitor, "monitor cannot be 'null'");
         mockery.assertIsSatisfied();
     }
 
@@ -165,7 +173,7 @@ public class MonitorBuilderTest
      * Test successful monitor with email notifier.
      */
     @Test
-    public void test_successful_flowStateChangeMonitor_withEmailNotifier()
+    void test_successful_flowStateChangeMonitor_withEmailNotifier()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
         notifiers.add(notifier);
@@ -196,7 +204,7 @@ public class MonitorBuilderTest
         MonitorBuilder monitorBuilder = builderFactory.getMonitorBuilder();
         Monitor monitor = monitorBuilder.withFlowStateChangeMonitor()
                 .withEmailNotifier(emailNotifierConfiguration).build();
-        Assert.assertNotNull("monitor cannot be 'null'", monitor);
+        assertNotNull(monitor, "monitor cannot be 'null'");
         mockery.assertIsSatisfied();
     }
 
@@ -204,7 +212,7 @@ public class MonitorBuilderTest
      * Test successful monitor with multiple notifiers.
      */
     @Test
-    public void test_successful_flowStateChangeMonitor_multipleNotifiers()
+    void test_successful_flowStateChangeMonitor_multipleNotifiers()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
         notifiers.add(dashboardNotifier);
@@ -238,7 +246,7 @@ public class MonitorBuilderTest
         MonitorBuilder monitorBuilder = builderFactory.getMonitorBuilder();
         Monitor monitor = monitorBuilder.withFlowStateChangeMonitor()
                 .withDashboardNotifier().withEmailNotifier(emailNotifierConfiguration).build();
-        Assert.assertNotNull("monitor cannot be 'null'", monitor);
+        assertNotNull(monitor, "monitor cannot be 'null'");
         mockery.assertIsSatisfied();
     }
 
@@ -246,7 +254,7 @@ public class MonitorBuilderTest
      * Test successful monitor with custom notifier.
      */
     @Test
-    public void test_successful_flowStateChangeMonitor_custom_notifier()
+    void test_successful_flowStateChangeMonitor_custom_notifier()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
         notifiers.add(notifier);
@@ -272,7 +280,7 @@ public class MonitorBuilderTest
         builderFactory.setApplicationContext(applicationContext);
         MonitorBuilder monitorBuilder = builderFactory.getMonitorBuilder();
         Monitor monitor = monitorBuilder.withFlowStateChangeMonitor().withNotifier(notifier).build();
-        Assert.assertNotNull("monitor cannot be 'null'", monitor);
+        assertNotNull(monitor, "monitor cannot be 'null'");
         mockery.assertIsSatisfied();
     }
 
@@ -280,7 +288,7 @@ public class MonitorBuilderTest
      * Test successful monitor with multiple custom notifiers.
      */
     @Test
-    public void test_successful_flowStateChangeMonitor_custom_notifiers()
+    void test_successful_flowStateChangeMonitor_custom_notifiers()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
         notifiers.add(notifier);
@@ -310,7 +318,7 @@ public class MonitorBuilderTest
                 .withNotifier(notifier)
                 .withNotifier(notifier)
                 .build();
-        Assert.assertNotNull("monitor cannot be 'null'", monitor);
+        assertNotNull(monitor, "monitor cannot be 'null'");
         mockery.assertIsSatisfied();
     }
 
@@ -318,7 +326,7 @@ public class MonitorBuilderTest
      * Test successful monitor with custom monitor.
      */
     @Test
-    public void test_successful_flowStateChangeMonitor_custom_monitor()
+    void test_successful_flowStateChangeMonitor_custom_monitor()
     {
         List<Notifier> notifiers = new ArrayList<Notifier>();
         notifiers.add(notifier);
@@ -344,7 +352,7 @@ public class MonitorBuilderTest
         Monitor _monitor = monitorBuilder.withMonitor(monitor)
                 .withNotifier(notifier)
                 .build();
-        Assert.assertNotNull("monitor cannot be 'null'", _monitor);
+        assertNotNull(_monitor, "monitor cannot be 'null'");
         mockery.assertIsSatisfied();
     }
 }

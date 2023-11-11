@@ -51,10 +51,10 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
-import javax.transaction.xa.Xid;
+import jakarta.resource.ResourceException;
+import jakarta.transaction.xa.Xid;
 import java.util.Map;
 
 /**
@@ -62,7 +62,7 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team 
  */
-public class CleanupChunksCommandTest
+class CleanupChunksCommandTest
 {
     /**
      * Test that when the commit method is called, it in turn calls the 
@@ -73,7 +73,7 @@ public class CleanupChunksCommandTest
      * @throws TransactionJournalingException 
      */
     @Test
-    public void testExecuteAndCommit() throws ResourceException, TransactionJournalingException{
+    void testExecuteAndCommit() throws ResourceException, TransactionJournalingException{
         
         Mockery interfaceMockery = new Mockery();
         

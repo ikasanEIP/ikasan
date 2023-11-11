@@ -47,9 +47,9 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Functional unit test cases for
@@ -57,7 +57,7 @@ import javax.resource.ResourceException;
  * 
  * @author Ikasan Development Team
  */
-public class JsonXmlConverterTest
+class JsonXmlConverterTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -76,7 +76,7 @@ public class JsonXmlConverterTest
      * Test successful invocation the converter for marshalling JSON to XML
      */
     @Test
-    public void test_successful_json_unmarshall() throws ResourceException
+    void test_successful_json_unmarshall() throws ResourceException
     {
         final JSONObject jsonObject = new JSONObject();
 

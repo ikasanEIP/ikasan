@@ -40,8 +40,12 @@
  */
 package org.ikasan.cli.shell.operation.model;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ProcessType</code> class.
@@ -54,33 +58,33 @@ class ProcessTypeTest
     void successful_h2_instance()
     {
         ProcessType h2Instance = ProcessType.getH2Instance();
-        Assert.assertTrue(h2Instance.getName().equals("H2"));
-        Assert.assertTrue(h2Instance.isPersist());
-        Assert.assertTrue(h2Instance.getOutputLog().equals("logs/h2.log"));
-        Assert.assertTrue(h2Instance.getErrorLog().equals("logs/h2.log"));
-        Assert.assertTrue(h2Instance.getCommandSignature().equals("org.h2.tools.Server"));
+        assertEquals("H2", h2Instance.getName());
+        assertTrue(h2Instance.isPersist());
+        assertEquals("logs/h2.log", h2Instance.getOutputLog());
+        assertEquals("logs/h2.log", h2Instance.getErrorLog());
+        assertEquals("org.h2.tools.Server", h2Instance.getCommandSignature());
     }
 
     @Test
     void successful_module_instance()
     {
         ProcessType moduleInstance = ProcessType.getModuleInstance();
-        Assert.assertTrue(moduleInstance.getName().equals("Module"));
-        Assert.assertTrue(moduleInstance.isPersist());
-        Assert.assertTrue(moduleInstance.getOutputLog().equals("logs/application.log"));
-        Assert.assertTrue(moduleInstance.getErrorLog().equals("logs/application.log"));
-        Assert.assertTrue(moduleInstance.getCommandSignature().equals("spring.jta.logDir"));
+        assertEquals("Module", moduleInstance.getName());
+        assertTrue(moduleInstance.isPersist());
+        assertEquals("logs/application.log", moduleInstance.getOutputLog());
+        assertEquals("logs/application.log", moduleInstance.getErrorLog());
+        assertEquals("spring.jta.logDir", moduleInstance.getCommandSignature());
     }
 
     @Test
     void successful_generic_instance()
     {
         ProcessType genericInstance = ProcessType.getGenericInstance();
-        Assert.assertTrue(genericInstance.getName().equals(""));
-        Assert.assertTrue(!genericInstance.isPersist());
-        Assert.assertNull(genericInstance.getOutputLog());
-        Assert.assertNull(genericInstance.getErrorLog());
-        Assert.assertNull(genericInstance.getCommandSignature());
+        assertEquals("", genericInstance.getName());
+        assertFalse(genericInstance.isPersist());
+        assertNull(genericInstance.getOutputLog());
+        assertNull(genericInstance.getErrorLog());
+        assertNull(genericInstance.getCommandSignature());
     }
 }
 

@@ -17,41 +17,62 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
+ <dependencies>
+  <dependency>
+   <groupId>jakarta.transaction</groupId>
+   <artifactId>jakarta.transaction-api</artifactId>
+   <version>2.0.1.redhat-00004</version>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-eip-standalone</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-eip-standalone</artifactId>
+   <version>${project.version}</version>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-big-queue</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-big-queue</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-jms-spring-arjuna</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-jms-spring-arjuna</artifactId>
+   <version>${project.version}</version>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-h2-standalone-persistence</artifactId>
+   <version>${project.version}</version>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-setup</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-setup</artifactId>
+   <version>${project.version}</version>
+  </dependency>
+  <dependency>
+   <groupId>jakarta.jms</groupId>
+   <artifactId>jakarta.jms-api</artifactId>
+   <version>3.1.0.redhat-00003</version>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test</artifactId>
-            <scope>test</scope>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-test</artifactId>
+   <scope>test</scope>
+   <exclusions>
+    <exclusion>
+     <groupId>junit</groupId>
+     <artifactId>junit</artifactId>
+    </exclusion>
+    <exclusion>
+     <groupId>org.junit.vintage</groupId>
+     <artifactId>junit-vintage-engine</artifactId>
+    </exclusion>
+   </exclusions>
         </dependency>
 
         <dependency>

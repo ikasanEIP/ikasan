@@ -42,11 +42,13 @@ package org.ikasan.ootb.scheduled;
 
 import org.ikasan.ootb.scheduled.dryrun.DryRunModeServiceImpl;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 /**
  * Dry run service related configuration required by the scheduler ootb module.
  */
+@AutoConfiguration
 public class DryRunServiceAutoConfiguration {
     @Bean
     public DryRunModeService dryRunModeService() {

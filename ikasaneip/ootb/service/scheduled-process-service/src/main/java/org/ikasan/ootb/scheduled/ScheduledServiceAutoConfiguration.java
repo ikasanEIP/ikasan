@@ -53,6 +53,7 @@ import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
 import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -65,6 +66,7 @@ import java.util.Properties;
 /**
  * Scheduler service related configuration required by the scheduler ootb module.
  */
+@AutoConfiguration
 public class ScheduledServiceAutoConfiguration
 {
     public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";

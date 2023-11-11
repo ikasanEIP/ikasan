@@ -57,155 +57,166 @@
     <name>Ikasan Exclusion Service</name>
     <description>Default Ikasan Exclusion Service for the Ikasan Enterprise Integration Platform</description>
 
-    <dependencies>
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-exclusion</artifactId>
-        </dependency>
+ <dependencies>
+  <dependency>
+   <groupId>jakarta.persistence</groupId>
+   <artifactId>jakarta.persistence-api</artifactId>
+   <version>3.1.0.redhat-00002</version>
+  </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-exclusion</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-configuration</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-configuration</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-management</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-management</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-flow</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-flow</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-serialiser</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-serialiser</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-persistence</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-persistence</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-persistence</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-persistence</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.slf4j</groupId>
+   <artifactId>slf4j-api</artifactId>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-spec-housekeeping</artifactId>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-spec-housekeeping</artifactId>
+   <scope>provided</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
+  <dependency>
+   <groupId>org.hibernate.orm</groupId>
+   <artifactId>hibernate-core</artifactId>
+   <scope>provided</scope>
+   <version>6.1.7.Final</version>
+  </dependency>
 
-        <dependency>
-            <groupId>org.hibernate</groupId>
-            <artifactId>hibernate-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-orm</artifactId>
+   <scope>provided</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-context</artifactId>
+   <scope>provided</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-context</artifactId>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-serialiser</artifactId>
+   <exclusions>
+    <exclusion>
+     <groupId>org.ow2.asm</groupId>
+     <artifactId>asm</artifactId>
+    </exclusion>
+   </exclusions>
+   <scope>provided</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-serialiser</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.ow2.asm</groupId>
-                    <artifactId>asm</artifactId>
-                </exclusion>
-            </exclusions>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>com.google.guava</groupId>
+   <artifactId>guava</artifactId>
+   <scope>provided</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.glassfish.jaxb</groupId>
+   <artifactId>jaxb-runtime</artifactId>
+   <scope>provided</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>com.fasterxml.jackson.core</groupId>
+   <artifactId>jackson-databind</artifactId>
+   <scope>provided</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <scope>provided</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
+  <dependency>
+   <groupId>com.fasterxml.jackson.core</groupId>
+   <artifactId>jackson-core</artifactId>
+   <scope>provided</scope>
+  </dependency>
 
 
-        <!-- Test dependencies -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <!-- Test dependencies -->
+  <dependency>
+   <groupId>org.slf4j</groupId>
+   <artifactId>slf4j-simple</artifactId>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-aspects</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-aspects</artifactId>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.jmock</groupId>
+   <artifactId>jmock</artifactId>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.jmock</groupId>
-            <artifactId>jmock-imposters</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.jmock</groupId>
+   <artifactId>jmock-imposters</artifactId>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>org.junit.jupiter</groupId>
+   <artifactId>junit-jupiter</artifactId>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <dependency>
+   <groupId>net.bytebuddy</groupId>
+   <artifactId>byte-buddy</artifactId>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <dependency>
+   <groupId>org.springframework</groupId>
+   <artifactId>spring-test</artifactId>
+   <scope>test</scope>
+  </dependency>
 
-        <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <scope>test</scope>
-        </dependency>
+  <dependency>
+   <groupId>com.h2database</groupId>
+   <artifactId>h2</artifactId>
+   <scope>test</scope>
+  </dependency>
+  <dependency>
+   <groupId>jakarta.annotation</groupId>
+   <artifactId>jakarta.annotation-api</artifactId>
+   <version>2.1.1.redhat-00003</version>
+   <scope>test</scope>
+  </dependency>
 
         <dependency>
             <groupId>org.hamcrest</groupId>

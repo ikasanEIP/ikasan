@@ -52,10 +52,10 @@ import org.ikasan.connector.basefiletransfer.outbound.command.util.UniqueIdGener
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -68,7 +68,7 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public class DeliverBatchCommandTest
+class DeliverBatchCommandTest
 {
     /** we are dealing with pathnames so make sure we stay platform independent */
     final String FILE_SEPARATOR = System.getProperty("file.separator");
@@ -138,8 +138,8 @@ public class DeliverBatchCommandTest
      */
     final List<ClientListEntry> tempDirectoryListing = new ArrayList<ClientListEntry>();
 
-    @Before
-    public void setUp() throws URISyntaxException
+    @BeforeEach
+    void setUp() throws URISyntaxException
     {
         fileHandles.add(new FileHandle(nestedFile1.getPath(), new ByteArrayInputStream(content)));
         fileHandles.add(new FileHandle(nestedFile2.getPath(), new ByteArrayInputStream(content)));
@@ -163,9 +163,9 @@ public class DeliverBatchCommandTest
      * @throws URISyntaxException
      */
     @Test
-    public void testExecute() throws ClientCommandPwdException, ClientCommandCdException, ResourceException,
-            ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
-            URISyntaxException
+    void testExecute() throws ClientCommandPwdException, ClientCommandCdException, ResourceException,
+        ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
+        URISyntaxException
     {
         DeliverBatchCommand command = new DeliverBatchCommand(outputDir, overwriteExisting);
         Mockery interfaceMockery = new Mockery();
@@ -239,9 +239,9 @@ public class DeliverBatchCommandTest
      * @throws ClientCommandRenameException
      */
     @Test
-    public void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
-            ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
-            ResourceException, URISyntaxException, ClientCommandRenameException
+    void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
+        ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
+        ResourceException, URISyntaxException, ClientCommandRenameException
     {
         final String batchName = "filename.zip";
 
@@ -345,9 +345,9 @@ public class DeliverBatchCommandTest
      * @throws URISyntaxException
      */
     @Test
-    public void testRollback() throws ResourceException, ClientCommandPwdException, ClientCommandCdException,
-            ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
-            ClientException, URISyntaxException
+    void testRollback() throws ResourceException, ClientCommandPwdException, ClientCommandCdException,
+        ClientCommandPutException, ClientCommandLsException, ClientCommandMkdirException,
+        ClientException, URISyntaxException
     {
         DeliverBatchCommand command = new DeliverBatchCommand(outputDir, overwriteExisting);
         Mockery interfaceMockery = new Mockery();

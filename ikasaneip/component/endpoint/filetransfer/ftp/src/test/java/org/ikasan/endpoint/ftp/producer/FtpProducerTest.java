@@ -50,22 +50,23 @@ import org.ikasan.spec.component.endpoint.EndpointException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.*;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.ConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.ConnectionFactory;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-public class FtpProducerTest {
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+
+class FtpProducerTest {
 
 	private FtpProducer uut;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
 	final private Mockery mockery = new Mockery() {
 		{
@@ -88,38 +89,38 @@ public class FtpProducerTest {
 	//private final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class,"mockFileChunkDao");
 	private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
 
-	@Before
-	public void setup() {
+    @BeforeEach
+    void setup() {
 		uut = new FtpProducer(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO,null);
 		uut.setConfiguration(configuration);
 	}
 
-	@After
-	public void tearDown() {
+    @AfterEach
+    void tearDown() {
 		mockery.assertIsSatisfied();
 	}
 
 
     @Test
-    public void invoke_when_ftpTemplate_is_null() throws ResourceException {
-        // set up
-        ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
+    void invoke_when_ftpTemplate_is_null() throws ResourceException {
+        assertThrows(FtpResourceNotStartedException.class, () -> {
+            // set up
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
 
-        thrown.expect(FtpResourceNotStartedException.class);
-
-        // execute
-        uut.invoke(payload);
+            // execute
+            uut.invoke(payload);
+        });
     }
 
 
     /**
-	 * Test successful invocation based on a single file.
-	 * 
-	 * @throws EndpointException
-	 *             if error invoking the endpoint
-	 */
-	@Test
-	public void producer_succeeds_when_receive_single_file() throws ResourceException, IOException {
+     * Test successful invocation based on a single file.
+     * 
+     * @throws EndpointException
+     *             if error invoking the endpoint
+     */
+    @Test
+    void producer_succeeds_when_receive_single_file() throws ResourceException, IOException {
 		// set up
 		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
 
@@ -174,172 +175,170 @@ public class FtpProducerTest {
 		uut.invoke(payload);
 	}
 
-	/**
-	 * When the producer is configured with an alternate connection template, on
-	 * failure, producer will switch to use the alternate next time it is invoked.
-	 * 
-	 * @throws EndpointException
-	 *             if error invoking endpoint
-	 */
-	@Test
-	public void producer_fails_changes_to_alternate_connection_template() throws ResourceException, IOException {
-		// set up
-		ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
+    /**
+     * When the producer is configured with an alternate connection template, on
+     * failure, producer will switch to use the alternate next time it is invoked.
+     * 
+     * @throws EndpointException
+     *             if error invoking endpoint
+     */
+    @Test
+    void producer_fails_changes_to_alternate_connection_template() throws ResourceException, IOException {
+        assertThrows(EndpointException.class, () -> {
+            // set up
+            ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
-		final String content = "content";
-        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
-		final String fileName = "fileName";
-		final String outputDirectory = "outputDirectory";
-		final boolean overwrite = true;
-		final String renameExtension = "renameExtension";
-		final boolean checksumDelivered = false;
-		final boolean unzip = false;
-		final boolean createParentDirectory = true;
-		final String tempFileName = "tempFileName";
+            final String content = "content";
+            final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
+            final String fileName = "fileName";
+            final String outputDirectory = "outputDirectory";
+            final boolean overwrite = true;
+            final String renameExtension = "renameExtension";
+            final boolean checksumDelivered = false;
+            final boolean unzip = false;
+            final boolean createParentDirectory = true;
+            final String tempFileName = "tempFileName";
 
-		final Payload payload = mockery.mock(Payload.class, "mockPayload");
-		final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+            final Payload payload = mockery.mock(Payload.class, "mockPayload");
+            final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
 
-		// expectations
-		mockery.checking(new Expectations() {
-			{
-				oneOf(payload).getInputStream();
-				will(returnValue(contentInputStream));
-				oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
-				will(returnValue(fileName));
-                oneOf(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
-                will(returnValue(null));
-				oneOf(configuration).getOutputDirectory();
-				will(returnValue(outputDirectory));
-				oneOf(configuration).getOverwrite();
-				will(returnValue(overwrite));
-				oneOf(configuration).getRenameExtension();
-				will(returnValue(renameExtension));
-				oneOf(configuration).getChecksumDelivered();
-				will(returnValue(checksumDelivered));
-				oneOf(configuration).getUnzip();
-				will(returnValue(unzip));
-				oneOf(configuration).getCreateParentDirectory();
-				will(returnValue(createParentDirectory));
-				oneOf(configuration).getTempFileName();
-				will(returnValue(tempFileName));
-				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(equal(contentInputStream)),
-						with(equal(fileName)),
-						with(equal(outputDirectory)),
-						with(equal(overwrite)),
-						with(equal(renameExtension)),
-						with(equal(checksumDelivered)),
-						with(equal(unzip)),
-						with(equal(createParentDirectory)),
-						with(equal(tempFileName)));
-				will(throwException(exception));
-			}
-		});
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    oneOf(payload).getInputStream();
+                    will(returnValue(contentInputStream));
+                    oneOf(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+                    will(returnValue(fileName));
+                    oneOf(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                    will(returnValue(null));
+                    oneOf(configuration).getOutputDirectory();
+                    will(returnValue(outputDirectory));
+                    oneOf(configuration).getOverwrite();
+                    will(returnValue(overwrite));
+                    oneOf(configuration).getRenameExtension();
+                    will(returnValue(renameExtension));
+                    oneOf(configuration).getChecksumDelivered();
+                    will(returnValue(checksumDelivered));
+                    oneOf(configuration).getUnzip();
+                    will(returnValue(unzip));
+                    oneOf(configuration).getCreateParentDirectory();
+                    will(returnValue(createParentDirectory));
+                    oneOf(configuration).getTempFileName();
+                    will(returnValue(tempFileName));
+                    oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+                        with(equal(contentInputStream)),
+                        with(equal(fileName)),
+                        with(equal(outputDirectory)),
+                        with(equal(overwrite)),
+                        with(equal(renameExtension)),
+                        with(equal(checksumDelivered)),
+                        with(equal(unzip)),
+                        with(equal(createParentDirectory)),
+                        with(equal(tempFileName)));
+                    will(throwException(exception));
+                }
+            });
+            uut.invoke(payload);
 
-		// execute
-        thrown.expect(EndpointException.class);
-       	uut.invoke(payload);
+            fail("Unreachable code.");
+        });
+    }
 
-		Assert.fail("Unreachable code.");
-	}
+    /**
+     * If an error occurs while producer using alternative connection template,
+     * switch back to original connection template
+     * 
+     * @throws EndpointException
+     *             if error invoking endpoint
+     */
+    @Test
+    void producer_fails_changes_to_original_connection_template() throws ResourceException, IOException {
+        assertThrows(EndpointException.class, () -> {
+            // set up
+            ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
+            ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
 
-	/**
-	 * If an error occurs while producer using alternative connection template,
-	 * switch back to original connection template
-	 * 
-	 * @throws EndpointException
-	 *             if error invoking endpoint
-	 */
-	@Test
-	public void producer_fails_changes_to_original_connection_template() throws ResourceException, IOException {
-		// set up
-		ReflectionTestUtils.setField(uut, "fileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", activeFileTransferConnectionTemplate);
-		ReflectionTestUtils.setField(uut, "alternateFileTransferConnectionTemplate", alternateFileTransferConnectionTemplate);
+            final String content = "content";
+            final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
+            final String fileName = "fileName";
+            final String outputDirectory = "outputDirectory";
+            final boolean overwrite = true;
+            final String renameExtension = "renameExtension";
+            final boolean checksumDelivered = false;
+            final boolean unzip = false;
+            final boolean createParentDirectory = true;
+            final String tempFileName = "tempFileName";
 
-		final String content = "content";
-        final ByteArrayInputStream contentInputStream = new ByteArrayInputStream(content.getBytes());
-		final String fileName = "fileName";
-		final String outputDirectory = "outputDirectory";
-		final boolean overwrite = true;
-		final String renameExtension = "renameExtension";
-		final boolean checksumDelivered = false;
-		final boolean unzip = false;
-		final boolean createParentDirectory = true;
-		final String tempFileName = "tempFileName";
+            final Payload payload = mockery.mock(Payload.class, "mockPayload");
+            final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
 
-		final Payload payload = mockery.mock(Payload.class, "mockPayload");
-		final ResourceException exception = new ResourceException(new RuntimeException("Something gone wrong"));
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    exactly(2).of(payload).getInputStream();
+                    will(returnValue(contentInputStream));
+                    exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
+                    will(returnValue(fileName));
+                    exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
+                    will(returnValue(null));
+                    exactly(2).of(configuration).getOutputDirectory();
+                    will(returnValue(outputDirectory));
+                    exactly(2).of(configuration).getOverwrite();
+                    will(returnValue(overwrite));
+                    exactly(2).of(configuration).getRenameExtension();
+                    will(returnValue(renameExtension));
+                    exactly(2).of(configuration).getChecksumDelivered();
+                    will(returnValue(checksumDelivered));
+                    exactly(2).of(configuration).getUnzip();
+                    will(returnValue(unzip));
+                    exactly(2).of(configuration).getCreateParentDirectory();
+                    will(returnValue(createParentDirectory));
+                    exactly(2).of(configuration).getTempFileName();
+                    will(returnValue(tempFileName));
+                    oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
+                        with(equal(contentInputStream)),
+                        with(equal(fileName)),
+                        with(equal(outputDirectory)),
+                        with(equal(overwrite)),
+                        with(equal(renameExtension)),
+                        with(equal(checksumDelivered)),
+                        with(equal(unzip)),
+                        with(equal(createParentDirectory)),
+                        with(equal(tempFileName)));
+                    will(throwException(exception));
+                    oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
+                        with(equal(contentInputStream)),
+                        with(equal(fileName)),
+                        with(equal(outputDirectory)),
+                        with(equal(overwrite)),
+                        with(equal(renameExtension)),
+                        with(equal(checksumDelivered)),
+                        with(equal(unzip)),
+                        with(equal(createParentDirectory)),
+                        with(equal(tempFileName)));
+                    will(throwException(exception));
+                }
+            });
 
-		// expectations
-		mockery.checking(new Expectations() {
-			{
-				exactly(2).of(payload).getInputStream();
-				will(returnValue(contentInputStream));
-				exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.FILE_NAME);
-				will(returnValue(fileName));
-                exactly(2).of(payload).getAttribute(FilePayloadAttributeNames.RELATIVE_PATH);
-                will(returnValue(null));
-				exactly(2).of(configuration).getOutputDirectory();
-				will(returnValue(outputDirectory));
-				exactly(2).of(configuration).getOverwrite();
-				will(returnValue(overwrite));
-				exactly(2).of(configuration).getRenameExtension();
-				will(returnValue(renameExtension));
-				exactly(2).of(configuration).getChecksumDelivered();
-				will(returnValue(checksumDelivered));
-				exactly(2).of(configuration).getUnzip();
-				will(returnValue(unzip));
-				exactly(2).of(configuration).getCreateParentDirectory();
-				will(returnValue(createParentDirectory));
-				exactly(2).of(configuration).getTempFileName();
-				will(returnValue(tempFileName));
-				oneOf(activeFileTransferConnectionTemplate).deliverInputStream(
-						with(equal(contentInputStream)),
-						with(equal(fileName)),
-						with(equal(outputDirectory)),
-						with(equal(overwrite)),
-						with(equal(renameExtension)),
-						with(equal(checksumDelivered)),
-						with(equal(unzip)),
-						with(equal(createParentDirectory)),
-						with(equal(tempFileName)));
-				will(throwException(exception));
-				oneOf(alternateFileTransferConnectionTemplate).deliverInputStream(
-						with(equal(contentInputStream)),
-						with(equal(fileName)),
-						with(equal(outputDirectory)),
-						with(equal(overwrite)),
-						with(equal(renameExtension)),
-						with(equal(checksumDelivered)),
-						with(equal(unzip)),
-						with(equal(createParentDirectory)),
-						with(equal(tempFileName)));
-				will(throwException(exception));
-			}
-		});
+            try {
+                uut.invoke(payload);
+            } catch (Exception e) {
+                assertEquals(alternateFileTransferConnectionTemplate,
+                    ReflectionTestUtils.getField(uut, "activeFileTransferConnectionTemplate"));
+                try {
+                    uut.invoke(payload);
+                } catch (Exception e2) {
+                    assertEquals(activeFileTransferConnectionTemplate,
+                        ReflectionTestUtils.getField(uut, "activeFileTransferConnectionTemplate"));
+                    throw e2;
+                }
+            }
 
-		// execute
-        thrown.expect(EndpointException.class);
-
-        try {
-			uut.invoke(payload);
-		} catch (Exception e) {
-			Assert.assertEquals(alternateFileTransferConnectionTemplate,
-					ReflectionTestUtils.getField(uut, "activeFileTransferConnectionTemplate"));
-			try {
-				uut.invoke(payload);
-			} catch (Exception e2) {
-				Assert.assertEquals(activeFileTransferConnectionTemplate,
-						ReflectionTestUtils.getField(uut, "activeFileTransferConnectionTemplate"));
-				throw e2;
-			}
-		}
-
-		Assert.fail("Unreachable code.");
-	}
+            fail("Unreachable code.");
+        });
+    }
 
 }

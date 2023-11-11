@@ -40,13 +40,13 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.ScheduledProcessEventOutboundFlowComponentFactory;
 import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 
 /**

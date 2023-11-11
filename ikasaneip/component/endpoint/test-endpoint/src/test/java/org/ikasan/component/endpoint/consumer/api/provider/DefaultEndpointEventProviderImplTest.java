@@ -41,28 +41,29 @@
 package org.ikasan.component.endpoint.consumer.api.provider;
 
 import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for DefaultEndpointEventProviderImpl.
  * 
  * @author Ikasan Development Team
  */
-public class DefaultEndpointEventProviderImplTest
+class DefaultEndpointEventProviderImplTest
 {
     /**
      * Test
      */
     @Test
-    public void test_eventProvider()
+    void test_eventProvider()
     {
         EndpointEventProvider endpointEventProvider = new DefaultEndpointEventProviderImpl();
-        Assert.assertTrue("Test Message 1".equals(endpointEventProvider.getEvent()));
-        Assert.assertTrue("Test Message 2".equals(endpointEventProvider.getEvent()));
-        Assert.assertTrue("Test Message 3".equals(endpointEventProvider.getEvent()));
+        assertEquals("Test Message 1", endpointEventProvider.getEvent());
+        assertEquals("Test Message 2", endpointEventProvider.getEvent());
+        assertEquals("Test Message 3", endpointEventProvider.getEvent());
 
         endpointEventProvider.rollback();
-        Assert.assertTrue("Test Message 3".equals(endpointEventProvider.getEvent()));
+        assertEquals("Test Message 3", endpointEventProvider.getEvent());
     }
 }

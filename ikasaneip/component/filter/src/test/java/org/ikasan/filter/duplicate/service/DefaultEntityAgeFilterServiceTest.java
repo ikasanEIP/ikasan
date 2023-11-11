@@ -1,34 +1,31 @@
 package org.ikasan.filter.duplicate.service;
 
-import org.junit.Assert;
+import jakarta.annotation.Resource;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Created by Ikasan Development Team on 10/07/2016.
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/filter-service-conf.xml"
+@SpringJUnitConfig(locations = {
+    "/FilteredMessageDaoInMemDBTest-context.xml",
+    "/filter-service-conf.xml"
 })
-public class DefaultEntityAgeFilterServiceTest
+class DefaultEntityAgeFilterServiceTest
 {
     @Resource private FilteredMessageDao duplicateFilterDao;
     @Resource private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         FilterEntry aMessage = new DefaultFilterEntry( "business-id-1".hashCode(), "client-d", "12345", 30);
         duplicateFilterDao.save(aMessage);
@@ -43,8 +40,8 @@ public class DefaultEntityAgeFilterServiceTest
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_newer_message()
+        @DirtiesContext
+    void test_success_newer_message()
     {
         defaultEntityAgeFilterService.initialise("client-d");
 
@@ -52,16 +49,16 @@ public class DefaultEntityAgeFilterServiceTest
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
-        Assert.assertFalse(result);
+        assertFalse(result);
 
         FilterEntry bMessage = duplicateFilterDao.findMessage(aMessage);
 
-        Assert.assertTrue(aMessage.getCriteriaDescription().equals(bMessage.getCriteriaDescription()));
+        assertEquals(aMessage.getCriteriaDescription(), bMessage.getCriteriaDescription());
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_message_doesnt_exist()
+        @DirtiesContext
+    void test_success_message_doesnt_exist()
     {
         defaultEntityAgeFilterService.initialise("client-d");
 
@@ -69,16 +66,16 @@ public class DefaultEntityAgeFilterServiceTest
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
-        Assert.assertFalse(result);
+        assertFalse(result);
 
         FilterEntry bMessage = duplicateFilterDao.findMessage(aMessage);
 
-        Assert.assertTrue(aMessage.getCriteriaDescription().equals(bMessage.getCriteriaDescription()));
+        assertEquals(aMessage.getCriteriaDescription(), bMessage.getCriteriaDescription());
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_older_message()
+        @DirtiesContext
+    void test_success_older_message()
     {
         defaultEntityAgeFilterService.initialise("client-d");
 
@@ -86,16 +83,16 @@ public class DefaultEntityAgeFilterServiceTest
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
 
         FilterEntry bMessage = duplicateFilterDao.findMessage(aMessage);
 
-        Assert.assertFalse(aMessage.getCriteriaDescription().equals(bMessage.getCriteriaDescription()));
+        assertNotEquals(aMessage.getCriteriaDescription(), bMessage.getCriteriaDescription());
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_equals_message_older_equals_flag_default()
+        @DirtiesContext
+    void test_success_equals_message_older_equals_flag_default()
     {
         defaultEntityAgeFilterService.initialise("client-d");
 
@@ -103,12 +100,12 @@ public class DefaultEntityAgeFilterServiceTest
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_equals_message_older_equals_flag_false()
+        @DirtiesContext
+    void test_success_equals_message_older_equals_flag_false()
     {
         defaultEntityAgeFilterService.initialise("client-d");
         defaultEntityAgeFilterService.setOlderIfEquals(false);
@@ -117,12 +114,12 @@ public class DefaultEntityAgeFilterServiceTest
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
-        Assert.assertFalse(result);
+        assertFalse(result);
     }
 
     @Test
-    @DirtiesContext
-    public void test_success_equals_message_older_equals_flag_true()
+        @DirtiesContext
+    void test_success_equals_message_older_equals_flag_true()
     {
         defaultEntityAgeFilterService.initialise("client-d");
         defaultEntityAgeFilterService.setOlderIfEquals(true);
@@ -131,6 +128,6 @@ public class DefaultEntityAgeFilterServiceTest
 
         boolean result = defaultEntityAgeFilterService.isOlderEntity(aMessage);
 
-        Assert.assertTrue(result);
+        assertTrue(result);
     }
 }

@@ -14,7 +14,7 @@ import org.ikasan.spec.event.MessageListener;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.serialiser.Serialiser;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public class BigQueueConsumerBuilderImpl implements BigQueueConsumerBuilder {
     private AopProxyProvider aopProxyProvider;

@@ -42,60 +42,59 @@ package org.ikasan.component.endpoint.quartz.consumer;
 
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.SchedulerException;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>ScheduledConsumer</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerConfigurationTest
+class ScheduledConsumerConfigurationTest
 {
     /**
      * Test configuration mutators.
      */
     @Test
-    public void test_mutators() throws SchedulerException
+    void test_mutators() throws SchedulerException
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
-        assertNotNull("Timezone Id cannopt be null", consumerConfiguration.getTimezone());
-        assertNull("initial cronExpression should be null", consumerConfiguration.getCronExpression());
+        assertNotNull(consumerConfiguration.getTimezone(), "Timezone Id cannopt be null");
+        assertNull(consumerConfiguration.getCronExpression(), "initial cronExpression should be null");
         consumerConfiguration.setCronExpression("cronExpression");
-        assertEquals("cronExpression should be populated with 'cronExpression'", "cronExpression", consumerConfiguration.getCronExpression());
+        assertEquals("cronExpression", consumerConfiguration.getCronExpression(), "cronExpression should be populated with 'cronExpression'");
     }
 
     /**
      * Test configuration mutators.
      */
     @Test
-    public void test_maxEagerCallbacks() throws SchedulerException
+    void test_maxEagerCallbacks() throws SchedulerException
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
-        assertNotNull("Timezone Id cannopt be null", consumerConfiguration.getTimezone());
-        assertEquals("initial maxEagerCallbacks should be 0", 0, consumerConfiguration.getMaxEagerCallbacks());
+        assertNotNull(consumerConfiguration.getTimezone(), "Timezone Id cannopt be null");
+        assertEquals(0, consumerConfiguration.getMaxEagerCallbacks(), "initial maxEagerCallbacks should be 0");
         consumerConfiguration.setMaxEagerCallbacks(2);
-        assertEquals("maxEagerCallbacks should be populated with '2'", 2, consumerConfiguration.getMaxEagerCallbacks());
+        assertEquals(2, consumerConfiguration.getMaxEagerCallbacks(), "maxEagerCallbacks should be populated with '2'");
     }
 
     /**
      * Test non configuration mutators.
      */
     @Test
-    public void test_getConsolidatedCronExpressions()
+    void test_getConsolidatedCronExpressions()
     {
         ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
-        assertNull("cron expression should be null", consumerConfiguration.getCronExpression());
-        assertEquals("cron expressions should be 0", 0, consumerConfiguration.getCronExpressions().size());
-        assertEquals("consolidated cron expressions should be 0", 0, consumerConfiguration.getConsolidatedCronExpressions().size());
+        assertNull(consumerConfiguration.getCronExpression(), "cron expression should be null");
+        assertEquals(0, consumerConfiguration.getCronExpressions().size(), "cron expressions should be 0");
+        assertEquals(0, consumerConfiguration.getConsolidatedCronExpressions().size(), "consolidated cron expressions should be 0");
         consumerConfiguration.setCronExpression("0/5 * * * * ?");
-        assertEquals("consolidated cron expressions should be 1", 1, consumerConfiguration.getConsolidatedCronExpressions().size());
+        assertEquals(1, consumerConfiguration.getConsolidatedCronExpressions().size(), "consolidated cron expressions should be 1");
 
         List<String> cronExpressions = new ArrayList<String>();
         cronExpressions.add("0/1 * * * * ?");
@@ -103,7 +102,7 @@ public class ScheduledConsumerConfigurationTest
         cronExpressions.add("0/3 * * * * ?");
         cronExpressions.add("0/5 * * * * ?");   // added even though repeat of cronExpression
         consumerConfiguration.setCronExpressions(cronExpressions);
-        assertEquals("consolidated cron expressions should be 5", 5, consumerConfiguration.getConsolidatedCronExpressions().size());
+        assertEquals(5, consumerConfiguration.getConsolidatedCronExpressions().size(), "consolidated cron expressions should be 5");
     }
 
     /**
@@ -111,23 +110,23 @@ public class ScheduledConsumerConfigurationTest
      *
      **/
     @Test
-    public void test_configuration_isValidationAware() throws InvalidConfigurationException
+    void test_configuration_isValidationAware() throws InvalidConfigurationException
     {
-        Assert.assertTrue("Configuration doesnt implement IsValidationAware", new ScheduledConsumerConfiguration() instanceof IsValidationAware);
+        assertTrue(new ScheduledConsumerConfiguration() instanceof IsValidationAware, "Configuration doesnt implement IsValidationAware");
     }
 
     /**
      * Test.
      */
     @Test
-    public void test_invalid_configuration_invalid_cronExpression()
+    void test_invalid_configuration_invalid_cronExpression()
     {
         ScheduledConsumerConfiguration scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
 
         try
         {
             scheduledConsumerConfiguration.validate();
-            Assert.fail("configuration is not valid");
+            fail("configuration is not valid");
         }
         catch(InvalidConfigurationException e)
         {
@@ -139,7 +138,7 @@ public class ScheduledConsumerConfigurationTest
      * Test.
      */
     @Test
-    public void test_valid_configuration()
+    void test_valid_configuration()
     {
         ScheduledConsumerConfiguration scheduledConsumerConfiguration = new ScheduledConsumerConfiguration();
         scheduledConsumerConfiguration.setCronExpression("0/5 * * * * ?");

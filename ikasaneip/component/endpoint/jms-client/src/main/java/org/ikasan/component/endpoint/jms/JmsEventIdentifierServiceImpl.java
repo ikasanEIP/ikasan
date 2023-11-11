@@ -45,9 +45,9 @@ import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageNotWriteableException;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageNotWriteableException;
 
 /**
  * Implementation of the ManagedEventIdentifierService specifically for JMS.

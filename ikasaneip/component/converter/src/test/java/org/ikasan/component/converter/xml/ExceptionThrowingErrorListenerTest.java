@@ -40,17 +40,19 @@
  */
 package org.ikasan.component.converter.xml;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.TransformerException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test class for ExceptionThrowingErrorListener
  *
  * @author Ikasan Development Team
  */
-public class ExceptionThrowingErrorListenerTest
+class ExceptionThrowingErrorListenerTest
 {
 
     /**
@@ -62,57 +64,57 @@ public class ExceptionThrowingErrorListenerTest
      * Tests that with default constructor arguments, error method rethrows same exception
      */
     @Test
-    public void testError_WithDefautSettings()
+    void testError_WithDefautSettings()
     {
         ExceptionThrowingErrorListener errorListener = new ExceptionThrowingErrorListener();
         TransformerException thrownException = null;
         try
         {
             errorListener.error(transformerException);
-            Assert.fail("exception should have been thrown");
+            fail("exception should have been thrown");
         } catch (TransformerException t)
         {
             thrownException = t;
         }
-        Assert.assertEquals("thrown exception should have been the exception passed to listener", transformerException, thrownException);
+        assertEquals(transformerException, thrownException, "thrown exception should have been the exception passed to listener");
     }
 
     /**
      * Tests that with default constructor arguments, fatalError method rethrows same exception
      */
     @Test
-    public void testFatalError_WithDefautSettings()
+    void testFatalError_WithDefautSettings()
     {
         ExceptionThrowingErrorListener errorListener = new ExceptionThrowingErrorListener();
         TransformerException thrownException = null;
         try
         {
             errorListener.fatalError(transformerException);
-            Assert.fail("exception should have been thrown");
+            fail("exception should have been thrown");
         } catch (TransformerException t)
         {
             thrownException = t;
         }
-        Assert.assertEquals("thrown exception should have been the exception passed to listener", transformerException, thrownException);
+        assertEquals(transformerException, thrownException, "thrown exception should have been the exception passed to listener");
     }
 
     /**
      * Tests that with default constructor arguments, warning method rethrows same exception
      */
     @Test
-    public void testWarning_WithDefautSettings()
+    void testWarning_WithDefautSettings()
     {
         ExceptionThrowingErrorListener errorListener = new ExceptionThrowingErrorListener();
         TransformerException thrownException = null;
         try
         {
             errorListener.warning(transformerException);
-            Assert.fail("exception should have been thrown");
+            fail("exception should have been thrown");
         } catch (TransformerException t)
         {
             thrownException = t;
         }
-        Assert.assertEquals("thrown exception should have been the exception passed to listener", transformerException, thrownException);
+        assertEquals(transformerException, thrownException, "thrown exception should have been the exception passed to listener");
     }
 
     /**
@@ -121,7 +123,7 @@ public class ExceptionThrowingErrorListenerTest
      * @throws javax.xml.transform.TransformerException
      */
     @Test
-    public void testError_WithRethrowingDisabled() throws TransformerException
+    void testError_WithRethrowingDisabled() throws TransformerException
     {
         ExceptionThrowingErrorListener errorListener = new ExceptionThrowingErrorListener(false, true, true);
         errorListener.error(transformerException);
@@ -133,7 +135,7 @@ public class ExceptionThrowingErrorListenerTest
      * @throws javax.xml.transform.TransformerException
      */
     @Test
-    public void testFatalError_WithRethrowingDisabled() throws TransformerException
+    void testFatalError_WithRethrowingDisabled() throws TransformerException
     {
         ExceptionThrowingErrorListener errorListener = new ExceptionThrowingErrorListener(true, false, true);
         errorListener.fatalError(transformerException);

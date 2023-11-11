@@ -43,12 +43,11 @@ public class ModuleControlApplication
     private DashboardRestService moduleMetadataDashboardRestService;
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/controlFlowState/{moduleName}/{flowName}")
+    @PutMapping("/controlFlowState/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlFlowState(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName,
+        @PathVariable String moduleName,
+        @PathVariable String flowName,
         @RequestBody String action)
     {
         try
@@ -78,7 +77,7 @@ public class ModuleControlApplication
         return new ResponseEntity("Flow state changed successfully!", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity changeFlowState(@RequestBody ChangeFlowStateDto changeFlowStateDto)
     {
@@ -112,11 +111,10 @@ public class ModuleControlApplication
 
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
+    @PutMapping("/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public void controlFlowStartupMode(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName, @PathVariable("startupType") String startupType,
+    public void controlFlowStartupMode(@PathVariable String moduleName,
+        @PathVariable String flowName, @PathVariable String startupType,
         @RequestBody String startupComment)
     {
         String user = UserUtil.getUser();
@@ -135,8 +133,7 @@ public class ModuleControlApplication
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/startupMode")
+    @PutMapping("/startupMode")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity changeFlowStartupMode(
         @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
@@ -168,8 +165,7 @@ public class ModuleControlApplication
         }
     }
 
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/startupMode/allFlows")
+    @PutMapping("/startupMode/allFlows")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity changeAllFlowStartupMode(
         @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
@@ -204,11 +200,10 @@ public class ModuleControlApplication
         }
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/startupMode/{moduleName}/{flowName}")
+    @GetMapping("/startupMode/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getStartupMode(@PathVariable("moduleName") String moduleName,
-                                  @PathVariable("flowName") String flowName)
+    public ResponseEntity getStartupMode(@PathVariable String moduleName,
+                                  @PathVariable String flowName)
     {
         StartupControl startupControl = moduleService.getStartupControl(moduleName, flowName);
 
@@ -220,23 +215,22 @@ public class ModuleControlApplication
     }
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/flowState/{moduleName}/{flowName}")
+    @GetMapping("/flowState/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public String getFlowState(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public String getFlowState(@PathVariable String moduleName,
+        @PathVariable String flowName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
         return flow.getState();
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/{moduleName}/{flowName}",
         produces = "application/json")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getFlow(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public ResponseEntity getFlow(@PathVariable String moduleName,
+        @PathVariable String flowName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
@@ -250,10 +244,9 @@ public class ModuleControlApplication
     }
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/flowStates/{moduleName}")
+    @GetMapping("/flowStates/{moduleName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public Map<String, String> getFlowStates(@PathVariable("moduleName") String moduleName)
+    public Map<String, String> getFlowStates(@PathVariable String moduleName)
     {
         HashMap<String, String> results = new HashMap<String, String>();
         Module<Flow> module = moduleService.getModule(moduleName);
@@ -267,10 +260,9 @@ public class ModuleControlApplication
         return results;
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/{moduleName}")
+    @GetMapping("/{moduleName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getModule(@PathVariable("moduleName") String moduleName)
+    public ResponseEntity getModule(@PathVariable String moduleName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         if (module != null && module.getFlows()!=null)
@@ -288,22 +280,20 @@ public class ModuleControlApplication
     }
 
     @SuppressWarnings("unchecked")
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/contextListenersState/{moduleName}/{flowName}")
+    @GetMapping("/contextListenersState/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public String getContextListenersState(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
+    public String getContextListenersState(@PathVariable String moduleName,
+        @PathVariable String flowName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
         return flow.areContextListenersRunning() ? "running" : "stopped";
     }
 
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/controlContextListenersState/{moduleName}/{flowName}")
+    @PutMapping("/controlContextListenersState/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity controlContextListenersState(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName, @RequestBody String action)
+    public ResponseEntity controlContextListenersState(@PathVariable String moduleName,
+        @PathVariable String flowName, @RequestBody String action)
     {
         try
         {
@@ -328,8 +318,7 @@ public class ModuleControlApplication
         return new ResponseEntity("Context Listeners state changed successfully!", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/activator")
+    @PutMapping("/activator")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity activator(@RequestBody ModuleActivationDto moduleActivationDto)
     {
@@ -357,10 +346,9 @@ public class ModuleControlApplication
         return new ResponseEntity("Module action[%s] successfully applied!".formatted(moduleActivationDto.getAction()), HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/isActivated/{moduleName}")
+    @GetMapping("/isActivated/{moduleName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public String isActivated(@PathVariable("moduleName") String moduleName)
+    public String isActivated(@PathVariable String moduleName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         return this.moduleActivator.isActivated(module) ? "activated" : "deactivated";

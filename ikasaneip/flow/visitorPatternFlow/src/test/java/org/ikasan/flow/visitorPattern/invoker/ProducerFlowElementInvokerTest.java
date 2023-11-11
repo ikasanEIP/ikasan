@@ -47,7 +47,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,7 +56,7 @@ import java.util.Map;
 /**
  * Supports testing of the ProducerFlowElementInvoker
  */
-public class ProducerFlowElementInvokerTest
+class ProducerFlowElementInvokerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -82,7 +82,7 @@ public class ProducerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_producer_flowElementInvoker_payloadOnly()
+    void test_producer_flowElementInvoker_payloadOnly()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -140,7 +140,7 @@ public class ProducerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_producer_flowElementInvoker_payloadOnly_invocation_aware()
+    void test_producer_flowElementInvoker_payloadOnly_invocation_aware()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -200,7 +200,7 @@ public class ProducerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_producer_flowElementInvoker_flowEvent()
+    void test_producer_flowElementInvoker_flowEvent()
     {
         // expectations
         mockery.checking(new Expectations()

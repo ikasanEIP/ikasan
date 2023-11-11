@@ -40,17 +40,18 @@
 package org.ikasan.module.service;
 
 import org.ikasan.spec.module.StartupType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class FlowStartupTypeConfigurationConverterTest {
+class FlowStartupTypeConfigurationConverterTest {
 
     private FlowStartupTypeConfigurationConverter converter = new FlowStartupTypeConfigurationConverter();
 
 
     @Test
-    public void testConvert() {
+    void testConvert() {
         // Arrange
         String source = "flow1,MANUAL,This is a manual flow";
 
@@ -64,7 +65,7 @@ public class FlowStartupTypeConfigurationConverterTest {
     }
 
     @Test
-    public void testConvertWithMinimumFields() {
+    void testConvertWithMinimumFields() {
         // Arrange
         String source = "flow2,AUTOMATIC";
 

@@ -38,6 +38,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.component.endpoint.filesystem.producer.FileProducerConfiguration;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -47,19 +48,16 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-import javax.jms.TextMessage;
+import jakarta.jms.TextMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
@@ -68,15 +66,14 @@ import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
@@ -103,7 +100,8 @@ public class ApplicationTest
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
 
-    @After public void shutdown() throws IOException
+    @AfterEach
+    void shutdown() throws IOException
     {
         flowTestRule.stopFlow();
 
@@ -113,7 +111,7 @@ public class ApplicationTest
 
     @Test
     @DirtiesContext
-    public void sourceFileFlow_flow() throws Exception
+    void sourceFileFlow_flow() throws Exception
     {
         flowTestRule.withFlow(moduleUnderTest.getFlow("sourceFileFlow"));
 
@@ -147,10 +145,10 @@ public class ApplicationTest
         with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
               .atMost(60, TimeUnit.SECONDS).untilAsserted(() -> {
 
-            assertTrue("Expected jms Message " + 1
-                    + " but found " + messageListenerVerifierTarget.getCaptureResults().size(),
-                messageListenerVerifierTarget.getCaptureResults().size() >= 1
-                      );
+            assertTrue(messageListenerVerifierTarget.getCaptureResults().size() >= 1
+                      ,
+                "Expected jms Message " + 1
+                    + " but found " + messageListenerVerifierTarget.getCaptureResults().size());
         });
 
         flowTestRule.assertIsSatisfied();
@@ -162,20 +160,20 @@ public class ApplicationTest
 
     }
 
-    @After
-    public void after(){
+    @AfterEach
+    void after(){
             flowTestRule.stopFlow();
             new ActiveMqHelper().removeAllMessages();
     }
 
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
     @DirtiesContext
-    public void targetFileFlow_test_file_delivery() throws Exception
+    void targetFileFlow_test_file_delivery() throws Exception
     {
         flowTestRule.withFlow(moduleUnderTest.getFlow("targetFileFlow"));
 
@@ -207,9 +205,10 @@ public class ApplicationTest
 
         File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
 
-        assertTrue("File does not exist.", result.exists());
-        assertEquals("Generated file, has different content.", message,
-            new String(Files.readAllBytes(result.toPath())));
+        assertTrue(result.exists(), "File does not exist.");
+        assertEquals(message,
+            new String(Files.readAllBytes(result.toPath())),
+            "Generated file, has different content.");
     }
 
 }

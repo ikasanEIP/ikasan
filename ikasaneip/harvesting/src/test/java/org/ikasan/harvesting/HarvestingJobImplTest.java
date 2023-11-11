@@ -8,7 +8,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.core.env.Environment;
@@ -16,7 +16,7 @@ import org.springframework.core.env.Environment;
 import java.util.Arrays;
 import java.util.List;
 
-public class HarvestingJobImplTest
+class HarvestingJobImplTest
 {
 
     private Mockery mockery = new Mockery() {{
@@ -30,7 +30,7 @@ public class HarvestingJobImplTest
     JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
     @Test
-    public void initWhenValuesAreNotInEnvironments()
+    void initWhenValuesAreNotInEnvironments()
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);
@@ -49,7 +49,7 @@ public class HarvestingJobImplTest
     }
 
     @Test
-    public void initWhenValuesInEnvironmentAreOfWrongType()
+    void initWhenValuesInEnvironmentAreOfWrongType()
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);
@@ -68,7 +68,7 @@ public class HarvestingJobImplTest
     }
 
     @Test
-    public void initWhenValuesInEnvironments()
+    void initWhenValuesInEnvironments()
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);
@@ -87,7 +87,7 @@ public class HarvestingJobImplTest
     }
 
     @Test
-    public void executeWhenHarvestableRecordsExistIsFalse() throws JobExecutionException
+    void executeWhenHarvestableRecordsExistIsFalse() throws JobExecutionException
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);
@@ -104,7 +104,7 @@ public class HarvestingJobImplTest
     }
 
     @Test
-    public void executeWhenHarvestableRecordsExistIsTrueButNothingToHarvest() throws JobExecutionException
+    void executeWhenHarvestableRecordsExistIsTrueButNothingToHarvest() throws JobExecutionException
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);
@@ -131,7 +131,7 @@ public class HarvestingJobImplTest
     }
 
     @Test
-    public void executeWhenHarvestableRecordsExistIsTrueAndHarvestList() throws JobExecutionException
+    void executeWhenHarvestableRecordsExistIsTrueAndHarvestList() throws JobExecutionException
     {
 
         HarvestingJobImpl uut = new HarvestingJobImpl("test", harvestService, environment, dashboardRestService);

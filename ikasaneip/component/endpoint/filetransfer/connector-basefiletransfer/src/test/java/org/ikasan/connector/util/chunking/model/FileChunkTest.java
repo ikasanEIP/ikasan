@@ -41,28 +41,24 @@
 package org.ikasan.connector.util.chunking.model;
 
 import org.ikasan.filetransfer.util.checksum.Md5Checksum;
+import org.junit.jupiter.api.Test;
 import org.ikasan.connector.util.chunking.ChunkTestUtils;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for FileChunk
  * 
  * @author Ikasan Development Team
  */
-public class FileChunkTest
+class FileChunkTest
 {
 
     /**
      * Tests that the internal Md5 hash works
      */
     @Test
-    public void testGetMd5Hash()
+    void testGetMd5Hash()
     {
         byte[] testData = ChunkTestUtils.getTestData();
 
@@ -73,40 +69,40 @@ public class FileChunkTest
         FileChunk fileChunk = new FileChunk(null, 0, testData);
 
         assertNull(
-            "DigestChecksum value should be null before the calculateChecksum method is called", fileChunk.getMd5Hash()); //$NON-NLS-1$
+            fileChunk.getMd5Hash(), "DigestChecksum value should be null before the calculateChecksum method is called"); //$NON-NLS-1$
         fileChunk.calculateChecksum();
         assertNotNull(
-            "DigestChecksum value should not be null after the calculateChecksum method is called", fileChunk.getMd5Hash()); //$NON-NLS-1$
+            fileChunk.getMd5Hash(), "DigestChecksum value should not be null after the calculateChecksum method is called"); //$NON-NLS-1$
 
         assertEquals(
-            "DigestChecksum value of FileChunk, should equal checksum value of payload", checksumValue, fileChunk.getMd5Hash()); //$NON-NLS-1$
+            checksumValue, fileChunk.getMd5Hash(), "DigestChecksum value of FileChunk, should equal checksum value of payload"); //$NON-NLS-1$
         assertEquals(
-            "DigestChecksum value of FileChunk, should equal checksum value of payload", checksumValue, fileChunk.getMd5Hash()); //$NON-NLS-1$
+            checksumValue, fileChunk.getMd5Hash(), "DigestChecksum value of FileChunk, should equal checksum value of payload"); //$NON-NLS-1$
     }
 
     /**
      * Tests that the constructor and accessors work correctly
      */
     @Test
-    public void testConstruction()
+    void testConstruction()
     {
         byte[] content = new byte[] { 1, 2, 3 };
         Long ordinal = 1l;
         FileChunkHeader fileChunkHeader = new FileChunkHeader(null, null, null, null);
         FileChunk fileChunk = new FileChunk(fileChunkHeader, ordinal, content);
 
-        assertEquals("ordinal should equal ordinal constructor argument", ordinal.longValue(), fileChunk.getOrdinal()); //$NON-NLS-1$
+        assertEquals(ordinal.longValue(), fileChunk.getOrdinal(), "ordinal should equal ordinal constructor argument"); //$NON-NLS-1$
         assertEquals(
-            "fileChunkHeader should equal fileChunkHeader constructor argument", fileChunkHeader, fileChunk.getFileChunkHeader()); //$NON-NLS-1$
-        assertEquals("content should equal content constructor argument", content, fileChunk.getContent()); //$NON-NLS-1$
-        assertNull("id should be null", fileChunk.getId()); //$NON-NLS-1$
+            fileChunkHeader, fileChunk.getFileChunkHeader(), "fileChunkHeader should equal fileChunkHeader constructor argument"); //$NON-NLS-1$
+        assertEquals(content, fileChunk.getContent(), "content should equal content constructor argument"); //$NON-NLS-1$
+        assertNull(fileChunk.getId(), "id should be null"); //$NON-NLS-1$
     }
 
     /**
      * asserts the toString has some implementation
      */
     @Test
-    public void testToString()
+    void testToString()
     {
         byte[] content = new byte[] { 1, 2, 3 };
         Long ordinal = 1l;
@@ -114,7 +110,7 @@ public class FileChunkTest
         FileChunk fileChunk = new FileChunk(fileChunkHeader, ordinal, content);
 
         assertTrue(
-            "toString should include the fileChunkHeader's toString()", fileChunk.toString().indexOf(fileChunkHeader.toString()) > -1); //$NON-NLS-1$
+            fileChunk.toString().indexOf(fileChunkHeader.toString()) > -1, "toString should include the fileChunkHeader's toString()"); //$NON-NLS-1$
     }
 
     /**
@@ -122,7 +118,7 @@ public class FileChunkTest
      * ordinal
      */
     @Test
-    public void testCompareTo()
+    void testCompareTo()
     {
         assertOrdinalCompareTo(1l, 2l);
         assertOrdinalCompareTo(2l, 2l);

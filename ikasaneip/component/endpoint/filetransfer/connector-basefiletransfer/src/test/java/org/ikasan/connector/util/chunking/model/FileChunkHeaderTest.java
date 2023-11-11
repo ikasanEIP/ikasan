@@ -40,26 +40,23 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for FileChunkHeader
  * 
  * @author Ikasan Development Team
  */
-public class FileChunkHeaderTest
+class FileChunkHeaderTest
 {
 
     /**
      * Tests the constructor and accessors
      */
     @Test
-    public void testConstructor()
+    void testConstructor()
     {
         String fileName = "fileName";
         Long chunkTimestamp = 1l;
@@ -67,21 +64,21 @@ public class FileChunkHeaderTest
         Long sequenceLength = 100l;
         FileChunkHeader fileChunkHeader = new FileChunkHeader(sequenceLength, externalMd5Hash, fileName, chunkTimestamp);
 
-        assertEquals("fileName should equal fileName constructor argument", fileName, fileChunkHeader.getFileName()); //$NON-NLS-1$
+        assertEquals(fileName, fileChunkHeader.getFileName(), "fileName should equal fileName constructor argument"); //$NON-NLS-1$
         assertEquals(
-            "chunkTimestamp should equal chunkTimestamp constructor argument", chunkTimestamp.longValue(), fileChunkHeader.getChunkTimeStamp().longValue()); //$NON-NLS-1$
+            chunkTimestamp.longValue(), fileChunkHeader.getChunkTimeStamp().longValue(), "chunkTimestamp should equal chunkTimestamp constructor argument"); //$NON-NLS-1$
         assertEquals(
-            "externalMd5Hash should equal externalMd5Hash constructor argument", externalMd5Hash, fileChunkHeader.getExternalMd5Hash()); //$NON-NLS-1$
+            externalMd5Hash, fileChunkHeader.getExternalMd5Hash(), "externalMd5Hash should equal externalMd5Hash constructor argument"); //$NON-NLS-1$
         assertEquals(
-            "sequenceLength should equal sequenceLength constructor argument", sequenceLength.longValue(), fileChunkHeader.getSequenceLength().longValue()); //$NON-NLS-1$
-        assertNull("id should be null", fileChunkHeader.getId()); //$NON-NLS-1$
+            sequenceLength.longValue(), fileChunkHeader.getSequenceLength().longValue(), "sequenceLength should equal sequenceLength constructor argument"); //$NON-NLS-1$
+        assertNull(fileChunkHeader.getId(), "id should be null"); //$NON-NLS-1$
     }
 
     /**
      * Trivially tests that the toString has been implemented
      */
     @Test
-    public void testToString()
+    void testToString()
     {
         String fileName = "fileName";
         Long chunkTimestamp = 1l;
@@ -89,14 +86,14 @@ public class FileChunkHeaderTest
         Long sequenceLength = 100l;
         FileChunkHeader fileChunkHeader = new FileChunkHeader(sequenceLength, externalMd5Hash, fileName, chunkTimestamp);
 
-        assertTrue("toString should include the fileName's toString()", fileChunkHeader.toString().indexOf( //$NON-NLS-1$
-            fileName.toString()) > -1);
-        assertTrue("toString should include the chunkTimestamp's toString()", fileChunkHeader.toString().indexOf( //$NON-NLS-1$
-            chunkTimestamp.toString()) > -1);
-        assertTrue("toString should include the externalMd5Hash's toString()", fileChunkHeader.toString().indexOf( //$NON-NLS-1$
-            externalMd5Hash.toString()) > -1);
-        assertTrue("toString should include the sequenceLength's toString()", fileChunkHeader.toString().indexOf( //$NON-NLS-1$
-            sequenceLength.toString()) > -1);
+        assertTrue(fileChunkHeader.toString().indexOf( //$NON-NLS-1$
+            fileName.toString()) > -1, "toString should include the fileName's toString()");
+        assertTrue(fileChunkHeader.toString().indexOf( //$NON-NLS-1$
+            chunkTimestamp.toString()) > -1, "toString should include the chunkTimestamp's toString()");
+        assertTrue(fileChunkHeader.toString().indexOf( //$NON-NLS-1$
+            externalMd5Hash.toString()) > -1, "toString should include the externalMd5Hash's toString()");
+        assertTrue(fileChunkHeader.toString().indexOf( //$NON-NLS-1$
+            sequenceLength.toString()) > -1, "toString should include the sequenceLength's toString()");
 
     }
 

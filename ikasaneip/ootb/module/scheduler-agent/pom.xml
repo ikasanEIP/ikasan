@@ -69,7 +69,7 @@
     <!-- standard modules -->
     <modules>
         <module>jar</module>
-        <module>distribution</module>
+<!--        <module>distribution</module>-->
     </modules>
 
     <!-- SCM URLS -->

@@ -49,15 +49,17 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Supports testing of the ConverterFlowElementInvoker
  */
-public class ConverterFlowElementInvokerTest
+class ConverterFlowElementInvokerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -83,7 +85,7 @@ public class ConverterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker_with_flowEvent()
+    void test_converter_flowElementInvoker_with_flowEvent()
     {
         final Converter converter = new ConverterForFlowEvent();
 
@@ -119,7 +121,7 @@ public class ConverterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker_with_payload()
+    void test_converter_flowElementInvoker_with_payload()
     {
         final Converter converter = new ConverterForAnyObject();
 
@@ -157,7 +159,7 @@ public class ConverterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker_with_payload_invocation_aware()
+    void test_converter_flowElementInvoker_with_payload_invocation_aware()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -196,87 +198,91 @@ public class ConverterFlowElementInvokerTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = TransformationException.class)
+    @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker_with_payload_invocation_aware_exception_thrown()
+    void test_converter_flowElementInvoker_with_payload_invocation_aware_exception_thrown()
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(TransformationException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(converterInvocationAware));
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(converterInvocationAware));
 
-                exactly(1).of(converterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(converterInvocationAware).convert(payload);
-                will(throwException(new TransformationException("bad transformation")));
+                    exactly(1).of(converterInvocationAware).setFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(converterInvocationAware).convert(payload);
+                    will(throwException(new TransformationException("bad transformation")));
 
-                // event though exception thrown we still expect to unset the FlowElementInvocation
-                exactly(1).of(converterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
+                    // event though exception thrown we still expect to unset the FlowElementInvocation
+                    exactly(1).of(converterInvocationAware).unsetFlowElementInvocation(with(any(FlowElementInvocation.class)));
 
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+            try
+            {
+                flowEventListeners.add(flowEventListener);
+                flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+            }
+            finally
+            {
+                mockery.assertIsSatisfied();
             }
         });
-
-        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
-        try
-        {
-            flowEventListeners.add(flowEventListener);
-            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-        }
-        finally
-        {
-            mockery.assertIsSatisfied();
-        }
     }
 
-    @Test(expected = InvalidFlowException.class)
+    @Test
     @SuppressWarnings("unchecked")
-    public void test_converter_flowElementInvoker_invalid_transition()
+    void test_converter_flowElementInvoker_invalid_transition()
     {
-        final Converter converter = new ConverterForAnyObject();
+        assertThrows(InvalidFlowException.class, () -> {
+            final Converter converter = new ConverterForAnyObject();
 
-        // expectations
-        mockery.checking(new Expectations()
-        {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
 
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(converter));
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(converter));
 
-                exactly(1).of(flowEvent).getPayload();
-                will(returnValue(payload));
-                exactly(1).of(flowEvent).setPayload(payload);
+                    exactly(1).of(flowEvent).getPayload();
+                    will(returnValue(payload));
+                    exactly(1).of(flowEvent).setPayload(payload);
 
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-                will(returnValue(null));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-            }
+                    exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                    exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                    will(returnValue(null));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
         });
-
-        FlowElementInvoker flowElementInvoker = new ConverterFlowElementInvoker();
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
     }
 
     /**

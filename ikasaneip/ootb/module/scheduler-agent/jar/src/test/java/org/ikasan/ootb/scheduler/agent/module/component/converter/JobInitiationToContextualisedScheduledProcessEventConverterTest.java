@@ -9,30 +9,37 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDt
 import org.ikasan.ootb.scheduler.agent.rest.dto.SchedulerJobInitiationEventDto;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
+import static org.junit.jupiter.api.Assertions.*;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_module_name_constructor() {
-        new JobInitiationToContextualisedScheduledProcessEventConverter(null, "logFolder", "logParen");
-    }
+class JobInitiationToContextualisedScheduledProcessEventConverterTest {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_log_folder_constructor() {
-        new JobInitiationToContextualisedScheduledProcessEventConverter("moduleName", null, "logParen");
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_log_paren_constructor() {
-        new JobInitiationToContextualisedScheduledProcessEventConverter("moduleName", "logFolder", null);
+    @Test
+    void test_exception_null_module_name_constructor() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new JobInitiationToContextualisedScheduledProcessEventConverter(null, "logFolder", "logParen");
+        });
     }
 
     @Test
-    public void test_convert_success() throws JsonProcessingException {
+    void test_exception_null_log_folder_constructor() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new JobInitiationToContextualisedScheduledProcessEventConverter("moduleName", null, "logParen");
+        });
+    }
+
+    @Test
+    void test_exception_null_log_paren_constructor() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new JobInitiationToContextualisedScheduledProcessEventConverter("moduleName", "logFolder", null);
+        });
+    }
+
+    @Test
+    void test_convert_success() throws JsonProcessingException {
         SchedulerJobInitiationEventDto schedulerJobInitiationEventDto = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEventDto.setSkipped(true);
         schedulerJobInitiationEventDto.setDryRunParameters(new DryRunParametersDto());
@@ -64,39 +71,39 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
         long currentTestTimeMillis = System.currentTimeMillis();
 
         //make sure the millis is in the last 500ms (If the test is taking more than this something is wrong)
-        Assert.assertTrue(isWithinTheLast500Millis(result.getFireTime(), currentTestTimeMillis));
+        assertTrue(isWithinTheLast500Millis(result.getFireTime(), currentTestTimeMillis));
 
-        Assert.assertEquals("agentName", result.getAgentName());
-        Assert.assertEquals("jobName", result.getJobName());
-        Assert.assertEquals("contextId", result.getContextName());
-        Assert.assertEquals("contextInstanceId", result.getContextInstanceId());
-        Assert.assertEquals(2, result.getChildContextNames().size());
-        Assert.assertTrue(result.isJobStarting());
-        Assert.assertFalse(result.isSuccessful());
-        Assert.assertTrue(result.isSkipped());
-        Assert.assertTrue(result.isDryRun());
+        assertEquals("agentName", result.getAgentName());
+        assertEquals("jobName", result.getJobName());
+        assertEquals("contextId", result.getContextName());
+        assertEquals("contextInstanceId", result.getContextInstanceId());
+        assertEquals(2, result.getChildContextNames().size());
+        assertTrue(result.isJobStarting());
+        assertFalse(result.isSuccessful());
+        assertTrue(result.isSkipped());
+        assertTrue(result.isDryRun());
 
         // file name is "logFolder/contextId-contextInstanceId-agentName-jobName-System.currentTimeMillis()-err.log"
-        Assert.assertTrue(result.getResultError().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
-        Assert.assertTrue(result.getResultError().endsWith("-err.log"));
+        assertTrue(result.getResultError().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
+        assertTrue(result.getResultError().endsWith("-err.log"));
         String millis = result.getResultError().substring("logFolder/contextId-contextInstanceId-agentName-jobName-".length(), result.getResultError().length() - "-err.log".length());
         Long millisFromFileName = Long.valueOf(millis);
         //make sure the millis from the filename is in the last 500ms (If the test is taking more than this something is wrong)
-        Assert.assertTrue(isWithinTheLast500Millis(millisFromFileName, currentTestTimeMillis));
+        assertTrue(isWithinTheLast500Millis(millisFromFileName, currentTestTimeMillis));
 
         // file name is "logFolder/contextId-contextInstanceId-agentName-jobName-System.currentTimeMillis()-out.log"
-        Assert.assertTrue(result.getResultOutput().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
-        Assert.assertTrue(result.getResultOutput().endsWith("-out.log"));
+        assertTrue(result.getResultOutput().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
+        assertTrue(result.getResultOutput().endsWith("-out.log"));
         millis = result.getResultOutput().substring("logFolder/contextId-contextInstanceId-agentName-jobName-".length(), result.getResultError().length() - "-err.log".length());
         millisFromFileName = Long.valueOf(millis);
         //make sure the millis from the filename is in the last 500ms (If the test is taking more than this something is wrong)
-        Assert.assertTrue(isWithinTheLast500Millis(millisFromFileName, currentTestTimeMillis));
+        assertTrue(isWithinTheLast500Millis(millisFromFileName, currentTestTimeMillis));
 
-        Assert.assertEquals(2, result.getInternalEventDrivenJob().getContextParameters().size());
+        assertEquals(2, result.getInternalEventDrivenJob().getContextParameters().size());
     }
 
     @Test
-    public void test_convert_success_with_hashed_logs() throws JsonProcessingException {
+    void test_convert_success_with_hashed_logs() throws JsonProcessingException {
         SchedulerJobInitiationEventDto schedulerJobInitiationEventDto = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEventDto.setSkipped(true);
         schedulerJobInitiationEventDto.setDryRunParameters(new DryRunParametersDto());
@@ -129,35 +136,37 @@ public class JobInitiationToContextualisedScheduledProcessEventConverterTest {
         long currentTestTimeMillis = System.currentTimeMillis();
 
         //make sure the millis is in the last 500ms (If the test is taking more than this something is wrong)
-        Assert.assertTrue(isWithinTheLast500Millis(result.getFireTime(), currentTestTimeMillis));
+        assertTrue(isWithinTheLast500Millis(result.getFireTime(), currentTestTimeMillis));
 
-        Assert.assertEquals("agentName", result.getAgentName());
-        Assert.assertEquals("jobName", result.getJobName());
-        Assert.assertEquals("contextId", result.getContextName());
-        Assert.assertEquals("contextInstanceId", result.getContextInstanceId());
-        Assert.assertEquals(2, result.getChildContextNames().size());
-        Assert.assertTrue(result.isJobStarting());
-        Assert.assertFalse(result.isSuccessful());
-        Assert.assertTrue(result.isSkipped());
-        Assert.assertTrue(result.isDryRun());
+        assertEquals("agentName", result.getAgentName());
+        assertEquals("jobName", result.getJobName());
+        assertEquals("contextId", result.getContextName());
+        assertEquals("contextInstanceId", result.getContextInstanceId());
+        assertEquals(2, result.getChildContextNames().size());
+        assertTrue(result.isJobStarting());
+        assertFalse(result.isSuccessful());
+        assertTrue(result.isSkipped());
+        assertTrue(result.isDryRun());
 
         // file name is "logFolder/contextId-contextInstanceId-agentName-jobName-System.currentTimeMillis()-err.log"
-        Assert.assertFalse(result.getResultError().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
-        Assert.assertTrue(result.getResultError().endsWith("-err.log"));
+        assertFalse(result.getResultError().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
+        assertTrue(result.getResultError().endsWith("-err.log"));
 
         // file name is "logFolder/contextId-contextInstanceId-agentName-jobName-System.currentTimeMillis()-out.log"
-        Assert.assertFalse(result.getResultOutput().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
-        Assert.assertTrue(result.getResultOutput().endsWith("-out.log"));
+        assertFalse(result.getResultOutput().startsWith("logFolder/contextId-contextInstanceId-agentName-jobName-"));
+        assertTrue(result.getResultOutput().endsWith("-out.log"));
 
-        Assert.assertEquals(2, result.getInternalEventDrivenJob().getContextParameters().size());
+        assertEquals(2, result.getInternalEventDrivenJob().getContextParameters().size());
     }
 
-    @Test(expected = TransformationException.class)
-    public void test_convert_exception() {
-        JobInitiationToContextualisedScheduledProcessEventConverter converter
-            = new JobInitiationToContextualisedScheduledProcessEventConverter("agentName", "logFolder", "/");
+    @Test
+    void test_convert_exception() {
+        assertThrows(TransformationException.class, () -> {
+            JobInitiationToContextualisedScheduledProcessEventConverter converter
+                = new JobInitiationToContextualisedScheduledProcessEventConverter("agentName", "logFolder", "/");
 
-        converter.convert("BAD PAYLOAD");
+            converter.convert("BAD PAYLOAD");
+        });
     }
 
     private boolean isWithinTheLast500Millis(long resultMillis, long testMillis) {

@@ -21,9 +21,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
@@ -51,7 +51,7 @@ public class SchedulerApplication
      *
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -94,13 +94,13 @@ public class SchedulerApplication
      *                          the correlation ID so that it can be correlated back to the correct dashboard instance
      * @return the response
      */
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/{moduleName}/{flowName}/{correlationId}",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity triggerNow(@PathVariable("moduleName") String moduleName,
-                                     @PathVariable("flowName") String flowName,
-                                     @PathVariable("correlationId") Optional <String> correlationId)
+    public ResponseEntity triggerNow(@PathVariable String moduleName,
+                                     @PathVariable String flowName,
+                                     @PathVariable Optional <String> correlationId)
     {
         try
         {

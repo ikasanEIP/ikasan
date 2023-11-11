@@ -38,6 +38,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.ikasan.spec.flow.Flow;
@@ -45,35 +46,31 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.ftp.FtpRule;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.SocketUtils;
 
-import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This test Ftp To Log Flow.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -95,28 +92,28 @@ public class JmsToFtpFlowTest
     public FtpRule ftp;
 
 
-    @Before
-    public void setup(){
+    @BeforeEach
+    void setup(){
         ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
         ftp.start();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Ftp Flow"));
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         flowTestRule.stopFlow();
         ftp.stop();
     }
 
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
-    public void test_file_upload() throws Exception
+    void test_file_upload() throws Exception
     {
 
         //Update Ftp Consumer config

@@ -9,6 +9,7 @@ import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.metrics.MetricsService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
@@ -20,6 +21,7 @@ import java.util.List;
  *  Dashboard Client configuration required by every module.
  * This autoconfig should be excluded from dashboard.
  */
+@AutoConfiguration
 public class DashboardClientAutoConfiguration
 {
     public static final String ERROR_PATH = "/rest/harvest/errors";

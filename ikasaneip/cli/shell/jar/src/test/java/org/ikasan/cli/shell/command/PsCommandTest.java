@@ -44,7 +44,6 @@ import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -54,6 +53,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>PsCommand</code> class.
@@ -99,21 +103,21 @@ class PsCommandTest
         // test all match
         JSONObject result = command._ps("sampleProcess", null);
         JSONArray processes = (JSONArray)result.get("Processes");
-        Assert.assertTrue(processes.length() == 2);
+        assertEquals(2, processes.length());
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
-        Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
-        Assert.assertTrue("type should be H2, but returned " + resultProcess.get("type"), resultProcess.get("type").equals("H2"));
-        Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
-        Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
+        assertTrue(resultProcess.get("running"), "running should be true");
+        assertEquals("H2", resultProcess.get("type"), "type should be H2, but returned " + resultProcess.get("type"));
+        assertEquals("ps", resultProcess.get("operation"), "operation should be ps");
+        assertNotNull(resultProcess.get("username"), "username should be not null");
+        assertNotNull(resultProcess.get("pid"), "pid should be not null");
 
         resultProcess = (JSONObject)processes.get(1);
-        Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
-        Assert.assertTrue("type should be H2", resultProcess.get("type").equals("Module"));
-        Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
-        Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
+        assertTrue(resultProcess.get("running"), "running should be true");
+        assertEquals("Module", resultProcess.get("type"), "type should be H2");
+        assertEquals("ps", resultProcess.get("operation"), "operation should be ps");
+        assertNotNull(resultProcess.get("username"), "username should be not null");
+        assertNotNull(resultProcess.get("pid"), "pid should be not null");
     }
 
     @Test
@@ -150,14 +154,14 @@ class PsCommandTest
         // test all match
         JSONObject result = command._ps("sampleProcess", null);
         JSONArray processes = (JSONArray)result.get("Processes");
-        Assert.assertTrue(processes.length() == 1);
+        assertEquals(1, processes.length());
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
-        Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
-        Assert.assertTrue("type should be H2", resultProcess.get("type").equals("H2"));
-        Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
-        Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
+        assertTrue(resultProcess.get("running"), "running should be true");
+        assertEquals("H2", resultProcess.get("type"), "type should be H2");
+        assertEquals("ps", resultProcess.get("operation"), "operation should be ps");
+        assertNotNull(resultProcess.get("username"), "username should be not null");
+        assertNotNull(resultProcess.get("pid"), "pid should be not null");
     }
 
     @Test
@@ -196,14 +200,14 @@ class PsCommandTest
         JSONArray processes = (JSONArray)result.get("Processes");
         System.out.println( processes.toString() );
 
-        Assert.assertTrue("Returned length of " + processes.length(), processes.length() == 1);
+        assertEquals(1, processes.length(), "Returned length of " + processes.length());
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
-        Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
-        Assert.assertTrue("type should be H2", resultProcess.get("type").equals("Module"));
-        Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
-        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
-        Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
+        assertTrue(resultProcess.get("running"), "running should be true");
+        assertEquals("Module", resultProcess.get("type"), "type should be H2");
+        assertEquals("ps", resultProcess.get("operation"), "operation should be ps");
+        assertNotNull(resultProcess.get("username"), "username should be not null");
+        assertNotNull(resultProcess.get("pid"), "pid should be not null");
     }
 
     @Test
@@ -239,7 +243,7 @@ class PsCommandTest
         // test all match
         JSONObject result = command._ps("sampleProcess", null);
         JSONArray processes = (JSONArray)result.get("Processes");
-        Assert.assertTrue(processes.length() == 0);
+        assertEquals(0, processes.length());
     }
 
     @AfterEach
@@ -258,14 +262,9 @@ class PsCommandTest
 
     void pause(long millis)
     {
-        try
-        {
+        assertDoesNotThrow(() -> {
             Thread.sleep(millis);
-        }
-        catch(InterruptedException e)
-        {
-            Assert.fail("Sleep interrupted" + e.getMessage());
-        }
+        }, "Sleep interrupted");
     }
 }
 

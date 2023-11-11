@@ -1,25 +1,26 @@
 package org.ikasan.component.endpoint.mongo.encoding;
 
-import static org.junit.Assert.assertNull;
 import net.sf.json.JSONNull;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-public class BsonEncodingJsonNullToNullTransformerTest
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+class BsonEncodingJsonNullToNullTransformerTest
 {
     private BsonEncodingJsonNullToNullTransformer bsonEncodingJsonNullToNullTransformer;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         bsonEncodingJsonNullToNullTransformer = new BsonEncodingJsonNullToNullTransformer();
     }
 
     @Test
-    public void testJsonNullToNull()
+    void testJsonNullToNull()
     {
-        assertNull("Excpect JSONNull to transform to null",
-            bsonEncodingJsonNullToNullTransformer.transform(JSONNull.getInstance()));
+        assertNull(bsonEncodingJsonNullToNullTransformer.transform(JSONNull.getInstance()),
+            "Excpect JSONNull to transform to null");
     }
 }

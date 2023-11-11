@@ -48,8 +48,9 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for {@link DefaultMessageFilter}
@@ -57,8 +58,9 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-@SuppressWarnings("unchecked") //Mocking doesn't play nice with generics. Warning can be safely ignored
-public class DefaultMessageFilterTest
+//Mocking doesn't play nice with generics. Warning can be safely ignored
+@SuppressWarnings("unchecked")
+class DefaultMessageFilterTest
 {
     /** A {@link Mockery} for mocking interfaces */
     private Mockery mockery = new Mockery()
@@ -77,7 +79,8 @@ public class DefaultMessageFilterTest
      * must return null.
      * @throws FilterException 
      */
-    @Test public void filter_discards_message()
+    @Test
+    void filter_discards_message()
     {
         final String messageToFilter = "somemessage";
         this.mockery.checking(new Expectations()
@@ -88,7 +91,7 @@ public class DefaultMessageFilterTest
         });
 
         String filteredMessage = this.filterToTest.filter(messageToFilter);
-        Assert.assertNull(filteredMessage);
+        assertNull(filteredMessage);
         this.mockery.assertIsSatisfied();
     }
 
@@ -97,7 +100,8 @@ public class DefaultMessageFilterTest
      * must return the message. 
      * @throws FilterException 
      */
-    @Test public void filter_pass_message_thru() throws FilterException
+    @Test
+    void filter_pass_message_thru() throws FilterException
     {
         final String messageToFilter = "somemessage";
         this.mockery.checking(new Expectations()
@@ -108,7 +112,7 @@ public class DefaultMessageFilterTest
         });
 
         String filteredMessage = this.filterToTest.filter(messageToFilter);
-        Assert.assertNotNull(filteredMessage);
+        assertNotNull(filteredMessage);
         this.mockery.assertIsSatisfied();
     }
 
@@ -117,7 +121,8 @@ public class DefaultMessageFilterTest
      *
      * @throws FilterException
      */
-    @Test public void filter_pass_message_with_configured_filter_rule_bad_configuration() throws FilterException
+    @Test
+    void filter_pass_message_with_configured_filter_rule_bad_configuration() throws FilterException
     {
         final String messageToFilter = "somemessage";
 
@@ -128,7 +133,7 @@ public class DefaultMessageFilterTest
         ((ConfiguredResource)filter).setConfiguration(new String("my configuration"));
 
         String filteredMessage = filter.filter(messageToFilter);
-        Assert.assertNotNull(filteredMessage);
+        assertNotNull(filteredMessage);
     }
 
 
@@ -137,7 +142,8 @@ public class DefaultMessageFilterTest
      *
      * @throws FilterException
      */
-    @Test public void filter_pass_message_with_configured_filter_rule_good_configuration() throws FilterException
+    @Test
+    void filter_pass_message_with_configured_filter_rule_good_configuration() throws FilterException
     {
         final String messageToFilter = "somemessage";
 
@@ -148,26 +154,29 @@ public class DefaultMessageFilterTest
         ((ConfiguredResource)filter).setConfiguration(Integer.valueOf(1));
 
         String filteredMessage = filter.filter(messageToFilter);
-        Assert.assertNotNull(filteredMessage);
+        assertNotNull(filteredMessage);
     }
 
     /**
      * Test case: filtering rule failure due to a thrown FilterException. 
      * @throws FilterException 
      */
-    @Test(expected = FilterException.class)
-    public void failed_filter_due_to_filterException() throws FilterException
+    @Test
+    void failed_filter_due_to_filterException() throws FilterException
     {
-        final String messageToFilter = "somemessage";
-        this.mockery.checking(new Expectations()
-        {
+        assertThrows(FilterException.class, () -> {
+            final String messageToFilter = "somemessage";
+            this.mockery.checking(new Expectations()
             {
-                one(filterRule).accept(messageToFilter);will(throwException(new FilterException("test exception")));
-            }
-        });
+                {
+                    one(filterRule).accept(messageToFilter);
+                    will(throwException(new FilterException("test exception")));
+                }
+            });
 
-        this.filterToTest.filter(messageToFilter);
-        this.mockery.assertIsSatisfied();
+            this.filterToTest.filter(messageToFilter);
+            this.mockery.assertIsSatisfied();
+        });
     }
 
     /**

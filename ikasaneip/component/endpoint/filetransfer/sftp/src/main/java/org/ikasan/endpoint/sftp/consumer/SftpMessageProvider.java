@@ -61,8 +61,8 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.JobExecutionContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.InvalidPropertyException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.InvalidPropertyException;
 import java.util.ArrayList;
 import java.util.List;
 

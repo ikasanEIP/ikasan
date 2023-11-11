@@ -13,12 +13,10 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.trigger.model.TriggerImpl;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +24,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -38,15 +35,12 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { WiretapApplication.class, MockedUserServiceTestConfig.class })
+@SpringBootTest(classes = {WiretapApplication.class, MockedUserServiceTestConfig.class})
 @EnableWebMvc
-public class WiretapApplicationTest
+class WiretapApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -68,15 +62,15 @@ public class WiretapApplicationTest
     private ObjectMapper mapper = new ObjectMapper();
 
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void createTriggerWithReadOnlyUser() throws Exception
+    void createTriggerWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/wiretap/trigger")
@@ -89,7 +83,7 @@ public class WiretapApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void createTriggerPUT_when_returns_200() throws Exception
+    void createTriggerPUT_when_returns_200() throws Exception
     {
 
 
@@ -117,7 +111,7 @@ public class WiretapApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void createTriggerPUT_when_returns_401() throws Exception
+    void createTriggerPUT_when_returns_401() throws Exception
     {
 
         Mockito.doThrow(new RuntimeException("issue persisting rigger"))
@@ -141,7 +135,7 @@ public class WiretapApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void deleteTrigger_when_returns_200() throws Exception
+    void deleteTrigger_when_returns_200() throws Exception
     {
 
         Mockito.when(jobAwareFlowEventListener.getTrigger(1202l))
@@ -171,7 +165,7 @@ public class WiretapApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void delteTriggerwhen_returns_401() throws Exception
+    void delteTriggerwhen_returns_401() throws Exception
     {
 
         Mockito.doThrow(new RuntimeException("issue persisting rigger"))
@@ -193,7 +187,7 @@ public class WiretapApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getTriggers_when_returns_200() throws Exception
+    void getTriggers_when_returns_200() throws Exception
     {
         //String moduleName, String flowName, String relationshipDescription, String jobName, Map<String, String> params
         TriggerImpl t = new TriggerImpl("testModule","testFlow","AFTER",

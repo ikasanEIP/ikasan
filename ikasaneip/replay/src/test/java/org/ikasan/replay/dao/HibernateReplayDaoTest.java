@@ -40,19 +40,17 @@
  */
 package org.ikasan.replay.dao;
 
+import jakarta.annotation.Resource;
 import org.ikasan.replay.model.HibernateReplayEvent;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,14 +60,13 @@ import java.util.List;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/replay-service-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
+@SpringJUnitConfig(locations = {
+		"/replay-service-conf.xml",
+		"/hsqldb-config.xml",
+		"/substitute-components.xml",
+		"/mock-components.xml"
 })
-public class HibernateReplayDaoTest
+class HibernateReplayDaoTest
 {	
 	/**
      * Mockery for mocking concrete classes
@@ -80,10 +77,10 @@ public class HibernateReplayDaoTest
     ReplayDao replayDao;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
-	
+
 	@Test
-	@DirtiesContext
-	public void testSaveReplayEvent_success()
+			@DirtiesContext
+	void testSaveReplayEvent_success()
 	{
 		HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
       
@@ -91,12 +88,12 @@ public class HibernateReplayDaoTest
 
 		ReplayEvent replayEvent1 = this.replayDao.getReplayEventById(replayEvent.getId());
 
-		Assert.assertEquals("Replay events equal", replayEvent, replayEvent1);
+		assertEquals(replayEvent, replayEvent1, "Replay events equal");
 	}
 
-    @Test
-    @DirtiesContext
-    public void testSaveReplayEvents_success()
+	@Test
+			@DirtiesContext
+	void testSaveReplayEvents_success()
     {
         List<ReplayEvent> replayEvents = new ArrayList<>();
 
@@ -112,12 +109,12 @@ public class HibernateReplayDaoTest
 
         List<ReplayEvent> replayEventsResults = this.replayDao.getReplayEvents("moduleName", null, null, null, 1000);
 
-        Assert.assertEquals("Result size == 100", 100, replayEventsResults.size());
+        assertEquals(100, replayEventsResults.size(), "Result size == 100");
     }
 
-    @Test
-    @DirtiesContext
-    public void test_harvest_success()
+	@Test
+			@DirtiesContext
+	void test_harvest_success()
     {
         this.replayDao.setHarvestQueryOrdered(true);
         long currentTimestamp = System.currentTimeMillis();
@@ -132,16 +129,16 @@ public class HibernateReplayDaoTest
             replayEventList.add(replayEvent);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.replayDao.getHarvestableRecords(5000).size(), 1000);
+		assertEquals(1000, this.replayDao.getHarvestableRecords(5000).size(), "Harvestable records == 1000");
 
         this.replayDao.updateAsHarvested(replayEventList);
 
-        Assert.assertEquals("Harvestable records == 0", this.replayDao.getHarvestableRecords(5000).size(), 0);
+		assertEquals(0, this.replayDao.getHarvestableRecords(5000).size(), "Harvestable records == 0");
     }
 
-    @Test
-    @DirtiesContext
-    public void test_harvest_success_with_gap()
+	@Test
+			@DirtiesContext
+	void test_harvest_success_with_gap()
     {
         this.replayDao.setHarvestQueryOrdered(true);
         long currentTimestamp = System.currentTimeMillis();
@@ -162,13 +159,13 @@ public class HibernateReplayDaoTest
 
         events = this.replayDao.getHarvestableRecords(3);
 
-        Assert.assertEquals("Id equals!",Long.valueOf(2L), Long.valueOf(events.get(1).getId() - events.get(0).getId()));
-        Assert.assertEquals("Id equals!",Long.valueOf(1L), Long.valueOf(events.get(2).getId() - events.get(1).getId()));
+        assertEquals(Long.valueOf(2L), Long.valueOf(events.get(1).getId() - events.get(0).getId()), "Id equals!");
+        assertEquals(Long.valueOf(1L), Long.valueOf(events.get(2).getId() - events.get(1).getId()), "Id equals!");
     }
 
-    @Test
-    @DirtiesContext
-    public void test_harvest_success_with_order_by()
+	@Test
+			@DirtiesContext
+	void test_harvest_success_with_order_by()
     {
         this.replayDao.setHarvestQueryOrdered(true);
         long currentTimestamp = System.currentTimeMillis();
@@ -184,10 +181,10 @@ public class HibernateReplayDaoTest
             replayEventList.add(replayEvent);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.replayDao.getHarvestableRecords(5000).size(), 1000);
+		assertEquals(1000, this.replayDao.getHarvestableRecords(5000).size(), "Harvestable records == 1000");
 
         this.replayDao.updateAsHarvested(replayEventList);
 
-        Assert.assertEquals("Harvestable records == 0", this.replayDao.getHarvestableRecords(5000).size(), 0);
+		assertEquals(0, this.replayDao.getHarvestableRecords(5000).size(), "Harvestable records == 0");
     }
 }

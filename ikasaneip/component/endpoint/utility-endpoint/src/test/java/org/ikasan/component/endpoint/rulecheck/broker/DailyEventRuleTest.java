@@ -12,15 +12,14 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.joda.time.format.DateTimeFormatter;
-import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 import static org.joda.time.format.DateTimeFormat.forPattern;
-import static org.junit.Assert.assertThat;
 
 public class DailyEventRuleTest
 {
@@ -34,9 +33,6 @@ public class DailyEventRuleTest
 
     @Rule
     public JodaFixedTimeRule jodaFixedTimeRule = new JodaFixedTimeRule();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private DailyEventRule rule;
 
@@ -55,8 +51,8 @@ public class DailyEventRuleTest
 
     private DailyEventRuleStrategy dailyEventRuleStrategy;
 
-    @Before
-    public void beforeEveryTest()
+    @BeforeEach
+    void beforeEveryTest()
     {
         configuration = new DailyEventRuleConfiguration();
         configurationService = context.mock(ConfigurationService.class);
@@ -81,7 +77,7 @@ public class DailyEventRuleTest
     }
 
     @Test
-    public void whenEventIsForTodayShouldUpdateConfiguration(){
+    void whenEventIsForTodayShouldUpdateConfiguration(){
 
         context.checking(new Expectations(){
             {
@@ -96,7 +92,7 @@ public class DailyEventRuleTest
     }
 
     @Test
-    public void whenNoEventSeenTodayWeNotify() throws RuleBreachException
+    void whenNoEventSeenTodayWeNotify() throws RuleBreachException
     {
 
         configuration.setLastDateProcessed("");

@@ -1,7 +1,7 @@
 package org.ikasan.dashboard;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
@@ -9,9 +9,9 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
@@ -22,7 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DashboardRestServiceTest
 {
@@ -34,14 +35,13 @@ public class DashboardRestServiceTest
 
     Environment environment = mockery.mock(Environment.class);
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(
-        WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
+    @RegisterExtension
+    public WireMockExtension wireMockRule = WireMockExtension.newInstance().options(WireMockConfiguration.options().dynamicPort()).build(); // No-args constructor defaults to port 8080
 
     DashboardRestServiceImpl uut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
         mockery.checking(new Expectations()
@@ -64,7 +64,7 @@ public class DashboardRestServiceTest
     }
 
     @Test
-    public void pushWiretapReturns201()
+    void pushWiretapReturns201()
     {
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
             1111l, "{event:content,as:json}", 222222l);
@@ -76,11 +76,11 @@ public class DashboardRestServiceTest
             .willReturn(aResponse()
                 .withStatus(201)
             ));
-        assertEquals(true, uut.publish(wiretaps));
+        assertTrue(uut.publish(wiretaps));
     }
 
     @Test
-    public void pushWiretapReturns401_Followed_by_authentication_and_successful_wiretap_push()
+    void pushWiretapReturns401_Followed_by_authentication_and_successful_wiretap_push()
     {
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
             1111l, "{event:content,as:json}", 222222l);
@@ -124,11 +124,11 @@ public class DashboardRestServiceTest
             .willReturn(aResponse()
                 .withStatus(201)
             ));
-        assertEquals(true, uut.publish(wiretaps));
+        assertTrue(uut.publish(wiretaps));
     }
 
     @Test
-    public void pushWiretapReturns401_Followed_by_failed_authentication()
+    void pushWiretapReturns401_Followed_by_failed_authentication()
     {
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
             1111l, "{event:content,as:json}", 222222l);
@@ -166,11 +166,11 @@ public class DashboardRestServiceTest
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
 
-        assertEquals(false, uut.publish(wiretaps));
+        assertFalse(uut.publish(wiretaps));
     }
 
     @Test
-    public void pushWiretapReturns400()
+    void pushWiretapReturns400()
     {
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
             1111l, "{event:content,as:json}", 222222l);
@@ -182,11 +182,11 @@ public class DashboardRestServiceTest
             .willReturn(aResponse()
                 .withStatus(400)
             ));
-        assertEquals(false, uut.publish(wiretaps));
+        assertFalse(uut.publish(wiretaps));
     }
 
     @Test
-    public void pushWiretapReturns500()
+    void pushWiretapReturns500()
     {
         WiretapFlowEvent wiretap = new WiretapFlowEvent("testModule", "testFlow", "testComponent", "lifeId", null,
             1111l, "{event:content,as:json}", 222222l);
@@ -198,11 +198,11 @@ public class DashboardRestServiceTest
             .willReturn(aResponse()
                 .withStatus(500)
             ));
-        assertEquals(false, uut.publish(wiretaps));
+        assertFalse(uut.publish(wiretaps));
     }
 
     @Test
-    public void testTimeout()
+    void testTimeout()
     {
         HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
             = new HttpComponentsClientHttpRequestFactory();
@@ -222,6 +222,6 @@ public class DashboardRestServiceTest
                 .withStatus(201)
                 .withFixedDelay(2000)
             ));
-        assertEquals(false, uut.publish(wiretaps));
+        assertFalse(uut.publish(wiretaps));
     }
 }

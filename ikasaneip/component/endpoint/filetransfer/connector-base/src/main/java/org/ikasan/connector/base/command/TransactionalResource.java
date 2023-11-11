@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base.command;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Interface for demarking classes that represent a transactional resource,

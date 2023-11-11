@@ -44,7 +44,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Date;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.XidImpl;

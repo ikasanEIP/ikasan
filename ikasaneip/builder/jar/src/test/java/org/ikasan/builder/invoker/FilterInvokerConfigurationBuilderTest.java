@@ -41,35 +41,36 @@
 package org.ikasan.builder.invoker;
 
 import org.ikasan.flow.visitorPattern.invoker.FilterInvokerConfiguration;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>FilterInvokerConfigurationBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class FilterInvokerConfigurationBuilderTest
+class FilterInvokerConfigurationBuilderTest
 {
     /**
      * Test successful builder.
      */
     @Test
-    public void FilterInvokerConfigurationBuilder_test_properties_setters()
+    void FilterInvokerConfigurationBuilder_test_properties_setters()
     {
         FilterInvokerConfigurationBuilder ficb = new FilterInvokerConfigurationBuilder(new FilterInvokerConfiguration());
 
-        Assert.assertTrue("FilterInvokerConfiguration should have 2 properties", TestUtils.getFields(FilterInvokerConfiguration.class).size() == 5);
-        Assert.assertFalse("FilterInvokerConfiguration should be false", ficb.withDynamicConfiguration(false).build().isDynamicConfiguration());
-        Assert.assertTrue("FilterInvokerConfiguration should be true", ficb.withDynamicConfiguration(true).build().isDynamicConfiguration());
-        Assert.assertFalse("FilterInvokerConfiguration should be false", ficb.withApplyFilter(false).build().isApplyFilter());
-        Assert.assertTrue("FilterInvokerConfiguration should be true", ficb.withApplyFilter(true).build().isApplyFilter());
-        Assert.assertFalse("FilterInvokerConfiguration should be false", ficb.withLogFiltered(false).build().isLogFiltered());
-        Assert.assertTrue("FilterInvokerConfiguration should be true", ficb.withLogFiltered(true).build().isLogFiltered());
-        Assert.assertTrue("FilterInvokerConfiguration should be true", ficb.withCaptureMetrics(true).build().getCaptureMetrics() == true);
-        Assert.assertTrue("FilterInvokerConfiguration should be false", ficb.withCaptureMetrics(false).build().getCaptureMetrics() == false);
-        Assert.assertTrue("FilterInvokerConfiguration should be true", ficb.withSnapMetricsEvent(true).build().getSnapEvent() == true);
-        Assert.assertTrue("FilterInvokerConfiguration should be false", ficb.withSnapMetricsEvent(false).build().getSnapEvent() == false);
+        assertEquals(5, TestUtils.getFields(FilterInvokerConfiguration.class).size(), "FilterInvokerConfiguration should have 2 properties");
+        assertFalse(ficb.withDynamicConfiguration(false).build().isDynamicConfiguration(), "FilterInvokerConfiguration should be false");
+        assertTrue(ficb.withDynamicConfiguration(true).build().isDynamicConfiguration(), "FilterInvokerConfiguration should be true");
+        assertFalse(ficb.withApplyFilter(false).build().isApplyFilter(), "FilterInvokerConfiguration should be false");
+        assertTrue(ficb.withApplyFilter(true).build().isApplyFilter(), "FilterInvokerConfiguration should be true");
+        assertFalse(ficb.withLogFiltered(false).build().isLogFiltered(), "FilterInvokerConfiguration should be false");
+        assertTrue(ficb.withLogFiltered(true).build().isLogFiltered(), "FilterInvokerConfiguration should be true");
+        assertTrue(ficb.withCaptureMetrics(true).build().getCaptureMetrics(), "FilterInvokerConfiguration should be true");
+        assertFalse(ficb.withCaptureMetrics(false).build().getCaptureMetrics(), "FilterInvokerConfiguration should be false");
+        assertTrue(ficb.withSnapMetricsEvent(true).build().getSnapEvent(), "FilterInvokerConfiguration should be true");
+        assertFalse(ficb.withSnapMetricsEvent(false).build().getSnapEvent(), "FilterInvokerConfiguration should be false");
 
     }
 

@@ -40,6 +40,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.FlowBuilder;
@@ -53,9 +54,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import java.io.IOException;
 
 @Configuration

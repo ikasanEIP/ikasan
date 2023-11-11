@@ -40,36 +40,34 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import jakarta.annotation.Resource;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for HibernateExclusionServiceDao.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
         "/mock-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
-        })
-public class HibernateErrorManagementDaoTest
+})
+class HibernateErrorManagementDaoTest
 {    
     @Resource
     ErrorManagementDao errorManagementDao;
@@ -79,15 +77,13 @@ public class HibernateErrorManagementDaoTest
 
     Exception exception = new Exception("error message");
 
-   
 
-    
     /**
      * Test save of errorOccurrence
      */
     @DirtiesContext
-    @Test
-    public void test_save_find_and_delete_error_occurrence()
+            @Test
+    void test_save_find_and_delete_error_occurrence()
     {
     	ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
     	ErrorOccurrenceImpl eo1 = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
@@ -103,22 +99,22 @@ public class HibernateErrorManagementDaoTest
     	uris.add(eo2.getUri());
     	
     	List<ErrorOccurrence> eoList = this.errorManagementDao.findErrorOccurrences(uris);
-    	
-    	Assert.assertTrue(eoList.size() == 3);
+
+        assertEquals(3, eoList.size());
     	
     	this.errorManagementDao.deleteErrorOccurence(eo);
     	
     	eoList = this.errorManagementDao.findErrorOccurrences(uris);
-    	
-    	Assert.assertTrue(eoList.size() == 2);
+
+        assertEquals(2, eoList.size());
     }
-    
+
     /**
      * Test save of errorOccurrence
      */
     @DirtiesContext
-    @Test
-    public void test_count_error_occurrence_for_module()
+            @Test
+    void test_count_error_occurrence_for_module()
     {
     	ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
     	ErrorOccurrenceImpl eo1 = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
@@ -130,12 +126,12 @@ public class HibernateErrorManagementDaoTest
     	
     	System.out.println(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)));
     	
-    	Assert.assertTrue(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)) == 3);
+    	assertTrue(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)) == 3);
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvest_success()
+            @DirtiesContext
+    void test_harvest_success()
     {
         this.errorManagementDao.setHarvestQueryOrdered(true);
         List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
@@ -149,16 +145,16 @@ public class HibernateErrorManagementDaoTest
             errorOccurrences.add(eo);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+        assertEquals(1000, this.errorManagementDao.getHarvestableRecords(5000).size(), "Harvestable records == 1000");
 
         this.errorManagementDao.updateAsHarvested(errorOccurrences);
 
-        Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
+        assertEquals(0, this.errorManagementDao.getHarvestableRecords(5000).size(), "Harvestable records == 0");
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvest_success_no_order_by()
+            @DirtiesContext
+    void test_harvest_success_no_order_by()
     {
         this.errorManagementDao.setHarvestQueryOrdered(false);
         List<ErrorOccurrence> errorOccurrences = new ArrayList<>();
@@ -172,10 +168,10 @@ public class HibernateErrorManagementDaoTest
             errorOccurrences.add(eo);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+        assertEquals(1000, this.errorManagementDao.getHarvestableRecords(5000).size(), "Harvestable records == 1000");
 
         this.errorManagementDao.updateAsHarvested(errorOccurrences);
 
-        Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
+        assertEquals(0, this.errorManagementDao.getHarvestableRecords(5000).size(), "Harvestable records == 0");
     }
 }

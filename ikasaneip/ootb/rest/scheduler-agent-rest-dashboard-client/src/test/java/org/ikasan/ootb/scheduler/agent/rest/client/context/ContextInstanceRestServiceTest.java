@@ -1,7 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.rest.client.context;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -11,9 +11,9 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -26,7 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class ContextInstanceRestServiceTest {
 
@@ -39,14 +40,13 @@ public class ContextInstanceRestServiceTest {
 
     Environment environment = mockery.mock(Environment.class);
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(
-        WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
+    @RegisterExtension
+    public WireMockExtension wireMockRule = WireMockExtension.newInstance().options(WireMockConfiguration.options().dynamicPort()).build(); // No-args constructor defaults to port 8080
 
     ContextInstanceRestServiceImpl uut;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
 
         mockery.checking(new Expectations() {{
@@ -99,7 +99,7 @@ public class ContextInstanceRestServiceTest {
 //    }
 //
     @Test
-    public void get_by_agent_name_contexts() throws IOException {
+    void get_by_agent_name_contexts() throws IOException {
         stubFor(get(urlEqualTo("/rest/jobContext/getByAgentName?agentName="+AGENT_NAME))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -119,17 +119,19 @@ public class ContextInstanceRestServiceTest {
         assertEquals(3, params.size());
     }
 
-    @Test(expected = EndpointException.class)
-    public void when_get_by_agent_returns_error() {
-        stubFor(get(urlEqualTo("/rest/jobContext/getByAgentName?agentName="+AGENT_NAME))
-            .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
-            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .willReturn(aResponse()
-                .withBody("{500 Error}")
-                .withStatus(500)
-            ));
+    @Test
+    void when_get_by_agent_returns_error() {
+        assertThrows(EndpointException.class, () -> {
+            stubFor(get(urlEqualTo("/rest/jobContext/getByAgentName?agentName=" + AGENT_NAME))
+                .withHeader(HttpHeaders.USER_AGENT, equalTo(MODULE_NAME))
+                .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+                .willReturn(aResponse()
+                    .withBody("{500 Error}")
+                    .withStatus(500)
+                ));
 
-        uut.getAllInstancesDashboardThinksAgentShouldHandle(AGENT_NAME);
+            uut.getAllInstancesDashboardThinksAgentShouldHandle(AGENT_NAME);
+        });
     }
 
     // @Mick, don't think we need these anymore

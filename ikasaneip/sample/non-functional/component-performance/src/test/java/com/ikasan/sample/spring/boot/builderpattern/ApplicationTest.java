@@ -40,6 +40,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.apache.activemq.broker.BrokerService;
 import org.h2.tools.Server;
 import org.ikasan.nonfunctional.test.util.WiretapTestUtil;
@@ -51,24 +52,21 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Stress testing of Ikasan persistence.
@@ -82,7 +80,6 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
@@ -109,28 +106,28 @@ public class ApplicationTest
     // test utils
     WiretapTestUtil wiretapTestUtil;
 
-    @BeforeClass
-    public static void setup() throws SQLException
+    @BeforeAll
+    static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @Before
-    public void start() throws Exception
+    @BeforeEach
+    void start() throws Exception
     {
         wiretapTestUtil = new WiretapTestUtil(wiretapService, jobAwareFlowEventListener);
     }
 
-    @AfterClass
-    public static void teardown()
+    @AfterAll
+    static void teardown()
     {
         server.shutdown();
     }
 
     @Test
     @DirtiesContext
-    public void test_splitter_stress() throws Exception
+    void test_splitter_stress() throws Exception
     {
         // event generator publishing to JMS topic
         splitterFlowTestRule.withFlow(moduleUnderTest.getFlow("splitter stress flow"));
@@ -164,10 +161,8 @@ public class ApplicationTest
                 ModuleConfig.EVENT_GENERATOR_COUNT, wiretaps.getResultSize()
                        );
 
-            assertTrue("Expected 'splitter stress flow' flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
-                    + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT
-                      );
+            assertEquals(wiretaps.getResultSize(), ModuleConfig.EVENT_GENERATOR_COUNT, "Expected 'splitter stress flow' flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
+                    + " but found " + wiretaps.getResultSize());
 
         });
 

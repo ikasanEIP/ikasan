@@ -42,10 +42,10 @@ package org.ikasan.connector.ftp.outbound;
 
 import java.io.Serializable;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.XAResource;
+import jakarta.transaction.xa.Xid;
 
 import com.google.common.cache.Cache;
 import org.slf4j.Logger;
@@ -322,7 +322,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
     /**
      * Deal with forgetting this unit of work as a txn, in this case do nothing
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#forget(javax.transaction.xa.Xid)
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#forget(jakarta.transaction.xa.Xid)
      */
     @Override
     public void forget(Xid arg0)
@@ -359,7 +359,7 @@ public class FTPManagedConnection extends TransactionalCommandConnection impleme
      * Return whether or not this resource manager is the same, always return
      * false
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#isSameRM(javax.transaction.xa.XAResource)
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#isSameRM(jakarta.transaction.xa.XAResource)
      * @return false
      */
     @Override

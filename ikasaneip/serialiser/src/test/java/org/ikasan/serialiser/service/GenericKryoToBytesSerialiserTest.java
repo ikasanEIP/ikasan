@@ -45,9 +45,9 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.TextMessage;
 
 import org.ikasan.serialiser.converter.JmsMapMessageConverter;
 import org.ikasan.serialiser.converter.JmsTextMessageConverter;
@@ -58,18 +58,19 @@ import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.impl.JobExecutionContextImpl;
 
 import com.esotericsoftware.kryo.Serializer;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for SerialiserFactoryKryoImpl.
  * 
  * @author Ikasan Development Team
  */
-public class GenericKryoToBytesSerialiserTest
+class GenericKryoToBytesSerialiserTest
 {
     /** one serialiser service should provide all serialiser instances */
 
@@ -77,7 +78,7 @@ public class GenericKryoToBytesSerialiserTest
      * Test
      */
     @Test
-    public void test_getSerialiser_for_string_successful()
+    void test_getSerialiser_for_string_successful()
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -98,14 +99,14 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         String restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(str));
+        assertEquals(restored, str);
     }
 
     /**
      * Test
      */
     @Test
-    public void test_getSerialiser_for_integer_successful()
+    void test_getSerialiser_for_integer_successful()
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -125,14 +126,14 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         Integer restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(myInt));
+        assertEquals(restored, myInt);
     }
 
     /**
      * Test
      */
     @Test
-    public void test_getSerialiser_for_primitiveClass_successful()
+    void test_getSerialiser_for_primitiveClass_successful()
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -153,15 +154,15 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         PrimitiveClass restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(primitiveClass));
+        assertEquals(restored, primitiveClass);
     }
-    
+
     /**
      * Test
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_textMessage_successful() throws JMSException
+    void test_getSerialiser_for_textMessage_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -183,15 +184,15 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         JmsTextMessageDefaultImpl restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(message));
+        assertEquals(restored, message);
     }
-    
+
     /**
      * Test
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_mapMessage_successful() throws JMSException
+    void test_getSerialiser_for_mapMessage_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -216,15 +217,15 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         JmsMapMessageDefaultImpl restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(message));
+        assertEquals(restored, message);
     }
-    
+
     /**
      * Test
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_jobContextMessage_successful() throws JMSException
+    void test_getSerialiser_for_jobContextMessage_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -246,15 +247,15 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         JobExecutionContextDefaultImpl restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(message));
+        assertEquals(restored, message);
     }
-    
+
     /**
      * Test
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_hashmap_successful() throws JMSException
+    void test_getSerialiser_for_hashmap_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -280,15 +281,15 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         HashMap<String, Object> restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(hashMap));
+        assertEquals(restored, hashMap);
     }
-    
+
     /**
      * Test
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_arraylist_successful() throws JMSException
+    void test_getSerialiser_for_arraylist_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -315,15 +316,15 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         ArrayList<Object> restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored.equals(arrayList));
+        assertEquals(restored, arrayList);
     }
-    
+
     /**
      * Test
      * @throws JMSException 
      */
     @Test
-    public void test_getSerialiser_for_array_successful() throws JMSException
+    void test_getSerialiser_for_array_successful() throws JMSException
     {
     	HashMap<Class,Serializer> serialisers = new HashMap<Class,Serializer>();
     	serialisers.put(File.class, new FileKryoSerialiser());
@@ -350,11 +351,11 @@ public class GenericKryoToBytesSerialiserTest
 
         // deserialise it
         Object[] restored = serialiser.deserialise(bytes);
-        Assert.assertTrue(restored[0].equals(array[0]));
-        Assert.assertTrue(restored[1].equals(array[1]));
-        Assert.assertTrue(restored[2].equals(array[2]));
-        Assert.assertTrue(restored[3].equals(array[3]));
-        Assert.assertTrue(restored[4].equals(array[4]));
-        Assert.assertTrue(restored[5].equals(array[5]));
+        assertEquals(restored[0], array[0]);
+        assertEquals(restored[1], array[1]);
+        assertEquals(restored[2], array[2]);
+        assertEquals(restored[3], array[3]);
+        assertEquals(restored[4], array[4]);
+        assertEquals(restored[5], array[5]);
     }
 }

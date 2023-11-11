@@ -55,22 +55,20 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>ComponentBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledConsumerBuilderTest {
+class ScheduledConsumerBuilderTest {
     /**
      * Mockery for mocking concrete classes
      */
@@ -79,9 +77,6 @@ public class ScheduledConsumerBuilderTest {
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown= ExpectedException.none();
 
     /**
      * Mocks
@@ -100,7 +95,7 @@ public class ScheduledConsumerBuilderTest {
      * Test successful builder creation.
      */
     @Test
-    public void scheduledConsumer_build_when_configuration_provided() {
+    void scheduledConsumer_build_when_configuration_provided() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -132,13 +127,13 @@ public class ScheduledConsumerBuilderTest {
                 .setScheduledJobGroupName("defaultScheduledJobGroupName")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
-        assertTrue("eager should be 'true'", configuration.isEager() == true);
-        assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
-        assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
+        assertTrue(configuration.isEager(), "eager should be 'true'");
+        assertTrue(configuration.isIgnoreMisfire(), "ignoreMisfire should be 'true'");
+        assertTrue(configuration.getTimezone() == "UTC", "Timezone should be 'true'");
 
         mockery.assertIsSatisfied();
     }
@@ -147,7 +142,7 @@ public class ScheduledConsumerBuilderTest {
      * Test successful builder creation.
      */
     @Test
-    public void scheduledConsumer_build_when_no_aop_proxy() {
+    void scheduledConsumer_build_when_no_aop_proxy() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -173,10 +168,10 @@ public class ScheduledConsumerBuilderTest {
                 .setScheduledJobGroupName("defaultScheduledJobGroupName")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
 
         mockery.assertIsSatisfied();
     }
@@ -185,7 +180,7 @@ public class ScheduledConsumerBuilderTest {
      * Test successful builder creation.
      */
     @Test
-    public void scheduledConsumer_build_when_jobName_and_jobGroup_set() {
+    void scheduledConsumer_build_when_jobName_and_jobGroup_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -214,17 +209,17 @@ public class ScheduledConsumerBuilderTest {
                 .setScheduledJobName("testjob")
                 .build();
 
-        assertTrue("instance should be a ScheduledConsumer", scheduledConsumer instanceof ScheduledConsumer);
+        assertTrue(scheduledConsumer instanceof ScheduledConsumer, "instance should be a ScheduledConsumer");
 
         ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
-        assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("121212", configuration.getCronExpression(), "cronExpression should be '121212'");
 
         mockery.assertIsSatisfied();
 
     }
 
     @Test
-    public void scheduledConsumer_build_when_jobName_not_set() {
+    void scheduledConsumer_build_when_jobName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -257,7 +252,7 @@ public class ScheduledConsumerBuilderTest {
     }
 
     @Test
-    public void scheduledConsumer_build_when_jobGroupName_not_set() {
+    void scheduledConsumer_build_when_jobGroupName_not_set() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -290,7 +285,7 @@ public class ScheduledConsumerBuilderTest {
     }
 
     @Test
-    public void scheduledConsumer_build_when_all_attributes_set_scheduledConsumer_vanilla_messageProvider() {
+    void scheduledConsumer_build_when_all_attributes_set_scheduledConsumer_vanilla_messageProvider() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -331,15 +326,15 @@ public class ScheduledConsumerBuilderTest {
                 .build();
 
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
-        assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
-        assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
+        assertEquals("121212", scheduledConsumer.getConfiguration().getCronExpression());
+        assertEquals("configuredResourceId", scheduledConsumer.getConfiguredResourceId());
         assertTrue(scheduledConsumer.isCriticalOnStartup());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
         assertTrue(scheduledConsumer.getConfiguration().isIgnoreMisfire());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
-        assertTrue(scheduledConsumer.getConfiguration().getMaxEagerCallbacks() == 10);
+        assertEquals(10, scheduledConsumer.getConfiguration().getMaxEagerCallbacks());
         assertTrue(scheduledConsumer.getMessageProvider() instanceof MessageProvider);
-        assertTrue(scheduledConsumer.getConfiguration().getTimezone().equals("GMT"));
+        assertEquals("GMT", scheduledConsumer.getConfiguration().getTimezone());
         assertTrue(scheduledConsumer.getEventFactory() != null);
         assertTrue(scheduledConsumer.getManagedEventIdentifierService() != null);
 
@@ -347,7 +342,7 @@ public class ScheduledConsumerBuilderTest {
     }
 
     @Test
-    public void scheduledConsumer_build_when_all_attributes_set_scheduledConsumer_callback_messageProvider() {
+    void scheduledConsumer_build_when_all_attributes_set_scheduledConsumer_callback_messageProvider() {
 
         final ScheduledConsumer emptyScheduleConsumer =  new ScheduledConsumer(scheduler);
         ScheduledConsumerBuilder scheduledConsumerBuilder = new ExtendedScheduledConsumerBuilderImpl(emptyScheduleConsumer,
@@ -389,15 +384,15 @@ public class ScheduledConsumerBuilderTest {
 
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
 
-        assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
-        assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
+        assertEquals("121212", scheduledConsumer.getConfiguration().getCronExpression());
+        assertEquals("configuredResourceId", scheduledConsumer.getConfiguredResourceId());
         assertTrue(scheduledConsumer.isCriticalOnStartup());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
         assertTrue(scheduledConsumer.getConfiguration().isIgnoreMisfire());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
-        assertTrue(scheduledConsumer.getConfiguration().getMaxEagerCallbacks() == 10);
+        assertEquals(10, scheduledConsumer.getConfiguration().getMaxEagerCallbacks());
         assertTrue(scheduledConsumer.getMessageProvider() instanceof CallBackMessageProvider);
-        assertTrue(scheduledConsumer.getConfiguration().getTimezone().equals("GMT"));
+        assertEquals("GMT", scheduledConsumer.getConfiguration().getTimezone());
         assertTrue(scheduledConsumer.getEventFactory() != null);
         assertTrue(scheduledConsumer.getManagedEventIdentifierService() != null);
 

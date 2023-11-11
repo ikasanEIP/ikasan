@@ -50,22 +50,22 @@ import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test class for {@link org.ikasan.endpoint.ftp.consumer.FtpMessageProvider}
  *
  * @author Ikasan Development Team
  */
-public class FtpMessageProviderTest {
+class FtpMessageProviderTest {
 
     private FtpMessageProvider uut;
     /**
@@ -76,9 +76,6 @@ public class FtpMessageProviderTest {
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     private final FileBasedPasswordHelper fileBasedPasswordHelper = mockery.mock(FileBasedPasswordHelper.class, "mockFileBasedPasswordHelper");
 
@@ -95,48 +92,53 @@ public class FtpMessageProviderTest {
     //private final FileChunkDao fileChunkDao = mockery.mock(FileChunkDao.class,"mockFileChunkDao");
     private final TransactionalResourceCommandDAO transactionalResourceCommandDAO = mockery.mock(TransactionalResourceCommandDAO.class,"mocktransactionalResourceCommandDAO");
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         uut = new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, fileBasedPasswordHelper);
         uut.setConfiguration(configuration);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void failed_constructor_when_both_arg_are_null() {
-        new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void failed_constructor_when_fileBasedPasswordHelper_is_null() {
-        new FtpMessageProvider(transactionManager,baseFileTransferDao,null,transactionalResourceCommandDAO, null);
+    @Test
+    void failed_constructor_when_both_arg_are_null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new FtpMessageProvider(transactionManager, baseFileTransferDao, null, transactionalResourceCommandDAO, null);
+        });
     }
 
     @Test
-    public void invoke_when_activeFileTransferConnectionTemplate_is_null() throws ResourceException {
+    void failed_constructor_when_fileBasedPasswordHelper_is_null() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new FtpMessageProvider(transactionManager, baseFileTransferDao, null, transactionalResourceCommandDAO, null);
+        });
+    }
 
-        ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,null);
+    @Test
+    void invoke_when_activeFileTransferConnectionTemplate_is_null() throws ResourceException {
+        assertThrows(FtpResourceNotStartedException.class, () -> {
 
-        thrown.expect(FtpResourceNotStartedException.class);
+            ReflectionTestUtils.setField(uut, "activeFileTransferConnectionTemplate", null);
 
-        final String directory = "directory";
+            final String directory = "directory";
 
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(1).of(configuration).getSourceDirectoryURLFactory();
-                will(returnValue(null));
-                exactly(1).of(configuration).getSourceDirectory();
-                will(returnValue(directory));
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    exactly(1).of(configuration).getSourceDirectoryURLFactory();
+                    will(returnValue(null));
+                    exactly(1).of(configuration).getSourceDirectory();
+                    will(returnValue(directory));
 
-            }
+                }
+            });
+
+            uut.invoke(jobExecutionContext);
+
         });
 
-        uut.invoke(jobExecutionContext);
-
     }
 
     @Test
-    public void invoke_when_activeFileTransferConnectionTemplate_returns_payload() throws ResourceException {
+    void invoke_when_activeFileTransferConnectionTemplate_returns_payload() throws ResourceException {
 
         ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,activeFileTransferConnectionTemplate);
         final String directory = "directory";
@@ -195,7 +197,7 @@ public class FtpMessageProviderTest {
     }
 
     @Test
-    public void invoke_when_activeFileTransferConnectionTemplate_returns_null() throws ResourceException {
+    void invoke_when_activeFileTransferConnectionTemplate_returns_null() throws ResourceException {
 
         ReflectionTestUtils.setField(uut,"activeFileTransferConnectionTemplate" ,activeFileTransferConnectionTemplate);
         ReflectionTestUtils.setField(uut,"fileTransferConnectionTemplate" ,fileTransferConnectionTemplate);

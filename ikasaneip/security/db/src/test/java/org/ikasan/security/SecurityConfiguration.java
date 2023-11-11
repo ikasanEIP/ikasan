@@ -1,5 +1,6 @@
 package org.ikasan.security;
 
+import jakarta.annotation.Resource;
 import org.ikasan.security.dao.HibernateSecurityDao;
 import org.ikasan.security.dao.HibernateUserDao;
 import org.ikasan.security.dao.SecurityDao;
@@ -10,13 +11,13 @@ import org.ikasan.security.service.UserService;
 import org.ikasan.security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
@@ -68,6 +69,7 @@ public class SecurityConfiguration
 
 
     @Bean
+    @DependsOnDatabaseInitialization
     public LocalSessionFactoryBean securitySessionFactory()
     {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
@@ -114,6 +116,7 @@ public class SecurityConfiguration
 
 
     @Bean
+    @DependsOnDatabaseInitialization
     public LocalSessionFactoryBean xaSecuritySessionFactory(
     )
     {

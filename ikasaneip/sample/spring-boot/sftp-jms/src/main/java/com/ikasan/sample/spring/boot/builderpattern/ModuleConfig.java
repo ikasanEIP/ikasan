@@ -1,13 +1,12 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-
-import javax.annotation.Resource;
 
 @Configuration
 @ImportResource({ "classpath:ikasan-transaction-pointcut-jms.xml",

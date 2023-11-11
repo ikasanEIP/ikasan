@@ -42,9 +42,9 @@ package org.ikasan.transaction.spring.jta;
 
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.transaction.NotSupportedException;
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
+import jakarta.transaction.NotSupportedException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
 
 /**
  * Glue between JBoss Arjuna transaction manager and the Spring JTA transaction wrapper

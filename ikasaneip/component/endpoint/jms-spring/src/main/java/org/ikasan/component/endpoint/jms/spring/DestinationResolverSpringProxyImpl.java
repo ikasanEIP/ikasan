@@ -44,7 +44,7 @@ import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 
-import javax.jms.Destination;
+import jakarta.jms.Destination;
 
 /**
  * Specific implementation of a destination resolver which unwraps a 

@@ -49,15 +49,17 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Supports testing of the ConsumerFlowElementInvoker
  */
-public class ConsumerFlowElementInvokerTest
+class ConsumerFlowElementInvokerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -86,7 +88,7 @@ public class ConsumerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_consumer_flowElementInvoker_without_converter()
+    void test_consumer_flowElementInvoker_without_converter()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -117,7 +119,7 @@ public class ConsumerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_consumer_flowElementInvoker_with_converter()
+    void test_consumer_flowElementInvoker_with_converter()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -157,7 +159,7 @@ public class ConsumerFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_consumer_flowElementInvoker_with_converter_invocation_aware()
+    void test_consumer_flowElementInvoker_with_converter_invocation_aware()
     {
         // expectations
         mockery.checking(new Expectations()
@@ -197,37 +199,39 @@ public class ConsumerFlowElementInvokerTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = InvalidFlowException.class)
+    @Test
     @SuppressWarnings("unchecked")
-    public void test_consumer_flowElementInvoker_invalid_transition()
+    void test_consumer_flowElementInvoker_invalid_transition()
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(InvalidFlowException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                exactly(2).of(flowEvent).getIdentifier();
-                will(returnValue(payload));
-                exactly(2).of(flowEvent).getRelatedIdentifier();
-                will(returnValue(payload));
-                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                {
+                    exactly(2).of(flowEvent).getIdentifier();
+                    will(returnValue(payload));
+                    exactly(2).of(flowEvent).getRelatedIdentifier();
+                    will(returnValue(payload));
+                    exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
 
-                exactly(1).of(flowInvocationContext).setLastComponentName(null);
-                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(consumer));
-                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
-                will(returnValue(null));
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-            }
+                    exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                    exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                    exactly(1).of(flowElement).getFlowComponent();
+                    will(returnValue(consumer));
+                    exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                    exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                    will(returnValue(null));
+                    exactly(1).of(flowElement).getComponentName();
+                    will(returnValue("componentName"));
+                }
+            });
+
+            FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
+            flowEventListeners.add(flowEventListener);
+            flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+            mockery.assertIsSatisfied();
         });
-
-        FlowElementInvoker flowElementInvoker = new ConsumerFlowElementInvoker();
-        flowEventListeners.add(flowEventListener);
-        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
-
-        mockery.assertIsSatisfied();
     }
 
     class StubbedConsumerFlowElementInvoker extends ConsumerFlowElementInvoker

@@ -57,13 +57,9 @@ import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for ChunkerImpl
@@ -137,12 +133,12 @@ public class ChunkerImplTest
     }
 
 
-	/**
-	 * test the chunkFile method
-	 * @throws ChunkableDataProviderAccessException 
-	 */
+    /**
+     * test the chunkFile method
+     * @throws ChunkableDataProviderAccessException 
+     */
     @Test
-	public void testChunkFile_CannotConnect() throws ChunkableDataProviderAccessException {
+    void testChunkFile_CannotConnect() throws ChunkableDataProviderAccessException {
 	      Mockery interfaceMockery = new Mockery();
 	        final Sequence sequence = interfaceMockery.sequence("sequence");
 	        
@@ -167,18 +163,17 @@ public class ChunkerImplTest
 		} catch (ChunkException e) {
 			// check that the underlying exception is the access exception
 			assertEquals(
-					"Cause of exception should have been the ChunkableDataProviderAccessException thrown by the provider",
-					chunkableDataProviderAccessException, e.getCause());
+					chunkableDataProviderAccessException, e.getCause(), "Cause of exception should have been the ChunkableDataProviderAccessException thrown by the provider");
 		}
 	}
 
     /**
-	 * test the chunkFile method
-	 * @throws ChunkableDataSourceException 
-	 * @throws ChunkableDataProviderAccessException 
-	 */
+     * test the chunkFile method
+     * @throws ChunkableDataSourceException 
+     * @throws ChunkableDataProviderAccessException 
+     */
     @Test
-	public void testChunkFile_CannotDisconnect() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
+    void testChunkFile_CannotDisconnect() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 	    
 	        Mockery interfaceMockery = new Mockery();
 	        final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -208,19 +203,18 @@ public class ChunkerImplTest
 		} catch (ChunkException e) {
 			// check that the underlying exception is the access exception
 			assertEquals(
-					"Cause of exception should have been the ChunkableDataProviderAccessException thrown by the provider",
-					chunkableDataProviderAccessException, e.getCause());
+					chunkableDataProviderAccessException, e.getCause(), "Cause of exception should have been the ChunkableDataProviderAccessException thrown by the provider");
 		}
 	}
 
-	/**
-	 * test the chunkFile method
-	 * @throws ChunkableDataSourceException 
-	 * @throws ChunkableDataProviderAccessException 
-	 * @throws ChunkLoadException 
-	 */
+    /**
+     * test the chunkFile method
+     * @throws ChunkableDataSourceException 
+     * @throws ChunkableDataProviderAccessException 
+     * @throws ChunkLoadException 
+     */
     @Test
-   public void testChunkFile_ExceptionDuringReplaying() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
+    void testChunkFile_ExceptionDuringReplaying() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
 	    
         Mockery interfaceMockery = new Mockery();
         final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -242,18 +236,17 @@ public class ChunkerImplTest
 		} catch (ChunkException e) {
 			// check that the underlying exception is the load exception
 			assertEquals(
-					"Cause of exception should have been the chunkLoadException thrown by the provider",
-					chunkLoadException, e.getCause());
+					chunkLoadException, e.getCause(), "Cause of exception should have been the chunkLoadException thrown by the provider");
 		}
 	}
 
-	/**
-	 * test the chunkFile method
-	 * @throws ChunkableDataSourceException 
-	 * @throws ChunkableDataProviderAccessException 
-	 */
+    /**
+     * test the chunkFile method
+     * @throws ChunkableDataSourceException 
+     * @throws ChunkableDataProviderAccessException 
+     */
     @Test
-	public void testChunkFile_ExceptionDuringSourcing() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
+    void testChunkFile_ExceptionDuringSourcing() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 	    
         Mockery interfaceMockery = new Mockery();
         final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -279,19 +272,18 @@ public class ChunkerImplTest
 		} catch (ChunkException e) {
 			// check that the underlying exception is the access exception
 			assertEquals(
-					"Cause of exception should have been the ChunkableDataSourceException thrown by the provider",
-					chunkableDataSourceException, e.getCause());
+					chunkableDataSourceException, e.getCause(), "Cause of exception should have been the ChunkableDataSourceException thrown by the provider");
 		}
 	}
 
-	/**
-	 * test the chunkFile method
-	 * @throws ChunkableDataSourceException 
-	 * @throws ChunkableDataProviderAccessException 
-	 * @throws ChunkLoadException 
-	 */
+    /**
+     * test the chunkFile method
+     * @throws ChunkableDataSourceException 
+     * @throws ChunkableDataProviderAccessException 
+     * @throws ChunkLoadException 
+     */
     @Test
-	public void testChunkFile_ExceptionUnsupportedResume() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
+    void testChunkFile_ExceptionUnsupportedResume() throws ChunkableDataProviderAccessException, ChunkableDataSourceException, ChunkLoadException {
 	    
         Mockery interfaceMockery = new Mockery();
         final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -315,22 +307,22 @@ public class ChunkerImplTest
 			// check that the underlying exception is a source exception
 			// concerning the resume functionality
 			assertTrue(
-					"Underlying exception should have been a ChunkableDataSourceException",
-					(e.getCause() instanceof ChunkableDataSourceException));
+					(e.getCause() instanceof ChunkableDataSourceException),
+					"Underlying exception should have been a ChunkableDataSourceException");
 			assertTrue(
-					"Underlying exception should have concerned the resume functionality",
-					e.getCause().getMessage().indexOf("resume") > -1);
+					e.getCause().getMessage().indexOf("resume") > -1,
+					"Underlying exception should have concerned the resume functionality");
 		}
 	}
 
-	/**
-	 * test the chunkFile method with an invalid mode
-	 * @throws ChunkableDataSourceException 
-	 * @throws ChunkableDataProviderAccessException 
-	 * 
-	 */
+    /**
+     * test the chunkFile method with an invalid mode
+     * @throws ChunkableDataSourceException 
+     * @throws ChunkableDataProviderAccessException 
+     * 
+     */
     @Test
-	public void testChunkFile_InvalidMode() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
+    void testChunkFile_InvalidMode() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 
 	       Mockery interfaceMockery = new Mockery();
 	       final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -350,24 +342,24 @@ public class ChunkerImplTest
 			// check that the underlying exception is a source exception
 			// concerning an unknown mode
 			assertTrue(
-					"Underlying exception should have been a ChunkableDataSourceException",
-					(e.getCause() instanceof ChunkableDataSourceException));
+					(e.getCause() instanceof ChunkableDataSourceException),
+					"Underlying exception should have been a ChunkableDataSourceException");
 			assertTrue(
-					"Underlying exception should have concerned an unknown mode",
-					e.getCause().getMessage().indexOf("Unknown mode") > -1);
+					e.getCause().getMessage().indexOf("Unknown mode") > -1,
+					"Underlying exception should have concerned an unknown mode");
 		}
 
 	}
 
-	/**
-	 * test the chunkFile method
-	 * 
-	 * @throws ChunkException
-	 * @throws ChunkableDataProviderAccessException 
-	 * @throws ChunkableDataSourceException 
-	 */
+    /**
+     * test the chunkFile method
+     * 
+     * @throws ChunkException
+     * @throws ChunkableDataProviderAccessException 
+     * @throws ChunkableDataSourceException 
+     */
     @Test
-	public void testChunkFile_UsingInputStream() throws ChunkException, ChunkableDataSourceException, ChunkableDataProviderAccessException {
+    void testChunkFile_UsingInputStream() throws ChunkException, ChunkableDataSourceException, ChunkableDataProviderAccessException {
 	   
 	    Mockery interfaceMockery = new Mockery();
 	    final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -388,8 +380,8 @@ public class ChunkerImplTest
 				Chunker.MODE_INPUT_STREAM);
 		chunkerImpl.chunkFile(remoteDir, fileName, ONE_MB);
 	}
-	
-	
+
+
     /**
      * test the chunkFile method with an invalid mode
      * 
@@ -398,7 +390,7 @@ public class ChunkerImplTest
      * 
      */
     @Test
-    public void testChunkFile_InvalidChunkSize() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
+    void testChunkFile_InvalidChunkSize() throws ChunkableDataProviderAccessException, ChunkableDataSourceException {
 
            Mockery interfaceMockery = new Mockery();
            final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -417,23 +409,22 @@ public class ChunkerImplTest
             fail("exception should have been thrown as an invalid chunk size was used");
         } catch (ChunkException e) {
             assertTrue(
-                    "Underlying exception should have concerned an invalid chunk size",
-                    e.getMessage().indexOf("chunkSize") > -1);
+                    e.getMessage().indexOf("chunkSize") > -1,
+                    "Underlying exception should have concerned an invalid chunk size");
         }
 
-    }	
-	
+    }
 
 
-	/**
-	 * test the chunkFile method
-	 * 
-	 * @throws ChunkException
-	 * @throws ChunkableDataSourceException 
-	 * @throws ChunkableDataProviderAccessException 
-	 */
+    /**
+     * test the chunkFile method
+     * 
+     * @throws ChunkException
+     * @throws ChunkableDataSourceException 
+     * @throws ChunkableDataProviderAccessException 
+     */
     @Test
-	public void testChunkFile_UsingOuputStream() throws ChunkException, ChunkableDataProviderAccessException, ChunkableDataSourceException {
+    void testChunkFile_UsingOuputStream() throws ChunkException, ChunkableDataProviderAccessException, ChunkableDataSourceException {
 
         Mockery interfaceMockery = new Mockery();
         final Sequence sequence = interfaceMockery.sequence("sequence");
@@ -457,10 +448,10 @@ public class ChunkerImplTest
 	}
 
     /**
-	 * test the handleChunk method
-	 */
+     * test the handleChunk method
+     */
     @Test
-	public void testHandleChunk() {
+    void testHandleChunk() {
 
 		FileChunkDao dao = new MockFileChunkDao(new ArrayList<FileChunk>());
 		ChunkerImpl chunkerImpl = new ChunkerImpl(dao, null, 0);
@@ -468,7 +459,7 @@ public class ChunkerImplTest
 		byte[] payload = new byte[] { 1, 2, 3 };
 		chunkerImpl.handleChunk(payload, 1, 10);
 		FileChunk lastSaved = ((MockFileChunkDao) dao).getLastSaved();
-		assertEquals("FileChunk saved should have th same payload as the bytes passed in", payload, lastSaved.getContent());
+		assertEquals(payload, lastSaved.getContent(), "FileChunk saved should have th same payload as the bytes passed in");
 
 	}
 	

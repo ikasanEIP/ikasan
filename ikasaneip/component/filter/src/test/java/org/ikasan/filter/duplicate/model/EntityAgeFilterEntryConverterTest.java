@@ -1,84 +1,102 @@
 package org.ikasan.filter.duplicate.model;
 
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Created by Ikasan Development Team on 09/07/2016.
  */
-public class EntityAgeFilterEntryConverterTest
+class EntityAgeFilterEntryConverterTest
 {
     String xml = "<message><businessIdentifier>BID</businessIdentifier><lastUpdated>02031973</lastUpdated></message>";
 
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_null_business_identifier_xpath()
+    @Test
+    void test_exception_constructor_null_business_identifier_xpath()
     {
-        new EntityAgeFilterEntryConverter
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
                 (null, "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client", 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_empty_business_identifier_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client", 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_null_last_updated_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("/message/businessIdentifier/text()", null
-                        , "DDMMYYYY", "test-client", 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_empty_last_updated_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("/message/businessIdentifier/text()", ""
-                        , "DDMMYYYY", "test-client", 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_null_date_format_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , null, "test-client", 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_empty_date_format_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "", "test-client", 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_null_client_id_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", null, 30);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void test_exception_constructor_empty_client_id_xpath()
-    {
-        new EntityAgeFilterEntryConverter
-                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "", 30);
+                , "DDMMYYYY", "test-client", 30);
+        });
     }
 
     @Test
-    @Ignore
+    void test_exception_constructor_empty_business_identifier_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("", "/message/lastUpdated/text()"
+                , "DDMMYYYY", "test-client", 30);
+        });
+    }
+
+    @Test
+    void test_exception_constructor_null_last_updated_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("/message/businessIdentifier/text()", null
+                , "DDMMYYYY", "test-client", 30);
+        });
+    }
+
+    @Test
+    void test_exception_constructor_empty_last_updated_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("/message/businessIdentifier/text()", ""
+                , "DDMMYYYY", "test-client", 30);
+        });
+    }
+
+    @Test
+    void test_exception_constructor_null_date_format_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
+                , null, "test-client", 30);
+        });
+    }
+
+    @Test
+    void test_exception_constructor_empty_date_format_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
+                , "", "test-client", 30);
+        });
+    }
+
+    @Test
+    void test_exception_constructor_null_client_id_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
+                , "DDMMYYYY", null, 30);
+        });
+    }
+
+    @Test
+    void test_exception_constructor_empty_client_id_xpath()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new EntityAgeFilterEntryConverter
+                ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
+                , "DDMMYYYY", "", 30);
+        });
+    }
+
     // ignoring this test as there seems to be a difference in calculating the milliseconds on the linode server.
-    public void test_convert()
+    @Test
+    @Disabled
+    void test_convert()
     {
         EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
@@ -90,41 +108,47 @@ public class EntityAgeFilterEntryConverterTest
         System.out.println(entry);
 
         System.out.println("Criteria = " + entry.getCriteria());
-        Assert.assertEquals(entry.getCriteria(), Integer.valueOf(65757));
-        Assert.assertEquals(entry.getClientId(), "test-client");
-        Assert.assertEquals(entry.getCriteriaDescription(), "94694400000");
+        assertEquals(entry.getCriteria(), Integer.valueOf(65757));
+        assertEquals("test-client", entry.getClientId());
+        assertEquals("94694400000", entry.getCriteriaDescription());
     }
 
-    @Test(expected=FilterEntryConverterException.class)
-    public void test_exception_bad_xml()
+    @Test
+    void test_exception_bad_xml()
     {
-        EntityAgeFilterEntryConverter converter
+        assertThrows(FilterEntryConverterException.class, () -> {
+            EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client", 30);
+                , "DDMMYYYY", "test-client", 30);
 
-        converter.convert("bad xml");
+            converter.convert("bad xml");
+        });
     }
 
-    @Test(expected=FilterEntryConverterException.class)
-    public void test_exception_bad_xpath_business_identifier()
+    @Test
+    void test_exception_bad_xpath_business_identifier()
     {
-        EntityAgeFilterEntryConverter converter
+        assertThrows(FilterEntryConverterException.class, () -> {
+            EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("bad xpath", "/message/lastUpdated/text()"
-                        , "DDMMYYYY", "test-client", 30);
+                , "DDMMYYYY", "test-client", 30);
 
-        converter.convert(xml);
+            converter.convert(xml);
+        });
     }
 
-    @Test(expected=FilterEntryConverterException.class)
-    public void test_exception_bad_xpath_updated_date()
+    @Test
+    void test_exception_bad_xpath_updated_date()
     {
-        EntityAgeFilterEntryConverter converter
+        assertThrows(FilterEntryConverterException.class, () -> {
+            EntityAgeFilterEntryConverter converter
                 = new EntityAgeFilterEntryConverter
                 ("/message/businessIdentifier/text()", "bad xpath"
-                        , "DDMMYYYY", "test-client", 30);
+                , "DDMMYYYY", "test-client", 30);
 
-        converter.convert(xml);
+            converter.convert(xml);
+        });
     }
 }

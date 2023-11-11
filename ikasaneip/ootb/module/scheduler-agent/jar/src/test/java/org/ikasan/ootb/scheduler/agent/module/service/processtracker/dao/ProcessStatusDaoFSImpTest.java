@@ -16,7 +16,7 @@ import java.nio.file.Path;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class ProcessStatusDaoFSImpTest {
+class ProcessStatusDaoFSImpTest {
     private ProcessStatusDao processStatusDao;
 
     @TempDir

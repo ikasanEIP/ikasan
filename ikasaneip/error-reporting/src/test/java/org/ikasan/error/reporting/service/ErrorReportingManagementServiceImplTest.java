@@ -40,6 +40,7 @@
  */
 package org.ikasan.error.reporting.service;
 
+import jakarta.annotation.Resource;
 import org.ikasan.error.reporting.dao.ErrorManagementDao;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.error.reporting.model.ModuleErrorCount;
@@ -48,17 +49,16 @@ import org.ikasan.spec.error.reporting.ErrorReportingManagementService;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.spec.persistence.BatchInsert;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
@@ -66,15 +66,12 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations = {
+@SpringJUnitConfig(locations = {
         "/error-reporting-service-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
 })
-
-public class ErrorReportingManagementServiceImplTest {
+class ErrorReportingManagementServiceImplTest {
     @Resource
     ErrorManagementDao errorManagementDao;
 
@@ -88,8 +85,8 @@ public class ErrorReportingManagementServiceImplTest {
 
     List<String> uris;
 
-    @Before
-    public void load() {
+    @BeforeEach
+    void load() {
         uris = new ArrayList<String>();
 
         for (int i = 0; i < 1000; i++)
@@ -109,8 +106,8 @@ public class ErrorReportingManagementServiceImplTest {
      * Test save of errorOccurrence
      */
     @DirtiesContext
-    @Test
-    public void test_batch_save_and_find()
+            @Test
+    void test_batch_save_and_find()
     {
         ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
@@ -118,14 +115,14 @@ public class ErrorReportingManagementServiceImplTest {
         errorOccurrences.add(errorOccurrence);
 
         ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
-        Assert.assertNull("Should not be found", persistedErrorOccurrence);
+        assertNull(persistedErrorOccurrence, "Should not be found");
 
         BatchInsert<ErrorOccurrence> batchInsert = new ErrorReportingManagementServiceImpl(errorManagementDao, errorReportingServiceDao);
 
         batchInsert.insert(errorOccurrences);
 
         persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
-        Assert.assertTrue("Should be found", persistedErrorOccurrence.equals(errorOccurrence));
+        assertEquals(persistedErrorOccurrence, errorOccurrence, "Should be found");
     }
 
 }

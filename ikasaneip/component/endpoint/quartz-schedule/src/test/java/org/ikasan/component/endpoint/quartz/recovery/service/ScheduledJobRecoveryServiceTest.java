@@ -44,8 +44,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobExecutionContext;
 import org.quartz.SchedulerException;
 import org.quartz.Trigger;
@@ -53,12 +52,15 @@ import org.quartz.TriggerKey;
 
 import java.util.Date;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * This test class supports the <code>ScheduledJobRecovery</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledJobRecoveryServiceTest
+class ScheduledJobRecoveryServiceTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -82,7 +84,7 @@ public class ScheduledJobRecoveryServiceTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_successful_start_no_recovery_required_firetime_in_future() throws SchedulerException
+    void test_successful_start_no_recovery_required_firetime_in_future() throws SchedulerException
     {
         final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
@@ -113,7 +115,7 @@ public class ScheduledJobRecoveryServiceTest
             ScheduledJobRecoveryServiceFactory.getInstance();
 
         scheduledJobRecoveryService.save(jobExecutionContext);
-        Assert.assertFalse( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "flowName", 0l) );
+        assertFalse( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "flowName", 0l) );
 
         mockery.assertIsSatisfied();
     }
@@ -123,7 +125,7 @@ public class ScheduledJobRecoveryServiceTest
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_start_no_recovery_required_firetime_in_past_beyond_tolerance() throws SchedulerException
+    void test_successful_start_no_recovery_required_firetime_in_past_beyond_tolerance() throws SchedulerException
     {
         final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
@@ -154,7 +156,7 @@ public class ScheduledJobRecoveryServiceTest
             ScheduledJobRecoveryServiceFactory.getInstance();
 
         scheduledJobRecoveryService.save(jobExecutionContext);
-        Assert.assertFalse( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "flowName", 5l) );
+        assertFalse( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "flowName", 5l) );
 
         mockery.assertIsSatisfied();
     }
@@ -164,7 +166,7 @@ public class ScheduledJobRecoveryServiceTest
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_start_no_recovery_required_due_to_no_persistence() throws SchedulerException
+    void test_successful_start_no_recovery_required_due_to_no_persistence() throws SchedulerException
     {
         final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
@@ -195,7 +197,7 @@ public class ScheduledJobRecoveryServiceTest
             ScheduledJobRecoveryServiceFactory.getInstance();
 
         scheduledJobRecoveryService.save(jobExecutionContext);
-        Assert.assertFalse( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "NoMatchflowName", 0l) );
+        assertFalse( scheduledJobRecoveryService.isRecoveryRequired("moduleName", "NoMatchflowName", 0l) );
 
         mockery.assertIsSatisfied();
     }
@@ -205,7 +207,7 @@ public class ScheduledJobRecoveryServiceTest
      * @throws SchedulerException
      */
     @Test
-    public void test_successful_start_recovery_required_firetime_in_past_within_tolerance() throws SchedulerException
+    void test_successful_start_recovery_required_firetime_in_past_within_tolerance() throws SchedulerException
     {
         final TriggerKey triggerKey = new TriggerKey("flowName", "moduleName");
         final Date fireTime = new Date();
@@ -236,7 +238,7 @@ public class ScheduledJobRecoveryServiceTest
             ScheduledJobRecoveryServiceFactory.getInstance();
 
         scheduledJobRecoveryService.save(jobExecutionContext);
-        Assert.assertTrue( scheduledJobRecoveryService.isRecoveryRequired("flowName", "moduleName", 10000l) );
+        assertTrue( scheduledJobRecoveryService.isRecoveryRequired("flowName", "moduleName", 10000l) );
 
         mockery.assertIsSatisfied();
     }

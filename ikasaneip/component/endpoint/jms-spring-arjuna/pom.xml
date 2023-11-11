@@ -51,7 +51,17 @@
     <packaging>jar</packaging>
     <name>Ikasan Enterprise Integration Spring based JMS endpoints Standalone</name>
 
-    <dependencies>
+  <dependencies>
+    <dependency>
+      <groupId>jakarta.jms</groupId>
+      <artifactId>jakarta.jms-api</artifactId>
+      <version>3.1.0.redhat-00003</version>
+    </dependency>
+    <dependency>
+      <groupId>jakarta.transaction</groupId>
+      <artifactId>jakarta.transaction-api</artifactId>
+      <version>2.0.1.redhat-00004</version>
+    </dependency>
 
 
         <dependency>
@@ -84,12 +94,6 @@
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock-legacy</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 

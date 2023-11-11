@@ -44,7 +44,7 @@ import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
 import org.ikasan.filetransfer.Payload;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.InputStream;
 import java.util.Map;
 
@@ -84,7 +84,7 @@ public interface
      * @param checksumDelivered if true, attempt to reload the delivered file to
      *            compare the checksum value
      * @param unzip if true, attempt to unzip the payload
-     * @throws javax.resource.ResourceException -
+     * @throws jakarta.resource.ResourceException -
      */
     void deliverInputStream(InputStream inputStream, String fileName, String outputDir, boolean overwrite, String renameExtension,
                                    boolean checksumDelivered, boolean unzip, boolean createParentDirectory, final String tempFileName) throws ResourceException;
@@ -111,7 +111,7 @@ public interface
      * @param isRecursive retrieve files from given sourceDir in recursive way
      *
      * @return Payload containing the file as content
-     * @throws javax.resource.ResourceException -
+     * @throws jakarta.resource.ResourceException -
      */
     Payload getDiscoveredFile(String sourceDir, String filenamePattern,
                                      boolean renameOnSuccess, String renameOnSuccessExtension,
@@ -138,7 +138,7 @@ public interface
      * @param unzip if true, attempt to unzip the payload
      * @param cleanup if true, cleans up any chunked data
      *
-     * @throws javax.resource.ResourceException -
+     * @throws jakarta.resource.ResourceException -
      */
     void deliverPayload(Payload payload, String outputDir, Map<String, String> outputTargets, boolean overwrite,
                                String renameExtension, boolean checksumDelivered, boolean unzip, boolean cleanup) throws ResourceException;
@@ -150,7 +150,7 @@ public interface
      * @param maxRows Max number of rows the housekeeper can work with at a time
      * @param ageOfFiles How old the entries should be (in days)
      *
-     * @throws javax.resource.ResourceException Exception thrown by the Connector
+     * @throws jakarta.resource.ResourceException Exception thrown by the Connector
      */
     void housekeep(int maxRows, int ageOfFiles) throws ResourceException;
 

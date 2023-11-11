@@ -43,17 +43,16 @@ public class FileFilterApplication
         this.mapper.registerModule(m);
     }
 
-    @RequestMapping(
-        method = RequestMethod.GET,
+    @GetMapping(
         value = "/search",
         produces = { MediaType.APPLICATION_JSON_VALUE }
     )
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity get(
-        @RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber,
-        @RequestParam(value = "pageSize", defaultValue = "20") int pageSize,
-        @RequestParam(value = "criteria", required = false) String criteria,
-        @RequestParam(value = "clientId", required = false) String clientId
+        @RequestParam(defaultValue = "0") int pageNumber,
+        @RequestParam(defaultValue = "20") int pageSize,
+        @RequestParam(required = false) String criteria,
+        @RequestParam(required = false) String clientId
                              )
     {
         PagedSearchResult<FileFilter>  pagedResult = baseFileTransferDao.find(pageNumber, pageSize, criteria,clientId);
@@ -61,20 +60,19 @@ public class FileFilterApplication
 
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity get(@RequestParam(value = "id") Integer id)
+    public ResponseEntity get(@RequestParam Integer id)
     {
         FileFilter fileFilter = baseFileTransferDao.findById(id.intValue());
         return new ResponseEntity(fileFilter, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/")
+    @DeleteMapping("/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity delete(@RequestParam(value = "id") Integer id)
+    public ResponseEntity delete(@RequestParam Integer id)
     {
         FileFilter fileFilter = baseFileTransferDao.findById(id.intValue());
         if ( fileFilter != null )
@@ -101,7 +99,7 @@ public class FileFilterApplication
 
     }
 
-    @RequestMapping(method = RequestMethod.POST,
+    @PostMapping(
                     value = "/",
                     consumes = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")

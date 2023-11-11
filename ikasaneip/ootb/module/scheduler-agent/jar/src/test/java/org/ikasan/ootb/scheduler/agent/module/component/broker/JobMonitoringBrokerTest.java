@@ -13,15 +13,14 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.scheduled.event.model.Outcome;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -34,9 +33,10 @@ import java.util.stream.IntStream;
 
 import static org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker.DEFAULT_ERROR_RETURN_CODE;
 import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JobMonitoringBrokerTest {
     private static final Long DEFAULT_TIMEOUT = 240L;
     @Mock
@@ -49,8 +49,8 @@ public class JobMonitoringBrokerTest {
     private CompletableFuture<ProcessHandle> completableFutureMock;
     @Mock
     private ErrorReportingService errorReportingService;
-    @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    @TempDir
+    public File tmpFolder;
 
     private JobMonitoringBrokerConfiguration configuration;
     private JobMonitoringBroker broker;
@@ -58,8 +58,9 @@ public class JobMonitoringBrokerTest {
     private static final String INSTANCE_ID = "X";
     private static final String JOB_NAME = "Y";
     private static final String IDENTITY = INSTANCE_ID +"-"+ JOB_NAME;
-    @Before
-    public void setUp() {
+
+    @BeforeEach
+    void setUp() {
         configuration = new JobMonitoringBrokerConfiguration();
         configuration.setTimeout(DEFAULT_TIMEOUT);
         broker = new JobMonitoringBroker("flowName");
@@ -68,20 +69,20 @@ public class JobMonitoringBrokerTest {
     }
 
     @Test
-    public void test_job_monitor_success() {
+    void test_job_monitor_success() {
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, false);
         event = broker.invoke(event);
 
-        Assert.assertEquals(event.getDetachableProcess().getPid(), event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(event.getDetachableProcess().getPid(), event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_fail_bad_command() throws InterruptedException {
+    void test_job_monitor_fail_bad_command() throws InterruptedException {
         when(processMock.waitFor(DEFAULT_TIMEOUT, TimeUnit.MINUTES)).thenReturn(true);
         when(processMock.exitValue()).thenReturn(1);
 
@@ -92,17 +93,16 @@ public class JobMonitoringBrokerTest {
 
         verify(this.errorReportingService, times(1)).notify(anyString(), any(), any(Throwable.class), anyString());
 
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertFalse(event.isSuccessful());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertFalse(event.isSuccessful());
     }
 
 
-
     @Test
-    public void test_job_monitor_success_due_to_return_code() throws InterruptedException {
+    void test_job_monitor_success_due_to_return_code() throws InterruptedException {
         when(processMock.waitFor(DEFAULT_TIMEOUT, TimeUnit.MINUTES)).thenReturn(true);
         when(processMock.exitValue()).thenReturn(1);
 
@@ -112,88 +112,88 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_dry_run_success() {
+    void test_job_monitor_dry_run_success() {
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(0, event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertTrue(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(0, event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertTrue(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_dry_run_fixed_execution_time_success() {
+    void test_job_monitor_dry_run_fixed_execution_time_success() {
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
         event.getDryRunParameters().setFixedExecutionTimeMillis(1000);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(0, event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertTrue(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(0, event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertTrue(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_dry_run_error_success() {
+    void test_job_monitor_dry_run_error_success() {
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
         event.getDryRunParameters().setError(true);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(0, event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertTrue(event.isDryRun());
-        Assert.assertFalse(event.isSuccessful());
+        assertEquals(0, event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertTrue(event.isDryRun());
+        assertFalse(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_dry_run_error_due_to_percent_error_success() {
+    void test_job_monitor_dry_run_error_due_to_percent_error_success() {
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(true, false);
         event.getDryRunParameters().setJobErrorPercentage(100);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(0, event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertTrue(event.isDryRun());
-        Assert.assertFalse(event.isSuccessful());
+        assertEquals(0, event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertTrue(event.isDryRun());
+        assertFalse(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_skip_success() {
+    void test_job_monitor_skip_success() {
         EnrichedContextualisedScheduledProcessEvent event = this.getEnrichedContextualisedScheduledProcessEvent(false, true);
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(0, event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertTrue(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(0, event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertTrue(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_execute_due_to_day_of_week() {
+    void test_job_monitor_execute_due_to_day_of_week() {
 
         ArrayList<Integer> todayList = new ArrayList<>();
         todayList.add(Calendar.getInstance().get(Calendar.DAY_OF_WEEK));
@@ -203,16 +203,16 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(event.getDetachableProcess().getProcess().pid(), event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(event.getDetachableProcess().getProcess().pid(), event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_ignore_due_to_day_of_week() {
+    void test_job_monitor_ignore_due_to_day_of_week() {
         ArrayList<Integer> daysOtherThanToday = new ArrayList<>();
 
         IntStream.range(1, 8).forEach(i -> {
@@ -226,16 +226,16 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertEquals(0, event.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED_IGNORED_DAY_OF_WEEK, event.getOutcome());
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertEquals(0, event.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED_IGNORED_DAY_OF_WEEK, event.getOutcome());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
     }
 
     @Test
-    public void test_job_monitor_running_too_long() throws InterruptedException, IOException {
+    void test_job_monitor_running_too_long() throws InterruptedException, IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         Long timeout = 1L;
         when(processMock.waitFor(timeout, TimeUnit.MINUTES)).thenReturn(false);
@@ -254,22 +254,22 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertFalse(event.isSuccessful());
-        Assert.assertEquals(DEFAULT_ERROR_RETURN_CODE, event.getReturnCode());
-        Assert.assertFalse(event.getDetachableProcess().isDetached());
-        Assert.assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertFalse(event.isSuccessful());
+        assertEquals(DEFAULT_ERROR_RETURN_CODE, event.getReturnCode());
+        assertFalse(event.getDetachableProcess().isDetached());
+        assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
 
-        Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting."));
+        assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting."));
 
         verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
         verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
 
     @Test
-    public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_ends_inside_timeout() throws IOException {
+    void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_ends_inside_timeout() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(schedulerPersistenceServiceMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
@@ -288,22 +288,22 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
 
-        Assert.assertEquals(0, event.getReturnCode());
-        Assert.assertTrue(event.getDetachableProcess().isDetached());
-        Assert.assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
-        Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
+        assertEquals(0, event.getReturnCode());
+        assertTrue(event.getDetachableProcess().isDetached());
+        assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
+        assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
 
         verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
         verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
 
     @Test
-    public void test_job_monitor_when_recovered_from_agent_crash_and_process_finished_during_agent_outage() throws IOException {
+    void test_job_monitor_when_recovered_from_agent_crash_and_process_finished_during_agent_outage() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(schedulerPersistenceServiceMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
@@ -321,21 +321,22 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertTrue(event.isSuccessful());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertTrue(event.isSuccessful());
 
-        Assert.assertEquals(0, event.getReturnCode());
-        Assert.assertTrue(event.getDetachableProcess().isDetached());
-        Assert.assertTrue(event.getDetachableProcess().isDetachedAlreadyFinished());
-        Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
+        assertEquals(0, event.getReturnCode());
+        assertTrue(event.getDetachableProcess().isDetached());
+        assertTrue(event.getDetachableProcess().isDetachedAlreadyFinished());
+        assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
 
         verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
         verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
     }
+
     @Test
-    public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_does_not_end_within_timeout() throws ExecutionException, InterruptedException, TimeoutException, IOException {
+    void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_does_not_end_within_timeout() throws ExecutionException, InterruptedException, TimeoutException, IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(processHandleMock.onExit()).thenReturn(completableFutureMock);
@@ -355,15 +356,15 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        Assert.assertFalse(event.isJobStarting());
-        Assert.assertFalse(event.isSkipped());
-        Assert.assertFalse(event.isDryRun());
-        Assert.assertFalse(event.isSuccessful());
+        assertFalse(event.isJobStarting());
+        assertFalse(event.isSkipped());
+        assertFalse(event.isDryRun());
+        assertFalse(event.isSuccessful());
 
-        Assert.assertEquals(DEFAULT_ERROR_RETURN_CODE, event.getReturnCode());
-        Assert.assertTrue(event.getDetachableProcess().isDetached());
-        Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally"));
-        Assert.assertTrue(event.getExecutionDetails().contains("WARNING : There were problems getting the return status from the detached process, it will be treated as an error, issue was"));
+        assertEquals(DEFAULT_ERROR_RETURN_CODE, event.getReturnCode());
+        assertTrue(event.getDetachableProcess().isDetached());
+        assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally"));
+        assertTrue(event.getExecutionDetails().contains("WARNING : There were problems getting the return status from the detached process, it will be treated as an error, issue was"));
 
         verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
         verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
@@ -417,8 +418,8 @@ public class JobMonitoringBrokerTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        enrichedContextualisedScheduledProcessEvent.setResultError(tmpFolder.getRoot().getAbsolutePath()+"/err");
-        enrichedContextualisedScheduledProcessEvent.setResultOutput(tmpFolder.getRoot().getAbsolutePath()+"/out");
+        enrichedContextualisedScheduledProcessEvent.setResultError(tmpFolder.getAbsolutePath()+"/err");
+        enrichedContextualisedScheduledProcessEvent.setResultOutput(tmpFolder.getAbsolutePath()+"/out");
         enrichedContextualisedScheduledProcessEvent.setJobName(JOB_NAME);
         enrichedContextualisedScheduledProcessEvent.setContextInstanceId(INSTANCE_ID);
         enrichedContextualisedScheduledProcessEvent.setDryRun(dryRun);
@@ -433,8 +434,8 @@ public class JobMonitoringBrokerTest {
 
     private void invokeJobStarting(EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent) {
         JobStartingBroker jobStartingBroker = new JobStartingBroker(new SchedulerDefaultPersistenceServiceImpl(
-            new SchedulerKryoProcessPersistenceImpl(tmpFolder.getRoot().getAbsolutePath()),
-            new ProcessStatusDaoFSImp(tmpFolder.getRoot().getAbsolutePath())));
+            new SchedulerKryoProcessPersistenceImpl(tmpFolder.getAbsolutePath()),
+            new ProcessStatusDaoFSImp(tmpFolder.getAbsolutePath())));
         jobStartingBroker.setConfiguration(JobStartingBrokerTest.getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);

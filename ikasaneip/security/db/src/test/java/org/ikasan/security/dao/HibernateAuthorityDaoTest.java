@@ -42,20 +42,18 @@ package org.ikasan.security.dao;
 
 import java.util.List;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.*;
 
+import jakarta.annotation.Resource;
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.Authority;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 /**
  * 
@@ -63,21 +61,21 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
-@Ignore
-public class HibernateAuthorityDaoTest
+@SpringJUnitConfig(classes = {SecurityConfiguration.class, TestImportConfig.class})
+@Disabled
+class HibernateAuthorityDaoTest
 {
 
 	@Resource
 	private AuthorityDao xaAuthorityDao;
-	
-	/**
+
+    /**
      * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
      * being tested
      * @throws SecurityDaoException 
      */
-    @Before public void setup()
+    @BeforeEach
+    void setup()
     {
     	for(int i=0; i<10; i++)
     	{
@@ -86,33 +84,33 @@ public class HibernateAuthorityDaoTest
     	}
 
     }
-    
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetAuthorities()
+
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
+     */
+    @Test
+        @DirtiesContext
+    void testGetAuthorities()
 	{
 		List<Authority> authorities = this.xaAuthorityDao.getAuthorities();
-		
-		Assert.assertTrue(authorities.size() == 10);
+
+        assertEquals(10, authorities.size());
 	}
 
-	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthority(java.lang.String)}.
-	 */
-	@Test
-	@DirtiesContext
-	public void testGetAuthority()
+    /**
+     * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthority(java.lang.String)}.
+     */
+    @Test
+        @DirtiesContext
+    void testGetAuthority()
 	{
 		Authority authority = this.xaAuthorityDao.getAuthority("authority1");
 		
-		Assert.assertNotNull(authority);
+		assertNotNull(authority);
 		
 		authority = this.xaAuthorityDao.getAuthority("does not exist");
 		
-		Assert.assertNull(authority);
+		assertNull(authority);
 	}
 
 }

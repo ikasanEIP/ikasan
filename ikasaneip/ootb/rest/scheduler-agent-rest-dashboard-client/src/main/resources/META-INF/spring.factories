@@ -1,3 +1,0 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-  org.ikasan.ootb.scheduler.agent.rest.client.ScheduledServiceAutoConfiguration,\
-  org.ikasan.ootb.scheduler.agent.rest.client.context.ContextInstanceRestServiceConfiguration

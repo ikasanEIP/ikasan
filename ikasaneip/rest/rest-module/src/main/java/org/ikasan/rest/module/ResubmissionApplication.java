@@ -81,11 +81,10 @@ public class ResubmissionApplication
      * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
      */
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/resubmit/{moduleName}/{flowName}/{errorUri}")
+    @PutMapping("/resubmit/{moduleName}/{flowName}/{errorUri}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity resubmit(@PathVariable("moduleName") String moduleName,
-                                   @PathVariable("flowName") String flowName, @PathVariable("errorUri") String errorUri,
+    public ResponseEntity resubmit(@PathVariable String moduleName,
+                                   @PathVariable String flowName, @PathVariable String errorUri,
                                    @RequestBody byte[] event)
     {
         try
@@ -113,11 +112,10 @@ public class ResubmissionApplication
      * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
      */
     @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/ignore/{moduleName}/{flowName}/{errorUri}")
+    @PutMapping("/ignore/{moduleName}/{flowName}/{errorUri}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity ignore(@PathVariable("moduleName") String moduleName,
-                                 @PathVariable("flowName") String flowName, @PathVariable("errorUri") String errorUri,
+    public ResponseEntity ignore(@PathVariable String moduleName,
+                                 @PathVariable String flowName, @PathVariable String errorUri,
                                  @RequestBody byte[] event)
     {
         try
@@ -142,7 +140,7 @@ public class ResubmissionApplication
      *
      * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
      */
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity resubmit(@RequestBody ResubmissionRequestDto requestDto)
     {

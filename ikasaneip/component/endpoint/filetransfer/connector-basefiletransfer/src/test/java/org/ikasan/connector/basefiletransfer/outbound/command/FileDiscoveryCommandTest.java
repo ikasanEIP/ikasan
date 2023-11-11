@@ -53,22 +53,23 @@ import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransf
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 /**
  * Test class for FileDiscoveryCommand
  * 
  * @author Ikasan Development Team
  */
-public class FileDiscoveryCommandTest
+class FileDiscoveryCommandTest
 {
     /**
      * Tests the execute method
@@ -79,9 +80,9 @@ public class FileDiscoveryCommandTest
      * @throws URISyntaxException Exception if the URI is invalid
      */
     @Test
-    public void testExecute() throws ResourceException,
-            ClientCommandCdException, ClientCommandLsException,
-            URISyntaxException
+    void testExecute() throws ResourceException,
+        ClientCommandCdException, ClientCommandLsException,
+        URISyntaxException
     {
         Mockery clientMockery = new Mockery()
         {
@@ -135,11 +136,10 @@ public class FileDiscoveryCommandTest
 
         ExecutionOutput  output = command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         List<?> result = output.getResultList();
-        assertNotNull("command result should not be null", result); //$NON-NLS-1$
-        assertNotNull("command result should only contain one entry", result //$NON-NLS-1$
-                .size() == 1);
+        assertNotNull(result, "command result should not be null"); //$NON-NLS-1$
+        assertNotNull(result //$NON-NLS-1$
+                .size() == 1, "command result should only contain one entry");
         assertEquals(
-                "command result's only entry should be the file that matches pattern", //$NON-NLS-1$
-                fileToDiscover, result.get(0));
+                fileToDiscover, result.get(0), "command result's only entry should be the file that matches pattern");
     }
 }

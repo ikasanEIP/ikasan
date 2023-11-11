@@ -88,7 +88,7 @@ public class ContextInstanceApplication {
         mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    @RequestMapping(path = "/save", method = RequestMethod.PUT)
+    @PutMapping("/save")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity save(@RequestBody ContextInstance contextInstance) {
         try {
@@ -103,9 +103,9 @@ public class ContextInstanceApplication {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/remove", method = RequestMethod.DELETE)
+    @DeleteMapping("/remove")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity remove(@RequestParam("correlationId") String correlationId) {
+    public ResponseEntity remove(@RequestParam String correlationId) {
         try {
             logger.info("Requested to remove correlationId [" + correlationId + "]");
             contextInstanceIdentifierProvisionService.remove(correlationId);
@@ -119,7 +119,7 @@ public class ContextInstanceApplication {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/removeAll", method = RequestMethod.DELETE)
+    @DeleteMapping("/removeAll")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity removeAll() {
         try {

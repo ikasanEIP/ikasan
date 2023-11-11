@@ -59,16 +59,18 @@ import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.ikasan.spec.replay.ReplayRecordService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * This test class supports the <code>VisitingInvokerFlow</code> class.
@@ -78,8 +80,6 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 public class VisitingInvokerFlowTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     /**
      * Mock flowConfiguration
@@ -278,8 +278,8 @@ public class VisitingInvokerFlowTest
 
     private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         // nothing to setup
     }
@@ -287,79 +287,91 @@ public class VisitingInvokerFlowTest
     /**
      * Test failed constructor due to null flow name.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullName()
+    @Test
+    void test_failed_constructorDueToNullName()
     {
-        new VisitingInvokerFlow(null, null, null, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new VisitingInvokerFlow(null, null, null, null, null, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null module name.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullModuleName()
+    @Test
+    void test_failed_constructorDueToNullModuleName()
     {
-        new VisitingInvokerFlow("flowName", null, null, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new VisitingInvokerFlow("flowName", null, null, null, null, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null flow configuration.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullFlowConfiguration()
+    @Test
+    void test_failed_constructorDueToNullFlowConfiguration()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", null, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new VisitingInvokerFlow("flowName", "moduleName", null, null, null, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null flow element invoker.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullExclusionFlowConfigurationInvoker()
+    @Test
+    void test_failed_constructorDueToNullExclusionFlowConfigurationInvoker()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null, null, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, null, null, null, null);
+        });
     }
 
     /**
      * Test failed constructor due to null flow recovery manager.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullFlowRecoveryManager()
+    @Test
+    void test_failed_constructorDueToNullFlowRecoveryManager()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, null, null,
-            null
-        );
+        assertThrows(IllegalArgumentException.class, () -> {
+            new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration, null, null,
+                null
+            );
+        });
     }
 
     /**
      * Test failed constructor due to null flow recovery manager.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullFlowExclusionService()
+    @Test
+    void test_failed_constructorDueToNullFlowExclusionService()
     {
-        new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration,
-            recoveryManager, null, null
-        );
+        assertThrows(IllegalArgumentException.class, () -> {
+            new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration,
+                recoveryManager, null, null
+            );
+        });
     }
 
     /**
      * Test successful visiting flow invoker instantiation.
      */
     @Test
-    public void test_successful_VisitingInvokerFlow_instantiation()
+    void test_successful_VisitingInvokerFlow_instantiation()
     {
         Flow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration, exclusionFlowConfiguration,
             recoveryManager, exclusionService, serialiserFactory
         );
-        Assert.assertEquals("flowName setter failed", "flowName", flow.getName());
-        Assert.assertEquals("moduleName setter failed", "moduleName", flow.getModuleName());
+        assertEquals("flowName", flow.getName(), "flowName setter failed");
+        assertEquals("moduleName", flow.getModuleName(), "moduleName setter failed");
     }
 
     /**
      * Test successful flow start from a stopped state.
      */
     @Test
-    public void test_successful_flow_start_from_stopped()
+    void test_successful_flow_start_from_stopped()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -547,7 +559,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow start from a stoppedInError state.
      */
     @Test
-    public void test_successful_flow_start_from_stoppedInError()
+    void test_successful_flow_start_from_stoppedInError()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -723,7 +735,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow start due to consumer already running.
      */
     @Test
-    public void test_failed_flow_start_due_to_consumer_already_running()
+    void test_failed_flow_start_due_to_consumer_already_running()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -771,7 +783,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow start due to consumer already running in recovery.
      */
     @Test
-    public void test_failed_flow_start_due_to_consumer_already_running_in_recovery()
+    void test_failed_flow_start_due_to_consumer_already_running_in_recovery()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -811,7 +823,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow start due to configuration failure.
      */
     @Test
-    public void test_failed_flow_start_due_to_configuration_failure()
+    void test_failed_flow_start_due_to_configuration_failure()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -906,7 +918,7 @@ public class VisitingInvokerFlowTest
         {
             if ( !(throwable instanceof RuntimeException) )
             {
-                Assert.fail("Runtime exception Not thrown");
+                fail("Runtime exception Not thrown");
 
             }
         }
@@ -943,7 +955,7 @@ public class VisitingInvokerFlowTest
      * resolve themselves later in the flow invocation.
      */
     @Test
-    public void test_success_flow_start_even_with_managedResource_start_failure_non_critical_resource()
+    void test_success_flow_start_even_with_managedResource_start_failure_non_critical_resource()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -1052,7 +1064,7 @@ public class VisitingInvokerFlowTest
      * starting. We don't ignore managed resource start failures if they are marked as critical.
      */
     @Test
-    public void test_success_flow_start_even_with_managedResource_start_failure_critical_resource()
+    void test_success_flow_start_even_with_managedResource_start_failure_critical_resource()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -1112,7 +1124,7 @@ public class VisitingInvokerFlowTest
         {
             if ( !(t instanceof RuntimeException) )
             {
-                Assert.fail("No Runtime Exception");
+                fail("No Runtime Exception");
             }
         }
 
@@ -1160,7 +1172,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow start due to consumer failing to start, but activating recovery.
      */
     @Test
-    public void test_failed_flow_start_due_to_recoverable_consumer_failure()
+    void test_failed_flow_start_due_to_recoverable_consumer_failure()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -1214,7 +1226,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow start due to consumer failing to start.
      */
     @Test
-    public void test_failed_flow_start_due_to_unrecoverable_consumer_failure()
+    void test_failed_flow_start_due_to_unrecoverable_consumer_failure()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -1266,7 +1278,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow stop on flow which is running.
      */
     @Test
-    public void test_successful_flow_stop_whilst_running()
+    void test_successful_flow_stop_whilst_running()
     {
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -1374,7 +1386,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow stop on flow which is in recovery.
      */
     @Test
-    public void test_successful_flow_stop_whilst_recovering()
+    void test_successful_flow_stop_whilst_recovering()
     {
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -1458,7 +1470,7 @@ public class VisitingInvokerFlowTest
      * stopping a stopped flow.
      */
     @Test
-    public void test_successful_flow_stop_whilst_stopped()
+    void test_successful_flow_stop_whilst_stopped()
     {
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -1537,7 +1549,7 @@ public class VisitingInvokerFlowTest
      * stopping a stoppedInError flow.
      */
     @Test
-    public void test_successful_flow_stop_whilst_stoppedInError()
+    void test_successful_flow_stop_whilst_stoppedInError()
     {
         final List<FlowElement<ManagedResource>> managedResourceFlowElements = new ArrayList<>();
         managedResourceFlowElements.add(managedResourceFlowElement1);
@@ -1614,7 +1626,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow invoke with a flow event.
      */
     @Test
-    public void test_successful_flow_invoke_with_flowEvent()
+    void test_successful_flow_invoke_with_flowEvent()
     {
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
             new ArrayList<FlowElement<ConfiguredResource>>();
@@ -1734,7 +1746,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow invoke with a flow event with a context listener.
      */
     @Test
-    public void test_successful_flow_invoke_with_flowEvent_with_contextListener()
+    void test_successful_flow_invoke_with_flowEvent_with_contextListener()
     {
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
             new ArrayList<FlowElement<ConfiguredResource>>();
@@ -1956,7 +1968,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow invoke with a flow event with a context listener that is disabled.
      */
     @Test
-    public void test_successful_flow_invoke_with_flowEvent_with_contextListener_disabled()
+    void test_successful_flow_invoke_with_flowEvent_with_contextListener_disabled()
     {
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
             new ArrayList<FlowElement<ConfiguredResource>>();
@@ -2082,7 +2094,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow invoke with a flow event with a context listener that is specifically enabled.
      */
     @Test
-    public void test_successful_flow_invoke_with_flowEvent_with_contextListener_enabled()
+    void test_successful_flow_invoke_with_flowEvent_with_contextListener_enabled()
     {
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
             new ArrayList<FlowElement<ConfiguredResource>>();
@@ -2208,7 +2220,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow invoke with a flow event, but dynamic dao failing.
      */
     @Test
-    public void test_failed_flow_invoke_with_flowEvent_stoppingInError_due_to_dynamicConfiguration_failure()
+    void test_failed_flow_invoke_with_flowEvent_stoppingInError_due_to_dynamicConfiguration_failure()
     {
         final RuntimeException exception = new RuntimeException("test failed dynamic dao");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2312,7 +2324,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow invoke with a flow event with the resulting outcome being stoppedInError.
      */
     @Test
-    public void test_failed_flow_invoke_with_flowEvent_resulting_in_stoppedInError()
+    void test_failed_flow_invoke_with_flowEvent_resulting_in_stoppedInError()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2425,7 +2437,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow invoke with a flow event with the resulting outcome being recovering.
      */
     @Test
-    public void test_failed_flow_invoke_with_flowEvent_resulting_in_recovery()
+    void test_failed_flow_invoke_with_flowEvent_resulting_in_recovery()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2541,7 +2553,7 @@ public class VisitingInvokerFlowTest
      * Test failed flow invoke with a flow event with the resulting outcome being recovering.
      */
     @Test
-    public void test_failed_flow_invoke_with_flowEvent_resulting_in_ignore()
+    void test_failed_flow_invoke_with_flowEvent_resulting_in_ignore()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2663,7 +2675,7 @@ public class VisitingInvokerFlowTest
      * being continue to run.
      */
     @Test
-    public void test_failed_flow_invoke_with_flowEvent_resulting_in_continuing_to_run()
+    void test_failed_flow_invoke_with_flowEvent_resulting_in_continuing_to_run()
     {
         final RuntimeException exception = new RuntimeException("test failed flow invocation");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2785,7 +2797,7 @@ public class VisitingInvokerFlowTest
      * being continue to run.
      */
     @Test
-    public void test_failed_flow_invoke_with_exception_resulting_in_continuing_to_run()
+    void test_failed_flow_invoke_with_exception_resulting_in_continuing_to_run()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2868,7 +2880,7 @@ public class VisitingInvokerFlowTest
      * being recovery.
      */
     @Test
-    public void test_failed_flow_invoke_with_exception_resulting_in_recovery()
+    void test_failed_flow_invoke_with_exception_resulting_in_recovery()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -2948,7 +2960,7 @@ public class VisitingInvokerFlowTest
      * being stoppedInError.
      */
     @Test
-    public void test_failed_flow_invoke_with_exception_resulting_in_stoppedInError()
+    void test_failed_flow_invoke_with_exception_resulting_in_stoppedInError()
     {
         final RuntimeException exception = new RuntimeException("invoked with exception test");
         final List<FlowElement<ConfiguredResource>> dynamicConfiguredResourceFlowElements =
@@ -3027,7 +3039,7 @@ public class VisitingInvokerFlowTest
      * Test getter for named flowElements
      */
     @Test
-    public void test_accessor_for_named_flow_elements()
+    void test_accessor_for_named_flow_elements()
     {
         final List<FlowElement<?>> configuredResourceFlowElements = new ArrayList<>();
 
@@ -3040,7 +3052,7 @@ public class VisitingInvokerFlowTest
             recoveryManager, exclusionService
         );
 
-        Assert.assertNotNull("there should be one flow elements on this flow", flow.getFlowElements());
+        assertNotNull(flow.getFlowElements(), "there should be one flow elements on this flow");
 
         // test assertions
 
@@ -3053,7 +3065,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow start from a stopped state.
      */
     @Test
-    public void test_successful_flow_start_from_stopped_with_exclusionFlow_having_manageResources()
+    void test_successful_flow_start_from_stopped_with_exclusionFlow_having_manageResources()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,
@@ -3171,7 +3183,7 @@ public class VisitingInvokerFlowTest
      * Test successful flow start from a stoppedInError state.
      */
     @Test
-    public void test_successful_flow_start_from_stoppedInError_with_exclusionFlow_having_managedResource()
+    void test_successful_flow_start_from_stoppedInError_with_exclusionFlow_having_managedResource()
     {
         // container for the complete flow
         final VisitingInvokerFlow flow = new VisitingInvokerFlow("flowName", "moduleName", flowConfiguration,

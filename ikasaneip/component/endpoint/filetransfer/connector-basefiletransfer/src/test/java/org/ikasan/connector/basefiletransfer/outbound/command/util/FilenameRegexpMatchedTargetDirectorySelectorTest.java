@@ -48,11 +48,9 @@ import org.ikasan.filetransfer.FilePayloadAttributeNames;
 import org.ikasan.filetransfer.Payload;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 /**
@@ -60,42 +58,42 @@ import static org.junit.Assert.assertNull;
  * 
  * @author Ikasan Development Team
  */
-public class FilenameRegexpMatchedTargetDirectorySelectorTest
+class FilenameRegexpMatchedTargetDirectorySelectorTest
 {
 
     /**
      * Test that the selector returns null if a map of mappings was never provided
      */
     @Test
-    public void testGetTargetDirectory_NullMap()
+    void testGetTargetDirectory_NullMap()
     {
         final String fileName = "abc.txt";
         final Payload payload = getPayload(fileName);
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(null);
-        assertNull("selector should return null if no mapping was provided", selector.getTargetDirectory(payload)); //$NON-NLS-1$
+        assertNull(selector.getTargetDirectory(payload), "selector should return null if no mapping was provided"); //$NON-NLS-1$
     }
-    
+
     /**
      * Test that the selector returns parentDir if a map of mappings was never provided
      */
     @Test
-    public void testGetTargetDirectory_WithParent_NullMap()
+    void testGetTargetDirectory_WithParent_NullMap()
     {
         final String fileName = "abc.txt";
         final Payload payload = getPayload(fileName);
         final String parentDir = "a/parent/path";
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(null);
-        assertEquals("selector should return parentDir if no mapping was provided", parentDir, selector.getTargetDirectory(payload, parentDir)); //$NON-NLS-1$
+        assertEquals(parentDir, selector.getTargetDirectory(payload, parentDir), "selector should return parentDir if no mapping was provided"); //$NON-NLS-1$
     }
-    
+
     /**
      * Test that the selector returns null if there is no match on the filename in
      * the map of mappings
      */
     @Test
-    public void testGetTargetDirectory_NoMatch()
+    void testGetTargetDirectory_NoMatch()
     {
         final String fileName = "abc.txt";
         final Payload payload = getPayload(fileName);
@@ -104,15 +102,15 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest
         mappings.put("someRandomRegexp", "some/meaningless/path");
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(mappings);
-        assertNull("selector should return null if no match was found", selector.getTargetDirectory(payload));  //$NON-NLS-1$
+        assertNull(selector.getTargetDirectory(payload), "selector should return null if no match was found");  //$NON-NLS-1$
     }
-    
+
     /**
      * Test that the selector returns parentDir if there is no match on the filename in
      * the map of mappings
      */
     @Test
-    public void testGetTargetDirectory_WithParent_NoMatch()
+    void testGetTargetDirectory_WithParent_NoMatch()
     {
         
         final String fileName = "abc.txt";
@@ -124,14 +122,14 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(mappings);
         
-        assertEquals("selector should return parentDir if no match was found", parentDir, selector.getTargetDirectory(payload, parentDir));  //$NON-NLS-1$
+        assertEquals(parentDir, selector.getTargetDirectory(payload, parentDir), "selector should return parentDir if no match was found");  //$NON-NLS-1$
     }
- 
+
     /**
      * Tests that a match will be returned  if foud
      */
     @Test
-    public void testGetTargetDirectory_Match()
+    void testGetTargetDirectory_Match()
     {
         
         final String fileName = "abc.txt";
@@ -147,14 +145,14 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(mappings);
         
-        assertEquals("selector should return the path for a matching entry", PATH_FOR_FIRST_MATCHING_ENTRY, selector.getTargetDirectory(payload));  //$NON-NLS-1$
-    }  
-    
+        assertEquals(PATH_FOR_FIRST_MATCHING_ENTRY, selector.getTargetDirectory(payload), "selector should return the path for a matching entry");  //$NON-NLS-1$
+    }
+
     /**
      * Tests that a match will be relative to the parent dir, if supplied
      */
     @Test
-    public void testGetTargetDirectory_WithParent_Match()
+    void testGetTargetDirectory_WithParent_Match()
     {
         
         final String fileName = "abc.txt";
@@ -172,9 +170,9 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest
         String fullPath = parentDir+"/"+PATH_FOR_FIRST_MATCHING_ENTRY;
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(mappings);
-        assertEquals("selector should return the path for a matching entry, relative to a parent path if supplied", fullPath, selector.getTargetDirectory(payload, parentDir));  //$NON-NLS-1$
-    }    
-    
+        assertEquals(fullPath, selector.getTargetDirectory(payload, parentDir), "selector should return the path for a matching entry, relative to a parent path if supplied");  //$NON-NLS-1$
+    }
+
     /**
      * Test that if the selector contains multiple matching entries, then the alphabetically 
      * earliest match (of the regexp itself) will be the match used.
@@ -183,7 +181,7 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest
      * ordering is not guaranteed when iterating over a <code>java.util.Set</code>
      */
     @Test
-    public void testGetTargetDirectory_MultipleMatch()
+    void testGetTargetDirectory_MultipleMatch()
     {
         
         final String fileName = "abc.txt";
@@ -204,7 +202,7 @@ public class FilenameRegexpMatchedTargetDirectorySelectorTest
         
         TargetDirectorySelector selector = new FilenameRegexpMatchedTargetDirectorySelector(mappings);
         
-        assertEquals("selector should return the first match found assuming that patterns are mathced in sorted order", PATH_FOR_FIRST_MATCHING_ENTRY, selector.getTargetDirectory(payload));  //$NON-NLS-1$
+        assertEquals(PATH_FOR_FIRST_MATCHING_ENTRY, selector.getTargetDirectory(payload), "selector should return the first match found assuming that patterns are mathced in sorted order");  //$NON-NLS-1$
     }
 
     /**

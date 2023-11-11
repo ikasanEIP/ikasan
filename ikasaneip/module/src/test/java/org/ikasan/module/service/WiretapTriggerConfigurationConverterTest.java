@@ -39,14 +39,14 @@
 
 package org.ikasan.module.service;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class WiretapTriggerConfigurationConverterTest {
+class WiretapTriggerConfigurationConverterTest {
 
     @Test
-    public void test(){
+    void test(){
         WiretapTriggerConfiguration configuration = new WiretapTriggerConfigurationConverter().convert("""
             flowName\
             ,BEFORE,componentName,301,INSERT\
@@ -59,7 +59,7 @@ public class WiretapTriggerConfigurationConverterTest {
     }
 
     @Test
-    public void testDefaultToInsertIfActionMiessing(){
+    void testDefaultToInsertIfActionMiessing(){
         WiretapTriggerConfiguration configuration = new WiretapTriggerConfigurationConverter().convert("""
             flowName\
             ,BEFORE,componentName,301\

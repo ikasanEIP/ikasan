@@ -48,19 +48,18 @@ import org.ikasan.connector.basefiletransfer.net.FileTransferClient;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for the RenameFileCommand
  * 
  * @author Ikasan Development Team
  */
-public class RenameFileCommandTest
+class RenameFileCommandTest
 {
     private final Mockery mockery = new Mockery()
     {
@@ -76,8 +75,8 @@ public class RenameFileCommandTest
      * @throws ClientCommandRenameException
      */
     @Test
-    public void testExecute() throws ResourceException,
-            ClientCommandRenameException
+    void testExecute() throws ResourceException,
+        ClientCommandRenameException
     {
 
 
@@ -103,9 +102,8 @@ public class RenameFileCommandTest
         // Execute the cmd
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
 
-        assertTrue("command state should be executed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.EXECUTED_STATE.getName().equals(command
-                .getState()));
+        assertEquals(AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
+            .getState(), "command state should be executed");
     }
 
     /**
@@ -131,8 +129,8 @@ public class RenameFileCommandTest
      * @throws ClientCommandRenameException
      */
     @Test
-    public void testRollback() throws ResourceException,
-            ClientCommandRenameException
+    void testRollback() throws ResourceException,
+        ClientCommandRenameException
     {
         // mock the client
         final FileTransferClient client = mockery.mock(FileTransferClient.class);
@@ -154,21 +152,19 @@ public class RenameFileCommandTest
         
         setupExecutionContext(newPath, oldPath, command);
         
-        assertEquals("command state should be initialised", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.INITIALISED_STATE.getName(), command
-                .getState());
+        assertEquals(AbstractTransactionalResourceCommand.INITIALISED_STATE.getName(), command
+                .getState(), "command state should be initialised");
         
         // Execute the cmd
         command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         
-        assertEquals("command state should be executed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
-                .getState());
+        assertEquals(AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(), command
+                .getState(), "command state should be executed");
         
         command.rollback();
         
-        assertEquals("command state should be rolled_back_executed", //$NON-NLS-1$
-            AbstractTransactionalResourceCommand.ROLLED_BACK_STATE.getName(),
-            command.getState());
+        assertEquals(AbstractTransactionalResourceCommand.ROLLED_BACK_STATE.getName(),
+            command.getState(),
+            "command state should be rolled_back_executed");
     }
 }

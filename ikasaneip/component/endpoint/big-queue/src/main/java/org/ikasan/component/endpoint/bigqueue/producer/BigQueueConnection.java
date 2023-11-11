@@ -4,9 +4,9 @@ import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.XAException;
+import jakarta.transaction.xa.XAResource;
+import jakarta.transaction.xa.Xid;
 import java.io.IOException;
 
 public class BigQueueConnection implements LastResourceCommitOptimisation {

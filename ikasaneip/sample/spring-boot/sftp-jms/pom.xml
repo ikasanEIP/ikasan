@@ -18,7 +18,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
-    <dependencies>
+ <dependencies>
+  <dependency>
+   <groupId>jakarta.jms</groupId>
+   <artifactId>jakarta.jms-api</artifactId>
+   <version>3.1.0.redhat-00003</version>
+  </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -55,11 +60,21 @@
             <artifactId>activemq-client</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-test</artifactId>
-            <version>${project.version}</version>
-            <scope>test</scope>
+  <dependency>
+   <groupId>org.ikasan</groupId>
+   <artifactId>ikasan-test</artifactId>
+   <version>${project.version}</version>
+   <scope>test</scope>
+   <exclusions>
+    <exclusion>
+     <groupId>junit</groupId>
+     <artifactId>junit</artifactId>
+    </exclusion>
+    <exclusion>
+     <groupId>org.junit.vintage</groupId>
+     <artifactId>junit-vintage-engine</artifactId>
+    </exclusion>
+   </exclusions>
         </dependency>
 
         <dependency>

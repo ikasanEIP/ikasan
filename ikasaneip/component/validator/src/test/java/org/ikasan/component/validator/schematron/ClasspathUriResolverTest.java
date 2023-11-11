@@ -41,37 +41,41 @@
 package org.ikasan.component.validator.schematron;
 
 import net.sf.saxon.trans.XPathException;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.xml.transform.Source;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Functional tests for ClasspathUriResolver
  */
-public class ClasspathUriResolverTest
+class ClasspathUriResolverTest
 {
 
     @Test
-    public void test_resolve_cp() throws XPathException
+    void test_resolve_cp() throws XPathException
     {
         ClasspathUriResolver resolver = new ClasspathUriResolver();
         Source valid = resolver.resolve("cp:xslt/basic-no-namespace.sch.xsl", null);
-        Assert.assertNotNull("Resource should not be null", valid);
+        assertNotNull(valid, "Resource should not be null");
     }
 
     @Test
-    public void test_resolve_classpath() throws XPathException
+    void test_resolve_classpath() throws XPathException
     {
         ClasspathUriResolver resolver = new ClasspathUriResolver();
         Source valid = resolver.resolve("classpath:xslt/basic-no-namespace.sch.xsl", null);
-        Assert.assertNotNull("Resource should not be null", valid);
+        assertNotNull(valid, "Resource should not be null");
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test_resolve_missing() throws XPathException
+    @Test
+    void test_resolve_missing() throws XPathException
     {
-        ClasspathUriResolver resolver = new ClasspathUriResolver();
-        Source invalid = resolver.resolve("classpath:xslt/missing.sch.xsl", null);
+        assertThrows(RuntimeException.class, () -> {
+            ClasspathUriResolver resolver = new ClasspathUriResolver();
+            Source invalid = resolver.resolve("classpath:xslt/missing.sch.xsl", null);
+        });
     }
 }

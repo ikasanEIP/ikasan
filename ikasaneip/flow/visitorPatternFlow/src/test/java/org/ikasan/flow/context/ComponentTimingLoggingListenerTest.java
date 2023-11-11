@@ -47,7 +47,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 
 import java.util.ArrayList;
@@ -58,7 +58,7 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-public class ComponentTimingLoggingListenerTest
+class ComponentTimingLoggingListenerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -76,7 +76,7 @@ public class ComponentTimingLoggingListenerTest
     protected FlowElement flowElement = mockery.mock(FlowElement.class);
 
     @Test
-    public void test_log()
+    void test_log()
     {
         final List<FlowElementInvocation> invocations = new ArrayList<>();
         invocations.add(flowElementInvocation);

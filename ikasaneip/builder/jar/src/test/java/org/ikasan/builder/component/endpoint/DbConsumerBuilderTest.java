@@ -54,21 +54,20 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This test class supports the <code>DbConsumerBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class DbConsumerBuilderTest
+class DbConsumerBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -78,9 +77,6 @@ public class DbConsumerBuilderTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     /**
      * Mocks
@@ -96,7 +92,7 @@ public class DbConsumerBuilderTest
     final ManagedResourceRecoveryManager managedResourceRecoveryManager = mockery.mock(ManagedResourceRecoveryManager.class, "mockManagedResourceRecoveryManager");
 
     @Test
-    public void dbConsumer_build_when_all_attributes_set_scheduledConsumer_vanilla_messageProvider() {
+    void dbConsumer_build_when_all_attributes_set_scheduledConsumer_vanilla_messageProvider() {
 
         final ScheduledConsumer emptyScheduleConsumer = new ScheduledConsumer(scheduler);
         DbConsumerBuilder dbConsumerBuilder = new ExtendedDbConsumerBuilderImpl(emptyScheduleConsumer,
@@ -143,22 +139,22 @@ public class DbConsumerBuilderTest
 
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
 
-        assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
-        assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
+        assertEquals("121212", scheduledConsumer.getConfiguration().getCronExpression());
+        assertEquals("configuredResourceId", scheduledConsumer.getConfiguredResourceId());
         assertTrue(scheduledConsumer.isCriticalOnStartup());
 
         DbConsumerConfiguration dbConsumerConfiguration = (DbConsumerConfiguration)scheduledConsumer.getConfiguration();
-        assertTrue(dbConsumerConfiguration.getDriver().equals("driver"));
-        assertTrue(dbConsumerConfiguration.getUrl().equals("url"));
-        assertTrue(dbConsumerConfiguration.getUsername().equals("username"));
-        assertTrue(dbConsumerConfiguration.getPassword().equals("password"));
-        assertTrue(dbConsumerConfiguration.getSqlStatement().equals("sqlStatement"));
+        assertEquals("driver", dbConsumerConfiguration.getDriver());
+        assertEquals("url", dbConsumerConfiguration.getUrl());
+        assertEquals("username", dbConsumerConfiguration.getUsername());
+        assertEquals("password", dbConsumerConfiguration.getPassword());
+        assertEquals("sqlStatement", dbConsumerConfiguration.getSqlStatement());
 
         assertTrue(scheduledConsumer.getConfiguration().isIgnoreMisfire());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
-        assertTrue(scheduledConsumer.getConfiguration().getMaxEagerCallbacks() == 10);
+        assertEquals(10, scheduledConsumer.getConfiguration().getMaxEagerCallbacks());
         assertTrue(scheduledConsumer.getMessageProvider() instanceof MessageProvider);
-        assertTrue(scheduledConsumer.getConfiguration().getTimezone().equals("GMT"));
+        assertEquals("GMT", scheduledConsumer.getConfiguration().getTimezone());
         assertTrue(scheduledConsumer.getEventFactory() != null);
         assertTrue(scheduledConsumer.getManagedEventIdentifierService() != null);
 
@@ -167,7 +163,7 @@ public class DbConsumerBuilderTest
     }
 
     @Test
-    public void dbConsumer_build_when_all_attributes_set_scheduledConsumer_callback_messageProvider() {
+    void dbConsumer_build_when_all_attributes_set_scheduledConsumer_callback_messageProvider() {
 
         final ScheduledConsumer emptyScheduleConsumer = new ScheduledConsumer(scheduler);
         DbConsumerBuilder dbConsumerBuilder = new ExtendedDbConsumerBuilderImpl(emptyScheduleConsumer,
@@ -213,22 +209,22 @@ public class DbConsumerBuilderTest
                 .build();
 
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
-        assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
-        assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
+        assertEquals("121212", scheduledConsumer.getConfiguration().getCronExpression());
+        assertEquals("configuredResourceId", scheduledConsumer.getConfiguredResourceId());
         assertTrue(scheduledConsumer.isCriticalOnStartup());
 
         DbConsumerConfiguration dbConsumerConfiguration = (DbConsumerConfiguration)scheduledConsumer.getConfiguration();
-        assertTrue(dbConsumerConfiguration.getDriver().equals("driver"));
-        assertTrue(dbConsumerConfiguration.getUrl().equals("url"));
-        assertTrue(dbConsumerConfiguration.getUsername().equals("username"));
-        assertTrue(dbConsumerConfiguration.getPassword().equals("password"));
-        assertTrue(dbConsumerConfiguration.getSqlStatement().equals("sqlStatement"));
+        assertEquals("driver", dbConsumerConfiguration.getDriver());
+        assertEquals("url", dbConsumerConfiguration.getUrl());
+        assertEquals("username", dbConsumerConfiguration.getUsername());
+        assertEquals("password", dbConsumerConfiguration.getPassword());
+        assertEquals("sqlStatement", dbConsumerConfiguration.getSqlStatement());
 
         assertTrue(scheduledConsumer.getConfiguration().isIgnoreMisfire());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
-        assertTrue(scheduledConsumer.getConfiguration().getMaxEagerCallbacks() == 10);
+        assertEquals(10, scheduledConsumer.getConfiguration().getMaxEagerCallbacks());
         assertTrue(scheduledConsumer.getMessageProvider() instanceof CallBackMessageProvider);
-        assertTrue(scheduledConsumer.getConfiguration().getTimezone().equals("GMT"));
+        assertEquals("GMT", scheduledConsumer.getConfiguration().getTimezone());
         assertTrue(scheduledConsumer.getEventFactory() != null);
         assertTrue(scheduledConsumer.getManagedEventIdentifierService() != null);
 

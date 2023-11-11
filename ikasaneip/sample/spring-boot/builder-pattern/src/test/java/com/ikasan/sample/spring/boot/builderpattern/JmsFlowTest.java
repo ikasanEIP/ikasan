@@ -38,36 +38,33 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {MyApplication.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class JmsFlowTest
@@ -93,8 +90,8 @@ public class JmsFlowTest
 
     private  MessageListenerVerifier messageListenerVerifier;
 
-    @Before
-    public void setup(){
+    @BeforeEach
+    void setup(){
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Flow"));
 
@@ -102,8 +99,8 @@ public class JmsFlowTest
 
     }
 
-    @After
-    public void shutdown(){
+    @AfterEach
+    void shutdown(){
         flowTestRule.stopFlow();
         new ActiveMqHelper().removeAllMessages();
         messageListenerVerifier.stop();
@@ -112,9 +109,8 @@ public class JmsFlowTest
     }
 
 
-
     @Test
-    public void test_Jms_Flow()
+    void test_Jms_Flow()
     {
 
         // Prepare test data
@@ -136,18 +132,16 @@ public class JmsFlowTest
         with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
               .atMost(60, TimeUnit.SECONDS).untilAsserted(() -> {
 
-            assertTrue("Expected jms Message " + 1
-                    + " but found " + messageListenerVerifier.getCaptureResults().size(),
-                messageListenerVerifier.getCaptureResults().size() == 1
-                      );
+            assertEquals(1, messageListenerVerifier.getCaptureResults().size(), "Expected jms Message " + 1
+                    + " but found " + messageListenerVerifier.getCaptureResults().size());
         });
 
         flowTestRule.assertIsSatisfied();
 
     }
 
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 

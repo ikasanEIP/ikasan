@@ -42,6 +42,7 @@ package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
@@ -60,18 +61,15 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,14 +78,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -108,8 +105,8 @@ public class JobProcessingFlowTest {
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
 
-    @BeforeClass
-    public static void setupObjectMapper() {
+    @BeforeAll
+    static void setupObjectMapper() {
         final var simpleModule = new SimpleModule()
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class)
@@ -120,14 +117,14 @@ public class JobProcessingFlowTest {
         objectMapper.registerModule(simpleModule);
     }
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeEach
+    void setup() throws IOException {
         outboundQueue.removeAll();
     }
 
     @Test
     @DirtiesContext
-    public void test_job_processing_flow_success() throws IOException {
+    void test_job_processing_flow_success() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
@@ -183,16 +180,16 @@ public class JobProcessingFlowTest {
         String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
         ContextualisedScheduledProcessEventImpl event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
 
-        assertEquals(true, event.isJobStarting());
-        assertEquals(false, event.isSuccessful());
+        assertTrue(event.isJobStarting());
+        assertFalse(event.isSuccessful());
 
         dequeued = outboundQueue.dequeue();
         dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
         messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
         event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
-        assertEquals(false, event.isJobStarting());
-        assertEquals(true, event.isSuccessful());
-        assertEquals(false, event.isDryRun());
+        assertFalse(event.isJobStarting());
+        assertTrue(event.isSuccessful());
+        assertFalse(event.isDryRun());
 
         bigQueue.removeAll();
         flowTestRule.stopFlow();
@@ -200,7 +197,7 @@ public class JobProcessingFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_job_processing_flow_success_dry_run() throws IOException {
+    void test_job_processing_flow_success_dry_run() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
@@ -254,16 +251,16 @@ public class JobProcessingFlowTest {
         String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
         ContextualisedScheduledProcessEventImpl event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
 
-        assertEquals(true, event.isJobStarting());
-        assertEquals(false, event.isSuccessful());
+        assertTrue(event.isJobStarting());
+        assertFalse(event.isSuccessful());
 
         dequeued = outboundQueue.dequeue();
         dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
         messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
         event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
-        assertEquals(false, event.isJobStarting());
-        assertEquals(true, event.isSuccessful());
-        assertEquals(true, event.isDryRun());
+        assertFalse(event.isJobStarting());
+        assertTrue(event.isSuccessful());
+        assertTrue(event.isDryRun());
 
 
         flowTestRule.stopFlow();
@@ -271,7 +268,7 @@ public class JobProcessingFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_job_processing_flow_success_skipped() throws IOException {
+    void test_job_processing_flow_success_skipped() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
@@ -325,22 +322,22 @@ public class JobProcessingFlowTest {
         String messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
         ContextualisedScheduledProcessEventImpl event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
 
-        assertEquals(true, event.isJobStarting());
-        assertEquals(false, event.isSuccessful());
+        assertTrue(event.isJobStarting());
+        assertFalse(event.isSuccessful());
 
         dequeued = outboundQueue.dequeue();
         dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
         messageAsString = new String(objectMapper.writeValueAsBytes(dequeuedMessage.getMessage()));
         event = objectMapper.readValue(messageAsString, ContextualisedScheduledProcessEventImpl.class);
-        assertEquals(false, event.isJobStarting());
-        assertEquals(true, event.isSuccessful());
+        assertFalse(event.isJobStarting());
+        assertTrue(event.isSuccessful());
 
 
         flowTestRule.stopFlow();
     }
 
-    @After
-    public void teardown() {
+    @AfterEach
+    void teardown() {
         // post-test teardown
     }
 }

@@ -80,6 +80,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.ProcessExecutionBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.ProcessExecutionBrokerConfiguration;
@@ -96,8 +97,6 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * Legacy job processing flow component factory.

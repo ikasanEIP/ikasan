@@ -7,7 +7,7 @@ import org.ikasan.monitor.notifier.EmailNotifierConfiguration;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.FlowMonitor;
 import org.ikasan.spec.monitor.JobMonitor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -16,13 +16,13 @@ import org.springframework.context.annotation.Configuration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class IkasanMonitorAutoConfigurationTest
+class IkasanMonitorAutoConfigurationTest
 {
     private final ApplicationContextRunner contextRunner = new ApplicationContextRunner()
         .withConfiguration(AutoConfigurations.of(IkasanMonitorAutoConfiguration.class));
 
     @Test
-    public void testFlowMonitorWithEmailNotifierWhenPropertiesSet(){
+    void testFlowMonitorWithEmailNotifierWhenPropertiesSet(){
         contextRunner.withPropertyValues("environment=TEST")
                      .withUserConfiguration(TestIkasanConfig.class)
                      .run(context -> {
@@ -35,7 +35,7 @@ public class IkasanMonitorAutoConfigurationTest
     }
 
     @Test
-    public void testJobMonitorWithEmailNotifierWhenPropertiesSet(){
+    void testJobMonitorWithEmailNotifierWhenPropertiesSet(){
         contextRunner.withPropertyValues("environment=TEST")
             .withUserConfiguration(TestIkasanConfig.class)
             .run(context -> {
@@ -48,7 +48,7 @@ public class IkasanMonitorAutoConfigurationTest
     }
 
     @Test
-    public void testFlowMonitorWithNoNotifiers(){
+    void testFlowMonitorWithNoNotifiers(){
         contextRunner.withPropertyValues(
             "ikasan.monitor.notifier.mail.enabled=true",
             "ikasan.monitor.notifier.mail.mail-host=testhost",
@@ -67,7 +67,7 @@ public class IkasanMonitorAutoConfigurationTest
     }
 
     @Test
-    public void testJobMonitorWithNoNotifiers(){
+    void testJobMonitorWithNoNotifiers(){
         contextRunner.withPropertyValues(
             "ikasan.monitor.notifier.mail.mail-host=testhost",
             "ikasan.job.monitor.notifier.mail.enabled=true"
@@ -85,7 +85,7 @@ public class IkasanMonitorAutoConfigurationTest
     }
 
     @Test
-    public void testFlowMonitorWithDashboardNotifiers(){
+    void testFlowMonitorWithDashboardNotifiers(){
         contextRunner.withPropertyValues("ikasan.dashboard.extract.enabled=true")
                      .withUserConfiguration(TestIkasanConfig.class)
                      .run(context -> {

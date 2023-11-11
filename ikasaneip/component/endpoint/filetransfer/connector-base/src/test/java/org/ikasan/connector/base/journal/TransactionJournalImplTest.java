@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
@@ -52,10 +52,10 @@ import org.ikasan.connector.base.command.TransactionalResourceCommandPersistence
 import org.ikasan.connector.base.command.XidImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 
 /**
@@ -63,16 +63,16 @@ import static org.junit.Assert.assertEquals;
  * 
  * @author Ikasan Development Team
  */
-public class TransactionJournalImplTest
+class TransactionJournalImplTest
 {
-    
+
     /**
      * Tests that the TransactionJournal saves the command whenever the notifyUpdate method is called
      * @throws TransactionalResourceCommandPersistenceException 
      * @throws TransactionJournalingException 
      */
     @Test
-    public void testNotifyUpdate() throws TransactionalResourceCommandPersistenceException, TransactionJournalingException{
+    void testNotifyUpdate() throws TransactionalResourceCommandPersistenceException, TransactionJournalingException{
         Mockery interfaceMockery = new Mockery();
         final TransactionalResourceCommandDAO dao = interfaceMockery.mock(TransactionalResourceCommandDAO.class);
         final TransactionalResourceCommand command = interfaceMockery.mock(TransactionalResourceCommand.class);
@@ -93,14 +93,14 @@ public class TransactionJournalImplTest
         journal.notifyUpdate(command);
         
     }
-    
+
     /**
      * Tests that the TransactionJournal calls the appropriate dao method on GetExecutedTransactions
      * @throws TransactionalResourceCommandPersistenceException 
      * @throws TransactionJournalingException 
      */
     @Test
-    public void testGetExecutedTransactions() throws TransactionalResourceCommandPersistenceException, TransactionJournalingException{
+    void testGetExecutedTransactions() throws TransactionalResourceCommandPersistenceException, TransactionJournalingException{
 
         final List<XidImpl> exeucutedTransactionXids = new ArrayList<XidImpl>();
         
@@ -129,19 +129,19 @@ public class TransactionJournalImplTest
 //        
 //        //call the method
         Xid[] executedTransactions = journal.getExecutedTransactions();
-        assertEquals("There should be 3 results", 3, executedTransactions.length);
-        assertEquals("First result should be the first XId in the List returned from the dao", firstExecutedTransaction, executedTransactions[0]);
-        assertEquals("Second result should be the second XId in the List returned from the dao", secondExecutedTransaction, executedTransactions[1]);
-        assertEquals("Third result should be the third XId in the List returned from the dao", thirdExecutedTransaction, executedTransactions[2]);
+        assertEquals(3, executedTransactions.length, "There should be 3 results");
+        assertEquals(firstExecutedTransaction, executedTransactions[0], "First result should be the first XId in the List returned from the dao");
+        assertEquals(secondExecutedTransaction, executedTransactions[1], "Second result should be the second XId in the List returned from the dao");
+        assertEquals(thirdExecutedTransaction, executedTransactions[2], "Third result should be the third XId in the List returned from the dao");
         
     }
-    
+
     /**
      * Tests that the TransactionJournal calls the appropriate dao method on GetExecutedTransactions
      * @throws TransactionalResourceCommandPersistenceException 
      */
     @Test
-    public void testGetExecutedTransactions_handlesDaoException() throws TransactionalResourceCommandPersistenceException{
+    void testGetExecutedTransactions_handlesDaoException() throws TransactionalResourceCommandPersistenceException{
         Mockery interfaceMockery = new Mockery();
         final TransactionalResourceCommandDAO dao = interfaceMockery.mock(TransactionalResourceCommandDAO.class);
         
@@ -166,7 +166,7 @@ public class TransactionJournalImplTest
             fail("exception should have been thrown");
         }
         catch (TransactionJournalingException e){
-            assertEquals("Underlying cause of Journling Exception should be dao exception", daoException, e.getCause());
+            assertEquals(daoException, e.getCause(), "Underlying cause of Journling Exception should be dao exception");
         }
         
     }

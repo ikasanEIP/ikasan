@@ -1,5 +1,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.*;
 import org.ikasan.builder.component.ComponentBuilder;
@@ -13,8 +14,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {

@@ -40,37 +40,36 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import jakarta.annotation.Resource;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Test class for HibernateExclusionServiceDao.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
+@SpringJUnitConfig(locations = {
         "/ikasan-transaction-conf.xml",
         "/error-reporting-service-conf.xml",
         "/mock-conf.xml",
         "/h2db-datasource-conf.xml",
         "/substitute-components.xml"
-        })
-
-public class HibernateErrorReportingServiceDaoTest
+})
+class HibernateErrorReportingServiceDaoTest
 {
     @Resource
     ErrorReportingServiceDao<ErrorOccurrence, String> errorReportingServiceDao;
@@ -81,25 +80,25 @@ public class HibernateErrorReportingServiceDaoTest
      * Test save of errorOccurrence
      */
     @DirtiesContext
-    @Test
-    public void test_save_and_find()
+            @Test
+    void test_save_and_find()
     {
         ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
         ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
-        Assert.assertNull("Should not be found", persistedErrorOccurrence);
+        assertNull(persistedErrorOccurrence, "Should not be found");
 
         errorReportingServiceDao.save(errorOccurrence);
         persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
-        Assert.assertTrue("Should be found", persistedErrorOccurrence.equals(errorOccurrence));
+        assertEquals(persistedErrorOccurrence, errorOccurrence, "Should be found");
     }
 
     /**
      * Test save of errorOccurrence
      */
     @DirtiesContext
-    @Test
-    public void test_batch_save_and_find()
+            @Test
+    void test_batch_save_and_find()
     {
         ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
@@ -107,54 +106,44 @@ public class HibernateErrorReportingServiceDaoTest
         errorOccurrences.add(errorOccurrence);
 
         ErrorOccurrence persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
-        Assert.assertNull("Should not be found", persistedErrorOccurrence);
+        assertNull(persistedErrorOccurrence, "Should not be found");
 
         errorReportingServiceDao.save(errorOccurrences);
 
         persistedErrorOccurrence = errorReportingServiceDao.find(errorOccurrence.getUri());
-        Assert.assertTrue("Should be found", persistedErrorOccurrence.equals(errorOccurrence));
+        assertEquals(persistedErrorOccurrence, errorOccurrence, "Should be found");
     }
 
     /**
      * Test exclusion
      */
     @DirtiesContext
-    @Test
-    public void test_deleteExpired_operation()
+            @Test
+    void test_deleteExpired_operation()
     {
         // new event with 1 milli expiry
         ErrorOccurrenceImpl errorOccurrenceExpired = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), 1L);
 
-        try
-        {
+        assertDoesNotThrow(() -> {
             Thread.sleep(1);
-        }
-        catch(InterruptedException e)
-        {
-            Assert.fail("sleep woken early!");
-        }
+        }, "sleep woken early!");
 
         ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "error detail", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
-        Assert.assertNull("Non expired should not be found", errorReportingServiceDao.find(errorOccurrence.getUri()));
-        Assert.assertNull("Expired should not be found", errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) );
+        assertNull(errorReportingServiceDao.find(errorOccurrence.getUri()), "Non expired should not be found");
+        assertNull(errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) , "Expired should not be found");
 
         errorReportingServiceDao.save(errorOccurrence);
         errorReportingServiceDao.save(errorOccurrenceExpired);
-        Assert.assertNotNull("Non expired should not be found", errorReportingServiceDao.find(errorOccurrence.getUri()));
-        Assert.assertNotNull("Expired should not be found", errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) );
+        assertNotNull(errorReportingServiceDao.find(errorOccurrence.getUri()), "Non expired should not be found");
+        assertNotNull(errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) , "Expired should not be found");
 
-        try
-        {
+        assertDoesNotThrow(() -> {
             Thread.sleep(100);
-        }
-        catch(InterruptedException e)
-        {
-            Assert.fail("sleep woken early!");
-        }
+        }, "sleep woken early!");
 
         errorReportingServiceDao.deleteExpired();
-        Assert.assertNull("Expired should not be found", errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) );
-        Assert.assertNotNull("Non expired should be found", errorReportingServiceDao.find(errorOccurrence.getUri()));
+        assertNull(errorReportingServiceDao.find(errorOccurrenceExpired.getUri()) , "Expired should not be found");
+        assertNotNull(errorReportingServiceDao.find(errorOccurrence.getUri()), "Non expired should be found");
     }
 
 }

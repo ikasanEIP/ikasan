@@ -42,9 +42,9 @@ package org.ikasan.serialiser.model;
 
 import java.util.*;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 /**
  * Light JMS message implementation purely for serialiser usage.

@@ -40,14 +40,14 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.h2.tools.Server;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,16 +55,13 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.sql.SQLException;
 
 /**
  * Testing of Ikasan encrypted properties.
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(loader = EncryptedEnvironmentContextLoader.class)
@@ -86,22 +83,22 @@ public class ApplicationTest
 
     }
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         flowTestRule = new IkasanFlowTestRule();
         flowTestRule.withFlow(moduleUnderTest.getFlow("sample flow"));
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         server.shutdown();
     }
 
     @Test
     @DirtiesContext
-    public void test_bootstrap_with_encrypted_values() throws Exception
+    void test_bootstrap_with_encrypted_values() throws Exception
     {
         // All we want to is bootstrap, start and stop the flow!
         flowTestRule.withFlow(moduleUnderTest.getFlow("sample flow"));

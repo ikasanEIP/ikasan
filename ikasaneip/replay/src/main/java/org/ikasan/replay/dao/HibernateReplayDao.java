@@ -54,7 +54,7 @@ import org.ikasan.spec.replay.ReplayEvent;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.criteria.*;
+import jakarta.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;

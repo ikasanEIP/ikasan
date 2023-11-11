@@ -45,10 +45,10 @@ import org.ikasan.connector.basefiletransfer.net.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
@@ -57,8 +57,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 /**
@@ -66,7 +66,7 @@ import static org.junit.Assert.assertTrue;
  * 
  * @author Ikasan Development Team
  */
-public class DeliverFileCommandTest
+class DeliverFileCommandTest
 {
     /** we are dealing with pathnames so make sure we stay platform independent */
     final String FILE_SEPARATOR = System.getProperty("file.separator");
@@ -140,8 +140,8 @@ public class DeliverFileCommandTest
     /** Mocked fileTransferClient */
     final FileTransferClient client = classMockery.mock(FileTransferClient.class);
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         try
         {
@@ -168,9 +168,9 @@ public class DeliverFileCommandTest
      * @throws URISyntaxException
      */
     @Test
-    public void testExecute_withMappedRecordWithOverwrite() throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException
+    void testExecute_withMappedRecordWithOverwrite() throws ResourceException, ClientCommandPwdException,
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException
     {
 
         classMockery.checking(new Expectations()
@@ -200,8 +200,7 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", 
-            outputDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename);
+        assertEquals(outputDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename, "temp filename should be the filname with the rename extension");
     }
 
     /**
@@ -217,10 +216,10 @@ public class DeliverFileCommandTest
      * @throws URISyntaxException
      */
     @Test
-    public void testExecute_withMappedRecordToDefaultDotDirectory() 
+    void testExecute_withMappedRecordToDefaultDotDirectory()
         throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException
     {
 
         final String dotOutputDir = ".";
@@ -253,8 +252,7 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", 
-            dotOutputDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename);
+        assertEquals(dotOutputDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename, "temp filename should be the filname with the rename extension");
     }
 
     /**
@@ -270,10 +268,10 @@ public class DeliverFileCommandTest
      * @throws URISyntaxException
      */
     @Test
-    public void testExecute_withMappedRecordToDefaultDirectory() 
+    void testExecute_withMappedRecordToDefaultDirectory()
         throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException
     {
 
         deliverFileCommand = new DeliverFileCommand(startingDir, renameExtension, overwriteExisting, createParentDirectory, null);
@@ -305,8 +303,7 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", 
-            startingDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename);
+        assertEquals(startingDir + FILE_SEPARATOR + fileName + renameExtension, tempFilename, "temp filename should be the filname with the rename extension");
     }
 
     /**
@@ -323,9 +320,9 @@ public class DeliverFileCommandTest
      * @throws ClientException 
      */
     @Test
-    public void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
-            ClientCommandPutException, ClientCommandLsException, URISyntaxException, ResourceException,
-            ClientCommandRenameException, ClientException
+    void testCommit() throws ClientCommandPwdException, ClientCommandCdException,
+        ClientCommandPutException, ClientCommandLsException, URISyntaxException, ResourceException,
+        ClientCommandRenameException, ClientException
     {
 
         classMockery.checking(new Expectations()
@@ -397,7 +394,7 @@ public class DeliverFileCommandTest
      * @throws ClientException
      */
     @Test
-    public void testCommitWithEmptyRenameExtension() throws ClientCommandPwdException, ClientCommandCdException,
+    void testCommitWithEmptyRenameExtension() throws ClientCommandPwdException, ClientCommandCdException,
         ClientCommandPutException, ClientCommandLsException, URISyntaxException, ResourceException,
         ClientCommandRenameException, ClientException {
         deliverFileCommand = new DeliverFileCommand(outputDir, "", overwriteExisting, createParentDirectory, null);
@@ -453,10 +450,10 @@ public class DeliverFileCommandTest
     }
 
 
-        /**
-         * Test the rollback function
-         *
-         * @throws ClientCommandPwdException
+    /**
+     * Test the rollback function
+     *
+     * @throws ClientCommandPwdException
          * @throws ClientCommandCdException
          * @throws ClientCommandPutException
          * @throws ClientCommandLsException
@@ -465,9 +462,9 @@ public class DeliverFileCommandTest
          * @throws ClientException
          */
     @Test
-    public void testRollback_PutFileAttemptedSuccessfully() throws ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException, ResourceException, ClientException
+    void testRollback_PutFileAttemptedSuccessfully() throws ClientCommandPwdException,
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException, ResourceException, ClientException
     {
 
         classMockery.checking(new Expectations()
@@ -532,9 +529,9 @@ public class DeliverFileCommandTest
      * @throws ResourceException
      */
     @Test
-    public void testRollback_PutFileAttemptedUnsuccessfully() throws ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException, ResourceException
+    void testRollback_PutFileAttemptedUnsuccessfully() throws ClientCommandPwdException,
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException, ResourceException
     {
 
         classMockery.checking(new Expectations()
@@ -590,8 +587,8 @@ public class DeliverFileCommandTest
      * @throws ResourceException
      */
     @Test
-    public void testRollback_PutFileNotAttempted() throws ClientCommandPwdException, ClientCommandCdException,
-            ResourceException
+    void testRollback_PutFileNotAttempted() throws ClientCommandPwdException, ClientCommandCdException,
+        ResourceException
     {
         // create new Deliver File Command with no parent directory creation option (false)
         deliverFileCommand = new DeliverFileCommand(outputDir, renameExtension, overwriteExisting, false, null);
@@ -648,9 +645,9 @@ public class DeliverFileCommandTest
      * @throws ClientCommandMkdirException
      */
     @Test
-    public void testExecute_withInputStream() throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException, ClientCommandMkdirException
+    void testExecute_withInputStream() throws ResourceException, ClientCommandPwdException,
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException, ClientCommandMkdirException
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
 
@@ -680,8 +677,9 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", outputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
-            tempFilename);
+        assertEquals(outputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename, //$NON-NLS-1$
+            "temp filename should be the filname with the rename extension");
     }
 
     /**
@@ -698,10 +696,10 @@ public class DeliverFileCommandTest
      * @throws ClientCommandMkdirException
      */
     @Test
-    public void testExecute_withInputStream_toDefaultDirectory() 
+    void testExecute_withInputStream_toDefaultDirectory()
         throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException, ClientCommandMkdirException
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException, ClientCommandMkdirException
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String sameOutputDir = "startingDir";
@@ -729,8 +727,9 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", sameOutputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
-            tempFilename);
+        assertEquals(sameOutputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename, //$NON-NLS-1$
+            "temp filename should be the filname with the rename extension");
     }
 
     /**
@@ -747,10 +746,10 @@ public class DeliverFileCommandTest
      * @throws ClientCommandMkdirException
      */
     @Test
-    public void testExecute_withInputStream_toDefaultDotDirectory() 
+    void testExecute_withInputStream_toDefaultDotDirectory()
         throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException, ClientCommandMkdirException
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException, ClientCommandMkdirException
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String dotOutputDir = ".";
@@ -778,8 +777,9 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", dotOutputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
-            tempFilename);
+        assertEquals(dotOutputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename, //$NON-NLS-1$
+            "temp filename should be the filname with the rename extension");
     }
 
     /**
@@ -797,10 +797,10 @@ public class DeliverFileCommandTest
      * @throws ClientCommandMkdirException
      */
     @Test
-    public void testExecute_withInputStream_toNonExistentParentDirectory_with_createParentDirectory_true() 
+    void testExecute_withInputStream_toNonExistentParentDirectory_with_createParentDirectory_true()
         throws ResourceException, ClientCommandPwdException,
-            ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
-            URISyntaxException, ClientCommandMkdirException
+        ClientCommandCdException, ClientCommandPutException, ClientCommandLsException,
+        URISyntaxException, ClientCommandMkdirException
     {
         final InputStream inputStream = new ByteArrayInputStream(content);
         final String originalDir = "here";
@@ -843,7 +843,8 @@ public class DeliverFileCommandTest
 
         String tempFilename = (String) executionOutput.getResult();
 
-        assertEquals("temp filename should be the filname with the rename extension", outputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
-            tempFilename);
+        assertEquals(outputDir + FILE_SEPARATOR + nestedFile.getPath() + renameExtension, //$NON-NLS-1$
+            tempFilename, //$NON-NLS-1$
+            "temp filename should be the filname with the rename extension");
     }
 }

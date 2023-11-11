@@ -44,11 +44,12 @@ import org.ikasan.marshaller.Marshaller;
 import org.ikasan.spec.component.transformation.Converter;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Functional unit test cases for
@@ -56,7 +57,7 @@ import javax.resource.ResourceException;
  * 
  * @author Ikasan Development Team
  */
-public class ToXmlDocumentTest
+class ToXmlDocumentTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -75,25 +76,25 @@ public class ToXmlDocumentTest
      * Test successful invocation
      */
     @Test
-    public void test_successful_string_to_doc() throws ResourceException
+    void test_successful_string_to_doc() throws ResourceException
     {
         String xml = "<root><element>value</element></root>";
 
         Converter<String,Document> converter = new ToXmlDocumentConverter();
         Document document = converter.convert(xml);
-        Assert.assertNotNull("document not instantiated", document);
+        assertNotNull(document, "document not instantiated");
     }
 
     /**
      * Test successful invocation
      */
     @Test
-    public void test_successful_bytes_to_doc() throws ResourceException
+    void test_successful_bytes_to_doc() throws ResourceException
     {
         String xml = "<root><element>value</element></root>";
 
         Converter<byte[],Document> converter = new ToXmlDocumentConverter();
         Document document = converter.convert(xml.getBytes());
-        Assert.assertNotNull("document not instantiated", document);
+        assertNotNull(document, "document not instantiated");
     }
 }

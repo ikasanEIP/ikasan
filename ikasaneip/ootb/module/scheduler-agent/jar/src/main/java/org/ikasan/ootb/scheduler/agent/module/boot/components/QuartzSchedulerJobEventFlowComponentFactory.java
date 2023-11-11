@@ -80,6 +80,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import jakarta.annotation.Resource;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.BuilderFactory;
@@ -102,8 +103,6 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * Quartz scheduler job event flow component factory.

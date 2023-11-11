@@ -51,7 +51,7 @@
 	<name>Ikasan Flow Implementation Visitor Pattern</name>
 	<description>Ikasan EIP Flow implementation based on the Visitor design pattern</description>
 
-	<dependencies>
+    <dependencies>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -59,29 +59,29 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-flow</artifactId>
- 			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-event</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-event</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-monitor</artifactId>
- 			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-monitor</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-recovery-manager</artifactId>
- 			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-recovery-manager</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -89,17 +89,17 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-management</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-management</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<dependency>
-			<groupId>org.ikasan</groupId>
-			<artifactId>ikasan-spec-configuration</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-configuration</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -107,7 +107,7 @@
             <scope>provided</scope>
         </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-resubmission</artifactId>
         </dependency>
@@ -117,7 +117,7 @@
             <artifactId>ikasan-spec-serialiser</artifactId>
         </dependency>
 
-		<dependency>
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-replay</artifactId>
         </dependency>
@@ -126,23 +126,29 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
 
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>javax.transaction</groupId>
-					<artifactId>jta</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>javax.transaction</groupId>
+                    <artifactId>jta</artifactId>
+                </exclusion>
+            </exclusions>
+            <version>6.1.7.Final</version>
+        </dependency>
 
         <!-- trial a cloning library -->
         <dependency>
@@ -155,6 +161,11 @@
             <artifactId>jmock-imposters</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>net.bytebuddy</groupId>
@@ -165,12 +176,6 @@
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 

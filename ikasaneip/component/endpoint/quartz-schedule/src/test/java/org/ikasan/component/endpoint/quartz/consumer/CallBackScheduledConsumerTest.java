@@ -50,8 +50,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 
 import java.text.ParseException;
@@ -60,13 +59,15 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 
 /**
  * This test class supports the <code>CallbackScheduledConsumer</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class CallBackScheduledConsumerTest
+class CallBackScheduledConsumerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -117,19 +118,23 @@ public class CallBackScheduledConsumerTest
     /**
      * Test failed constructor for scheduled consumer due to null scheduler.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_failure_NullScheduler()
+    @Test
+    void test_constructor_failure_NullScheduler()
     {
-        new CallBackScheduledConsumer(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CallBackScheduledConsumer(null);
+        });
     }
 
     /**
      * Test failed constructor for scheduled consumer due to null scheduledJobRecoveryService.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_failure_NullScheduledJobRecoveryService()
+    @Test
+    void test_constructor_failure_NullScheduledJobRecoveryService()
     {
-        new CallBackScheduledConsumer(scheduler, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new CallBackScheduledConsumer(scheduler, null);
+        });
     }
 
     /**
@@ -137,7 +142,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_start_no_persisted_recovery_no_recovery_manager_recovery() throws SchedulerException
+    void test_start_no_persisted_recovery_no_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -200,8 +205,8 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met", 3, scheduledConsumer.getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
+        assertEquals(3, scheduledConsumer.getTriggers().size(), "Expected number of triggers not met");
+        assertTrue(((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace(), "Expected replacement of triggers");
 
         mockery.assertIsSatisfied();
     }
@@ -211,7 +216,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException
      */
     @Test
-    public void test_start_no_persisted_recovery_with_recovery_manager_recovery() throws SchedulerException
+    void test_start_no_persisted_recovery_with_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -254,8 +259,8 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
-        Assert.assertNull("Expected number of triggers not null", scheduledConsumer.getTriggers());
-        Assert.assertNull("Expected no triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
+        assertNull(scheduledConsumer.getTriggers(), "Expected number of triggers not null");
+        assertNull(((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace(), "Expected no triggers");
 
         mockery.assertIsSatisfied();
     }
@@ -265,7 +270,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException
      */
     @Test
-    public void test_start_with_persisted_recovery_outside_tolerance_no_recovery_manager_recovery() throws SchedulerException
+    void test_start_with_persisted_recovery_outside_tolerance_no_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -340,8 +345,8 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
+        assertEquals(3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size(), "Expected number of triggers not met - should have 2 business and 1 recovery trigger ");
+        assertTrue(((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace(), "Expected replacement of triggers");
 
         mockery.assertIsSatisfied();
     }
@@ -351,7 +356,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException
      */
     @Test
-    public void test_start_with_persisted_recovery_inside_tolerance_no_recovery_manager_recovery() throws SchedulerException
+    void test_start_with_persisted_recovery_inside_tolerance_no_recovery_manager_recovery() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         final List<String> expressions = new ArrayList(2);
@@ -426,8 +431,8 @@ public class CallBackScheduledConsumerTest
         scheduledConsumer.setJobDetail(mockJobDetail);
         scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
         scheduledConsumer.start();
-        Assert.assertEquals("Expected number of triggers not met - should have 2 business and 1 recovery trigger ", 3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size());
-        Assert.assertTrue("Expected replacement of triggers", ((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace());
+        assertEquals(3, ((StubbedCallBackScheduledConsumer)scheduledConsumer).getTriggers().size(), "Expected number of triggers not met - should have 2 business and 1 recovery trigger ");
+        assertTrue(((StubbedCallBackScheduledConsumer)scheduledConsumer).isReplace(), "Expected replacement of triggers");
 
         mockery.assertIsSatisfied();
     }
@@ -436,66 +441,70 @@ public class CallBackScheduledConsumerTest
      * Test failed consumer start.
      * @throws SchedulerException 
      */
-    @Test(expected = RuntimeException.class)
-    public void test_start_failure_due_to_schedulerException() throws SchedulerException
+    @Test
+    void test_start_failure_due_to_schedulerException() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
-        
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                // get flow and module name from the job
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+        assertThrows(RuntimeException.class, () -> {
+            final JobKey jobKey = new JobKey("flowName", "moduleName");
 
-                // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    // get flow and module name from the job
+                    exactly(1).of(mockJobDetail).getKey();
+                    will(returnValue(jobKey));
 
-                // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
-                will(throwException(new SchedulerException()));
-            }
+                    // access configuration for details
+                    exactly(1).of(consumerConfiguration).getCronExpression();
+                    will(returnValue("* * * * ? ?"));
+
+                    // schedule the job
+                    exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                    will(throwException(new SchedulerException()));
+                }
+            });
+
+            CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
+            scheduledConsumer.setConfiguration(consumerConfiguration);
+            scheduledConsumer.start();
+            mockery.assertIsSatisfied();
         });
-
-        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
-        scheduledConsumer.setConfiguration(consumerConfiguration);
-        scheduledConsumer.start();
-        mockery.assertIsSatisfied();
     }
 
     /**
      * Test failed consumer start.
      * @throws SchedulerException 
      */
-    @Test(expected = RuntimeException.class)
-    public void test_start_failure_due_to_parserException() throws SchedulerException
+    @Test
+    void test_start_failure_due_to_parserException() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
-        
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(RuntimeException.class, () -> {
+            final JobKey jobKey = new JobKey("flowName", "moduleName");
+
+            // expectations
+            mockery.checking(new Expectations()
             {
-                // get flow and module name from the job
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+                {
+                    // get flow and module name from the job
+                    exactly(1).of(mockJobDetail).getKey();
+                    will(returnValue(jobKey));
 
-                // access configuration for details
-                exactly(1).of(consumerConfiguration).getCronExpression();
-                will(returnValue("* * * * ? ?"));
-                
-                // schedule the job
-                exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
-                will(throwException(new ParseException("test",0)));
-            }
+                    // access configuration for details
+                    exactly(1).of(consumerConfiguration).getCronExpression();
+                    will(returnValue("* * * * ? ?"));
+
+                    // schedule the job
+                    exactly(1).of(scheduler).scheduleJob(mockJobDetail, trigger);
+                    will(throwException(new ParseException("test", 0)));
+                }
+            });
+
+            CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
+            scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
+            scheduledConsumer.setConfiguration(consumerConfiguration);
+            scheduledConsumer.start();
+            mockery.assertIsSatisfied();
         });
-
-        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
-        scheduledConsumer.setCallBackMessageProvider(callBackMessageProvider);
-        scheduledConsumer.setConfiguration(consumerConfiguration);
-        scheduledConsumer.start();
-        mockery.assertIsSatisfied();
     }
 
     /**
@@ -503,7 +512,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException
      */
     @Test
-    public void test_stop_when_exists() throws SchedulerException
+    void test_stop_when_exists() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
 
@@ -534,7 +543,7 @@ public class CallBackScheduledConsumerTest
      * @throws SchedulerException 
      */
     @Test
-    public void test_stop_when_not_exists() throws SchedulerException
+    void test_stop_when_not_exists() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("flowName", "moduleName");
         
@@ -562,35 +571,37 @@ public class CallBackScheduledConsumerTest
      * Test failed consumer stop due to scheduler exception.
      * @throws SchedulerException 
      */
-    @Test(expected = RuntimeException.class)
-    public void test_stop_failure_due_to_schedulerException() throws SchedulerException
+    @Test
+    void test_stop_failure_due_to_schedulerException() throws SchedulerException
     {
-        final JobKey jobKey = new JobKey("flowName", "moduleName");
-        
-        // expectations
-        mockery.checking(new Expectations() {
-            {
-                // get flow and module name from the job
-                exactly(1).of(mockJobDetail).getKey();
-                will(returnValue(jobKey));
+        assertThrows(RuntimeException.class, () -> {
+            final JobKey jobKey = new JobKey("flowName", "moduleName");
 
-                // unschedule the job
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(Boolean.TRUE));
+            // expectations
+            mockery.checking(new Expectations() {
+                {
+                    // get flow and module name from the job
+                    exactly(1).of(mockJobDetail).getKey();
+                    will(returnValue(jobKey));
 
-                exactly(1).of(scheduler).deleteJob(jobKey);
-                will(throwException(new SchedulerException()));
-            }
+                    // unschedule the job
+                    exactly(1).of(scheduler).checkExists(jobKey);
+                    will(returnValue(Boolean.TRUE));
+
+                    exactly(1).of(scheduler).deleteJob(jobKey);
+                    will(throwException(new SchedulerException()));
+                }
+            });
+
+            CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
+            scheduledConsumer.setConfiguration(consumerConfiguration);
+            scheduledConsumer.stop();
+            mockery.assertIsSatisfied();
         });
-
-        CallBackScheduledConsumer scheduledConsumer = new StubbedCallBackScheduledConsumer(scheduler);
-        scheduledConsumer.setConfiguration(consumerConfiguration);
-        scheduledConsumer.stop();
-        mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_not_null_no_persisted_recovery() throws SchedulerException
+    void test_execute_when_messageProvider_message_is_not_null_no_persisted_recovery() throws SchedulerException
     {
         final JobDataMap jobDataMap = new JobDataMap();
 
@@ -635,7 +646,7 @@ public class CallBackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_not_null_with_persisted_recovery() throws SchedulerException
+    void test_execute_when_messageProvider_message_is_not_null_with_persisted_recovery() throws SchedulerException
     {
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
         final JobDataMap jobDataMap = new JobDataMap();
@@ -725,7 +736,7 @@ public class CallBackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_null_not_in_flow_recovery() throws SchedulerException
+    void test_execute_when_messageProvider_message_is_null_not_in_flow_recovery() throws SchedulerException
     {
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
         final JobDataMap jobDataMap = new JobDataMap();
@@ -772,7 +783,7 @@ public class CallBackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_invoke_is_false_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
+    void test_execute_when_messageProvider_message_invoke_is_false_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
     {
         final TriggerKey triggerKey = new TriggerKey("moduleName", "flowName");
         final JobDataMap jobDataMap = new JobDataMap();
@@ -853,7 +864,7 @@ public class CallBackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
+    void test_execute_when_messageProvider_throws_exception() throws SchedulerException
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final String identifier = "testId";
@@ -899,7 +910,7 @@ public class CallBackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager() throws SchedulerException
+    void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager() throws SchedulerException
     {
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
@@ -967,7 +978,7 @@ public class CallBackScheduledConsumerTest
     }
 
     @Test
-    public void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager_existing_eagerTrigger() throws SchedulerException
+    void test_execute_when_messageProvider_message_is_not_null_and_consumer_is_eager_existing_eagerTrigger() throws SchedulerException
     {
         final JobDetail jobDetail = mockery.mock(JobDetail.class);
         final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");

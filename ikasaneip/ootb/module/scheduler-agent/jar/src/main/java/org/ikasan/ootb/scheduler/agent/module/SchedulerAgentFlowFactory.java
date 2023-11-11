@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module;
 
+import jakarta.annotation.Resource;
 import org.ikasan.ootb.scheduler.agent.module.boot.*;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowFactory;
@@ -48,7 +49,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.List;
 
@@ -112,7 +112,7 @@ public class SchedulerAgentFlowFactory implements FlowFactory
                     return this.createHousekeepLogFilesFlows();
                 }
                 default: {
-                    throw new RuntimeException(String.format("Unknown profile[%s] encountered in flow factory!", profile));
+                    throw new RuntimeException("Unknown profile[%s] encountered in flow factory!".formatted(profile));
                 }
             }
         }

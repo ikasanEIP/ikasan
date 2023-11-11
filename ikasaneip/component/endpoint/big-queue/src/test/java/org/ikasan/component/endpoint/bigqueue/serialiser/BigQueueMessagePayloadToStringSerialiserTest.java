@@ -3,18 +3,19 @@ package org.ikasan.component.endpoint.bigqueue.serialiser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BigQueueMessagePayloadToStringSerialiserTest {
 
     @Test
-    public void should_serialise_and_deserialise() throws Exception {
+    void should_serialise_and_deserialise() throws Exception {
         String messageId = UUID.randomUUID().toString();
         long createdTime = System.currentTimeMillis();
         TestEvent testEvent = createTestEvent();

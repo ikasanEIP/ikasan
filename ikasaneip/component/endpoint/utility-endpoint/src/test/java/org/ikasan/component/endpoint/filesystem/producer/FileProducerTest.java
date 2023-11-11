@@ -47,13 +47,15 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
 /**
@@ -61,7 +63,7 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public class FileProducerTest
+class FileProducerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -89,7 +91,7 @@ public class FileProducerTest
      * Test successful string to file write.
      */
     @Test
-    public void test_successful_flowEventFileWrite()
+    void test_successful_flowEventFileWrite()
     {
 
         // set test expectations
@@ -118,7 +120,7 @@ public class FileProducerTest
      * Test successful string to file write.
      */
     @Test
-    public void test_successful_stringFileWrite()
+    void test_successful_stringFileWrite()
     {
 
         // set test expectations
@@ -145,7 +147,7 @@ public class FileProducerTest
      * Test successful string to file write.
      */
     @Test
-    public void test_successful_stringFileWrite_with_temp_file()
+    void test_successful_stringFileWrite_with_temp_file()
     {
 
         // set test expectations
@@ -174,7 +176,7 @@ public class FileProducerTest
      * Test successful string to file write.
      */
     @Test
-    public void test_successful_stringFileWrite_with_temp_file_with_checksum()
+    void test_successful_stringFileWrite_with_temp_file_with_checksum()
     {
 
         // set test expectations
@@ -202,40 +204,42 @@ public class FileProducerTest
     /**
      * Test successful string to file write.
      */
-    @Test (expected = EndpointException.class)
-    public void test_successful_stringFileWrite_with_temp_file_with_checksum_existing_no_overwrite() throws IOException
+    @Test
+    void test_successful_stringFileWrite_with_temp_file_with_checksum_existing_no_overwrite() throws IOException
     {
+        assertThrows(EndpointException.class, () -> {
 
-        // set test expectations
-        mockery.checking(new Expectations() {
-            {
-                exactly(2).of(configuration).isOverwrite();
-                will(returnValue(false));
-                exactly(3).of(configuration).getFilename();
-                will(returnValue(filename));
-                exactly(1).of(configuration).isUseTempFile();
-                will(returnValue(true));
-                exactly(1).of(configuration).getTempFilename();
-                will(returnValue(tempFilename));
-                exactly(2).of(configuration).getEncoding();
-                will(returnValue(encoding));
-                exactly(1).of(configuration).isWriteChecksum();
-                will(returnValue(true));
-            }
+            // set test expectations
+            mockery.checking(new Expectations() {
+                {
+                    exactly(2).of(configuration).isOverwrite();
+                    will(returnValue(false));
+                    exactly(3).of(configuration).getFilename();
+                    will(returnValue(filename));
+                    exactly(1).of(configuration).isUseTempFile();
+                    will(returnValue(true));
+                    exactly(1).of(configuration).getTempFilename();
+                    will(returnValue(tempFilename));
+                    exactly(2).of(configuration).getEncoding();
+                    will(returnValue(encoding));
+                    exactly(1).of(configuration).isWriteChecksum();
+                    will(returnValue(true));
+                }
+            });
+
+            FileUtils.writeStringToFile(testFile, "test existing file");
+            FileProducer fileProducer = new FileProducer();
+            fileProducer.setConfiguration(configuration);
+            fileProducer.invoke("text to write");
+            mockery.assertIsSatisfied();
         });
-
-        FileUtils.writeStringToFile(testFile, "test existing file");
-        FileProducer fileProducer = new FileProducer();
-        fileProducer.setConfiguration(configuration);
-        fileProducer.invoke("text to write");
-        mockery.assertIsSatisfied();
     }
 
     /**
      * Test successful string to file write.
      */
     @Test
-    public void test_successful_stringFileWrite_with_temp_file_with_checksum_existing_with_overwrite() throws IOException
+    void test_successful_stringFileWrite_with_temp_file_with_checksum_existing_with_overwrite() throws IOException
     {
 
         // set test expectations
@@ -267,7 +271,7 @@ public class FileProducerTest
      * Test successful bytes to file write.
      */
     @Test
-    public void test_successful_bytesFileWrite()
+    void test_successful_bytesFileWrite()
     {
 
         // set test expectations
@@ -292,7 +296,7 @@ public class FileProducerTest
      * Test successful bytes to file write.
      */
     @Test
-    public void test_successful_bytesFileWrite_with_temp_file()
+    void test_successful_bytesFileWrite_with_temp_file()
     {
 
         // set test expectations
@@ -319,7 +323,7 @@ public class FileProducerTest
      * Test successful bytes to file write.
      */
     @Test
-    public void test_successful_bytesFileWrite_with_temp_file_with_checksum()
+    void test_successful_bytesFileWrite_with_temp_file_with_checksum()
     {
 
         // set test expectations
@@ -348,7 +352,7 @@ public class FileProducerTest
      * Test successful collection to file write.
      */
     @Test
-    public void test_successful_collectionFileWrite()
+    void test_successful_collectionFileWrite()
     {
 
         // set test expectations
@@ -380,7 +384,7 @@ public class FileProducerTest
      * Test successful collection to file write.
      */
     @Test
-    public void test_successful_collectionFileWrite_with_temp_file()
+    void test_successful_collectionFileWrite_with_temp_file()
     {
 
         // set test expectations
@@ -414,7 +418,7 @@ public class FileProducerTest
      * Test successful collection to file write.
      */
     @Test
-    public void test_successful_collectionFileWrite_with_temp_file_with_checksum()
+    void test_successful_collectionFileWrite_with_temp_file_with_checksum()
     {
 
         // set test expectations
@@ -450,7 +454,7 @@ public class FileProducerTest
      * Test successful collection to file write.
      */
     @Test
-    public void test_successful_collectionFileWrite_with_temp_file_with_checksum_with_lineEnding()
+    void test_successful_collectionFileWrite_with_temp_file_with_checksum_with_lineEnding()
     {
 
         // set test expectations
@@ -482,8 +486,8 @@ public class FileProducerTest
         mockery.assertIsSatisfied();
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         if(testFile.exists())
         {

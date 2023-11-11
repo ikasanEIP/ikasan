@@ -53,9 +53,9 @@ import org.ikasan.connector.sftp.net.SFTPClient;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.slf4j.event.Level;
 
-import javax.resource.ResourceException;
-import javax.transaction.xa.XAResource;
-import javax.transaction.xa.Xid;
+import jakarta.resource.ResourceException;
+import jakarta.transaction.xa.XAResource;
+import jakarta.transaction.xa.Xid;
 import java.io.File;
 import java.io.Serializable;
 
@@ -338,7 +338,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
     /**
      * Deal with forgetting this unti of work as a txn, in this case do nothing
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#forget(javax.transaction.xa.Xid)
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#forget(jakarta.transaction.xa.Xid)
      */
     @Override
     public void forget(Xid arg0)
@@ -375,7 +375,7 @@ public class SFTPManagedConnection extends TransactionalCommandConnection implem
      * Return whether or not this resource manager is the same, always return
      * false
      * 
-     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#isSameRM(javax.transaction.xa.XAResource)
+     * @see org.ikasan.connector.base.outbound.xa.EISXAManagedConnection#isSameRM(jakarta.transaction.xa.XAResource)
      * @return false
      */
     @Override

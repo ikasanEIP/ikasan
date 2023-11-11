@@ -44,35 +44,37 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.InvalidConfigurationException;
 import org.ikasan.spec.configuration.IsValidationAware;
 import org.jmock.Expectations;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Functional unit test cases for <code>FileConsumerConfiguration</code>.
  * 
  * @author Ikasan Development Team
  */
-public class FileConsumerConfigurationTest
+class FileConsumerConfigurationTest
 {
     /**
      * Test to ensure the configuration is validation aware.
      *
      **/
     @Test
-    public void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
+    void test_ftpConfiguration_isValidationAware() throws InvalidConfigurationException
     {
-        Assert.assertTrue("Configuration doesnt implement IsValidationAware", new FileConsumerConfiguration() instanceof IsValidationAware);
+        assertTrue(new FileConsumerConfiguration() instanceof IsValidationAware, "Configuration doesnt implement IsValidationAware");
     }
 
     /**
      * Test.
      */
     @Test
-    public void test_valid_configuration()
+    void test_valid_configuration()
     {
         FileConsumerConfiguration fileConsumerConfiguration = new FileConsumerConfiguration();
         fileConsumerConfiguration.setCronExpression("0/5 * * * * ?");
@@ -88,14 +90,14 @@ public class FileConsumerConfigurationTest
      * Test.
      */
     @Test
-    public void test_invalid_configuration_invalid_cronExpression()
+    void test_invalid_configuration_invalid_cronExpression()
     {
         FileConsumerConfiguration fileConsumerConfiguration = new FileConsumerConfiguration();
 
         try
         {
             fileConsumerConfiguration.validate();
-            Assert.fail("configuration is not valid");
+            fail("configuration is not valid");
         }
         catch(InvalidConfigurationException e)
         {
@@ -107,7 +109,7 @@ public class FileConsumerConfigurationTest
      * Test.
      */
     @Test
-    public void test_invalid_configuration_invalid_filenames()
+    void test_invalid_configuration_invalid_filenames()
     {
         FileConsumerConfiguration fileConsumerConfiguration = new FileConsumerConfiguration();
         fileConsumerConfiguration.setCronExpression("0/5 * * * * ?");
@@ -115,7 +117,7 @@ public class FileConsumerConfigurationTest
         try
         {
             fileConsumerConfiguration.validate();
-            Assert.fail("configuration is not valid");
+            fail("configuration is not valid");
         }
         catch(InvalidConfigurationException e)
         {

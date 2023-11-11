@@ -40,11 +40,10 @@
 package org.ikasan.component.factory.spring.jms.consumer;
 
 
+import jakarta.annotation.Resource;
 import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.factory.spring.common.NonConfiguredResourceBaseComponentFactory;
 import org.ikasan.component.factory.spring.jms.JmsComponentFactory;
-
-import javax.annotation.Resource;
 
 /**
  * Easily create Jms Consumer passing the configuration prefix. Will handle all different types of jms consumer

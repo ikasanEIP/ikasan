@@ -40,6 +40,8 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command.util;
 
+import org.junit.jupiter.api.Test;
+
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -48,13 +50,8 @@ import java.io.InputStream;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-import org.junit.Test;
 
-import static org.junit.Assert.fail;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for UnzippingFileProvider
@@ -127,7 +124,7 @@ public class UnzippingFileProviderTest
      * @throws UnzipNotSupportedException 
      */
     @Test
-    public void testUnzippingFileProvider() throws UnzipNotSupportedException
+    void testUnzippingFileProvider() throws UnzipNotSupportedException
     {
         createUnzippingFileProvider();
 
@@ -151,10 +148,10 @@ public class UnzippingFileProviderTest
      * @throws UnzipNotSupportedException 
      */
     @Test
-    public void testHasNext() throws UnzipNotSupportedException
+    void testHasNext() throws UnzipNotSupportedException
     {
         UnzippingFileProvider fileProvider = createUnzippingFileProvider();
-        assertTrue("fileProvider should have a next entry", fileProvider.hasNext()); //$NON-NLS-1$
+        assertTrue(fileProvider.hasNext(), "fileProvider should have a next entry"); //$NON-NLS-1$
     }
 
     /**
@@ -162,22 +159,22 @@ public class UnzippingFileProviderTest
      * @throws UnzipNotSupportedException 
      */
     @Test
-    public void testNext() throws UnzipNotSupportedException
+    void testNext() throws UnzipNotSupportedException
     {
         UnzippingFileProvider fileProvider = createUnzippingFileProvider();
         FileHandle next = fileProvider.next();
-        assertNotNull("object returned from next method should not be null, when there is a legitimate next object",next ); //$NON-NLS-1$
+        assertNotNull(next ,"object returned from next method should not be null, when there is a legitimate next object"); //$NON-NLS-1$
         
-        assertEquals("path for FileHandle should match the name of the zip entry",ZIP_ENTRY_FILE_NAME, next.getPath()); //$NON-NLS-1$
+        assertEquals(ZIP_ENTRY_FILE_NAME, next.getPath(), "path for FileHandle should match the name of the zip entry"); //$NON-NLS-1$
         
-        assertFalse("fileProvider should not have a next entry, when the only entry has already been retrieved", fileProvider.hasNext()); //$NON-NLS-1$
+        assertFalse(fileProvider.hasNext(), "fileProvider should not have a next entry, when the only entry has already been retrieved"); //$NON-NLS-1$
     }
-    
+
     /**
      * Test the illegal Input Stream
      */
     @Test
-    public void testIlleagalInputStream(){
+    void testIlleagalInputStream(){
         byte[] bytes = new byte[] {1,2,3,4,5,6,7,8};
         
         try

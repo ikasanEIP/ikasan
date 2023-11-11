@@ -6,21 +6,22 @@ import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableP
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class DetachableProcessBuilderTest {
+@ExtendWith(MockitoExtension.class)
+class DetachableProcessBuilderTest {
     private DetachableProcessBuilder detachableProcessBuilder;
     @Mock
     private SchedulerPersistenceService schedulerPersistenceServiceMock;
@@ -39,7 +40,7 @@ public class DetachableProcessBuilderTest {
     private static final Long PROCESS_ID = 999L;
 
     @Test
-    public void if_the_underlying_process_had_previously_started_and_is_now_completed() {
+    void if_the_underlying_process_had_previously_started_and_is_now_completed() {
         SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE);
 
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(schedulerIkasanProcess);
@@ -57,7 +58,7 @@ public class DetachableProcessBuilderTest {
     }
 
     @Test
-    public void if_the_underlying_process_had_previously_started_and_is_not_yet_completed() {
+    void if_the_underlying_process_had_previously_started_and_is_not_yet_completed() {
         SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE);
 
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(schedulerIkasanProcess);
@@ -76,7 +77,7 @@ public class DetachableProcessBuilderTest {
     }
 
     @Test
-    public void if_the_underlying_process_has_not_yet_been_started() {
+    void if_the_underlying_process_has_not_yet_been_started() {
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(null);
         detachableProcessBuilder = new DetachableProcessBuilder(schedulerPersistenceServiceMock, new ProcessBuilder(), COMMANDS, IDENTITY);
 
@@ -89,15 +90,17 @@ public class DetachableProcessBuilderTest {
         assertThat(detachableProcess.getPid()).isEqualTo(0);
     }
 
-    @Test(expected = EndpointException.class)
-    public void when_command_called_with_not_parameters_exception_should_be_thrown() {
+    @Test
+    void when_command_called_with_not_parameters_exception_should_be_thrown() {
+        assertThrows(EndpointException.class, () -> {
 
-        detachableProcessBuilder = new DetachableProcessBuilder(schedulerPersistenceServiceMock, new ProcessBuilder(), COMMANDS, IDENTITY);
-        detachableProcessBuilder.command(null);
+            detachableProcessBuilder = new DetachableProcessBuilder(schedulerPersistenceServiceMock, new ProcessBuilder(), COMMANDS, IDENTITY);
+            detachableProcessBuilder.command(null);
+        });
     }
 
     @Test
-    public void when_command_called_with_valid_params_expect_them_to_be_set_on_internal_processBuilder() throws IOException {
+    void when_command_called_with_valid_params_expect_them_to_be_set_on_internal_processBuilder() throws IOException {
         final String COMMAND = "dir";
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         when(schedulerPersistenceServiceMock.createCommandScript(IDENTITY, cp.getScriptFilePostfix(), COMMAND)).thenReturn("XX");
@@ -132,7 +135,7 @@ public class DetachableProcessBuilderTest {
     }
 
     @Test
-    public void if_process_is_not_detached_and_start_is_called_ensure_new_process_starts() throws IOException {
+    void if_process_is_not_detached_and_start_is_called_ensure_new_process_starts() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(processBuilderMock.start()).thenReturn(processMock);
@@ -152,7 +155,7 @@ public class DetachableProcessBuilderTest {
     }
 
     @Test
-    public void if_process_is_detached_and_start_is_called_ensure_new_process_is_not_created() throws IOException {
+    void if_process_is_detached_and_start_is_called_ensure_new_process_is_not_created() throws IOException {
         SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE);
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(schedulerIkasanProcess);

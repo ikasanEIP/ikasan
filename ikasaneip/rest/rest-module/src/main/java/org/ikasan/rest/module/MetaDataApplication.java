@@ -14,9 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
@@ -52,12 +52,12 @@ public class MetaDataApplication
      * @param flowName
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
             value = "/flow/{moduleName}/{flowName}",
             produces = {"application/json"})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getFlowMetadata(@PathVariable("moduleName") String moduleName,
-                                              @PathVariable("flowName") String flowName) {
+    public ResponseEntity getFlowMetadata(@PathVariable String moduleName,
+                                              @PathVariable String flowName) {
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
 
@@ -73,11 +73,11 @@ public class MetaDataApplication
      * @param moduleName
      * @return
      */
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/module/{moduleName}",
         produces = {"application/json"})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getModuleMetadata(@PathVariable("moduleName") String moduleName) {
+    public ResponseEntity getModuleMetadata(@PathVariable String moduleName) {
 
         Module<Flow> module = moduleContainer.getModule(moduleName);
 

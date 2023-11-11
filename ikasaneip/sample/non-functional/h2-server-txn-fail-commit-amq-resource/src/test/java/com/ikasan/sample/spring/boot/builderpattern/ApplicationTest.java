@@ -40,6 +40,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.region.Destination;
@@ -56,16 +57,17 @@ import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
@@ -73,7 +75,7 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Transaction failure test.
@@ -85,7 +87,6 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
@@ -126,15 +127,15 @@ public class ApplicationTest
     // AMQ Broker
     BrokerService broker;
 
-    @BeforeClass
-    public static void setup() throws SQLException
+    @BeforeAll
+    static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server = Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @Before
-    public void start() throws Exception
+    @BeforeEach
+    void start() throws Exception
     {
         // clean up any previous failures that left persisted state
         FileTestUtil.deleteFile(new File(amqPersistenceBaseDir));
@@ -151,8 +152,8 @@ public class ApplicationTest
         amqTestUtil = new AMQTestUtil(brokerUrl);
     }
 
-    @After
-    public void stop() throws Exception
+    @AfterEach
+    void stop() throws Exception
     {
         flow3TestRule.stopFlow();
 
@@ -167,15 +168,15 @@ public class ApplicationTest
         FileTestUtil.deleteFile(new File(objectStoreDir));
     }
 
-    @AfterClass
-    public static void teardown()
+    @AfterAll
+    static void teardown()
     {
         server.shutdown();
     }
 
     @Test
     @DirtiesContext
-    public void test_happy_flows_with_concurrent_db_updates() throws Exception
+    void test_happy_flows_with_concurrent_db_updates() throws Exception
     {
         // jms consumer to the topic to dev null
         flow3TestRule.withFlow(moduleUnderTest.getFlow("jmsToDevNullFlow1"));
@@ -213,32 +214,30 @@ public class ApplicationTest
             logger.info("Expected jmsToDevNullFlow1 flow wiretap count {} but found {}",
                 testMessageCount-1, wiretaps.getResultSize()
                        );
-            assertTrue("Expected jmsToDevNullFlow1 flow wiretap count " + testMessageCount
-                    + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == testMessageCount-1
-                      );
+            assertEquals(wiretaps.getResultSize(), testMessageCount - 1, "Expected jmsToDevNullFlow1 flow wiretap count " + testMessageCount
+                    + " but found " + wiretaps.getResultSize());
 
         });
 
         Destination dlq = broker.getBroker().getDestinationMap().get(new ActiveMQQueue("ActiveMQ.DLQ"));
         if(dlq != null)
         {
-            Assert.assertTrue("DLQ should contain 1 message",   dlq.getDestinationStatistics().getMessages().getCount()==1);
+            assertEquals(1, dlq.getDestinationStatistics().getMessages().getCount(), "DLQ should contain 1 message");
             org.apache.activemq.command.Message[] dlqMessages = dlq.browse();
             org.apache.activemq.command.Message dlqMessage = dlqMessages[0];
             String content = new String(dlqMessage.getContent().getData());
-            Assert.assertTrue("DLQ should contain Test Message 2, but found " + content.substring(4), content.substring(4).endsWith("Test Message 2"));
+            assertTrue(content.substring(4).endsWith("Test Message 2"), "DLQ should contain Test Message 2, but found " + content.substring(4));
         }
         else
         {
-            Assert.fail("dlq should exist");
+            fail("dlq should exist");
         }
 
         PagedSearchResult<WiretapEvent> wiretaps = wiretapTestUtil.getWiretaps("Transaction Test Module", "jmsToDevNullFlow1", TriggerRelationship.AFTER, "JMS Consumer", testMessageCount+5);
-        assertTrue("Wiretaps should contain 4 messages, but contains " + wiretaps.getPagedResults().size(), wiretaps.getPagedResults().size() == 3);
-        assertTrue("Wiretap should be 'Test Message 4', found " + wiretaps.getPagedResults().get(0).getEvent().toString(), wiretaps.getPagedResults().get(0).getEvent().equals("Test Message 4"));
-        assertTrue("Wiretap should be 'Test Message 3', found  " + wiretaps.getPagedResults().get(1).getEvent().toString(), wiretaps.getPagedResults().get(1).getEvent().equals("Test Message 3"));
-        assertTrue("Wiretap should be 'Test Message 1', found  " + wiretaps.getPagedResults().get(2).getEvent().toString(), wiretaps.getPagedResults().get(2).getEvent().equals("Test Message 1"));
+        assertEquals(3, wiretaps.getPagedResults().size(), "Wiretaps should contain 4 messages, but contains " + wiretaps.getPagedResults().size());
+        assertEquals("Test Message 4", wiretaps.getPagedResults().get(0).getEvent(), "Wiretap should be 'Test Message 4', found " + wiretaps.getPagedResults().get(0).getEvent().toString());
+        assertEquals("Test Message 3", wiretaps.getPagedResults().get(1).getEvent(), "Wiretap should be 'Test Message 3', found  " + wiretaps.getPagedResults().get(1).getEvent().toString());
+        assertEquals("Test Message 1", wiretaps.getPagedResults().get(2).getEvent(), "Wiretap should be 'Test Message 1', found  " + wiretaps.getPagedResults().get(2).getEvent().toString());
 
         flow3TestRule.assertIsSatisfied();
     }

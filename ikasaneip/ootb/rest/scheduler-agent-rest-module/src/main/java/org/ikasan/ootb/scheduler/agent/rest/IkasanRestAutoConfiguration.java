@@ -47,15 +47,15 @@ import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
 import org.ikasan.ootb.scheduler.agent.rest.service.BigQueueManagementAppServiceImpl;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-@Configuration
+@AutoConfiguration
 public class IkasanRestAutoConfiguration implements WebMvcConfigurer
 {
 

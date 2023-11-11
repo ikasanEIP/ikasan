@@ -1,13 +1,13 @@
 package org.ikasan.configurationService.model;
 
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class ConfigurationParameterListImplTest
+class ConfigurationParameterListImplTest
 {
     @Test
-    public void testConfigurationParameterListImplWithNullValue()
+    void testConfigurationParameterListImplWithNullValue()
     {
         ConfigurationParameterListImpl parameterListImpl = new ConfigurationParameterListImpl("name", null);
         assertNotNull(parameterListImpl);

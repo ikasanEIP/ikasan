@@ -48,17 +48,16 @@ import org.ikasan.connector.util.chunking.ChunkTestUtils;
 import org.ikasan.connector.util.chunking.process.ChunkHandleException;
 import org.ikasan.connector.util.chunking.process.ChunkHandler;
 import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Tests the ChunkingInputStreamConsumer class
  * 
  * @author Ikasan Development Team
  */
-public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
+class ChunkingInputStreamConsumerTest extends IoJUnitHelper
 {
 
     /**
@@ -67,7 +66,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
      * @throws ChunkableDataSourceException
      */
     @Test
-    public void testConsumeInputStream() throws ChunkableDataSourceException
+    void testConsumeInputStream() throws ChunkableDataSourceException
     {
         MockChunkHandler mockChunkHandler = new MockChunkHandler();
         ChunkingInputStreamConsumer inputStreamConsumer = new ChunkingInputStreamConsumer(mockChunkHandler);
@@ -86,7 +85,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
      * caught, wrapped and thrown as ChunkableDataSourceException
      */
     @Test
-    public void testConsumeInputStream_catchingIoException()
+    void testConsumeInputStream_catchingIoException()
     {
         MockChunkHandler mockChunkHandler = new MockChunkHandler();
         ChunkingInputStreamConsumer inputStreamConsumer = new ChunkingInputStreamConsumer(mockChunkHandler);
@@ -111,7 +110,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
      * ChunkableDataSourceException
      */
     @Test
-    public void testConsumeInputStream_catchingChunkHandleException()
+    void testConsumeInputStream_catchingChunkHandleException()
     {
 
         final ChunkHandleException chunkHandleException = new ChunkHandleException("Houston, we have a problem"); //$NON-NLS-1$
@@ -131,7 +130,7 @@ public class ChunkingInputStreamConsumerTest extends IoJUnitHelper
         }
         catch (ChunkableDataSourceException e)
         {
-            assertEquals("underlying exception should be the chunkHandleException", chunkHandleException, e.getCause()); //$NON-NLS-1$
+            assertEquals(chunkHandleException, e.getCause(), "underlying exception should be the chunkHandleException"); //$NON-NLS-1$
         }
     }
 

@@ -40,36 +40,37 @@
  */
 package org.ikasan.component.converter.xml;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 /**
  * Test cases for XsltConfigurationParameterConverter
  *
  * @author Ikasan Development Team
  */
-public class XsltConfigurationParameterConverterTest
+class XsltConfigurationParameterConverterTest
 {
 
     private XsltConfigurationParameterConverter converter;
 
     private TestConfiguration testConfiguration;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         converter = new XsltConfigurationParameterConverter();
         testConfiguration = new TestConfiguration();
     }
 
     @Test
-    public void testConvertPrimitives() throws Exception
+    void testConvertPrimitives() throws Exception
     {
         String testString = "A test xslt string";
 
@@ -80,17 +81,17 @@ public class XsltConfigurationParameterConverterTest
 
         Map<String, String> result = converter.convert(testConfiguration);
 
-        Assert.assertEquals(4, result.size());
+        assertEquals(4, result.size());
 
-        Assert.assertEquals(testString, result.get("testString"));
-        Assert.assertEquals("123", result.get("testInt"));
-        Assert.assertEquals("true", result.get("testBoolean"));
-        Assert.assertEquals("9999999999999", result.get("testLong"));
+        assertEquals(testString, result.get("testString"));
+        assertEquals("123", result.get("testInt"));
+        assertEquals("true", result.get("testBoolean"));
+        assertEquals("9999999999999", result.get("testLong"));
 
     }
 
     @Test
-    public void testConvertMap() throws Exception
+    void testConvertMap() throws Exception
     {
         Map<String, String> testMap = new HashMap<>();
         testMap.put("key1", "value1");
@@ -101,7 +102,7 @@ public class XsltConfigurationParameterConverterTest
 
         Map<String, String> result = converter.convert(testConfiguration);
 
-        Assert.assertEquals(4, result.size());
+        assertEquals(4, result.size());
 
         String actualMapXml = result.get("testMap");
 
@@ -109,15 +110,15 @@ public class XsltConfigurationParameterConverterTest
         String entry2 = "<entry key=\"key2\" value=\"value2\"/>";
         String entry3 = "<entry key=\"key3\" value=\"value3\"/>";
 
-        Assert.assertTrue(actualMapXml.contains(entry1));
-        Assert.assertTrue(actualMapXml.contains(entry2));
-        Assert.assertTrue(actualMapXml.contains(entry3));
+        assertTrue(actualMapXml.contains(entry1));
+        assertTrue(actualMapXml.contains(entry2));
+        assertTrue(actualMapXml.contains(entry3));
 
-        Assert.assertTrue(actualMapXml.replace(entry1, "").replace(entry2, "").replace(entry3, "").equals("<map></map>"));
+        assertEquals("<map></map>", actualMapXml.replace(entry1, "").replace(entry2, "").replace(entry3, ""));
     }
 
     @Test
-    public void testConvertList() throws Exception
+    void testConvertList() throws Exception
     {
         List<String> testList = new ArrayList<>();
         testList.add("value1");
@@ -128,29 +129,29 @@ public class XsltConfigurationParameterConverterTest
 
         Map<String, String> result = converter.convert(testConfiguration);
 
-        Assert.assertEquals(4, result.size());
+        assertEquals(4, result.size());
 
         String actualListXml = result.get("testList");
 
         String expectedListXml = "<list><value>value1</value><value>value2</value><value>value3</value></list>";
 
-        Assert.assertEquals(expectedListXml, actualListXml);
+        assertEquals(expectedListXml, actualListXml);
 
     }
 
     @Test
-    public void testMethodMissingResultsInRuntimeException()
+    void testMethodMissingResultsInRuntimeException()
     {
         InvalidConfiguration invalidConfiguration = new InvalidConfiguration();
 
         try
         {
             converter.convert(invalidConfiguration);
-            Assert.fail("Configuration field has no getter - should throw a RuntimeException");
+            fail("Configuration field has no getter - should throw a RuntimeException");
         }
         catch (RuntimeException e)
         {
-            Assert.assertEquals("error occurred introspecting XsltConverterConfiguration instance for field name: xsltParamHasNoGetter", e.getMessage());
+            assertEquals("error occurred introspecting XsltConverterConfiguration instance for field name: xsltParamHasNoGetter", e.getMessage());
         }
     }
 

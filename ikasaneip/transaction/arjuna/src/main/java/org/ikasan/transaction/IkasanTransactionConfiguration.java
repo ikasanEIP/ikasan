@@ -11,6 +11,7 @@ import me.snowdrop.boot.narayana.core.properties.NarayanaProperties;
 import me.snowdrop.boot.narayana.core.properties.NarayanaPropertiesInitializer;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -19,23 +20,24 @@ import org.springframework.boot.autoconfigure.transaction.jta.JtaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.XADataSourceWrapper;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.boot.system.ApplicationHome;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.jta.JtaTransactionManager;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
-import javax.jms.Message;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
+import jakarta.jms.Message;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 import java.io.File;
 
-@Configuration
+@AutoConfiguration
 @EnableConfigurationProperties({
-                                   JtaProperties.class,
-                                   NarayanaProperties.class
-                               })
+                                               JtaProperties.class,
+                                               NarayanaProperties.class
+})
 public class IkasanTransactionConfiguration
 {
     private final JtaProperties jtaProperties;
@@ -130,11 +132,11 @@ public class IkasanTransactionConfiguration
     }
 
     private void initLogDir(NarayanaProperties properties) {
-        if (!StringUtils.isEmpty(properties.getLogDir())) {
+        if (!ObjectUtils.isEmpty(properties.getLogDir())) {
             return;
         }
 
-        if (!StringUtils.isEmpty(this.jtaProperties.getLogDir())) {
+        if (!ObjectUtils.isEmpty(this.jtaProperties.getLogDir())) {
             properties.setLogDir(this.jtaProperties.getLogDir());
         } else {
             properties.setLogDir(getLogDir().getAbsolutePath());
@@ -142,11 +144,11 @@ public class IkasanTransactionConfiguration
     }
 
     private void initTransactionManagerId(NarayanaProperties properties) {
-        if (!StringUtils.isEmpty(properties.getTransactionManagerId())) {
+        if (!ObjectUtils.isEmpty(properties.getTransactionManagerId())) {
             return;
         }
 
-        if (!StringUtils.isEmpty(this.jtaProperties.getTransactionManagerId())) {
+        if (!ObjectUtils.isEmpty(this.jtaProperties.getTransactionManagerId())) {
             properties.setTransactionManagerId(this.jtaProperties.getTransactionManagerId());
         }
     }
@@ -167,6 +169,7 @@ public class IkasanTransactionConfiguration
 
         @Bean
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
+        @DependsOnDatabaseInitialization
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule) {
             return new GenericXADataSourceWrapper(narayanaProperties, xaRecoveryModule);
@@ -182,6 +185,7 @@ public class IkasanTransactionConfiguration
 
         @Bean
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
+        @DependsOnDatabaseInitialization
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule, TransactionManager transactionManager) {
             return new PooledXADataSourceWrapper(narayanaProperties, xaRecoveryModule, transactionManager);
@@ -192,7 +196,6 @@ public class IkasanTransactionConfiguration
     /**
      * JMS connection factory wrapper configuration.
      */
-    @Configuration
     @ConditionalOnClass(Message.class)
     static class NarayanaJmsConfiguration {
 

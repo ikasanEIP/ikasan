@@ -7,6 +7,7 @@ import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.monitor.JobMonitor;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 
@@ -16,6 +17,7 @@ import java.util.List;
  * Harvesting related configuration required by every module.
  * This autoconfig should be excluded from dashboard.
  */
+@AutoConfiguration
 public class HarvestingAutoConfiguration
 {
     @Bean

@@ -43,9 +43,7 @@ package org.ikasan.scheduler;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 import org.quartz.spi.JobFactory;
 import org.quartz.spi.TriggerFiredBundle;
@@ -53,12 +51,14 @@ import org.quartz.spi.TriggerFiredBundle;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * This test class supports the <code>CachingScheduledJobFactory</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class CachingScheduledJobFactoryTest
+class CachingScheduledJobFactoryTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -87,13 +87,13 @@ public class CachingScheduledJobFactoryTest
     
     /** Mock jobDetail */
     final JobDetail jobDetail = mockery.mock(JobDetail.class, "mockJobDetail");
-    
+
     /**
      * Test successful create jobDetail instance.
      * @throws SchedulerException 
      */
     @Test
-    public void test_createJobDetail() throws SchedulerException
+    void test_createJobDetail() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("name", "group");
         
@@ -106,16 +106,16 @@ public class CachingScheduledJobFactoryTest
         });
 
         ScheduledJobFactory scheduledJobFactory = new StubbedCachingScheduledJobFactory();
-        Assert.assertTrue( scheduledJobFactory.createJobDetail(job, job.getClass(), "name", "group") instanceof JobDetail );
+        assertTrue( scheduledJobFactory.createJobDetail(job, job.getClass(), "name", "group") instanceof JobDetail );
         mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test successful new job callback where job is found in the cache.
      * @throws SchedulerException 
      */
     @Test
-    public void test_newJob_callback_found_in_cache() throws SchedulerException
+    void test_newJob_callback_found_in_cache() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("name", "group");
         
@@ -133,16 +133,16 @@ public class CachingScheduledJobFactoryTest
         });
 
         ScheduledJobFactory scheduledJobFactory = new StubbedCachingScheduledJobFactory();
-        Assert.assertTrue( scheduledJobFactory.newJob(triggerFiredBundle, scheduler) instanceof Job);
+        assertTrue( scheduledJobFactory.newJob(triggerFiredBundle, scheduler) instanceof Job);
         mockery.assertIsSatisfied();
     }
-    
+
     /**
      * Test successful new job callback where job is not found in the cache.
      * @throws SchedulerException 
      */
     @Test
-    public void test_newJob_callback_not_found_in_cache() throws SchedulerException
+    void test_newJob_callback_not_found_in_cache() throws SchedulerException
     {
         final JobKey jobKey = new JobKey("name", "group");
         
@@ -162,7 +162,7 @@ public class CachingScheduledJobFactoryTest
         });
 
         ScheduledJobFactory scheduledJobFactory = new StubbedCachingScheduledJobFactory();
-        Assert.assertTrue( scheduledJobFactory.newJob(triggerFiredBundle, scheduler) instanceof Job);
+        assertTrue( scheduledJobFactory.newJob(triggerFiredBundle, scheduler) instanceof Job);
         mockery.assertIsSatisfied();
     }
     

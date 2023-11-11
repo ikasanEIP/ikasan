@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -16,7 +16,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableMethodSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter
 {
     @Autowired
@@ -32,7 +32,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
     private String additionalUnsecuredEndpoints;
 
 
-    @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception
+    /*~~(Migrate manually based on https://spring.io/blog/2022/02/21/spring-security-without-the-websecurityconfigureradapter)~~>*/@Override protected void configure(AuthenticationManagerBuilder auth) throws Exception
     {
         auth.authenticationProvider(ikasanAuthenticationProvider)
             .userDetailsService(userService).passwordEncoder(passwordEncoder);
@@ -85,12 +85,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter
             .httpBasic()
             .and()
             .authorizeRequests()
-            .antMatchers("/login.jsp").permitAll()
-            .antMatchers("/css/**","/images/**","/js/**").permitAll()
-            .antMatchers("/rest/**").permitAll()
-            .antMatchers(additionalUnsecuredEndpoints).permitAll()
-            .antMatchers("/admin/**").hasAnyAuthority("ALL", "WebServiceAdmin", "WriteBlueConsole")
-            .antMatchers("/**").hasAnyAuthority("ALL", "ReadBlueConsole")
+            .requestMatchers("/login.jsp").permitAll()
+            .requestMatchers("/css/**", "/images/**", "/js/**").permitAll()
+            .requestMatchers("/rest/**").permitAll()
+            .requestMatchers(additionalUnsecuredEndpoints).permitAll()
+            .requestMatchers("/admin/**").hasAnyAuthority("ALL", "WebServiceAdmin", "WriteBlueConsole")
+            .requestMatchers("/**").hasAnyAuthority("ALL", "ReadBlueConsole")
             .anyRequest().authenticated()
             .and()
             .formLogin()

@@ -43,9 +43,9 @@ package org.ikasan.serialiser.converter;
 import org.ikasan.serialiser.model.JmsStreamMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-import javax.jms.JMSException;
-import javax.jms.MessageEOFException;
-import javax.jms.StreamMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageEOFException;
+import jakarta.jms.StreamMessage;
 
 /**
  * Simple converter of a vendor specific StreamMessage to an Ikasan stream message for serialisation.

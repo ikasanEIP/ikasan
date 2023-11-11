@@ -40,36 +40,38 @@
  */
 package org.ikasan.component.endpoint.quartz.recovery.model;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This test class supports the <code>ScheduledJobRecoveryModel</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ScheduledJobRecoveryModelTest
+class ScheduledJobRecoveryModelTest
 {
     /**
      * Test.
      */
     @Test
-    public void test_successful_default_instantiation()
+    void test_successful_default_instantiation()
     {
         ScheduledJobRecoveryModel scheduledJobRecoveryModel = new ScheduledJobRecoveryModel();
-        Assert.assertNull("group should be null", scheduledJobRecoveryModel.getGroup());
-        Assert.assertNull("name should be null", scheduledJobRecoveryModel.getName());
-        Assert.assertNull("fireTime should be null", scheduledJobRecoveryModel.getFireTime());
-        Assert.assertNull("nextFireTime should be null", scheduledJobRecoveryModel.getNextFireTime());
+        assertNull(scheduledJobRecoveryModel.getGroup(), "group should be null");
+        assertNull(scheduledJobRecoveryModel.getName(), "name should be null");
+        assertNull(scheduledJobRecoveryModel.getFireTime(), "fireTime should be null");
+        assertNull(scheduledJobRecoveryModel.getNextFireTime(), "nextFireTime should be null");
     }
 
     /**
      * Test.
      */
     @Test
-    public void test_successful_mutators()
+    void test_successful_mutators()
     {
         Date fireTime = new Date();
         ScheduledJobRecoveryModel scheduledJobRecoveryModel = new ScheduledJobRecoveryModel();
@@ -79,9 +81,9 @@ public class ScheduledJobRecoveryModelTest
         Date nextFireTime = new Date();
         scheduledJobRecoveryModel.setNextFireTime(nextFireTime);
 
-        Assert.assertTrue("group should 'group''", scheduledJobRecoveryModel.getGroup().equals("group"));
-        Assert.assertTrue("name should be 'name'", scheduledJobRecoveryModel.getName().equals("name"));
-        Assert.assertTrue("fireTime should be " + fireTime, scheduledJobRecoveryModel.getFireTime().equals(fireTime));
-        Assert.assertTrue("nextFireTime should be " + nextFireTime, scheduledJobRecoveryModel.getNextFireTime().equals(nextFireTime));
+        assertEquals("group", scheduledJobRecoveryModel.getGroup(), "group should 'group''");
+        assertEquals("name", scheduledJobRecoveryModel.getName(), "name should be 'name'");
+        assertEquals(scheduledJobRecoveryModel.getFireTime(), fireTime, "fireTime should be " + fireTime);
+        assertEquals(scheduledJobRecoveryModel.getNextFireTime(), nextFireTime, "nextFireTime should be " + nextFireTime);
     }
 }

@@ -44,47 +44,50 @@ import org.ikasan.component.converter.xml.ObjectToXMLStringConverter;
 import org.ikasan.component.converter.xml.XmlConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.ConfiguredResource;
+import org.junit.jupiter.api.Test;
 
-import org.junit.Test;
-
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>ObjectToXmlStringConverterBuilderImpl</code> class.
  *
  * @author Ikasan Development Team
  */
-public class ObjectToXmlStringConverterBuilderImplTest
+class ObjectToXmlStringConverterBuilderImplTest
 {
     /**
      * Test successful builder creation.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void objectToXmlStringConverterBuilder_without_constructor_classes()
+    @Test
+    void objectToXmlStringConverterBuilder_without_constructor_classes()
     {
-        new ObjectToXmlStringConverterBuilderImpl(null, null);
-    }
-
-    /**
-     * Test successful builder creation.
-     */
-    @Test(expected = IllegalArgumentException.class)
-    public void objectToXmlStringConverterBuilder_without_constructor_configuration()
-    {
-        new ObjectToXmlStringConverterBuilderImpl(new ArrayList(), null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ObjectToXmlStringConverterBuilderImpl(null, null);
+        });
     }
 
     /**
      * Test successful builder creation.
      */
     @Test
-    public void objectToXmlStringConverterBuilder_with_configuration()
+    void objectToXmlStringConverterBuilder_without_constructor_configuration()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ObjectToXmlStringConverterBuilderImpl(new ArrayList(), null);
+        });
+    }
+
+    /**
+     * Test successful builder creation.
+     */
+    @Test
+    void objectToXmlStringConverterBuilder_with_configuration()
     {
         List<Class> classes = new ArrayList<Class>();
         List<Class> objectClasses = new ArrayList<Class>();
@@ -114,26 +117,26 @@ public class ObjectToXmlStringConverterBuilderImplTest
                 .build();
 
 
-        assertTrue("instance should be a Converter", converter instanceof Converter);
-        assertTrue("Converter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource) converter).getConfiguredResourceId()));
-        assertTrue("xmlAdapterMap should be the same object'", ((ObjectToXMLStringConverter) converter).getXmlAdapterMap() == xmlAdapters );
-        assertTrue("xmlAdapterMap should be 'empty'", ((ObjectToXMLStringConverter) converter).getXmlAdapterMap().isEmpty() );
+        assertTrue(converter instanceof Converter, "instance should be a Converter");
+        assertEquals("configuredResourceId", ((ConfiguredResource)converter).getConfiguredResourceId(), "Converter configuredResourceId should be 'configuredResourceId'");
+        assertTrue(((ObjectToXMLStringConverter) converter).getXmlAdapterMap() == xmlAdapters , "xmlAdapterMap should be the same object'");
+        assertTrue(((ObjectToXMLStringConverter) converter).getXmlAdapterMap().isEmpty() , "xmlAdapterMap should be 'empty'");
 
         XmlConfiguration builtConfiguration = ((ConfiguredResource<XmlConfiguration>) converter).getConfiguration();
-        assertTrue("rootName should be 'rootName'", "rootName".equals(builtConfiguration.getRootName()));
-        assertTrue("rootClassName should be 'java.lang.String'", "java.lang.String".equals(builtConfiguration.getRootClassName()));
-        assertTrue("fastFailOnConfigurationLoad should be 'true'", builtConfiguration.isFastFailOnConfigurationLoad());
-        assertTrue("namespacePrefix should be 'namespacePrefix'", "namespacePrefix".equals(builtConfiguration.getNamespacePrefix()));
-        assertTrue("namespaceURI should be 'namespaceURI'", "namespaceURI".equals(builtConfiguration.getNamespaceURI()));
-        assertTrue("noNamespaceSchema should be 'true'", builtConfiguration.isNoNamespaceSchema());
-        assertTrue("routeOnValidationException should be 'true'", builtConfiguration.isRouteOnValidationException());
-        assertTrue("schema should be 'example.xsd'", "example.xsd".equals(builtConfiguration.getSchema()));
-        assertTrue("schemaLocation should be 'http://foo.com/domain example.xsd'", "http://foo.com/domain example.xsd".equals(builtConfiguration.getSchemaLocation()));
-        assertTrue("useNamespacePrefix should be 'useNamespacePrefix'", builtConfiguration.isUseNamespacePrefix());
-        assertTrue("validate should be 'true'", builtConfiguration.isValidate());
-        assertTrue("objectClasses size should be '2'", builder.getClasses().size() == 2);
-        assertTrue("objectClasses entry 1 should be 'String.class'", builder.getClasses().get(0).equals(String.class));
-        assertTrue("objectClasses entry 2 should be 'Integer.class'", builder.getClasses().get(1).equals(Integer.class));
+        assertEquals("rootName", builtConfiguration.getRootName(), "rootName should be 'rootName'");
+        assertEquals("java.lang.String", builtConfiguration.getRootClassName(), "rootClassName should be 'java.lang.String'");
+        assertTrue(builtConfiguration.isFastFailOnConfigurationLoad(), "fastFailOnConfigurationLoad should be 'true'");
+        assertEquals("namespacePrefix", builtConfiguration.getNamespacePrefix(), "namespacePrefix should be 'namespacePrefix'");
+        assertEquals("namespaceURI", builtConfiguration.getNamespaceURI(), "namespaceURI should be 'namespaceURI'");
+        assertTrue(builtConfiguration.isNoNamespaceSchema(), "noNamespaceSchema should be 'true'");
+        assertTrue(builtConfiguration.isRouteOnValidationException(), "routeOnValidationException should be 'true'");
+        assertEquals("example.xsd", builtConfiguration.getSchema(), "schema should be 'example.xsd'");
+        assertEquals("http://foo.com/domain example.xsd", builtConfiguration.getSchemaLocation(), "schemaLocation should be 'http://foo.com/domain example.xsd'");
+        assertTrue(builtConfiguration.isUseNamespacePrefix(), "useNamespacePrefix should be 'useNamespacePrefix'");
+        assertTrue(builtConfiguration.isValidate(), "validate should be 'true'");
+        assertEquals(2, builder.getClasses().size(), "objectClasses size should be '2'");
+        assertEquals(String.class, builder.getClasses().get(0), "objectClasses entry 1 should be 'String.class'");
+        assertEquals(Integer.class, builder.getClasses().get(1), "objectClasses entry 2 should be 'Integer.class'");
     }
 
     /**

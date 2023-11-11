@@ -49,12 +49,11 @@ import org.quartz.Scheduler;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.matchers.GroupMatcher;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -76,7 +75,6 @@ public class SchedulerController
      *
      * @param platformScheduler - THe platform scheduler
      */
-    @Autowired
     public SchedulerController(Scheduler platformScheduler)
     {
         super();
@@ -104,7 +102,7 @@ public class SchedulerController
      * @throws Exception - Catch all
      */
     @SuppressWarnings("unchecked")
-    @RequestMapping(value = "/admin/viewScheduler.htm", method = RequestMethod.GET)
+    @GetMapping("/admin/viewScheduler.htm")
     public ModelAndView viewScheduler() throws Exception
     {
         List<Trigger> triggers = getTriggers();
@@ -119,7 +117,7 @@ public class SchedulerController
      * @return a redirect to viewScheduler
      * @throws Exception - Catch all
      */
-    @RequestMapping(value = "/admin/schedulerStandby.htm", method = RequestMethod.POST)
+    @PostMapping("/admin/schedulerStandby.htm")
     public String stopScheduler() throws Exception
     {
         if (!platformScheduler.isInStandbyMode())
@@ -135,7 +133,7 @@ public class SchedulerController
      * @return a redirect to viewScheduler
      * @throws Exception - Catch all
      */
-    @RequestMapping(value = "/admin/schedulerResume.htm", method = RequestMethod.POST)
+    @PostMapping("/admin/schedulerResume.htm")
     public String resumeScheduler() throws Exception
     {
         if (platformScheduler.isInStandbyMode())

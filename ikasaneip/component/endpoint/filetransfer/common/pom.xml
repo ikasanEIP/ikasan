@@ -55,8 +55,13 @@
     <artifactId>ikasan-filetransfer-common</artifactId>
     <packaging>jar</packaging>
 
-    <dependencies>
-       <!-- Needed for XML parsing -->
+  <dependencies>
+    <!-- Needed for XML parsing -->
+    <dependency>
+      <groupId>jakarta.resource</groupId>
+      <artifactId>jakarta.resource-api</artifactId>
+      <version>2.1.0</version>
+    </dependency>
         <dependency>
             <groupId>xerces</groupId>
             <artifactId>xercesImpl</artifactId>

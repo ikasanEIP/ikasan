@@ -43,36 +43,37 @@ package org.ikasan.builder.component.converter;
 import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEventHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>XmlStringToObjectConverterBuilderImpl</code> class.
  *
  * @author Ikasan Development Team
  */
-public class XmlStringToObjectConverterBuilderImplTest
+class XmlStringToObjectConverterBuilderImplTest
 {
     /**
      * Test successful builder creation.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void xmlStringToObjectConverterBuilder_without_constructor_classes()
+    @Test
+    void xmlStringToObjectConverterBuilder_without_constructor_classes()
     {
-        new XmlStringToObjectConverterBuilderImpl(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new XmlStringToObjectConverterBuilderImpl(null);
+        });
     }
 
     /**
      * Test successful builder creation.
      */
     @Test
-    public void xmlStringToObjectConverterBuilder_with_configuration()
+    void xmlStringToObjectConverterBuilder_with_configuration()
     {
         List<Class> classes = new ArrayList<Class>();
         classes.add(java.lang.Integer.class);
@@ -95,19 +96,19 @@ public class XmlStringToObjectConverterBuilderImplTest
                 .build();
 
 
-        assertTrue("instance should be a Converter", converter instanceof Converter);
-        assertTrue("Converter configuredResourceId should be 'configuredResourceId'", "configuredResourceId".equals(((ConfiguredResource) converter).getConfiguredResourceId()));
+        assertTrue(converter instanceof Converter, "instance should be a Converter");
+        assertEquals("configuredResourceId", ((ConfiguredResource)converter).getConfiguredResourceId(), "Converter configuredResourceId should be 'configuredResourceId'");
 
         XmlStringToObjectConfiguration builtConfiguration = ((ConfiguredResource<XmlStringToObjectConfiguration>) converter).getConfiguration();
         Class[] boundClasses = builtConfiguration.getClassesToBeBound();
-        assertTrue("classesToBeBound should contain " + boundClasses.length, boundClasses.length == 2);
-        assertTrue("classesToBeBound should be " + boundClasses[0], org.ikasan.builder.component.converter.Example.class.equals(boundClasses[0]));
-        assertTrue("classesToBeBound should be " + boundClasses[1], java.lang.Integer.class.equals(boundClasses[1]));
-        assertTrue("contextPath should be 'true'", "org.ikasan.builder.component.converter".equals(builtConfiguration.getContextPath()) );
-        assertTrue("contextPaths should contain 2", builtConfiguration.getContextPaths().length > 0);
-        assertNull("MarshallerProperties should be 'null'", builtConfiguration.getMarshallerProperties());
-        assertTrue("schema should be 'schema'", "schema".equals(builtConfiguration.getSchema()));
-        assertNull("UnmarshallerProperties should be 'null'", builtConfiguration.getUnmarshallerProperties());
-        assertNull("ValidationEventHandler should be 'null'", builtConfiguration.getValidationEventHandler());
+        assertEquals(2, boundClasses.length, "classesToBeBound should contain " + boundClasses.length);
+        assertEquals(org.ikasan.builder.component.converter.Example.class, boundClasses[0], "classesToBeBound should be " + boundClasses[0]);
+        assertEquals(java.lang.Integer.class, boundClasses[1], "classesToBeBound should be " + boundClasses[1]);
+        assertEquals("org.ikasan.builder.component.converter", builtConfiguration.getContextPath(), "contextPath should be 'true'");
+        assertTrue(builtConfiguration.getContextPaths().length > 0, "contextPaths should contain 2");
+        assertNull(builtConfiguration.getMarshallerProperties(), "MarshallerProperties should be 'null'");
+        assertEquals("schema", builtConfiguration.getSchema(), "schema should be 'schema'");
+        assertNull(builtConfiguration.getUnmarshallerProperties(), "UnmarshallerProperties should be 'null'");
+        assertNull(builtConfiguration.getValidationEventHandler(), "ValidationEventHandler should be 'null'");
     }
 }

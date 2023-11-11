@@ -24,12 +24,11 @@ import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -40,13 +39,13 @@ import java.util.Map;
 
 import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.FILE;
 import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.QUARTZ;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
-public class JobProvisionServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class JobProvisionServiceImplTest {
     @Mock
     private ModuleService moduleService;
 
@@ -169,7 +168,7 @@ public class JobProvisionServiceImplTest {
     private JobProvisionServiceImpl service;
 
     @Test
-    public void test_provision_success_no_spel_expressions() {
+    void test_provision_success_no_spel_expressions() {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
         setupWhen();
@@ -226,7 +225,7 @@ public class JobProvisionServiceImplTest {
     }
 
     @Test
-    public void test_provision_success_with_spel_expressions() {
+    void test_provision_success_with_spel_expressions() {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
         Map<String, List<Object>> spelMap
@@ -243,7 +242,7 @@ public class JobProvisionServiceImplTest {
     }
 
     @Test
-    public void get_spel_replacement_string() {
+    void get_spel_replacement_string() {
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         fileEventDrivenJob.setContextName("contextName");
         fileEventDrivenJob.setJobName("jobName");
@@ -253,7 +252,7 @@ public class JobProvisionServiceImplTest {
     }
 
     @Test
-    public void get_spel_replacement_list_strings() {
+    void get_spel_replacement_list_strings() {
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         assertEquals("{}", service.getSpelReplacement("filenames", fileEventDrivenJob));
         fileEventDrivenJob.setFilenames(List.of("fileName1", "fileName2"));
@@ -261,7 +260,7 @@ public class JobProvisionServiceImplTest {
     }
 
     @Test
-    public void get_spel_replacement_map_of_string_string() {
+    void get_spel_replacement_map_of_string_string() {
         FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
         assertEquals("{}", service.getSpelReplacement("passthroughProperties", fileEventDrivenJob));
         fileEventDrivenJob.setPassthroughProperties(Map.of("key1", "value1"));
@@ -269,7 +268,7 @@ public class JobProvisionServiceImplTest {
     }
 
     @Test
-    public void test_remove_jobs_for_context() {
+    void test_remove_jobs_for_context() {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
         SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
@@ -277,9 +276,9 @@ public class JobProvisionServiceImplTest {
         configuration.setFlowDefinitions(this.getJobContextMap());
         configuration.setFlowDefinitionProfiles(this.getJobProfileMap());
 
-        Assert.assertEquals(3, configuration.getFlowContextMap().size());
-        Assert.assertEquals(3, configuration.getFlowDefinitions().size());
-        Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
+        assertEquals(3, configuration.getFlowContextMap().size());
+        assertEquals(3, configuration.getFlowDefinitions().size());
+        assertEquals(2, configuration.getFlowDefinitionProfiles().size());
 
         when(moduleService.getModule(null)).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configuration);
@@ -318,9 +317,9 @@ public class JobProvisionServiceImplTest {
             , configuredResource
             , configurationManagement);
 
-        Assert.assertEquals(0, configuration.getFlowContextMap().size());
-        Assert.assertEquals(0, configuration.getFlowDefinitions().size());
-        Assert.assertEquals(0, configuration.getFlowDefinitionProfiles().size());
+        assertEquals(0, configuration.getFlowContextMap().size());
+        assertEquals(0, configuration.getFlowDefinitions().size());
+        assertEquals(0, configuration.getFlowDefinitionProfiles().size());
     }
 
     private void setupWhen() {

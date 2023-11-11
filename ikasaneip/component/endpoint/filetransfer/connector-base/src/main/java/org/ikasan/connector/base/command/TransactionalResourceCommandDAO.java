@@ -42,7 +42,7 @@ package org.ikasan.connector.base.command;
 
 import java.util.List;
 
-import javax.transaction.xa.Xid;
+import jakarta.transaction.xa.Xid;
 
 import org.ikasan.connector.base.command.state.State;
 

@@ -519,9 +519,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
-                <version>${version.org.hibernate}</version>
+                <version>6.1.7.Final/" title="6.1.7.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>xml-apis</groupId>

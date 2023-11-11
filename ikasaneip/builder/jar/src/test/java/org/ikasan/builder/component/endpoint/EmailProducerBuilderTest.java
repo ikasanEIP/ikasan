@@ -44,36 +44,37 @@ import org.ikasan.component.endpoint.email.producer.EmailProducer;
 import org.ikasan.component.endpoint.email.producer.EmailProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This test class supports the <code>EmailProducerBuilder</code> class.
  *
  * @author Ikasan Development Team
  */
-public class EmailProducerBuilderTest
+class EmailProducerBuilderTest
 {
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_emailproducerbuilder_build_invalid_properties()
+    @Test
+    void test_emailproducerbuilder_build_invalid_properties()
     {
-        EmailProducerBuilder.getInstance().build();
+        assertThrows(IllegalArgumentException.class, () -> {
+            EmailProducerBuilder.getInstance().build();
+        });
     }
 
     @Test
-    public void test_emailproducerbuilder_getInstance()
+    void test_emailproducerbuilder_getInstance()
     {
-        Assert.assertTrue(EmailProducerBuilder.getInstance() instanceof EmailProducerBuilder);
+        assertTrue(EmailProducerBuilder.getInstance() instanceof EmailProducerBuilder);
     }
 
     @Test
-    public void test_emailproducerbuilder_build_success() {
+    void test_emailproducerbuilder_build_success() {
 
         EmailProducerBuilder emailProducerBuilder = EmailProducerBuilder.getInstance();
 
@@ -115,42 +116,41 @@ public class EmailProducerBuilderTest
                 .setRuntimeEnvironment("runtimeEnv")
                 .build();
 
-        assertTrue("instance should be a emailProducer", emailProducer instanceof EmailProducer);
+        assertTrue(emailProducer instanceof EmailProducer, "instance should be a emailProducer");
 
-        assertTrue("configuredResourceId should be 'configuredResourceId'",
-                "configuredResourceId".equals(((ConfiguredResource)emailProducer).getConfiguredResourceId()));
+        assertEquals("configuredResourceId", ((ConfiguredResource)emailProducer).getConfiguredResourceId(), "configuredResourceId should be 'configuredResourceId'");
 
         EmailProducerConfiguration configuration = (
                 (ConfiguredResource<EmailProducerConfiguration>) emailProducer).getConfiguration();
 
-        assertEquals("recipient should be ikasan1", "ikasan1", configuration.getToRecipients().get(0));
-        assertEquals("recipients should be ikasan1 and ikasan2", recipients, configuration.getToRecipients());
-        assertEquals("CC recipient should be ikasan1", "ikasan1", configuration.getCcRecipients().get(0));
-        assertEquals("CC recipients should be ikasan1 and ikasan2", recipients, configuration.getCcRecipients());
-        assertEquals("BCC recipient should be ikasan1", "ikasan1", configuration.getBccRecipients().get(0));
-        assertEquals("BCC recipients should be ikasan1 and ikasan2", recipients, configuration.getBccRecipients());
-        assertEquals("email body should be 'My email body'", "My email body", configuration.getEmailBody());
-        assertEquals("email subject should be 'subject'", "subject", configuration.getSubject());
-        assertEquals("email format should be 'mailFormat'", "mailFormat", configuration.getEmailFormat());
-        assertEquals("email from should be 'Me'", "Me", configuration.getMailFrom());
-        assertEquals("email hasAttachment should be 'false'", Boolean.FALSE, configuration.isHasAttachment());
-        assertEquals("email debug should be 'true'", Boolean.TRUE, configuration.getMailDebug());
-        assertEquals("email host should be 'mailhost'", "mailhost", configuration.getMailHost());
-        assertEquals("mimeAddressRestricted should be 'true'", Boolean.TRUE, configuration.getMailMimeAddressStrict());
-        assertEquals("popClass should be 'popClass'", "popClass", configuration.getMailPopClass());
-        assertEquals("popHost should be 'popHost'", "popHost", configuration.getMailPopHost());
-        assertEquals("popPort should be '23'", 23, configuration.getMailPopPort());
-        assertEquals("popUser should be 'popUser'", "popUsername", configuration.getMailPopUser());
-        assertNull("ExtendedMailSessionProperties should be 'null'", configuration.getExtendedMailSessionProperties());
-        assertEquals("Mailhost should be 'host'", "mailhost", configuration.getMailHost());
-        assertEquals("subject should be 'subject'", "subject", configuration.getSubject());
-        assertEquals("smtpClass should be 'smtpClass'", "smtpClass", configuration.getMailSmtpClass());
-        assertEquals("smtpHost should be 'smtpHost'", "smtpHost", configuration.getMailSmtpHost());
-        assertEquals("smtpPort should be '23'", 23, configuration.getMailSmtpPort());
-        assertEquals("smtpUser should be 'smtpUsername'", "smtpUsername", configuration.getMailSmtpUser());
-        assertEquals("protocol should be 'protocol'", "protocol", configuration.getMailStoreProtocol());
-        assertEquals("runtimeEnv should be 'runtimeEnv'", "runtimeEnv", configuration.getRuntimeEnvironment());
-        assertEquals("transportProtocol should be 'transportProtocol'", "transportProtocol", configuration.getMailTransportProtocol());
+        assertEquals("ikasan1", configuration.getToRecipients().get(0), "recipient should be ikasan1");
+        assertEquals(recipients, configuration.getToRecipients(), "recipients should be ikasan1 and ikasan2");
+        assertEquals("ikasan1", configuration.getCcRecipients().get(0), "CC recipient should be ikasan1");
+        assertEquals(recipients, configuration.getCcRecipients(), "CC recipients should be ikasan1 and ikasan2");
+        assertEquals("ikasan1", configuration.getBccRecipients().get(0), "BCC recipient should be ikasan1");
+        assertEquals(recipients, configuration.getBccRecipients(), "BCC recipients should be ikasan1 and ikasan2");
+        assertEquals("My email body", configuration.getEmailBody(), "email body should be 'My email body'");
+        assertEquals("subject", configuration.getSubject(), "email subject should be 'subject'");
+        assertEquals("mailFormat", configuration.getEmailFormat(), "email format should be 'mailFormat'");
+        assertEquals("Me", configuration.getMailFrom(), "email from should be 'Me'");
+        assertEquals(Boolean.FALSE, configuration.isHasAttachment(), "email hasAttachment should be 'false'");
+        assertEquals(Boolean.TRUE, configuration.getMailDebug(), "email debug should be 'true'");
+        assertEquals("mailhost", configuration.getMailHost(), "email host should be 'mailhost'");
+        assertEquals(Boolean.TRUE, configuration.getMailMimeAddressStrict(), "mimeAddressRestricted should be 'true'");
+        assertEquals("popClass", configuration.getMailPopClass(), "popClass should be 'popClass'");
+        assertEquals("popHost", configuration.getMailPopHost(), "popHost should be 'popHost'");
+        assertEquals(23, configuration.getMailPopPort(), "popPort should be '23'");
+        assertEquals("popUsername", configuration.getMailPopUser(), "popUser should be 'popUser'");
+        assertNull(configuration.getExtendedMailSessionProperties(), "ExtendedMailSessionProperties should be 'null'");
+        assertEquals("mailhost", configuration.getMailHost(), "Mailhost should be 'host'");
+        assertEquals("subject", configuration.getSubject(), "subject should be 'subject'");
+        assertEquals("smtpClass", configuration.getMailSmtpClass(), "smtpClass should be 'smtpClass'");
+        assertEquals("smtpHost", configuration.getMailSmtpHost(), "smtpHost should be 'smtpHost'");
+        assertEquals(23, configuration.getMailSmtpPort(), "smtpPort should be '23'");
+        assertEquals("smtpUsername", configuration.getMailSmtpUser(), "smtpUser should be 'smtpUsername'");
+        assertEquals("protocol", configuration.getMailStoreProtocol(), "protocol should be 'protocol'");
+        assertEquals("runtimeEnv", configuration.getRuntimeEnvironment(), "runtimeEnv should be 'runtimeEnv'");
+        assertEquals("transportProtocol", configuration.getMailTransportProtocol(), "transportProtocol should be 'transportProtocol'");
     }
 
 

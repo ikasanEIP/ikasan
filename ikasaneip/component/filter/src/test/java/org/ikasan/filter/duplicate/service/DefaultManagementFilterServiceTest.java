@@ -44,8 +44,7 @@ import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for {@link  DefaultManagementFilterService}
@@ -53,7 +52,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-public class DefaultManagementFilterServiceTest
+class DefaultManagementFilterServiceTest
 {
     /** {@link Mockery} for mocking interfaces */
     private Mockery mockery = new Mockery();
@@ -70,7 +69,8 @@ public class DefaultManagementFilterServiceTest
     /**
      * Test case: persist message
      */
-    @Test public void new_messages_are_persisted()
+    @Test
+    void new_messages_are_persisted()
     {
         this.mockery.checking(new Expectations()
         {
@@ -85,7 +85,8 @@ public class DefaultManagementFilterServiceTest
     /**
      * Test case: housekeep persisted messages
      */
-    @Test public void delete_expired_messages()
+    @Test
+    void delete_expired_messages()
     {
         this.mockery.checking(new Expectations()
         {

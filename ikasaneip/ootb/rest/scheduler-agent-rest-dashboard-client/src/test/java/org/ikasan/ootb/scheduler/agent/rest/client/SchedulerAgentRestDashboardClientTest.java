@@ -1,7 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.rest.client;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.ikasan.dashboard.DashboardRestServiceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.client.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -10,9 +10,9 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.StandardEnvironment;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +23,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SchedulerAgentRestDashboardClientTest
 {
@@ -35,14 +36,13 @@ public class SchedulerAgentRestDashboardClientTest
 
     Environment environment = mockery.mock(Environment.class);
 
-    @Rule
-    public WireMockRule wireMockRule = new WireMockRule(
-        WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080
+    @RegisterExtension
+    public WireMockExtension wireMockRule = WireMockExtension.newInstance().options(WireMockConfiguration.options().dynamicPort()).build(); // No-args constructor defaults to port 8080
 
     DashboardRestServiceImpl uut;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         String dashboardBaseUrl = "http://localhost:" + wireMockRule.port();
         mockery.checking(new Expectations()
@@ -63,7 +63,7 @@ public class SchedulerAgentRestDashboardClientTest
     }
 
     @Test
-    public void puush_events_returns_201() {
+    void puush_events_returns_201() {
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/scheduled");
         ContextualisedScheduledProcessEvent event = new ContextualisedScheduledProcessEventImpl();
         event.setAgentName("blah");
@@ -76,11 +76,11 @@ public class SchedulerAgentRestDashboardClientTest
             .willReturn(aResponse()
                 .withStatus(201)
             ));
-        assertEquals(true, uut.publish(contextualisedScheduledProcessEvents));
+        assertTrue(uut.publish(contextualisedScheduledProcessEvents));
     }
 
     @Test
-    public void push_events_401_Followed_by_authentication_and_successful_evens_push()
+    void push_events_401_Followed_by_authentication_and_successful_evens_push()
     {
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/scheduled");
 
@@ -128,11 +128,11 @@ public class SchedulerAgentRestDashboardClientTest
             .willReturn(aResponse()
                 .withStatus(201)
             ));
-        assertEquals(true, uut.publish(contextualisedScheduledProcessEvents));
+        assertTrue(uut.publish(contextualisedScheduledProcessEvents));
     }
 
     @Test
-    public void pushWiretapReturns400()
+    void pushWiretapReturns400()
     {
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/scheduled");
 
@@ -148,11 +148,11 @@ public class SchedulerAgentRestDashboardClientTest
             .willReturn(aResponse()
                 .withStatus(400)
             ));
-        assertEquals(false, uut.publish(contextualisedScheduledProcessEvents));
+        assertFalse(uut.publish(contextualisedScheduledProcessEvents));
     }
 
     @Test
-    public void pushWiretapReturns500()
+    void pushWiretapReturns500()
     {
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/scheduled");
 
@@ -167,11 +167,11 @@ public class SchedulerAgentRestDashboardClientTest
             .willReturn(aResponse()
                 .withStatus(500)
             ));
-        assertEquals(false, uut.publish(contextualisedScheduledProcessEvents));
+        assertFalse(uut.publish(contextualisedScheduledProcessEvents));
     }
 
     @Test
-    public void testTimeout()
+    void testTimeout()
     {
         HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
             = new HttpComponentsClientHttpRequestFactory();
@@ -192,6 +192,6 @@ public class SchedulerAgentRestDashboardClientTest
                 .withStatus(201)
                 .withFixedDelay(2000)
             ));
-        assertEquals(false, uut.publish(contextualisedScheduledProcessEvents));
+        assertFalse(uut.publish(contextualisedScheduledProcessEvents));
     }
 }

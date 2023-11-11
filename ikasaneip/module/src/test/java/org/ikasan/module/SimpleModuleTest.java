@@ -43,21 +43,22 @@ package org.ikasan.module;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-
 import org.ikasan.module.SimpleModule;
+
+import static org.junit.jupiter.api.Assertions.*;
+
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.flow.Flow;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test class supports the <code>SimpleModule</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class SimpleModuleTest
+class SimpleModuleTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -70,31 +71,33 @@ public class SimpleModuleTest
     /**
      * Test failed constructor due to null flow name.
      */
-    @Test(expected = IllegalArgumentException.class)
-    public void test_failed_constructorDueToNullName()
+    @Test
+    void test_failed_constructorDueToNullName()
     {
-        new SimpleModule(null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SimpleModule(null);
+        });
     }
 
     /**
      * Test successful getters/setters.
      */
     @Test
-    public void test_successful_mutators()
+    void test_successful_mutators()
     {
         Module<Flow> module = new SimpleModule("testModule");
-        Assert.assertNull("description should be null", module.getDescription() );
-        Assert.assertTrue("name should be 'testModule'", "testModule".equals( module.getName() ) );
+        assertNull(module.getDescription() , "description should be null");
+        assertEquals("testModule", module.getName(), "name should be 'testModule'");
         
         module.setDescription("description");
-        Assert.assertTrue("description should be 'description", "description".equals( module.getDescription() ) );
+        assertEquals("description", module.getDescription(), "description should be 'description");
     }
 
     /**
      * Test successful flow accessors.
      */
     @Test
-    public void test_successful_flow_accessor()
+    void test_successful_flow_accessor()
     {
         List<Flow> flows = new ArrayList<Flow>();
         flows.add(flow);
@@ -116,7 +119,7 @@ public class SimpleModuleTest
         });
 
         Module<Flow> module = new SimpleModule("testModule", flows);
-        Assert.assertTrue("number of flows on module should be 3", module.getFlows().size() == 3 );
-        Assert.assertNotNull("Should have returned flowName2", module.getFlow("flowName2"));
+        assertEquals(3, module.getFlows().size(), "number of flows on module should be 3");
+        assertNotNull(module.getFlow("flowName2"), "Should have returned flowName2");
     }
 }

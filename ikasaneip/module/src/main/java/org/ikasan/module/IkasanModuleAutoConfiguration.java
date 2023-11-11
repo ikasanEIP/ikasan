@@ -40,6 +40,7 @@
  */
 package org.ikasan.module;
 
+import jakarta.annotation.Resource;
 import org.ikasan.module.container.ModuleContainerImpl;
 import org.ikasan.module.service.*;
 import org.ikasan.module.startup.dao.HibernateStartupControlDao;
@@ -55,20 +56,20 @@ import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.sql.init.dependency.DependsOnDatabaseInitialization;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
 
-@Configuration
+@AutoConfiguration
 public class IkasanModuleAutoConfiguration implements ApplicationContextAware
 {
     private ApplicationContext applicationContext;
@@ -151,6 +152,7 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     }
 
     @Bean
+    @DependsOnDatabaseInitialization
     public LocalSessionFactoryBean startupControlSessionFactory() {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(ikasanxads);

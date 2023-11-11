@@ -47,14 +47,14 @@ import org.ikasan.spec.scheduled.event.service.ScheduledProcessEventService;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This test class supports the <code>ScheduledProcessEventProducer</code>.
  *
  * @author Ikasan Development Team
  */
-public class ScheduledProcessEventProducerTest
+class ScheduledProcessEventProducerTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -70,7 +70,7 @@ public class ScheduledProcessEventProducerTest
      * Test simple invocation.
      */
     @Test
-    public void test_publish()
+    void test_publish()
     {
         ScheduledProcessEventProducer producer = new ScheduledProcessEventProducer(scheduledProcessEventService);
         ScheduledProcessEvent event = new ScheduledProcessEventImpl();

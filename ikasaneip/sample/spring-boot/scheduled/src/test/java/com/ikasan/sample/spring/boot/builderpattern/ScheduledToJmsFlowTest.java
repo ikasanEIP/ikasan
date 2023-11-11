@@ -38,6 +38,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
@@ -48,29 +49,28 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test Sftp To JMS Flow.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -101,8 +101,8 @@ public class ScheduledToJmsFlowTest
 
     private ErrorReportingService errorReportingService;
 
-    @Before
-    public void setup(){
+    @BeforeEach
+    void setup(){
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
         messageListenerVerifier.start();
 
@@ -110,7 +110,8 @@ public class ScheduledToJmsFlowTest
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
     }
 
-    @After public void teardown()
+    @AfterEach
+    void teardown()
     {
         messageListenerVerifier.stop();
         FakeDataProvider.reset();
@@ -122,7 +123,7 @@ public class ScheduledToJmsFlowTest
     }
 
     @Test
-    public void test_consume_success()
+    void test_consume_success()
     {
         //Setup component expectations
         FakeDataProvider.add("message 1");
@@ -144,13 +145,13 @@ public class ScheduledToJmsFlowTest
               .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
         flowTestRule.assertIsSatisfied();
 
-        Assert.assertEquals(2, FakeDataProvider.size());
-        Assert.assertEquals("message 2", FakeDataProvider.get(0));
-        Assert.assertEquals("message 3", FakeDataProvider.get(1));
+        assertEquals(2, FakeDataProvider.size());
+        assertEquals("message 2", FakeDataProvider.get(0));
+        assertEquals("message 3", FakeDataProvider.get(1));
     }
 
     @Test
-    public void test_consume_recover() throws Exception
+    void test_consume_recover() throws Exception
     {
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowRecoveryException(true);
@@ -177,14 +178,14 @@ public class ScheduledToJmsFlowTest
             .untilAsserted(() ->  assertEquals(0, messageListenerVerifier.getCaptureResults().size() ));
         flowTestRule.assertIsSatisfied();
 
-        Assert.assertEquals(3, FakeDataProvider.size());
-        Assert.assertEquals("message 1", FakeDataProvider.get(0));
-        Assert.assertEquals("message 2", FakeDataProvider.get(1));
-        Assert.assertEquals("message 3", FakeDataProvider.get(2));
+        assertEquals(3, FakeDataProvider.size());
+        assertEquals("message 1", FakeDataProvider.get(0));
+        assertEquals("message 2", FakeDataProvider.get(1));
+        assertEquals("message 3", FakeDataProvider.get(2));
     }
 
     @Test
-    public void test_consume_recover_with_recovery_successful() throws Exception
+    void test_consume_recover_with_recovery_successful() throws Exception
     {
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowRecoveryException(true);
@@ -218,13 +219,13 @@ public class ScheduledToJmsFlowTest
 
         flowTestRule.assertIsSatisfied();
 
-        Assert.assertEquals(2, FakeDataProvider.size());
-        Assert.assertEquals("message 2", FakeDataProvider.get(0));
-        Assert.assertEquals("message 3", FakeDataProvider.get(1));
+        assertEquals(2, FakeDataProvider.size());
+        assertEquals("message 2", FakeDataProvider.get(0));
+        assertEquals("message 3", FakeDataProvider.get(1));
     }
 
     @Test
-    public void test_consume_stop() throws Exception
+    void test_consume_stop() throws Exception
     {
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowStoppedInErrorException(true);
@@ -251,14 +252,14 @@ public class ScheduledToJmsFlowTest
             .untilAsserted(() ->  assertEquals(0, messageListenerVerifier.getCaptureResults().size() ));
         flowTestRule.assertIsSatisfied();
 
-        Assert.assertEquals(3, FakeDataProvider.size());
-        Assert.assertEquals("message 1", FakeDataProvider.get(0));
-        Assert.assertEquals("message 2", FakeDataProvider.get(1));
-        Assert.assertEquals("message 3", FakeDataProvider.get(2));
+        assertEquals(3, FakeDataProvider.size());
+        assertEquals("message 1", FakeDataProvider.get(0));
+        assertEquals("message 2", FakeDataProvider.get(1));
+        assertEquals("message 3", FakeDataProvider.get(2));
     }
 
     @Test
-    public void test_consume_exclude() throws Exception
+    void test_consume_exclude() throws Exception
     {
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowExclusionException(true);
@@ -289,9 +290,9 @@ public class ScheduledToJmsFlowTest
 
         flowTestRule.assertIsSatisfied();
 
-        Assert.assertEquals(2, FakeDataProvider.size());
-        Assert.assertEquals("message 2", FakeDataProvider.get(0));
-        Assert.assertEquals("message 3", FakeDataProvider.get(1));
+        assertEquals(2, FakeDataProvider.size());
+        assertEquals("message 2", FakeDataProvider.get(0));
+        assertEquals("message 3", FakeDataProvider.get(1));
 
         List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
         assertEquals(1, errors.size());
@@ -316,8 +317,8 @@ public class ScheduledToJmsFlowTest
             });
     }
 
-    @AfterClass
-    public static void shutdownBroker(){
+    @AfterAll
+    static void shutdownBroker(){
         new ActiveMqHelper().shutdownBroker();
     }
 

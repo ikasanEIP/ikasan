@@ -44,18 +44,19 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.jms.*;
+import jakarta.jms.*;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for JmsMessageConverter.
  * 
  * @author Ikasan Development Team
  */
-public class JmsMessageConverterTest
+class JmsMessageConverterTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -77,7 +78,7 @@ public class JmsMessageConverterTest
      * Test TextMessage converter
      */
     @Test
-    public void test_convert_textMessage() throws JMSException
+    void test_convert_textMessage() throws JMSException
     {
 
         // expectations
@@ -89,8 +90,8 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(textMessage);
-        Assert.assertTrue(result instanceof String);
-        Assert.assertTrue(result.equals("text payload content"));
+        assertTrue(result instanceof String);
+        assertEquals("text payload content", result);
         mockery.assertIsSatisfied();
     }
 
@@ -98,7 +99,7 @@ public class JmsMessageConverterTest
      * Test MapMessage converter
      */
     @Test
-    public void test_convert_mapMessage() throws JMSException
+    void test_convert_mapMessage() throws JMSException
     {
         // expectations
         mockery.checking(new Expectations()
@@ -119,11 +120,11 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(mapMessage);
-        Assert.assertTrue(result instanceof Map);
-        Assert.assertTrue(((Map)result).size() == 3);
-        Assert.assertTrue(((Map)result).get("name1").equals("value1"));
-        Assert.assertTrue(((Map)result).get("name2").equals(Long.valueOf(2)));
-        Assert.assertTrue(((Map)result).get("name3").equals(Double.valueOf(3)));
+        assertTrue(result instanceof Map);
+        assertEquals(3, ((Map) result).size());
+        assertEquals("value1", ((Map) result).get("name1"));
+        assertEquals(((Map) result).get("name2"), Long.valueOf(2));
+        assertEquals(((Map) result).get("name3"), Double.valueOf(3));
         mockery.assertIsSatisfied();
     }
 
@@ -131,7 +132,7 @@ public class JmsMessageConverterTest
      * Test ObjectMessage converter
      */
     @Test
-    public void test_convert_objectMessage() throws JMSException
+    void test_convert_objectMessage() throws JMSException
     {
         // expectations
         mockery.checking(new Expectations()
@@ -143,7 +144,7 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(objectMessage);
-        Assert.assertTrue(result instanceof String);
+        assertTrue(result instanceof String);
         mockery.assertIsSatisfied();
     }
 
@@ -151,7 +152,7 @@ public class JmsMessageConverterTest
      * Test BytesMessage converter
      */
     @Test
-    public void test_convert_bytesMessage() throws JMSException
+    void test_convert_bytesMessage() throws JMSException
     {
         // expectations
         mockery.checking(new Expectations()
@@ -164,8 +165,8 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(bytesMessage);
-        Assert.assertTrue(result instanceof byte[]);
-        Assert.assertTrue(((byte[])result).length == 100);
+        assertTrue(result instanceof byte[]);
+        assertEquals(100, ((byte[]) result).length);
         mockery.assertIsSatisfied();
     }
 
@@ -173,7 +174,7 @@ public class JmsMessageConverterTest
      * Test BytesMessage converter no content
      */
     @Test
-    public void test_convert_bytesMessage_no_content() throws JMSException
+    void test_convert_bytesMessage_no_content() throws JMSException
     {
         // expectations
         mockery.checking(new Expectations()
@@ -185,7 +186,7 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(bytesMessage);
-        Assert.assertNull(result);
+        assertNull(result);
         mockery.assertIsSatisfied();
     }
 
@@ -193,7 +194,7 @@ public class JmsMessageConverterTest
      * Test StreamMessage converter
      */
     @Test
-    public void test_convert_streamMessage() throws JMSException
+    void test_convert_streamMessage() throws JMSException
     {
         // expectations
         mockery.checking(new Expectations()
@@ -204,7 +205,7 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(streamMessage);
-        Assert.assertTrue(result instanceof StreamMessage);
+        assertTrue(result instanceof StreamMessage);
         mockery.assertIsSatisfied();
     }
 
@@ -212,7 +213,7 @@ public class JmsMessageConverterTest
      * Test Message converter
      */
     @Test
-    public void test_convert_Message() throws JMSException
+    void test_convert_Message() throws JMSException
     {
         // expectations
         mockery.checking(new Expectations()
@@ -223,7 +224,7 @@ public class JmsMessageConverterTest
         });
 
         Object result = JmsMessageConverter.extractContent(message);
-        Assert.assertTrue(result instanceof Message);
+        assertTrue(result instanceof Message);
         mockery.assertIsSatisfied();
     }
 }

@@ -42,20 +42,20 @@ package org.ikasan.component.endpoint.util.producer;
 
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for LogProducer.
  *
  * @author Ikasan Development Team
  */
-public class LogProducerTest
+class LogProducerTest
 {
     /**
      * Test logProducer
      */
     @Test
-    public void test_logProducer_say_hello()
+    void test_logProducer_say_hello()
     {
         Producer producer = new LogProducer<String>();
         LogProducerConfiguration configuration = new LogProducerConfiguration();
@@ -67,7 +67,7 @@ public class LogProducerTest
      * Test logProducer
      */
     @Test
-    public void test_logProducer_say_hello_every_2nd_invoke()
+    void test_logProducer_say_hello_every_2nd_invoke()
     {
         Producer producer = new LogProducer<String>();
         LogProducerConfiguration configuration = new LogProducerConfiguration();
@@ -81,7 +81,7 @@ public class LogProducerTest
      * Test logProducer
      */
     @Test
-    public void test_logProducer_say_hello_with_pattern_no_textReplace()
+    void test_logProducer_say_hello_with_pattern_no_textReplace()
     {
         Producer producer = new LogProducer<String>();
         LogProducerConfiguration configuration = new LogProducerConfiguration();
@@ -94,7 +94,7 @@ public class LogProducerTest
      * Test logProducer
      */
     @Test
-    public void test_logProducer_say_hello_with_no_pattern_but_textReplace()
+    void test_logProducer_say_hello_with_no_pattern_but_textReplace()
     {
         Producer producer = new LogProducer<String>();
         LogProducerConfiguration configuration = new LogProducerConfiguration();
@@ -107,7 +107,7 @@ public class LogProducerTest
      * Test logProducer
      */
     @Test
-    public void test_logProducer_say_hello_with_pattern_and_text_replacement()
+    void test_logProducer_say_hello_with_pattern_and_text_replacement()
     {
         Producer producer = new LogProducer<String>();
         LogProducerConfiguration configuration = new LogProducerConfiguration();

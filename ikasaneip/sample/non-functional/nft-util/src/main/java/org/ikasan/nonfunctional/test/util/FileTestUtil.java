@@ -41,12 +41,13 @@
 package org.ikasan.nonfunctional.test.util;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 /**
  * File test utility methods.
@@ -69,6 +70,6 @@ public class FileTestUtil
             logger.info("Directory [" + file.getAbsolutePath() + "] does not exist!");
         }
 
-        Assert.assertTrue("Failed to delete file " + file.getAbsolutePath(), !file.exists() );
+        assertFalse(file.exists(), "Failed to delete file " + file.getAbsolutePath());
     }
 }

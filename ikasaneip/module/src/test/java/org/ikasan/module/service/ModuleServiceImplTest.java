@@ -52,14 +52,16 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Test cases for ModuleServiceImpl
  *
  * @author Ikasan Development Team
  */
-public class ModuleServiceImplTest
+class ModuleServiceImplTest
 {
     private Mockery mockery = new Mockery()
     {{
@@ -84,27 +86,33 @@ public class ModuleServiceImplTest
     /** Class under test */
     ModuleServiceImpl moduleService = new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao);
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_moduleContainer()
+    @Test
+    void test_constructor_null_moduleContainer()
     {
-        new ModuleServiceImpl(null, systemEventService, startupControlDao);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleServiceImpl(null, systemEventService, startupControlDao);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_systemEventService()
+    @Test
+    void test_constructor_null_systemEventService()
     {
-        new ModuleServiceImpl(moduleContainer, null, startupControlDao);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleServiceImpl(moduleContainer, null, startupControlDao);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_startupControlDao()
+    @Test
+    void test_constructor_null_startupControlDao()
     {
-        new ModuleServiceImpl(moduleContainer, systemEventService, null);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleServiceImpl(moduleContainer, systemEventService, null);
+        });
     }
 
 
     @Test
-    public void test_startFlow_not_disabled()
+    void test_startFlow_not_disabled()
     {
         mockery.checking(new Expectations()
         {{
@@ -124,27 +132,31 @@ public class ModuleServiceImplTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void test_startFlow_disabled()
+    @Test
+    void test_startFlow_disabled()
     {
-        mockery.checking(new Expectations()
-        {{
-                oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION, ACTOR);
-                oneOf(moduleContainer).getModule(MODULE_NAME);
-                will(returnValue(module));
-                oneOf(module).getFlow(FLOW_NAME);
-                will(returnValue(flow));
-                oneOf(startupControlDao).getStartupControl(MODULE_NAME, FLOW_NAME);
-                will(returnValue(startupControl));
-                oneOf(startupControl).getStartupType();
-                will(returnValue(StartupType.DISABLED));
-            }});
-        moduleService.startFlow(MODULE_NAME, FLOW_NAME, ACTOR);
-        mockery.assertIsSatisfied();
+        assertThrows(IllegalStateException.class, () -> {
+            mockery.checking(new Expectations()
+            {
+                {
+                    oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_START_REQUEST_SYSTEM_EVENT_ACTION, ACTOR);
+                    oneOf(moduleContainer).getModule(MODULE_NAME);
+                    will(returnValue(module));
+                    oneOf(module).getFlow(FLOW_NAME);
+                    will(returnValue(flow));
+                    oneOf(startupControlDao).getStartupControl(MODULE_NAME, FLOW_NAME);
+                    will(returnValue(startupControl));
+                    oneOf(startupControl).getStartupType();
+                    will(returnValue(StartupType.DISABLED));
+                }
+            });
+            moduleService.startFlow(MODULE_NAME, FLOW_NAME, ACTOR);
+            mockery.assertIsSatisfied();
+        });
     }
 
     @Test
-    public void test_resumeFlow_not_disabled()
+    void test_resumeFlow_not_disabled()
     {
         mockery.checking(new Expectations()
         {{
@@ -164,27 +176,31 @@ public class ModuleServiceImplTest
         mockery.assertIsSatisfied();
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void test_resumeFlow_disabled()
+    @Test
+    void test_resumeFlow_disabled()
     {
-        mockery.checking(new Expectations()
-        {{
-                oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_RESUME_REQUEST_SYSTEM_EVENT_ACTION, ACTOR);
-                oneOf(moduleContainer).getModule(MODULE_NAME);
-                will(returnValue(module));
-                oneOf(module).getFlow(FLOW_NAME);
-                will(returnValue(flow));
-                oneOf(startupControlDao).getStartupControl(MODULE_NAME, FLOW_NAME);
-                will(returnValue(startupControl));
-                oneOf(startupControl).getStartupType();
-                will(returnValue(StartupType.DISABLED));
-            }});
-        moduleService.resumeFlow(MODULE_NAME, FLOW_NAME, ACTOR);
-        mockery.assertIsSatisfied();
+        assertThrows(IllegalStateException.class, () -> {
+            mockery.checking(new Expectations()
+            {
+                {
+                    oneOf(systemEventService).logSystemEvent(MODULE_NAME + "." + FLOW_NAME, ModuleServiceImpl.INITIATOR_RESUME_REQUEST_SYSTEM_EVENT_ACTION, ACTOR);
+                    oneOf(moduleContainer).getModule(MODULE_NAME);
+                    will(returnValue(module));
+                    oneOf(module).getFlow(FLOW_NAME);
+                    will(returnValue(flow));
+                    oneOf(startupControlDao).getStartupControl(MODULE_NAME, FLOW_NAME);
+                    will(returnValue(startupControl));
+                    oneOf(startupControl).getStartupType();
+                    will(returnValue(StartupType.DISABLED));
+                }
+            });
+            moduleService.resumeFlow(MODULE_NAME, FLOW_NAME, ACTOR);
+            mockery.assertIsSatisfied();
+        });
     }
 
     @Test
-    public void test_startPauseFlow()
+    void test_startPauseFlow()
     {
         mockery.checking(new Expectations()
         {{
@@ -201,7 +217,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_pauseFlow()
+    void test_pauseFlow()
     {
         mockery.checking(new Expectations()
         {{
@@ -218,7 +234,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_stopFlow()
+    void test_stopFlow()
     {
         mockery.checking(new Expectations()
         {{
@@ -235,7 +251,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_setStartupType_automatic()
+    void test_setStartupType_automatic()
     {
         mockery.checking(new Expectations()
         {{
@@ -253,7 +269,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_setStartupType_manual()
+    void test_setStartupType_manual()
     {
         mockery.checking(new Expectations()
         {{
@@ -271,7 +287,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_setStartupType_disabled()
+    void test_setStartupType_disabled()
     {
         mockery.checking(new Expectations()
         {{
@@ -289,7 +305,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_startContextListeners()
+    void test_startContextListeners()
     {
         mockery.checking(new Expectations()
         {{
@@ -305,7 +321,7 @@ public class ModuleServiceImplTest
     }
 
     @Test
-    public void test_stopContextListeners()
+    void test_stopContextListeners()
     {
         mockery.checking(new Expectations(){{
             oneOf(systemEventService).logSystemEvent(MODULE_NAME+"."+FLOW_NAME, ModuleServiceImpl.STOP_CONTEXT_LISTENERS_ACTION, ACTOR);

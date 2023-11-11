@@ -4,20 +4,20 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileLi
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
-public class SchedulerFileFilterTest {
+@ExtendWith(MockitoExtension.class)
+class SchedulerFileFilterTest {
 
     @Mock
     private IsDuplicateFilterRule isDuplicateFilterRule;
@@ -25,18 +25,22 @@ public class SchedulerFileFilterTest {
     @Mock
     private DryRunModeService dryRunModeService;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_constructor_null_filter_rule() {
-        new SchedulerFileFilter(null, dryRunModeService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_constructor_null_dry_run_mode_service() {
-        new SchedulerFileFilter(isDuplicateFilterRule, null);
+    @Test
+    void test_exception_constructor_null_filter_rule() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SchedulerFileFilter(null, dryRunModeService);
+        });
     }
 
     @Test
-    public void test_filter_accept_success_not_dry_run() {
+    void test_exception_constructor_null_dry_run_mode_service() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new SchedulerFileFilter(isDuplicateFilterRule, null);
+        });
+    }
+
+    @Test
+    void test_filter_accept_success_not_dry_run() {
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
         when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         when(isDuplicateFilterRule.accept(any(Object.class))).thenReturn(true);
@@ -52,11 +56,11 @@ public class SchedulerFileFilterTest {
 
         CorrelatedFileList results = filter.filter(correlatedFileList);
 
-        Assert.assertNotNull(results);
+        assertNotNull(results);
     }
 
     @Test
-    public void test_filter_filter_success_not_dry_run() {
+    void test_filter_filter_success_not_dry_run() {
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
         when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(false);
         when(isDuplicateFilterRule.accept(any(Object.class))).thenReturn(false);
@@ -72,11 +76,11 @@ public class SchedulerFileFilterTest {
 
         CorrelatedFileList results = filter.filter(correlatedFileList);
 
-        Assert.assertNull(results);
+        assertNull(results);
     }
 
     @Test
-    public void test_filter_accept_success_dry_run() {
+    void test_filter_accept_success_dry_run() {
         when(dryRunModeService.getDryRunMode()).thenReturn(true);
 
         SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
@@ -90,11 +94,11 @@ public class SchedulerFileFilterTest {
 
         CorrelatedFileList results = filter.filter(correlatedFileList);
 
-        Assert.assertNotNull(results);
+        assertNotNull(results);
     }
 
     @Test
-    public void test_filter_accept_success_job_dry_run() {
+    void test_filter_accept_success_job_dry_run() {
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
         when(dryRunModeService.isJobDryRun(any(String.class))).thenReturn(true);
 
@@ -109,6 +113,6 @@ public class SchedulerFileFilterTest {
 
         CorrelatedFileList results = filter.filter(correlatedFileList);
 
-        Assert.assertNotNull(results);
+        assertNotNull(results);
     }
 }

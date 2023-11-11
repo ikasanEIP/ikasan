@@ -4,18 +4,17 @@ import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Client;
 import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Configuration;
 import org.ikasan.component.endpoint.amazon.s3.validation.InvalidAmazonS3PayloadException;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.verify;
 
-public class AmazonS3ByteArrayProducerTest {
+class AmazonS3ByteArrayProducerTest {
 
     private AmazonS3Configuration configuration;
 
@@ -25,8 +24,8 @@ public class AmazonS3ByteArrayProducerTest {
 
     private byte[] contents;
 
-    @Before
-    public void setup(){
+    @BeforeEach
+    void setup(){
         contents = new String("hello world").getBytes(StandardCharsets.UTF_8);
         configuration = new AmazonS3Configuration();
         configuration.setDefaultBucketName(BUCKET_NAME);
@@ -41,7 +40,7 @@ public class AmazonS3ByteArrayProducerTest {
     }
 
     @Test
-    public void testInvoke(){
+    void testInvoke(){
         AmazonS3Client amazonS3Client = Mockito.mock(AmazonS3Client.class);
 
         amazonS3ByteArrayProducer = new AmazonS3ByteArrayProducer(amazonS3Client);
@@ -57,47 +56,47 @@ public class AmazonS3ByteArrayProducerTest {
         verify(amazonS3Client).shutdown();
     }
 
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
     @Test
-    public void testWithNonNullConfigurationPropertiesMissing(){
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("""
+    void testWithNonNullConfigurationPropertiesMissing(){
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
+            producerConfiguration.setRegion("Region");
+            amazonS3ByteArrayProducer.setConfiguration(producerConfiguration);
+        });
+        assertTrue(exception.getMessage().contains("""
             Instance of AmazonS3Configuration has the following \
             constraint violations :- [accessKey must not be null, defaultBucketName must not be null, secretKey must not be null]\
-            """);
-        AmazonS3Configuration producerConfiguration = new AmazonS3Configuration();
-        producerConfiguration.setRegion("Region");
-        amazonS3ByteArrayProducer.setConfiguration(producerConfiguration);
+            """));
     }
 
     @Test
-    public void testWithNonNullPayloadPropertiesMissing(){
-        expectedException.expect(InvalidAmazonS3PayloadException.class);
-        expectedException.expectMessage("""
+    void testWithNonNullPayloadPropertiesMissing(){
+        Throwable exception = assertThrows(InvalidAmazonS3PayloadException.class, () -> {
+            amazonS3ByteArrayPayload.setKeyName(null);
+            amazonS3ByteArrayPayload.setContents(null);
+            amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);
+        });
+        assertTrue(exception.getMessage().contains("""
             Instance of AmazonS3ByteArrayPayload has the following constraint \
             violations :- [contents must not be null, keyName must not be null]\
-            """);
-        amazonS3ByteArrayPayload.setKeyName(null);
-        amazonS3ByteArrayPayload.setContents(null);
-        amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);
+            """));
     }
 
     @Test
-    public void testAgainstWithBadAuthenticationDetails() {
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("""
+    void testAgainstWithBadAuthenticationDetails() {
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            configuration.setSecretKey("wrong");
+            configuration.setAccessKey("wrong");
+            amazonS3ByteArrayProducer.startManagedResource();
+        });
+        assertTrue(exception.getMessage().contains("""
             com.amazonaws.services.s3.model.AmazonS3Exception: \
             The AWS Access Key Id you provided does not exist in our records\
-            """);
-        configuration.setSecretKey("wrong");
-        configuration.setAccessKey("wrong");
-        amazonS3ByteArrayProducer.startManagedResource();
+            """));
     }
 
     @Test
-    public void testWithComponentDisabled() {
+    void testWithComponentDisabled() {
         configuration.setSecretKey("wrong");
         configuration.setAccessKey("wrong");
         configuration.setRegion("Region");
@@ -120,25 +119,26 @@ public class AmazonS3ByteArrayProducerTest {
      private static final String BUCKET_NAME="ikasan-test-bucket";
 
     @Test
-    @Ignore
-    public void testAgainstS3Env(){
+    @Disabled
+    void testAgainstS3Env(){
         amazonS3ByteArrayProducer.startManagedResource();
         amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);
     }
 
     @Test
-    @Ignore
-    public void testAgainstS3EnvWithNonExistentBucket(){
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("The configured default bucket idontexist does not exist");
-        configuration.setDefaultBucketName("idontexist");
-        amazonS3ByteArrayProducer.startManagedResource();
-        amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);
+    @Disabled
+    void testAgainstS3EnvWithNonExistentBucket(){
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            configuration.setDefaultBucketName("idontexist");
+            amazonS3ByteArrayProducer.startManagedResource();
+            amazonS3ByteArrayProducer.invoke(amazonS3ByteArrayPayload);
+        });
+        assertTrue(exception.getMessage().contains("The configured default bucket idontexist does not exist"));
     }
 
     @Test
-    @Ignore
-    public void testAgainstS3EnvWithBucketInPayloadAndUsingKeyPrefix(){
+    @Disabled
+    void testAgainstS3EnvWithBucketInPayloadAndUsingKeyPrefix(){
         configuration.setDefaultBucketName("ikasan-test-bucket-2");
         configuration.setKeyPrefix("this/is/a/subdirectory/");
         amazonS3ByteArrayPayload.setBucketName("ikasan-test-bucket");
@@ -147,15 +147,16 @@ public class AmazonS3ByteArrayProducerTest {
     }
 
     @Test
-    @Ignore
-    public void testAgainstS3EnvWithBadRegion() {
-        expectedException.expect(EndpointException.class);
-        expectedException.expectMessage("""
+    @Disabled
+    void testAgainstS3EnvWithBadRegion() {
+        Throwable exception = assertThrows(EndpointException.class, () -> {
+            configuration.setRegion("EU_WEST_1");
+            amazonS3ByteArrayProducer.startManagedResource();
+        });
+        assertTrue(exception.getMessage().contains("""
             The configured default bucket ikasan-test-bucket does not \
             live in configured region EU_WEST_1\
-            """);
-        configuration.setRegion("EU_WEST_1");
-        amazonS3ByteArrayProducer.startManagedResource();
+            """));
     }
 
 }

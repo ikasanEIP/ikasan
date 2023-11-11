@@ -40,15 +40,17 @@
  */
 package org.ikasan.scheduler;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 
 import java.text.ParseException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -60,16 +62,16 @@ import static org.quartz.TriggerBuilder.newTrigger;
 
 //TODO - do we really need this test class? it looks to be checking the functionality of the DisallowConcurrentExecution annotation on Quartz
 
-public class SchedulerCallbackExecutionTest
+class SchedulerCallbackExecutionTest
 {
     protected CountDownLatch latch;
-    
-    @Before
-    public void setup()
+
+    @BeforeEach
+    void setup()
     {
         this.latch = new CountDownLatch(1);
     }
-    
+
     /**
      * Test successful registration of a job with the scheduler and associated concurrent callbacks.
      * @throws SchedulerException 
@@ -77,7 +79,7 @@ public class SchedulerCallbackExecutionTest
      * @throws InterruptedException 
      */
     @Test
-    public void test_createJobDetail_concurrentCallbacks() throws SchedulerException, ParseException, InterruptedException
+    void test_createJobDetail_concurrentCallbacks() throws SchedulerException, ParseException, InterruptedException
     {
         Scheduler scheduler = SchedulerFactory.getInstance().getScheduler();
         
@@ -85,9 +87,9 @@ public class SchedulerCallbackExecutionTest
         JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, ConcurrentCallbackJob.class, "name", "group");
         Trigger trigger = newTrigger().withIdentity("name", "group").withSchedule(cronSchedule("0/1 * * * * ?")).build();
         scheduler.scheduleJob(jobDetail, trigger);
-        Assert.assertTrue("a callback should have occurred", latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "a callback should have occurred");
         latch = new CountDownLatch(1);
-        Assert.assertTrue("another callback should have occurred", latch.await(3, TimeUnit.SECONDS));
+        assertTrue(latch.await(3, TimeUnit.SECONDS), "another callback should have occurred");
     }
 
     /**
@@ -97,7 +99,7 @@ public class SchedulerCallbackExecutionTest
      * @throws InterruptedException 
      */
     @Test
-    public void test_createJobDetail_non_concurrentCallbacks() throws SchedulerException, ParseException, InterruptedException
+    void test_createJobDetail_non_concurrentCallbacks() throws SchedulerException, ParseException, InterruptedException
     {
         Scheduler scheduler = SchedulerFactory.getInstance().getScheduler();
         
@@ -106,9 +108,9 @@ public class SchedulerCallbackExecutionTest
         JobDetail jobDetail = CachingScheduledJobFactory.getInstance().createJobDetail(job, NonConcurrentCallbackJob.class, "name2", "group");
         Trigger trigger = newTrigger().withIdentity("name2", "group").withSchedule(cronSchedule("0/1 * * * * ?")).build();
         scheduler.scheduleJob(jobDetail, trigger);
-        Assert.assertTrue("a callback should have occurred", latch.await(5, TimeUnit.SECONDS));
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "a callback should have occurred");
         latch = new CountDownLatch(1);
-        Assert.assertFalse("no further callbacks should have occurred", latch.await(3, TimeUnit.SECONDS));
+        assertFalse(latch.await(3, TimeUnit.SECONDS), "no further callbacks should have occurred");
     }
 
     /**
@@ -128,14 +130,9 @@ public class SchedulerCallbackExecutionTest
     	public void execute(JobExecutionContext context) throws JobExecutionException
         {
             latch.countDown();
-            try
-            {
-            	Thread.sleep(sleep);
-            }
-            catch(InterruptedException e)
-            {
-            	Assert.fail("Thread woken early");
-            }
+            assertDoesNotThrow(() -> {
+                Thread.sleep(sleep);
+            }, "Thread woken early");
         }
     }
 

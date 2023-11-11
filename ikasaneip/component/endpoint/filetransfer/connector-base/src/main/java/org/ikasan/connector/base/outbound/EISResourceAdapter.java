@@ -40,9 +40,9 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.spi.ActivationSpec;
-import javax.resource.spi.endpoint.MessageEndpointFactory;
-import javax.transaction.xa.XAResource;
+import jakarta.resource.spi.ActivationSpec;
+import jakarta.resource.spi.endpoint.MessageEndpointFactory;
+import jakarta.transaction.xa.XAResource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

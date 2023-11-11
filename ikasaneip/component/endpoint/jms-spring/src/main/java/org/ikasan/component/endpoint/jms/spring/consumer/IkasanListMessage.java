@@ -40,9 +40,9 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 import java.util.*;
 
 /**

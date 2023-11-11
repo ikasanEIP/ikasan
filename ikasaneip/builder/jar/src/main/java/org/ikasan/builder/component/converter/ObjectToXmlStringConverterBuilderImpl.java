@@ -44,7 +44,7 @@ import org.ikasan.component.converter.xml.ObjectToXMLStringConverter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.component.converter.xml.XmlConfiguration;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.List;
 import java.util.Map;
 

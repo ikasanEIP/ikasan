@@ -44,8 +44,10 @@ import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for {@link DefaultDuplicateFilterService}
@@ -53,7 +55,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
-public class DefaultDuplicateFilterServiceTest
+class DefaultDuplicateFilterServiceTest
 {
     /** {@link Mockery} for mocking interfaces */
     private Mockery mockery = new Mockery();
@@ -70,7 +72,8 @@ public class DefaultDuplicateFilterServiceTest
     /**
      * Test case: persist message
      */
-    @Test public void new_messages_are_persisted()
+    @Test
+    void new_messages_are_persisted()
     {
         this.mockery.checking(new Expectations()
         {
@@ -85,7 +88,8 @@ public class DefaultDuplicateFilterServiceTest
     /**
      * Test case: if message not found, service must return false
      */
-    @Test public void return_false_when_message_not_found()
+    @Test
+    void return_false_when_message_not_found()
     {
         this.mockery.checking(new Expectations()
         {
@@ -94,14 +98,15 @@ public class DefaultDuplicateFilterServiceTest
             }
         });
         boolean result = this.serviceToTest.isDuplicate(this.entry);
-        Assert.assertFalse(result);
+        assertFalse(result);
         this.mockery.assertIsSatisfied();
     }
 
     /**
      * Test case: if message is found, service must resturn true
      */
-    @Test public void return_true_when_message_not_found()
+    @Test
+    void return_true_when_message_not_found()
     {
         this.mockery.checking(new Expectations()
         {
@@ -110,7 +115,7 @@ public class DefaultDuplicateFilterServiceTest
             }
         });
         boolean result = this.serviceToTest.isDuplicate(this.entry);
-        Assert.assertTrue(result);
+        assertTrue(result);
         this.mockery.assertIsSatisfied();
     }
 

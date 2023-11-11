@@ -3,15 +3,15 @@ package org.ikasan.security.service;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.AuthenticationMethod;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class LdapServiceImplTest {
 
@@ -30,13 +30,13 @@ public class LdapServiceImplTest {
     @InjectMocks
     public LdapServiceImpl ldapService;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         MockitoAnnotations.initMocks(this);
     }
 
     @Test
-    public void testIsValidEncoding_happyPath() {
+    void testIsValidEncoding_happyPath() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -49,12 +49,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_happyPath_with_kanji_characters() {
+    void testIsValidEncoding_happyPath_with_kanji_characters() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username 例外クラス";
@@ -67,12 +67,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_withoutMemberGroups() {
+    void testIsValidEncoding_withoutMemberGroups() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -80,12 +80,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_nullDepartment() {
+    void testIsValidEncoding_nullDepartment() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -93,12 +93,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_invalidDepartment() {
+    void testIsValidEncoding_invalidDepartment() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -106,12 +106,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_nullFirstName() {
+    void testIsValidEncoding_nullFirstName() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -119,12 +119,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_invalidFirstName() {
+    void testIsValidEncoding_invalidFirstName() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -132,12 +132,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_nullSurname() {
+    void testIsValidEncoding_nullSurname() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -145,12 +145,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_invalidSurname() {
+    void testIsValidEncoding_invalidSurname() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -158,12 +158,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_nullEmail() {
+    void testIsValidEncoding_nullEmail() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -171,12 +171,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_invalidEmail() {
+    void testIsValidEncoding_invalidEmail() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -184,12 +184,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_nullDescription() {
+    void testIsValidEncoding_nullDescription() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -197,12 +197,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_invalidDescription() {
+    void testIsValidEncoding_invalidDescription() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "username";
@@ -210,13 +210,13 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 
 
     @Test
-    public void testIsValidEncoding_nullAccountName() {
+    void testIsValidEncoding_nullAccountName() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = null;
@@ -224,11 +224,11 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(validEncoding);
+        assertTrue(validEncoding);
     }
 
     @Test
-    public void testIsValidEncoding_invalidAccountName() {
+    void testIsValidEncoding_invalidAccountName() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "invalidName-with-EmDash—" + '\uD835';
@@ -236,12 +236,12 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 
     @Test
-    public void testIsValidEncoding_invalidGroup() {
+    void testIsValidEncoding_invalidGroup() {
 
         LdapServiceImpl.LdapUser ldapUser = ldapService.new LdapUser();
         ldapUser.accountName = "userName";
@@ -250,7 +250,7 @@ public class LdapServiceImplTest {
 
         boolean validEncoding = ldapService.isValidEncoding(ldapUser);
 
-        Assert.assertTrue(!validEncoding);
+        assertFalse(validEncoding);
 
     }
 

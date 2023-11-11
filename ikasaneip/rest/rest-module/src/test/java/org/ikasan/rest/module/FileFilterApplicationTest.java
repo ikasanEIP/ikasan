@@ -6,12 +6,10 @@ import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.spec.systemevent.SystemEventService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -22,7 +20,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -33,14 +30,11 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.Arrays;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringBootTest(classes = { FileFilterApplication.class, MockedUserServiceTestConfig.class })
-public class FileFilterApplicationTest
+@SpringBootTest(classes = {FileFilterApplication.class, MockedUserServiceTestConfig.class})
+class FileFilterApplicationTest
 {
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
@@ -62,8 +56,8 @@ public class FileFilterApplicationTest
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-    @Before
-    public void setUp()
+    @BeforeEach
+    void setUp()
     {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         uat.setBaseFileTransferDao(baseFileTransferDao);
@@ -71,7 +65,7 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void searchWithReadOnlyUser() throws Exception
+    void searchWithReadOnlyUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/filefilter/search?clientId=Test")
@@ -81,7 +75,7 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void searchByClientId() throws Exception
+    void searchByClientId() throws Exception
     {
         Date creationDate = new Date(1l);
         FileFilter filterEntry = new FileFilter("testClientId", "test.log", creationDate,creationDate,1000 );
@@ -114,7 +108,7 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void testFindByIdWithWrongUser() throws Exception
+    void testFindByIdWithWrongUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
@@ -122,7 +116,7 @@ public class FileFilterApplicationTest
             .accept(MediaType.APPLICATION_JSON_VALUE);
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
-        Mockito.verifyZeroInteractions(baseFileTransferDao);
+        Mockito.verifyNoInteractions(baseFileTransferDao);
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -131,7 +125,7 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testFindById() throws Exception
+    void testFindById() throws Exception
     {
 
         Date creationDate = new Date(1l);
@@ -158,11 +152,11 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void deleteByIdWithWrongUser() throws Exception
+    void deleteByIdWithWrongUser() throws Exception
     {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
-        Mockito.verifyZeroInteractions(baseFileTransferDao);
+        Mockito.verifyNoInteractions(baseFileTransferDao);
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/filefilter/?id=111")
             .accept(MediaType.APPLICATION_JSON_VALUE);
@@ -174,7 +168,7 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void deleteById() throws Exception
+    void deleteById() throws Exception
     {
 
         Date creationDate = new Date(1l);
@@ -208,7 +202,7 @@ public class FileFilterApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testCreate() throws Exception
+    void testCreate() throws Exception
     {
         Date creationDate = new Date(1l);
         FileFilter filterEntry = new FileFilter("testClientId", "test.log", creationDate, creationDate,1000 );

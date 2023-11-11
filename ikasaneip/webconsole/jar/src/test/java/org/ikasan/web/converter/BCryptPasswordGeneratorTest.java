@@ -40,8 +40,7 @@
  */
 package org.ikasan.web.converter;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.binding.convert.converters.Converter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
@@ -53,13 +52,13 @@ import java.util.Map;
  * Unit test class supporting <class>SpringConverter</class>
  * @author  Ikasan Developmnet Team
  */
-public class BCryptPasswordGeneratorTest
+class BCryptPasswordGeneratorTest
 {
     /**
      * Test null to map.
      */
     @Test
-    public void test_map_converter_with_null_value() throws Exception
+    void test_map_converter_with_null_value() throws Exception
     {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String hashedPassword = passwordEncoder.encode("admin");

@@ -62,13 +62,13 @@ public class ConfigurationApplication
     }
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createConfiguration(@PathVariable("moduleName") String moduleName,
-                                              @PathVariable("flowName") String flowName,
-                                              @PathVariable("componentName") String componentName)
+    public ResponseEntity createConfiguration(@PathVariable String moduleName,
+                                              @PathVariable String flowName,
+                                              @PathVariable String componentName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
@@ -103,13 +103,13 @@ public class ConfigurationApplication
      * @return
      */
     @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createFlowElementConfiguration(@PathVariable("moduleName") String moduleName,
-                                                         @PathVariable("flowName") String flowName,
-                                                         @PathVariable("componentName") String componentName)
+    public ResponseEntity createFlowElementConfiguration(@PathVariable String moduleName,
+                                                         @PathVariable String flowName,
+                                                         @PathVariable String componentName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
@@ -138,12 +138,12 @@ public class ConfigurationApplication
     }
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/createConfiguration/{moduleName}/{flowName}",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createFlowConfiguration(@PathVariable("moduleName") String moduleName,
-                                                  @PathVariable("flowName") String flowName)
+    public ResponseEntity createFlowConfiguration(@PathVariable String moduleName,
+                                                  @PathVariable String flowName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
         Flow flow = module.getFlow(flowName);
@@ -168,8 +168,7 @@ public class ConfigurationApplication
         return new ResponseEntity(configuration, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/flows")
+    @GetMapping("/flows")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity getFlowsConfiguration()
     {
@@ -178,8 +177,7 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/module")
+    @GetMapping("/module")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity getModuleConfiguration()
     {
@@ -193,12 +191,12 @@ public class ConfigurationApplication
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/{moduleName}/{flowName}/flow",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getFlowsConfiguration(@PathVariable("moduleName") String moduleName,
-                                                @PathVariable("flowName") String flowName)
+    public ResponseEntity getFlowsConfiguration(@PathVariable String moduleName,
+                                                @PathVariable String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         ConfigurationMetaData configuredResources = configurationMetaDataExtractor.getFlowConfiguration(flow);
@@ -206,13 +204,13 @@ public class ConfigurationApplication
     }
 
     @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createInvokerConfiguration(@PathVariable("moduleName") String moduleName,
-                                                     @PathVariable("flowName") String flowName,
-                                                     @PathVariable("componentName") String componentName)
+    public ResponseEntity createInvokerConfiguration(@PathVariable String moduleName,
+                                                     @PathVariable String flowName,
+                                                     @PathVariable String componentName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         FlowElement<?> flowElement = flow.getFlowElement(componentName);
@@ -238,7 +236,7 @@ public class ConfigurationApplication
         return new ResponseEntity("Configuration created!", HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/invokers",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -250,7 +248,7 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/components",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -262,24 +260,24 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/{moduleName}/{flowName}/invokers",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getInvokersConfiguration(@PathVariable("moduleName") String moduleName,
-                                                   @PathVariable("flowName") String flowName)
+    public ResponseEntity getInvokersConfiguration(@PathVariable String moduleName,
+                                                   @PathVariable String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor.getInvokersConfiguration(flow);
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/{moduleName}/{flowName}/{componentName}/invoker",
         produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getInvokerConfiguration(@PathVariable("moduleName") String moduleName,
-                                                   @PathVariable("flowName") String flowName,
+    public ResponseEntity getInvokerConfiguration(@PathVariable String moduleName,
+                                                   @PathVariable String flowName,
                                                    @PathVariable("componentName") String componentname)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
@@ -291,12 +289,12 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResource, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
                     value = "/{moduleName}/{flowName}/components",
                     produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getComponentsConfiguration(@PathVariable("moduleName") String moduleName,
-                                                     @PathVariable("flowName") String flowName)
+    public ResponseEntity getComponentsConfiguration(@PathVariable String moduleName,
+                                                     @PathVariable String flowName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         List<ConfigurationMetaData> configuredResources = configurationMetaDataExtractor
@@ -304,13 +302,13 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.GET,
+    @GetMapping(
         value = "/{moduleName}/{flowName}/{componentName}",
         produces = { "application/json" })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity getComponentConfiguration(@PathVariable("moduleName") String moduleName,
-                                                    @PathVariable("flowName") String flowName,
-                                                    @PathVariable("componentName") String componentName)
+    public ResponseEntity getComponentConfiguration(@PathVariable String moduleName,
+                                                    @PathVariable String flowName,
+                                                    @PathVariable String componentName)
     {
         Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
         FlowElement flowElement = flow.getFlowElement(componentName);
@@ -319,7 +317,7 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResource, HttpStatus.OK);
     }
 
-    @RequestMapping(method = RequestMethod.PUT)
+    @PutMapping
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity putConfiguration(@RequestBody ConfigurationMetaData configurationMetaData)
     {
@@ -410,10 +408,9 @@ public class ConfigurationApplication
         return cp;
     }
 
-    @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/{configurationId}")
+    @DeleteMapping("/{configurationId}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteConfiguration(@PathVariable("configurationId") String configurationId)
+    public ResponseEntity deleteConfiguration(@PathVariable String configurationId)
     {
         Configuration configuration = this.configurationManagement.getConfiguration(configurationId);
         if ( configuration != null )

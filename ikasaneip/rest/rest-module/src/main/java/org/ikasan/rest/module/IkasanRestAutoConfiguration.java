@@ -48,15 +48,15 @@ import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataIm
 import org.ikasan.rest.module.sse.MonitoringFileService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.util.List;
 
-@Configuration
+@AutoConfiguration
 public class IkasanRestAutoConfiguration implements WebMvcConfigurer
 {
 

@@ -51,18 +51,20 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This test class supports the <code>ModuleBuilder</code> class.
  * 
  * @author Ikasan Development Team
  */
-public class ModuleBuilderTest
+class ModuleBuilderTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -91,8 +93,8 @@ public class ModuleBuilderTest
 
     IkasanApplication ikasanApplication;
 
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
 
         // expectations
@@ -127,8 +129,8 @@ public class ModuleBuilderTest
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
     }
 
-    @After
-    public void teardown()
+    @AfterEach
+    void teardown()
     {
         ikasanApplication.close();
     }
@@ -137,7 +139,7 @@ public class ModuleBuilderTest
      * Test successful flow creation.
      */
     @Test
-    public void test_successful_flowCreation()
+    void test_successful_flowCreation()
     {
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
     	ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("moduleName").withDescription("module description");
@@ -151,9 +153,9 @@ public class ModuleBuilderTest
 
     	Module module = moduleBuilder.addFlow(flow1).addFlow(flow2).build();
 
-    	Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
-    	Assert.assertTrue("module description should be 'module description'", "module description".equals(module.getDescription()));
-    	Assert.assertNotNull("module should contain a flow named 'flowName1''", module.getFlow("flowName1"));
-    	Assert.assertNotNull("module should contain a flow named 'flowName2''", module.getFlow("flowName2"));
+        assertEquals("moduleName", module.getName(), "module name should be 'moduleName'");
+        assertEquals("module description", module.getDescription(), "module description should be 'module description'");
+    	assertNotNull(module.getFlow("flowName1"), "module should contain a flow named 'flowName1''");
+    	assertNotNull(module.getFlow("flowName2"), "module should contain a flow named 'flowName2''");
     }
 }

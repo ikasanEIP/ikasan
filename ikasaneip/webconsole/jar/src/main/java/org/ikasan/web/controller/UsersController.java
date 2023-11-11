@@ -134,8 +134,8 @@ public class UsersController {
      * @param result - The result
      * @return view the user
      */
-    @RequestMapping(value = "createUser.htm", method = RequestMethod.POST)
-    public String createUser(ModelMap model, @ModelAttribute("user") User user, BindingResult result) {
+    @PostMapping("createUser.htm")
+    public String createUser(ModelMap model, @ModelAttribute User user, BindingResult result) {
         // check that user doesn't already exist, and the password has been supplied
         ValidationUtils.rejectIfEmpty(result, "username", "field.required", "Username cannot be empty");
         ValidationUtils.rejectIfEmpty(result, "password", "field.required", "Password cannot be empty");
@@ -158,7 +158,7 @@ public class UsersController {
      * @param model    - The window (map)
      * @return path to user view
      */
-    @RequestMapping(value = "view.htm", method = RequestMethod.GET)
+    @GetMapping("view.htm")
     public String viewUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model) {
         User user = this.userService.loadUserByUsername(username);
         model.addAttribute("user", user);
@@ -175,8 +175,8 @@ public class UsersController {
      * @param result             - The binding result
      * @return view the user
      */
-    @RequestMapping(value = "changePassword.htm", method = RequestMethod.POST)
-    public String changePassword(@ModelAttribute("user") User user, @RequestParam("confirm_password") String confirmNewPassword, ModelMap model, BindingResult result) {
+    @PostMapping("changePassword.htm")
+    public String changePassword(@ModelAttribute User user, @RequestParam("confirm_password") String confirmNewPassword, ModelMap model, BindingResult result) {
         try {
             this.userService.changeUsersPassword(user.getUsername(), user.getPassword(), confirmNewPassword);
         } catch (IllegalArgumentException e) {
@@ -193,7 +193,7 @@ public class UsersController {
      * @param model     - The window (map)
      * @return to the view users
      */
-    @RequestMapping(value = "grantAuthority.htm", method = RequestMethod.POST)
+    @PostMapping("grantAuthority.htm")
     public String grantAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
                                  @RequestParam(AUTHORITY_PARAMETER_NAME) String authority, ModelMap model) {
         this.userService.grantAuthority(username, authority);
@@ -208,7 +208,7 @@ public class UsersController {
      * @param model     - The window (map)
      * @return to the view users
      */
-    @RequestMapping(value = "revokeAuthority.htm", method = RequestMethod.POST)
+    @PostMapping("revokeAuthority.htm")
     public String revokeAuthority(@RequestParam(USERNAME_PARAMETER_NAME) String username,
                                   @RequestParam(AUTHORITY_PARAMETER_NAME) String authority, ModelMap model) {
         this.userService.revokeAuthority(username, authority);
@@ -222,7 +222,7 @@ public class UsersController {
      * @param model    - The window (map)
      * @return to the view users
      */
-    @RequestMapping(value = "delete.htm", method = RequestMethod.POST)
+    @PostMapping("delete.htm")
     public String deleteUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model) {
         this.userService.deleteUser(username);
         return listUsers(model);
@@ -235,7 +235,7 @@ public class UsersController {
      * @param model    - The window (map)
      * @return to the view users
      */
-    @RequestMapping(value = "disable.htm", method = RequestMethod.POST)
+    @PostMapping("disable.htm")
     public String disableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model) {
         this.userService.disableUser(username);
         return viewUser(username, model);
@@ -248,7 +248,7 @@ public class UsersController {
      * @param model    - The window (map)
      * @return to the view users
      */
-    @RequestMapping(value = "enable.htm", method = RequestMethod.POST)
+    @PostMapping("enable.htm")
     public String enableUser(@RequestParam(USERNAME_PARAMETER_NAME) String username, ModelMap model) {
         this.userService.enableUser(username);
         return viewUser(username, model);

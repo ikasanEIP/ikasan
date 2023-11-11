@@ -37,22 +37,22 @@
  */
 package org.ikasan.component.endpoint.mongo.test;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@Ignore
-public class EmbeddedMongoTest {
+@Disabled
+class EmbeddedMongoTest {
 
 
     @Test
-    public void testEmbeddedMongoOverrideConfigurationWithSystemProperties() throws Exception {
+    void testEmbeddedMongoOverrideConfigurationWithSystemProperties() throws Exception {
         Map<String, String> envVars = new HashMap<>();
         envVars.put("http.proxy.host", "httpProxyHostFromEnv");
         envVars.put("http.proxy.port", "httpProxyPortFromEnv");
@@ -82,7 +82,7 @@ public class EmbeddedMongoTest {
     }
 
     @Test
-    public void testEmbeddedMongoOverrideConfigurationWithEnvironmentVariables() throws Exception {
+    void testEmbeddedMongoOverrideConfigurationWithEnvironmentVariables() throws Exception {
         Map<String, String> envVars = new HashMap<>();
         envVars.put("http.proxy.host", "httpProxyHostFromEnv");
         envVars.put("http.proxy.port", "httpProxyPortFromEnv");
@@ -95,7 +95,7 @@ public class EmbeddedMongoTest {
     }
 
     @Test
-    public void testEmbeddedMongoWithPortConstructor()
+    void testEmbeddedMongoWithPortConstructor()
     {
         final EmbeddedMongo embeddedMongo = new EmbeddedMongo(200);
         final EmbeddedMongoConfiguration configuration = embeddedMongo.getConfiguration();

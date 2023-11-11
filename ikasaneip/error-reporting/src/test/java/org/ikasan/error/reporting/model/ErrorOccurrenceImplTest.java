@@ -41,17 +41,22 @@
 package org.ikasan.error.reporting.model;
 
 import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test class for ErrorOccurrence.
  * 
  * @author Ikasan Development Team
  */
-public class ErrorOccurrenceImplTest
+class ErrorOccurrenceImplTest
 {
     Exception exception = new Exception("failed error occurence msg");
 
@@ -59,30 +64,30 @@ public class ErrorOccurrenceImplTest
      * Test error occurrence window instance
      */
     @Test
-    public void test_new_errorOccurrence()
+    void test_new_errorOccurrence()
     {
         ErrorOccurrenceImpl errorOccurrence = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "failed error occurrence text", exception.getMessage(), exception.getClass().getName(), 1000L, "event".getBytes(), "errorString");
         errorOccurrence.setEventLifeIdentifier("lifeId");
         errorOccurrence.setEventRelatedIdentifier("relatedLifeId");
 
-        Assert.assertTrue(errorOccurrence.getModuleName().equals("moduleName"));
-        Assert.assertTrue(errorOccurrence.getFlowName().equals("flowName"));
-        Assert.assertTrue(errorOccurrence.getFlowElementName().equals("componentName"));
-        Assert.assertTrue(errorOccurrence.getErrorDetail().equals("failed error occurrence text"));
-        Assert.assertTrue(errorOccurrence.getErrorMessage().equals("failed error occurence msg"));
-        Assert.assertTrue(new String(errorOccurrence.getEvent()).equals("event"));
-        Assert.assertTrue(errorOccurrence.getExpiry() > System.currentTimeMillis());
-        Assert.assertTrue(errorOccurrence.getEventLifeIdentifier().equals("lifeId"));
-        Assert.assertTrue(errorOccurrence.getEventRelatedIdentifier().equals("relatedLifeId"));
-        Assert.assertTrue(errorOccurrence.getTimestamp() > 0);
-        Assert.assertNotNull(errorOccurrence.getUri());
+        assertEquals("moduleName", errorOccurrence.getModuleName());
+        assertEquals("flowName", errorOccurrence.getFlowName());
+        assertEquals("componentName", errorOccurrence.getFlowElementName());
+        assertEquals("failed error occurrence text", errorOccurrence.getErrorDetail());
+        assertEquals("failed error occurence msg", errorOccurrence.getErrorMessage());
+        assertEquals("event", new String(errorOccurrence.getEvent()));
+        assertTrue(errorOccurrence.getExpiry() > System.currentTimeMillis());
+        assertEquals("lifeId", errorOccurrence.getEventLifeIdentifier());
+        assertEquals("relatedLifeId", errorOccurrence.getEventRelatedIdentifier());
+        assertTrue(errorOccurrence.getTimestamp() > 0);
+        assertNotNull(errorOccurrence.getUri());
     }
 
     /**
      * Test error occurrence window instance
      */
     @Test
-    public void test_equals()
+    void test_equals()
     {
         ErrorOccurrenceImpl errorOccurrence1 = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "failed error occurrence text", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         pause(1);
@@ -90,16 +95,16 @@ public class ErrorOccurrenceImplTest
         pause(1);
         ErrorOccurrenceImpl errorOccurrence3 = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "failed error occurrence text", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
 
-        Assert.assertFalse(errorOccurrence1.equals(errorOccurrence2));
-        Assert.assertFalse(errorOccurrence2.equals(errorOccurrence3));
-        Assert.assertFalse(errorOccurrence3.equals(errorOccurrence1));
+        assertNotEquals(errorOccurrence1, errorOccurrence2);
+        assertNotEquals(errorOccurrence2, errorOccurrence3);
+        assertNotEquals(errorOccurrence3, errorOccurrence1);
     }
 
     /**
      * Test error occurrence window instance
      */
     @Test
-    public void test_hashcode()
+    void test_hashcode()
     {
         ErrorOccurrenceImpl errorOccurrence1 = new ErrorOccurrenceImpl("moduleName", "flowName", "componentName", "failed error occurrence text", exception.getMessage(), exception.getClass().getName(), ErrorReportingService.DEFAULT_TIME_TO_LIVE);
         pause(1);
@@ -113,21 +118,16 @@ public class ErrorOccurrenceImplTest
         map.put(errorOccurrence3, "3");
         map.put(errorOccurrence1, "one");
 
-        Assert.assertTrue(map.size() == 3);
-        Assert.assertTrue(map.containsKey(errorOccurrence1));
-        Assert.assertTrue(map.containsKey(errorOccurrence2));
-        Assert.assertTrue(map.containsKey(errorOccurrence3));
+        assertEquals(3, map.size());
+        assertTrue(map.containsKey(errorOccurrence1));
+        assertTrue(map.containsKey(errorOccurrence2));
+        assertTrue(map.containsKey(errorOccurrence3));
     }
 
     private void pause(long period)
     {
-        try
-        {
+        assertDoesNotThrow(() -> {
             Thread.sleep(period);
-        }
-        catch(InterruptedException e)
-        {
-            Assert.fail(e.getMessage());
-        }
+        });
     }
 }

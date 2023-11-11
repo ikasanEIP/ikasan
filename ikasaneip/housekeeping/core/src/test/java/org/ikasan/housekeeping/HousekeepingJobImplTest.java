@@ -6,12 +6,12 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.springframework.core.env.Environment;
 
-public class HousekeepingJobImplTest
+class HousekeepingJobImplTest
 {
 
     private Mockery mockery = new Mockery() {{
@@ -24,7 +24,7 @@ public class HousekeepingJobImplTest
     JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
     @Test
-    public void initWhenValuesAreNotInEnvironments()
+    void initWhenValuesAreNotInEnvironments()
     {
 
         HousekeepingJobImpl uut = new HousekeepingJobImpl("test",housekeepService,environment);
@@ -51,7 +51,7 @@ public class HousekeepingJobImplTest
     }
 
     @Test
-    public void initWhenValuesInEnvironmentAreOfWrongType()
+    void initWhenValuesInEnvironmentAreOfWrongType()
     {
 
         HousekeepingJobImpl uut = new HousekeepingJobImpl("test",housekeepService,environment);
@@ -78,7 +78,7 @@ public class HousekeepingJobImplTest
     }
 
     @Test
-    public void initWhenValuesInEnvironments()
+    void initWhenValuesInEnvironments()
     {
 
         HousekeepingJobImpl uut = new HousekeepingJobImpl("test",housekeepService,environment);
@@ -104,7 +104,7 @@ public class HousekeepingJobImplTest
     }
 
     @Test
-    public void executeWhenHousekeepablesExistIsFalse() throws JobExecutionException
+    void executeWhenHousekeepablesExistIsFalse() throws JobExecutionException
     {
 
         HousekeepingJobImpl uut = new HousekeepingJobImpl("test",housekeepService,environment);
@@ -119,8 +119,9 @@ public class HousekeepingJobImplTest
 
         mockery.assertIsSatisfied();
     }
+
     @Test
-    public void executeWhenHousekeepablesExistIsTrue() throws JobExecutionException
+    void executeWhenHousekeepablesExistIsTrue() throws JobExecutionException
     {
 
         HousekeepingJobImpl uut = new HousekeepingJobImpl("test",housekeepService,environment);

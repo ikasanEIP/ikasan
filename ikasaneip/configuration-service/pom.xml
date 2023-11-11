@@ -58,6 +58,11 @@
     <description>Ikasan Default Configuration Service Implementation</description>
 
     <dependencies>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.1.0.redhat-00002</version>
+        </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
@@ -80,7 +85,7 @@
         </dependency>
 
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <scope>provided</scope>
             <exclusions>
@@ -89,6 +94,7 @@
                     <artifactId>jta</artifactId>
                 </exclusion>
             </exclusions>
+            <version>6.1.7.Final</version>
         </dependency>
 
         <dependency>
@@ -147,6 +153,11 @@
             <artifactId>jmock-imposters</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>net.bytebuddy</groupId>
@@ -169,12 +180,6 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
 

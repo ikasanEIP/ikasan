@@ -40,31 +40,27 @@
  */
 package org.ikasan.security.service;
 
+import jakarta.annotation.Resource;
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.User;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { SecurityConfiguration.class, TestImportConfig.class })
+@SpringJUnitConfig(classes = {SecurityConfiguration.class, TestImportConfig.class})
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-public class UserServiceTest
+class UserServiceTest
 {
     private User admin;
     private  User disabledUser;
@@ -74,11 +70,8 @@ public class UserServiceTest
     @Resource
     private UserService xaUserService;
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Before
-    public void setup()
+    @BeforeEach
+    void setup()
     {
         admin = new User("admin", "admin", "admin@admin.com",true);
         disabledUser = new User("disabledUser", "disabledUser", "disabledUser@admin.com",false);
@@ -91,8 +84,8 @@ public class UserServiceTest
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#getUsers()}.
      */
     @Test
-    @DirtiesContext
-    public void testGetUsers()
+        @DirtiesContext
+    void testGetUsers()
     {
 
     }
@@ -102,8 +95,8 @@ public class UserServiceTest
      * {@link org.ikasan.security.service.UserServiceImpl#changePassword(java.lang.String, java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testChangePassword()
+        @DirtiesContext
+    void testChangePassword()
     {
 
     }
@@ -113,8 +106,8 @@ public class UserServiceTest
      * {@link org.ikasan.security.service.UserServiceImpl#createUser(org.springframework.security.core.userdetails.UserDetails)}.
      */
     @Test
-    @DirtiesContext
-    public void testCreateUser()
+        @DirtiesContext
+    void testCreateUser()
     {
 
     }
@@ -123,8 +116,8 @@ public class UserServiceTest
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#deleteUser(java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testDeleteUser()
+        @DirtiesContext
+    void testDeleteUser()
     {
 
     }
@@ -133,8 +126,8 @@ public class UserServiceTest
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#disableUser(java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testDisableUser()
+        @DirtiesContext
+    void testDisableUser()
     {
 
     }
@@ -143,8 +136,8 @@ public class UserServiceTest
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#enableUser(java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testEnableUser()
+        @DirtiesContext
+    void testEnableUser()
     {
 
     }
@@ -154,8 +147,8 @@ public class UserServiceTest
      * {@link org.ikasan.security.service.UserServiceImpl#updateUser(org.springframework.security.core.userdetails.UserDetails)}.
      */
     @Test
-    @DirtiesContext
-    public void testUpdateUser()
+        @DirtiesContext
+    void testUpdateUser()
     {
 
     }
@@ -164,53 +157,55 @@ public class UserServiceTest
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#userExists(java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testUserExists()
+        @DirtiesContext
+    void testUserExists()
     {
 
     }
 
     @Test
-    @DirtiesContext
-    public void testLoadUserByUsername()
+        @DirtiesContext
+    void testLoadUserByUsername()
     {
         User result = xaUserService.loadUserByUsername("admin");
 
-        Assert.assertEquals(admin.getEmail(),result.getEmail());
-        Assert.assertEquals(admin.getUsername(),result.getUsername());
-        Assert.assertEquals(admin.getId(),result.getId());
+        assertEquals(admin.getEmail(),result.getEmail());
+        assertEquals(admin.getUsername(),result.getUsername());
+        assertEquals(admin.getId(),result.getId());
     }
 
     @Test
-    @DirtiesContext
-    public void testLoadUserByUsernameWhenUserIsDisabled()
+        @DirtiesContext
+    void testLoadUserByUsernameWhenUserIsDisabled()
     {
-        thrown.expect(UsernameNotFoundException.class);
-        thrown.expectMessage("Disabled username : disabledUser contact administrator.");
+        Throwable exception = assertThrows(UsernameNotFoundException.class, () -> {
 
-        User result = xaUserService.loadUserByUsername("disabledUser");
+            User result = xaUserService.loadUserByUsername("disabledUser");
 
-        Assert.assertEquals(admin,result);
+            assertEquals(admin, result);
+        });
+        assertTrue(exception.getMessage().contains("Disabled username : disabledUser contact administrator."));
     }
 
     @Test
-    @DirtiesContext
-    public void testLoadUserByUsernameWhenUserDoesntExist()
+        @DirtiesContext
+    void testLoadUserByUsernameWhenUserDoesntExist()
     {
-        thrown.expect(UsernameNotFoundException.class);
-        thrown.expectMessage("Unknown username : unknown");
+        Throwable exception = assertThrows(UsernameNotFoundException.class, () -> {
 
-        User result = xaUserService.loadUserByUsername("unknown");
+            User result = xaUserService.loadUserByUsername("unknown");
 
-        Assert.assertEquals(admin,result);
+            assertEquals(admin, result);
+        });
+        assertTrue(exception.getMessage().contains("Unknown username : unknown"));
     }
 
     /**
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#getAuthorities()}.
      */
     @Test
-    @DirtiesContext
-    public void testGetAuthorities()
+        @DirtiesContext
+    void testGetAuthorities()
     {
 
     }
@@ -220,8 +215,8 @@ public class UserServiceTest
      * {@link org.ikasan.security.service.UserServiceImpl#grantAuthority(java.lang.String, java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testGrantAuthority()
+        @DirtiesContext
+    void testGrantAuthority()
     {
 
     }
@@ -231,8 +226,8 @@ public class UserServiceTest
      * {@link org.ikasan.security.service.UserServiceImpl#revokeAuthority(java.lang.String, java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testRevokeAuthority()
+        @DirtiesContext
+    void testRevokeAuthority()
     {
 
     }
@@ -242,8 +237,8 @@ public class UserServiceTest
      * {@link org.ikasan.security.service.UserServiceImpl#changeUsersPassword(java.lang.String, java.lang.String, java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testChangeUsersPassword()
+        @DirtiesContext
+    void testChangeUsersPassword()
     {
 
     }
@@ -252,8 +247,8 @@ public class UserServiceTest
      * Test method for {@link org.ikasan.security.service.UserServiceImpl#changeUsersEmail(java.lang.String, java.lang.String)}.
      */
     @Test
-    @DirtiesContext
-    public void testChangeUsersEmail()
+        @DirtiesContext
+    void testChangeUsersEmail()
     {
 
     }

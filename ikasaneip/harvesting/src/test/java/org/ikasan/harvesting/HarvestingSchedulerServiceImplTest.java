@@ -7,15 +7,16 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.quartz.*;
 
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-public class HarvestingSchedulerServiceImplTest
+import static org.junit.jupiter.api.Assertions.fail;
+
+class HarvestingSchedulerServiceImplTest
 {
 
     private Mockery mockery = new Mockery() {{
@@ -33,7 +34,7 @@ public class HarvestingSchedulerServiceImplTest
 
 
     @Test
-    public void constructor()
+    void constructor()
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -59,7 +60,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void registerJobs() throws SchedulerException
+    void registerJobs() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -104,7 +105,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void registerJobsWhenNoJobs() throws SchedulerException
+    void registerJobsWhenNoJobs() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList();
 
@@ -122,7 +123,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void registerJobsWhenHousekeepJobIsDisabled() throws SchedulerException
+    void registerJobsWhenHousekeepJobIsDisabled() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -158,8 +159,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-
-    public void registerJobsWhenShcedulerThrowsRuntimeException() throws SchedulerException
+    void registerJobsWhenShcedulerThrowsRuntimeException() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -206,12 +206,12 @@ public class HarvestingSchedulerServiceImplTest
             return;
         }
 
-        Assert.fail("Not expected to be reached!");
+        fail("Not expected to be reached!");
 
     }
 
     @Test
-    public void remove() throws SchedulerException
+    void remove() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -245,7 +245,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void removeWhenJobDoesntExist() throws SchedulerException
+    void removeWhenJobDoesntExist() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -276,7 +276,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void add() throws SchedulerException
+    void add() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -313,7 +313,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void startScheduler() throws SchedulerException
+    void startScheduler() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 
@@ -350,7 +350,7 @@ public class HarvestingSchedulerServiceImplTest
     }
 
     @Test
-    public void shutdownScheduler() throws SchedulerException
+    void shutdownScheduler() throws SchedulerException
     {
         List<HarvestingJob> harvestingJobs = Arrays.asList(harvestingJob);
 

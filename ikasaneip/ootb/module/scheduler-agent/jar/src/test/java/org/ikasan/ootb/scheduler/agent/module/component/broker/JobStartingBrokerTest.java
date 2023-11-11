@@ -14,15 +14,14 @@ import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDt
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,16 +33,17 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class JobStartingBrokerTest {
     @Mock
     private SchedulerPersistenceService schedulerPersistenceServiceMock;
     @Mock
     private ProcessHandle processHandleMock;
-    @Rule
-    public TemporaryFolder tmpFolder = new TemporaryFolder();
+    @TempDir
+    public File tmpFolder;
     // Test Fixtures
     private JobStartingBroker jobStartingBroker;
     private InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto;
@@ -55,8 +55,9 @@ public class JobStartingBrokerTest {
     private String outputLog;
 
     private EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent = null;
-    @Before
-    public void setUp() {
+
+    @BeforeEach
+    void setUp() {
         enrichedContextualisedScheduledProcessEvent =
             new EnrichedContextualisedScheduledProcessEvent();
 
@@ -76,8 +77,8 @@ public class JobStartingBrokerTest {
         internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
         enrichedContextualisedScheduledProcessEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
 
-        errorLog = tmpFolder.getRoot().getAbsolutePath()+"/err";
-        outputLog = tmpFolder.getRoot().getAbsolutePath()+"/out";
+        errorLog = tmpFolder.getAbsolutePath()+"/err";
+        outputLog = tmpFolder.getAbsolutePath()+"/out";
         enrichedContextualisedScheduledProcessEvent.setResultError(errorLog);
         enrichedContextualisedScheduledProcessEvent.setResultOutput(outputLog);
         enrichedContextualisedScheduledProcessEvent.setContextInstanceId(INSTANCE_ID);
@@ -85,60 +86,60 @@ public class JobStartingBrokerTest {
 
         jobStartingBroker = new JobStartingBroker(
             new SchedulerDefaultPersistenceServiceImpl(
-                new SchedulerKryoProcessPersistenceImpl(tmpFolder.getRoot().getAbsolutePath()),
-                new ProcessStatusDaoFSImp(tmpFolder.getRoot().getAbsolutePath())));
+                new SchedulerKryoProcessPersistenceImpl(tmpFolder.getAbsolutePath()),
+                new ProcessStatusDaoFSImp(tmpFolder.getAbsolutePath())));
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
     }
 
 
     @Test
-    public void test_job_start_skipped_success() {
+    void test_job_start_skipped_success() {
         enrichedContextualisedScheduledProcessEvent.setSkipped(true);
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
 
     @Test
-    public void test_job_start_dry_run_success() {
+    void test_job_start_dry_run_success() {
         enrichedContextualisedScheduledProcessEvent.setSkipped(false);
         enrichedContextualisedScheduledProcessEvent.setDryRun(true);
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
-    public void test_job_start_success() {
+    void test_job_start_success() {
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
-    public void test_job_start_success_custom_command() {
+    void test_job_start_success_custom_command() {
         if (SystemUtils.OS_NAME.contains("Windows")) {
             internalEventDrivenJobInstanceDto.setExecutionEnvironmentProperties("cmd.exe|/c");
             internalEventDrivenJobInstanceDto.setCommandLine("dir");
@@ -150,18 +151,18 @@ public class JobStartingBrokerTest {
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
-    public void test_job_start_success_with_context_parameters() {
+    void test_job_start_success_with_context_parameters() {
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
         contextParameterInstance.setDefaultValue("defaultValue");
@@ -176,24 +177,24 @@ public class JobStartingBrokerTest {
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         final EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
 
         // reading the output file
         Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
-            Assert.assertEquals("\"END\" \t OF \"CMD - echo test\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+            assertEquals("\"END\" \t OF \"CMD - echo test\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
     }
 
     @Test
-    public void test_job_start_success_with_null_context_parameters() {
+    void test_job_start_success_with_null_context_parameters() {
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
         contextParameterInstance.setDefaultValue("defaultValue");
@@ -207,28 +208,28 @@ public class JobStartingBrokerTest {
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
         if (SystemUtils.OS_NAME.contains("Windows")) {
             Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
-                Assert.assertEquals("\"END\" \t OF \"CMD - %cmd%\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+                assertEquals("\"END\" \t OF \"CMD - %cmd%\"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
                 // cmd - if parameter is null will interpret the env replace literally if env is not set
         } else {
             Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() ->
-                Assert.assertEquals("\"END\" \t OF \"CMD - \"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+                assertEquals("\"END\" \t OF \"CMD - \"", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
         }
     }
 
     @Test
-    public void test_job_start_success_with_empty_value_context_parameters() {
+    void test_job_start_success_with_empty_value_context_parameters() {
         ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
         contextParameterInstance.setName("cmd");
         contextParameterInstance.setValue(""); // set to empty string, expecting this to change to a space based on config setEnvironmentToAddSpaceForEmptyContextParam
@@ -247,22 +248,22 @@ public class JobStartingBrokerTest {
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         final EnrichedContextualisedScheduledProcessEvent finalEnrichedContextualisedScheduledProcessEvent = enrichedContextualisedScheduledProcessEvent;
         Awaitility.await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> 
-            Assert.assertEquals("Some .Value", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
+            assertEquals("Some .Value", loadDataFile(finalEnrichedContextualisedScheduledProcessEvent.getResultOutput()).trim()));
     }
 
     @Test
-    public void test_job_start_when_recover_from_agent_crash_and_process_still_running() {
+    void test_job_start_when_recover_from_agent_crash_and_process_still_running() {
         final long pid = 999L;
 
         jobStartingBroker = new JobStartingBroker(schedulerPersistenceServiceMock);
@@ -275,95 +276,97 @@ public class JobStartingBrokerTest {
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess());
-        Assert.assertEquals(999, enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(processHandleMock, enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcessHandle());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess());
+        assertEquals(999, enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(processHandleMock, enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcessHandle());
 
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
 
         verify(schedulerPersistenceServiceMock, times(1)).find(SCHEDULER_PROCESS_TYPE, IDENTITY);
         verify(schedulerPersistenceServiceMock, times(1)).findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY);
     }
 
-    @Test(expected = EndpointException.class)
-    public void test_exception_empty_command_line() {
-        internalEventDrivenJobInstanceDto.setCommandLine("");
+    @Test
+    void test_exception_empty_command_line() {
+        assertThrows(EndpointException.class, () -> {
+            internalEventDrivenJobInstanceDto.setCommandLine("");
 
-        ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
-        contextParameterInstance.setName("cmd");
-        contextParameterInstance.setDefaultValue("defaultValue");
-        contextParameterInstance.setValue("echo test");
-        enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
+            ContextParameterInstanceImpl contextParameterInstance = new ContextParameterInstanceImpl();
+            contextParameterInstance.setName("cmd");
+            contextParameterInstance.setDefaultValue("defaultValue");
+            contextParameterInstance.setValue("echo test");
+            enrichedContextualisedScheduledProcessEvent.setContextParameters(List.of(contextParameterInstance));
 
-        jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+            jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
+        });
     }
 
     @Test
-    public void test_job_start_not_skipped_days_of_week_not_today() {
+    void test_job_start_not_skipped_days_of_week_not_today() {
         int dayOfWeek = Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
         internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(List.of(dayOfWeek == 1 ? dayOfWeek + 1 : dayOfWeek -1));
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertEquals(0, enrichedContextualisedScheduledProcessEvent.getPid());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getDetachableProcess());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
-    public void test_job_start_not_skipped_days_of_week_today() {
+    void test_job_start_not_skipped_days_of_week_today() {
         internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(List.of(Calendar.getInstance().get(Calendar.DAY_OF_WEEK)));
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
-    public void test_job_start_not_skipped_days_of_week_empty() {
+    void test_job_start_not_skipped_days_of_week_empty() {
         internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(Collections.emptyList());
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     @Test
-    public void test_job_start_not_skipped_days_of_week_null() {
+    void test_job_start_not_skipped_days_of_week_null() {
         internalEventDrivenJobInstanceDto.setDaysOfWeekToRun(null);
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
-        Assert.assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
-        Assert.assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
-        Assert.assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
-        Assert.assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
-        Assert.assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
-        Assert.assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_script.sh")));
+        assertTrue((enrichedContextualisedScheduledProcessEvent.getExecutionDetails().contains(IDENTITY+"_results")));
+        assertEquals(enrichedContextualisedScheduledProcessEvent.getDetachableProcess().getProcess().pid(), enrichedContextualisedScheduledProcessEvent.getPid());
+        assertEquals(Outcome.EXECUTION_INVOKED, enrichedContextualisedScheduledProcessEvent.getOutcome());
+        assertTrue(enrichedContextualisedScheduledProcessEvent.isJobStarting());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isSkipped());
+        assertFalse(enrichedContextualisedScheduledProcessEvent.isDryRun());
+        assertNotNull(enrichedContextualisedScheduledProcessEvent.getExecutionDetails());
     }
 
     private class ContextParameterInstanceImpl implements ContextParameterInstance {

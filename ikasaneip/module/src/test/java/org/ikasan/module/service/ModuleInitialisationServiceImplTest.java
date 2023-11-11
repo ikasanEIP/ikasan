@@ -52,8 +52,8 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -63,12 +63,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 /**
  * Test cases for ModuleInitialisationServiceImpl
  *
  * @author Ikasan Development Team
  */
-public class ModuleInitialisationServiceImplTest {
+class ModuleInitialisationServiceImplTest {
     private Mockery mockery = new Mockery() {{
         setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         setThreadingPolicy(new Synchroniser());
@@ -93,8 +95,9 @@ public class ModuleInitialisationServiceImplTest {
      * Class under test
      */
     ModuleInitialisationServiceImpl uut;
-    @Before
-    public void setup(){
+
+    @BeforeEach
+    void setup(){
         uut = new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
            housekeepingSchedulerService,harvestingSchedulerService);
 
@@ -102,34 +105,43 @@ public class ModuleInitialisationServiceImplTest {
         ReflectionTestUtils.setField(uut,"platformContext",platformContext);
 
     }
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_moduleContainer() {
-        new ModuleInitialisationServiceImpl(null, moduleActivator,
-            housekeepingSchedulerService, harvestingSchedulerService);
+
+    @Test
+    void test_constructor_null_moduleContainer() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleInitialisationServiceImpl(null, moduleActivator,
+                housekeepingSchedulerService, harvestingSchedulerService);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_module_activator() {
-        new ModuleInitialisationServiceImpl(moduleContainer, null,
-            housekeepingSchedulerService, harvestingSchedulerService);
-    }
-
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_housekeeping() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            null, harvestingSchedulerService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_harvestion() {
-        new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
-            housekeepingSchedulerService, null);
+    @Test
+    void test_constructor_null_module_activator() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleInitialisationServiceImpl(moduleContainer, null,
+                housekeepingSchedulerService, harvestingSchedulerService);
+        });
     }
 
 
     @Test
-    public void destroy() throws Exception {
+    void test_constructor_null_housekeeping() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
+                null, harvestingSchedulerService);
+        });
+    }
+
+    @Test
+    void test_constructor_null_harvestion() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
+                housekeepingSchedulerService, null);
+        });
+    }
+
+
+    @Test
+    void destroy() throws Exception {
         mockery.checking(new Expectations() {{
             oneOf(moduleContainer).getModules();
             will(returnValue(Arrays.asList(module)));
@@ -162,7 +174,7 @@ public class ModuleInitialisationServiceImplTest {
     }
 
     @Test
-    public void register() throws Exception {
+    void register() throws Exception {
         mockery.checking(new Expectations() {{
             oneOf(moduleContainer).add(module);
             oneOf(moduleActivator).activate(module);

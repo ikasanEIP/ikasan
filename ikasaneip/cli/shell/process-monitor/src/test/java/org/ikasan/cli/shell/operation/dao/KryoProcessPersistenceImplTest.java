@@ -41,10 +41,12 @@
 package org.ikasan.cli.shell.operation.dao;
 
 import org.ikasan.cli.shell.operation.model.IkasanProcess;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * This test class supports the <code>KryoProcessPersistenceImpl</code> class.
@@ -62,14 +64,14 @@ class KryoProcessPersistenceImplTest
         processPersistenceDao.save(ikasanProcessSaved);
 
         IkasanProcess ikasanProcessFound = processPersistenceDao.find("type", "name");
-        Assert.assertTrue(ikasanProcessFound.getName().equals(ikasanProcessSaved.getName()));
-        Assert.assertTrue(ikasanProcessFound.getPid() == ikasanProcessSaved.getPid());
-        Assert.assertTrue(ikasanProcessFound.getType().equals(ikasanProcessSaved.getType()));
-        Assert.assertTrue(ikasanProcessFound.getUser().equals(ikasanProcessSaved.getUser()));
+        assertEquals(ikasanProcessFound.getName(), ikasanProcessSaved.getName());
+        assertEquals(ikasanProcessFound.getPid(), ikasanProcessSaved.getPid());
+        assertEquals(ikasanProcessFound.getType(), ikasanProcessSaved.getType());
+        assertEquals(ikasanProcessFound.getUser(), ikasanProcessSaved.getUser());
 
         processPersistenceDao.delete("type", "name");
         ikasanProcessFound = processPersistenceDao.find("type", "name");
-        Assert.assertNull(ikasanProcessFound);
+        assertNull(ikasanProcessFound);
     }
 }
 

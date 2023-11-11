@@ -5,30 +5,30 @@ import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class ContextInstanceCacheTest {
+class ContextInstanceCacheTest {
 
     @Test
-    public void getContextParameter_should_return_null_values() {
+    void getContextParameter_should_return_null_values() {
         assertNull(ContextInstanceCache.getContextParameter(null, "contextParameterName"));
         assertNull(ContextInstanceCache.getContextParameter("contextInstanceId", null));
     }
 
     @Test
-    public void getContextParameter_should_return_null_null_context_instance() {
+    void getContextParameter_should_return_null_null_context_instance() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         assertNull(ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
     }
 
     @Test
-    public void getContextParameter_should_return_null_null_context_parameters() {
+    void getContextParameter_should_return_null_null_context_parameters() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -38,7 +38,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void getContextParameter_should_return_value() {
+    void getContextParameter_should_return_value() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -54,7 +54,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void getContextParameter_should_return_null_with_context_parameters_null_name() {
+    void getContextParameter_should_return_null_with_context_parameters_null_name() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -70,7 +70,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void getContextParameter_should_return_null_with_context_parameters_null_value() {
+    void getContextParameter_should_return_null_with_context_parameters_null_value() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -85,7 +85,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void existsInCache() {
+    void existsInCache() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -103,7 +103,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void doesNotExistInCache() {
+    void doesNotExistInCache() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -115,7 +115,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void getByContextId_and_remove() {
+    void getByContextId_and_remove() {
         String contextInstanceId1 = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance1 = new ContextInstanceImpl();
         instance1.setId(contextInstanceId1);
@@ -144,7 +144,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void put() {
+    void put() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance1 = new ContextInstanceImpl();
         instance1.setId(contextInstanceId);

@@ -40,6 +40,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.annotation.Resource;
 import org.apache.activemq.broker.BrokerFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.h2.tools.Server;
@@ -53,23 +54,24 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Ikasan component failure.
@@ -80,7 +82,6 @@ import static org.junit.Assert.assertTrue;
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
         webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest
@@ -120,15 +121,15 @@ public class ApplicationTest
     String amqPersistenceBaseDir = "./activemq-data";
     String amqPersistenceDir = amqPersistenceBaseDir + "/localhost/KahaDB";
 
-    @BeforeClass
-    public static void setup() throws SQLException
+    @BeforeAll
+    static void setup() throws SQLException
     {
         // TODO can we use a random port and tie back to the application.properties url?
         server =  Server.createTcpServer("-tcpPort", "9092", "-tcpAllowOthers","-ifNotExists").start();
     }
 
-    @Before
-    public void start() throws Exception
+    @BeforeEach
+    void start() throws Exception
     {
 
         // clean up any previous failures that left persisted state
@@ -143,8 +144,8 @@ public class ApplicationTest
         wiretapTestUtil = new WiretapTestUtil(wiretapService, jobAwareFlowEventListener);
     }
 
-    @After
-    public void stop() throws Exception
+    @AfterEach
+    void stop() throws Exception
     {
         flow1TestRule.stopFlow();
         flow2TestRule.stopFlow();
@@ -155,15 +156,15 @@ public class ApplicationTest
         broker.stop();
     }
 
-    @AfterClass
-    public static void teardown()
+    @AfterAll
+    static void teardown()
     {
         server.shutdown();
     }
 
     @Test
     @DirtiesContext
-    public void test_happy_flows_with_concurrent_db_updates() throws Exception
+    void test_happy_flows_with_concurrent_db_updates() throws Exception
     {
         // event generator publishing to JMS topic
         flow1TestRule.withFlow(moduleUnderTest.getFlow("eventGeneratorToJMSFlow"));
@@ -230,13 +231,10 @@ public class ApplicationTest
             logger.info("Expected eventGeneratorToJMSFlow flow wiretap count {} but found {}",
                 ModuleConfig.EVENT_GENERATOR_COUNT, wiretaps.getResultSize()
                        );
-            assertTrue("Expected " + "eventGeneratorToJMSFlow" + " flow wiretap count "
-                    + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT
-                      );
-            assertTrue("Expected " + "eventGeneratorToJMSFlow" + " flow wiretap count "
-                + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT );
+            assertEquals(wiretaps.getResultSize(), ModuleConfig.EVENT_GENERATOR_COUNT, "Expected " + "eventGeneratorToJMSFlow" + " flow wiretap count "
+                    + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize());
+            assertEquals(wiretaps.getResultSize(), ModuleConfig.EVENT_GENERATOR_COUNT, "Expected " + "eventGeneratorToJMSFlow" + " flow wiretap count "
+                    + ModuleConfig.EVENT_GENERATOR_COUNT + " but found " + wiretaps.getResultSize());
 
         });
 
@@ -251,10 +249,8 @@ public class ApplicationTest
             logger.info("Expected configurationUpdaterFlow flow wiretap count {} but found {}",
                 ModuleConfig.EVENT_GENERATOR_COUNT, wiretaps.getResultSize()
                        );
-            assertTrue("Expected configurationUpdaterFlow flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
-                    + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT
-                      );
+            assertEquals(wiretaps.getResultSize(), ModuleConfig.EVENT_GENERATOR_COUNT, "Expected configurationUpdaterFlow flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
+                    + " but found " + wiretaps.getResultSize());
 
         });
 
@@ -269,10 +265,8 @@ public class ApplicationTest
             logger.info("Expected jmsToDevNullFlow1 flow wiretap count {} but found {}",
                 ModuleConfig.EVENT_GENERATOR_COUNT, wiretaps.getResultSize()
                        );
-            assertTrue("Expected jmsToDevNullFlow1 flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
-                    + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT
-                      );
+            assertEquals(wiretaps.getResultSize(), ModuleConfig.EVENT_GENERATOR_COUNT, "Expected jmsToDevNullFlow1 flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
+                    + " but found " + wiretaps.getResultSize());
 
         });
 
@@ -287,10 +281,8 @@ public class ApplicationTest
             logger.info("Expected jmsToDevNullFlow2 flow wiretap count {} but found {}",
                 ModuleConfig.EVENT_GENERATOR_COUNT, wiretaps.getResultSize()
                        );
-            assertTrue("Expected jmsToDevNullFlow2 flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
-                    + " but found " + wiretaps.getResultSize(),
-                wiretaps.getResultSize() == ModuleConfig.EVENT_GENERATOR_COUNT
-                      );
+            assertEquals(wiretaps.getResultSize(), ModuleConfig.EVENT_GENERATOR_COUNT, "Expected jmsToDevNullFlow2 flow wiretap count " + ModuleConfig.EVENT_GENERATOR_COUNT
+                    + " but found " + wiretaps.getResultSize());
 
         });
 

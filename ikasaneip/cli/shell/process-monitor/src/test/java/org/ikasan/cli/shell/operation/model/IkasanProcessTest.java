@@ -40,8 +40,11 @@
  */
 package org.ikasan.cli.shell.operation.model;
 
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * This test class supports the <code>IkasanProcess</code> class.
@@ -57,19 +60,19 @@ class IkasanProcessTest
         IkasanProcess ikasanProcess2 = new IkasanProcess("type2", "name2", 123456, "user2");
         IkasanProcess ikasanProcess3 = new IkasanProcess("type", "name", 12345, "user");
 
-        Assert.assertTrue(ikasanProcess1.getName().equals(ikasanProcess3.getName()));
-        Assert.assertTrue(ikasanProcess1.getPid() == ikasanProcess3.getPid());
-        Assert.assertTrue(ikasanProcess1.getType().equals(ikasanProcess3.getType()));
-        Assert.assertTrue(ikasanProcess1.getUser().equals(ikasanProcess3.getUser()));
+        assertEquals(ikasanProcess1.getName(), ikasanProcess3.getName());
+        assertEquals(ikasanProcess1.getPid(), ikasanProcess3.getPid());
+        assertEquals(ikasanProcess1.getType(), ikasanProcess3.getType());
+        assertEquals(ikasanProcess1.getUser(), ikasanProcess3.getUser());
 
-        Assert.assertTrue(ikasanProcess1.equals(ikasanProcess3));
+        assertEquals(ikasanProcess1, ikasanProcess3);
 
-        Assert.assertFalse(ikasanProcess2.getName().equals(ikasanProcess3.getName()));
-        Assert.assertFalse(ikasanProcess2.getPid() == ikasanProcess3.getPid());
-        Assert.assertFalse(ikasanProcess2.getType().equals(ikasanProcess3.getType()));
-        Assert.assertFalse(ikasanProcess2.getUser().equals(ikasanProcess3.getUser()));
+        assertNotEquals(ikasanProcess2.getName(), ikasanProcess3.getName());
+        assertNotNull(ikasanProcess3.getPid());
+        assertNotEquals(ikasanProcess2.getType(), ikasanProcess3.getType());
+        assertNotEquals(ikasanProcess2.getUser(), ikasanProcess3.getUser());
 
-        Assert.assertFalse(ikasanProcess2.equals(ikasanProcess3));
+        assertNotEquals(ikasanProcess2, ikasanProcess3);
     }
 }
 

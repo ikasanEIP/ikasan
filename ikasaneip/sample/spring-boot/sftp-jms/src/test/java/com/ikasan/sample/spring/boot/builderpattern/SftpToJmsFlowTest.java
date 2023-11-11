@@ -39,7 +39,7 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
-
+import jakarta.annotation.Resource;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
@@ -48,17 +48,18 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.Rule;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;
@@ -69,14 +70,13 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This test Sftp To JMS Flow.
  *
  * @author Ikasan Development Team
  */
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -107,8 +107,8 @@ public class SftpToJmsFlowTest {
 
     public MessageListenerVerifier messageListenerVerifier;
 
-    @Before
-    public void setup() throws IOException {
+    @BeforeEach
+    void setup() throws IOException {
         FileTestUtil.deleteFile(new File(objectStoreDir));
         sftp.createDirectories("/source");
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
@@ -116,8 +116,8 @@ public class SftpToJmsFlowTest {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
 
-    @After
-    public void teardown() throws SQLException, IOException {
+    @AfterEach
+    void teardown() throws SQLException, IOException {
         messageListenerVerifier.stop();
         sftp.deleteAllFilesAndDirectories();
         String currentState = flowTestRule.getFlowState();
@@ -129,13 +129,13 @@ public class SftpToJmsFlowTest {
 
     }
 
-    @AfterClass
-    public static void shutdownBroker() {
+    @AfterAll
+    static void shutdownBroker() {
         new ActiveMqHelper().shutdownBroker();
     }
 
     @Test
-    public void test_file_download() throws Exception {
+    void test_file_download() throws Exception {
 
         // Upload data to fake SFTP
         sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());

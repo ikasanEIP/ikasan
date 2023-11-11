@@ -48,7 +48,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.X509TrustManager;
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.*;
 import java.net.*;
 import java.security.GeneralSecurityException;

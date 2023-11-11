@@ -2,22 +2,22 @@ package org.ikasan.component.endpoint.amazon.s3.validation;
 
 import com.amazonaws.util.CollectionUtils;
 import org.ikasan.spec.component.endpoint.EndpointException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BeanValidatorTest {
+class BeanValidatorTest {
 
 
     @Test
-    public void testViolations() {
+    void testViolations() {
         TestBean testBean = new TestBean();
         BeanValidator<TestBean> validator = new BeanValidator<>();
         try {
@@ -28,7 +28,7 @@ public class BeanValidatorTest {
     }
 
     @Test
-    public void noViolations() {
+    void noViolations() {
         TestBean testBean = new TestBean();
         testBean.setFirstName("firstName");
         testBean.setLastName("lastName");

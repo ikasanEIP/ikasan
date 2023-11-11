@@ -40,8 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module;
 
-import javax.annotation.Resource;
-
+import jakarta.annotation.Resource;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;

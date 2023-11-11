@@ -6,19 +6,16 @@ import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -31,29 +28,25 @@ import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {ContextInstanceApplication.class, MockedUserServiceTestConfigWithConverter.class})
 @EnableWebMvc
-public class ContextInstanceApplicationTest {
+class ContextInstanceApplicationTest {
 
     @MockBean
     private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
-
-    @Rule
-    public ExpectedException exceptionRule = ExpectedException.none();
 
     protected MockMvc mockMvc;
 
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
-    @Before
-    public void setUp() {
+    @BeforeEach
+    void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
         Set<String> contextInstanceIds = getContextInstanceIds();
         for (String contextInstanceId : contextInstanceIds) {
@@ -63,7 +56,7 @@ public class ContextInstanceApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void save_read_only_user_causes_access_denied_exception() throws Exception {
+    void save_read_only_user_causes_access_denied_exception() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
         String content = IOUtils.toString(getClass().getResourceAsStream("/data/job-context-instance-1.json"), StandardCharsets.UTF_8);
@@ -77,7 +70,7 @@ public class ContextInstanceApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void save() throws Exception {
+    void save() throws Exception {
 
         assertEquals(0, getContextInstanceIds().size());
 
@@ -94,7 +87,7 @@ public class ContextInstanceApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void remove_read_only_user_causes_access_denied_exception() throws Exception {
+    void remove_read_only_user_causes_access_denied_exception() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/remove?correlationId=COL_ID_1")
@@ -106,7 +99,7 @@ public class ContextInstanceApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void remove() throws Exception {
+    void remove() throws Exception {
         String CORRELATION_ID = "COL_ID_1";
         assertEquals(0, getContextInstanceIds().size());
 
@@ -124,7 +117,7 @@ public class ContextInstanceApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void remove_all_read_only_user_causes_access_denied_exception() throws Exception {
+    void remove_all_read_only_user_causes_access_denied_exception() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/removeAll")
@@ -136,7 +129,7 @@ public class ContextInstanceApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void removeAll() throws Exception {
+    void removeAll() throws Exception {
 
         MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/contextInstance/removeAll")
             .accept(MediaType.APPLICATION_JSON)

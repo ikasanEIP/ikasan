@@ -5,25 +5,26 @@ import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.flow.FlowEvent;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.transaction.SystemException;
-import javax.transaction.Transaction;
-import javax.transaction.TransactionManager;
-import javax.transaction.xa.XAException;
-import javax.transaction.xa.Xid;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.Transaction;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.xa.XAException;
+import jakarta.transaction.xa.Xid;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
-public class BigQueueProducerTest {
+class BigQueueProducerTest {
 
     @Mock
     private TransactionManager transactionManager;
@@ -34,23 +35,27 @@ public class BigQueueProducerTest {
     @Mock
     private Xid xid;
 
-    @Before
-    public void init() {
+    @BeforeEach
+    void init() {
         MockitoAnnotations.openMocks(this);
     }
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_big_queue_constructor() {
-        new BigQueueProducerLRCO(null, null);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_exception_null_transaction_manager_constructor() throws IOException {
-        new BigQueueProducerLRCO(new BigQueueImpl("./target", "test"), null);
+    @Test
+    void test_exception_null_big_queue_constructor() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BigQueueProducerLRCO(null, null);
+        });
     }
 
     @Test
-    public void test_producer_invoke_success() throws IOException, SystemException, XAException {
+    void test_exception_null_transaction_manager_constructor() throws IOException {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new BigQueueProducerLRCO(new BigQueueImpl("./target", "test"), null);
+        });
+    }
+
+    @Test
+    void test_producer_invoke_success() throws IOException, SystemException, XAException {
         when(transactionManager.getTransaction()).thenReturn(transaction);
         String messageId = UUID.randomUUID().toString();
         long createdTime = System.currentTimeMillis();

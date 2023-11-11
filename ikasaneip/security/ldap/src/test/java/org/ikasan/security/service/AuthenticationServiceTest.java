@@ -46,25 +46,27 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
+import jakarta.annotation.Resource;
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
-import org.junit.*;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * 
@@ -72,8 +74,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
+@SpringJUnitConfig(classes = {SecurityConfiguration.class, TestImportConfig.class})
 public class AuthenticationServiceTest
 {
 	private InMemoryDirectoryServer inMemoryDirectoryServer;
@@ -98,8 +99,9 @@ public class AuthenticationServiceTest
 	
 	@Resource
 	private AuthenticationProviderFactory xaAuthenticationProviderFactory;
-	
-	@Before public void setup() throws IOException, LDAPException
+
+    @BeforeEach
+    void setup() throws IOException, LDAPException
     {
         setupLdapServer();
 
@@ -237,28 +239,32 @@ public class AuthenticationServiceTest
 
 		inMemoryDirectoryServer.startListening();
 	}
-    
-    @Test (expected=IllegalArgumentException.class)
-	@DirtiesContext
-	public void testNullAuthenticationProviderFactoryOnConstruction() throws AuthenticationServiceException
-	{
-		new AuthenticationServiceImpl(null, this.xaSecurityService);
-	}
-    
-    @Test (expected=IllegalArgumentException.class)
-	@DirtiesContext
-	public void testNullSecurityServiceOnConstruction() throws AuthenticationServiceException
-	{
-		new AuthenticationServiceImpl(this.xaAuthenticationProviderFactory, null);
-	}
 
-	/**
-	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
-	 * @throws AuthenticationServiceException 
-	 */
-	@Test
-	@DirtiesContext
-	public void testLocalLogin() throws AuthenticationServiceException
+    @Test
+        @DirtiesContext
+    void testNullAuthenticationProviderFactoryOnConstruction() throws AuthenticationServiceException
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new AuthenticationServiceImpl(null, this.xaSecurityService);
+        });
+    }
+
+    @Test
+        @DirtiesContext
+    void testNullSecurityServiceOnConstruction() throws AuthenticationServiceException
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new AuthenticationServiceImpl(this.xaAuthenticationProviderFactory, null);
+        });
+    }
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException 
+     */
+    @Test
+        @DirtiesContext
+    void testLocalLogin() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
         authMethod.setOrder(1L);
@@ -268,29 +274,31 @@ public class AuthenticationServiceTest
 		
 		Authentication authentication = this.authenticationService.login("llogan", "password_local");
 		
-		Assert.assertNotNull(authentication);
+		assertNotNull(authentication);
 	}
-	
-	@Test (expected=AuthenticationServiceException.class)
-	@DirtiesContext
-	public void testLocalLoginFailBadPassword() throws AuthenticationServiceException
-	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
-        authMethod.setOrder(1L);
-		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
-		
-		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
-		
-		this.authenticationService.login("stewmi", "bad password");
-	}
-	
-	/**
-	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
-	 * @throws AuthenticationServiceException 
-	 */
-	@Test
-	@DirtiesContext
-	public void testLdapLoginFallingBackToLocal() throws AuthenticationServiceException
+
+    @Test
+        @DirtiesContext
+    void testLocalLoginFailBadPassword() throws AuthenticationServiceException
+    {
+        assertThrows(AuthenticationServiceException.class, () -> {
+            AuthenticationMethod authMethod = new AuthenticationMethod();
+            authMethod.setOrder(1L);
+            authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+
+            this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+            this.authenticationService.login("stewmi", "bad password");
+        });
+    }
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException 
+     */
+    @Test
+        @DirtiesContext
+    void testLdapLoginFallingBackToLocal() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
         authMethod.setOrder(1L);
@@ -300,50 +308,52 @@ public class AuthenticationServiceTest
 		
 		Authentication authentication = this.authenticationService.login("llogan", "password_local");
 		
-		Assert.assertNotNull(authentication);
+		assertNotNull(authentication);
 
-        Assert.assertEquals(120, authentication.getAuthorities().size());
+        assertEquals(120, authentication.getAuthorities().size());
         AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
         AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
         authentication.getAuthorities().forEach(grantedAuthority -> {
             if(grantedAuthority instanceof ModuleGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
                 containsModuleAuthorities.set(true);
             }
             else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
                 containsJobPlanAuthorities.set(true);
             }
         });
 
-        Assert.assertTrue(containsModuleAuthorities.get());
-        Assert.assertTrue(containsJobPlanAuthorities.get());
+        assertTrue(containsModuleAuthorities.get());
+        assertTrue(containsJobPlanAuthorities.get());
 	}
-	
-	/**
-	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
-	 * @throws AuthenticationServiceException 
-	 */
-	@Test (expected=AuthenticationServiceException.class)
-	@DirtiesContext
-	public void testLdapLoginFallingBackToLocalFailBadPassword() throws AuthenticationServiceException
-	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
-		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
-        authMethod.setOrder(1L);
-		
-		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
-		
-		this.authenticationService.login("stewmi", "bad password");
-	}
-	
-	/**
-	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
-	 * @throws AuthenticationServiceException 
-	 */
-	@Test
-	@DirtiesContext
-	public void testLdapLogin() throws AuthenticationServiceException
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException 
+     */
+    @Test
+        @DirtiesContext
+    void testLdapLoginFallingBackToLocalFailBadPassword() throws AuthenticationServiceException
+    {
+        assertThrows(AuthenticationServiceException.class, () -> {
+            AuthenticationMethod authMethod = new AuthenticationMethod();
+            authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+            authMethod.setOrder(1L);
+
+            this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+            this.authenticationService.login("stewmi", "bad password");
+        });
+    }
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException 
+     */
+    @Test
+        @DirtiesContext
+    void testLdapLogin() throws AuthenticationServiceException
 	{
 		AuthenticationMethod authMethod = new AuthenticationMethod();
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
@@ -359,24 +369,24 @@ public class AuthenticationServiceTest
 		
 		Authentication authentication = this.authenticationService.login("llogan", "password");
 		
-		Assert.assertNotNull(authentication);
+		assertNotNull(authentication);
 
-        Assert.assertEquals(120, authentication.getAuthorities().size());
+        assertEquals(120, authentication.getAuthorities().size());
         AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
         AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
         authentication.getAuthorities().forEach(grantedAuthority -> {
             if(grantedAuthority instanceof ModuleGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
                 containsModuleAuthorities.set(true);
             }
             else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
                 containsJobPlanAuthorities.set(true);
             }
         });
 
-        Assert.assertTrue(containsModuleAuthorities.get());
-        Assert.assertTrue(containsJobPlanAuthorities.get());
+        assertTrue(containsModuleAuthorities.get());
+        assertTrue(containsJobPlanAuthorities.get());
 	}
 
     /**
@@ -384,8 +394,8 @@ public class AuthenticationServiceTest
      * @throws AuthenticationServiceException
      */
     @Test
-    @DirtiesContext
-    public void testLdapLoginMultipleAuthMethods() throws AuthenticationServiceException
+        @DirtiesContext
+    void testLdapLoginMultipleAuthMethods() throws AuthenticationServiceException
     {
         AuthenticationMethod authMethod = new AuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
@@ -415,24 +425,24 @@ public class AuthenticationServiceTest
 
         Authentication authentication = this.authenticationService.login("llogan", "password");
 
-        Assert.assertNotNull(authentication);
+        assertNotNull(authentication);
 
-        Assert.assertEquals(120, authentication.getAuthorities().size());
+        assertEquals(120, authentication.getAuthorities().size());
         AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
         AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
         authentication.getAuthorities().forEach(grantedAuthority -> {
             if(grantedAuthority instanceof ModuleGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
                 containsModuleAuthorities.set(true);
             }
             else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
                 containsJobPlanAuthorities.set(true);
             }
         });
 
-        Assert.assertTrue(containsModuleAuthorities.get());
-        Assert.assertTrue(containsJobPlanAuthorities.get());
+        assertTrue(containsModuleAuthorities.get());
+        assertTrue(containsJobPlanAuthorities.get());
     }
 
 
@@ -441,8 +451,8 @@ public class AuthenticationServiceTest
      * @throws AuthenticationServiceException
      */
     @Test
-    @DirtiesContext
-    public void testLdapLoginMultipleAuthMethodsReverseOrderOfAuthMethods() throws AuthenticationServiceException
+        @DirtiesContext
+    void testLdapLoginMultipleAuthMethodsReverseOrderOfAuthMethods() throws AuthenticationServiceException
     {
         AuthenticationMethod authMethod = new AuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
@@ -472,51 +482,53 @@ public class AuthenticationServiceTest
 
         Authentication authentication = this.authenticationService.login("llogan", "password");
 
-        Assert.assertNotNull(authentication);
+        assertNotNull(authentication);
 
-        Assert.assertEquals(120, authentication.getAuthorities().size());
+        assertEquals(120, authentication.getAuthorities().size());
         AtomicBoolean containsModuleAuthorities = new AtomicBoolean(false);
         AtomicBoolean containsJobPlanAuthorities = new AtomicBoolean(false);
         authentication.getAuthorities().forEach(grantedAuthority -> {
             if(grantedAuthority instanceof ModuleGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("MODULE:"));
                 containsModuleAuthorities.set(true);
             }
             else if(grantedAuthority instanceof JobPlanGrantedAuthority) {
-                Assert.assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
+                assertTrue(grantedAuthority.getAuthority().startsWith("JOB_PLAN:"));
                 containsJobPlanAuthorities.set(true);
             }
         });
 
-        Assert.assertTrue(containsModuleAuthorities.get());
-        Assert.assertTrue(containsJobPlanAuthorities.get());
+        assertTrue(containsModuleAuthorities.get());
+        assertTrue(containsJobPlanAuthorities.get());
     }
 
-	
-	/**
-	 * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
-	 * @throws AuthenticationServiceException 
-	 */
-	@Test(expected=AuthenticationServiceException.class)
-	@DirtiesContext
-	public void testLdapLoginFailBadPassword() throws AuthenticationServiceException
-	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
-        authMethod.setOrder(1L);
-		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
-		authMethod.setLdapServerUrl(ldapServerUrl);
-        authMethod.setLdapBindUserDn("cn=Directory Manager");
-        authMethod.setLdapBindUserPassword("password");
-        authMethod.setLdapUserSearchBaseDn("ou=people,ou=IL-Sunset,dc=slidev,dc=org");
-        authMethod.setLdapUserSearchFilter("(uid={0})");
-		
-		this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
-		
-		this.authenticationService.login("llogan", "bad password");
-	}
-	
-	@After
-	public void teardownLdapServer()
+
+    /**
+     * Test method for {@link org.ikasan.security.service.AuthenticationServiceImpl#login(java.lang.String, java.lang.String)}.
+     * @throws AuthenticationServiceException 
+     */
+    @Test
+        @DirtiesContext
+    void testLdapLoginFailBadPassword() throws AuthenticationServiceException
+    {
+        assertThrows(AuthenticationServiceException.class, () -> {
+            AuthenticationMethod authMethod = new AuthenticationMethod();
+            authMethod.setOrder(1L);
+            authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+            authMethod.setLdapServerUrl(ldapServerUrl);
+            authMethod.setLdapBindUserDn("cn=Directory Manager");
+            authMethod.setLdapBindUserPassword("password");
+            authMethod.setLdapUserSearchBaseDn("ou=people,ou=IL-Sunset,dc=slidev,dc=org");
+            authMethod.setLdapUserSearchFilter("(uid={0})");
+
+            this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+            this.authenticationService.login("llogan", "bad password");
+        });
+    }
+
+    @AfterEach
+    void teardownLdapServer()
 	{
 		// Disconnect from the server and cause the server to shut down.
 

@@ -57,22 +57,22 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.Sequence;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Test class for the ChunkingRetrieveFileCommand
  * 
  * @author Ikasan Development Team
  */
-public class ChunkingRetrieveFileCommandTest
+class ChunkingRetrieveFileCommandTest
 {
 
     /**
@@ -84,7 +84,7 @@ public class ChunkingRetrieveFileCommandTest
      * @throws ClientCommandLsException Exception if we can't list a a directory
      */
     @Test
-    public void testExecute() throws ResourceException, ClientCommandGetException, 
+    void testExecute() throws ResourceException, ClientCommandGetException,
         URISyntaxException, ClientCommandLsException
     {
         Mockery context = new Mockery()
@@ -136,8 +136,8 @@ public class ChunkingRetrieveFileCommandTest
         ChunkingRetrieveFileCommand command = new ChunkingRetrieveFileCommand(dao, null, true,".sent", false, null, fileChunkDao,
             (1024 * 1024), false);
 
-        assertEquals("command state should be initialised", AbstractTransactionalResourceCommand.INITIALISED_STATE
-            .getName(), command.getState());
+        assertEquals(AbstractTransactionalResourceCommand.INITIALISED_STATE
+            .getName(), command.getState(), "command state should be initialised");
         // create the ExecutionContext
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.put(ExecutionContext.RETRIEVABLE_FILE_PARAM, entry);
@@ -149,10 +149,11 @@ public class ChunkingRetrieveFileCommandTest
         // execute the command
         ExecutionOutput output = command.execute(client, new XidImpl(new byte[0], new byte[0], 0));
         Object result = output.getResult();
-        assertNotNull("result should not be null", result);
-        assertTrue("result should be file a FileChunkHeader", result instanceof FileChunkHeader);
-        assertEquals("command state should be executed", AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(),
-            command.getState());
+        assertNotNull(result, "result should not be null");
+        assertTrue(result instanceof FileChunkHeader, "result should be file a FileChunkHeader");
+        assertEquals(AbstractTransactionalResourceCommand.EXECUTED_STATE.getName(),
+            command.getState(),
+            "command state should be executed");
     }
 
     /**

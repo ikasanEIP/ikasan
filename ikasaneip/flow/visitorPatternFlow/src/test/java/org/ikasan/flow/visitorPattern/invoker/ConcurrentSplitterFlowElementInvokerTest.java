@@ -44,9 +44,9 @@ package org.ikasan.flow.visitorPattern.invoker;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.flow.*;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
 import java.util.ArrayList;
@@ -57,7 +57,7 @@ import java.util.concurrent.Executors;
 /**
  * Supports testing of the SplitterFlowElementInvoker
  */
-public class ConcurrentSplitterFlowElementInvokerTest
+class ConcurrentSplitterFlowElementInvokerTest
 {
     private FlowEventListener flowEventListener = Mockito.mock(FlowEventListener.class, "flowEventListener");
 
@@ -96,19 +96,19 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
     private ExecutorService executorService;
 
-    @Before
-    public void setup(){
+    @BeforeEach
+    void setup(){
          executorService = Executors.newFixedThreadPool(1);
     }
 
-    @After
-    public void shutdown(){
+    @AfterEach
+    void shutdown(){
         executorService.shutdownNow();
     }
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution() throws Exception
+    void test_splitter_flowElementInvoker_one_payload_successful_thread_execution() throws Exception
     {
         String payload = "one";
         final List<String> payloads = new ArrayList<>();
@@ -161,7 +161,7 @@ public class ConcurrentSplitterFlowElementInvokerTest
 
     @Test
     @SuppressWarnings("unchecked")
-    public void test_splitter_flowElementInvoker_one_payload_successful_thread_execution_invocation_aware()
+    void test_splitter_flowElementInvoker_one_payload_successful_thread_execution_invocation_aware()
         throws Exception
     {
         String payload = "one";

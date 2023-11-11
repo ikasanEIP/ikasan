@@ -40,24 +40,24 @@
  */
 package org.ikasan.connector.basefiletransfer.net;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Tests OlderFirstClientListEntryComparator
  */
-public class OlderFirstClientListEntryComparatorListTest
+class OlderFirstClientListEntryComparatorListTest
 {
     private OlderFirstClientListEntryComparator uut = new OlderFirstClientListEntryComparator();
 
     @Test
-    public void compare_when_firstfile_is_older(){
+    void compare_when_firstfile_is_older(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1438155532);
         firstClientListEntry.setName("A");
@@ -78,7 +78,7 @@ public class OlderFirstClientListEntryComparatorListTest
     }
 
     @Test
-    public void compare_when_secondfile_is_older(){
+    void compare_when_secondfile_is_older(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1439155532);
         firstClientListEntry.setName("A");
@@ -99,7 +99,7 @@ public class OlderFirstClientListEntryComparatorListTest
     }
 
     @Test
-    public void compare_when_files_have_same_age(){
+    void compare_when_files_have_same_age(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1439155532);
         firstClientListEntry.setName("A");
@@ -120,7 +120,7 @@ public class OlderFirstClientListEntryComparatorListTest
     }
 
     @Test
-    public void compare_when_files_have_same_age_and_same_name(){
+    void compare_when_files_have_same_age_and_same_name(){
         ClientListEntry firstClientListEntry =new ClientListEntry();
         firstClientListEntry.setMtime(1439155532);
         firstClientListEntry.setName("A");

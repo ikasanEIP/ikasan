@@ -41,7 +41,10 @@ package org.ikasan.component.endpoint.email.producer;
  */
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
-import org.junit.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.Configured;
@@ -50,10 +53,10 @@ import org.springframework.util.SocketUtils;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
-import javax.mail.BodyPart;
-import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimeMultipart;
+import jakarta.mail.BodyPart;
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMultipart;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -61,12 +64,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Test class for JmsMessageConverter.
  *
  * @author Ikasan Development Team
  */
-public class EmailProducerTest {
+class EmailProducerTest {
 
     String sender = "ikasanUnitTest@ikasan.org";
     String ccReceiver = "ccRecipient1@ikasan.org";
@@ -83,8 +89,8 @@ public class EmailProducerTest {
      */
     Wiser wiser;
 
-    @Before
-    public void setup() {
+    @BeforeEach
+    void setup() {
         wiser = new Wiser();
         int port = SocketUtils.findAvailableTcpPort();
         wiser.setPort(port);
@@ -92,13 +98,13 @@ public class EmailProducerTest {
         wiser.start();
     }
 
-    @After
-    public void teardown() {
+    @AfterEach
+    void teardown() {
         wiser.stop();
     }
 
     @Test
-    public void test_successful_email_withoutAttachment() throws MessagingException, IOException {
+    void test_successful_email_withoutAttachment() throws MessagingException, IOException {
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(false, null);
         emailProducerConfiguration.setMailSmtpPort(wiser.getServer().getPort());
 
@@ -109,22 +115,22 @@ public class EmailProducerTest {
         emailProducer.invoke(getEmailPayload(false,null));
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 3);
+        assertEquals(3, messages.size(), "Should be three messages - one per addressee");
         for (WiserMessage message : wiser.getMessages()) {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String) bodyPart.getContent();
-            Assert.assertTrue("The email content should be empty", content.isEmpty());
-            Assert.assertTrue("Should fild email format as \"text/plain\"", bodyPart.getContentType().contains("text/plain"));
+            assertTrue(content.isEmpty(), "The email content should be empty");
+            assertTrue(bodyPart.getContentType().contains("text/plain"), "Should fild email format as \"text/plain\"");
         }
     }
 
     @Test
-    public void test_successful_email_contentFromConfig() throws MessagingException, IOException {
+    void test_successful_email_contentFromConfig() throws MessagingException, IOException {
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(false, "This content is from config");
         emailProducerConfiguration.setMailSmtpPort(wiser.getServer().getPort());
 
@@ -135,22 +141,22 @@ public class EmailProducerTest {
         emailProducer.invoke(getEmailPayload(false,null));
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 3);
+        assertEquals(3, messages.size(), "Should be three messages - one per addressee");
         for (WiserMessage message : wiser.getMessages()) {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String) bodyPart.getContent();
-            Assert.assertEquals("The email content should be from config", "This content is from config", content);
-            Assert.assertTrue("Should find email format as \"text/plain\"", bodyPart.getContentType().contains("text/plain"));
+            assertEquals("This content is from config", content, "The email content should be from config");
+            assertTrue(bodyPart.getContentType().contains("text/plain"), "Should find email format as \"text/plain\"");
         }
     }
 
     @Test
-    public void test_successful_email_contentFromPayload() throws MessagingException, IOException {
+    void test_successful_email_contentFromPayload() throws MessagingException, IOException {
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(false, "This content is from config");
         emailProducerConfiguration.setMailSmtpPort(wiser.getServer().getPort());
 
@@ -161,23 +167,23 @@ public class EmailProducerTest {
         emailProducer.invoke(getEmailPayload(false,"The content is from payload"));
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 3);
+        assertEquals(3, messages.size(), "Should be three messages - one per addressee");
         for (WiserMessage message : wiser.getMessages()) {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-            Assert.assertTrue("should be only 1 bodypart", mimeMultipart.getCount() == 1);
+            assertEquals(1, mimeMultipart.getCount(), "should be only 1 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String) bodyPart.getContent();
-            Assert.assertEquals("The email content should be from payload", "The content is from payload", content );
-            Assert.assertTrue("Should find email format as \"text/plain\"", bodyPart.getContentType().contains("text/plain"));
+            assertEquals("The content is from payload", content , "The email content should be from payload");
+            assertTrue(bodyPart.getContentType().contains("text/plain"), "Should find email format as \"text/plain\"");
         }
     }
 
 
     @Test
-    public void test_successful_email_withAttachment() throws MessagingException, IOException {
+    void test_successful_email_withAttachment() throws MessagingException, IOException {
 
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(true, null);
         emailProducerConfiguration.setMailSmtpPort(wiser.getServer().getPort());
@@ -189,26 +195,26 @@ public class EmailProducerTest {
         emailProducer.invoke(getEmailPayload(true, null));
         List<WiserMessage> messages = wiser.getMessages();
 
-        Assert.assertTrue("Should be three messages - one per addressee", messages.size() == 3);
+        assertEquals(3, messages.size(), "Should be three messages - one per addressee");
         for (WiserMessage message : wiser.getMessages()) {
-            Assert.assertTrue("sender should be " + sender, sender.equals(message.getEnvelopeSender()));
+            assertEquals(sender, message.getEnvelopeSender(), "sender should be " + sender);
 
             MimeMessage mimeMessage = message.getMimeMessage();
             MimeMultipart mimeMultipart = (MimeMultipart) mimeMessage.getContent();
-            Assert.assertTrue("should be 2 bodypart", mimeMultipart.getCount() == 2);
+            assertEquals(2, mimeMultipart.getCount(), "should be 2 bodypart");
             BodyPart bodyPart = mimeMultipart.getBodyPart(0);
             String content = (String) bodyPart.getContent();
-            Assert.assertTrue("The email content should be empty", content.isEmpty());  BodyPart attachment = mimeMultipart.getBodyPart(1);
-            Assert.assertEquals("Check attachment file name", "testAttachment", attachment.getFileName());
-            Assert.assertTrue("Check file content", IOUtils.toString(attachment.getDataHandler().getDataSource().getInputStream()).contains("1997,Ford,E350"));
-            Assert.assertTrue("Should find email format as \"text/plain\"", bodyPart.getContentType().contains("text/plain"));
+            assertTrue(content.isEmpty(), "The email content should be empty");  BodyPart attachment = mimeMultipart.getBodyPart(1);
+            assertEquals("testAttachment", attachment.getFileName(), "Check attachment file name");
+            assertTrue(IOUtils.toString(attachment.getDataHandler().getDataSource().getInputStream()).contains("1997,Ford,E350"), "Check file content");
+            assertTrue(bodyPart.getContentType().contains("text/plain"), "Should find email format as \"text/plain\"");
 
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
-    public void testMailServerFailure()throws IOException{
+    void testMailServerFailure() throws IOException{
 
         EmailProducerConfiguration emailProducerConfiguration = getConfiguration(true, null);
         emailProducerConfiguration.setMailSmtpPort(wiser.getServer().getPort());
@@ -221,9 +227,9 @@ public class EmailProducerTest {
 
         try {
             emailProducer.invoke(getEmailPayload(false, null));
-            Assert.assertTrue("Expecting mail server connection issue", false);
+            assertTrue(false, "Expecting mail server connection issue");
         }catch(EndpointException e){
-            Assert.assertTrue("Expecting mail server connection issue", e.getMessage().contains("Could not connect to SMTP host"));
+            assertTrue(e.getMessage().contains("Could not connect to SMTP host"), "Expecting mail server connection issue");
         }
     }
 

@@ -112,38 +112,37 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         try
         {
             long now = System.currentTimeMillis();
-            logger.info(String.format("Provisioning %s jobs for agent %s", jobs.size(), this.moduleName));
+            logger.info("Provisioning %s jobs for agent %s".formatted(jobs.size(), this.moduleName));
 
             Module<Flow> module = this.moduleService.getModule(moduleName);
-            logger.info(String.format("Deactivating module [%s]", this.moduleName));
+            logger.info("Deactivating module [%s]".formatted(this.moduleName));
             moduleActivator.deactivate(module);
-            logger.info(String.format("Deactivated module [%s]", this.moduleName));
+            logger.info("Deactivated module [%s]".formatted(this.moduleName));
 
             ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
             ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
 
-            logger.info(String.format("Updating module configuration [%s]", this.moduleName));
+            logger.info("Updating module configuration [%s]".formatted(this.moduleName));
             this.updateInitialModuleConfiguration(jobs, configuredModuleConfiguration);
             this.configurationService.update(configuredModule);
-            logger.info(String.format("Updated module configuration [%s]", this.moduleName));
+            logger.info("Updated module configuration [%s]".formatted(this.moduleName));
 
-            logger.info(String.format("Activating module [%s]", this.moduleName));
+            logger.info("Activating module [%s]".formatted(this.moduleName));
             moduleActivator.activate(module);
-            logger.info(String.format("Activated module [%s]", this.moduleName));
+            logger.info("Activated module [%s]".formatted(this.moduleName));
 
-            logger.info(String.format("Configuring components [%s]", this.moduleName));
+            logger.info("Configuring components [%s]".formatted(this.moduleName));
             this.configureComponents(jobs, module);
-            logger.info(String.format("Configured components [%s]", this.moduleName));
+            logger.info("Configured components [%s]".formatted(this.moduleName));
 
-            logger.info(String.format("Updating startup types [%s]", this.moduleName));
+            logger.info("Updating startup types [%s]".formatted(this.moduleName));
             this.updateModuleConfigurationStartupType(jobs, configuredModuleConfiguration);
             this.configurationService.update(configuredModule);
-            logger.info(String.format("Updated startup types [%s]", this.moduleName));
+            logger.info("Updated startup types [%s]".formatted(this.moduleName));
 
-            logger.info(String.format("Starting jobs [%s]", this.moduleName));
+            logger.info("Starting jobs [%s]".formatted(this.moduleName));
             this.startJobs(jobs);
-            logger.info(String.format("Finished provisioning %s jobs. Time taken %s milliseconds."
-                , jobs.size(), System.currentTimeMillis()-now));
+            logger.info("Finished provisioning %s jobs. Time taken %s milliseconds.".formatted(jobs.size(), System.currentTimeMillis() - now));
         }
         catch (Exception e)
         {
@@ -154,25 +153,25 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
     @Override
     public void removeJobs(String contextName) {
-        logger.info(String.format("Removing jobs for context[%s].", contextName));
+        logger.info("Removing jobs for context[%s].".formatted(contextName));
         Module<Flow> module = this.moduleService.getModule(moduleName);
         ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
         ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
 
         this.deleteComponentConfigurations(module.getFlows(), configuredModuleConfiguration);
 
-        logger.info(String.format("Deactivating module [%s]", this.moduleName));
+        logger.info("Deactivating module [%s]".formatted(this.moduleName));
         moduleActivator.deactivate(module);
-        logger.info(String.format("Deactivated module [%s]", this.moduleName));
+        logger.info("Deactivated module [%s]".formatted(this.moduleName));
 
         this.clearFlowConfig(configuredModuleConfiguration, contextName);
         this.configurationService.update(configuredModule);
 
-        logger.info(String.format("Activating module [%s]", this.moduleName));
+        logger.info("Activating module [%s]".formatted(this.moduleName));
         moduleActivator.activate(module);
-        logger.info(String.format("Activated module [%s]", this.moduleName));
+        logger.info("Activated module [%s]".formatted(this.moduleName));
 
-        logger.info(String.format("Finished removing jobs for context[%s].", contextName));
+        logger.info("Finished removing jobs for context[%s].".formatted(contextName));
     }
 
     /**
@@ -187,8 +186,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         clearFlowConfig(configuredModuleConfiguration, contextName);
 
         jobs.forEach(job -> {
-            if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
-                SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
+            if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration configuration) {
                 configuration.getFlowContextMap().put(job.getAggregateJobName(), job.getContextName());
             }
             if(job instanceof FileEventDrivenJob) {
@@ -213,8 +211,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     }
 
     private void clearFlowConfig(ConfiguredModuleConfiguration configuredModuleConfiguration, String contextName) {
-        if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
-            SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
+        if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration configuration) {
 
             List<String> flowsInThatContext = new ArrayList<>();
             for (String jobName : configuration.getFlowContextMap().keySet()) {
@@ -274,8 +271,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param configuredModuleConfiguration
      */
     private void deleteComponentConfigurations(List<Flow> flows, ConfiguredModuleConfiguration configuredModuleConfiguration) {
-        if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
-            SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
+        if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration configuration) {
             flows.forEach(flow -> {
                 if(configuration.getFlowDefinitionProfiles().containsKey(flow.getName())) {
                     if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.FILE)) {
@@ -620,25 +616,23 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             if (property != null) {
                 if (property instanceof String) {
                     return "'" + property + "'";
-                } else if (property instanceof List) {
+                } else if (property instanceof List list) {
                     // assumes its a list of strings so far this is the case
                     StringBuilder builder = new StringBuilder();
                     builder.append("{");
                     int i = 0;
-                    for (Object object : ((List<?>) property)) {
+                    for (Object object :list) {
                         i++;
                         builder.append("'" + object + "'");
-                        if (((List<?>) property).size() != i) {
+                        if (list.size() != i) {
                             builder.append(",");
                         }
                     }
                     builder.append("}");
                     return builder.toString();
 
-                } else if (property instanceof Map) {
+                } else if (property instanceof Map map) {
                     int i = 0;
-                    // assumes the map is a map of string to string so far this is the case
-                    Map map = (Map) property;
                     StringBuilder builder = new StringBuilder();
                     builder.append("{");
                     for (Object key : map.keySet()) {
@@ -646,7 +640,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                         builder.append("'" + key + "'");
                         builder.append(":");
                         builder.append("'" + map.get(key) + "'");
-                        if (((Map) property).size() != i) {
+                        if (map.size() != i) {
                             builder.append(",");
                         }
                     }
@@ -657,7 +651,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 }
             }
         } catch (Exception e) {
-            logger.warn(String.format("Could not get field name [%s] on class [%s]. Error [%s]",
+            logger.warn("Could not get field name [%s] on class [%s]. Error [%s]".formatted(
                 fieldName, clazz.getClass().getName(), e.getMessage()));
         }
 

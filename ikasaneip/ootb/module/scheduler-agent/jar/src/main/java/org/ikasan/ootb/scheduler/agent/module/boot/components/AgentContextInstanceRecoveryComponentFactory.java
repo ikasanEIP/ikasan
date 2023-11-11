@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import jakarta.annotation.Resource;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
 import org.ikasan.spec.module.ModuleService;
@@ -48,8 +49,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-
-import javax.annotation.Resource;
 
 /**
  * Agent context instances recovery component factory.

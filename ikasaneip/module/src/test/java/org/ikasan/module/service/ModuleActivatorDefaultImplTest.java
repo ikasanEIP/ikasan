@@ -56,20 +56,22 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 /**
  * Test cases for ModuleActivatorImpl
  *
  * @author Ikasan Development Team
  */
-public class ModuleActivatorDefaultImplTest
+class ModuleActivatorDefaultImplTest
 {
     private Mockery mockery = new Mockery() {{
         setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
@@ -100,36 +102,44 @@ public class ModuleActivatorDefaultImplTest
      */
     ModuleActivator moduleActivator;
 
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_configurationService()
+    @Test
+    void test_constructor_null_configurationService()
     {
-        new ModuleActivatorDefaultImpl(null, startupControlDao, dashboardRestService,
-            dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_startupControlDao()
-    {
-        new ModuleActivatorDefaultImpl(configurationService, null, dashboardRestService,
-            dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_moduleDashboardRestService()
-    {
-        new ModuleActivatorDefaultImpl(configurationService, startupControlDao, null,
-            dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
-    }
-
-    @Test(expected = IllegalArgumentException.class)
-    public void test_constructor_null_configurationDashboardRestService()
-    {
-        new ModuleActivatorDefaultImpl(configurationService, startupControlDao, dashboardRestService,
-            null, bulkStartupTypeSetupService, wiretapTriggerSetupService);
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleActivatorDefaultImpl(null, startupControlDao, dashboardRestService,
+                dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
+        });
     }
 
     @Test
-    public void test_successful_activate_existing_startupControl()
+    void test_constructor_null_startupControlDao()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleActivatorDefaultImpl(configurationService, null, dashboardRestService,
+                dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
+        });
+    }
+
+    @Test
+    void test_constructor_null_moduleDashboardRestService()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleActivatorDefaultImpl(configurationService, startupControlDao, null,
+                dashboardRestService, bulkStartupTypeSetupService, wiretapTriggerSetupService);
+        });
+    }
+
+    @Test
+    void test_constructor_null_configurationDashboardRestService()
+    {
+        assertThrows(IllegalArgumentException.class, () -> {
+            new ModuleActivatorDefaultImpl(configurationService, startupControlDao, dashboardRestService,
+                null, bulkStartupTypeSetupService, wiretapTriggerSetupService);
+        });
+    }
+
+    @Test
+    void test_successful_activate_existing_startupControl()
     {
         List flowsEmpty = new ArrayList();
 
@@ -197,12 +207,12 @@ public class ModuleActivatorDefaultImplTest
             }});
 
         moduleActivator.activate(module);
-        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        assertTrue(moduleActivator.isActivated(module) , "module isActivated should return true");
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_activate_no_existing_startupControl()
+    void test_successful_activate_no_existing_startupControl()
     {
         List flowsEmpty = new ArrayList();
 
@@ -273,12 +283,12 @@ public class ModuleActivatorDefaultImplTest
             }});
 
         moduleActivator.activate(module);
-        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        assertTrue(moduleActivator.isActivated(module) , "module isActivated should return true");
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_activate_no_existing_startupControl_not_configured_resource()
+    void test_successful_activate_no_existing_startupControl_not_configured_resource()
     {
         List flowsEmpty = new ArrayList();
 
@@ -336,12 +346,12 @@ public class ModuleActivatorDefaultImplTest
             }});
 
         moduleActivator.activate(module);
-        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        assertTrue(moduleActivator.isActivated(module) , "module isActivated should return true");
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_deactivate_activate_with_stopped_flow()
+    void test_successful_deactivate_activate_with_stopped_flow()
     {
         List flowsEmpty = new ArrayList();
 
@@ -423,12 +433,12 @@ public class ModuleActivatorDefaultImplTest
 
         moduleActivator.deactivate(module);
         moduleActivator.activate(module);
-        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        assertTrue(moduleActivator.isActivated(module) , "module isActivated should return true");
         mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_successful_deactivate_activate_with_running_flow()
+    void test_successful_deactivate_activate_with_running_flow()
     {
         List flowsEmpty = new ArrayList();
 
@@ -503,7 +513,7 @@ public class ModuleActivatorDefaultImplTest
 
         moduleActivator.deactivate(module);
         moduleActivator.activate(module);
-        Assert.assertTrue("module isActivated should return true", moduleActivator.isActivated(module) );
+        assertTrue(moduleActivator.isActivated(module) , "module isActivated should return true");
         mockery.assertIsSatisfied();
     }
 

@@ -40,6 +40,7 @@
  */
 package org.ikasan.configurationService.service;
 
+import jakarta.annotation.Resource;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.model.*;
 import org.ikasan.spec.configuration.Configuration;
@@ -49,28 +50,25 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.junit.Assert;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Pure Java based sample of Ikasan EIP for sourcing prices from a tech endpoint.
  * 
  * @author Ikasan Development Team
  */
-@RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(classes = {TestConfiguration.class})
-public class ConfiguredResourceConfigurationManagementTest
+@SpringJUnitConfig(classes = {TestConfiguration.class})
+class ConfiguredResourceConfigurationManagementTest
 {
     /**
      * Mockery for mocking concrete classes
@@ -89,35 +87,37 @@ public class ConfiguredResourceConfigurationManagementTest
     ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockedConfiguredResource");
 
     @Test
-    public void test_instantiation()
+    void test_instantiation()
     {
-        Assert.assertTrue("configurationManagement cannot be 'null'", configurationManagement != null);
+        assertTrue(configurationManagement != null, "configurationManagement cannot be 'null'");
     }
 
     /**
      * Test the failed creation of a configuration through the configurationManagement contract implementation.
      * This fails as there is no instance of a configuration class registered with the configuredResource.
      */
-    @Test (expected = RuntimeException.class)
-    @DirtiesContext
-    public void test_failed_configurationManagement_create_configuration_not_configuration_instance_on_configuredResource()
+    @Test
+        @DirtiesContext
+    void test_failed_configurationManagement_create_configuration_not_configuration_instance_on_configuredResource()
     {
-        // expectations
-        mockery.checking(new Expectations()
-        {
+        assertThrows(RuntimeException.class, () -> {
+            // expectations
+            mockery.checking(new Expectations()
             {
-                // once the configuration instance
-                one(configuredResource).getConfiguration();
-                will(returnValue(null));
+                {
+                    // once the configuration instance
+                    one(configuredResource).getConfiguration();
+                    will(returnValue(null));
 
-                // get resourceId for adding to the exception
-                exactly(2).of(configuredResource).getConfiguredResourceId();
-                will(returnValue("configuredResourceId"));
-            }
+                    // get resourceId for adding to the exception
+                    exactly(2).of(configuredResource).getConfiguredResourceId();
+                    will(returnValue("configuredResourceId"));
+                }
+            });
+
+            configurationManagement.createConfiguration(configuredResource);
+            this.mockery.assertIsSatisfied();
         });
-
-        configurationManagement.createConfiguration(configuredResource);
-        this.mockery.assertIsSatisfied();
     }
 
 
@@ -125,8 +125,8 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful creation of a dao through the configurationManagement contract implementation.
      */
     @Test
-    @DirtiesContext
-    public void test_configurationManagement_create_configuration()
+        @DirtiesContext
+    void test_configurationManagement_create_configuration()
     {
         final SampleConfiguration runtimeConfiguration = new SampleConfiguration();
 
@@ -145,7 +145,7 @@ public class ConfiguredResourceConfigurationManagementTest
         });
 
         Object configuration = configurationManagement.createConfiguration(configuredResource);
-        Assert.assertTrue(configuration instanceof Configuration);
+        assertTrue(configuration instanceof Configuration);
         this.mockery.assertIsSatisfied();
     }
 
@@ -153,8 +153,8 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful save of a mixed based dao through the configurationManagement contract implementation.
      */
     @Test
-    @DirtiesContext
-    public void test_configurationManagement_save_mixed_based_configuration()
+        @DirtiesContext
+    void test_configurationManagement_save_mixed_based_configuration()
     {
         Configuration<List<ConfigurationParameter>> configuration =
                 new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
@@ -182,7 +182,7 @@ public class ConfiguredResourceConfigurationManagementTest
      * Test the successful delete of a dao through the configurationManagement contract implementation.
      */
     @Test
-    public void test_configurationManagement_delete_configuration()
+    void test_configurationManagement_delete_configuration()
     {
         Configuration<List<ConfigurationParameter>> configuration =
                 new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
