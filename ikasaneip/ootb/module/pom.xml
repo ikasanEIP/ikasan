@@ -52,7 +52,7 @@
     <name>Ikasan Out of the Box Modules</name>
 
     <modules>
-       <module>scheduler-agent</module>
+<!--       <module>scheduler-agent</module>-->
     </modules>
 
 </project>

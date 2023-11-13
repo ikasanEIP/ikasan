@@ -252,24 +252,25 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
-        <version.logback.core>1.2.11</version.logback.core>
+        <version.logback.core>1.2.12</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
-        <version.org.hibernate>5.4.24.Final</version.org.hibernate>
-        <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.3.18</version.org.springframework>
-        <version.org.springframework.security>5.3.13.RELEASE</version.org.springframework.security>
+        <version.org.hibernate>5.6.15.Final</version.org.hibernate>
+        <version.org.hibernate-validator>6.2.5.Final</version.org.hibernate-validator>
+        <version.org.springframework>5.3.30</version.org.springframework>
+        <version.org.springframework.security>5.7.11</version.org.springframework.security>
         <version.org.springframework.ldap>3.0.2</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
-        <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
-        <version.org.springboot>2.5.12</version.org.springboot>
+        <version.spring.cloud.config.client>3.1.8</version.spring.cloud.config.client>
+        <version.org.springboot>2.7.17</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
+        <version.org.spingdoc.openapi>1.6.15</version.org.spingdoc.openapi>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.12.19</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>1.7.36</version.org.slf4j>
-        <version.junit>4.13.1</version.junit>
-        <version.org.awaitility>4.0.2</version.org.awaitility>
+        <version.junit>4.13.2</version.junit>
+        <version.org.awaitility>4.2.0</version.org.awaitility>
         <version.org.jmock>2.12.0</version.org.jmock>
         <version.org.jmock.jmock-legacy>2.12.0</version.org.jmock.jmock-legacy>
         <version.org.assertj>3.13.2</version.org.assertj>
@@ -293,7 +294,7 @@
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
         <version.commons-io>2.7</version.commons-io>
-        <version.commons-dbcp2>2.7.0</version.commons-dbcp2>
+        <version.commons-dbcp2>2.9.0</version.commons-dbcp2>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.9</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
@@ -754,7 +755,7 @@
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
-                <module>developer</module>
+<!--                <module>developer</module>-->
                 <module>transaction</module>
                 <module>replay</module>
                 <module>persistence</module>
@@ -2011,10 +2012,16 @@
             </dependency>
 
             <!-- Swagger -->
+<!--            <dependency>-->
+<!--                <groupId>io.springfox</groupId>-->
+<!--                <artifactId>springfox-boot-starter</artifactId>-->
+<!--                <version>${version.io.spingfox.swagger}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${version.io.spingfox.swagger}</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>${version.org.spingdoc.openapi}</version>
             </dependency>
 
             <dependency>
