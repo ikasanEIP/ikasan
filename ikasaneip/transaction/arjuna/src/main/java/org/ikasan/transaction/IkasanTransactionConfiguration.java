@@ -3,10 +3,12 @@ package org.ikasan.transaction;
 import com.arjuna.ats.arjuna.recovery.RecoveryManager;
 import com.arjuna.ats.internal.jta.recovery.arjunacore.XARecoveryModule;
 import com.arjuna.ats.jbossatx.jta.RecoveryManagerService;
+import jakarta.jms.Message;
+import jakarta.transaction.TransactionManager;
+import jakarta.transaction.UserTransaction;
 import me.snowdrop.boot.narayana.autoconfigure.NarayanaBeanFactoryPostProcessor;
 import me.snowdrop.boot.narayana.core.jdbc.GenericXADataSourceWrapper;
-import me.snowdrop.boot.narayana.core.jdbc.PooledXADataSourceWrapper;
-import me.snowdrop.boot.narayana.core.jms.NarayanaXAConnectionFactoryWrapper;
+import me.snowdrop.boot.narayana.core.jms.GenericXAConnectionFactoryWrapper;
 import me.snowdrop.boot.narayana.core.properties.NarayanaProperties;
 import me.snowdrop.boot.narayana.core.properties.NarayanaPropertiesInitializer;
 import org.springframework.beans.factory.ObjectProvider;
@@ -15,7 +17,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.transaction.TransactionManagerCustomizers;
-import org.springframework.boot.autoconfigure.transaction.jta.JtaProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.jdbc.XADataSourceWrapper;
 import org.springframework.boot.jms.XAConnectionFactoryWrapper;
@@ -26,25 +27,22 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.util.StringUtils;
 
-import javax.jms.Message;
-import javax.transaction.TransactionManager;
-import javax.transaction.UserTransaction;
 import java.io.File;
 
 @Configuration
 @EnableConfigurationProperties({
-                                   JtaProperties.class,
+                                   //JtaProperties.class,
                                    NarayanaProperties.class
                                })
 public class IkasanTransactionConfiguration
 {
-    private final JtaProperties jtaProperties;
+//    private final JtaProperties jtaProperties;
 
     private final TransactionManagerCustomizers transactionManagerCustomizers;
 
-    public IkasanTransactionConfiguration(JtaProperties jtaProperties,
+    public IkasanTransactionConfiguration(
                                           ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
-        this.jtaProperties = jtaProperties;
+//        this.jtaProperties = jtaProperties;
         this.transactionManagerCustomizers = transactionManagerCustomizers.getIfAvailable();
     }
 
@@ -134,11 +132,12 @@ public class IkasanTransactionConfiguration
             return;
         }
 
-        if (!StringUtils.isEmpty(this.jtaProperties.getLogDir())) {
-            properties.setLogDir(this.jtaProperties.getLogDir());
-        } else {
-            properties.setLogDir(getLogDir().getAbsolutePath());
-        }
+//        if (!StringUtils.isEmpty(this.jtaProperties.getLogDir())) {
+//            properties.setLogDir(this.jtaProperties.getLogDir());
+//        } else {
+//            properties.setLogDir(getLogDir().getAbsolutePath());
+//        }
+        properties.setLogDir(getLogDir().getAbsolutePath());
     }
 
     private void initTransactionManagerId(NarayanaProperties properties) {
@@ -146,15 +145,15 @@ public class IkasanTransactionConfiguration
             return;
         }
 
-        if (!StringUtils.isEmpty(this.jtaProperties.getTransactionManagerId())) {
-            properties.setTransactionManagerId(this.jtaProperties.getTransactionManagerId());
-        }
+//        if (!StringUtils.isEmpty(this.jtaProperties.getTransactionManagerId())) {
+//            properties.setTransactionManagerId(this.jtaProperties.getTransactionManagerId());
+//        }
     }
 
     private File getLogDir() {
-        if (StringUtils.hasLength(this.jtaProperties.getLogDir())) {
-            return new File(this.jtaProperties.getLogDir());
-        }
+//        if (StringUtils.hasLength(this.jtaProperties.getLogDir())) {
+//            return new File(this.jtaProperties.getLogDir());
+//        }
         File home = new ApplicationHome().getDir();
         return new File(home, "transaction-logs");
     }
@@ -169,7 +168,7 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule) {
-            return new GenericXADataSourceWrapper(narayanaProperties, xaRecoveryModule);
+            return new GenericXADataSourceWrapper(xaRecoveryModule);
         }
 
     }
@@ -184,7 +183,7 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule, TransactionManager transactionManager) {
-            return new PooledXADataSourceWrapper(narayanaProperties, xaRecoveryModule, transactionManager);
+            return new GenericXADataSourceWrapper(xaRecoveryModule);
         }
 
     }
@@ -200,7 +199,7 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XAConnectionFactoryWrapper.class)
         public XAConnectionFactoryWrapper xaConnectionFactoryWrapper(TransactionManager transactionManager,
                                                                      XARecoveryModule xaRecoveryModule, NarayanaProperties narayanaProperties) {
-            return new NarayanaXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule, narayanaProperties);
+            return new GenericXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule, null);
         }
 
     }

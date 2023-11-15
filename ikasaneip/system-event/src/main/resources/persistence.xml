@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+  http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="stadto">
+        //No need to specify the provider as we already have specified JPA vendor in applicationContext.xml
+    </persistence-unit>
+</persistence>

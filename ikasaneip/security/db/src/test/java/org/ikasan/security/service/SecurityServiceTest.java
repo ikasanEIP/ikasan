@@ -41,31 +41,23 @@
 
 package org.ikasan.security.service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
-import org.ikasan.security.model.PolicyLinkType;
-import org.ikasan.security.model.Role;
-import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.ikasan.security.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Unit test for {@link SecurityService}
@@ -81,8 +73,10 @@ public class SecurityServiceTest
 
  
     /** Object being tested */
-    @Resource private SecurityDao xaSecurityDao;
-    @Resource private SecurityService xaSecurityService;
+    @Autowired
+    private SecurityDao xaSecurityDao;
+    @Autowired
+    private SecurityService xaSecurityService;
 
 
     /**

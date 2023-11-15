@@ -40,6 +40,7 @@
  */
 package org.ikasan.systemevent.model;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.systemevent.SystemEvent;
 
 import javax.naming.OperationNotSupportedException;
@@ -56,8 +57,11 @@ import java.util.StringJoiner;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name="SystemEvent")
 public class SystemEventImpl implements SystemEvent
 {
+    @Transient
 	private String moduleName;
 
 	/**
@@ -73,6 +77,8 @@ public class SystemEventImpl implements SystemEvent
 	/**
 	 * Unique id required for persistence
 	 */
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
 	private Long id;
 	
 	/**
@@ -102,7 +108,7 @@ public class SystemEventImpl implements SystemEvent
 	 * no args constructor required for ORM
 	 */
 	@SuppressWarnings("unused")
-	private SystemEventImpl(){}
+	protected SystemEventImpl(){}
 
 	/**
 	 * Constructor
