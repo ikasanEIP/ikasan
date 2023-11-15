@@ -16,7 +16,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
@@ -32,7 +31,7 @@ public class SecurityConfiguration
     @Qualifier("ikasan.xads")
     DataSource ikasanxads;
 
-    @Resource
+    @Autowired
     Map platformHibernateProperties;
 
     @Bean public PasswordEncoder passwordEncoder()

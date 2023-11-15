@@ -42,7 +42,6 @@ package org.ikasan.security.service;
 
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.User;
 import org.junit.Assert;
@@ -51,12 +50,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * @author Ikasan Development Team
@@ -69,9 +67,9 @@ public class UserServiceTest
     private User admin;
     private  User disabledUser;
 
-    @Resource
+    @Autowired
     private UserDao xaUserDao;
-    @Resource
+    @Autowired
     private UserService xaUserService;
 
     @Rule

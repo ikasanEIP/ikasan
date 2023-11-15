@@ -78,7 +78,7 @@
         </dependency>
         <!-- For persisting information about the connector such as chunking large messages -->
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
             <exclusions>
                 <exclusion>

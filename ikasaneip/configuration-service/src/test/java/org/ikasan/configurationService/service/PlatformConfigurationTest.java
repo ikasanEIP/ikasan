@@ -40,11 +40,6 @@
  */
 package org.ikasan.configurationService.service;
 
-import java.util.HashMap;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.spec.configuration.Configuration;
@@ -54,9 +49,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * 
@@ -69,10 +68,10 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class PlatformConfigurationTest
 {
 	
-	@Resource
+	@Autowired
 	ConfiguredResourceConfigurationService configurationService;
 	
-	@Resource
+	@Autowired
     PlatformConfigurationService platformConfigurationService;
 	
 	@Before

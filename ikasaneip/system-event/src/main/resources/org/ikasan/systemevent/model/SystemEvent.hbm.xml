@@ -83,7 +83,6 @@
                   type="long"
                   column="HarvestedDateTime"
                   not-null="true"/>
-
     </class>
 
 </hibernate-mapping>

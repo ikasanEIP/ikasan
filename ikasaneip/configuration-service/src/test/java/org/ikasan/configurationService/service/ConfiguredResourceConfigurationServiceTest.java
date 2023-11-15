@@ -54,11 +54,11 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -81,10 +81,10 @@ public class ConfiguredResourceConfigurationServiceTest {
         setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
-    @Resource
+    @Autowired
     ConfigurationDao configurationServiceDao;
 
-    @Resource
+    @Autowired
     ConfigurationService configurationService;
 
     ConfiguredResource configuredResource = mockery.mock(ConfiguredResource.class, "mockedConfiguredResource");
