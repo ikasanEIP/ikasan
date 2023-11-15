@@ -11,11 +11,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -29,7 +29,7 @@ import java.util.List;
 @Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class SystemEventServiceImplTest
 {
-    @Resource
+    @Autowired
     private SystemEventService<SystemEvent> systemEventService;
 
     private Mockery mockery = new Mockery()

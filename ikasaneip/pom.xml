@@ -255,14 +255,14 @@
         <version.logback.core>1.2.11</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
-        <version.org.hibernate>5.4.24.Final</version.org.hibernate>
+        <version.org.hibernate>6.3.1.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
-        <version.org.springframework>5.3.18</version.org.springframework>
+        <version.org.springframework>6.0.13</version.org.springframework>
         <version.org.springframework.security>5.3.13.RELEASE</version.org.springframework.security>
         <version.org.springframework.ldap>3.0.2</version.org.springframework.ldap>
         <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
         <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
-        <version.org.springboot>2.5.12</version.org.springboot>
+        <version.org.springboot>3.1.5</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
@@ -305,7 +305,7 @@
         </version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>6.0.9</version.com.unboundid>
         <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
-        <version.com.h2database>1.4.200</version.com.h2database>
+        <version.com.h2database>2.1.214</version.com.h2database>
         <version.org.liquibase>3.8.9</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.28</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
@@ -322,8 +322,8 @@
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.javax.jms-api>2.0.1</version.javax.jms-api>
-        <version.org.jboss.narayana.jta>5.9.8.Final</version.org.jboss.narayana.jta>
-        <version.me.snowdrop.narayana>2.2.0</version.me.snowdrop.narayana>
+        <version.org.jboss.narayana.jta>7.0.0.Final</version.org.jboss.narayana.jta>
+        <version.me.snowdrop.narayana>3.0.0.redhat-00042</version.me.snowdrop.narayana>
         <version.commons.net>3.3</version.commons.net>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
         <version.org.jboss.logging.jboss-logging>3.3.2.Final</version.org.jboss.logging.jboss-logging>
@@ -360,7 +360,7 @@
         <version.expiring.map>0.5.10</version.expiring.map>
         <version.jakarta.xml.bind-api>2.3.3</version.jakarta.xml.bind-api>
         <version.jmock.imposters>2.12.0</version.jmock.imposters>
-        <version.jaxb-runtime>2.3.9</version.jaxb-runtime>
+        <version.jaxb-runtime>4.0.4</version.jaxb-runtime>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -499,6 +499,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
+                    <configuration>
+                        <trimStackTrace>false</trimStackTrace>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
@@ -536,24 +539,6 @@
         <plugins>
 
             <plugin>
-                <groupId>org.openrewrite.maven</groupId>
-                <artifactId>rewrite-maven-plugin</artifactId>
-                <version>5.9.1</version>
-                <configuration>
-                    <activeRecipes>
-                        <recipe>org.openrewrite.java.migrate.UpgradeToJava17</recipe>
-                    </activeRecipes>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.openrewrite.recipe</groupId>
-                        <artifactId>rewrite-migrate-java</artifactId>
-                        <version>2.2.0</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
                 <version>2.1.2</version>
@@ -585,30 +570,30 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules>
-                                <dependencyConvergence />
-                            </rules>
-                        </configuration>
-                    </execution>
-                </executions>
-                <configuration>
-                    <rules>
-                        <dependencyConvergence />
-                    </rules>
-                </configuration>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-enforcer-plugin</artifactId>-->
+<!--                <version>1.4.1</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>enforce-versions</id>-->
+<!--                        <goals>-->
+<!--                            <goal>enforce</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <rules>-->
+<!--                                <dependencyConvergence />-->
+<!--                            </rules>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                <configuration>-->
+<!--                    <rules>-->
+<!--                        <dependencyConvergence />-->
+<!--                    </rules>-->
+<!--                </configuration>-->
 
-            </plugin>
+<!--            </plugin>-->
 
         </plugins>
     </build>
@@ -1485,7 +1470,7 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${version.org.hibernate}</version>
                 <exclusions>
@@ -1568,19 +1553,6 @@
                 <artifactId>javax.annotation-api</artifactId>
                 <version>${version.javax.annotation}</version>
             </dependency>
-
-            <dependency>
-                <groupId>jakarta.xml.bind</groupId>
-                <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>2.3.3</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.glassfish.jaxb</groupId>
-                <artifactId>jaxb-runtime</artifactId>
-                <version>2.3.9</version>
-            </dependency>
-
 
             <dependency>
                 <groupId>geronimo-spec</groupId>

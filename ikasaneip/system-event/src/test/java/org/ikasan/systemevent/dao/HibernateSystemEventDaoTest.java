@@ -40,19 +40,19 @@
  */
 package org.ikasan.systemevent.dao;
 
-import java.util.Date;
-import java.util.List;
-import javax.annotation.Resource;
-
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
 import org.ikasan.systemevent.model.SystemEventImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Date;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
@@ -69,11 +69,10 @@ import static org.junit.Assert.assertEquals;
 @Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class HibernateSystemEventDaoTest
 {
+
     /** Object being tested */
-    @Resource private SystemEventDao systemEventDao;
-
-
-
+    @Autowired
+    private SystemEventDao systemEventDao;
 
     @Test
     @DirtiesContext
@@ -85,7 +84,8 @@ public class HibernateSystemEventDaoTest
 
         for(int i=0; i< 10000; i++)
         {
-            systemEventDao.save(new SystemEventImpl("subject", "action", new Date(), "actor", new Date(System.currentTimeMillis() - 1000000000)));
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date()
+                , "actor", new Date(System.currentTimeMillis() - 1000000000)));
         }
 
         while(systemEventDao.housekeepablesExist())
@@ -99,8 +99,6 @@ public class HibernateSystemEventDaoTest
 
 
     }
-
-
 
     @Test
     @DirtiesContext

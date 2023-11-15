@@ -498,7 +498,7 @@
                 <type>zip</type>
                 <exclusions>
                     <exclusion>
-                        <groupId>org.hibernate</groupId>
+                        <groupId>org.hibernate.orm</groupId>
                         <artifactId>hibernate-validator</artifactId>
                     </exclusion>
                 </exclusions>
@@ -519,7 +519,7 @@
             </dependency>
 
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.orm</groupId>
                 <artifactId>hibernate-core</artifactId>
                 <version>${version.org.hibernate}</version>
                 <exclusions>

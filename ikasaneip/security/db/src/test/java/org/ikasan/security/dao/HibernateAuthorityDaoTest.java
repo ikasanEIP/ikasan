@@ -40,10 +40,6 @@
  */
 package org.ikasan.security.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.Authority;
@@ -52,10 +48,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 /**
  * 
@@ -69,7 +67,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class HibernateAuthorityDaoTest
 {
 
-	@Resource
+	@Autowired
 	private AuthorityDao xaAuthorityDao;
 	
 	/**

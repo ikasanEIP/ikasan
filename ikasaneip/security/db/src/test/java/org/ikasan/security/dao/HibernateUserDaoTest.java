@@ -40,24 +40,21 @@
  */
 package org.ikasan.security.dao;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.security.SecurityConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.JobPlanGrantedAuthority;
 import org.ikasan.security.model.ModuleGrantedAuthority;
 import org.ikasan.security.model.User;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Import;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.List;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
@@ -74,8 +71,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @Sql(scripts = {"/teardownSecurityData.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class HibernateUserDaoTest
 {
-
-	@Resource
+	@Autowired
 	private UserDao xaUserDao;
 
 	/**
