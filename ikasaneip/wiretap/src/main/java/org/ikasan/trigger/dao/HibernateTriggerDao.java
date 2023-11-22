@@ -59,7 +59,6 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-@Transactional
 public class HibernateTriggerDao implements TriggerDao
 {
     @PersistenceContext(unitName = "wiretap")

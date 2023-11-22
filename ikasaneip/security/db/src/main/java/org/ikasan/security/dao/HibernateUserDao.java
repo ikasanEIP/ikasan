@@ -40,11 +40,13 @@
  */
 package org.ikasan.security.dao;
 
-import java.util.List;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.ikasan.security.model.User;
 import org.ikasan.security.model.UserLite;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import java.util.List;
 
 /**
  * Hibernate implementation of <code>UserDao</code>
@@ -52,18 +54,21 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
  * @author Ikasan Development Team
  *
  */
-public class HibernateUserDao extends HibernateDaoSupport implements UserDao
+public class HibernateUserDao implements UserDao
 {
+    @PersistenceContext(unitName = "security")
+    private EntityManager entityManager;
 
-    
     /* (non-Javadoc)
      * @see org.ikasan.framework.security.dao.UserDao#getUser(java.lang.String)
      */
     @SuppressWarnings("unchecked")
     public User getUser(String username)
     {
-        List<User> results = (List<User>) getHibernateTemplate().findByNamedParam("from User where username  = :name", "name", username);
+        Query query = this.entityManager.createQuery("from User where username  = :name");
+        query.setParameter("name", username);
         User result = null;
+        List<User> results = query.getResultList();
         if (!results.isEmpty()){
             result = results.get(0);
         }
@@ -77,7 +82,7 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     @SuppressWarnings("unchecked")
     public List<User> getUsers()
     {
-        return getHibernateTemplate().execute(session -> session.createQuery("from User").getResultList());
+        return this.entityManager.createQuery("from User").getResultList();
     }
 
     /* (non-Javadoc)
@@ -86,12 +91,12 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
     @SuppressWarnings("unchecked")
     public List<UserLite> getUserLites()
     {
-        return getHibernateTemplate().execute(session -> session.createQuery("from UserLite").getResultList());
+        return this.entityManager.createQuery("from UserLite").getResultList();
     }
 
     public void save(User user)
     {
-        getHibernateTemplate().saveOrUpdate(user);
+        this.entityManager.persist(user);
     }
 
     /* (non-Javadoc)
@@ -99,7 +104,7 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
      */
     public void delete(User user)
     {
-        getHibernateTemplate().delete(user);
+        this.entityManager.remove(user);
         
     }
 
@@ -110,9 +115,10 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
 	@Override
 	public List<User> getUserByUsernameLike(String username)
 	{
-		List<User> results = (List<User>) getHibernateTemplate().findByNamedParam("from User where username LIKE :name", "name", username + '%');
+        Query query = this.entityManager.createQuery("from User where username LIKE :name");
+		query.setParameter("name", username + '%');
 
-        return results;
+        return query.getResultList();
 	}
 
 	/* (non-Javadoc)
@@ -121,10 +127,10 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
 	@Override
 	public List<User> getUserByFirstnameLike(String firstname)
 	{
-		@SuppressWarnings("unchecked")
-		List<User> results = (List<User>) getHibernateTemplate().findByNamedParam("from User where firstName LIKE :name", "name", firstname + '%');
+        Query query = this.entityManager.createQuery("from User where firstName LIKE :name");
+		query.setParameter("name", firstname + '%');
 
-        return results;
+        return query.getResultList();
 	}
 
 	/* (non-Javadoc)
@@ -133,10 +139,10 @@ public class HibernateUserDao extends HibernateDaoSupport implements UserDao
 	@Override
 	public List<User> getUserBySurnameLike(String surname)
 	{
-		@SuppressWarnings("unchecked")
-		List<User> results = (List<User>) getHibernateTemplate().findByNamedParam("from User where surname LIKE :name", "name", surname + '%');
+        Query query = this.entityManager.createQuery("from User where surname LIKE :name");
+		query.setParameter("name", surname + '%');
 
-        return results;
+        return query.getResultList();
 	}
 
 
