@@ -61,47 +61,54 @@ import java.util.StringJoiner;
 @Table(name="SystemEvent")
 public class SystemEventImpl implements SystemEvent
 {
+    /**
+     * Unique id required for persistence
+     */
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+
     @Transient
 	private String moduleName;
 
 	/**
 	 * What happened?
 	 */
-	private String action;
+    @Column(name="Action")
+    private String action;
 	
 	/**
 	 * Who/what was causing/driving this?
 	 */
-	private String actor;
-	
-	/**
-	 * Unique id required for persistence
-	 */
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-	private Long id;
+    @Column(name="Actor")
+    private String actor;
 	
 	/**
 	 * To what? ie subject of the action
 	 */
-	private String subject;
+    @Column(name="Subject")
+    private String subject;
 
 	/**
 	 * When did the action take place?
 	 */
-	private Date timestamp;
+    @Column(name="Timestamp")
+    private Date timestamp;
 	
 	/**
 	 * Min time to keep this event if any
 	 */
-	private Date expiry;
+    @Column(name="Expiry")
+    private Date expiry;
 
     /**
      * Flag to indicate if the entity has been harvested.
      */
+    @Column(name="Harvested")
     private boolean harvested;
 
     /** the time the record was harvested */
+    @Column(name="HarvestedDateTime")
     private long harvestedDateTime;
 	
 	/**

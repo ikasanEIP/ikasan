@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+  http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="wiretap">
+        <class>org.ikasan.history.model.ComponentInvocationMetricImpl</class>
+        <class>org.ikasan.history.model.CustomMetric</class>
+        <class>org.ikasan.history.model.FlowInvocationMetricImpl</class>
+        <class>org.ikasan.history.model.HistoryEventFactory</class>
+        <class>org.ikasan.history.model.MetricEvent</class>
+        <class>org.ikasan.trigger.model.TriggerImpl</class>
+        <class>org.ikasan.wiretap.model.WiretapFlowEvent</class>
+    </persistence-unit>
+</persistence>

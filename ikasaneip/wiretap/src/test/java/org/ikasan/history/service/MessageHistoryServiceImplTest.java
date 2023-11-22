@@ -40,6 +40,8 @@
  */
 package org.ikasan.history.service;
 
+import org.ikasan.WiretapAutoConfiguration;
+import org.ikasan.WiretapTestAutoConfiguration;
 import org.ikasan.history.dao.MessageHistoryDao;
 import org.ikasan.history.model.*;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -68,9 +70,7 @@ import java.util.*;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml",
-        "/substitute-components.xml",
-})
+@ContextConfiguration(classes={WiretapAutoConfiguration.class, WiretapTestAutoConfiguration.class})
 public class MessageHistoryServiceImplTest
 {
     private final Mockery mockery = new Mockery()

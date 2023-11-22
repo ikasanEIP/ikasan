@@ -40,6 +40,7 @@
  */
 package org.ikasan.trigger.model;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
 
@@ -51,31 +52,43 @@ import java.util.Map;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name = "FlowEventTrigger")
 public class TriggerImpl implements Trigger
 {
+    /** Unique identifier */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
     /**
      * Name of the <code>FlowElement</code>, if any, to which this
      * <code>Trigger</code> applies If null, this trigger is deemed to apply to
      * the <code>Flow</code> itself
      */
+    @Column(name="FlowElementName", nullable = true)
     private String flowElementName;
 
     /** Name of the <code>Flow</code> to which this <code>Trigger</code> applies */
+    @Column(name="FlowName", nullable = false)
     private String flowName;
 
-    /** Unique identifier */
-    private Long id;
-
     /** Name of the <code>Job</code> to which this <code>Trigger</code> refers */
+    @Column(name="JobName", nullable = false)
     private String jobName;
 
     /**
      * Name of the <code>Module</code> to which this <code>Trigger</code>
      * applies
      */
+    @Column(name="Module    Name", nullable = false)
     private String moduleName;
 
     /** Additional parameters to be used when invoking jobs */
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "FlowEventTriggerParameters"
+        , joinColumns = @JoinColumn(name = "TriggerId", nullable = false)
+        , uniqueConstraints = @UniqueConstraint(columnNames = {"TriggerId"}))
     private Map<String, String> params = new HashMap<String, String>();
 
     /** Either before or after */
@@ -83,7 +96,7 @@ public class TriggerImpl implements Trigger
 
     /** (Hibernate) Constructor */
     @SuppressWarnings("unused")
-    private TriggerImpl()
+    public TriggerImpl()
     {
         // Constructor used by Hibernate
     }

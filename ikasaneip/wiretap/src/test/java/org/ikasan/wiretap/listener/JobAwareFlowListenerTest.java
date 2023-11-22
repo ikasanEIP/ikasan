@@ -40,6 +40,8 @@
  */
 package org.ikasan.wiretap.listener;
 
+import org.ikasan.WiretapAutoConfiguration;
+import org.ikasan.WiretapTestAutoConfiguration;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleService;
@@ -69,10 +71,7 @@ import static org.junit.Assert.assertEquals;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-         "/h2-config.xml",
-        "/substitute-components.xml",
-})
+@ContextConfiguration(classes={WiretapAutoConfiguration.class, WiretapTestAutoConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JobAwareFlowListenerTest
 {
