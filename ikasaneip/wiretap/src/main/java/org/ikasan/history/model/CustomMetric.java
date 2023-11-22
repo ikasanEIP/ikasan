@@ -1,14 +1,25 @@
 package org.ikasan.history.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
+@Entity
+@Table(name = "CustomMetric")
 public class CustomMetric implements Serializable
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
-	private ComponentInvocationMetricImpl componentInvocationMetricImpl;
-	private String name;
-	private String value;
-	
+    @ManyToOne
+    @JoinColumn(name="CompInvocationMetricId", nullable=false, updatable = false)
+    private ComponentInvocationMetricImpl componentInvocationMetricImpl;
+
+    @Column(name="Name", nullable = false)
+    private String name;
+
+    @Column(name="CustomValue", nullable = false)
+    private String value;
 
 	protected CustomMetric() 
 	{

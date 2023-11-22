@@ -40,15 +40,11 @@
  */
 package org.ikasan.history.model;
 
-import java.util.AbstractMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-
 import org.ikasan.spec.flow.FlowElementInvocation;
 import org.ikasan.spec.flow.FlowInvocationContext;
 import org.ikasan.spec.history.FlowInvocationMetric;
+
+import java.util.*;
 
 /**
  * Factory for creating MessageHistoryEvents from FlowInvocationContext objects

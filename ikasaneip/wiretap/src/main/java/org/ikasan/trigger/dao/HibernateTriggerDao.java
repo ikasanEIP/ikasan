@@ -40,16 +40,17 @@
  */
 package org.ikasan.trigger.dao;
 
-import org.hibernate.Session;
-import org.hibernate.query.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.trigger.model.TriggerImpl;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -58,39 +59,40 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerDao
+@Transactional
+public class HibernateTriggerDao implements TriggerDao
 {
+    @PersistenceContext(unitName = "wiretap")
+    private EntityManager entityManager;
+
     /* (non-Javadoc)
      * @see org.ikasan.trigger.dao.TriggerDao#delete(org.ikasan.trigger.window.Trigger)
      */
     public void delete(Trigger trigger)
     {
-        getHibernateTemplate().delete(trigger);
+        this.entityManager.remove(trigger);
     }
 
     /* (non-Javadoc)
      * @see org.ikasan.framework.flow.event.dao.TriggerDao#findAll()
      */
     @SuppressWarnings("unchecked")
-    public List<Trigger> findAll()
-    {
-        return getHibernateTemplate().execute(session -> session.createQuery("from TriggerImpl").getResultList());
+    public List<Trigger> findAll() {
+        return entityManager.createQuery("from TriggerImpl").getResultList();
     }
 
     /* (non-Javadoc)
      * @see org.ikasan.framework.flow.event.dao.TriggerDao#findById(java.lang.Long)
      */
-    public Trigger findById(Long triggerId)
-    {
-        return (Trigger) getHibernateTemplate().get(TriggerImpl.class, triggerId);
+    public Trigger findById(Long triggerId) {
+        return entityManager.find(TriggerImpl.class, triggerId);
     }
 
     /* (non-Javadoc)
      * @see org.ikasan.trigger.dao.TriggerDao#save(org.ikasan.trigger.window.Trigger)
      */
-    public void save(Trigger trigger)
-    {
-        getHibernateTemplate().saveOrUpdate(trigger);
+    public void save(Trigger trigger) {
+        entityManager.persist(trigger);
     }
 
 	/* (non-Javadoc)
@@ -98,41 +100,35 @@ public class HibernateTriggerDao extends HibernateDaoSupport implements TriggerD
 	 */
 	@Override
 	public List<Trigger> findTriggers(String moduleName, String flowName,
-			String flowElementName)
-	{
-		return getHibernateTemplate().execute((Session session) -> {
+			String flowElementName) {
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 
-            CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<Trigger> criteriaQuery = builder.createQuery(Trigger.class);
 
-            CriteriaQuery<Trigger> criteriaQuery = builder.createQuery(Trigger.class);
+        Root<TriggerImpl> root = criteriaQuery.from(TriggerImpl.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-            Root<TriggerImpl> root = criteriaQuery.from(TriggerImpl.class);
-            List<Predicate> predicates = new ArrayList<>();
+        if(moduleName != null && moduleName.length() > 0)
+        {
+            predicates.add(builder.equal(root.get("moduleName"),moduleName));
+        }
 
-            if(moduleName != null && moduleName.length() > 0)
-            {
-                predicates.add(builder.equal(root.get("moduleName"),moduleName));
-            }
+        if(flowName != null && flowName.length() > 0)
+        {
+            predicates.add(builder.equal(root.get("flowName"),flowName));
+        }
 
-            if(flowName != null && flowName.length() > 0)
-            {
-                predicates.add(builder.equal(root.get("flowName"),flowName));
-            }
+        if(flowElementName != null && flowElementName.length() > 0)
+        {
+            predicates.add(builder.equal(root.get("flowElementName"),flowElementName));
+        }
 
-            if(flowElementName != null && flowElementName.length() > 0)
-            {
-                predicates.add(builder.equal(root.get("flowElementName"),flowElementName));
-            }
+        criteriaQuery.select(root)
+            .where(predicates.toArray(new Predicate[predicates.size()]));
 
-            criteriaQuery.select(root)
-                .where(predicates.toArray(new Predicate[predicates.size()]));
+        TypedQuery<Trigger> query = this.entityManager.createQuery(criteriaQuery);
+        List<Trigger> rowList = query.getResultList();
 
-            Query<Trigger> query = session.createQuery(criteriaQuery);
-            List<Trigger> rowList = query.getResultList();
-
-            return rowList;
-
-        });
-
+        return rowList;
 	}
 }
