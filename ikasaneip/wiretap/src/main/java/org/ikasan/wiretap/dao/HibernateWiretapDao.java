@@ -41,9 +41,16 @@
 package org.ikasan.wiretap.dao;
 
 import com.google.common.collect.Lists;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapDao;
@@ -53,13 +60,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Hibernate implementation of the <code>WiretapDao</code>
@@ -67,10 +70,14 @@ import java.util.stream.Collectors;
  * @author Ikasan Development Team
  * 
  */
-public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapDao<Long>
+@Transactional
+public class HibernateWiretapDao implements WiretapDao<Long>
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(HibernateWiretapDao.class);
+
+    @PersistenceContext(unitName = "wiretap")
+    private EntityManager entityManager;
 
     private static final String EXPIRY = "expiry";
     private static final String EVENT_ID = "eventId";
@@ -92,7 +99,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     public static final String WIRETAP_EVENTS_DELETE_QUERY = "delete WiretapFlowEvent w " +
             " where w.id in(:" + EVENT_IDS + ")";
 
-    public static final String UPDATE_HARVESTED_QUERY = "update WiretapFlowEvent w set w.harvestedDateTime = :" + CURRENT_DATE_TIME + ", w.harvested = 1" +
+    public static final String UPDATE_HARVESTED_QUERY = "update WiretapFlowEvent w set w.harvestedDateTime = :" + CURRENT_DATE_TIME + ", w.harvested = true" +
         " where w.id in(:" + EVENT_IDS + ")";
 
 
@@ -137,12 +144,11 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     public void save(WiretapEvent wiretapEvent)
     {
-        getHibernateTemplate().saveOrUpdate(wiretapEvent);
+        this.entityManager.persist(wiretapEvent);
     }
 
     @Override
-    public void save(List<WiretapEvent> wiretapEvents)
-    {
+    public void save(List<WiretapEvent> wiretapEvents) {
         wiretapEvents.forEach(wiretapEvent -> this.save(wiretapEvent));
     }
 
@@ -151,37 +157,30 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     @SuppressWarnings("unchecked")
     @Override
-    public WiretapEvent findById(final Long identifier)
-    {
-        return (WiretapFlowEvent)this.getHibernateTemplate().execute(new HibernateCallback()
+    public WiretapEvent findById(final Long identifier) {
+        WiretapFlowEvent wiretapEvent = this.entityManager.find(WiretapFlowEvent.class, identifier);
+
+        Query query = this.entityManager.createQuery(WIRETAP_IDS_FOR_GROUPED_EVENT_ID);
+        query.setParameter(EVENT_ID, wiretapEvent.getEventId());
+
+
+        List<Long> relatedIds = (List<Long>)query.getResultList();
+
+        Collections.sort(relatedIds);
+        int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getIdentifier());
+        Long nextEvent = null;
+        Long previousEvent = null;
+        if (thisWiretapsIndex > 0)
         {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                WiretapFlowEvent wiretapEvent = (WiretapFlowEvent) getHibernateTemplate().get(WiretapFlowEvent.class, identifier);
-
-                Query query = session.createQuery(WIRETAP_IDS_FOR_GROUPED_EVENT_ID);
-                query.setParameter(EVENT_ID, wiretapEvent.getEventId());
-
-
-                List<Long> relatedIds = (List<Long>)query.list();
-
-                Collections.sort(relatedIds);
-                int thisWiretapsIndex = relatedIds.indexOf(wiretapEvent.getIdentifier());
-                Long nextEvent = null;
-                Long previousEvent = null;
-                if (thisWiretapsIndex > 0)
-                {
-                    previousEvent = relatedIds.get(thisWiretapsIndex - 1);
-                }
-                if (thisWiretapsIndex < relatedIds.size() - 1)
-                {
-                    nextEvent = relatedIds.get(thisWiretapsIndex + 1);
-                }
-                wiretapEvent.setNextByEventId(nextEvent);
-                wiretapEvent.setPreviousByEventId(previousEvent);
-                return wiretapEvent;
-            }
-        });
+            previousEvent = relatedIds.get(thisWiretapsIndex - 1);
+        }
+        if (thisWiretapsIndex < relatedIds.size() - 1)
+        {
+            nextEvent = relatedIds.get(thisWiretapsIndex + 1);
+        }
+        wiretapEvent.setNextByEventId(nextEvent);
+        wiretapEvent.setPreviousByEventId(previousEvent);
+        return wiretapEvent;
     }
 
     /**
@@ -205,8 +204,7 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     @SuppressWarnings("unchecked")
     public PagedSearchResult<WiretapEvent> findWiretapEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
             final Set<String> moduleNames, final String moduleFlow, final String componentName, final String eventId, final String payloadId, final Date fromDate, final Date untilDate,
-            final String payloadContent)
-    {
+            final String payloadContent) {
 
         Set<String> flowNames = null;
         Set<String> componentNames = null;
@@ -229,115 +227,118 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
     @Override
     public PagedSearchResult<WiretapEvent> findWiretapEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
             final Set<String> moduleNames, final Set<String> moduleFlows, final Set<String> componentNames, final String eventId, final String payloadId,
-            final Date fromDate, final Date untilDate, final String payloadContent)
-    {
-        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
+            final Date fromDate, final Date untilDate, final String payloadContent) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<WiretapEvent> criteriaQuery = builder.createQuery(WiretapEvent.class);
+        Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
+        List<Predicate> predicates = getCriteria(builder, root, pageNo, pageSize, orderBy, orderAscending,
+            moduleNames, moduleFlows, componentNames, eventId, payloadId,
+            fromDate, untilDate, payloadContent);
+
+        criteriaQuery.select(root)
+            .where(predicates.toArray(new Predicate[predicates.size()]));
+
+        if (orderBy != null)
         {
-            public Object doInHibernate(Session session) throws HibernateException
+            if (orderAscending)
             {
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-
-                CriteriaQuery<WiretapEvent> criteriaQuery = builder.createQuery(WiretapEvent.class);
-                Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
-                List<Predicate> predicates = getCriteria(builder,root);
-
-                criteriaQuery.select(root)
-                    .where(predicates.toArray(new Predicate[predicates.size()]));
-
-                if (orderBy != null)
-                {
-                    if (orderAscending)
-                    {
-                        criteriaQuery.orderBy(builder.asc(root.get(orderBy)));
-                    }
-                    else
-                    {
-                        criteriaQuery.orderBy(builder.desc(root.get(orderBy)));
-                    }
-                } else {
-                    criteriaQuery.orderBy(builder.desc(root.get("timestamp")));
-                }
-
-
-                Query<WiretapEvent> query = session.createQuery(criteriaQuery);
-                query.setMaxResults(pageSize);
-                int firstResult = pageNo * pageSize;
-                query.setFirstResult(firstResult);
-                List<WiretapEvent> results = query.getResultList();
-
-                Long rowCount = rowCount(session);
-
-                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+                criteriaQuery.orderBy(builder.asc(root.get(orderBy)));
             }
-
-            private Long rowCount(Session session){
-
-                CriteriaBuilder builder = session.getCriteriaBuilder();
-                CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
-                Root<WiretapFlowEvent> root = metaDataCriteriaQuery.from(WiretapFlowEvent.class);
-                List<Predicate> predicates = getCriteria(builder,root);
-
-                metaDataCriteriaQuery.select(builder.count(root))
-                    .where(predicates.toArray(new Predicate[predicates.size()]));
-
-                org.hibernate.query.Query<Long> metaDataQuery = session.createQuery(metaDataCriteriaQuery);
-
-                List<Long> rowCountList = metaDataQuery.getResultList();
-                if (!rowCountList.isEmpty())
-                {
-                    return rowCountList.get(0);
-                }
-                return Long.valueOf(0);
-            }
-
-            /**
-             * Create a criteria instance for each invocation of data or metadata queries.
-             * @param builder
-             * @param root
-             * @return
-             */
-            private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<WiretapFlowEvent> root)
+            else
             {
-
-                List<Predicate> predicates = new ArrayList<>();
-
-                if (restrictionExists(moduleNames))
-                {
-                    predicates.add(root.get("moduleName").in(moduleNames));
-                }
-                if (restrictionExists(moduleFlows))
-                {
-                    predicates.add(root.get("flowName").in(moduleFlows));
-                }
-                if (restrictionExists(componentNames))
-                {
-                    predicates.add(root.get("componentName").in(componentNames));
-                }
-                if (restrictionExists(eventId))
-                {
-                    predicates.add(builder.equal(root.get("eventId"),eventId));
-                }
-                if (restrictionExists(payloadContent))
-                {
-                    if(payloadContent.startsWith("%")||payloadContent.endsWith("%"))
-                    {
-                        predicates.add(builder.like(root.get("event"), payloadContent));
-                    }else{
-                        predicates.add(builder.like(root.get("event"), "%" + payloadContent + "%"));
-                    }
-                }
-                if (restrictionExists(fromDate))
-                {
-                    predicates.add( builder.greaterThan(root.get("timestamp"),fromDate.getTime()));
-                }
-                if (restrictionExists(untilDate))
-                {
-                    predicates.add( builder.lessThan(root.get("timestamp"),untilDate.getTime()));
-                }
-
-                return predicates;
+                criteriaQuery.orderBy(builder.desc(root.get(orderBy)));
             }
-        });
+        } else {
+            criteriaQuery.orderBy(builder.desc(root.get("timestamp")));
+        }
+
+
+        TypedQuery<WiretapEvent> query = this.entityManager.createQuery(criteriaQuery);
+        query.setMaxResults(pageSize);
+        int firstResult = pageNo * pageSize;
+        query.setFirstResult(firstResult);
+        List<WiretapEvent> results = query.getResultList();
+
+        Long rowCount = rowCount(pageNo, pageSize, orderBy, orderAscending,
+            moduleNames, moduleFlows, componentNames, eventId, payloadId,
+            fromDate, untilDate, payloadContent);
+
+        return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+    }
+
+    private Long rowCount(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+                          final Set<String> moduleNames, final Set<String> moduleFlows, final Set<String> componentNames, final String eventId, final String payloadId,
+                          final Date fromDate, final Date untilDate, final String payloadContent){
+
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
+        Root<WiretapFlowEvent> root = metaDataCriteriaQuery.from(WiretapFlowEvent.class);
+        List<Predicate> predicates = getCriteria(builder,root, pageNo, pageSize, orderBy, orderAscending,
+            moduleNames, moduleFlows, componentNames, eventId, payloadId,
+            fromDate, untilDate, payloadContent);
+
+        metaDataCriteriaQuery.select(builder.count(root))
+            .where(predicates.toArray(new Predicate[predicates.size()]));
+
+        TypedQuery<Long> metaDataQuery = this.entityManager.createQuery(metaDataCriteriaQuery);
+
+        List<Long> rowCountList = metaDataQuery.getResultList();
+        if (!rowCountList.isEmpty())
+        {
+            return rowCountList.get(0);
+        }
+        return Long.valueOf(0);
+    }
+
+    /**
+     * Create a criteria instance for each invocation of data or metadata queries.
+     * @param builder
+     * @param root
+     * @return
+     */
+    private List<Predicate>  getCriteria(CriteriaBuilder builder,Root<WiretapFlowEvent> root, final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
+                                         final Set<String> moduleNames, final Set<String> moduleFlows, final Set<String> componentNames, final String eventId, final String payloadId,
+                                         final Date fromDate, final Date untilDate, final String payloadContent)
+    {
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (restrictionExists(moduleNames))
+        {
+            predicates.add(root.get("moduleName").in(moduleNames));
+        }
+        if (restrictionExists(moduleFlows))
+        {
+            predicates.add(root.get("flowName").in(moduleFlows));
+        }
+        if (restrictionExists(componentNames))
+        {
+            predicates.add(root.get("componentName").in(componentNames));
+        }
+        if (restrictionExists(eventId))
+        {
+            predicates.add(builder.equal(root.get("eventId"),eventId));
+        }
+        if (restrictionExists(payloadContent))
+        {
+            if(payloadContent.startsWith("%")||payloadContent.endsWith("%"))
+            {
+                predicates.add(builder.like(root.get("event"), payloadContent));
+            }else{
+                predicates.add(builder.like(root.get("event"), "%" + payloadContent + "%"));
+            }
+        }
+        if (restrictionExists(fromDate))
+        {
+            predicates.add( builder.greaterThan(root.get("timestamp"),fromDate.getTime()));
+        }
+        if (restrictionExists(untilDate))
+        {
+            predicates.add( builder.lessThan(root.get("timestamp"),untilDate.getTime()));
+        }
+
+        return predicates;
     }
 
     /**
@@ -370,19 +371,12 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      */
     public void deleteAllExpired()
     {
-        if (!batchHousekeepDelete)
-        {
-            getHibernateTemplate().execute((session) -> {
-
-                Query query = session.createQuery(HOUSEKEEP_DELETE_QUERY);
-                query.setParameter(EXPIRY, System.currentTimeMillis());
-                query.executeUpdate();
-                return null;
-
-            });
+        if (!batchHousekeepDelete) {
+            Query query = this.entityManager.createQuery(HOUSEKEEP_DELETE_QUERY);
+            query.setParameter(EXPIRY, System.currentTimeMillis());
+            query.executeUpdate();
         }
-        else
-        {
+        else {
             batchHousekeepDelete();
         }
     }
@@ -404,27 +398,18 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
 
             numberDeleted += this.housekeepingBatchSize;
 
-            getHibernateTemplate().execute(new HibernateCallback<Object>()
+            Query query = this.entityManager.createQuery(WIRETAP_EVENTS_TO_DELETE_QUERY);
+            query.setParameter(NOW, System.currentTimeMillis());
+            query.setMaxResults(housekeepingBatchSize);
+
+            List<Long> wiretapEventIds = (List<Long>)query.getResultList();
+
+            if(wiretapEventIds.size() > 0)
             {
-                public Object doInHibernate(Session session) throws HibernateException
-                {
-
-                    Query query = session.createQuery(WIRETAP_EVENTS_TO_DELETE_QUERY);
-                    query.setLong(NOW, System.currentTimeMillis());
-                    query.setMaxResults(housekeepingBatchSize);
-
-                    List<Long> wiretapEventIds = (List<Long>)query.list();
-
-                    if(wiretapEventIds.size() > 0)
-                    {
-                        query = session.createQuery(WIRETAP_EVENTS_DELETE_QUERY);
-                        query.setParameterList(EVENT_IDS, wiretapEventIds);
-                        query.executeUpdate();
-                    }
-
-                    return null;
-                }
-            });
+                query = this.entityManager.createQuery(WIRETAP_EVENTS_DELETE_QUERY);
+                query.setParameter(EVENT_IDS, wiretapEventIds);
+                query.executeUpdate();
+            }
         }
     }
 
@@ -434,75 +419,63 @@ public class HibernateWiretapDao extends HibernateDaoSupport implements WiretapD
      *
      * @return true if there is at least 1 expired WiretapFlowEvent
      */
-    public boolean housekeepablesExist()
-    {
-        return getHibernateTemplate().execute((Session session) -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-            Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
+    public boolean housekeepablesExist() {
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
 
-            criteriaQuery.select(builder.count(root))
-                .where(builder.lessThan(root.get("expiry"),System.currentTimeMillis()));
+        criteriaQuery.select(builder.count(root))
+            .where(builder.lessThan(root.get("expiry"),System.currentTimeMillis()));
 
 
-            Query<Long> query = session.createQuery(criteriaQuery);
-            List<Long> rowCountList = query.getResultList();
-            Long rowCount = Long.valueOf(0);
-            if (!rowCountList.isEmpty())
-            {
-                rowCount = rowCountList.get(0);
-            }
+        Query query = this.entityManager.createQuery(criteriaQuery);
+        List<Long> rowCountList = query.getResultList();
+        Long rowCount = Long.valueOf(0);
+        if (!rowCountList.isEmpty())
+        {
+            rowCount = rowCountList.get(0);
+        }
 
-            logger.debug(rowCount+", Wiretap housekeepables exist");
-            return Boolean.valueOf(rowCount > 0);
-        });
+        logger.debug(rowCount+", Wiretap housekeepables exist");
+        return Boolean.valueOf(rowCount > 0);
     }
 
-    public List<WiretapEvent> getHarvestableRecords(final int housekeepingBatchSize)
-    {
-        return getHibernateTemplate().execute((Session session) -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<WiretapEvent> criteriaQuery = builder.createQuery(WiretapEvent.class);
-            Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
+    public List<WiretapEvent> getHarvestableRecords(final int housekeepingBatchSize) {
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<WiretapEvent> criteriaQuery = builder.createQuery(WiretapEvent.class);
+        Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
 
-            criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvestedDateTime"),0));
+        criteriaQuery.select(root)
+            .where(builder.equal(root.get("harvestedDateTime"),0));
 
-           if(this.isHarvestQueryOrdered) {
-               criteriaQuery.orderBy(
-                   builder.asc(root.get("timestamp")));
-           }
+       if(this.isHarvestQueryOrdered) {
+           criteriaQuery.orderBy(
+               builder.asc(root.get("timestamp")));
+       }
 
-            Query<WiretapEvent> query = session.createQuery(criteriaQuery);
-            query.setFirstResult(0);
-            query.setMaxResults(housekeepingBatchSize);
-            return query.getResultList();
-        });
+        Query query = this.entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(0);
+        query.setMaxResults(housekeepingBatchSize);
+        return query.getResultList();
     }
 
-    public void updateAsHarvested(List<WiretapEvent> events)
-    {
-        getHibernateTemplate().execute((session) -> {
+    public void updateAsHarvested(List<WiretapEvent> events) {
+        List<Long> wiretapEventIds = new ArrayList<Long>();
 
-            List<Long> wiretapEventIds = new ArrayList<Long>();
+        for(WiretapEvent event: events)
+        {
+            wiretapEventIds.add(event.getIdentifier());
+        }
 
-            for(WiretapEvent event: events)
-            {
-                wiretapEventIds.add(event.getIdentifier());
-            }
+        List<List<Long>> partitionedIds = Lists.partition(wiretapEventIds, 300);
 
-            List<List<Long>> partitionedIds = Lists.partition(wiretapEventIds, 300);
-
-            for(List<Long> eventIds: partitionedIds)
-            {
-                Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
-                query.setParameterList(EVENT_IDS, eventIds);
-                query.setParameter(CURRENT_DATE_TIME, System.currentTimeMillis());
-                query.executeUpdate();
-            }
-
-            return null;
-        });
+        for(List<Long> eventIds: partitionedIds)
+        {
+            Query query = this.entityManager.createQuery(UPDATE_HARVESTED_QUERY);
+            query.setParameter(EVENT_IDS, eventIds);
+            query.setParameter(CURRENT_DATE_TIME, System.currentTimeMillis());
+            query.executeUpdate();
+        }
     }
 
     public boolean isBatchHousekeepDelete()

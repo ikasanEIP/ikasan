@@ -4,7 +4,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
   http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
-    <persistence-unit name="stadto">
-        //No need to specify the provider as we already have specified JPA vendor in applicationContext.xml
+    <persistence-unit name="system-event">
+        <class>org.ikasan.systemevent.model.SystemEventImpl</class>
     </persistence-unit>
 </persistence>

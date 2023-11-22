@@ -40,27 +40,47 @@
  */
 package org.ikasan.history.model;
 
+import jakarta.persistence.*;
+import org.ikasan.spec.history.ComponentInvocationMetric;
+
 import java.io.Serializable;
 import java.util.Set;
-
-import org.ikasan.spec.history.ComponentInvocationMetric;
 
 /**
  * Implementation of a MessageHistoryEvent based on a String lifeIdentifier from a Flow
  *
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name = "ComponentInvocationMetric")
 public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<String, CustomMetric, MetricEvent>, Serializable
 {
-    private String componentName,
-            beforeEventIdentifier, beforeRelatedEventIdentifier,
-            afterEventIdentifier, afterRelatedEventIdentifier;
-    private long startTimeMillis, endTimeMillis, id;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private long id;
+    @Column(name = "ComponentName", nullable = false)
+    private String componentName;
+    @Column(name = "BeforeEventIdentifier", nullable = false)
+    private String beforeEventIdentifier;
+    @Column(name = "BeforeRelatedEventIdentifier", nullable = false)
+    private String beforeRelatedEventIdentifier;
+    @Column(name = "afterEventIdentifier", nullable = false)
+    private String afterEventIdentifier;
+    @Column(name = "afterRelatedEventIdentifier", nullable = false)
+    private String afterRelatedEventIdentifier;
+    @Column(name = "StartTime", nullable = false)
+    private long startTimeMillis;
+    @Column(name = "EndTime", nullable = true)
+    private long endTimeMillis;
 
+    @ManyToOne
+    @JoinColumn(name="FlowInvocationMetricId", nullable=true, updatable = false)
     private FlowInvocationMetricImpl flowInvocation;
-    
+
+    @OneToMany(mappedBy="componentInvocationMetricImpl", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CustomMetric> metrics;
 
+    @Transient
     private MetricEvent wiretapFlowEvent;
 
     /** Required by the ORM... */

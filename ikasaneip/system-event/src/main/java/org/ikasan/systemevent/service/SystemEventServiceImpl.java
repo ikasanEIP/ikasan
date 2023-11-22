@@ -61,7 +61,7 @@ import org.springframework.beans.factory.InitializingBean;
  * @author Ikasan Development Team
  * 
  */
-public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, InitializingBean, HousekeepService, HarvestService<SystemEvent>
+public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, HousekeepService, HarvestService<SystemEvent>
 {
     private static Logger logger = LoggerFactory.getLogger(SystemEventServiceImpl.class);
 
@@ -77,8 +77,6 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
     private Long eventExpiryMinutes;
 
     private ModuleContainer moduleContainer;
-
-    private SystemEventServiceConfiguration systemEventServiceConfiguration;
 
     /**
      * Constructor
@@ -160,27 +158,6 @@ public class SystemEventServiceImpl implements SystemEventService<SystemEvent>, 
 
         return systemEventDao.find(pageNo, pageSize, orderBy, orderAscending, subject, action, timestampFrom, timestampTo, actor);
 
-    }
-
-    @Override
-    public void afterPropertiesSet() throws Exception
-    {
-        if (systemEventDao != null && systemEventServiceConfiguration != null)
-        {
-            systemEventDao.setBatchHousekeepDelete(systemEventServiceConfiguration.isBatchHousekeepDelete());
-            systemEventDao.setHousekeepingBatchSize(systemEventServiceConfiguration.getHousekeepingBatchSize());
-            systemEventDao.setTransactionBatchSize(systemEventServiceConfiguration.getTransactionBatchSize());
-        }
-    }
-
-    public SystemEventServiceConfiguration getSystemEventServiceConfiguration()
-    {
-        return systemEventServiceConfiguration;
-    }
-
-    public void setSystemEventServiceConfiguration(SystemEventServiceConfiguration systemEventServiceConfiguration)
-    {
-        this.systemEventServiceConfiguration = systemEventServiceConfiguration;
     }
 
 	/* (non-Javadoc)

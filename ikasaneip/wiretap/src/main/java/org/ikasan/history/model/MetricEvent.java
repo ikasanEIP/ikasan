@@ -40,6 +40,9 @@
  */
 package org.ikasan.history.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.GenericWiretapEvent;
 
@@ -51,15 +54,20 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MetricEvent")
 public class MetricEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable
 {
     /** event id */
+    @Column(name="EventId", nullable = false)
     private String eventId;
 
     /** related event id */
+    @Column(name="RelatedEventId", nullable = false)
     private String relatedEventId;
 
     /** event created date/time */
+    @Column(name="EventTimestamp", nullable = false)
     private long eventTimestamp;
 
     public MetricEvent()
@@ -73,6 +81,16 @@ public class MetricEvent extends GenericWiretapEvent implements WiretapEvent<Str
         this.eventId = eventId;
         this.relatedEventId = relatedEventId;
         this.eventTimestamp = eventTimestamp;
+    }
+
+    @Override
+    public long getIdentifier() {
+        return identifier;
+    }
+
+    @Override
+    public void setIdentifier(long identifier) {
+        this.identifier = identifier;
     }
 
     public String getEventId()
