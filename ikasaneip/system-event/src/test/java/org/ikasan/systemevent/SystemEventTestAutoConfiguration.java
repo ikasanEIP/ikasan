@@ -3,9 +3,9 @@ package org.ikasan.systemevent;
 import jakarta.persistence.EntityManagerFactory;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.systemevent.service.TestModuleContainer;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -16,6 +16,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@ImportResource("/transactions.xml")
 public class SystemEventTestAutoConfiguration {
 
     @Bean(name = {"ikasan.xads", "ikasan.ds"})

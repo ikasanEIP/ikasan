@@ -13,16 +13,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import javax.annotation.Resource;
+import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 import java.util.Map;
-import java.util.Properties;
 
 @Configuration
 public class SecurityConfiguration
@@ -38,7 +34,7 @@ public class SecurityConfiguration
     @Value("${ikasan.dashboard.extract.enabled:false}")
     boolean preventLocalAuthentication;
 
-    @Resource
+    @Autowired
     Map platformHibernateProperties;
 
     @Bean public PasswordEncoder passwordEncoder()
@@ -49,14 +45,12 @@ public class SecurityConfiguration
     @Bean
     public SecurityDao securityDao(){
         HibernateSecurityDao securityDao = new HibernateSecurityDao();
-        securityDao.setSessionFactory(xaSecuritySessionFactory().getObject());
         return securityDao;
     }
 
     @Bean
     public UserDao userDao(){
         HibernateUserDao userDao = new HibernateUserDao();
-        userDao.setSessionFactory(xaSecuritySessionFactory().getObject());
         return userDao;
     }
 
@@ -72,25 +66,6 @@ public class SecurityConfiguration
         return new UserServiceImpl(userDao(), securityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
 
-
-    @Bean
-    public LocalSessionFactoryBean securitySessionFactory(
-    )
-    {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(ikasands);
-        sessionFactoryBean.setMappingResources("/org/ikasan/security/model/Principal.hbm.xml",
-            "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/Policy.hbm.xml",
-            "/org/ikasan/security/model/User.hbm.xml", "/org/ikasan/security/model/Authority.hbm.xml",
-            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml", "/org/ikasan/security/model/PolicyLink.hbm.xml",
-            "/org/ikasan/security/model/PolicyLinkType.hbm.xml", "/org/ikasan/security/model/RoleModule.hbm.xml",
-            "/org/ikasan/security/model/RoleJobPlan.hbm.xml");
-        Properties properties = new Properties();
-        properties.putAll(platformHibernateProperties);
-        sessionFactoryBean.setHibernateProperties(properties);
-
-        return sessionFactoryBean;
-    }
 
     @Bean
     public AuthenticationService authenticationService(Environment environment){
@@ -109,14 +84,12 @@ public class SecurityConfiguration
     @Bean
     public SecurityDao xaSecurityDao(){
         HibernateSecurityDao securityDao = new HibernateSecurityDao();
-        securityDao.setSessionFactory(xaSecuritySessionFactory().getObject());
         return securityDao;
     }
 
     @Bean
     public UserDao xaUserDao(){
         HibernateUserDao userDao = new HibernateUserDao();
-        userDao.setSessionFactory(xaSecuritySessionFactory().getObject());
         return userDao;
     }
 
@@ -132,24 +105,6 @@ public class SecurityConfiguration
         return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
 
-
-    @Bean
-    public LocalSessionFactoryBean xaSecuritySessionFactory()
-    {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(ikasanxads);
-        sessionFactoryBean.setMappingResources("/org/ikasan/security/model/Principal.hbm.xml",
-            "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/Policy.hbm.xml",
-            "/org/ikasan/security/model/User.hbm.xml", "/org/ikasan/security/model/Authority.hbm.xml",
-            "/org/ikasan/security/model/AuthenticationMethod.hbm.xml", "/org/ikasan/security/model/PolicyLink.hbm.xml",
-            "/org/ikasan/security/model/PolicyLinkType.hbm.xml", "/org/ikasan/security/model/RoleModule.hbm.xml",
-            "/org/ikasan/security/model/RoleJobPlan.hbm.xml");
-        Properties properties = new Properties();
-        properties.putAll(platformHibernateProperties);
-        sessionFactoryBean.setHibernateProperties(properties);
-
-        return sessionFactoryBean;
-    }
 
     @Bean
     public AuthenticationProviderFactory xaAuthenticationProviderFactory(Environment environment){

@@ -70,7 +70,6 @@ import java.util.*;
  * @author Ikasan Development Team
  * 
  */
-@Transactional
 public class HibernateWiretapDao implements WiretapDao<Long>
 {
     /** Logger for this class */

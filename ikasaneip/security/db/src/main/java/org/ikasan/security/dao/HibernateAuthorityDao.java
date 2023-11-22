@@ -40,10 +40,12 @@
  */
 package org.ikasan.security.dao;
 
-import java.util.List;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.ikasan.security.model.Authority;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+
+import java.util.List;
 
 /**
  * Hibernate implementation of <code>AuthorityDao</code>
@@ -51,15 +53,18 @@ import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
  * @author Ikasan Development Team
  *
  */
-public class HibernateAuthorityDao extends HibernateDaoSupport implements AuthorityDao
+public class HibernateAuthorityDao implements AuthorityDao
 {
+    @PersistenceContext(unitName = "security")
+    private EntityManager entityManager;
+
     /* (non-Javadoc)
      * @see org.ikasan.framework.security.dao.AuthorityDao#getAuthorities()
      */
     @SuppressWarnings("unchecked")
     public List<Authority> getAuthorities()
     {
-        return getHibernateTemplate().execute(session -> session.createQuery("from Authority").getResultList());
+        return this.entityManager.createQuery("from Authority").getResultList();
     }
 
     /* (non-Javadoc)
@@ -68,20 +73,24 @@ public class HibernateAuthorityDao extends HibernateDaoSupport implements Author
     @SuppressWarnings("unchecked")
     public Authority getAuthority(String authority)
     {
-        List<Authority> results = (List<Authority>) getHibernateTemplate().findByNamedParam("from Authority where authority  = :authority", "authority", authority);
+        Query query = this.entityManager.createQuery("from Authority where authority  = :authority");
+        query.setParameter("authority", authority);
         Authority result = null;
+
+        List<Authority> results = query.getResultList();
+
         if (!results.isEmpty()){
             result = results.get(0);
         }
         
-        return result;    }
+        return result;
+    }
 
     /* (non-Javadoc)
      * @see org.ikasan.framework.security.dao.AuthorityDao#save(org.ikasan.framework.security.window.Authority)
      */
     public void save(Authority newAuthority)
     {
-        getHibernateTemplate().save(newAuthority);
-        
+        this.entityManager.persist(newAuthority);
     }
 }
