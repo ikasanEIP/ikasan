@@ -40,16 +40,14 @@
  */
 package org.ikasan.history.dao;
 
-import java.util.*;
-
-import javax.annotation.Resource;
-
+import org.ikasan.WiretapAutoConfiguration;
+import org.ikasan.WiretapTestAutoConfiguration;
+import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.FlowInvocationMetricImpl;
-import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.junit.After;
 import org.junit.Assert;
@@ -60,15 +58,16 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.annotation.Resource;
+import java.util.*;
+
 /**
  * Test cases for the HibernateMessageHistoryDao
  *
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml",
-        "/substitute-components.xml",
-})
+@ContextConfiguration(classes={WiretapAutoConfiguration.class, WiretapTestAutoConfiguration.class})
 @DirtiesContext
 public class HibernateMessageHistoryDaoTest
 {
@@ -101,7 +100,7 @@ public class HibernateMessageHistoryDaoTest
                     "lifeId" + j, "relatedLifeId" + j, System.currentTimeMillis(), "payload", 30L);
 
             messageHistoryDao.save(wiretapEvent);
-
+            messageHistoryDao.save(event1);
             events.add(event1);
         }
 
@@ -159,7 +158,7 @@ public class HibernateMessageHistoryDaoTest
     @DirtiesContext
     public void test_get_relatedLifeId()
     {
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", "lifeId1");
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", "relatedLifeId1");
         Assert.assertTrue(results.getPagedResults().size() == 1);
     }
     
@@ -283,7 +282,7 @@ public class HibernateMessageHistoryDaoTest
 
         System.out.println("Delete completed records: " + results.getResultSize());
 
-        Assert.assertTrue(results.getPagedResults().size() == 0);
+        Assert.assertEquals(5, results.getPagedResults().size());
     }
 
     @Test
@@ -341,7 +340,7 @@ public class HibernateMessageHistoryDaoTest
 
         System.out.println("Delete completed records: " + results.getResultSize());
 
-        Assert.assertTrue(results.getPagedResults().size() == 0);
+        Assert.assertEquals(5, results.getPagedResults().size());
     }
 
     @After

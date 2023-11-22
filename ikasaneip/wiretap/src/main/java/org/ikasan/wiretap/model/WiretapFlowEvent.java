@@ -40,6 +40,7 @@
  */
 package org.ikasan.wiretap.model;
 
+import jakarta.persistence.*;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.wiretap.WiretapEvent;
 
@@ -52,15 +53,20 @@ import java.util.Objects;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "IkasanWiretap")
 public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable, HarvestEvent
 {
     /** related event id */
+    @Column(name="RelatedEventId", nullable = false)
     private String relatedEventId;
 
     /** has the record been harvested */
+    @Column(name="Harvested", nullable = false)
     private boolean harvested;
 
     /** the time the record was harvested */
+    @Column(name="HarvestedDateTime", nullable = false)
     private long harvestedDateTime;
 
 
@@ -116,7 +122,6 @@ public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEven
     {
         this.harvestedDateTime = harvestedDateTime;
     }
-
 
     @Override
     public String toString()

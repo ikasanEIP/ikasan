@@ -42,11 +42,12 @@ package org.ikasan.systemevent.dao;
 
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
+import org.ikasan.systemevent.SystemEventAutoConfiguration;
+import org.ikasan.systemevent.SystemEventTestAutoConfiguration;
 import org.ikasan.systemevent.model.SystemEventImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -62,11 +63,9 @@ import static org.junit.Assert.assertEquals;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
-        "/systemevent-service-conf.xml", "/test-conf.xml"
-})
+@ContextConfiguration(classes={SystemEventAutoConfiguration.class, SystemEventTestAutoConfiguration.class})
 @Sql(scripts = "classpath:drop-system-event-table.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:create-system-event-table.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class HibernateSystemEventDaoTest
 {
 
@@ -75,9 +74,7 @@ public class HibernateSystemEventDaoTest
     private SystemEventDao systemEventDao;
 
     @Test
-    @DirtiesContext
-    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000()
-    {
+    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000() {
         systemEventDao.setBatchHousekeepDelete(true);
         systemEventDao.setHousekeepingBatchSize(100);
         systemEventDao.setTransactionBatchSize(2000);
@@ -96,14 +93,10 @@ public class HibernateSystemEventDaoTest
         List<SystemEvent> result = systemEventDao.list(null,null,null,null);
 
         assertEquals(0, result.size());
-
-
     }
 
     @Test
-    @DirtiesContext
-    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000()
-    {
+    public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize20000() {
         systemEventDao.setBatchHousekeepDelete(true);
         systemEventDao.setHousekeepingBatchSize(1000);
         systemEventDao.setTransactionBatchSize(20000);
@@ -118,14 +111,11 @@ public class HibernateSystemEventDaoTest
         List<SystemEvent> result = systemEventDao.list(null,null,null,null);
 
         assertEquals(3456, result.size());
-
     }
 
 
     @Test
-    @DirtiesContext
-    public void test_harvesting()
-    {
+    public void test_harvesting() {
         this.systemEventDao.setOrderHarvestQuery(true);
         for(int i=0; i< 20; i++)
         {
@@ -134,19 +124,20 @@ public class HibernateSystemEventDaoTest
 
         List<SystemEvent> events = this.systemEventDao.getHarvestableRecords(15);
 
+        assertEquals(15, events.size());
+
         this.systemEventDao.updateAsHarvested(events);
 
 
         List<SystemEvent> result = systemEventDao.list(null,null,null,null);
 
+        assertEquals(20, result.size());
         assertEquals(15, result.stream()
                                .filter(systemEvent -> ((SystemEventImpl)systemEvent).isHarvested()).count());
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvesting_no_order_by()
-    {
+    public void test_harvesting_no_order_by() {
         this.systemEventDao.setOrderHarvestQuery(false);
         for(int i=0; i< 20; i++)
         {
@@ -162,13 +153,10 @@ public class HibernateSystemEventDaoTest
 
         assertEquals(15, result.stream()
             .filter(systemEvent -> ((SystemEventImpl)systemEvent).isHarvested()).count());
-
     }
 
     @Test
-    @DirtiesContext
-    public void test_harvesting_no_order_by_with_gap()
-    {
+    public void test_harvesting_no_order_by_with_gap() {
         this.systemEventDao.setOrderHarvestQuery(false);
         for(int i=0; i< 20; i++)
         {

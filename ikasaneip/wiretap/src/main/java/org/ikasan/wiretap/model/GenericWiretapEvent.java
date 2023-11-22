@@ -40,6 +40,7 @@
  */
 package org.ikasan.wiretap.model;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.wiretap.WiretapEvent;
 
 import java.io.Serializable;
@@ -50,28 +51,37 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
+@MappedSuperclass
 public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
 {
     /** immutable identifier */
-    private long identifier;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    protected long identifier;
 
     /** immutable event creation timestamp */
+    @Column(name="CreatedDateTime", nullable = false)
     protected long timestamp;
 
     /** module name */
-    private String moduleName;
+    @Column(name="ModuleName", nullable = false)
+    protected String moduleName;
     
     /** flow name */
-    private String flowName;
+    @Column(name="FlowName", nullable = false)
+    protected String flowName;
     
     /** component name */
-    private String componentName;
+    @Column(name="ComponentName", nullable = false)
+    protected String componentName;
 
     /** tapped event */
-    private String event;
+    @Column(name="PayloadContent", nullable = false)
+    protected String event;
 
     /** expiry time in millis */
-    private long expiry;
+    @Column(name="Expiry", nullable = false)
+    protected long expiry;
 
     /** Next GenericWiretapEvent (if any) for this event */
     private transient Long nextByEventId;
@@ -80,6 +90,7 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
     private transient Long previousByEventId;
 
     /** event id */
+    @Column(name="EventId", nullable = false)
     protected String eventId;
 
     /**

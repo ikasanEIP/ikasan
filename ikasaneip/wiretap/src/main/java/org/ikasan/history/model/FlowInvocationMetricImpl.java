@@ -1,5 +1,6 @@
 package org.ikasan.history.model;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.history.FlowInvocationMetric;
 
 import java.io.Serializable;
@@ -8,19 +9,33 @@ import java.util.Set;
 /**
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name = "FlowInvocationMetric")
 public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentInvocationMetricImpl>, Serializable
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @Column(name="ModuleName", nullable = false)
     private String moduleName;
+    @Column(name="FlowName", nullable = false)
     private String flowName;
+    @Column(name="StartTime", nullable = false)
     private long invocationStartTime;
+    @Column(name="EndTime", nullable = true)
     private long invocationEndTime;
+    @Column(name="FinalAction", nullable = false)
     private String finalAction;
+    @OneToMany(mappedBy="flowInvocation", fetch = FetchType.EAGER)
     private Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls;
+    @Column(name="Harvested", nullable = false)
     private Boolean harvested = false;
+    @Column(name="Expiry", nullable = false)
     private long expiry;
+    @Column(name="ErrorUri", nullable = true)
     private String errorUri;
     /** the time the record was harvested */
+    @Column(name="HarvestedDateTime", nullable = false)
     private long harvestedDateTime = 0L;
 
     /**
@@ -47,7 +62,7 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
         this.errorUri = errorUri;
     }
 
-    private FlowInvocationMetricImpl()
+    protected FlowInvocationMetricImpl()
     {
 
     }
@@ -122,6 +137,7 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     public void setFlowInvocationEvents(Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls)
     {
         this.componentInvocationMetricImpls = componentInvocationMetricImpls;
+        this.componentInvocationMetricImpls.forEach(componentInvocationMetric -> componentInvocationMetric.setFlowInvocation(this));
     }
 
     public Boolean getHarvested()

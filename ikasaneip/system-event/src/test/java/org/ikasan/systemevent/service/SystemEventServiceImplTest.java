@@ -3,6 +3,8 @@ package org.ikasan.systemevent.service;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventDao;
 import org.ikasan.spec.systemevent.SystemEventService;
+import org.ikasan.systemevent.SystemEventAutoConfiguration;
+import org.ikasan.systemevent.SystemEventTestAutoConfiguration;
 import org.ikasan.systemevent.model.SystemEventImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
@@ -22,11 +24,9 @@ import java.util.Date;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml", "/transaction-conf.xml",
-    "/systemevent-service-conf.xml", "/test-conf.xml"
-})
+@ContextConfiguration(classes={SystemEventAutoConfiguration.class, SystemEventTestAutoConfiguration.class})
 @Sql(scripts = "classpath:drop-system-event-table.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-@Sql(scripts = {"classpath:create-system-event-table.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+@Sql(scripts = "classpath:create-system-event-table.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class SystemEventServiceImplTest
 {
     @Autowired

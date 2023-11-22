@@ -42,6 +42,8 @@ package org.ikasan.wiretap.dao;
 
 import javax.annotation.Resource;
 
+import org.ikasan.WiretapAutoConfiguration;
+import org.ikasan.WiretapTestAutoConfiguration;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapDao;
 import org.ikasan.spec.wiretap.WiretapEvent;
@@ -66,19 +68,13 @@ import java.util.List;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml",
-        "/substitute-components.xml",
-})
+@ContextConfiguration(classes={WiretapAutoConfiguration.class, WiretapTestAutoConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class HibernateWiretapDaoTest
 {
 	/** Object being tested */
 	@Resource private WiretapDao wiretapDao;
 
-	/**
-	 * Before each test case, inject a mock {@link HibernateTemplate} to hibernate implementation
-	 * being tested
-	 */
 	@Before
 	public void setup() {
 
