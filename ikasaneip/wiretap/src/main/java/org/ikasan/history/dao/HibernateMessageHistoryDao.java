@@ -59,7 +59,6 @@ import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -70,7 +69,6 @@ import java.util.stream.Collectors;
  * @author Ikasan Development Team
  *
  */
-@Transactional
 public class HibernateMessageHistoryDao implements MessageHistoryDao
 {
     /**

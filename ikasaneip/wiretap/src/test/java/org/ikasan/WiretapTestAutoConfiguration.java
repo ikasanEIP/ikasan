@@ -9,6 +9,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -19,6 +20,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@ImportResource("/transactions.xml")
 public class WiretapTestAutoConfiguration {
 
     @Mock
