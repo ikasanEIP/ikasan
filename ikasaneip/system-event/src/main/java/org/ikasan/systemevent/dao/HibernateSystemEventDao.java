@@ -70,7 +70,6 @@ import java.util.stream.Collectors;
  *
  * @author Ikasan Development Team
  */
-@Transactional
 public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
 {
     /**
