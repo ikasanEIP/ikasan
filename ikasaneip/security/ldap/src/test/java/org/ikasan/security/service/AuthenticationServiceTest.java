@@ -46,7 +46,7 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
-import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.constants.SecurityConstants;
@@ -73,7 +73,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class,TestImportConfig.class})
 public class AuthenticationServiceTest
 {
 	private InMemoryDirectoryServer inMemoryDirectoryServer;

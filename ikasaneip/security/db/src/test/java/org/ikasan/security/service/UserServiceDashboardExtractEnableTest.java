@@ -1,6 +1,6 @@
 package org.ikasan.security.service;
 
-import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.User;
@@ -10,13 +10,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * This class is to test with the property value "ikasan.dashboard.extract.enabled" set to true
@@ -24,7 +23,7 @@ import javax.annotation.Resource;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { SecurityConfiguration.class, TestImportConfig.class })
+@ContextConfiguration(classes = { SecurityAutoConfiguration.class, TestImportConfig.class })
 @TestPropertySource(properties = "ikasan.dashboard.extract.enabled = true")
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class UserServiceDashboardExtractEnableTest {
@@ -32,9 +31,9 @@ public class UserServiceDashboardExtractEnableTest {
     private User admin;
     private  User disabledUser;
 
-    @Resource
+    @Autowired
     private UserDao xaUserDao;
-    @Resource
+    @Autowired
     private UserService xaUserService;
 
     @Rule

@@ -40,18 +40,33 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
+
 import java.util.*;
 
 /**
  * @author CMI2 Development Team
  *
  */
+@Entity
+@Table(name = "SecurityRole")
 public class Role implements Comparable<Role>
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "Name")
     private String name = "";
+    @Column(name = "Description")
     private String description = "";
+    @ManyToMany(cascade = { CascadeType.MERGE })
+    @JoinTable(
+        name = "RolePolicy",
+        joinColumns = { @JoinColumn(name = "RoleId") },
+        inverseJoinColumns = { @JoinColumn(name = "PolicyId") }
+    )
     private Set<Policy> policies = new HashSet<>();
+    @OneToMany(mappedBy="componentInvocationMetricImpl", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<RoleModule> roleModules = new HashSet<>();
     private Set<RoleJobPlan> roleJobPlans = new HashSet<>();
 

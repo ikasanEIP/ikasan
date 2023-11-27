@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
 /**
@@ -47,34 +49,63 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "AuthenticationMethod")
 public class AuthenticationMethod 
 {
-	private Long id;
-	private String name = "";
-	private String method = "";
-	private Long order;
-	private Date lastSynchronised;
-	private boolean enabled;
-	private String ldapServerUrl = "";
-	private String ldapBindUserDn = "";
-	private String ldapBindUserPassword = "";
-	private String ldapUserSearchBaseDn = "";
-	private String applicationSecurityBaseDn = "";
-	private String applicationSecurityGroupAttributeName = "";
-	private String ldapUserSearchFilter = "";
-	private String accountTypeAttributeName = "";
-	private String userAccountNameAttributeName = "";
-	private String emailAttributeName = "";
-	private String firstNameAttributeName = "";
-	private String surnameAttributeName = "";
-	private String departmentAttributeName = "";
-	private String ldapUserDescriptionAttributeName = "";
-	private String applicationSecurityDescriptionAttributeName = "";
-	private String memberofAttributeName = "";
-	private String userSynchronisationFilter = "";
-	private String groupSynchronisationFilter = "";
-	private boolean scheduled;
-	private String synchronisationCronExpression;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "Name")
+    private String name = "";
+	@Column(name = "Method")
+    private String method = "";
+    @Column(name = "Order")
+    private Long order;
+    @Column(name = "LastSynchronised")
+    private Date lastSynchronised;
+    @Column(name = "Enabled")
+    private boolean enabled;
+    @Column(name = "LdapServerUrl")
+    private String ldapServerUrl = "";
+    @Column(name = "LdapBindUserDn")
+    private String ldapBindUserDn = "";
+    @Column(name = "LdapBindUserPassword")
+    private String ldapBindUserPassword = "";
+    @Column(name = "LdapUserSearchBaseDn")
+    private String ldapUserSearchBaseDn = "";
+    @Column(name = "AppSecBaseDn")
+    private String applicationSecurityBaseDn = "";
+    @Column(name = "AppSecDescAttributeName")
+    private String applicationSecurityGroupAttributeName = "";
+    @Column(name = "LdapUserSearchFilter")
+    private String ldapUserSearchFilter = "";
+    @Column(name = "AccountTypeAttributeName")
+    private String accountTypeAttributeName = "";
+    @Column(name = "UserAccNameAttributeName")
+    private String userAccountNameAttributeName = "";
+    @Column(name = "EmailAttributeName")
+    private String emailAttributeName = "";
+    @Column(name = "FirstNameAttributeName")
+    private String firstNameAttributeName = "";
+    @Column(name = "SurnameAttributeName")
+    private String surnameAttributeName = "";
+    @Column(name = "DepartmentAttributeName")
+    private String departmentAttributeName = "";
+    @Column(name = "LdapUserDescAttributeName")
+    private String ldapUserDescriptionAttributeName = "";
+    @Column(name = "AppSecGroupAttributeName")
+    private String applicationSecurityDescriptionAttributeName = "";
+    @Column(name = "MemberofAttributeName")
+    private String memberofAttributeName = "";
+    @Column(name = "UserSynchronisationFilter")
+    private String userSynchronisationFilter = "";
+    @Column(name = "GroupSynchronisationFilter")
+    private String groupSynchronisationFilter = "";
+    @Column(name = "Scheduled")
+    private boolean scheduled;
+    @Column(name = "SynchronisationCronExpression")
+    private String synchronisationCronExpression;
 	
 	public AuthenticationMethod()
 	{

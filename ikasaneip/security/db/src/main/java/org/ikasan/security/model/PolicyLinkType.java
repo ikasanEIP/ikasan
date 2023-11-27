@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
 /**
@@ -47,32 +49,41 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "PolicyLinkType")
 public class PolicyLinkType
 {
-	public Long id;
-	public String name;
-	public String tableName;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    public Long id;
+    @Column(name = "Name")
+    public String name;
+    @Column(name = "TableName")
+    public String tableName;
 
-	/** The data time stamp when an instance was first created */
+    /** The date time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime")
     private Date createdDateTime;
 
-    /** The data time stamp when an instance was last updated */
+    /** The date time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime")
     private Date updatedDateTime;
-
   
     /**
      * 
      */
     @SuppressWarnings("unused")
-	private PolicyLinkType()
+	protected PolicyLinkType()
     {
     	
     }
-   
-	/**
-	 * @param id
-	 * @param name
-	 */
+
+    /**
+     * Constructor
+     *
+     * @param name
+     * @param tableName
+     */
 	public PolicyLinkType(String name, String tableName)
 	{
 		super();

@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
+
 import java.security.Principal;
 import java.util.Date;
 import java.util.Set;
@@ -48,17 +50,26 @@ import java.util.Set;
   *
   * @author Ikasan Development Team
   */
+ @Entity
+ @Table(name = "SecurityPrincipal")
  public class IkasanPrincipalLite implements Principal
  {
+     @Id
+     @GeneratedValue(strategy= GenerationType.IDENTITY)
      private Long id;
+     @Column(name = "Name")
      private String name;
+     @Column(name = "PrincipalType")
      private String type;
+     @Column(name = "Description")
      private String description;
 
-     /** The data time stamp when an instance was first created */
+     /** The date time stamp when an instance was first created */
+     @Column(name = "CreatedDateTime")
      private Date createdDateTime;
 
-     /** The data time stamp when an instance was last updated */
+     /** The date time stamp when an instance was last updated */
+     @Column(name = "UpdatedDateTime")
      private Date updatedDateTime;
 
      /**

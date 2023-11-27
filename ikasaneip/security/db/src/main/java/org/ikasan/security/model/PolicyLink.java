@@ -40,6 +40,8 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
 /**
@@ -47,24 +49,33 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
+@Entity
 public class PolicyLink
 {
-	private Long id;
-	private PolicyLinkType policyLinkType;
-	private Long targetId;
-	private String name;
-	
-	/** The data time stamp when an instance was first created */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PolicyLinkTypeId", nullable = false)
+    private PolicyLinkType policyLinkType;
+    @Column(name = "TargetId")
+    private Long targetId;
+    @Column(name = "Name")
+    private String name;
+
+    /** The date time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime")
     private Date createdDateTime;
 
-    /** The data time stamp when an instance was last updated */
+    /** The date time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime")
     private Date updatedDateTime;
     
     /**
      * 
      */
     @SuppressWarnings("unused")
-	private PolicyLink()
+	protected PolicyLink()
     {
     	
     }

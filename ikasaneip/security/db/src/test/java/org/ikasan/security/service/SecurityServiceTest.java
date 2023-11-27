@@ -41,7 +41,8 @@
 
 package org.ikasan.security.service;
 
-import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.SecurityAutoConfiguration;
+import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.*;
@@ -67,11 +68,9 @@ import java.util.List;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class, SecurityTestAutoConfiguration.class})
 public class SecurityServiceTest
 {
-
- 
     /** Object being tested */
     @Autowired
     private SecurityDao xaSecurityDao;

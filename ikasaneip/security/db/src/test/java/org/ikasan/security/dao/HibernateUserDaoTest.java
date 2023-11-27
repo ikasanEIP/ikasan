@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.dao;
 
-import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.JobPlanGrantedAuthority;
 import org.ikasan.security.model.ModuleGrantedAuthority;
@@ -66,7 +66,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityConfiguration.class,TestImportConfig.class})
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class,TestImportConfig.class})
 @Sql(scripts = {"/setupSecurityData.sql"}, executionPhase = BEFORE_TEST_METHOD)
 @Sql(scripts = {"/teardownSecurityData.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class HibernateUserDaoTest
