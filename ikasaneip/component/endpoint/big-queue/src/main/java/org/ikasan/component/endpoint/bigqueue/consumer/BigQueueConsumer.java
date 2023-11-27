@@ -286,9 +286,11 @@ public class BigQueueConsumer<T>
         try {
             inboundQueue.dequeue();
             inboundQueue.gc();
-            this.addInboundListener();
         } catch (IOException e) {
             throw new XAException(e.getMessage());
+        }
+        finally {
+            this.addInboundListener();
         }
     }
 
@@ -330,9 +332,11 @@ public class BigQueueConsumer<T>
             if(this.bigQueueConsumerConfiguration.isPutErrorsToBackOfQueue()) {
                 inboundQueue.enqueue(inboundQueue.dequeue());
             }
-            this.addInboundListener();
         } catch (IOException e) {
             throw new XAException(e.getMessage());
+        }
+        finally {
+            this.addInboundListener();
         }
     }
 
