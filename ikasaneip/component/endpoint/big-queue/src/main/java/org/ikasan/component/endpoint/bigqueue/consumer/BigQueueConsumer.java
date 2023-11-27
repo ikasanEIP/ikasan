@@ -167,10 +167,13 @@ public class BigQueueConsumer<T>
     }
 
     private void addInboundListener() {
+        logger.debug("Adding inbound message listener - bigQueueListenerExecutor: " + bigQueueListenerExecutor);
         if(this.bigQueueListenerExecutor != null) {
             this.listenableFuture = this.inboundQueue.peekAsync();
+            logger.debug("Peeking onto the inbound queue. listenableFuture: " + listenableFuture);
             this.listenableFuture.addListener(this.inboundQueueMessageRunner
                 , bigQueueListenerExecutor);
+            logger.debug("Sucessfully added inbound listener!");
         }
     }
 
@@ -219,6 +222,7 @@ public class BigQueueConsumer<T>
             invoke(flowEvent);
         }
         catch (RollbackException | SystemException e) {
+            logger.debug("An exception has occurred attemping to process event!", e);
             this.onException(e);
         }
     }
@@ -284,14 +288,18 @@ public class BigQueueConsumer<T>
     public void commit(Xid xid, boolean onePhase) throws XAException {
         logger.debug("commit " + xid);
         try {
+            logger.debug("dequeuing message due to commit");
             inboundQueue.dequeue();
+            logger.debug("garbage collecting queue due to commit");
             inboundQueue.gc();
         } catch (IOException e) {
+            logger.debug("An exception has occurred commiting transaction!", e);
             throw new XAException(e.getMessage());
         }
         finally {
             this.addInboundListener();
         }
+        logger.debug("commit complete" + xid);
     }
 
     @Override
@@ -333,6 +341,7 @@ public class BigQueueConsumer<T>
                 inboundQueue.enqueue(inboundQueue.dequeue());
             }
         } catch (IOException e) {
+            logger.debug("An exception has occurred rolling back transaction!", e);
             throw new XAException(e.getMessage());
         }
         finally {
