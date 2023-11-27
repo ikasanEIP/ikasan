@@ -44,6 +44,7 @@ public class InboundQueueMessageRunner implements Runnable {
             this.messageListener.onMessage(payload);
         }
         catch (Exception e) {
+            logger.debug("An exception has occurred in the inbound message runner!", e);
             if(this.endpointListener != null) {
                 this.endpointListener.onException(e);
             }
