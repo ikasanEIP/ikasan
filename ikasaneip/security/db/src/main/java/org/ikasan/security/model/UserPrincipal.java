@@ -40,6 +40,11 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+
 import java.io.Serializable;
 
 /**
@@ -47,11 +52,13 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
-public class UserPrincipal 
+@Entity
+public class UserPrincipal
 {
 	private static final long serialVersionUID = -1724759502309436272L;
-	
-	private UserPrincipalPk id;
+
+    @Id
+    private UserPrincipalPk id;
 	private Long userId;
 	private Long ikasanPrincipalId;
 	
