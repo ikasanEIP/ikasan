@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.service;
 
-import org.ikasan.security.SecurityConfiguration;
+import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.User;
@@ -60,7 +60,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { SecurityConfiguration.class, TestImportConfig.class })
+@ContextConfiguration(classes = { SecurityAutoConfiguration.class, TestImportConfig.class })
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class UserServiceTest
 {

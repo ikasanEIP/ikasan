@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
 /**
@@ -49,6 +50,8 @@ import org.springframework.security.core.GrantedAuthority;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "Authorities")
 public class Authority implements GrantedAuthority
 {
 
@@ -61,17 +64,21 @@ public class Authority implements GrantedAuthority
     /**
      * Identitiy field required for ORM
      */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
     
     /**
      * Name of the authority
      */
+    @Column(name = "Authority")
     private String authority;
     
     
     /**
      * Description of this authority
      */
+    @Column(name = "Description")
     private String description;
 
 
@@ -80,7 +87,7 @@ public class Authority implements GrantedAuthority
      * No args constructor required by ORM
      */
     @SuppressWarnings("unused")
-    private Authority(){}
+    protected Authority(){}
     
     /**
      * Constructor

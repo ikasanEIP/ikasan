@@ -14,16 +14,17 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.sql.DataSource;
-import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-public class SecurityConfiguration
+public class SecurityAutoConfiguration
 {
     @Autowired
     @Qualifier("ikasan.ds")
@@ -36,9 +37,6 @@ public class SecurityConfiguration
     @Autowired
     @Value("${ikasan.dashboard.extract.enabled:false}")
     boolean preventLocalAuthentication;
-
-    @Autowired
-    Map platformHibernateProperties;
 
     @Bean public PasswordEncoder passwordEncoder()
     {
@@ -92,5 +90,27 @@ public class SecurityConfiguration
     public UserService xaUserService(Environment environment)
     {
         return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), this.preventLocalAuthentication);
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean securityEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
+        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+            = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("security");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:security-persistence.xml");
+
+        return localContainerEntityManagerFactoryBean;
+    }
+
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
+            = new HibernateJpaVendorAdapter();
+
+        return hibernateJpaVendorAdapter;
     }
 }

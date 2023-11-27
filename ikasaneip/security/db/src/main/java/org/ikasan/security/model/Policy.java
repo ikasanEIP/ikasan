@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Date;
@@ -48,17 +49,28 @@ import java.util.Set;
 /**
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name = "SecurityPolicy")
 public class Policy implements GrantedAuthority, Comparable<Policy>
 {
-    /**
-     *
-     */
     private static final long serialVersionUID = -3421453948503155354L;
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private String name = "";
-    private String description = "";
+    @Column(name = "Name")
+    private String name;
+    @Column(name = "Description")
+    private String description;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "PolicyLinkId")
     private PolicyLink policyLink;
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "RolePolicy",
+        joinColumns = { @JoinColumn(name = "PolicyId") },
+        inverseJoinColumns = { @JoinColumn(name = "RoleId") }
+    )
     private Set<Role> roles;
 
     /**

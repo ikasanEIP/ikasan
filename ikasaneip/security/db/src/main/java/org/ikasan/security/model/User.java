@@ -43,6 +43,10 @@ package org.ikasan.security.model;
 import java.security.Principal;
 import java.util.*;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import org.ikasan.security.util.AuthoritiesHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -53,12 +57,15 @@ import org.springframework.security.core.userdetails.UserDetails;
  * @author Ikasan Development Team
  * 
  */
+@Entity
 public class User implements UserDetails, Principal
 {
     /** serialVersionUID */
     private static final long serialVersionUID = 8975017088981341914L;
 
     /** Id field utilised by ORM */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     /** Users username for the system */
