@@ -1,5 +1,6 @@
 package org.ikasan.component.endpoint.bigqueue.consumer;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.consumer.configuration.BigQueueConsumerConfiguration;
@@ -17,6 +18,7 @@ import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.transaction.SystemException;
 import javax.transaction.Transaction;
@@ -95,7 +97,38 @@ public class BigQueueConsumerTest {
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
         Assert.assertEquals(0, bigQueue.size());
-        bigQueue.close();
+    }
+
+    @Test
+    public void test_null_message_consumed_successfully() throws IOException, InterruptedException, XAException, SystemException {
+        Mockito.doNothing().when(eventListener).invoke(any(FlowEvent.class));
+        when(flowEventFactory.newEvent(anyString(), anyString(), any())).thenReturn(flowEvent);
+        when(transactionManager.getTransaction()).thenReturn(transaction);
+
+        BigQueueImpl bigQueue = new BigQueueImpl("./target", "test");
+        bigQueue.removeAll();
+
+        InboundQueueMessageRunner runner = new InboundQueueMessageRunner(bigQueue, new BigQueueMessageJsonSerialiser());
+        BigQueueConsumer consumer = new BigQueueConsumer(bigQueue, runner, this.transactionManager);
+        runner.setMessageListener(consumer);
+        runner.setEndpointListener(consumer);
+        consumer.setEventFactory(this.flowEventFactory);
+        consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
+        consumer.setListener(this.eventListener);
+
+        consumer.start();
+        Assert.assertTrue(consumer.isRunning());
+
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS).await()
+            .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> Assert.assertEquals(0, bigQueue.size()));
+
+        ListenableFuture future = (ListenableFuture)ReflectionTestUtils.getField(consumer, "listenableFuture");
+        Assert.assertNotNull(future);
+        Assert.assertFalse(future.isDone());
+
+        consumer.stop();
+        Assert.assertFalse(consumer.isRunning());
+        Assert.assertEquals(0, bigQueue.size());
     }
 
     @Test
@@ -137,7 +170,6 @@ public class BigQueueConsumerTest {
 
         consumer.stop();
         Assert.assertFalse(consumer.isRunning());
-        bigQueue.close();
 
         verify(eventListener, times(2)).invoke(any(FlowEvent.class));
     }
@@ -191,8 +223,6 @@ public class BigQueueConsumerTest {
         Assert.assertEquals("\"test message 2\"", deserialised1.getMessage());
         BigQueueMessage deserialised2 = bigQueueMessageJsonSerialiser.deserialise(dequeue2);
         Assert.assertEquals("\"test message 1\"", deserialised2.getMessage());
-
-        bigQueue.close();
     }
 
     @Test
@@ -219,7 +249,6 @@ public class BigQueueConsumerTest {
         Assert.assertFalse(consumer.isRunning());
 
         Assert.assertEquals(1, bigQueue.size());
-        bigQueue.close();
 
         verify(eventListener, times(0)).invoke(any(FlowEvent.class));
         verify(eventListener, times(0)).invoke(any(RuntimeException.class));
@@ -255,7 +284,6 @@ public class BigQueueConsumerTest {
         Assert.assertFalse(consumer.isRunning());
 
         Assert.assertEquals(0, bigQueue.size());
-        bigQueue.close();
 
         verify(eventListener, times(1)).invoke(any(Resubmission.class));
     }
