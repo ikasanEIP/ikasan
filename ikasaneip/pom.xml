@@ -356,7 +356,7 @@
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
-        <version.big.queue>1.0.0</version.big.queue>
+        <version.big.queue>1.0.1-SNAPSHOT</version.big.queue>
         <version.expiring.map>0.5.10</version.expiring.map>
         <version.jakarta.xml.bind-api>2.3.3</version.jakarta.xml.bind-api>
         <version.jmock.imposters>2.12.0</version.jmock.imposters>
