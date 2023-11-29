@@ -14,6 +14,8 @@ public class InboundQueueMessageRunner implements Runnable {
     private Serialiser serialiser;
     private EndpointListener endpointListener;
 
+    private NullPayloadCallback nullPayloadCallback;
+
     /**
      *
      * @param iBigQueue
@@ -32,11 +34,17 @@ public class InboundQueueMessageRunner implements Runnable {
         this.endpointListener = endpointListener;
     }
 
+    public void setNullPayloadCallback(NullPayloadCallback nullPayloadCallback) {
+        this.nullPayloadCallback = nullPayloadCallback;
+    }
+
     @Override
     public void run() {
         try {
             byte[] event = iBigQueue.peek();
             if(event == null) {
+                logger.debug("message runner is returning null!");
+                if(this.nullPayloadCallback != null)this.nullPayloadCallback.executeNullPayloadCallback();
                 return;
             }
             Object payload = this.serialiser.deserialise(event);
