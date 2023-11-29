@@ -36,7 +36,7 @@ public class BigQueueConsumer<T>
     implements Consumer<EventListener<?>,EventFactory>,
     ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<T, Throwable>, MessageListener<T>,
     ConfiguredResource<BigQueueConsumerConfiguration>,
-    ResubmissionService<T>, XAResource {
+    ResubmissionService<T>, XAResource, NullPayloadCallback {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(BigQueueConsumer.class);
 
@@ -86,6 +86,7 @@ public class BigQueueConsumer<T>
         if(this.inboundQueueMessageRunner == null) {
             throw new IllegalArgumentException("inboundQueueMessageRunner cannot bee null!");
         }
+        this.inboundQueueMessageRunner.setNullPayloadCallback(this);
         this.transactionManager = transactionManager;
         if(this.transactionManager == null) {
             throw new IllegalArgumentException("transactionManager cannot bee null!");
@@ -188,12 +189,13 @@ public class BigQueueConsumer<T>
         this.isRunning = false;
         if(this.listenableFuture != null) {
             this.listenableFuture.cancel(true);
-            logger.debug("future is cancelled" + this.listenableFuture.isCancelled());
-            logger.debug("future is done" + this.listenableFuture.isDone());
+            logger.info("this.listenableFuture is cancelled " + this.listenableFuture.isCancelled());
+            logger.info("this.listenableFuture is done " + this.listenableFuture.isDone());
             this.listenableFuture = null;
         }
         if(this.bigQueueListenerExecutor != null) {
             try {
+                logger.info("Shutting down executor - " + this.bigQueueListenerExecutor);
                 this.shutdownExecutor(this.bigQueueListenerExecutor);
             }
             catch (Exception e) {
@@ -357,6 +359,11 @@ public class BigQueueConsumer<T>
     @Override
     public void start(Xid xid, int flags) throws XAException {
         logger.debug("start " + xid);
+    }
+
+    @Override
+    public void executeNullPayloadCallback() {
+        this.addInboundListener();
     }
 
     /**
