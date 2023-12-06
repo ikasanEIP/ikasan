@@ -56,55 +56,55 @@ public class AuthenticationMethod
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false)
     private String name = "";
-	@Column(name = "Method")
+	@Column(name = "Method", nullable = false)
     private String method = "";
-    @Column(name = "AuthOrder")
+    @Column(name = "AuthOrder", nullable = false)
     private Long order;
-    @Column(name = "LastSynchronised")
+    @Column(name = "LastSynchronised", nullable = false)
     private Date lastSynchronised;
-    @Column(name = "Enabled")
+    @Column(name = "Enabled", nullable = false)
     private boolean enabled;
-    @Column(name = "LdapServerUrl")
+    @Column(name = "LdapServerUrl", nullable = false)
     private String ldapServerUrl = "";
-    @Column(name = "LdapBindUserDn")
+    @Column(name = "LdapBindUserDn", nullable = false)
     private String ldapBindUserDn = "";
-    @Column(name = "LdapBindUserPassword")
+    @Column(name = "LdapBindUserPassword", nullable = false)
     private String ldapBindUserPassword = "";
-    @Column(name = "LdapUserSearchBaseDn")
+    @Column(name = "LdapUserSearchBaseDn", nullable = false)
     private String ldapUserSearchBaseDn = "";
-    @Column(name = "AppSecBaseDn")
+    @Column(name = "AppSecBaseDn", nullable = false)
     private String applicationSecurityBaseDn = "";
-    @Column(name = "AppSecDescAttributeName")
+    @Column(name = "AppSecDescAttributeName", nullable = false)
     private String applicationSecurityGroupAttributeName = "";
-    @Column(name = "LdapUserSearchFilter")
+    @Column(name = "LdapUserSearchFilter", nullable = false)
     private String ldapUserSearchFilter = "";
-    @Column(name = "AccountTypeAttributeName")
+    @Column(name = "AccountTypeAttributeName", nullable = false)
     private String accountTypeAttributeName = "";
-    @Column(name = "UserAccNameAttributeName")
+    @Column(name = "UserAccNameAttributeName", nullable = false)
     private String userAccountNameAttributeName = "";
-    @Column(name = "EmailAttributeName")
+    @Column(name = "EmailAttributeName", nullable = false)
     private String emailAttributeName = "";
-    @Column(name = "FirstNameAttributeName")
+    @Column(name = "FirstNameAttributeName", nullable = false)
     private String firstNameAttributeName = "";
-    @Column(name = "SurnameAttributeName")
+    @Column(name = "SurnameAttributeName", nullable = false)
     private String surnameAttributeName = "";
-    @Column(name = "DepartmentAttributeName")
+    @Column(name = "DepartmentAttributeName", nullable = false)
     private String departmentAttributeName = "";
-    @Column(name = "LdapUserDescAttributeName")
+    @Column(name = "LdapUserDescAttributeName", nullable = false)
     private String ldapUserDescriptionAttributeName = "";
-    @Column(name = "AppSecGroupAttributeName")
+    @Column(name = "AppSecGroupAttributeName", nullable = false)
     private String applicationSecurityDescriptionAttributeName = "";
-    @Column(name = "MemberofAttributeName")
+    @Column(name = "MemberofAttributeName", nullable = false)
     private String memberofAttributeName = "";
-    @Column(name = "UserSynchronisationFilter")
+    @Column(name = "UserSynchronisationFilter", nullable = false)
     private String userSynchronisationFilter = "";
-    @Column(name = "GroupSynchronisationFilter")
+    @Column(name = "GroupSynchronisationFilter", nullable = false)
     private String groupSynchronisationFilter = "";
     @Column(name = "Scheduled")
     private boolean scheduled;
-    @Column(name = "SynchronisationCronExpression")
+    @Column(name = "SynchronisationCronExpression", nullable = false)
     private String synchronisationCronExpression;
 	
 	public AuthenticationMethod()

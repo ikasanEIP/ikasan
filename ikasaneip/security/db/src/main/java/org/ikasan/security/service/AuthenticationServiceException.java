@@ -60,7 +60,7 @@ public class AuthenticationServiceException extends Exception
     }
 
     /**
-     * @param arg0
+     * @param message
      */
     public AuthenticationServiceException(String message)
     {
@@ -68,7 +68,7 @@ public class AuthenticationServiceException extends Exception
     }
 
     /**
-     * @param arg0
+     * @param throwable
      */
     public AuthenticationServiceException(Throwable throwable)
     {
@@ -76,8 +76,8 @@ public class AuthenticationServiceException extends Exception
     }
 
     /**
-     * @param arg0
-     * @param arg1
+     * @param message
+     * @param throwable
      */
     public AuthenticationServiceException(String message, Throwable throwable)
     {

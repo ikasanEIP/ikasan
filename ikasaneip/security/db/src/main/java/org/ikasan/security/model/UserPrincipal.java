@@ -57,42 +57,6 @@ public class UserPrincipal
 
     @EmbeddedId
     private UserPrincipalPk id;
-//    @Column(name = "UserId", nullable = false)
-//    Long userId;
-//    @Column(name = "IkasanPrincipalId", nullable = false)
-//    Long ikasanPrincipalId;
-//
-//	/**
-//	 * @return the userId
-//	 */
-//	public Long getUserId()
-//	{
-//		return id.getUserId();
-//	}
-//
-//	/**
-//	 * @param userId the userId to set
-//	 */
-//	public void setUserId(Long userId)
-//	{
-//		this.userId = userId;
-//	}
-//
-//	/**
-//	 * @return the ikasanPrincipalId
-//	 */
-//	public Long getIkasanPrincipalId()
-//	{
-//		return ikasanPrincipalId;
-//	}
-//
-//	/**
-//	 * @param ikasanPrincipalId the ikasanPrincipalId to set
-//	 */
-//	public void setIkasanPrincipalId(Long ikasanPrincipalId)
-//	{
-//		this.ikasanPrincipalId = ikasanPrincipalId;
-//	}
 
 	/**
 	 * @return the id
