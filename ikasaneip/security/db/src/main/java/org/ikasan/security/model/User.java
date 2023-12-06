@@ -43,10 +43,7 @@ package org.ikasan.security.model;
 import java.security.Principal;
 import java.util.*;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.ikasan.security.util.AuthoritiesHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -58,6 +55,7 @@ import org.springframework.security.core.userdetails.UserDetails;
  * 
  */
 @Entity
+@Table(name = "Users")
 public class User implements UserDetails, Principal
 {
     /** serialVersionUID */
@@ -69,38 +67,53 @@ public class User implements UserDetails, Principal
     private Long id;
 
     /** Users username for the system */
+    @Column(name = "Username", unique = true, nullable = false)
     private String username;
 
     /** Users password for the system */
+    @Column(name = "NewPassword", nullable = false)
     private String password;
 
     /** Users email address for the system */
+    @Column(name = "Email")
     private String email;
 
     /** The users firstname */
+    @Column(name = "FirstName")
     private String firstName;
     
     /** The users surname */
+    @Column(name = "Surname")
     private String surname;
     
     /** The users department */
+    @Column(name = "Department")
     private String department;
 
     /** Activation status for the user in the system */
+    @Column(name = "Enabled", nullable = false)
     private boolean enabled;
 
     /** All <code>IkasanPrincipals</code> held by the owner for the system */
+    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "UserPrincipal",
+        joinColumns = { @JoinColumn(name = "UserId") },
+        inverseJoinColumns = { @JoinColumn(name = "PrincipalId") }
+    )
     private Set<IkasanPrincipal> principals;
     
     /**
 	 * Last time the user accessed the system
 	 */
-	private long previousAccessTimestamp;
+    @Column(name = "PreviousAccess")
+    private long previousAccessTimestamp;
 
 	/**
      * Boolean flag to force user to change password in next login.
 	 */
-	private boolean requiresPasswordChange;
+    @Column(name = "RequiresPasswordChange", nullable = false)
+    private boolean requiresPasswordChange;
 
     /**
      * Constructor

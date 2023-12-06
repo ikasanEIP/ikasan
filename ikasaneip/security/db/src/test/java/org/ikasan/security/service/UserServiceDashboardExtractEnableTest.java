@@ -1,6 +1,7 @@
 package org.ikasan.security.service;
 
 import org.ikasan.security.SecurityAutoConfiguration;
+import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.model.User;
@@ -23,7 +24,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { SecurityAutoConfiguration.class, TestImportConfig.class })
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class, SecurityTestAutoConfiguration.class})
 @TestPropertySource(properties = "ikasan.dashboard.extract.enabled = true")
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
 public class UserServiceDashboardExtractEnableTest {

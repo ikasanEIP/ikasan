@@ -1,9 +1,6 @@
 package org.ikasan.security;
 
-import org.ikasan.security.dao.HibernateSecurityDao;
-import org.ikasan.security.dao.HibernateUserDao;
-import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.UserDao;
+import org.ikasan.security.dao.*;
 import org.ikasan.security.service.SecurityService;
 import org.ikasan.security.service.SecurityServiceImpl;
 import org.ikasan.security.service.UserService;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -24,6 +22,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+//@EnableJpaRepositories(basePackages = "org.ikasan.security.dao")
 public class SecurityAutoConfiguration
 {
     @Autowired
@@ -53,6 +52,12 @@ public class SecurityAutoConfiguration
     public UserDao userDao(){
         HibernateUserDao userDao = new HibernateUserDao();
         return userDao;
+    }
+
+    @Bean
+    public AuthorityDao authorityDao(){
+        HibernateAuthorityDao hibernateAuthorityDao = new HibernateAuthorityDao();
+        return hibernateAuthorityDao;
     }
 
     @Bean
@@ -93,7 +98,27 @@ public class SecurityAutoConfiguration
     }
 
     @Bean
-    public LocalContainerEntityManagerFactoryBean securityEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
+    public AuthorityDao xaAuthorityDao(){
+        HibernateAuthorityDao hibernateAuthorityDao = new HibernateAuthorityDao();
+        return hibernateAuthorityDao;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean xaSecurityEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
+        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+            = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("security-xa");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:security-persistence.xml");
+
+        return localContainerEntityManagerFactoryBean;
+    }
+
+    @Bean
+    public LocalContainerEntityManagerFactoryBean securityEntityManager(@Qualifier("ikasan.ds")DataSource dataSource
         , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();

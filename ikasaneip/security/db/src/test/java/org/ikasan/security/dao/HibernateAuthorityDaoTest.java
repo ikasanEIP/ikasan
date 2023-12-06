@@ -41,6 +41,7 @@
 package org.ikasan.security.dao;
 
 import org.ikasan.security.SecurityAutoConfiguration;
+import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.Authority;
 import org.junit.Assert;
@@ -62,11 +63,9 @@ import java.util.List;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityAutoConfiguration.class,TestImportConfig.class})
-@Ignore
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class, SecurityTestAutoConfiguration.class})
 public class HibernateAuthorityDaoTest
 {
-
 	@Autowired
 	private AuthorityDao xaAuthorityDao;
 	

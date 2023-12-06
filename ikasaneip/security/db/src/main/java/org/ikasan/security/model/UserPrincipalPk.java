@@ -40,6 +40,9 @@
  */
 package org.ikasan.security.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 
 /**
@@ -47,12 +50,15 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
+@Embeddable
 public class UserPrincipalPk implements Serializable
 {
 	private static final long serialVersionUID = -1724759502309436272L;
-	
-	Long userId;
-	Long ikasanPrincipalId;
+
+    @Column(name = "UserId", nullable = false)
+    Long userId;
+    @Column(name = "PrincipalId", nullable = false)
+    Long ikasanPrincipalId;
 	
 	/**
 	 * @return the userId

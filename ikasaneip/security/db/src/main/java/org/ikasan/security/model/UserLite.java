@@ -40,10 +40,7 @@
  */
 package org.ikasan.security.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
@@ -58,6 +55,7 @@ import java.util.Set;
  * 
  */
 @Entity
+@Table(name = "Users")
 public class UserLite
 {
     /** serialVersionUID */
@@ -68,31 +66,38 @@ public class UserLite
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
-    /** Users username for the system */
+    @Column(name = "Username", unique = true, nullable = false)
     private String username;
 
     /** Users password for the system */
+    @Column(name = "NewPassword", nullable = false)
     private String password;
 
     /** Users email address for the system */
+    @Column(name = "Email")
     private String email;
 
     /** The users firstname */
+    @Column(name = "FirstName")
     private String firstName;
 
     /** The users surname */
+    @Column(name = "Surname")
     private String surname;
 
     /** The users department */
+    @Column(name = "Department")
     private String department;
 
     /** Activation status for the user in the system */
+    @Column(name = "Enabled", nullable = false)
     private boolean enabled;
 
     /**
-	 * Last time the user accessed the system
-	 */
-	private long previousAccessTimestamp;
+     * Last time the user accessed the system
+     */
+    @Column(name = "PreviousAccess")
+    private long previousAccessTimestamp;
 
     /**
      * Default constructor required by ORM

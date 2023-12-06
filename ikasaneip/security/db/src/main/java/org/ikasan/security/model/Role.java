@@ -55,25 +55,28 @@ public class Role implements Comparable<Role>
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false, unique = true)
     private String name = "";
-    @Column(name = "Description")
+    @Column(name = "Description", nullable = false)
     private String description = "";
-    @ManyToMany(cascade = { CascadeType.MERGE })
+    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(
         name = "RolePolicy",
         joinColumns = { @JoinColumn(name = "RoleId") },
         inverseJoinColumns = { @JoinColumn(name = "PolicyId") }
     )
     private Set<Policy> policies = new HashSet<>();
-    @OneToMany(mappedBy="componentInvocationMetricImpl", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<RoleModule> roleModules = new HashSet<>();
+    @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<RoleJobPlan> roleJobPlans = new HashSet<>();
 
-    /** The data time stamp when an instance was first created */
+    /** The date time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
-    /** The data time stamp when an instance was last updated */
+    /** The date time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     /**
