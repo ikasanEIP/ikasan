@@ -65,7 +65,7 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PolicyLinkId")
     private PolicyLink policyLink;
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(
         name = "RolePolicy",
         joinColumns = { @JoinColumn(name = "PolicyId") },

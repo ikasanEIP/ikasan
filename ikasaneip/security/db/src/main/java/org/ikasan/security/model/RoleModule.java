@@ -11,18 +11,18 @@ public class RoleModule
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "ModuleName")
+    @Column(name = "ModuleName", nullable = false)
     private String moduleName;
     @ManyToOne
     @JoinColumn(name="RoleId", nullable=false, updatable = false)
     private Role role;
 
     /** The date time stamp when an instance was first created */
-    @Column(name = "CreatedDateTime")
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The date time stamp when an instance was last updated */
-    @Column(name = "UpdatedDateTime")
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     public RoleModule()

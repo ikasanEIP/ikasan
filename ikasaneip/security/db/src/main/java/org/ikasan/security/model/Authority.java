@@ -71,7 +71,7 @@ public class Authority implements GrantedAuthority
     /**
      * Name of the authority
      */
-    @Column(name = "Authority")
+    @Column(name = "Authority", unique = true)
     private String authority;
     
     

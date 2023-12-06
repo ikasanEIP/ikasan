@@ -53,7 +53,6 @@ import org.ikasan.security.model.UserLite;
  */
 public interface UserDao
 {
-
     /**
      * Retrieves all <code>User</code>s known to the system
      * 
@@ -87,7 +86,7 @@ public interface UserDao
     /**
      * Retrieves a List of <code>User</code> whose firstname like firstname%
      * 
-     * @param username
+     * @param firstname
      * @return specified <code>User</code> or null if does not exist
      */
     public List<User> getUserByFirstnameLike(String firstname);
@@ -95,7 +94,7 @@ public interface UserDao
     /**
      * Retrieves a List of <code>User</code> whose surname like surname%
      * 
-     * @param username
+     * @param surname
      * @return specified <code>User</code> or null if does not exist
      */
     public List<User> getUserBySurnameLike(String surname);

@@ -58,17 +58,17 @@ public class PolicyLink
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PolicyLinkTypeId", nullable = false)
     private PolicyLinkType policyLinkType;
-    @Column(name = "TargetId")
+    @Column(name = "TargetId", nullable = false)
     private Long targetId;
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false)
     private String name;
 
     /** The date time stamp when an instance was first created */
-    @Column(name = "CreatedDateTime")
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The date time stamp when an instance was last updated */
-    @Column(name = "UpdatedDateTime")
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
     
     /**
