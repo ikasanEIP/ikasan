@@ -56,17 +56,17 @@ public class PolicyLinkType
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     public Long id;
-    @Column(name = "Name")
+    @Column(name = "Name", unique = true, nullable = false)
     public String name;
-    @Column(name = "TableName")
+    @Column(name = "TableName", nullable = false)
     public String tableName;
 
     /** The date time stamp when an instance was first created */
-    @Column(name = "CreatedDateTime")
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The date time stamp when an instance was last updated */
-    @Column(name = "UpdatedDateTime")
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
   
     /**
