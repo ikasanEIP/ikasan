@@ -1,9 +1,6 @@
 package org.ikasan.security.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.util.Date;
 import java.util.Objects;
@@ -14,17 +11,18 @@ public class RoleJobPlan
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "JobPlanName")
     private String jobPlanName;
+    @ManyToOne
+    @JoinColumn(name="RoleId", nullable=false, updatable = false)
     private Role role;
 
-    /**
-     * The data time stamp when an instance was first created
-     */
+    /** The date time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime")
     private Date createdDateTime;
 
-    /**
-     * The data time stamp when an instance was last updated
-     */
+    /** The date time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime")
     private Date updatedDateTime;
 
     public RoleJobPlan()

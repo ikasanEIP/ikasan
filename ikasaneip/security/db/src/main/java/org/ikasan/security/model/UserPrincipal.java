@@ -40,10 +40,7 @@
  */
 package org.ikasan.security.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serializable;
 
@@ -53,46 +50,49 @@ import java.io.Serializable;
  *
  */
 @Entity
+@Table(name = "UserPrincipal")
 public class UserPrincipal
 {
 	private static final long serialVersionUID = -1724759502309436272L;
 
-    @Id
+    @EmbeddedId
     private UserPrincipalPk id;
-	private Long userId;
-	private Long ikasanPrincipalId;
-	
-	/**
-	 * @return the userId
-	 */
-	public Long getUserId()
-	{
-		return userId;
-	}
-	
-	/**
-	 * @param userId the userId to set
-	 */
-	public void setUserId(Long userId)
-	{
-		this.userId = userId;
-	}
-	
-	/**
-	 * @return the ikasanPrincipalId
-	 */
-	public Long getIkasanPrincipalId()
-	{
-		return ikasanPrincipalId;
-	}
-	
-	/**
-	 * @param ikasanPrincipalId the ikasanPrincipalId to set
-	 */
-	public void setIkasanPrincipalId(Long ikasanPrincipalId)
-	{
-		this.ikasanPrincipalId = ikasanPrincipalId;
-	}
+//    @Column(name = "UserId", nullable = false)
+//    Long userId;
+//    @Column(name = "IkasanPrincipalId", nullable = false)
+//    Long ikasanPrincipalId;
+//
+//	/**
+//	 * @return the userId
+//	 */
+//	public Long getUserId()
+//	{
+//		return id.getUserId();
+//	}
+//
+//	/**
+//	 * @param userId the userId to set
+//	 */
+//	public void setUserId(Long userId)
+//	{
+//		this.userId = userId;
+//	}
+//
+//	/**
+//	 * @return the ikasanPrincipalId
+//	 */
+//	public Long getIkasanPrincipalId()
+//	{
+//		return ikasanPrincipalId;
+//	}
+//
+//	/**
+//	 * @param ikasanPrincipalId the ikasanPrincipalId to set
+//	 */
+//	public void setIkasanPrincipalId(Long ikasanPrincipalId)
+//	{
+//		this.ikasanPrincipalId = ikasanPrincipalId;
+//	}
 
 	/**
 	 * @return the id

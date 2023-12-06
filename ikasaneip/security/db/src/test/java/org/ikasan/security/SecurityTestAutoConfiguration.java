@@ -12,10 +12,13 @@ import org.ikasan.security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.MethodInvokingFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportResource;
 import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.jndi.JndiTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +30,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
+@ImportResource("/test-transaction.xml")
 public class SecurityTestAutoConfiguration
 {
     @Bean(name = {"ikasan.xads", "ikasan.ds"})
@@ -40,9 +44,9 @@ public class SecurityTestAutoConfiguration
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
+    public PlatformTransactionManager transactionManager(EntityManagerFactory securityEntityManager) {
         JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory);
+        transactionManager.setEntityManagerFactory(securityEntityManager);
         return transactionManager;
     }
 
@@ -51,8 +55,32 @@ public class SecurityTestAutoConfiguration
     Properties platformJpaProperties() {
         Properties platformJpaProperties = new Properties();
         platformJpaProperties.put("hibernate.show_sql", false);
-        platformJpaProperties.put("hibernate.hbm2ddl.auto", "none");
+        platformJpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
+        platformJpaProperties.put("hibernate.event.merge.entity_copy_observer", "allow");
 
         return platformJpaProperties;
     }
+
+    @Bean
+    JndiTemplate jndiBinder() {
+        return new JndiTemplate();
+    }
+
+//    @Bean
+//    MethodInvokingFactoryBean xaDatasourceJndiBinding() {
+//        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
+//        methodInvokingFactoryBean.setTargetObject(jndiBinder());
+//        methodInvokingFactoryBean.setTargetMethod("bind");
+//        methodInvokingFactoryBean.setArguments("ikasan-xa-datasource", this.ikasanXaDataSource());
+//        return methodInvokingFactoryBean;
+//    }
+//
+//    @Bean
+//    MethodInvokingFactoryBean datasourceJndiBinding() {
+//        MethodInvokingFactoryBean methodInvokingFactoryBean = new MethodInvokingFactoryBean();
+//        methodInvokingFactoryBean.setTargetObject(jndiBinder());
+//        methodInvokingFactoryBean.setTargetMethod("bind");
+//        methodInvokingFactoryBean.setArguments("ikasan-datasource", this.ikasanXaDataSource());
+//        return methodInvokingFactoryBean;
+//    }
 }

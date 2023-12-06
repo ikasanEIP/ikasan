@@ -41,6 +41,8 @@
 
 package org.ikasan.security.service;
 
+import org.hibernate.PropertyValueException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
@@ -214,14 +216,14 @@ public class SecurityServiceTest
         Assert.assertNotNull(principal);
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test (expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_create_new_principal_null_name() 
     {
         this.xaSecurityService.createNewPrincipal(null, "type");
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test (expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_create_new_principal_null_type() 
     {
@@ -276,14 +278,14 @@ public class SecurityServiceTest
         Assert.assertNotNull(role);
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test (expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_create_new_role_null_name() 
     {
         this.xaSecurityService.createNewRole(null, "description");
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test (expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_create_new_role_null_description() 
     {
@@ -314,7 +316,7 @@ public class SecurityServiceTest
         Assert.assertEquals(principal.getRoles().size(), 0);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_principal_no_name()
     {
@@ -324,12 +326,14 @@ public class SecurityServiceTest
         for(int i=0; i<10; i++)
         {
             Role role = new Role();
-            role.setName("role" + i);
+            role.setName("role-" + i);
+            role.setDescription("description");
 
             for(int j=0; j<10; j++)
             {
                 Policy policy = new Policy();
-                policy.setName("policy" + j + i);
+                policy.setName("policy-" + j + i);
+                policy.setDescription("description");
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
                 policies.add(policy);
             }
@@ -342,17 +346,19 @@ public class SecurityServiceTest
 
         IkasanPrincipal principal = new IkasanPrincipal();
         principal.setType("type");
+        principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityService.savePrincipal(principal);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_principal_duplicate_name() 
     {
         IkasanPrincipal principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal7");
+        principal.setDescription("description");
         principal.setType("type");
 
         this.xaSecurityService.savePrincipal(principal);
@@ -382,7 +388,7 @@ public class SecurityServiceTest
         Assert.assertTrue(principals.size() == 7);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_role_no_name()
     {
@@ -396,7 +402,8 @@ public class SecurityServiceTest
             for(int j=0; j<10; j++)
             {
                 Policy policy = new Policy();
-                policy.setName("policy" + j + i);
+                policy.setName("policy-" + j + i);
+                policy.setDescription("description");
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
                 policies.add(policy);
             }
@@ -404,7 +411,7 @@ public class SecurityServiceTest
             role.setPolicies(policies);
             this.xaSecurityDao.saveOrUpdateRole(role);
             roles.add(role);
-            policies = new HashSet<Policy>();
+            policies = new HashSet<>();
         }
 
         IkasanPrincipal principal = new IkasanPrincipal();
@@ -456,16 +463,17 @@ public class SecurityServiceTest
         Assert.assertTrue(roles.size() == 10);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_principal_policy_name() 
     {
         Policy policy = new Policy();
         policy.setName("policy11");
+        policy.setDescription("description");
         this.xaSecurityService.savePolicy(policy);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_policy_no_name()
     {
@@ -506,21 +514,21 @@ public class SecurityServiceTest
         Assert.assertNotNull(policy);
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test (expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_create_new_policy_null_name() 
     {
         this.xaSecurityService.createNewPolicy(null, "description");
     }
 
-    @Test (expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test (expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_create_new_policy_null_description() 
     {
         this.xaSecurityService.createNewPolicy("role", null);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_role_name() 
     {
@@ -642,7 +650,7 @@ public class SecurityServiceTest
     {    	
     	List<Policy> policies = this.xaSecurityService.getAllPoliciesWithRole("role1");
 
-    	Assert.assertTrue(policies.size() == 10);
+    	Assert.assertEquals(10,policies.size());
     }
     
     @Test
@@ -692,7 +700,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_success_add_all_policies_to_role_with_different_policy_()
+    public void test_success_add_all_policies_to_role_with_different_policy()
     {
         Role role = this.xaSecurityService.findRoleByName("role1");
 

@@ -19,4 +19,21 @@
         <class>org.ikasan.security.model.UserLite</class>
         <class>org.ikasan.security.model.UserPrincipal</class>
     </persistence-unit>
+
+    <persistence-unit name="security-xa">
+        <class>org.ikasan.security.model.AuthenticationMethod</class>
+        <class>org.ikasan.security.model.Authority</class>
+        <class>org.ikasan.security.model.Policy</class>
+        <class>org.ikasan.security.model.PolicyLink</class>
+        <class>org.ikasan.security.model.PolicyLinkType</class>
+        <class>org.ikasan.security.model.IkasanPrincipal</class>
+        <class>org.ikasan.security.model.IkasanPrincipalLite</class>
+        <class>org.ikasan.security.model.Role</class>
+        <class>org.ikasan.security.model.RoleJobPlan</class>
+        <class>org.ikasan.security.model.RoleModule</class>
+        <class>org.ikasan.security.model.User</class>
+        <class>org.ikasan.security.model.UserLite</class>
+        <class>org.ikasan.security.model.UserPrincipal</class>
+    </persistence-unit>
+
 </persistence>

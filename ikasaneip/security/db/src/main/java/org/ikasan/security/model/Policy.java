@@ -58,9 +58,9 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "Name")
+    @Column(name = "Name", nullable = false, unique = true)
     private String name;
-    @Column(name = "Description")
+    @Column(name = "Description", nullable = false)
     private String description;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PolicyLinkId")
