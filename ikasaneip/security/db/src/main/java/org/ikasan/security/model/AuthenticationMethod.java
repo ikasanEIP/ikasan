@@ -60,7 +60,7 @@ public class AuthenticationMethod
     private String name = "";
 	@Column(name = "Method")
     private String method = "";
-    @Column(name = "Order")
+    @Column(name = "AuthOrder")
     private Long order;
     @Column(name = "LastSynchronised")
     private Date lastSynchronised;

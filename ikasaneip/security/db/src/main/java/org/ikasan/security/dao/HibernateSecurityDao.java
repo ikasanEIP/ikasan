@@ -58,11 +58,11 @@ import java.util.List;
  * @author CMI2 Development Team
  *
  */
-@Transactional
 public class HibernateSecurityDao implements SecurityDao
 {
     @PersistenceContext(unitName = "security")
-    private EntityManager entityManager;
+    protected EntityManager entityManager;
+
  	/*
  	 * (non-Javadoc)
  	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdateRole(org.ikasan.security.window.Role)
@@ -71,7 +71,7 @@ public class HibernateSecurityDao implements SecurityDao
     public void saveOrUpdateRole(Role role)
     {
     	role.setUpdatedDateTime(new Date());
-    	this.entityManager.persist(role);
+    	this.entityManager.persist(this.entityManager.contains(role) ? role : entityManager.merge(role));
     }
 
     /*
@@ -93,7 +93,7 @@ public class HibernateSecurityDao implements SecurityDao
     public void saveOrUpdatePrincipal(IkasanPrincipal principal)
     {
     	principal.setUpdatedDateTime(new Date());
-    	this.entityManager.persist(principal);
+    	this.entityManager.persist(this.entityManager.contains(principal) ? principal : entityManager.merge(principal));
     }
 
     /*
@@ -287,7 +287,7 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void deleteRole(Role role)
     {
-        this.entityManager.remove(role);
+        this.entityManager.remove(this.entityManager.contains(role) ? role : entityManager.merge(role));
     }
 
     /*
@@ -297,13 +297,13 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void deletePolicy(Policy policy)
     {
-        this.entityManager.remove(policy);
+        this.entityManager.remove(this.entityManager.contains(policy) ? policy : entityManager.merge(policy));
     }
 
     @Override
     public void deleteRoleModule(RoleModule roleModule)
     {
-        this.entityManager.remove(roleModule);
+        this.entityManager.remove(this.entityManager.contains(roleModule) ? roleModule : entityManager.merge(roleModule));
     }
 
     @Override
@@ -313,7 +313,7 @@ public class HibernateSecurityDao implements SecurityDao
 
     @Override
     public void deleteRoleJobPlan(RoleJobPlan roleJobPlan) {
-        this.entityManager.remove(roleJobPlan);
+        this.entityManager.remove(this.entityManager.contains(roleJobPlan) ? roleJobPlan : entityManager.merge(roleJobPlan));
     }
 
     @Override
@@ -328,7 +328,7 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void deletePrincipal(IkasanPrincipal principal)
     {
-        this.entityManager.remove(principal);
+        this.entityManager.remove(this.entityManager.contains(principal) ? principal : entityManager.merge(principal));
     }
 
 	/* (non-Javadoc)
@@ -475,7 +475,7 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void deletePolicyLink(PolicyLink policyLink)
 	{
-		this.entityManager.remove(policyLink);
+		this.entityManager.remove(this.entityManager.contains(policyLink) ? policyLink : entityManager.merge(policyLink));
 	}
 
 	/* (non-Javadoc)

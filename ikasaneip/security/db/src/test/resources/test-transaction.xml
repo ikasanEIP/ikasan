@@ -53,12 +53,6 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory">
-            <ref bean="xaSecuritySessionFactory"/>
-        </property>
-    </bean>
-
 	<aop:config>
         <aop:pointcut id="daoMethods"
                 expression="execution(* org.ikasan.security.dao.SecurityDao.deleteAuthenticationMethod(..))
@@ -76,7 +70,7 @@
                    || execution(* org.ikasan.security.dao.UserDao.save(..))
                    || execution(* org.ikasan.security.dao.SecurityDao.saveRoleModule(..))
                    || execution(* org.ikasan.security.dao.SecurityDao.saveRoleJobPlan(..))
-"/>
+                   || execution(* org.ikasan.security.dao.AuthorityDao.save(..))"/>
                 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
 

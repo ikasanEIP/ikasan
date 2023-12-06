@@ -41,7 +41,10 @@
 
 package org.ikasan.security.dao;
 
+import org.hibernate.PropertyValueException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
+import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.model.*;
 import org.junit.Assert;
@@ -67,7 +70,7 @@ import java.util.List;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityAutoConfiguration.class,TestImportConfig.class})
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class, SecurityTestAutoConfiguration.class})
 public class HibernateSecurityDaoTest
 {
     /** Object being tested */
@@ -80,8 +83,8 @@ public class HibernateSecurityDaoTest
      */
     @Before public void setup()
     {
-        HashSet<Role> roles = new HashSet<Role>();
-        HashSet<Policy> policies = new HashSet<Policy>();
+        HashSet<Role> roles = new HashSet<>();
+        HashSet<Policy> policies = new HashSet<>();
 
         for(int i=0; i<10; i++)
         {
@@ -101,7 +104,7 @@ public class HibernateSecurityDaoTest
             role.setDescription("description");
             this.xaSecurityDao.saveOrUpdateRole(role);
             roles.add(role);
-            policies = new HashSet<Policy>();
+            policies = new HashSet<>();
         }
 
     	IkasanPrincipal principal = new IkasanPrincipal();
@@ -242,7 +245,6 @@ public class HibernateSecurityDaoTest
 
         role.setPolicies(policies);
         this.xaSecurityDao.saveOrUpdateRole(role);
-        policies = new HashSet<Policy>();
 
         principal.getRoles().add(role);
 
@@ -389,7 +391,7 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals(principal.getRoles().size(), 0);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = PropertyValueException.class)
     @DirtiesContext
     public void test_exception_principal_no_name()
     {
@@ -399,12 +401,12 @@ public class HibernateSecurityDaoTest
         for(int i=0; i<10; i++)
         {
             Role role = new Role();
-            role.setName("role" + i);
+            role.setName("role-" + i);
 
             for(int j=0; j<10; j++)
             {
                 Policy policy = new Policy();
-                policy.setName("policy" + j + i);
+                policy.setName("policy-" + j + i);
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
                 policies.add(policy);
             }
@@ -412,7 +414,7 @@ public class HibernateSecurityDaoTest
             role.setPolicies(policies);
             this.xaSecurityDao.saveOrUpdateRole(role);
             roles.add(role);
-            policies = new HashSet<Policy>();
+            policies = new HashSet<>();
         }
 
         IkasanPrincipal principal = new IkasanPrincipal();
@@ -422,12 +424,13 @@ public class HibernateSecurityDaoTest
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_principal_duplicate_name()
     {
         IkasanPrincipal principal = new IkasanPrincipal();
         principal.setName("anotherPrincipal7");
+        principal.setDescription("description");
         principal.setType("type");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
@@ -457,7 +460,7 @@ public class HibernateSecurityDaoTest
         Assert.assertTrue(principals.size() == 7);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_role_no_name()
     {
@@ -467,11 +470,13 @@ public class HibernateSecurityDaoTest
         for(int i=0; i<10; i++)
         {
             Role role = new Role();
+            role.setDescription("description");
 
             for(int j=0; j<10; j++)
             {
                 Policy policy = new Policy();
                 policy.setName("policy" + j + i);
+                policy.setDescription("description");
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
                 policies.add(policy);
             }
@@ -479,7 +484,7 @@ public class HibernateSecurityDaoTest
             role.setPolicies(policies);
             this.xaSecurityDao.saveOrUpdateRole(role);
             roles.add(role);
-            policies = new HashSet<Policy>();
+            policies = new HashSet<>();
         }
 
         IkasanPrincipal principal = new IkasanPrincipal();
@@ -531,51 +536,25 @@ public class HibernateSecurityDaoTest
         Assert.assertTrue(roles.size() == 10);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_principal_policy_name()
     {
         Policy policy = new Policy();
         policy.setName("policy11");
+        policy.setDescription("description");
         this.xaSecurityDao.saveOrUpdatePolicy(policy);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = PropertyValueException.class)
     @DirtiesContext
-    public void test_exception_policy_no_name()
-    {
-        HashSet<Role> roles = new HashSet<Role>();
-        HashSet<Policy> policies = new HashSet<Policy>();
-
-        for(int i=0; i<10; i++)
-        {
-            Role role = new Role();
-            role.setName("name");
-            role.setDescription("description");
-
-            for(int j=0; j<10; j++)
-            {
-                Policy policy = new Policy();
-                policy.setName("blah");
-                policy.setDescription("description");
-                this.xaSecurityDao.saveOrUpdatePolicy(policy);
-                policies.add(policy);                
-            }
-
-            role.setPolicies(policies);
-            this.xaSecurityDao.saveOrUpdateRole(role);
-            roles.add(role);
-            policies = new HashSet<Policy>();
-        }
-
-        IkasanPrincipal principal = new IkasanPrincipal();
-        principal.setType("type");
-        principal.setRoles(roles);
-
-        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+    public void test_exception_policy_no_name() {
+        Policy policy = new Policy();
+        policy.setDescription("description");
+        this.xaSecurityDao.saveOrUpdatePolicy(policy);
     }
 
-    @Test(expected = org.springframework.dao.DataIntegrityViolationException.class)
+    @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
     public void test_exception_role_name()
     {
