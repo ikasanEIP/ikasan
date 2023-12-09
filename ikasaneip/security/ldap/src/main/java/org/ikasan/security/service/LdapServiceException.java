@@ -46,13 +46,10 @@ package org.ikasan.security.service;
  */
 public class LdapServiceException extends Exception
 {
-    /**
-     * 
-     */
     private static final long serialVersionUID = -2463315800294867651L;
 
     /**
-     * 
+     * Constructor
      */
     public LdapServiceException()
     {
@@ -60,7 +57,9 @@ public class LdapServiceException extends Exception
     }
 
     /**
-     * @param arg0
+     * Constructor
+     *
+     * @param message
      */
     public LdapServiceException(String message)
     {
@@ -68,7 +67,9 @@ public class LdapServiceException extends Exception
     }
 
     /**
-     * @param arg0
+     * Constructor
+     *
+     * @param throwable
      */
     public LdapServiceException(Throwable throwable)
     {
@@ -76,8 +77,10 @@ public class LdapServiceException extends Exception
     }
 
     /**
-     * @param arg0
-     * @param arg1
+     * Constructor
+     *
+     * @param message
+     * @param throwable
      */
     public LdapServiceException(String message, Throwable throwable)
     {

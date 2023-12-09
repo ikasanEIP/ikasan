@@ -10,7 +10,6 @@ import org.springframework.context.annotation.ImportResource;
     "/mock-components.xml",
     "/test-transaction.xml"
 })
-public class TestImportConfig
-{
+public class TestImportConfig {
 
 }

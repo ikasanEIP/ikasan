@@ -53,42 +53,42 @@
        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd">
 
-    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">
-        <property name="sessionFactory">
-            <ref bean="xaSecuritySessionFactory"/>
-        </property>
-    </bean>
+<!--    <bean id="transactionManager" class="org.springframework.orm.hibernate5.HibernateTransactionManager">-->
+<!--        <property name="sessionFactory">-->
+<!--            <ref bean="xaSecuritySessionFactory"/>-->
+<!--        </property>-->
+<!--    </bean>-->
 
-	<aop:config>
-        <aop:pointcut id="daoMethods"
-                expression="execution(* org.ikasan.security.dao.SecurityDao.deleteAuthenticationMethod(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.deletePolicy(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.deletePolicyLink(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.deleteRole(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.deletePrincipal(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdateAuthenticationMethod(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePolicy(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePolicyLink(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePolicyLinkType(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePrincipal(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdateRole(..))
-                   || execution(* org.ikasan.security.dao.UserDao.delete(..))
-                   || execution(* org.ikasan.security.dao.UserDao.save(..))
+<!--	<aop:config>-->
+<!--        <aop:pointcut id="daoMethods"-->
+<!--                expression="execution(* org.ikasan.security.dao.SecurityDao.deleteAuthenticationMethod(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.deletePolicy(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.deletePolicyLink(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.deleteRole(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.deletePrincipal(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdateAuthenticationMethod(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePolicy(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePolicyLink(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePolicyLinkType(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdatePrincipal(..))-->
+<!--                   || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdateRole(..))-->
+<!--                   || execution(* org.ikasan.security.dao.UserDao.delete(..))-->
+<!--                   || execution(* org.ikasan.security.dao.UserDao.save(..))-->
 
 
-"/>
-        <!--<aop:pointcut id="serviceMethods"-->
-                <!--expression="execution(* org.ikasan.security.dao.service*.*(..))"/>-->
-                
-        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+<!--"/>-->
+<!--        &lt;!&ndash;<aop:pointcut id="serviceMethods"&ndash;&gt;-->
+<!--                &lt;!&ndash;expression="execution(* org.ikasan.security.dao.service*.*(..))"/>&ndash;&gt;-->
+<!--                -->
+<!--        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>-->
 
-    </aop:config>
+<!--    </aop:config>-->
 
-    <tx:advice id="txAdvice" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="*" propagation="REQUIRED"/>
-        </tx:attributes>
-    </tx:advice>
+<!--    <tx:advice id="txAdvice" transaction-manager="transactionManager">-->
+<!--        <tx:attributes>-->
+<!--            <tx:method name="*" propagation="REQUIRED"/>-->
+<!--        </tx:attributes>-->
+<!--    </tx:advice>-->
 
 	<bean id="ldapServerUrl" class="java.lang.String">
 		<constructor-arg value="#{'ldap://' + ldapBindAddress.hostName + ':' + ldapBindPort}" />
