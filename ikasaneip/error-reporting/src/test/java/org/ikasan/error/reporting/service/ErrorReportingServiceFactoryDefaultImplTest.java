@@ -40,6 +40,8 @@
  */
 package org.ikasan.error.reporting.service;
 
+import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
+import org.ikasan.error.reporting.ErrorReportingTestAutoConfiguration;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -49,9 +51,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
+
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**
  * Test class for ErrorReportingServiceDefaultImpl based on
@@ -61,13 +66,8 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/ikasan-transaction-conf.xml",
-        "/error-reporting-service-conf.xml",
-        "/substitute-components.xml",
-        "/h2db-datasource-conf.xml"
-        })
-
+@ContextConfiguration(classes = {ErrorReportingAutoConfiguration.class, ErrorReportingTestAutoConfiguration.class})
+@Sql(scripts = {"/modifyErrorOccurrenceTable.sql"}, executionPhase = BEFORE_TEST_METHOD)
 public class ErrorReportingServiceFactoryDefaultImplTest
 {
     @Resource
