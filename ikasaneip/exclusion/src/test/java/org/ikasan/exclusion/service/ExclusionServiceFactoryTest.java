@@ -40,6 +40,8 @@
  */
 package org.ikasan.exclusion.service;
 
+import org.ikasan.exclusion.ExclusionAutoConfiguration;
+import org.ikasan.exclusion.ExclusionTestAutoConfiguration;
 import org.ikasan.exclusion.dao.BlackListDaoFactory;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -60,12 +62,7 @@ import javax.annotation.Resource;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
-        "/substitute-components.xml",
-        "/h2db-datasource-conf.xml"
-        })
-
+@ContextConfiguration(classes = {ExclusionAutoConfiguration.class, ExclusionTestAutoConfiguration.class})
 public class ExclusionServiceFactoryTest
 {
     /**

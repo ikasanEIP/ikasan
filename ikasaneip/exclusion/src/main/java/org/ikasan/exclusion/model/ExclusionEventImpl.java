@@ -40,6 +40,7 @@
  */
 package org.ikasan.exclusion.model;
 
+import jakarta.persistence.*;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 
@@ -50,33 +51,48 @@ import java.util.Arrays;
  *
  * @author Ikasan Development Team
  */
+@Entity
 public class ExclusionEventImpl implements ExclusionEvent<Long>, HarvestEvent
 {
     /** surrogate id assigned from ORM */
-    Long id;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
 
-    /** module name */
-    String moduleName;
+    /**
+     * Name of the module with which the target Flow is associated
+     */
+    @Column(name = "ModuleName", nullable = false)
+    private String moduleName;
 
-    /** flowName */
-    String flowName;
+    /**
+     * Name of the target Flow
+     */
+    @Column(name = "FlowName", nullable = false)
+    private String flowName;
 
     /** identifier for this event */
+    @Column(name = "Identifier", nullable = false)
     String identifier;
 
     /** original form of the event being excluded */
+    @Column(name = "Event", nullable = false)
     byte[] event;
 
     /** timestamp indicating when this event was created */
+    @Column(name = "Timestamp", nullable = false)
     long timestamp;
 
     /** error uri reported as part of this excluded event */
+    @Column(name = "ErrorUri", nullable = false)
     String errorUri;
 
     /** flag to indicate if the record has been harvested */
+    @Column(name = "Harvested")
     boolean harvested;
 
     /** the time the record was harvested */
+    @Column(name = "HarvestedDateTime")
     private long harvestedDateTime;
 
     /**
