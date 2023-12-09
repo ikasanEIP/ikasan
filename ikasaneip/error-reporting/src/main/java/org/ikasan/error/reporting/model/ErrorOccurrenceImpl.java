@@ -41,6 +41,7 @@
 package org.ikasan.error.reporting.model;
 
 
+import jakarta.persistence.*;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 
@@ -51,95 +52,116 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "ErrorOccurrence")
 public class ErrorOccurrenceImpl implements ErrorOccurrence<byte[]>, HarvestEvent
 {
     /** unique identifier for this instance */
+    @Id
     private String uri;
 
     /**
      * name of the module where this error occurred
      */
+    @Column(name = "ModuleName", nullable = false)
     private String moduleName;
 
     /**
      * name of the flow where this error occurred, if it was event/flow related
      */
+    @Column(name = "FlowName", nullable = false)
     private String flowName;
 
     /**
      * name of the flow element where this error occurred, if it was event/flow related
      */
+    @Column(name = "FlowElementName")
     private String flowElementName;
 
     /**
      * raw dump of the error as it occurred
      */
+    @Column(name = "ErrorDetail")
     private String errorDetail;
 
     /**
      * the error message extracted from the errorDetail
      */
+    @Column(name = "ErrorMessage")
     private String errorMessage;
     
     /**
      * the exception class associated with the error
      */
+    @Column(name = "ExceptionClass")
     private String exceptionClass;
 
     /**
 	 * Id of the event associated with this error, if it was event/flow related
 	 */
+    @Column(name = "EventLifeIdentifier")
 	private String eventLifeIdentifier;
 
     /**
      * Related identifier
      */
+    @Column(name = "EventRelatedIdentifier")
     private String eventRelatedIdentifier;
 
     /** action to be taken on this error incident */
+    @Column(name = "Action")
     private String action;
 
     /**
      * Representation of the Event at the time that the error took place
      */
+    @Column(name = "Event")
     private byte[] event;
     
     /**
      * Representation of the Event as a String at the time that the error took place
      */
+    @Column(name = "EventAsString")
     private String eventAsString;
 
     /**
 	 * Time that this error was logged
 	 */
+    @Column(name = "Timestamp", nullable = false)
 	private long timestamp;
 
     /**
      * useby date for the errorOccurrence, after which the system may delete it
      */
+    @Column(name = "Expiry", nullable = false)
     private long expiry;
     
     /**
      * Action performed by the user
      */
+    @Column(name = "UserAction")
     private String userAction;
     
     /**
      * Who performed the action
      */
+    @Column(name = "ActionedBy")
     private String actionedBy;
     
     /**
      * When the action was performed
      */
+    @Column(name = "UserActionTimestamp")
     private long userActionTimestamp;
 
 	/**
 	 * Flag to indicate if the entity has been harvested.
      */
+    @Column(name = "Harvested", nullable = false)
 	private boolean harvested;
 
     /** the time the record was harvested */
+    @Column(name = "HarvestedDateTime", nullable = false)
     private long harvestedDateTime;
 
     /**

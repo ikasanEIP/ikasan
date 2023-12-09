@@ -40,6 +40,8 @@
  */
 package org.ikasan.error.reporting.dao;
 
+import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
+import org.ikasan.error.reporting.ErrorReportingTestAutoConfiguration;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceDao;
@@ -48,12 +50,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**
  * Test class for HibernateExclusionServiceDao.
@@ -62,13 +67,8 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/ikasan-transaction-conf.xml",
-        "/error-reporting-service-conf.xml",
-        "/mock-conf.xml",
-        "/h2db-datasource-conf.xml",
-        "/substitute-components.xml"
-        })
+@ContextConfiguration(classes = {ErrorReportingAutoConfiguration.class, ErrorReportingTestAutoConfiguration.class})
+@Sql(scripts = {"/modifyErrorOccurrenceTable.sql"}, executionPhase = BEFORE_TEST_METHOD)
 public class HibernateErrorManagementDaoTest
 {    
     @Resource
@@ -79,9 +79,7 @@ public class HibernateErrorManagementDaoTest
 
     Exception exception = new Exception("error message");
 
-   
 
-    
     /**
      * Test save of errorOccurrence
      */
