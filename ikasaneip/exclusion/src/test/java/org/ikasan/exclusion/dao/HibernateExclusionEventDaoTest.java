@@ -45,6 +45,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.ikasan.exclusion.ExclusionAutoConfiguration;
+import org.ikasan.exclusion.ExclusionTestAutoConfiguration;
 import org.ikasan.exclusion.model.ExclusionEventImpl;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
@@ -62,13 +64,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-//specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
-        "/h2db-datasource-conf.xml",
-        "/substitute-components.xml"
-    })
-
+@ContextConfiguration(classes = {ExclusionAutoConfiguration.class, ExclusionTestAutoConfiguration.class})
 public class HibernateExclusionEventDaoTest
 {
     @Resource
