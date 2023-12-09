@@ -52,6 +52,7 @@ import java.util.Arrays;
  * @author Ikasan Development Team
  */
 @Entity
+@Table(name = "ExclusionEvent")
 public class ExclusionEventImpl implements ExclusionEvent<Long>, HarvestEvent
 {
     /** surrogate id assigned from ORM */
