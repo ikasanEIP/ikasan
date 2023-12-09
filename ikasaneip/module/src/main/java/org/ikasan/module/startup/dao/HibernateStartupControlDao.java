@@ -40,16 +40,14 @@
  */
 package org.ikasan.module.startup.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.spec.module.StartupControl;
-import org.springframework.orm.hibernate5.HibernateCallback;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Hibernate implementation of <code>FlowStartupControlDao</code>
@@ -58,7 +56,7 @@ import org.hibernate.Session;
  * @author Ikasan Development Team
  * 
  */
-public class HibernateStartupControlDao extends HibernateDaoSupport implements StartupControlDao
+public class HibernateStartupControlDao implements StartupControlDao
 {
     /**
      * General query for finding existing InitiatorCommands for a given
@@ -71,52 +69,42 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
     private static final String startupControlsQuery = "from StartupControlImpl i where i.moduleName =:"
         + MODULE_NAME;
 
+    @PersistenceContext(unitName = "module")
+    private EntityManager entityManager;
+
     /*
      * (non-Javadoc)
      * 
      * @see org.ikasan.framework.flow.initiator.dao.FlowStartupControlDao#
      * getFlowStartupControl(java.lang.String, java.lang.String)
      */
-    public StartupControl getStartupControl(final String moduleName, final String flowName)
-    {
-    	return (StartupControl)this.getHibernateTemplate().execute(new HibernateCallback()
-        {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(startupControlQuery);
-                query.setParameter(MODULE_NAME, moduleName);
-                query.setParameter(FLOW_NAME, flowName);
+    public StartupControl getStartupControl(final String moduleName, final String flowName) {
+    	Query query = entityManager.createQuery(startupControlQuery);
+        query.setParameter(MODULE_NAME, moduleName);
+        query.setParameter(FLOW_NAME, flowName);
 
-                List results = (List<StartupControl>)query.list();
-                
-                if (!results.isEmpty())
-                {
-                    return results.get(0);
-                }
-                return new StartupControlImpl(moduleName, flowName);
-            }
-        });        
+        List<StartupControl> results = (List<StartupControl>)query.getResultList();
+
+        if (!results.isEmpty())
+        {
+            return results.get(0);
+        }
+        return new StartupControlImpl(moduleName, flowName);
     }
 
     @Override
     public List<StartupControl> getStartupControls(String moduleName)
     {
-        return (List<StartupControl>)this.getHibernateTemplate().execute(new HibernateCallback()
+        Query query = entityManager.createQuery(startupControlsQuery);
+        query.setParameter(MODULE_NAME, moduleName);
+
+        List<StartupControl> results = (List<StartupControl>)query.getResultList();
+        if(results == null)
         {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
-                Query query = session.createQuery(startupControlsQuery);
-                query.setParameter(MODULE_NAME, moduleName);
+            return new ArrayList<>();
+        }
 
-                List<StartupControl> results = (List<StartupControl>)query.list();
-                if(results == null)
-                {
-                    return new ArrayList<StartupControl>();
-                }
-
-                return results;
-            }
-        });
+        return results;
     }
 
     /*
@@ -128,13 +116,13 @@ public class HibernateStartupControlDao extends HibernateDaoSupport implements S
      */
     public void save(StartupControl startupControl)
     {
-        getHibernateTemplate().saveOrUpdate(startupControl);
+        entityManager.persist(this.entityManager.contains(startupControl) ? startupControl : entityManager.merge(startupControl));
     }
 
     @Override
     public void delete(StartupControl startupControl)
     {
-        getHibernateTemplate().delete(startupControl);
+        entityManager.remove(this.entityManager.contains(startupControl) ? startupControl : entityManager.merge(startupControl));
     }
 
 }
