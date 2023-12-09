@@ -40,6 +40,7 @@
  */
 package org.ikasan.module.startup;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 
@@ -56,38 +57,45 @@ import org.ikasan.spec.module.StartupType;
  * @author The Ikasan Development Team
  * 
  */
+@Entity
 public class StartupControlImpl implements StartupControl
 {
     /**
+     * Identity key
+     */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+
+    /**
      * Name of the module with which the target Flow is associated
      */
+    @Column(name = "ModuleName", nullable = false)
     private String moduleName;
 
     /**
      * Name of the target Flow
      */
+    @Column(name = "FlowName", nullable = false)
     private String flowName;
 
     /**
      * Startup type
      */
+    @Column(name = "StartupType", nullable = false)
     private StartupType startupType;
 
     /**
      * Comment
      */
+    @Column(name = "Comment", nullable = false)
     private String comment;
 
     /**
-     * Identity key
-     */
-    private Long id;
-
-    /**
-     * No args constructor, as required by ceratin ORM tools
+     * No args constructor, as required by certain ORM tools
      */
     @SuppressWarnings("unused")
-    private StartupControlImpl()
+    protected StartupControlImpl()
     {
     }
 
@@ -160,7 +168,7 @@ public class StartupControlImpl implements StartupControl
     /**
      * Setter for startupType
      * 
-     * @param action
+     * @param startupType
      */
     public void setStartupType(StartupType startupType)
     {

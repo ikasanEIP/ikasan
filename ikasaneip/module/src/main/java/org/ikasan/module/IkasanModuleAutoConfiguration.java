@@ -62,6 +62,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.annotation.Resource;
 import javax.sql.DataSource;
@@ -76,7 +79,6 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     @Autowired
     ConfigurationService configurationService;
 
-    @Resource Map platformHibernateProperties;
     @Autowired
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
@@ -150,23 +152,43 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
         return new ModuleContainerImpl();
     }
 
+//    @Bean
+//    public LocalSessionFactoryBean startupControlSessionFactory() {
+//        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+//        sessionFactoryBean.setDataSource(ikasanxads);
+//        sessionFactoryBean.setMappingResources("org/ikasan/module/startup/StartupControl.hbm.xml");
+//        Properties properties = new Properties();
+//        properties.putAll(platformHibernateProperties);
+//        sessionFactoryBean.setHibernateProperties(properties);
+//        return sessionFactoryBean;
+//    }
+
     @Bean
-    public LocalSessionFactoryBean startupControlSessionFactory() {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(ikasanxads);
-        sessionFactoryBean.setMappingResources("org/ikasan/module/startup/StartupControl.hbm.xml");
-        Properties properties = new Properties();
-        properties.putAll(platformHibernateProperties);
-        sessionFactoryBean.setHibernateProperties(properties);
-        return sessionFactoryBean;
+    public LocalContainerEntityManagerFactoryBean moduleEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
+        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+            = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("module");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:module-persistence.xml");
+
+        return localContainerEntityManagerFactoryBean;
     }
 
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
+            = new HibernateJpaVendorAdapter();
+
+        return hibernateJpaVendorAdapter;
+    }
 
     @Bean
     public StartupControlDao startupControlDao() {
 
         HibernateStartupControlDao startupControlDao = new HibernateStartupControlDao();
-        startupControlDao.setSessionFactory(startupControlSessionFactory().getObject());
         return startupControlDao;
     }
 
