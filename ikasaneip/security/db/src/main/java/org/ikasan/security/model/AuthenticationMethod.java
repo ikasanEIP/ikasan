@@ -62,7 +62,7 @@ public class AuthenticationMethod
     private String method = "";
     @Column(name = "AuthOrder", nullable = false)
     private Long order;
-    @Column(name = "LastSynchronised", nullable = false)
+    @Column(name = "LastSynchronised")
     private Date lastSynchronised;
     @Column(name = "Enabled", nullable = false)
     private boolean enabled;
@@ -104,7 +104,7 @@ public class AuthenticationMethod
     private String groupSynchronisationFilter = "";
     @Column(name = "Scheduled")
     private boolean scheduled;
-    @Column(name = "SynchronisationCronExpression", nullable = false)
+    @Column(name = "SynchronisationCronExpression")
     private String synchronisationCronExpression;
 	
 	public AuthenticationMethod()

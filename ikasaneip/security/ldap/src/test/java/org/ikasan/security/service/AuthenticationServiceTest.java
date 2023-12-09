@@ -46,20 +46,24 @@ import com.unboundid.ldap.listener.InMemoryDirectoryServer;
 import com.unboundid.ldap.listener.InMemoryDirectoryServerConfig;
 import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
+import org.ikasan.security.LdapSecurityTestAutoConfiguration;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -73,30 +77,30 @@ import java.util.concurrent.atomic.AtomicBoolean;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SecurityAutoConfiguration.class,TestImportConfig.class})
+@ContextConfiguration(classes = {SecurityAutoConfiguration.class, LdapSecurityTestAutoConfiguration.class})
 public class AuthenticationServiceTest
 {
 	private InMemoryDirectoryServer inMemoryDirectoryServer;
 	
-	@Resource 
+	@Autowired
 	InMemoryDirectoryServerConfig inMemoryDirectoryServerConfig;
 	
-	@Resource
+	@Autowired
 	private AuthenticationService authenticationService;
 	
-	@Resource
+	@Autowired
 	private SecurityDao securityDao;
 	
-	@Resource 
+	@Autowired
 	private UserService userService;
 	
-	@Resource
+	@Autowired
 	private String ldapServerUrl;
 	
-	@Resource
+	@Autowired
 	private SecurityService xaSecurityService;
 	
-	@Resource
+	@Autowired
 	private AuthenticationProviderFactory xaAuthenticationProviderFactory;
 	
 	@Before public void setup() throws IOException, LDAPException

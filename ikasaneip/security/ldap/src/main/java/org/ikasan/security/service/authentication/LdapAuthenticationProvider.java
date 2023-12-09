@@ -73,7 +73,10 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
     private UserService userService;
 
     /**
-     * Constructor - Takes a UserService
+     * Constructor
+     *
+     * @param authenticator
+     * @param securityService
      * @param userService
      */
     public LdapAuthenticationProvider(BindAuthenticator authenticator,
@@ -99,6 +102,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 
     /**
      * Get the authenticator
+     *
      * @return The authenticator
      */
     public LdapAuthenticator getAuthenticator()
@@ -108,6 +112,7 @@ public class LdapAuthenticationProvider implements AuthenticationProvider
 
     /**
      * Set the authenticator to be used
+     *
      * @param authenticator
      */
     public void setAuthenticator(LdapAuthenticator authenticator)
