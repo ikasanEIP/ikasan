@@ -150,6 +150,24 @@
            <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- for some reason jmock can't mock the PagedSearchResult without this, even though its part of system-event -->
         <dependency>
             <groupId>org.ikasan</groupId>
