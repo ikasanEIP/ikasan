@@ -22,16 +22,11 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-//@EnableJpaRepositories(basePackages = "org.ikasan.security.dao")
 public class SecurityAutoConfiguration
 {
     @Autowired
     @Qualifier("ikasan.ds")
     DataSource ikasands;
-
-//    @Autowired
-//    @Qualifier("ikasan.xads")
-//    DataSource ikasanxads;
 
     @Autowired
     @Value("${ikasan.dashboard.extract.enabled:false}")
@@ -71,51 +66,6 @@ public class SecurityAutoConfiguration
     {
         return new UserServiceImpl(userDao(), securityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
-
-
-//    @Bean
-//    public SecurityDao xaSecurityDao(){
-//        HibernateSecurityDao securityDao = new HibernateSecurityDao();
-//        return securityDao;
-//    }
-//
-//    @Bean
-//    public UserDao xaUserDao(){
-//        HibernateUserDao userDao = new HibernateUserDao();
-//        return userDao;
-//    }
-//
-//    @Bean
-//    public SecurityService xaSecurityService()
-//    {
-//        return new SecurityServiceImpl(xaSecurityDao());
-//    }
-//
-//    @Bean
-//    public UserService xaUserService(Environment environment)
-//    {
-//        return new UserServiceImpl(xaUserDao(), xaSecurityService(), passwordEncoder(), this.preventLocalAuthentication);
-//    }
-//
-//    @Bean
-//    public AuthorityDao xaAuthorityDao(){
-//        HibernateAuthorityDao hibernateAuthorityDao = new HibernateAuthorityDao();
-//        return hibernateAuthorityDao;
-//    }
-
-//    @Bean
-//    public LocalContainerEntityManagerFactoryBean xaSecurityEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-//        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
-//        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
-//            = new LocalContainerEntityManagerFactoryBean();
-//        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
-//        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-//        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
-//        localContainerEntityManagerFactoryBean.setPersistenceUnitName("security-xa");
-//        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:security-persistence.xml");
-//
-//        return localContainerEntityManagerFactoryBean;
-//    }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean securityEntityManager(@Qualifier("ikasan.ds")DataSource dataSource

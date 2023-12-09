@@ -358,9 +358,10 @@
         <version.maven-model>3.3.9</version.maven-model>
         <version.big.queue>1.0.1-SNAPSHOT</version.big.queue>
         <version.expiring.map>0.5.10</version.expiring.map>
-        <version.jakarta.xml.bind-api>2.3.3</version.jakarta.xml.bind-api>
         <version.jmock.imposters>2.12.0</version.jmock.imposters>
         <version.jaxb-runtime>4.0.4</version.jaxb-runtime>
+        <version.org.springframework.data>3.2.0</version.org.springframework.data>
+        <version.jakarta.xml.bind>4.0.1</version.jakarta.xml.bind>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -813,12 +814,6 @@
     <dependencyManagement>
 
         <dependencies>
-
-            <dependency>
-                <groupId>org.openrewrite.recipe</groupId>
-                <artifactId>rewrite-migrate-java</artifactId>
-                <version>2.2.0</version>
-            </dependency>
 
             <dependency>
                 <groupId>org.ikasan</groupId>
@@ -1428,7 +1423,7 @@
             <dependency>
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
-                <version>${version.jakarta.xml.bind-api}</version>
+                <version>${version.jakarta.xml.bind}</version>
             </dependency>
 
             <dependency>
@@ -1540,6 +1535,23 @@
                 <groupId>org.springframework.shell</groupId>
                 <artifactId>spring-shell-starter</artifactId>
                 <version>${version.org.springframework.shell}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-jpa</artifactId>
+                <version>${version.org.springframework.data}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-commons</artifactId>
+                <version>${version.org.springframework.data}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
             </dependency>
 
             <dependency>
