@@ -40,6 +40,8 @@
  */
 package org.ikasan.exclusion.dao;
 
+import org.ikasan.exclusion.ExclusionAutoConfiguration;
+import org.ikasan.exclusion.ExclusionTestAutoConfiguration;
 import org.ikasan.exclusion.model.BlackListEvent;
 import org.ikasan.exclusion.model.BlackListLinkedHashMap;
 import org.ikasan.spec.flow.FlowInvocationContext;
@@ -59,12 +61,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(locations={
-        "/exclusion-service-conf.xml",
-        "/substitute-components.xml",
-        "/h2db-datasource-conf.xml"
-        })
-
+@ContextConfiguration(classes = {ExclusionAutoConfiguration.class, ExclusionTestAutoConfiguration.class})
 public class MapBlackListDaoTest
 {
     /**
