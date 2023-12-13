@@ -44,6 +44,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 
@@ -53,17 +54,24 @@ import org.ikasan.spec.configuration.ConfigurationParameter;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name = "Configuration")
 @SuppressWarnings("serial")
-public class DefaultConfiguration implements Configuration<List<ConfigurationParameter>>, Serializable
+public class DefaultConfiguration implements Configuration<List<AbstractComponentParameter>>, Serializable
 {
     /** runtime configuration identifier */
+    @Id
     protected String configurationId;
     
     /** runtime configuration description */
+    @Column(name = "Description")
     protected String description;
     
     /** configuration parameters within this configuration */
-    protected List<ConfigurationParameter> parameters;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OrderColumn(name="PositionRef")
+    @JoinColumn(name = "ConfigurationIdentifier", nullable = false)
+    protected List<AbstractComponentParameter> parameters;
     
     /**
      * Constructor
@@ -71,7 +79,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
      */
     public DefaultConfiguration(String configurationId)
     {
-        this(configurationId, null, new ArrayList<ConfigurationParameter>());
+        this(configurationId, null, new ArrayList<AbstractComponentParameter>());
     }
 
     /**
@@ -79,7 +87,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
      * @param configurationId
      * @param parameters
      */
-    public DefaultConfiguration(String configurationId, List<ConfigurationParameter> parameters)
+    public DefaultConfiguration(String configurationId, List<AbstractComponentParameter> parameters)
     {
         this(configurationId, null, parameters);
     }
@@ -90,7 +98,7 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
      * @param description
      * @param parameters
      */
-    public DefaultConfiguration(String configurationId, String description, List<ConfigurationParameter> parameters)
+    public DefaultConfiguration(String configurationId, String description, List<AbstractComponentParameter> parameters)
     {
         this.configurationId = configurationId;
         if(configurationId == null)
@@ -125,12 +133,12 @@ public class DefaultConfiguration implements Configuration<List<ConfigurationPar
         return configurationId;
     }
 
-    public List<ConfigurationParameter> getParameters()
+    public List<AbstractComponentParameter> getParameters()
     {
         return parameters;
     }
 
-    public void setParameters(List<ConfigurationParameter> parameters)
+    public void setParameters(List<AbstractComponentParameter> parameters)
     {
         this.parameters = parameters;
     }

@@ -40,6 +40,8 @@
  */
 package org.ikasan.configurationService.service;
 
+import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
+import org.ikasan.configurationService.ConfigurationServiceTestAutoConfiguration;
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.model.*;
 import org.ikasan.spec.configuration.Configuration;
@@ -69,7 +71,7 @@ import java.util.Map;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(classes = {TestConfiguration.class})
+@ContextConfiguration(classes = {ConfigurationServiceAutoConfiguration.class, ConfigurationServiceTestAutoConfiguration.class})
 public class ConfiguredResourceConfigurationManagementTest
 {
     /**
@@ -156,8 +158,8 @@ public class ConfiguredResourceConfigurationManagementTest
     @DirtiesContext
     public void test_configurationManagement_save_mixed_based_configuration()
     {
-        Configuration<List<ConfigurationParameter>> configuration =
-                new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
+        Configuration<List<AbstractComponentParameter>> configuration =
+                new DefaultConfiguration("configuredResourceId", new ArrayList<>());
         configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
         configuration.getParameters().add( new ConfigurationParameterIntegerImpl("name", Integer.valueOf(10), "desc"));
         configuration.getParameters().add( new ConfigurationParameterLongImpl("name", Long.valueOf(10), "desc"));
@@ -184,8 +186,8 @@ public class ConfiguredResourceConfigurationManagementTest
     @Test
     public void test_configurationManagement_delete_configuration()
     {
-        Configuration<List<ConfigurationParameter>> configuration =
-                new DefaultConfiguration("configuredResourceId", new ArrayList<ConfigurationParameter>());
+        Configuration<List<AbstractComponentParameter>> configuration =
+                new DefaultConfiguration("configuredResourceId", new ArrayList<>());
         configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
         this.configurationServiceDao.save(configuration);
 

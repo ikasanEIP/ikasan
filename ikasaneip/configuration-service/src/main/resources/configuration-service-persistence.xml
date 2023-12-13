@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
+  http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
+             version="2.1">
+    <persistence-unit name="configuration-service" transaction-type="JTA">
+        <class>org.ikasan.configurationService.model.AbstractComponentParameter</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterListImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterMapImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterStringImpl</class>
+        <class>org.ikasan.configurationService.model.DefaultConfiguration</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterLongImpl</class>
+    </persistence-unit>
+
+    <persistence-unit name="xa-configuration-service" transaction-type="JTA">
+        <class>org.ikasan.configurationService.model.AbstractComponentParameter</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterListImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterMapImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterStringImpl</class>
+        <class>org.ikasan.configurationService.model.DefaultConfiguration</class>
+        <class>org.ikasan.configurationService.model.ConfigurationParameterLongImpl</class>
+    </persistence-unit>
+
+</persistence>

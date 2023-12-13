@@ -40,6 +40,8 @@
  */
 package org.ikasan.configurationService.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 /**
@@ -48,9 +50,14 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
-@SuppressWarnings("serial")
+@Entity(name = "ConfParamBoolean")
+@PrimaryKeyJoinColumn(name = "Id")
 public class ConfigurationParameterBooleanImpl extends AbstractComponentParameter<Boolean> implements Serializable
 {
+    /** configuration value */
+    @Column(name="Value")
+    protected Boolean value;
+
     /**
      * Constructor
      * @param name
@@ -81,6 +88,16 @@ public class ConfigurationParameterBooleanImpl extends AbstractComponentParamete
             this.value = Boolean.FALSE;
         }
         this.description = description;
+    }
+
+    @Override
+    public Boolean getValue() {
+        return this.value;
+    }
+
+    @Override
+    public void setValue(Boolean value) {
+        this.value = value;
     }
 
     /**

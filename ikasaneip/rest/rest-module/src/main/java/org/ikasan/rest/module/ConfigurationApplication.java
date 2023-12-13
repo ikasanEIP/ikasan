@@ -352,10 +352,11 @@ public class ConfigurationApplication
     private Configuration convert(ConfigurationMetaData<List<ConfigurationParameterMetaData>> metaData)
     {
 
-        List<ConfigurationParameter> list = metaData.getParameters().stream().map(p -> convertParam(p))
-                                                    .collect(Collectors.toList());
-
-        return new DefaultConfiguration(metaData.getConfigurationId(), metaData.getDescription(), list);
+//        List<AbstractComponentParameter> list = metaData.getParameters().stream().map(p -> convertParam(p))
+//                                                    .collect(Collectors.toList());
+//
+//        return new DefaultConfiguration(metaData.getConfigurationId(), metaData.getDescription(), list);
+        return null;
 
     }
 
