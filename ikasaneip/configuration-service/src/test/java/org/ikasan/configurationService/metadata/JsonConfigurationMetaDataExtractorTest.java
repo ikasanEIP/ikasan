@@ -334,8 +334,8 @@ public class JsonConfigurationMetaDataExtractorTest
     }
 
     private Configuration getConfiguration(String configuredResourceId){
-        Configuration<List<ConfigurationParameter>> configuration =
-            new DefaultConfiguration(configuredResourceId, new ArrayList<ConfigurationParameter>());
+        Configuration<List<AbstractComponentParameter>> configuration =
+            new DefaultConfiguration(configuredResourceId, new ArrayList<AbstractComponentParameter>());
         configuration.getParameters().add( new ConfigurationParameterStringImpl("name", "value", "desc"));
         configuration.getParameters().add( new ConfigurationParameterIntegerImpl("name", Integer.valueOf(10), "desc"));
         configuration.getParameters().add( new ConfigurationParameterLongImpl("name", Long.valueOf(10), "desc"));

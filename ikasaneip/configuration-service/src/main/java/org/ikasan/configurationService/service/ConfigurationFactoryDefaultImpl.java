@@ -79,10 +79,10 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
         // hide the constructor
     }
 
-    public Configuration<List<ConfigurationParameter>> createConfiguration(
+    public Configuration<List<AbstractComponentParameter>> createConfiguration(
             String configurationResourceId) {
         return new DefaultConfiguration(configurationResourceId,
-                new ArrayList<ConfigurationParameter>());
+                new ArrayList<AbstractComponentParameter>());
     }
 
     /**
@@ -92,12 +92,12 @@ public class ConfigurationFactoryDefaultImpl implements ConfigurationFactory {
      * @param runtimeConfiguration - The runtime configuration
      * @return
      */
-    public Configuration<List<ConfigurationParameter>> createConfiguration(String configurationResourceId, Object runtimeConfiguration) {
+    public Configuration<List<AbstractComponentParameter>> createConfiguration(String configurationResourceId, Object runtimeConfiguration) {
         if (runtimeConfiguration == null) {
             throw new ConfigurationException("Runtime configuration object cannot be 'null'");
         }
 
-        Configuration<List<ConfigurationParameter>> configuration = new DefaultConfiguration(configurationResourceId, new ArrayList<ConfigurationParameter>());
+        Configuration<List<AbstractComponentParameter>> configuration = new DefaultConfiguration(configurationResourceId, new ArrayList<>());
 
         Map<String, Object> properties = ReflectionUtils.getPropertiesIgnoringExceptions(runtimeConfiguration);
         // We wrap this in a TreeMap because PropertyUtils does not offer ordering (as of version 1.9.1) and several

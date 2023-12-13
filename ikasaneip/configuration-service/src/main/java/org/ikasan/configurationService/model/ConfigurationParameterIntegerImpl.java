@@ -40,6 +40,8 @@
  */
 package org.ikasan.configurationService.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 
 /**
@@ -49,8 +51,13 @@ import java.io.Serializable;
  *
  */
 @SuppressWarnings("serial")
+@Entity(name = "ConfParamInteger")
+@PrimaryKeyJoinColumn(name = "Id")
 public class ConfigurationParameterIntegerImpl extends AbstractComponentParameter<Integer> implements Serializable
 {
+    @Column(name="Value")
+    protected Integer value;
+
     /**
      * Constructor
      * @param name
@@ -85,5 +92,15 @@ public class ConfigurationParameterIntegerImpl extends AbstractComponentParamete
     protected ConfigurationParameterIntegerImpl()
     {
         // required by ORM
+    }
+
+    @Override
+    public Integer getValue() {
+        return value;
+    }
+
+    @Override
+    public void setValue(Integer value) {
+        this.value = value;
     }
 }

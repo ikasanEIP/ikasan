@@ -40,6 +40,8 @@
  */
 package org.ikasan.configurationService.service;
 
+import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
+import org.ikasan.configurationService.ConfigurationServiceTestAutoConfiguration;
 import org.ikasan.configurationService.model.PlatformConfiguration;
 import org.ikasan.configurationService.model.PlatformConfigurationConfiguredResource;
 import org.ikasan.spec.configuration.Configuration;
@@ -64,7 +66,7 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(classes = {TestConfiguration.class})
+@ContextConfiguration(classes = {ConfigurationServiceAutoConfiguration.class, ConfigurationServiceTestAutoConfiguration.class})
 public class PlatformConfigurationTest
 {
 	
