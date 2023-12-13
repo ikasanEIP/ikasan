@@ -40,6 +40,8 @@
  */
 package org.ikasan.configurationService.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -50,8 +52,19 @@ import java.util.List;
  *
  */
 @SuppressWarnings("serial")
+@Entity(name = "ConfParamList")
+@PrimaryKeyJoinColumn(name = "Id")
 public class ConfigurationParameterListImpl extends AbstractComponentParameter<List<String>> implements Serializable
 {
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "ConfParamListString",
+        joinColumns = @JoinColumn(name = "Id", nullable = false)
+    )
+    @Column(name = "Value")
+    @OrderColumn(name="PositionRef")
+    protected List<String> value;
+
     /**
      * Constructor
      * @param name
@@ -94,11 +107,11 @@ public class ConfigurationParameterListImpl extends AbstractComponentParameter<L
 
     @Override public List<String> getValue()
     {
-        return super.getValue();
+        return this.value;
     }
 
     @Override public void setValue(List<String> value)
     {
-        super.setValue(value);
+        this.value = value;
     }
 }

@@ -40,7 +40,10 @@
  */
 package org.ikasan.configurationService.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -49,9 +52,20 @@ import java.util.Map;
  * @author Ikasan Development Team
  *
  */
-@SuppressWarnings("serial")
+@Entity(name = "ConfParamMap")
+@PrimaryKeyJoinColumn(name = "Id")
 public class ConfigurationParameterMapImpl  extends AbstractComponentParameter<Map<String,String>> implements Serializable
 {
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(
+        name = "ConfParamListMap",
+        joinColumns = @JoinColumn(name = "Id", nullable = false)
+    )
+    @OrderColumn(name="PositionRef")
+    @MapKeyColumn(name = "MapKey")
+    @Column(name = "Value")
+    protected Map<String, String> value;
+
     /**
      * Constructor
      * @param name
@@ -90,11 +104,11 @@ public class ConfigurationParameterMapImpl  extends AbstractComponentParameter<M
 
     @Override public Map<String, String> getValue()
     {
-        return super.getValue();
+        return this.value;
     }
 
     @Override public void setValue(Map<String, String> value)
     {
-        super.setValue(value);
+        this.value = value;
     }
 }

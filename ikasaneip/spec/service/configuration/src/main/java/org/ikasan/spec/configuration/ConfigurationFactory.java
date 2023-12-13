@@ -49,7 +49,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public interface ConfigurationFactory
+public interface ConfigurationFactory<T>
 {
     /**
      * Instantiate a new Configuration based on the incoming configuration id and runtime configuration bean.
@@ -57,6 +57,6 @@ public interface ConfigurationFactory
      * @param runtimeConfiguration
      * @return
      */
-    public Configuration<List<ConfigurationParameter>> createConfiguration(String configurationId, Object runtimeConfiguration);
+    public Configuration<List<T>> createConfiguration(String configurationId, Object runtimeConfiguration);
 
 }

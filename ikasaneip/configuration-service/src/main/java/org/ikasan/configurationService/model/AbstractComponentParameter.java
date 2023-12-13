@@ -40,6 +40,7 @@
  */
 package org.ikasan.configurationService.model;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 
 import java.io.Serializable;
@@ -48,18 +49,21 @@ import java.io.Serializable;
  * Abstract Configuration Parameter for modelling common properties of a configuration parameter
  * Ikasan Development Team
  */
-public abstract class AbstractComponentParameter<T> implements ConfigurationParameter<T>, Serializable
+@Entity(name = "ConfigurationParameter")
+@Inheritance(strategy = InheritanceType.JOINED)
+public abstract class AbstractComponentParameter<T> implements Serializable, ConfigurationParameter<T>
 {
     /** required by ORM */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     protected Long id;
 
     /** configuration name */
+    @Column(name="Name", nullable = false)
     protected String name;
 
-    /** configuration value */
-    protected T value;
-
     /** configuration description */
+    @Column(name="Description")
     protected String description;
 
     /**
@@ -102,19 +106,13 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
      * Getter for value
      * @return
      */
-    public T getValue()
-    {
-        return this.value;
-    }
+    public abstract T getValue();
 
     /**
      * Setter for value
      * @param value
      */
-    public void setValue(T value)
-    {
-        this.value = value;
-    }
+    public abstract void setValue(T value);
 
     /**
      * Getter for description
@@ -177,7 +175,7 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
         // is same object type
         ConfigurationParameterBooleanImpl configurationParameter = (ConfigurationParameterBooleanImpl) object;
         if( this.name.equals(configurationParameter.getName()) &&
-                equalsOrNull(this.value, configurationParameter.getValue()) &&
+                equalsOrNull(this.getValue(), configurationParameter.getValue()) &&
                 equalsOrNull(this.description, configurationParameter.getDescription()) )
         {
             return true;
@@ -197,7 +195,7 @@ public abstract class AbstractComponentParameter<T> implements ConfigurationPara
     {
         int hash = 1;
         hash = hash * 31 + this.name.hashCode();
-        hash = hash * 31 + (this.value == null ? 0 : this.value.hashCode());
+        hash = hash * 31 + (this.getValue() == null ? 0 : this.getValue().hashCode());
         hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
         return hash;
     }

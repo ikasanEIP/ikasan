@@ -56,4 +56,11 @@
     <packaging>jar</packaging>
     <name>Ikasan Specification Configuration Resource Contracts</name>
     <description>The specification configuration contracts for the Ikasan Enterprise Integration Platform</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+        </dependency>
+    </dependencies>
 </project>

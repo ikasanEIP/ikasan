@@ -40,15 +40,16 @@
  */
 package org.ikasan.configurationService.dao;
 
-import org.hibernate.query.Query;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.ikasan.configurationService.model.DefaultConfiguration;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationParameter;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
 import java.util.List;
 
 /**
@@ -57,32 +58,29 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public class ConfigurationHibernateImpl extends HibernateDaoSupport 
-    implements ConfigurationDao<List<ConfigurationParameter>>
+public abstract class AbstractConfigurationDaoHibernateImpl implements ConfigurationDao<List<ConfigurationParameter>>
 {
+    public abstract EntityManager getEntityManager();
+
     /* (non-Javadoc)
      * @see org.ikasan.framework.configuration.dao.ConfigurationDao#findConfiguration(java.lang.String)
      */
     public Configuration findByConfigurationId(String configurationId)
     {
-
-        return getHibernateTemplate().execute((session) -> {
-
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Configuration> criteriaQuery = builder.createQuery(Configuration.class);
-            Root<DefaultConfiguration> root = criteriaQuery.from(DefaultConfiguration.class);
+        CriteriaBuilder builder = this.getEntityManager().getCriteriaBuilder();
+        CriteriaQuery<Configuration> criteriaQuery = builder.createQuery(Configuration.class);
+        Root<DefaultConfiguration> root = criteriaQuery.from(DefaultConfiguration.class);
 
 
-            criteriaQuery.select(root)
-                .where(builder.equal(root.get("configurationId"),configurationId));
+        criteriaQuery.select(root)
+            .where(builder.equal(root.get("configurationId"),configurationId));
 
-            Query<Configuration> query = session.createQuery(criteriaQuery);
-            List<Configuration> list = query.getResultList();
-            if(list!=null && !list.isEmpty()){
-                return list.get(0);
-            }
-            return null;
-        });
+        TypedQuery<Configuration> query = this.getEntityManager().createQuery(criteriaQuery);
+        List<Configuration> list = query.getResultList();
+        if(list!=null && !list.isEmpty()){
+            return list.get(0);
+        }
+        return null;
     }
 
     /* (non-Javadoc)
@@ -114,9 +112,8 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
         });
 
         // hibernate mutates the object and amends configurations Params with Id
-        getHibernateTemplate().saveOrUpdate(configuration);
-
-
+        this.getEntityManager().persist(this.getEntityManager().contains(configuration)
+            ? configuration : this.getEntityManager().merge(configuration));
     }
 
     /* (non-Javadoc)
@@ -124,6 +121,7 @@ public class ConfigurationHibernateImpl extends HibernateDaoSupport
      */
     public void delete(Configuration<List<ConfigurationParameter>> configuration)
     {
-        getHibernateTemplate().delete(configuration);
+        this.getEntityManager().remove(this.getEntityManager().contains(configuration)
+            ? configuration : this.getEntityManager().merge(configuration));
     }
 }
