@@ -41,6 +41,11 @@
 
 package org.ikasan.filter.duplicate.model;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+
 import java.io.Serializable;
 
 /**
@@ -53,6 +58,8 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MessageFilter")
 public class DefaultFilterEntry implements FilterEntry, Serializable
 {
     /**
@@ -62,18 +69,25 @@ public class DefaultFilterEntry implements FilterEntry, Serializable
 
     /** A hash unique to message to be filtered. Together with {@link #clientId}
      * it identifies the FilterEntry uniquely. */
+    @Id
+    @Column(name = "Criteria", nullable = false)
     private Integer criteria;
 
     /** The client id */
+    @Id
+    @Column(name = "ClientId", nullable = false)
     private String clientId;
 
     /** string form of the criteria to aid support should entries need cherry pick removal */
+    @Column(name = "CriteriaDescription")
     private String criteriaDescription;
 
     /** date/time of insertion */
+    @Column(name = "CreatedDateTime", nullable = false)
     private long createdDateTime;
 
     /** Expiry date/time */
+    @Column(name = "Expiry", nullable = false)
     private long expiry;
 
     @SuppressWarnings("unused")

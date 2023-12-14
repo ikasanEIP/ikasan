@@ -1,5 +1,7 @@
 package org.ikasan.filter.duplicate.service;
 
+import org.ikasan.filter.FilterAutoConfiguration;
+import org.ikasan.filter.FilterTestAutoConfiguration;
 import org.junit.Assert;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
@@ -18,10 +20,7 @@ import javax.annotation.Resource;
  * Created by Ikasan Development Team on 10/07/2016.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/filter-service-conf.xml"
-})
+@ContextConfiguration(classes = {FilterAutoConfiguration.class, FilterTestAutoConfiguration.class})
 public class DefaultEntityAgeFilterServiceTest
 {
     @Resource private FilteredMessageDao duplicateFilterDao;

@@ -41,20 +41,25 @@
 
 package org.ikasan.filter.duplicate.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.query.Query;
+import org.ikasan.filter.DefaultMessageFilter;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.search.PagedSearchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate5.HibernateCallback;
 import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -66,8 +71,10 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport implements FilteredMessageDao
+public class HibernateFilteredMessageDaoImpl implements FilteredMessageDao
 {
+    private static Logger logger = LoggerFactory.getLogger(HibernateFilteredMessageDaoImpl.class);
+
     public static final String EXPIRY = "expiry";
     public static final String EVENT_IDS = "eventIds";
     public static final String NOW = "now";
@@ -104,7 +111,7 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
          where \
         """;
 
-    public static final String SEARCH_FILTER_ENTRIES_CLIENT_PREDICATE = " se.id.clientId = :" + FilterEntry.CLIENT_ID_PROP_KEY;
+    public static final String SEARCH_FILTER_ENTRIES_CLIENT_PREDICATE = " se.clientId = :" + FilterEntry.CLIENT_ID_PROP_KEY;
 
     public static final String SEARCH_FILTER_ENTRIES_CRITERIA_PREDICATE = " se.criteria = :" + FilterEntry.CRITERIA_PROP_KEY;
 
@@ -122,167 +129,153 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     /** Batch size used when in a single transaction */
     private Integer transactionBatchSize = 1000;
 
+    @PersistenceContext(unitName = "filter")
+    private EntityManager entityManager;
+
 
     @Override
     public List<FilterEntry> findMessages(String clientId)
     {
-        return getHibernateTemplate().execute((session) -> {
-            Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_BY_CLIENTID_QUERY);
-            query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  clientId);
+        Query query = this.entityManager.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_BY_CLIENTID_QUERY);
+        query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  clientId);
 
-            return query.getResultList();
-
-
-        });
-
+        return query.getResultList();
     }
 
     @Override
     public PagedSearchResult<FilterEntry> findMessagesByPage(final int pageNo, final int pageSize,
         Integer criteria, String clientId ,final Date fromDate, final Date untilDate)
     {
+        Query query = getQueryWithParam(this.entityManager
+            .createQuery(buildQuery(false, criteria, clientId, fromDate, untilDate))
+            , criteria, clientId, fromDate, untilDate);
 
+        query.setMaxResults(pageSize);
+        int firstResult = pageNo * pageSize;
+        query.setFirstResult(firstResult);
 
-        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        List<FilterEntry> results = query.getResultList();
+
+        Long rowCount = rowCount(criteria, clientId, fromDate, untilDate);
+
+        return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+    }
+
+    private Long rowCount(Integer criteria, String clientId ,final Date fromDate, final Date untilDate){
+
+        Query metaDataQuery = getQueryWithParam(this.entityManager
+            .createQuery(buildQuery(true, criteria, clientId, fromDate, untilDate))
+            , criteria, clientId, fromDate, untilDate);
+
+        List<Long> rowCountList = metaDataQuery.getResultList();
+        if (!rowCountList.isEmpty())
         {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
+            return rowCountList.get(0);
+        }
+        return Long.valueOf(0);
+    }
 
-                Query query = getQueryWithParam(session.createQuery(buildQuery(false)));
+    /**
+     * Enrich query with provided parameters.
+     *
+     * @param query
+     * @return
+     */
+    private Query getQueryWithParam(Query query, Integer criteria, String clientId ,final Date fromDate, final Date untilDate)
+    {
+        if (restrictionExists(clientId))
+        {
+            query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  clientId);
+        }
 
-                query.setMaxResults(pageSize);
-                int firstResult = pageNo * pageSize;
-                query.setFirstResult(firstResult);
+        if (restrictionExists(criteria))
+        {
+            query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  criteria);
+        }
 
-                List<FilterEntry> results = query.getResultList();
+        if (restrictionExists(fromDate))
+        {
+            query.setParameter(FROM_DATE,  fromDate.getTime());
+        }
+        if (restrictionExists(untilDate))
+        {
+            query.setParameter(UNTIL_DATE,  untilDate.getTime());
+        }
 
-                Long rowCount = rowCount(session);
+        return query;
+    }
 
-                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
-            }
+    /**
+     * Create query with provided parameters.
+     * @param shouldCount
+     * @return
+     */
+    private String buildQuery(boolean shouldCount, Integer criteria, String clientId ,final Date fromDate, final Date untilDate)
+    {
+        StringBuilder query = new StringBuilder();
+        if (shouldCount)
+        {
+            query.append(COUNT_FILTER_ENTRIES_FROM);
+        }
+        else
+        {
+            query.append(SEARCH_FILTER_ENTRIES_FROM);
+        }
+        query.append(String.join(" AND ",predicate(criteria, clientId, fromDate, untilDate)));
 
-            private Long rowCount(Session session){
+        return query.toString();
+    }
 
-                Query metaDataQuery = getQueryWithParam(session.createQuery(buildQuery(true)));
+    private List<String> predicate(Integer criteria, String clientId ,final Date fromDate, final Date untilDate)
+    {
+        List<String> predicates = new ArrayList<>();
+        if (restrictionExists(clientId))
+        {
+            predicates.add(SEARCH_FILTER_ENTRIES_CLIENT_PREDICATE);
+        }
 
-                List<Long> rowCountList = metaDataQuery.getResultList();
-                if (!rowCountList.isEmpty())
-                {
-                    return rowCountList.get(0);
-                }
-                return Long.valueOf(0);
-            }
+        if (restrictionExists(criteria))
+        {
+            predicates.add(SEARCH_FILTER_ENTRIES_CRITERIA_PREDICATE);
+        }
 
-            /**
-             * Enrich query with provided parameters.
-             * @param query
-             * @return
-             */
-            private Query getQueryWithParam(Query query)
-            {
+        if (restrictionExists(fromDate))
+        {
+            predicates.add(SEARCH_FILTER_ENTRIES_FROM_DATE_PREDICATE);
+        }
+        if (restrictionExists(untilDate))
+        {
+            predicates.add(SEARCH_FILTER_ENTRIES_UNTIL_DATE_PREDICATE);
+        }
 
-
-                if (restrictionExists(clientId))
-                {
-                    query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  clientId);
-                }
-
-                if (restrictionExists(criteria))
-                {
-                    query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  criteria);
-                }
-
-                if (restrictionExists(fromDate))
-                {
-                    query.setParameter(FROM_DATE,  fromDate.getTime());
-                }
-                if (restrictionExists(untilDate))
-                {
-                    query.setParameter(UNTIL_DATE,  untilDate.getTime());
-                }
-
-                return query;
-            }
-
-            /**
-             * Create query with provided parameters.
-             * @param shouldCount
-             * @return
-             */
-            private String buildQuery(boolean shouldCount)
-            {
-                StringBuilder query = new StringBuilder();
-                if (shouldCount)
-                {
-                    query.append(COUNT_FILTER_ENTRIES_FROM);
-                }
-                else
-                {
-                    query.append(SEARCH_FILTER_ENTRIES_FROM);
-                }
-                query.append(String.join(" AND ",predicate()));
-
-                return query.toString();
-
-            }
-
-            private List<String> predicate()
-            {
-                List<String> predicates = new ArrayList<>();
-                if (restrictionExists(clientId))
-                {
-                    predicates.add(SEARCH_FILTER_ENTRIES_CLIENT_PREDICATE);
-                }
-
-                if (restrictionExists(criteria))
-                {
-                    predicates.add(SEARCH_FILTER_ENTRIES_CRITERIA_PREDICATE);
-                }
-
-                if (restrictionExists(fromDate))
-                {
-                    predicates.add(SEARCH_FILTER_ENTRIES_FROM_DATE_PREDICATE);
-                }
-                if (restrictionExists(untilDate))
-                {
-                    predicates.add(SEARCH_FILTER_ENTRIES_UNTIL_DATE_PREDICATE);
-                }
-
-                return predicates;
-            }
-        });
-
+        return predicates;
     }
 
     /*
-         * (non-Javadoc)
-         * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.window.FilterEntry)
-         */
+     * (non-Javadoc)
+     * @see org.ikasan.filter.duplicate.dao.MessagePersistanceDao#findMessageById(org.ikasan.filter.duplicate.window.FilterEntry)
+     */
     @SuppressWarnings("unchecked")
     public FilterEntry findMessage(FilterEntry message)
     {
-        return getHibernateTemplate().execute((session) -> {
+        Query query = this.entityManager.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_ONE_QUERY);
+        query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  message.getCriteria());
+        query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  message.getClientId());
 
-            Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_SELECT_ONE_QUERY);
-            query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  message.getCriteria());
-            query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  message.getClientId());
-
-            List<FilterEntry> result = query.getResultList();
-            if (!result.isEmpty())
-            {
-                return result.get(0);
-            }else{
-                return null;
-            }
-
-        });
-
+        List<FilterEntry> result = query.getResultList();
+        if (!result.isEmpty()) {
+            return result.get(0);
+        }
+        else {
+            return null;
+        }
     }
 
     @Override
     public void saveOrUpdate(FilterEntry message)
     {
-        this.getHibernateTemplate().saveOrUpdate(message);
+        this.entityManager.persist(this.entityManager.contains(message)
+            ? message : this.entityManager.merge(message));
     }
 
     /*
@@ -291,21 +284,16 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
      */
     public void save(FilterEntry message)
     {
-        this.getHibernateTemplate().save(message);
+        this.entityManager.persist(message);
     }
 
     public void delete(FilterEntry message)
     {
-        getHibernateTemplate().execute((session) -> {
+        Query query = this.entityManager.createQuery(MESSAGE_FILTER_TO_DELETE_QUERY);
+        query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  message.getCriteria());
+        query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  message.getClientId());
 
-            Query query = session.createQuery(MESSAGE_FILTER_TO_DELETE_QUERY);
-            query.setParameter(FilterEntry.CRITERIA_PROP_KEY,  message.getCriteria());
-            query.setParameter(FilterEntry.CLIENT_ID_PROP_KEY,  message.getClientId());
-
-            return query.executeUpdate();
-
-        });
-
+        query.executeUpdate();
     }
 
     /*
@@ -316,12 +304,9 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     {
         if (!this.batchHousekeepDelete)
         {
-            getHibernateTemplate().execute(session -> {
-                Query query = session.createQuery(HOUSEKEEP_QUERY);
-                query.setParameter(EXPIRY, System.currentTimeMillis());
-                query.executeUpdate();
-                return null;
-            });
+            Query query = this.entityManager.createQuery(HOUSEKEEP_QUERY);
+            query.setParameter(EXPIRY, System.currentTimeMillis());
+            query.executeUpdate();
         }
         else
         {
@@ -341,21 +326,18 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
         while(housekeepablesExist() && numberDeleted < this.transactionBatchSize)
         {
             numberDeleted += this.housekeepingBatchSize;
-            getHibernateTemplate().execute(session -> {
-                Query query = session.createQuery(MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY);
-                query.setParameter(NOW, System.currentTimeMillis());
-                query.setMaxResults(housekeepingBatchSize);
 
-                List<Long> filterIds = (List<Long>) query.list();
-                if (filterIds.size() > 0)
-                {
-                    query = session.createQuery(MESSAGE_FILTER_ENTRIES_DELETE_QUERY);
-                    query.setParameterList(EVENT_IDS, filterIds);
-                    query.executeUpdate();
-                }
+            Query query = this.entityManager.createQuery(MESSAGE_FILTER_ENTRIES_TO_DELETE_QUERY);
+            query.setParameter(NOW, System.currentTimeMillis());
+            query.setMaxResults(housekeepingBatchSize);
 
-                return null;
-            });
+            List<Long> filterIds = (List<Long>) query.getResultList();
+            if (filterIds.size() > 0)
+            {
+                query = this.entityManager.createQuery(MESSAGE_FILTER_ENTRIES_DELETE_QUERY);
+                query.setParameter(EVENT_IDS, filterIds);
+                query.executeUpdate();
+            }
         }
     }
 
@@ -366,25 +348,22 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
     @SuppressWarnings("unchecked")
     public List<FilterEntry> findExpiredMessages()
     {
-        return getHibernateTemplate().execute((session) -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<FilterEntry> criteriaQuery = builder.createQuery(FilterEntry.class);
-            Root<DefaultFilterEntry> root = criteriaQuery.from(DefaultFilterEntry.class);
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<FilterEntry> criteriaQuery = builder.createQuery(FilterEntry.class);
+        Root<DefaultFilterEntry> root = criteriaQuery.from(DefaultFilterEntry.class);
 
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(builder.lessThan(root.get(FilterEntry.EXPRIY_PROP_KEY), System.currentTimeMillis()));
-            criteriaQuery.select(root).where(predicates.toArray(new Predicate[predicates.size()]));
-            Query<FilterEntry> query = session.createQuery(criteriaQuery);
-            query.setMaxResults(housekeepingBatchSize);
-            List<FilterEntry> result = query.getResultList();
-            if (!result.isEmpty())
-            {
-                return result;
-            }else{
-                return null;
-            }
-
-        });
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.lessThan(root.get(FilterEntry.EXPRIY_PROP_KEY), System.currentTimeMillis()));
+        criteriaQuery.select(root).where(predicates.toArray(new Predicate[predicates.size()]));
+        Query query = this.entityManager.createQuery(criteriaQuery);
+        query.setMaxResults(housekeepingBatchSize);
+        List<FilterEntry> result = query.getResultList();
+        if (!result.isEmpty())
+        {
+            return result;
+        }else{
+            return null;
+        }
     }
 
     /**
@@ -394,23 +373,21 @@ public class HibernateFilteredMessageDaoImpl extends HibernateDaoSupport impleme
      */
     public boolean housekeepablesExist()
     {
-        return getHibernateTemplate().execute((session) -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-            Root<DefaultFilterEntry> root = criteriaQuery.from(DefaultFilterEntry.class);
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(builder.lessThan(root.get(FilterEntry.EXPRIY_PROP_KEY), System.currentTimeMillis()));
-            criteriaQuery.select(builder.count(root)).where(predicates.toArray(new Predicate[predicates.size()]));
-            org.hibernate.query.Query<Long> query = session.createQuery(criteriaQuery);
-            List<Long> rowCountList = query.getResultList();
-            Long rowCount = Long.valueOf(0);
-            if (!rowCountList.isEmpty())
-            {
-                rowCount = rowCountList.get(0);
-            }
-            logger.debug(rowCount+", MessageFilter housekeepables exist");
-            return Boolean.valueOf(rowCount > 0);
-        });
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<DefaultFilterEntry> root = criteriaQuery.from(DefaultFilterEntry.class);
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.lessThan(root.get(FilterEntry.EXPRIY_PROP_KEY), System.currentTimeMillis()));
+        criteriaQuery.select(builder.count(root)).where(predicates.toArray(new Predicate[predicates.size()]));
+        Query query = this.entityManager.createQuery(criteriaQuery);
+        List<Long> rowCountList = query.getResultList();
+        Long rowCount = Long.valueOf(0);
+        if (!rowCountList.isEmpty())
+        {
+            rowCount = rowCountList.get(0);
+        }
+        logger.debug(rowCount+", MessageFilter housekeepables exist");
+        return Boolean.valueOf(rowCount > 0);
     }
 
     /* (non-Javadoc)
