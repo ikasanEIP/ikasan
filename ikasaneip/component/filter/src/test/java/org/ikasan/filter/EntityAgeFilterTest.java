@@ -20,10 +20,7 @@ import javax.annotation.Resource;
  * Created by Ikasan Development Team on 10/07/2016.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/filter-service-conf.xml"
-})
+@ContextConfiguration(classes = {FilterAutoConfiguration.class, FilterTestAutoConfiguration.class})
 public class EntityAgeFilterTest
 {
     String xmlVeryOld = "<message><businessIdentifier>business-id-1</businessIdentifier><lastUpdated>1973-03-02T19:06:44.000Z</lastUpdated></message>";

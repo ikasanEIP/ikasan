@@ -40,6 +40,9 @@
  */
 package org.ikasan.filter.duplicate.dao;
 
+import org.hibernate.exception.ConstraintViolationException;
+import org.ikasan.filter.FilterAutoConfiguration;
+import org.ikasan.filter.FilterTestAutoConfiguration;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.junit.Assert;
 
@@ -52,6 +55,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.transaction.UnexpectedRollbackException;
 
 import java.util.Date;
 import java.util.List;
@@ -71,10 +75,7 @@ import static org.junit.Assert.*;
  */
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/FilteredMessageDaoInMemDBTest-context.xml",
-        "/filter-service-conf.xml"
-})
+@ContextConfiguration(classes = {FilterAutoConfiguration.class, FilterTestAutoConfiguration.class})
 public class HibernateFilteredMessageDaoImplTest
 {
     @Autowired
@@ -227,7 +228,7 @@ public class HibernateFilteredMessageDaoImplTest
     /**
      * Test case: try to save an already existing filter entry
      */
-    @Test(expected=DataIntegrityViolationException.class)
+    @Test(expected= UnexpectedRollbackException.class)
     @DirtiesContext
     public void save_duplicate_must_fail()
     {
