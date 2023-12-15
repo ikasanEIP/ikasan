@@ -50,7 +50,7 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import javax.resource.ResourceException;
 import java.io.IOException;
@@ -76,9 +76,9 @@ public class SFTPManagedConnectionOpenSessionTest
         }
     };
     //private  TemporaryFolder testFolder = new TemporaryFolder();
-    private static final int SFTP_PORT_PASSWORD = SocketUtils.findAvailableTcpPort();
-    private static final int SFTP_PORT_PUBLICKEY = SocketUtils.findAvailableTcpPort();
-    private static final int SFTP_PORT_PASSPHRASE_PUBLICKEY = SocketUtils.findAvailableTcpPort();
+    private static final int SFTP_PORT_PASSWORD = TestSocketUtils.findAvailableTcpPort();
+    private static final int SFTP_PORT_PUBLICKEY = TestSocketUtils.findAvailableTcpPort();
+    private static final int SFTP_PORT_PASSPHRASE_PUBLICKEY = TestSocketUtils.findAvailableTcpPort();
     private SftpServerWithPasswordAuthenticator server;
     private SftpServerWithPublickeyAuthenticator serverPublic = new SftpServerWithPublickeyAuthenticator(SFTP_PORT_PUBLICKEY);
     private SftpServerWithPassphraseProtectedPublickeyAuthenticator passphraseProtectedPublickeyAuthenticator

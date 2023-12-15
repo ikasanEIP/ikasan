@@ -47,10 +47,12 @@ import java.util.List;
 
 import javax.resource.ResourceException;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.Session;
 import org.ikasan.filetransfer.util.checksum.DigestChecksum;
@@ -120,40 +122,43 @@ public class HibernateFileChunkDao implements FileChunkDao
      * clause to restrict to max age
      */
     private static final String CLAUSE_MAX_AGE = "f.fileChunkHeader.chunkTimeStamp > :" + MAX_AGE_PARAMETER;
-    /**
-     * Session Factory for the Hibernate Session
-     */
-    private SessionFactory sessionFactory;
+//    /**
+//     * Session Factory for the Hibernate Session
+//     */
+//    private SessionFactory sessionFactory;
 
-    /**
-     * Constructor for DAO
-     * 
-     * @param sf
-     */
-    public HibernateFileChunkDao(SessionFactory sf)
-    {
-        this.sessionFactory = sf;
-    }
+//    /**
+//     * Constructor for DAO
+//     *
+//     * @param sf
+//     */
+//    public HibernateFileChunkDao(SessionFactory sf)
+//    {
+//        this.sessionFactory = sf;
+//    }
+//
+//    /**
+//     * @param sesssionFactoryJndiPath
+//     * @throws ResourceException
+//     */
+//    public HibernateFileChunkDao(String sesssionFactoryJndiPath) throws ResourceException
+//    {
+//
+//    }
+//
+//    /**
+//     * Constructor for DAO
+//     *
+//     * @param sff
+//     * @throws ResourceException
+//     */
+//    public HibernateFileChunkDao(HibernateSessionFactoryFactory sff) throws ResourceException
+//    {
+//        this.sessionFactory = sff.getSessionFactory();
+//    }
 
-    /**
-     * @param sesssionFactoryJndiPath
-     * @throws ResourceException
-     */
-    public HibernateFileChunkDao(String sesssionFactoryJndiPath) throws ResourceException
-    {
-
-    }
-
-    /**
-     * Constructor for DAO
-     * 
-     * @param sff
-     * @throws ResourceException
-     */
-    public HibernateFileChunkDao(HibernateSessionFactoryFactory sff) throws ResourceException
-    {
-        this.sessionFactory = sff.getSessionFactory();
-    }
+    @PersistenceContext(unitName = "file-transfer")
+    private EntityManager entityManager;
 
     /**
      * for debug purposes
@@ -174,19 +179,20 @@ public class HibernateFileChunkDao implements FileChunkDao
         }
         fileChunk.calculateChecksum();
 
-        Session session = sessionFactory.openSession();        
-        /*
-         * NOTE:  We do not start a Txn here because we should be using a
-         * Txn manager, which alread has us involved in a txn
-         */
-        //session.beginTransaction();
-        session.save(fileChunk);
-        /*
-         * NOTE:  We do not commit a Txn here because we should be using a
-         * Txn manager, which commits for us
-         */
-        //session.getTransaction().commit();
-        session.close();
+        this.entityManager.persist(fileChunk);
+//        Session session = sessionFactory.openSession();
+//        /*
+//         * NOTE:  We do not start a Txn here because we should be using a
+//         * Txn manager, which alread has us involved in a txn
+//         */
+//        //session.beginTransaction();
+//        session.save(fileChunk);
+//        /*
+//         * NOTE:  We do not commit a Txn here because we should be using a
+//         * Txn manager, which commits for us
+//         */
+//        //session.getTransaction().commit();
+//        session.close();
 
         //long saveEndTime = System.currentTimeMillis();
         //logger.debug("completed chunk save in
@@ -202,11 +208,11 @@ public class HibernateFileChunkDao implements FileChunkDao
     public FileChunk load(FileConstituentHandle fileConstituentHandle) throws ChunkLoadException
     {
         FileChunk result = null;
-        Session querySession = sessionFactory.openSession();
-        Query query = querySession.createQuery(FIND_CHUNK_BY_ID);
+//        Session querySession = sessionFactory.openSession();
+        Query query = this.entityManager.createQuery(FIND_CHUNK_BY_ID);
         query.setParameter(ID_PARAMETER, fileConstituentHandle.getId());
-        result = (FileChunk) query.uniqueResult();
-        querySession.close();
+        result = (FileChunk) query.getSingleResult();
+//        querySession.close();
         DigestChecksum localCheckSum = new Md5Checksum();
         localCheckSum.update(result.getContent());
         if (!result.getMd5Hash().equals(localCheckSum.digestToString()))
@@ -232,7 +238,7 @@ public class HibernateFileChunkDao implements FileChunkDao
             // get the latest chunk timestamp for this filename
             version = getLatestTimestamp(fileName);
         }
-        Session querySession = sessionFactory.openSession();
+//        Session querySession = sessionFactory.openSession();
         StringBuffer queryString = new StringBuffer(FIND_RELATED_CHUNKS);
         if (noOfChunks != null)
         {
@@ -244,7 +250,7 @@ public class HibernateFileChunkDao implements FileChunkDao
             queryString.append(AND);
             queryString.append(CLAUSE_MAX_AGE);
         }
-        Query query = querySession.createQuery(queryString.toString());
+        Query query = this.entityManager.createQuery(queryString.toString());
         query.setParameter(FILE_NAME_PARAMETER, fileName);
         query.setParameter(CHUNK_TIME_STAMP_PARAMETER, version);
         if (noOfChunks != null)
@@ -255,7 +261,7 @@ public class HibernateFileChunkDao implements FileChunkDao
         {
             query.setParameter(MAX_AGE_PARAMETER, System.currentTimeMillis() - maxAge);
         }
-        List<?> results = query.list();
+        List<?> results = query.getResultList();
         for (Iterator<?> iter = results.iterator(); iter.hasNext();)
         {
             Object[] row = (Object[]) iter.next();
@@ -264,7 +270,7 @@ public class HibernateFileChunkDao implements FileChunkDao
             FileChunkHeader fileChunkHeader = (FileChunkHeader) row[2];
             result.add(new FileChunk(fileChunkHeader, ordinal, primaryKey));
         }
-        querySession.close();
+//        querySession.close();
         logger.debug("HibernateFileChunkDao.findChunks returning result of length:" + result.size()); //$NON-NLS-1$
         Collections.sort(result);
         return result;
@@ -279,36 +285,36 @@ public class HibernateFileChunkDao implements FileChunkDao
      */
     private Long getLatestTimestamp(String fileName)
     {
-        Long result = null;
-        Session querySession = sessionFactory.openSession();
-        Query query = querySession.createQuery(FIND_LATEST_TIMESTAMP);
+        Long result;
+//        Session querySession = sessionFactory.openSession();
+        Query query = this.entityManager.createQuery(FIND_LATEST_TIMESTAMP);
         query.setParameter(FILE_NAME_PARAMETER, fileName);
-        result = (Long) query.uniqueResult();
-        querySession.close();
+        result = (Long) query.getResultList().get(0);
+//        querySession.close();
         return result;
     }
 
     public void save(FileChunkHeader fileChunkHeader)
     {
         logger.debug("save called with:" + fileChunkHeader); //$NON-NLS-1$
-        Session session = startSession();
-        session.saveOrUpdate(fileChunkHeader);
+//        Session session = startSession();
+        this.entityManager.persist(fileChunkHeader);
         /*
          * NOTE:  We do not commit a Txn here because we should be using a
          * Txn manager, which commits for us
          */
         //session.getTransaction().commit();
-        session.close();
+//        session.close();
     }
 
     public FileChunkHeader load(Long id) throws ChunkHeaderLoadException
     {
-        FileChunkHeader result = null;
-        Session querySession = sessionFactory.openSession();
-        Query query = querySession.createQuery(FIND_CHUNK_HEADER_BY_ID);
+        FileChunkHeader result;
+//        Session querySession = sessionFactory.openSession();
+        Query query = this.entityManager.createQuery(FIND_CHUNK_HEADER_BY_ID);
         query.setParameter(ID_PARAMETER, id);
-        result = (FileChunkHeader) query.uniqueResult();
-        querySession.close();
+        result = (FileChunkHeader) query.getSingleResult();
+//        querySession.close();
 
         if (result == null)
         {
@@ -334,33 +340,33 @@ public class HibernateFileChunkDao implements FileChunkDao
         List<FileConstituentHandle> chunkHandles = findChunks(fileChunkHeader.getFileName(), fileChunkHeader
             .getChunkTimeStamp(), null, null);
 
-        Session session = null;
+//        Session session = null;
         try
         {
-            session = startSession();
+//            session = startSession();
 
             // reload each of the chunks and delete it
-            Query query = session.createQuery(FIND_CHUNK_BY_ID);
+            Query query = this.entityManager.createQuery(FIND_CHUNK_BY_ID);
             FileChunk fileChunk = null;
             int counter = 0;
             int size = 0;
             for (FileConstituentHandle handle : chunkHandles)
             {
                 query.setParameter(ID_PARAMETER, handle.getId());
-                fileChunk = (FileChunk) query.uniqueResult();
+                fileChunk = (FileChunk) query.getSingleResult();
                 size = fileChunk.getContent().length;
                 logger.debug("Chunk is [" + size + "] number of bytes in size"); //$NON-NLS-1$ //$NON-NLS-2$
-                session.delete(fileChunk);
+                this.entityManager.remove(fileChunk);
                 counter++;
                 logger.debug("Deleted chunk [" + counter + "] of [" + chunkHandles.size() + "]");  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
                 // Bug fix - we need to add the flush here otherwise Hibernate holds on to the chunks until 
                 // the transaction commits.
-                session.flush();
+                this.entityManager.flush();
             }
 
             // lastly delete the header record
-            session.delete(fileChunkHeader);
-            session.flush();
+            this.entityManager.remove(fileChunkHeader);
+            this.entityManager.flush();
 
             /*
              * NOTE:  We do not commit a Txn here because we should be using a
@@ -373,28 +379,5 @@ public class HibernateFileChunkDao implements FileChunkDao
             logger.error(e.getMessage(),e);
             throw e;
         }
-        finally
-        {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
-
-    }
-
-    /**
-     * Initiates a new session
-     * 
-     * @return Session
-     */
-    private Session startSession()
-    {
-        Session newSession = sessionFactory.openSession();
-        /*
-         * NOTE:  We do not begin a Txn here because we should be using a
-         * transactional XA data source connection 
-         */
-        //newSession.beginTransaction();
-        return newSession;
     }
 }

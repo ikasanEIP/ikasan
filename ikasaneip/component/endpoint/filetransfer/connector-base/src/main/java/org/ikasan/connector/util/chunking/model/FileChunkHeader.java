@@ -40,7 +40,9 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
-import javax.xml.bind.annotation.XmlRootElement;
+import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlRootElement;
+
 import java.io.Serializable;
 
 /**
@@ -50,43 +52,53 @@ import java.io.Serializable;
  * @author Ikasan Development Team
  */
 @XmlRootElement
+@Entity
+@Table(name="FTFileChunkHeader")
 public class FileChunkHeader implements Serializable
 {
 
     /**
      * Primary key as set by persistence mechanism
      */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     /**
      * no of chunks for this file
      */
+    @Column(name = "SequenceLength", nullable = false)
     private Long sequenceLength;
 
     /**
      * checksum value for the entire file calculated internally when file was
      * sourced/chunked
      */
+    @Column(name = "InternalMd5Hash")
     private String internalMd5Hash;
 
     /**
      * checksum value (if any) supplied by the source system prior to upload
      */
+    @Column(name = "ExternalMd5Hash")
     private String externalMd5Hash;
 
     /**
      * original name of the chunked file
      */
+    @Column(name = "FileName", nullable = false)
     private String fileName;
 
     /**
      * The time that this file was chunked
      */
+    @Column(name = "ChunkTimeStamp", nullable = false)
     private Long chunkTimeStamp;
 
     /**
      * Optional client id
      */
+    @Column(name = "ClientId")
     private String clientId;
 
     /**

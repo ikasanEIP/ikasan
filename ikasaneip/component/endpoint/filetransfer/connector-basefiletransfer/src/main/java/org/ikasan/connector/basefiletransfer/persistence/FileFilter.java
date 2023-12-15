@@ -40,6 +40,8 @@
  */
 package org.ikasan.connector.basefiletransfer.persistence;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 import java.util.Objects;
 
@@ -55,31 +57,41 @@ import java.util.Objects;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name="FTFileFilter")
 public class FileFilter
 {
 
     /** id */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Integer id;
 
     /** clientId */
+    @Column(name = "ClientId", nullable = false)
     private String clientId;
 
     /** URI */
     private String uri;
 
     /** last modified */
+    @Column(name = "LastModified", nullable = false)
     private Date lastModified;
     
     /** last accessed */
+    @Column(name = "LastAccessed", nullable = false)
     private Date lastAccessed;
     
     /** size */
+    @Column(name = "Size", nullable = false)
     private int size;
 
     /** immutable event creation timestamp */
+    @Column(name = "CreatedDateTime", nullable = false)
     private long createdDateTime;
 
     /** Criteria to filter on */
+    @Column(name = "Criteria", nullable = false)
     private String criteria;
 
     /** Default constructor */

@@ -40,14 +40,15 @@
  */
 package org.ikasan.connector.base.command;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueResultException;
-import org.hibernate.query.Query;
 import org.ikasan.connector.base.command.state.State;
 import org.ikasan.connector.util.HexConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import javax.transaction.xa.Xid;
 import java.util.ArrayList;
@@ -59,7 +60,7 @@ import java.util.List;
  * 
  * @author Ikasan Development Team
  */
-public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSupport implements TransactionalResourceCommandDAO
+public class HibernateTransactionalResourceCommandDAO implements TransactionalResourceCommandDAO
 {
     /** Hibernate globalTransactionId parameter */
     private static final String GLOBAL_TRANSACTION_ID_PARAMETER = "globalTransactionIdParam";
@@ -84,13 +85,15 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(HibernateTransactionalResourceCommandDAO.class);
 
+    @PersistenceContext(unitName = "file-transfer")
+    private EntityManager entityManager;
 
     public void save(TransactionalResourceCommand command) throws TransactionalResourceCommandPersistenceException
     {
         logger.debug("save called with command [" + command + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         try
         {
-            this.getHibernateTemplate().saveOrUpdate(command);
+            this.entityManager.persist(command);
         }
         catch (HibernateException e)
         {
@@ -113,18 +116,12 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
         logger.debug("found xidImpl [" + xidImpl + "], now looking for associated commands..."); //$NON-NLS-1$//$NON-NLS-2$
         try
         {
-
-
-            result=  this.getHibernateTemplate().execute(session -> {
-                String xidParam = "xidParam";
-                Query<TransactionalResourceCommand> query = session.createQuery("from AbstractTransactionalResourceCommand c where c.xid.id = :"
-                    + xidParam + " order by c.xid.id");
-                logger.debug("Executing from AbstractTransactionalResourceCommand c where c.xid.id = :" + xidImpl.getId() + " order by c.xid.id");
-                query.setParameter(xidParam, xidImpl.getId());
-                return query.list();
-            });
-
-//            session.getTransaction().commit();
+            String xidParam = "xidParam";
+            Query query = this.entityManager.createQuery("from AbstractTransactionalResourceCommand c where c.xid.id = :"
+                + xidParam + " order by c.xid.id");
+            logger.debug("Executing from AbstractTransactionalResourceCommand c where c.xid.id = :" + xidImpl.getId() + " order by c.xid.id");
+            query.setParameter(xidParam, xidImpl.getId());
+            result = query.getResultList();
         }
         catch (HibernateException e)
         {
@@ -142,14 +139,9 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
     {
         try
         {
-
-            return this.getHibernateTemplate().execute(session -> {
-                Query<TransactionalResourceCommand> query = session.createQuery(FIND_COMMANDS_BY_STATE);
-                query.setParameter(STATE_PARAMETER, state.getName());
-                return query.list();
-            });
-
- //            session.getTransaction().commit();
+            Query query = this.entityManager.createQuery(FIND_COMMANDS_BY_STATE);
+            query.setParameter(STATE_PARAMETER, state.getName());
+            return query.getResultList();
         }
         catch (HibernateException e)
         {
@@ -166,15 +158,12 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
         XidImpl result = null;
         try
         {
-            List<XidImpl> xids = this.getHibernateTemplate().execute(session -> {
-                Query<XidImpl> query = session.createQuery(FIND_XID_BY_XID);
-                String globalTransactionId = HexConverter.byteArrayToHex(xid.getGlobalTransactionId());
-                String branchQualifier = HexConverter.byteArrayToHex(xid.getBranchQualifier());
-                query.setParameter(GLOBAL_TRANSACTION_ID_PARAMETER, globalTransactionId);
-                query.setParameter(BRANCH_TRANSACTION_ID_PARAMETER, branchQualifier);
-                return query.list();
-            });
-
+            Query query = this.entityManager.createQuery(FIND_XID_BY_XID);
+            String globalTransactionId = HexConverter.byteArrayToHex(xid.getGlobalTransactionId());
+            String branchQualifier = HexConverter.byteArrayToHex(xid.getBranchQualifier());
+            query.setParameter(GLOBAL_TRANSACTION_ID_PARAMETER, globalTransactionId);
+            query.setParameter(BRANCH_TRANSACTION_ID_PARAMETER, branchQualifier);
+            List<XidImpl> xids = query.getResultList();
 
             if (xids.size() > 1)
             {
@@ -190,7 +179,6 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
             {
                 result = xids.get(0);
             }
-           // session.getTransaction().commit();
         }
         catch (HibernateException e)
         {
@@ -208,8 +196,7 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
         logger.debug("save called with xid [" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         try
         {
-            this.getHibernateTemplate().saveOrUpdate(xid);
-//            session.flush();
+            this.entityManager.persist(xid);
         }
         catch (HibernateException e)
         {
@@ -221,14 +208,9 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
     {
         try
         {
-
-            return this.getHibernateTemplate().execute( session ->{
-                    Query<XidImpl> query = session.createQuery(FIND_XID_BY_STATE);
-                    query.setParameter(STATE_PARAMETER, state);
-                    return query.list();
-                }
-            );
-
+            Query query = this.entityManager.createQuery(FIND_XID_BY_STATE);
+            query.setParameter(STATE_PARAMETER, state);
+            return query.getResultList();
         }
         catch (HibernateException e)
         {
@@ -260,9 +242,7 @@ public class HibernateTransactionalResourceCommandDAO extends HibernateDaoSuppor
     {
         try
         {
-            this.getHibernateTemplate().delete(obj);
-            //session.flush();
-//            session.getTransaction().commit();
+            this.entityManager.remove(obj);
         }
         catch (HibernateException e)
         {

@@ -69,7 +69,6 @@
             </column>
             <column name="LastAccessed" type="${dateType}" defaultValueDate="${getDate}" >
                 <constraints nullable="false" />
-
             </column>
             <column name="Size" type="numeric(18)">
                 <constraints nullable="false"/>

@@ -59,8 +59,5 @@ public interface HibernateSessionFactoryFactory
      * @return SessionFactory
      * @throws ResourceException
      */
-    public SessionFactory getSessionFactory() throws ResourceException;
-    
-    
-    
+    SessionFactory getSessionFactory() throws ResourceException;
 }

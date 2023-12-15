@@ -40,13 +40,14 @@
  */
 package org.ikasan.component.endpoint.jms.spring.producer;
 
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.XAConnectionFactory;
+import jakarta.transaction.TransactionManager;
 import org.jboss.narayana.jta.jms.ConnectionFactoryProxy;
 import org.jboss.narayana.jta.jms.TransactionHelperImpl;
 import org.springframework.jms.core.IkasanJmsTemplate;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.XAConnectionFactory;
-import javax.transaction.TransactionManager;
+
 
 /**
  * Extend JmsTemplateProducer to ensure standard defaults are set on the producer being instantiated.

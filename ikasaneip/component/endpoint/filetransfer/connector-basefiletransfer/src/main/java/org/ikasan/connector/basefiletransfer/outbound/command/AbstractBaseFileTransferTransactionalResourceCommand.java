@@ -71,7 +71,7 @@ import org.ikasan.connector.listener.TransactionCommitFailureObserverable;
 
 /**
  * This is the base class for all FileTransfer oriented
- * TranasactionalResourceCommands
+ * TransactionalResourceCommands
  * 
  * This exists simply to provide access to all common low level File Transfer
  * operations

@@ -40,20 +40,19 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.persistence;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
-import org.hibernate.query.Query;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.HibernateCallback;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.NoResultException;
 import java.util.*;
 
 /**
@@ -62,7 +61,7 @@ import java.util.*;
  *
  * @author Ikasan Development Team
  */
-public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implements BaseFileTransferDao
+public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
 {
     /**
      * Client ID parameter
@@ -105,23 +104,26 @@ public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implem
 
     public static final String FILE_FILTER_FROM = "select ff from FileFilter ff where ";
 
-    public static final String FILE_FILTER_CLIENT_EQUALS_PREDICATE = " ff.fileFilterId.clientId = :" + CLIENT_ID;
+    public static final String FILE_FILTER_CLIENT_EQUALS_PREDICATE = " ff.clientId = :" + CLIENT_ID;
 
-    public static final String FILE_FILTER_CRITERIA_EQUALS_PREDICATE = " ff.fileFilterId.criteria = :" + CRITERIA;
+    public static final String FILE_FILTER_CRITERIA_EQUALS_PREDICATE = " ff.criteria = :" + CRITERIA;
 
-    public static final String FILE_FILTER_SIZE_EQUALS_PREDICATE = " ff.fileFilterId.size = :" + SIZE;
+    public static final String FILE_FILTER_SIZE_EQUALS_PREDICATE = " ff.size = :" + SIZE;
 
     public static final String FILE_FILTER_LAST_MODIFIED_EQUALS_PREDICATE =
-        " ff.fileFilterId.lastModified = :" + LAST_MODIFIED;
+        " ff.lastModified = :" + LAST_MODIFIED;
 
-    public static final String FILE_FILTER_CLIENT_LIKE_PREDICATE = " ff.fileFilterId.clientId like :" + CLIENT_ID;
+    public static final String FILE_FILTER_CLIENT_LIKE_PREDICATE = " ff.clientId like :" + CLIENT_ID;
 
-    public static final String FILE_FILTER_CRITERIA_LIKE_PREDICATE = " ff.fileFilterId.criteria like :" + CRITERIA;
+    public static final String FILE_FILTER_CRITERIA_LIKE_PREDICATE = " ff.criteria like :" + CRITERIA;
 
     /**
      * Logger
      */
     private static Logger logger = LoggerFactory.getLogger(HibernateBaseFileTransferDaoImpl.class);
+
+    @PersistenceContext(unitName = "file-transfer")
+    private EntityManager entityManager;
 
     /**
      * @see org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao#isDuplicate(ClientListEntry,
@@ -135,89 +137,77 @@ public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implem
 
         // Log the parameters
         logIsDuplicateParameters(qo, filterOnFilename, filterOnLastModifiedDate);
-        try
-        {
-            FileFilter resultObject = (FileFilter) getHibernateTemplate().execute(new HibernateCallback<Object>()
-            {
-                public Object doInHibernate(Session session) throws HibernateException
-                {
-                    Query query = getQueryWithParam(session.createQuery(buildQuery()));
 
-                    return query.getSingleResult();
-                }
+        Query query = getQueryWithParam(this.entityManager.createQuery(buildQuery(filterOnFilename, filterOnLastModifiedDate)),
+            qo, filterOnFilename, filterOnLastModifiedDate);
 
-                /**
-                 * Enrich query with provided parameters.
-                 *
-                 * @param query
-                 * @return
-                 */
-                private Query getQueryWithParam(Query query)
-                {
-
-                    query.setParameter(CLIENT_ID, qo.getClientId());
-                    query.setParameter(SIZE, qo.getSize());
-                    if ( filterOnFilename )
-                    {
-                        query.setParameter(CRITERIA, qo.getCriteria());
-                    }
-
-                    if ( filterOnLastModifiedDate )
-                    {
-                        query.setParameter(LAST_MODIFIED, qo.getLastModified());
-                    }
-
-                    return query;
-                }
-
-                /**
-                 * Create query with provided parameters.
-                 *
-                 * @return
-                 */
-                private String buildQuery()
-                {
-                    StringBuilder query = new StringBuilder();
-                    query.append(FILE_FILTER_FROM);
-                    query.append(String.join(" AND ", predicate()));
-
-                    return query.toString();
-
-                }
-
-                private List<String> predicate()
-                {
-                    List<String> predicates = new ArrayList<>();
-
-                    predicates.add(FILE_FILTER_CLIENT_EQUALS_PREDICATE);
-                    predicates.add(FILE_FILTER_SIZE_EQUALS_PREDICATE);
-
-                    if ( filterOnFilename )
-                    {
-                        predicates.add(FILE_FILTER_CRITERIA_EQUALS_PREDICATE);
-                    }
-
-                    if ( filterOnLastModifiedDate )
-                    {
-                        predicates.add(FILE_FILTER_LAST_MODIFIED_EQUALS_PREDICATE);
-                    }
-
-                    return predicates;
-                }
-            });
-
-            if ( resultObject != null )
-            {
-                logDuplicateFileFound(resultObject);
-                return true;
-            }
+        try {
+            FileFilter resultObject = (FileFilter) query.getSingleResult();
+            logDuplicateFileFound(resultObject);
+            return true;
+        }
+        catch (NoResultException e) {
             return false;
         }
-        catch (NoResultException noResultException)
+    }
+
+    /**
+     * Enrich query with provided parameters.
+     *
+     * @param query
+     * @return
+     */
+    private Query getQueryWithParam(Query query, FileFilter qo, boolean filterOnFilename, boolean filterOnLastModifiedDate)
+    {
+
+        query.setParameter(CLIENT_ID, qo.getClientId());
+        query.setParameter(SIZE, qo.getSize());
+        if ( filterOnFilename )
         {
-            return false;
+            query.setParameter(CRITERIA, qo.getCriteria());
         }
 
+        if ( filterOnLastModifiedDate )
+        {
+            query.setParameter(LAST_MODIFIED, qo.getLastModified());
+        }
+
+        return query;
+    }
+
+    /**
+     * Create query with provided parameters.
+     *
+     * @return
+     */
+    private String buildQuery(boolean filterOnFilename, boolean filterOnLastModifiedDate)
+    {
+        StringBuilder query = new StringBuilder();
+        query.append(FILE_FILTER_FROM);
+        query.append(String.join(" AND ", predicate(filterOnFilename, filterOnLastModifiedDate)));
+
+        return query.toString();
+
+    }
+
+    private List<String> predicate(boolean filterOnFilename, boolean filterOnLastModifiedDate)
+    {
+        List<String> predicates = new ArrayList<>();
+
+        predicates.add(FILE_FILTER_CLIENT_EQUALS_PREDICATE);
+        predicates.add(FILE_FILTER_SIZE_EQUALS_PREDICATE);
+
+        if ( filterOnFilename )
+        {
+            predicates.add(FILE_FILTER_CRITERIA_EQUALS_PREDICATE);
+        }
+
+        if ( filterOnLastModifiedDate )
+        {
+            predicates.add(FILE_FILTER_LAST_MODIFIED_EQUALS_PREDICATE);
+        }
+
+        return predicates;
     }
 
     /**
@@ -232,14 +222,13 @@ public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implem
 
         try
         {
-            this.getHibernateTemplate().save(o);
+            this.entityManager.persist(o);
         }
         catch (ConstraintViolationException cve)
         {
             logger.debug(
                 "Tried to insert duplicate which is not allowed, this is OK behaviour if filterDuplicates is false.");
         }
-
     }
 
     /**
@@ -268,148 +257,132 @@ public class HibernateBaseFileTransferDaoImpl extends HibernateDaoSupport implem
                     + "] and ageOfFiles parameter is set to (should be a negative number) [" + historyInDays + "]");
         }
 
-        getHibernateTemplate().execute((session) -> {
+        Query query = this.entityManager.createQuery(HOUSEKEEP_FILE_FILTER_FROM);
+        query.setParameter(CLIENT_ID, clientId);
+        query.setParameter(CREATED_DATE_TIME, cal.getTime().getTime());
 
-            Query query = session.createQuery(HOUSEKEEP_FILE_FILTER_FROM);
-            query.setParameter(CLIENT_ID, clientId);
-            query.setParameter(CREATED_DATE_TIME, cal.getTime().getTime());
+        query.setMaxResults(maxRows);
 
-            query.setMaxResults(maxRows);
-
-            query.list().stream().forEach(fileFilter -> session.delete(fileFilter));
-            return null;
-        });
-
+        query.getResultList().stream().forEach(fileFilter -> this.entityManager.remove(fileFilter));
     }
 
     public FileFilter findById(int id)
     {
-        return getHibernateTemplate().execute((session) -> {
+        Query query = this.entityManager.createQuery(FILE_FILTER_TO_SELECT_ONE_QUERY);
+        query.setParameter("id", id);
 
-            Query query = session.createQuery(FILE_FILTER_TO_SELECT_ONE_QUERY);
-            query.setParameter("id", id);
-
-            List<FileFilter> result = query.getResultList();
-            if ( !result.isEmpty() )
-            {
-                return result.get(0);
-            }
-            else
-            {
-                return null;
-            }
-
-        });
+        List<FileFilter> result = query.getResultList();
+        if ( !result.isEmpty() )
+        {
+            return result.get(0);
+        }
+        else
+        {
+            return null;
+        }
     }
 
     public void delete(FileFilter fileFilter)
     {
-        getHibernateTemplate().delete(fileFilter);
+        this.entityManager.remove(entityManager.contains(fileFilter)
+            ? fileFilter : entityManager.merge(fileFilter));
     }
 
     public FileFilter save(FileFilter fileFilter)
     {
-        getHibernateTemplate().save(fileFilter);
+        this.entityManager.persist(fileFilter);
         return fileFilter;
     }
 
     @Override
     public PagedSearchResult<FileFilter> find(int pageNo, int pageSize, String criteria, String clientId)
     {
+        Query query = getQueryWithParam(this.entityManager.createQuery(buildQuery(false, criteria, clientId)),
+            criteria, clientId);
 
-        return (PagedSearchResult) getHibernateTemplate().execute(new HibernateCallback<Object>()
+        query.setMaxResults(pageSize);
+        int firstResult = pageNo * pageSize;
+        query.setFirstResult(firstResult);
+
+        List<FileFilter> results = query.getResultList();
+
+        Long rowCount = rowCount(criteria, clientId);
+
+        return new ArrayListPagedSearchResult(results, firstResult, rowCount);
+    }
+
+    private Long rowCount(String criteria, String clientId)
+    {
+
+        Query metaDataQuery = getQueryWithParam(this.entityManager.createQuery(buildQuery(true, criteria, clientId)),
+            criteria, clientId);
+
+        List<Long> rowCountList = metaDataQuery.getResultList();
+        if ( !rowCountList.isEmpty() )
         {
-            public Object doInHibernate(Session session) throws HibernateException
-            {
+            return rowCountList.get(0);
+        }
+        return Long.valueOf(0);
+    }
 
-                Query query = getQueryWithParam(session.createQuery(buildQuery(false)));
+    /**
+     * Enrich query with provided parameters.
+     * @param query
+     * @return
+     */
+    private Query getQueryWithParam(Query query, String criteria, String clientId)
+    {
 
-                query.setMaxResults(pageSize);
-                int firstResult = pageNo * pageSize;
-                query.setFirstResult(firstResult);
+        if ( restrictionExists(clientId) )
+        {
+            query.setParameter(CLIENT_ID, clientId);
+        }
 
-                List<FileFilter> results = query.getResultList();
+        if ( restrictionExists(criteria) )
+        {
+            query.setParameter(CRITERIA, criteria);
+        }
 
-                Long rowCount = rowCount(session);
+        return query;
+    }
 
-                return new ArrayListPagedSearchResult(results, firstResult, rowCount);
-            }
+    /**
+     * Create query with provided parameters.
+     * @param shouldCount
+     * @return
+     */
+    private String buildQuery(boolean shouldCount, String criteria, String clientId)
+    {
+        StringBuilder query = new StringBuilder();
+        if ( shouldCount )
+        {
+            query.append(COUNT_FILE_FILTER_FROM);
+        }
+        else
+        {
+            query.append(FILE_FILTER_FROM);
+        }
+        query.append(String.join(" AND ", likePredicate(criteria, clientId)));
 
-            private Long rowCount(Session session)
-            {
-
-                Query metaDataQuery = getQueryWithParam(session.createQuery(buildQuery(true)));
-
-                List<Long> rowCountList = metaDataQuery.getResultList();
-                if ( !rowCountList.isEmpty() )
-                {
-                    return rowCountList.get(0);
-                }
-                return Long.valueOf(0);
-            }
-
-            /**
-             * Enrich query with provided parameters.
-             * @param query
-             * @return
-             */
-            private Query getQueryWithParam(Query query)
-            {
-
-                if ( restrictionExists(clientId) )
-                {
-                    query.setParameter(CLIENT_ID, clientId);
-                }
-
-                if ( restrictionExists(criteria) )
-                {
-                    query.setParameter(CRITERIA, criteria);
-                }
-
-                return query;
-            }
-
-            /**
-             * Create query with provided parameters.
-             * @param shouldCount
-             * @return
-             */
-            private String buildQuery(boolean shouldCount)
-            {
-                StringBuilder query = new StringBuilder();
-                if ( shouldCount )
-                {
-                    query.append(COUNT_FILE_FILTER_FROM);
-                }
-                else
-                {
-                    query.append(FILE_FILTER_FROM);
-                }
-                query.append(String.join(" AND ", predicate()));
-
-                return query.toString();
-
-            }
-
-            private List<String> predicate()
-            {
-                List<String> predicates = new ArrayList<>();
-                if ( restrictionExists(clientId) )
-                {
-                    predicates.add(FILE_FILTER_CLIENT_LIKE_PREDICATE);
-                }
-
-                if ( restrictionExists(criteria) )
-                {
-                    predicates.add(FILE_FILTER_CRITERIA_LIKE_PREDICATE);
-                }
-
-                return predicates;
-            }
-        });
+        return query.toString();
 
     }
 
+    private List<String> likePredicate(String criteria, String clientId)
+    {
+        List<String> predicates = new ArrayList<>();
+        if ( restrictionExists(clientId) )
+        {
+            predicates.add(FILE_FILTER_CLIENT_LIKE_PREDICATE);
+        }
+
+        if ( restrictionExists(criteria) )
+        {
+            predicates.add(FILE_FILTER_CRITERIA_LIKE_PREDICATE);
+        }
+
+        return predicates;
+    }
 
     /* **********************
      * Helper Logging methods
