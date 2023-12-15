@@ -40,10 +40,8 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.persistence;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-
-import org.hibernate.SessionFactory;
+import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
+import org.ikasan.connector.basefiletransfer.BaseFilterTransferTestAutoConfiguration;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
 import org.ikasan.connector.basefiletransfer.outbound.command.BaseFileTransferCommandJUnitHelper;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
@@ -52,13 +50,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.net.URI;
+import javax.sql.DataSource;
 import java.net.URISyntaxException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -71,13 +69,13 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 //specifies the Spring configuration to load for this test fixture
-@ContextConfiguration(classes = { TestConfiguration.class })
+@ContextConfiguration(classes = { BaseFileTransferAutoConfiguration.class, BaseFilterTransferTestAutoConfiguration.class })
 public class HibernateBaseFileTransferDaoImplTest
 {
-    @Resource
+    @Autowired
     DataSource xaDataSource;
 
-    @Resource
+    @Autowired
     BaseFileTransferDao uut;
 
     JdbcTemplate jdbcTemplate;
@@ -156,7 +154,6 @@ public class HibernateBaseFileTransferDaoImplTest
     @Test
     public void persistClientListEntry() throws URISyntaxException
     {
-
         ClientListEntry entry = BaseFileTransferCommandJUnitHelper.createEntry("file://logback-test.xml");
         entry.setFullPath("logback-test.xml");
         entry.setLongFilename("logback-test.xml");

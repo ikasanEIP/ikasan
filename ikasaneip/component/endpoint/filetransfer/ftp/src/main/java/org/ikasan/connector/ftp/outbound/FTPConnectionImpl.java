@@ -39,6 +39,7 @@
 package org.ikasan.connector.ftp.outbound;
 
 import com.google.common.cache.Cache;
+import jakarta.xml.bind.JAXBException;
 import org.ikasan.connector.ConnectorException;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
@@ -46,7 +47,6 @@ import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResourceCommand;
 import org.ikasan.connector.basefiletransfer.net.BaseFileTransferMappedRecord;
 import org.ikasan.connector.basefiletransfer.net.ClientListEntry;
-import org.ikasan.connector.basefiletransfer.net.OlderFirstClientListEntryComparator;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferConnectionImpl;
 import org.ikasan.connector.basefiletransfer.outbound.BaseFileTransferMappedRecordTransformer;
 import org.ikasan.connector.basefiletransfer.outbound.command.*;
@@ -68,11 +68,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.resource.ResourceException;
-import javax.xml.bind.JAXBException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringReader;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

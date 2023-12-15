@@ -41,6 +41,8 @@
 package org.ikasan.endpoint.sftp;
 
 import com.google.common.cache.Cache;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
 import org.ikasan.client.ConnectionCallback;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
@@ -62,8 +64,6 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 import javax.resource.ResourceException;
 import javax.resource.cci.Connection;
 import javax.resource.cci.ConnectionSpec;
-import javax.transaction.RollbackException;
-import javax.transaction.SystemException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -213,7 +213,6 @@ public class ConfigurationApplicationTest
     @WithMockUser(authorities = "WebServiceAdmin")
     public void testPutSingleConfiguration() throws Exception
     {
-
         MvcResult mvcResult = mockMvc.perform(
             MockMvcRequestBuilders.put("/rest/configuration").contentType(MediaType.APPLICATION_JSON_VALUE)
                                   .content(loadDataFile("/data/componentConfig.json"))).andReturn();
@@ -233,7 +232,6 @@ public class ConfigurationApplicationTest
             Mockito.anyString()
             );
         Mockito.verifyNoMoreInteractions(configurationManagement,systemEventService);
-
     }
 
     @Test
