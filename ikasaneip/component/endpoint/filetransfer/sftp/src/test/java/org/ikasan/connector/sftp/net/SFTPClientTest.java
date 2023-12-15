@@ -5,7 +5,7 @@ import org.ikasan.connector.sftp.ssh.SftpServerWithPasswordAuthenticator;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -31,7 +31,7 @@ public class SFTPClientTest
     @Before
     public void before() throws ClientConnectionException, IOException
     {
-        int passwordSftpServerPort = SocketUtils.findAvailableTcpPort();
+        int passwordSftpServerPort = TestSocketUtils.findAvailableTcpPort();
         tempDir = Files.createTempDirectory("tempfiles");
         dataFile = Paths.get("src/test/resources/data/test-data.xml");
         server = new SftpServerWithPasswordAuthenticator(passwordSftpServerPort, tempDir);

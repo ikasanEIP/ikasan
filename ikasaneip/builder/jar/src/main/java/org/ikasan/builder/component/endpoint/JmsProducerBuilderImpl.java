@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component.endpoint;
 
+import jakarta.transaction.TransactionManager;
 import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer;
 import org.ikasan.component.endpoint.jms.spring.producer.JmsTemplateProducer;
@@ -51,7 +52,6 @@ import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
-import javax.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
 

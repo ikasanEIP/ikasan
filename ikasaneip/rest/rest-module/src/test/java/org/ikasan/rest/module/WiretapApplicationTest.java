@@ -204,7 +204,7 @@ public class WiretapApplicationTest
             .when(jobAwareFlowEventListener.getTriggers())
             .thenReturn(Arrays.asList(t));
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/wiretap/triggers/")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/wiretap/triggers")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE)
                                                               .contentType(MediaType.APPLICATION_JSON_VALUE);
 

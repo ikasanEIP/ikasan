@@ -46,8 +46,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.springframework.jms.JmsException;
 import org.springframework.jms.support.converter.MessageConverter;
 
-import javax.jms.*;
-import javax.jms.IllegalStateException;
+
 
 /**
  * Ikasan based implementation around the standard Spring JMS template.

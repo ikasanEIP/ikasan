@@ -352,17 +352,16 @@ public class ConfigurationApplication
     private Configuration convert(ConfigurationMetaData<List<ConfigurationParameterMetaData>> metaData)
     {
 
-//        List<AbstractComponentParameter> list = metaData.getParameters().stream().map(p -> convertParam(p))
-//                                                    .collect(Collectors.toList());
-//
-//        return new DefaultConfiguration(metaData.getConfigurationId(), metaData.getDescription(), list);
-        return null;
+        List<AbstractComponentParameter> list = metaData.getParameters().stream().map(p -> convertParam(p))
+                                                    .collect(Collectors.toList());
+
+        return new DefaultConfiguration(metaData.getConfigurationId(), metaData.getDescription(), list);
 
     }
 
-    private ConfigurationParameter convertParam(ConfigurationParameterMetaData metaData)
+    private AbstractComponentParameter convertParam(ConfigurationParameterMetaData metaData)
     {
-        ConfigurationParameter cp = null;
+        AbstractComponentParameter cp = null;
 
         if ( ConfigurationParameterMapImpl.class.getName().equals(metaData.getImplementingClass()) )
         {

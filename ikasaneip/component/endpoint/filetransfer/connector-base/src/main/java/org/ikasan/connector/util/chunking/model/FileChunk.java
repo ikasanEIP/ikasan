@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.util.chunking.model;
 
+import jakarta.persistence.*;
 import org.ikasan.filetransfer.util.checksum.DigestChecksum;
 import org.ikasan.filetransfer.util.checksum.Md5Checksum;
 
@@ -49,33 +50,42 @@ import org.ikasan.filetransfer.util.checksum.Md5Checksum;
  * @author Ikasan Development Team
  * 
  */
+@Entity
+@Table(name="FTFileChunk")
 public class FileChunk implements FileConstituentHandle
 {
 
     /**
      * Primary key set by persistence mechanism
      */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     /**
      * payload of this chunk
      */
+    @Column(name = "Content", nullable = false)
     private byte[] content;
 
     /**
      * ordinal of this chunk within the sequence
      */
+    @Column(name = "Ordinal", nullable = false)
     private long ordinal;
 
     /**
      * The previously calculated hash value for the contents of this chunk
      */
+    @Column(name = "Md5Hash", nullable = false)
     private String md5Hash;
 
     /**
      * FileChunkHeader representing the File of which this chunk is a
      * constituent
      */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "FileChunkHeaderId")
     private FileChunkHeader fileChunkHeader;
 
     /**

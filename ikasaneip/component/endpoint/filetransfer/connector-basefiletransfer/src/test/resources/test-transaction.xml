@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <aop:config>
+        <aop:pointcut id="fileTransferDaoHousekeepingMethods"
+                      expression="execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.housekeep(..))
+                                    ||execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.persistClientListEntry(..))
+                                    ||execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.save(..))
+                                    ||execution(* org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao.delete(..))"/>
+
+        <aop:advisor id="fileTransferDaoHousekeepingMethodsPointcutAdvice" advice-ref="requiresNew-TransactionAdvice"
+                     pointcut-ref="fileTransferDaoHousekeepingMethods"/>
+    </aop:config>
+
+    <tx:advice id="requiresNew-TransactionAdvice"
+               transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
+
+</beans>
