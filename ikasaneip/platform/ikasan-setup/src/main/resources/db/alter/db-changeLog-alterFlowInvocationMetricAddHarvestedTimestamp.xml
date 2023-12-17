@@ -68,7 +68,7 @@
         <!-- We need to set the HarvestedDateTime > 0 if we have already been harvested. -->
         <sql>
             UPDATE FlowInvocationMetric SET HarvestedDateTime = 1
-            WHERE Harvested = 1
+            WHERE Harvested = true
         </sql>
 
     </changeSet>
