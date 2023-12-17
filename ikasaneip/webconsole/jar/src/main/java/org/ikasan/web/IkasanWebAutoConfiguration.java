@@ -62,7 +62,6 @@ import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
@@ -72,9 +71,9 @@ import java.util.Map;
 import java.util.Properties;
 
 @Configuration
-public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
+public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
 {
-    @Override public void configureViewResolvers(ViewResolverRegistry registry)
+    public void configureViewResolvers(ViewResolverRegistry registry)
     {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/jsp/");
@@ -145,7 +144,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     public SecurityService securityService()
     {
         HibernateSecurityDao securityDao = new HibernateSecurityDao();
-        securityDao.setSessionFactory(securitySessionFactory().getObject());
+//        securityDao.setSessionFactory(securitySessionFactory().getObject());
         return new SecurityServiceImpl(securityDao);
     }
 
@@ -153,7 +152,7 @@ public class IkasanWebAutoConfiguration extends WebMvcConfigurerAdapter
     public UserService userService(Environment environment)
     {
         HibernateUserDao userDao = new HibernateUserDao();
-        userDao.setSessionFactory(securitySessionFactory().getObject());
+//        userDao.setSessionFactory(securitySessionFactory().getObject());
         return new UserServiceImpl(userDao, securityService(), passwordEncoder(), this.preventLocalAuthentication);
     }
 
