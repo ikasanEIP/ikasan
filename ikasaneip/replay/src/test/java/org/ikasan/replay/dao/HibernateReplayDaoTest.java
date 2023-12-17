@@ -40,7 +40,9 @@
  */
 package org.ikasan.replay.dao;
 
-import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.replay.ReplayAutoConfiguration;
+import org.ikasan.replay.ReplayTestAutoConfiguration;
+import org.ikasan.replay.model.ReplayEventImpl;
 import org.ikasan.spec.replay.ReplayDao;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.serialiser.SerialiserFactory;
@@ -63,12 +65,7 @@ import java.util.List;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/replay-service-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
-})
+@ContextConfiguration(classes = {ReplayAutoConfiguration.class, ReplayTestAutoConfiguration .class})
 public class HibernateReplayDaoTest
 {	
 	/**
@@ -85,7 +82,7 @@ public class HibernateReplayDaoTest
 	@DirtiesContext
 	public void testSaveReplayEvent_success()
 	{
-		HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+		ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
       
 		this.replayDao.saveOrUpdate(replayEvent);
 
@@ -103,7 +100,7 @@ public class HibernateReplayDaoTest
         long currentTimestamp = System.currentTimeMillis();
         for(int i=0; i<100; i++)
         {
-            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+            ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
             replayEvent.setTimestamp(currentTimestamp-100+i);
             replayEvents.add(replayEvent);
         }
@@ -125,7 +122,7 @@ public class HibernateReplayDaoTest
 
         for(int i=0; i<1000; i++)
         {
-            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+            ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
             replayEvent.setTimestamp(currentTimestamp-1000+i);
             this.replayDao.saveOrUpdate(replayEvent);
 
@@ -149,7 +146,7 @@ public class HibernateReplayDaoTest
 
         for(int i=0; i<1000; i++)
         {
-            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+            ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
             replayEvent.setTimestamp(currentTimestamp-1000+i);
             this.replayDao.saveOrUpdate(replayEvent);
 
@@ -177,7 +174,7 @@ public class HibernateReplayDaoTest
 
         for(int i=0; i<1000; i++)
         {
-            HibernateReplayEvent replayEvent = new HibernateReplayEvent("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
+            ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri", "event".getBytes(), "event", "moduleName", "flowName", 30);
             replayEvent.setTimestamp(currentTimestamp-1000+i);
             this.replayDao.saveOrUpdate(replayEvent);
 

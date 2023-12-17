@@ -1,6 +1,7 @@
 package org.ikasan.component.converter.xml.jaxb;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
  * Dummy adapter so we can test the setting and usage correctly

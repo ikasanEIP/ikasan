@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!-- 
 
 
@@ -43,38 +43,28 @@
 
  Author:  Ikasan Development Team
  
- Purpose: ExclusionEventAction table hibernate mapping file. * * *
 -->
-<!DOCTYPE hibernate-mapping PUBLIC
-    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
-<hibernate-mapping>
-	<class name="org.ikasan.replay.model.HibernateReplayAudit"
-		table="ReplayAudit">
-		
-		<id name="id" type="java.lang.Long" column="Id">
-			<generator class="native" />
-		</id>
-		
-		<property name="user"
-                  type="java.lang.String"
-                  column="ReplayUser"
-                  not-null="true" />
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:tx="http://www.springframework.org/schema/tx"
+    xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
+	
+	<aop:config>
+        <aop:pointcut id="daoMethods"
+                expression="execution(* org.ikasan.replay.dao.*.*(..))"/>
+                
+        <aop:advisor advice-ref="required-TransactionAdvice" pointcut-ref="daoMethods"/>
+    </aop:config>
 
-        <property name="replayReason"
-                  type="java.lang.String"
-                  column="Reason"
-                  not-null="true" />
-                  
-        <property name="targetServer"
-                  type="java.lang.String"
-                  column="TargetServer"
-                  not-null="true" />
-		          
-		<property name="timestamp" 
-				  column="Timestamp" 
-				  type="long" 
-				  not-null="true"/>
-		
-	</class>
-</hibernate-mapping>
+    <tx:advice id="required-TransactionAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" />
+        </tx:attributes>
+    </tx:advice>
+
+	
+
+</beans>

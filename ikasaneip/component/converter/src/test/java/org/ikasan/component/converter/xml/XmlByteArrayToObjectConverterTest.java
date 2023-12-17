@@ -40,13 +40,12 @@
  */
 package org.ikasan.component.converter.xml;
 
+import jakarta.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEventHandler;
 import org.ikasan.component.converter.xml.jaxb.Example;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.xml.bind.ValidationEvent;
-import javax.xml.bind.ValidationEventHandler;
 
 import static org.junit.Assert.assertEquals;
 

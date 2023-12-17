@@ -40,10 +40,10 @@
  */
 package org.ikasan.replay.model;
 
+import jakarta.persistence.*;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.replay.ReplayEvent;
 
-import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -51,34 +51,47 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
-public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
+@Entity
+@Table(name = "ReplayEvent")
+public class ReplayEventImpl implements ReplayEvent, HarvestEvent
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
 
+    @Column(name="ModuleName", nullable = false)
     private String moduleName;
 
+    @Column(name="FlowName", nullable = false)
     private String flowName;
 
-	private String eventId;
+    @Column(name="Identifier", nullable = false)
+    private String eventId;
 
+    @Column(name="Event", nullable = false)
     private byte[] event;
 
-	private String eventAsString;
+    @Column(name="EventAsString")
+    private String eventAsString;
 
+    @Column(name="Timestamp", nullable = false)
     private long timestamp;
 
+    @Column(name="Expiry", nullable = false)
     private long expiry;
 
 	/** flag to indicate if the record has been harvested */
-	boolean harvested;
+    @Column(name="Harvested", nullable = false)
+    boolean harvested;
 
     /** the time the record was harvested */
+    @Column(name="HarvestedDateTime", nullable = false)
     private long harvestedDateTime;
 
     /**
 	 * Default constructor
 	 */
-	public HibernateReplayEvent()
+	protected ReplayEventImpl()
 	{
 		
 	}
@@ -92,7 +105,7 @@ public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 	 * @param flowName
 	 * @param timeToLiveDays
      */
-	public HibernateReplayEvent(String eventId, byte[] event, String eventAsString, String moduleName, String flowName, int timeToLiveDays)
+	public ReplayEventImpl(String eventId, byte[] event, String eventAsString, String moduleName, String flowName, int timeToLiveDays)
 	{
 		super();
 
@@ -288,7 +301,7 @@ public class HibernateReplayEvent implements ReplayEvent, HarvestEvent
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HibernateReplayEvent other = (HibernateReplayEvent) obj;
+		ReplayEventImpl other = (ReplayEventImpl) obj;
 		if (!id.equals(other.id))
 			return false;
 		

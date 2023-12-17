@@ -7,15 +7,14 @@ import java.util.List;
 import java.util.Map;
 
 
-import org.ikasan.replay.dao.ReplayEventConverter;
 import org.ikasan.replay.model.BulkReplayResponse;
 import org.ikasan.replay.model.ReplayResponse;
 import org.ikasan.spec.replay.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.apache.commons.codec.binary.Base64;
-import org.ikasan.replay.model.HibernateReplayAudit;
-import org.ikasan.replay.model.HibernateReplayAuditEvent;
+import org.ikasan.replay.model.ReplayAuditImpl;
+import org.ikasan.replay.model.ReplayAuditEventImpl;
 import org.springframework.http.*;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -29,16 +28,16 @@ import org.springframework.web.client.RestTemplate;
  * @author Ikasan Development Team
  *
  */
-public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateReplayAuditEvent, ReplayResponse, BulkReplayResponse>
+public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAuditEventImpl, ReplayResponse, BulkReplayResponse>
 {
 	private static Logger logger = LoggerFactory.getLogger(ReplayService.class);
 	
-	private ReplayAuditDao<HibernateReplayAudit,HibernateReplayAuditEvent> replayAuditDao;
+	private ReplayAuditDao<ReplayAuditImpl, ReplayAuditEventImpl> replayAuditDao;
 	
 	private boolean cancel = false;
     
-    private List<ReplayListener<HibernateReplayAuditEvent>> replayListeners
-    	= new ArrayList<ReplayListener<HibernateReplayAuditEvent>>();
+    private List<ReplayListener<ReplayAuditEventImpl>> replayListeners
+    	= new ArrayList<ReplayListener<ReplayAuditEventImpl>>();
 
     private RestTemplate restTemplate;
 
@@ -70,7 +69,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 	{
 		cancel = false;
 
-    	HibernateReplayAudit replayAudit = new HibernateReplayAudit(user, replayReason, targetServer);
+    	ReplayAuditImpl replayAudit = new ReplayAuditImpl(user, replayReason, targetServer);
     	logger.info("Saving replayAudit: " + replayAudit);
     	
     	this.replayAuditDao.saveOrUpdateAudit(replayAudit);
@@ -109,13 +108,13 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 
 	private ReplayResponse replay(String targetServer, ReplayEvent event,
                                   String authUser, String authPassword, String user,
-                                  String replayReason, HibernateReplayAudit replayAudit, String contextPath)
+                                  String replayReason, ReplayAuditImpl replayAudit, String contextPath)
 	{
 		cancel = false;
 
 		if(replayAudit == null)
 		{
-			replayAudit = new HibernateReplayAudit(user, replayReason, targetServer);
+			replayAudit = new ReplayAuditImpl(user, replayReason, targetServer);
 			logger.info("Saving replayAudit: " + replayAudit);
 
 			this.replayAuditDao.saveOrUpdateAudit(replayAudit);
@@ -125,14 +124,14 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 
 		ReplayResponse replayResponse = this.replayMessage(targetServer, event, authUser, authPassword, contextPath);
 
-		HibernateReplayAuditEvent replayAuditEvent = new HibernateReplayAuditEvent(replayAudit, event, replayResponse.isSuccess(),
+		ReplayAuditEventImpl replayAuditEvent = new ReplayAuditEventImpl(replayAudit, event, replayResponse.isSuccess(),
 				replayResponse.getResponseBody(), System.currentTimeMillis());
 
 		logger.info("Saving replayAuditEvent: " + replayAuditEvent);
 
 		this.replayAuditDao.saveOrUpdate(replayAuditEvent);
 
-		for(ReplayListener<HibernateReplayAuditEvent> listener: this.replayListeners)
+		for(ReplayListener<ReplayAuditEventImpl> listener: this.replayListeners)
 		{
 			listener.onReplay(replayAuditEvent);
 		}
@@ -218,7 +217,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, HibernateRe
 	 * @see org.ikasan.spec.replay.ReplayService#addReplayListener(org.ikasan.spec.replay.ReplayListener)
 	 */
 	@Override
-	public void addReplayListener(ReplayListener<HibernateReplayAuditEvent> listener)
+	public void addReplayListener(ReplayListener<ReplayAuditEventImpl> listener)
 	{
 		this.replayListeners.add(listener);
 	}

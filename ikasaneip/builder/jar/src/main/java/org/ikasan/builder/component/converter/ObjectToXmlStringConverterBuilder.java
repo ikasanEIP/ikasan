@@ -40,11 +40,11 @@
  */
 package org.ikasan.builder.component.converter;
 
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.ikasan.builder.component.Builder;
 import org.ikasan.component.converter.xml.XmlConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +97,7 @@ public interface ObjectToXmlStringConverterBuilder extends Builder<Converter>
      */
     ObjectToXmlStringConverterBuilder setFastFailOnConfigurationLoad(boolean fastFailOnConfigurationLoad);
 
-    ObjectToXmlStringConverterBuilder setXmlAdapterMap(Map<Class,XmlAdapter> xmlAdapterMap);
+    ObjectToXmlStringConverterBuilder setXmlAdapterMap(Map<Class, XmlAdapter> xmlAdapterMap);
 
     ObjectToXmlStringConverterBuilder setConfiguration(XmlConfiguration xmlConfiguration);
 

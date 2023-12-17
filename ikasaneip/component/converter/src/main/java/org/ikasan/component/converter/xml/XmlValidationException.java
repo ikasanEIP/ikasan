@@ -40,7 +40,7 @@
  */
 package org.ikasan.component.converter.xml;
 
-import javax.xml.bind.ValidationEvent;
+import jakarta.xml.bind.ValidationEvent;
 
 /**
  * Use custom XML validation exception to allow specific handling of a failed XML

@@ -1,7 +1,7 @@
 package org.ikasan.replay.dao;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.ikasan.replay.model.HibernateReplayEvent;
+import org.ikasan.replay.model.ReplayEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -34,7 +34,7 @@ public class ReplayEventConverter implements Converter<List<ReplayEvent>, List<R
         {
             String json = objectMapper.writeValueAsString(payload);
             results = objectMapper.readValue(json, objectMapper.getTypeFactory()
-                .constructCollectionType(List.class, HibernateReplayEvent.class));
+                .constructCollectionType(List.class, ReplayEventImpl.class));
         }
         catch (IOException e)
         {
