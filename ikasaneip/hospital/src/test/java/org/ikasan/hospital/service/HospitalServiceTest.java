@@ -40,8 +40,6 @@
  */
 package org.ikasan.hospital.service;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 /**
@@ -49,6 +47,7 @@ import org.junit.Test;
  * @author Ikasan Development Team
  *
  */
+// todo write some unit tests!
 public class HospitalServiceTest
 {
 
@@ -57,6 +56,5 @@ public class HospitalServiceTest
 	{
 
 	}
-
 
 }
