@@ -42,11 +42,14 @@ package org.ikasan.hospital.dao;
 
 import javax.annotation.Resource;
 
+import org.ikasan.hospital.HospitalAutoConfiguration;
+import org.ikasan.hospital.HospitalTestAutoConfiguration;
 import org.ikasan.hospital.model.ExclusionEventActionImpl;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -57,19 +60,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
  */
 @SuppressWarnings("unqualified-field-access")
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={
-        "/hospital-conf.xml",
-        "/hsqldb-config.xml",
-        "/substitute-components.xml",
-        "/mock-components.xml"
-})
+@ContextConfiguration(classes = {HospitalAutoConfiguration.class, HospitalTestAutoConfiguration.class})
 public class HibernateHospitalDaoTest
 {
 
 	@Resource HospitalDao hospitalDao;
 	
 	@Test
-	public void testSaveExclusionEvent_success()
+    @DirtiesContext
+	public void test_SaveExclusionEvent_success()
 	{
 		ExclusionEventAction action = new ExclusionEventActionImpl("errorUri", "actionedBy", "state", "event".getBytes(), "moduleName", "flowName");
 		
@@ -77,21 +76,17 @@ public class HibernateHospitalDaoTest
 	}
 
     @Test
-    public void testgetExclusionEventAction_success()
+    @DirtiesContext
+    public void test_getExclusionEventAction_success()
     {
         // setup
         ExclusionEventAction action = new ExclusionEventActionImpl("errorUri", "actionedBy", "state", "event".getBytes(), "moduleName", "flowName");
 
         this.hospitalDao.saveOrUpdate(action);
 
-
         // test
-
         ExclusionEventAction result = this.hospitalDao.getExclusionEventActionByErrorUri("errorUri");
 
         Assert.assertEquals(action,result);
-
-
-
     }
 }
