@@ -40,6 +40,7 @@
  */
 package org.ikasan.builder.component.converter;
 
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.ikasan.component.converter.xml.ObjectToXMLStringConverter;
 import org.ikasan.component.converter.xml.XmlConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
@@ -47,7 +48,6 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 
 import org.junit.Test;
 
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -90,7 +90,7 @@ public class ObjectToXmlStringConverterBuilderImplTest
         List<Class> objectClasses = new ArrayList<Class>();
         objectClasses.add(Integer.class);
 
-        Map<Class,XmlAdapter> xmlAdapters = new HashMap<Class,XmlAdapter>();
+        Map<Class, XmlAdapter> xmlAdapters = new HashMap<Class,XmlAdapter>();
 
         XmlConfiguration configuration = new XmlConfiguration();
         ObjectToXmlStringConverterBuilderImplExtendedForTest builder = new ObjectToXmlStringConverterBuilderImplExtendedForTest(classes, configuration);

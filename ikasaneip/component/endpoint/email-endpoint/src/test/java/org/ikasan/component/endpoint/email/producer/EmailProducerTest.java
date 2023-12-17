@@ -39,14 +39,16 @@ package org.ikasan.component.endpoint.email.producer;
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
+
 import com.google.common.collect.Lists;
 import org.apache.commons.io.IOUtils;
-import org.junit.*;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.management.ManagedResource;
-import org.springframework.util.SocketUtils;
+import org.junit.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.test.util.TestSocketUtils;
 import org.subethamail.wiser.Wiser;
 import org.subethamail.wiser.WiserMessage;
 
@@ -86,7 +88,7 @@ public class EmailProducerTest {
     @Before
     public void setup() {
         wiser = new Wiser();
-        int port = SocketUtils.findAvailableTcpPort();
+        int port = TestSocketUtils.findAvailableTcpPort();
         wiser.setPort(port);
         logger.info(("Attempting to start Wiser SMTP Server on port " + port).formatted());
         wiser.start();

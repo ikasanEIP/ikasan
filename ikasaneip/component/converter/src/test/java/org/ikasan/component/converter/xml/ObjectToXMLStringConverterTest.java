@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.converter.xml;
 
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.custommonkey.xmlunit.Diff;
 import org.custommonkey.xmlunit.Difference;
 import org.custommonkey.xmlunit.DifferenceConstants;
@@ -57,8 +59,6 @@ import org.junit.Test;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import java.io.IOException;
 import java.util.*;
 
@@ -168,10 +168,9 @@ public class ObjectToXMLStringConverterTest
      * Successful marshalling from example to XML.
      * @throws java.io.IOException
      * @throws org.xml.sax.SAXException
-     * @throws javax.xml.bind.JAXBException
      */
     @Test
-    public void test_successful_example_to_xml_with_no_validation_valid_msg() throws SAXException, IOException, JAXBException
+    public void test_successful_example_to_xml_with_no_validation_valid_msg() throws SAXException, IOException
     {
         XmlConfiguration xmlConfiguration = new XmlConfiguration();
         xmlConfiguration.setSchemaLocation("http://foo.com/domain example.xsd");
