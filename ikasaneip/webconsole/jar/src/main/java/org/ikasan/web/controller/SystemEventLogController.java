@@ -48,9 +48,8 @@ import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.systemevent.SystemEvent;
 import org.ikasan.spec.systemevent.SystemEventService;
@@ -104,18 +103,18 @@ public class SystemEventLogController
      * @return - key to next view
      */
     @RequestMapping(value="search.htm", method = RequestMethod.GET)
-    public String search(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch, 
-            @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy,
-            @RequestParam(required = false) Boolean orderAsc, 
-    		@RequestParam(required = false)String subject,
-    		@RequestParam(required = false)String action,
-    		@RequestParam(required = false)String actor,
-    		@RequestParam(required = false)String timestampFromDate,
-    		@RequestParam(required = false)String timestampFromTime,
-    		@RequestParam(required = false)String timestampToDate,
-    		@RequestParam(required = false)String timestampToTime,
+    public String search(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch,
+                         @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy,
+                         @RequestParam(required = false) Boolean orderAsc,
+                         @RequestParam(required = false)String subject,
+                         @RequestParam(required = false)String action,
+                         @RequestParam(required = false)String actor,
+                         @RequestParam(required = false)String timestampFromDate,
+                         @RequestParam(required = false)String timestampFromTime,
+                         @RequestParam(required = false)String timestampToDate,
+                         @RequestParam(required = false)String timestampToTime,
 
-    		ModelMap model)
+                         ModelMap model)
     {
     	Date timestampFrom = createDateTime(timestampFromDate, timestampFromTime);
     	Date timestampTo = createDateTime(timestampToDate, timestampToTime);

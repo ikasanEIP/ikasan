@@ -43,9 +43,9 @@ package org.ikasan.web.controller;
 import java.io.IOException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.module.ModuleService;
