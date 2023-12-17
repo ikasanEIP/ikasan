@@ -40,6 +40,7 @@
  */
 package org.ikasan.hospital.model;
 
+import jakarta.persistence.*;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
 
 import java.util.Arrays;
@@ -50,19 +51,30 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "ExclusionEventAction")
 public class ExclusionEventActionImpl implements ExclusionEventAction<byte[]>
 {
 	public static final String RESUBMIT = "re-submitted";
 	public static final String IGNORED = "ignored";
 
-	private Long id;
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    private Long id;
+    @Column(name="ModuleName", nullable = false)
     private String moduleName;
+    @Column(name="FlowName", nullable = false)
     private String flowName;
-	private String errorUri;
-	private String actionedBy;
-	private String action;
+    @Column(name="ErrorUri", nullable = false)
+    private String errorUri;
+    @Column(name="ActionedBy", nullable = false)
+    private String actionedBy;
+    @Column(name="Action", nullable = false)
+    private String action;
+    @Column(name="Event", nullable = false)
     private byte[] event;
-    private long timestamp;	
+    @Column(name="Timestamp", nullable = false)
+    private long timestamp;
 	
 	/**
 	 * Default constructor for Hibernate

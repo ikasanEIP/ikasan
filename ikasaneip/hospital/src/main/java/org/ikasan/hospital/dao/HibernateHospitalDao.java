@@ -40,18 +40,16 @@
  */
 package org.ikasan.hospital.dao;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import org.ikasan.hospital.model.ExclusionEventActionImpl;
 import org.ikasan.spec.hospital.model.ExclusionEventAction;
-import org.springframework.orm.hibernate5.HibernateCallback;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -63,7 +61,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public class HibernateHospitalDao extends HibernateDaoSupport implements HospitalDao
+public class HibernateHospitalDao implements HospitalDao
 {
 	public static final Long THIRTY_DAYS = 30 * 24 * 60 *  60 * 1000L;
 
@@ -79,13 +77,16 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	private Integer transactionBatchSize;
 	private Integer housekeepingBatchSize;
 
+    @PersistenceContext(unitName = "hospital")
+    private EntityManager entityManager;
+
 	/* (non-Javadoc)
 	 * @see org.ikasan.hospital.dao.HospitalDao#saveOrUpdate(org.ikasan.hospital.window.ExclusionEventAction)
 	 */
 	@Override
 	public void saveOrUpdate(ExclusionEventAction exclusionEventAction)
 	{
-		getHibernateTemplate().save(exclusionEventAction);
+		this.entityManager.persist(exclusionEventAction);
 	}
 
 	/* (non-Javadoc)
@@ -95,28 +96,24 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	public ExclusionEventAction getExclusionEventActionByErrorUri(
 			String errorUri)
 	{
-		return getHibernateTemplate().execute((session) -> {
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 
-            CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
 
-            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
+        Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
 
-            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
+        criteriaQuery.select(root)
+            .where(builder.equal(root.get("errorUri"),errorUri));
 
-            criteriaQuery.select(root)
-                .where(builder.equal(root.get("errorUri"),errorUri));
+        Query query = this.entityManager.createQuery(criteriaQuery);
+        List<ExclusionEventAction> results = query.getResultList();
 
-            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
-            List<ExclusionEventAction> results = query.getResultList();
+        if(results == null || results.size() == 0)
+        {
+            return null;
+        }
 
-            if(results == null || results.size() == 0)
-            {
-                return null;
-            }
-
-            return results.get(0);
-
-        });
+        return results.get(0);
 	}
 
 	/* (non-Javadoc)
@@ -128,45 +125,41 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 			List<String> moduleName, List<String> flowName, Date startDate,
 			Date endDate, int size)
 	{
-		return getHibernateTemplate().execute((session) -> {
+		CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 
-            CriteriaBuilder builder = session.getCriteriaBuilder();
+        CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
 
-            CriteriaQuery<ExclusionEventAction> criteriaQuery = builder.createQuery(ExclusionEventAction.class);
+        Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
-            List<Predicate> predicates = new ArrayList<>();
+        if(moduleName != null && moduleName.size() > 0)
+        {
+            predicates.add(root.get("moduleName").in(moduleName));
+        }
 
-            if(moduleName != null && moduleName.size() > 0)
-            {
-                predicates.add(root.get("moduleName").in(moduleName));
-            }
+        if(flowName != null && flowName.size() > 0)
+        {
+            predicates.add(root.get("flowName").in(flowName));
+        }
 
-            if(flowName != null && flowName.size() > 0)
-            {
-                predicates.add(root.get("flowName").in(flowName));
-            }
+        if(startDate != null)
+        {
+            predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+        }
 
-            if(startDate != null)
-            {
-                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
-            }
+        if(endDate != null)
+        {
+            predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+        }
 
-            if(endDate != null)
-            {
-                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
-            }
+        criteriaQuery.select(root)
+            .where(predicates.toArray(new Predicate[predicates.size()]))
+            .orderBy(builder.desc(root.get("timestamp")));
 
-            criteriaQuery.select(root)
-                .where(predicates.toArray(new Predicate[predicates.size()]))
-                .orderBy(builder.desc(root.get("timestamp")));
-
-            org.hibernate.query.Query<ExclusionEventAction> query = session.createQuery(criteriaQuery);
-            query.setFirstResult(0);
-            query.setMaxResults(size);
-            return query.getResultList();
-
-        });
+        Query query = this.entityManager.createQuery(criteriaQuery);
+        query.setFirstResult(0);
+        query.setMaxResults(size);
+        return query.getResultList();
 	}
 	
 	/* (non-Javadoc)
@@ -175,50 +168,44 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	@Override
 	public Long actionedExclusionsRowCount(List<String> moduleName, List<String> flowName, Date startDate, Date endDate)
 	{
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
 
-		return getHibernateTemplate().execute((session) -> {
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
 
-            CriteriaBuilder builder = session.getCriteriaBuilder();
+        Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
+        List<Predicate> predicates = new ArrayList<>();
 
-            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        if(moduleName != null && moduleName.size() > 0)
+        {
+            predicates.add(root.get("moduleName").in(moduleName));
+        }
 
-            Root<ExclusionEventActionImpl> root = criteriaQuery.from(ExclusionEventActionImpl.class);
-            List<Predicate> predicates = new ArrayList<>();
+        if(flowName != null && flowName.size() > 0)
+        {
+            predicates.add(root.get("flowName").in(flowName));
+        }
 
-            if(moduleName != null && moduleName.size() > 0)
-            {
-                predicates.add(root.get("moduleName").in(moduleName));
-            }
+        if(startDate != null)
+        {
+            predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
+        }
 
-            if(flowName != null && flowName.size() > 0)
-            {
-                predicates.add(root.get("flowName").in(flowName));
-            }
+        if(endDate != null)
+        {
+            predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
+        }
 
-            if(startDate != null)
-            {
-                predicates.add( builder.greaterThan(root.get("timestamp"),startDate.getTime()));
-            }
+        criteriaQuery.select(builder.count(root))
+            .where(predicates.toArray(new Predicate[predicates.size()]));
 
-            if(endDate != null)
-            {
-                predicates.add( builder.lessThan(root.get("timestamp"),endDate.getTime()));
-            }
+        Query query = this.entityManager.createQuery(criteriaQuery);
 
-            criteriaQuery.select(builder.count(root))
-                .where(predicates.toArray(new Predicate[predicates.size()]));
-
-            org.hibernate.query.Query<Long> query = session.createQuery(criteriaQuery);
-
-            List<Long> rowCountList = query.getResultList();
-            if (!rowCountList.isEmpty())
-            {
-                return rowCountList.get(0);
-            }
-            return Long.valueOf(0);
-
-        });
-
+        List<Long> rowCountList = query.getResultList();
+        if (!rowCountList.isEmpty())
+        {
+            return rowCountList.get(0);
+        }
+        return Long.valueOf(0);
 	}
 
 	/* (non-Javadoc)
@@ -234,32 +221,24 @@ public class HibernateHospitalDao extends HibernateDaoSupport implements Hospita
 	@Override
 	public void housekeep()
 	{
-		getHibernateTemplate().execute(new HibernateCallback<Object>()
-		{
-			public Object doInHibernate(Session session) throws HibernateException
-			{
-				int numHousekept = 0;
+        int numHousekept = 0;
 
-				while(numHousekept < transactionBatchSize)
-				{
-					numHousekept += housekeepingBatchSize;
-					
-					Query query = session.createQuery(EXCLUSION_EVENT_ACTIONS_TO_DELETE_QUERY);
-					query.setLong(NOW, System.currentTimeMillis() - THIRTY_DAYS);
-					query.setMaxResults(housekeepingBatchSize);
+        while(numHousekept < transactionBatchSize)
+        {
+            numHousekept += housekeepingBatchSize;
 
-					List<Long> errorUris = (List<Long>) query.list();
+            Query query = this.entityManager.createQuery(EXCLUSION_EVENT_ACTIONS_TO_DELETE_QUERY);
+            query.setParameter(NOW, System.currentTimeMillis() - THIRTY_DAYS);
+            query.setMaxResults(housekeepingBatchSize);
 
-					if (errorUris.size() > 0) {
-						query = session.createQuery(EXCLUSION_EVENT_ACTIONS_DELETE_QUERY);
-						query.setParameterList(EVENT_IDS, errorUris);
-						query.executeUpdate();
-					}
-				}
+            List<Long> errorUris = query.getResultList();
 
-				return null;
-			}
-		});
+            if (errorUris.size() > 0) {
+                query = this.entityManager.createQuery(EXCLUSION_EVENT_ACTIONS_DELETE_QUERY);
+                query.setParameter(EVENT_IDS, errorUris);
+                query.executeUpdate();
+            }
+        }
 	}
 
 	@Override

@@ -1,11 +1,13 @@
-package org.ikasan.replay;
+package org.ikasan.hospital;
 
-import org.ikasan.replay.dao.HibernateReplayDao;
-import org.ikasan.replay.service.ReplayManagementServiceImpl;
-import org.ikasan.replay.service.ReplayRecordServiceImpl;
-import org.ikasan.replay.service.ReplayServiceImpl;
-import org.ikasan.spec.replay.*;
-import org.ikasan.spec.serialiser.SerialiserFactory;
+import org.ikasan.hospital.dao.HibernateHospitalDao;
+import org.ikasan.hospital.dao.HospitalDao;
+import org.ikasan.hospital.service.HospitalManagementServiceImpl;
+import org.ikasan.hospital.service.HospitalServiceImpl;
+import org.ikasan.spec.exclusion.ExclusionManagementService;
+import org.ikasan.spec.hospital.service.HospitalManagementService;
+import org.ikasan.spec.hospital.service.HospitalService;
+import org.ikasan.spec.module.ModuleContainer;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,38 +19,34 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-public class ReplayAutoConfiguration {
+public class HospitalAutoConfiguration {
 
     @Bean
-    public ReplayManagementService replayManagementService(ReplayDao replayDao, ReplayAuditDao replayAuditDao) {
-        return new ReplayManagementServiceImpl(replayDao, replayAuditDao);
+    public HospitalManagementService hospitalManagementService(HospitalDao hospitalDao) {
+        return new HospitalManagementServiceImpl(hospitalDao);
     }
 
     @Bean
-    public ReplayService replayService(ReplayAuditDao replayAuditDao) {
-        return new ReplayServiceImpl(replayAuditDao);
+    public HospitalService hospitalService(ModuleContainer moduleContainer, HospitalDao hospitalDao
+        , ExclusionManagementService exclusionManagementService) {
+        return new HospitalServiceImpl(moduleContainer, hospitalDao, exclusionManagementService);
     }
 
     @Bean
-    public ReplayRecordService replayRecordService(ReplayDao replayDao, SerialiserFactory serialiserFactory) {
-        return new ReplayRecordServiceImpl(serialiserFactory, replayDao);
+    public HospitalDao hospitalDao() {
+        return new HibernateHospitalDao();
     }
 
     @Bean
-    public ReplayDao replayDao() {
-        return new HibernateReplayDao();
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean xaReplayEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
+    public LocalContainerEntityManagerFactoryBean xaHospitalEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
         , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
-        localContainerEntityManagerFactoryBean.setPersistenceUnitName("xa-replay");
-        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:replay-persistence.xml");
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("xa-hospital");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:hospital-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
     }
@@ -61,8 +59,8 @@ public class ReplayAutoConfiguration {
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
-        localContainerEntityManagerFactoryBean.setPersistenceUnitName("replay");
-        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:replay-persistence.xml");
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("hospital");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:hospital-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
     }
