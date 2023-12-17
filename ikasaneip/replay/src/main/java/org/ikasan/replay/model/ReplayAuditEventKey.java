@@ -40,6 +40,8 @@
  */
 package org.ikasan.replay.model;
 
+import jakarta.persistence.Embeddable;
+
 import java.io.Serializable;
 
 /**
@@ -48,6 +50,7 @@ import java.io.Serializable;
  *
  */
 @SuppressWarnings("serial")
+@Embeddable
 public class ReplayAuditEventKey implements Serializable
 {
 	private static final long serialVersionUID = 4202004053354602230L;
@@ -56,7 +59,7 @@ public class ReplayAuditEventKey implements Serializable
 	private Long replayEventId;
 	
 	@SuppressWarnings("unused")
-	private ReplayAuditEventKey(){}
+	protected ReplayAuditEventKey(){}
 	
 	public ReplayAuditEventKey(Long replayAuditId, Long replayEventId) 
 	{

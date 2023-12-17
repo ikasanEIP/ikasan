@@ -40,7 +40,8 @@
  */
 package org.ikasan.component.converter.xml;
 
-import javax.xml.bind.ValidationEventHandler;
+import jakarta.xml.bind.ValidationEventHandler;
+
 import java.util.Map;
 
 /**

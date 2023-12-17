@@ -40,6 +40,8 @@
  */
 package org.ikasan.replay.model;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.Any;
 import org.ikasan.spec.replay.ReplayAuditEvent;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.replay.ReplayAudit;
@@ -49,21 +51,35 @@ import org.ikasan.spec.replay.ReplayAudit;
  * @author Ikasan Development Team
  *
  */
-public class HibernateReplayAuditEvent implements ReplayAuditEvent<ReplayAuditEventKey>
+@Entity
+@Table(name = "ReplayAuditEvent")
+public class ReplayAuditEventImpl implements ReplayAuditEvent<ReplayAuditEventKey>
 {
+//    @Id
+//    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @EmbeddedId
 	private ReplayAuditEventKey id;
-	private String moduleName;
-	private String flowName;
-	private String eventId;
-	private ReplayAudit replayAudit;
-	private ReplayEvent replayEvent;
-	private boolean success;
-	private String resultMessage;
-	private long timestamp;
+    @Column(name="ModuleName", nullable = false)
+    private String moduleName;
+    @Column(name="FlowName", nullable = false)
+    private String flowName;
+    @Column(name="EventId", nullable = false)
+    private String eventId;
+    @ManyToOne(fetch = FetchType.EAGER, targetEntity = ReplayAuditImpl.class)
+    @JoinColumn(name = "ReplayAuditId", nullable = false, insertable = false, updatable = false)
+    private ReplayAudit replayAudit;
+	@Transient
+    private ReplayEvent replayEvent;
+    @Column(name="Success", nullable = false)
+    private boolean success;
+    @Column(name="ResultMessage", nullable = false)
+    private String resultMessage;
+    @Column(name="Timestamp", nullable = false)
+    private long timestamp;
    
     
     @SuppressWarnings("unused")
-	private HibernateReplayAuditEvent()
+	protected ReplayAuditEventImpl()
     {
     }
 
@@ -73,7 +89,7 @@ public class HibernateReplayAuditEvent implements ReplayAuditEvent<ReplayAuditEv
      * @param replayAudit
      * @param replayEvent
      */
-	public HibernateReplayAuditEvent(ReplayAudit replayAudit, ReplayEvent replayEvent,  boolean success, String result, long timestamp)
+	public ReplayAuditEventImpl(ReplayAudit replayAudit, ReplayEvent replayEvent, boolean success, String result, long timestamp)
 	{
 		super();
 		this.replayAudit = replayAudit;

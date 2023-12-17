@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.converter.xml;
 
+import jakarta.xml.bind.JAXBElement;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ikasan.spec.component.transformation.Converter;
@@ -49,7 +50,6 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.springframework.oxm.XmlMappingException;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 

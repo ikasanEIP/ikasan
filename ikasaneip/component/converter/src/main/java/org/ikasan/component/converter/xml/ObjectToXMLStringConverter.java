@@ -40,6 +40,11 @@
  */
 package org.ikasan.component.converter.xml;
 
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
@@ -55,11 +60,6 @@ import org.xml.sax.XMLReader;
 import org.xml.sax.helpers.XMLReaderFactory;
 
 import javax.xml.XMLConstants;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.namespace.QName;
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
@@ -227,11 +227,11 @@ public class ObjectToXMLStringConverter implements Converter<Object, Object>, Co
             e.setFailedEvent(failedXml);
             if(this.xmlConfiguration.isRouteOnValidationException())
             {
-                logger.info(e.getValidationEvent().getMessage() + " Source[" + failedXml + "]", e);
+                logger.info(e.getValidationEvent() + " Source[" + failedXml + "]", e);
                 return e;
             }
 
-            throw new TransformationException(e.getValidationEvent().getMessage() + " Source[" + failedXml + "]", e);
+            throw new TransformationException(e.getValidationEvent() + " Source[" + failedXml + "]", e);
         }
         catch (JAXBException e)
         {

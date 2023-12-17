@@ -1,21 +1,30 @@
 package org.ikasan.replay.model;
 
 
+import jakarta.persistence.*;
 import org.ikasan.spec.replay.ReplayAudit;
 
-public class HibernateReplayAudit implements ReplayAudit
+@Entity
+@Table(name = "ReplayAudit")
+public class ReplayAuditImpl implements ReplayAudit
 {
+    @Id
+    @GeneratedValue(generator = "native")
 	private Long id;
-	private String user;
-	private String replayReason;
-	private String targetServer;
-	private long timestamp;
+    @Column(name="ReplayUser", nullable = false)
+    private String user;
+    @Column(name="Reason", nullable = false)
+    private String replayReason;
+    @Column(name="TargetServer", nullable = false)
+    private String targetServer;
+    @Column(name="Timestamp", nullable = false)
+    private long timestamp;
 
 	/**
 	 * Default constructor for Hibernate
 	 */
 	@SuppressWarnings("unused")
-	private HibernateReplayAudit()
+	protected ReplayAuditImpl()
 	{
 		
 	}
@@ -27,7 +36,7 @@ public class HibernateReplayAudit implements ReplayAudit
 	 * @param replayReason
 	 * @param targetServer
 	 */
-	public HibernateReplayAudit(String user, String replayReason, String targetServer)
+	public ReplayAuditImpl(String user, String replayReason, String targetServer)
 	{
 		super();
 		this.user = user;
@@ -148,7 +157,7 @@ public class HibernateReplayAudit implements ReplayAudit
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		HibernateReplayAudit other = (HibernateReplayAudit) obj;
+		ReplayAuditImpl other = (ReplayAuditImpl) obj;
 		if (id == null) {
 			if (other.id != null)
 				return false;
