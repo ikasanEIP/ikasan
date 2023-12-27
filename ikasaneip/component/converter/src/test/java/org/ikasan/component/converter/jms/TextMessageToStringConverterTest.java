@@ -46,8 +46,8 @@ import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 import javax.xml.transform.TransformerException;
 
 import static org.junit.Assert.assertEquals;

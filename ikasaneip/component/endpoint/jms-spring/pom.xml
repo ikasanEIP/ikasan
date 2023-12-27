@@ -65,10 +65,10 @@
         </dependency>
 
         <!-- Standard J2ee spec -->
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.apache.geronimo.specs</groupId>-->
+<!--            <artifactId>geronimo-jms_1.1_spec</artifactId>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -83,6 +83,11 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
         </dependency>
 
         <dependency>

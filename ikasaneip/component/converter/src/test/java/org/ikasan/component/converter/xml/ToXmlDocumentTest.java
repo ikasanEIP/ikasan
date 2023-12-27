@@ -48,7 +48,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.w3c.dom.Document;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Functional unit test cases for

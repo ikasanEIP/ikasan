@@ -43,9 +43,9 @@ package org.ikasan.serialiser.converter;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.util.chunking.model.dao;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.hibernate.SessionFactory;
 

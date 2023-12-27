@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -17,6 +18,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
+@DependsOn({"jpaVendorAdapter", "platformJpaProperties"})
 public class SystemEventAutoConfiguration {
 
     @Value("${system.event.expiry.minutes:10080}")
@@ -29,11 +31,13 @@ public class SystemEventAutoConfiguration {
     private int systemEventTransactionBatchSize;
 
     @Bean
+    @DependsOn({"systemEventDao", "moduleContainer"})
     public SystemEventService systemEventService(SystemEventDao systemEventDao, ModuleContainer moduleContainer) {
         return new SystemEventServiceImpl(systemEventDao, systemEventExpiryMinutes, moduleContainer);
     }
 
     @Bean
+    @DependsOn("systemEventEntityManager")
     public SystemEventDao<?> systemEventDao() {
         return new HibernateSystemEventDao(true
             , systemEventHouseKeepingBatchSize, systemEventTransactionBatchSize);
@@ -41,7 +45,7 @@ public class SystemEventAutoConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean systemEventEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -51,13 +55,5 @@ public class SystemEventAutoConfiguration {
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:systemevent-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

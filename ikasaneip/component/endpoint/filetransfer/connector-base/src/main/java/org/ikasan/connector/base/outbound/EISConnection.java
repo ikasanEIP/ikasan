@@ -40,8 +40,8 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
 
 import org.ikasan.connector.base.ConnectionState;
 

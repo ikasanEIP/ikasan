@@ -252,22 +252,22 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
-        <version.logback.core>1.2.11</version.logback.core>
+        <version.logback.core>1.4.14</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>6.3.1.Final</version.org.hibernate>
         <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
-        <version.org.springframework>6.0.13</version.org.springframework>
+        <version.org.springframework>6.1.2</version.org.springframework>
         <version.org.springframework.security>6.2.0</version.org.springframework.security>
         <version.org.springframework.ldap>3.0.2</version.org.springframework.ldap>
-        <version.org.springframework.webflow>2.4.0.RELEASE</version.org.springframework.webflow>
+        <version.org.springframework.webflow>3.0.0</version.org.springframework.webflow>
         <version.spring.cloud.config.client>3.0.6</version.spring.cloud.config.client>
-        <version.org.springboot>3.1.5</version.org.springboot>
+        <version.org.springboot>3.2.1</version.org.springboot>
         <version.org.springframework.shell>2.0.1.RELEASE</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.12.19</version.net.bytebuddy.byte-buddy>
-        <version.org.slf4j>1.7.36</version.org.slf4j>
+        <version.org.slf4j>2.0.9</version.org.slf4j>
         <version.junit>4.13.1</version.junit>
         <version.org.awaitility>4.0.2</version.org.awaitility>
         <version.org.jmock>2.12.0</version.org.jmock>
@@ -293,7 +293,7 @@
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
         <version.commons-io>2.7</version.commons-io>
-        <version.commons-dbcp2>2.7.0</version.commons-dbcp2>
+        <version.commons-dbcp2>2.11.1-SNAPSHOT</version.commons-dbcp2>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.9</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
@@ -306,7 +306,7 @@
         <version.com.unboundid>6.0.9</version.com.unboundid>
         <version.org.quartz-scheduler>2.2.3</version.org.quartz-scheduler>
         <version.com.h2database>2.1.214</version.com.h2database>
-        <version.org.liquibase>4.24.0</version.org.liquibase>
+        <version.org.liquibase>4.25.1</version.org.liquibase>
         <version.org.yaml.snakeyaml>1.28</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>11.0.18</version.org.eclipse.jetty>
@@ -314,15 +314,15 @@
         <version.org.mongodb.mongo-java-driver>3.12.10</version.org.mongodb.mongo-java-driver>
         <version.org.mongodb4.mongo-java-driver>4.4.1</version.org.mongodb4.mongo-java-driver>
         <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
-        <version.org.aspectj>1.9.5</version.org.aspectj>
-        <version.org.aspectjrt>1.9.5</version.org.aspectjrt>
+        <version.org.aspectj>1.9.21</version.org.aspectj>
+        <version.org.aspectjrt>1.9.21</version.org.aspectjrt>
         <version.jakarta.servlet>6.1.0-M1</version.jakarta.servlet>
-        <version.javax.servlet.jstl>1.2</version.javax.servlet.jstl>
-        <version.activemq>5.16.3</version.activemq>
+        <version.jakarta.servlet.jsp.jstl>3.0.0</version.jakarta.servlet.jsp.jstl>
+        <version.activemq>6.0.1</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.jakarta.jms-api>3.1.0</version.jakarta.jms-api>
-        <version.org.jboss.narayana.jta>7.0.0.Final</version.org.jboss.narayana.jta>
+        <version.org.jboss.narayana.jta>6.0.1.Final</version.org.jboss.narayana.jta>
         <version.me.snowdrop.narayana>3.0.0.redhat-00042</version.me.snowdrop.narayana>
         <version.commons.net>3.3</version.commons.net>
         <version.xalan.xalan>2.7.2</version.xalan.xalan>
@@ -333,11 +333,11 @@
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.1.0</version.org.apache.sshd>
         <version.com.github.stefanbirkner.sftp>2.0.1</version.com.github.stefanbirkner.sftp>
-        <version.com.fasterxml.jackson.core>2.13.2</version.com.fasterxml.jackson.core>
-        <version.com.fasterxml.jackson.core.databind>2.13.2.2</version.com.fasterxml.jackson.core.databind>
+        <version.com.fasterxml.jackson.core>2.16.0</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core.databind>2.16.0</version.com.fasterxml.jackson.core.databind>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>30.0-jre</version.com.google.guava>
-        <version.tomcat>9.0.46</version.tomcat>
+        <version.tomcat>10.1.5</version.tomcat>
         <version.wiremock>3.0.1</version.wiremock>
         <version.org.apache.httpcomponents>5.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
@@ -363,6 +363,7 @@
         <version.org.springframework.data>3.2.0</version.org.springframework.data>
         <version.jakarta.xml.bind>4.0.1</version.jakarta.xml.bind>
         <version.jakarta.persistence>3.1.0</version.jakarta.persistence>
+        <version.jakarta.resource-api>2.0.0</version.jakarta.resource-api>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -737,7 +738,7 @@
                 <module>platform</module>
                 <module>builder</module>
                 <module>compatibility</module>
-                <module>mapping</module>
+<!--                <module>mapping</module>-->
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
@@ -791,7 +792,7 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
-                <module>mapping</module>
+<!--                <module>mapping</module>-->
                 <module>platform</module>
                 <module>hospital</module>
                 <module>webconsole</module>
@@ -1434,6 +1435,12 @@
             </dependency>
 
             <dependency>
+                <groupId>jakarta.resource</groupId>
+                <artifactId>jakarta.resource-api</artifactId>
+                <version>${version.jakarta.resource-api}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.ow2.asm</groupId>
                 <artifactId>asm</artifactId>
                 <version>${version.ow2.asm}</version>
@@ -1556,11 +1563,18 @@
                 <version>${version.org.springframework.data}</version>
             </dependency>
 
+<!--            <dependency>-->
+<!--                <groupId>jakarta.servlet</groupId>-->
+<!--                <artifactId>jstl</artifactId>-->
+<!--                <version>${version.javax.servlet.jstl}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${version.javax.servlet.jstl}</version>
+                <groupId>jakarta.servlet.jsp.jstl</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                <version>${version.jakarta.servlet.jsp.jstl}</version>
             </dependency>
+
 
             <dependency>
                 <groupId>javax.annotation</groupId>
@@ -1568,17 +1582,17 @@
                 <version>${version.javax.annotation}</version>
             </dependency>
 
-            <dependency>
-                <groupId>geronimo-spec</groupId>
-                <artifactId>geronimo-spec-j2ee</artifactId>
-                <version>${version.geronimo.spec}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>geronimo-spec</groupId>-->
+<!--                <artifactId>geronimo-spec-j2ee</artifactId>-->
+<!--                <version>${version.geronimo.spec}</version>-->
+<!--            </dependency>-->
 
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${version.geronimo.jms.spec}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.geronimo.specs</groupId>-->
+<!--                <artifactId>geronimo-jms_1.1_spec</artifactId>-->
+<!--                <version>${version.geronimo.jms.spec}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>jakarta.jms</groupId>
@@ -2011,10 +2025,16 @@
             </dependency>
 
             <!-- Swagger -->
+<!--            <dependency>-->
+<!--                <groupId>io.springfox</groupId>-->
+<!--                <artifactId>springfox-boot-starter</artifactId>-->
+<!--                <version>${version.io.spingfox.swagger}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${version.io.spingfox.swagger}</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.2.0</version>
             </dependency>
 
             <dependency>
@@ -2179,6 +2199,12 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-dbcp2</artifactId>
                 <version>${version.commons-dbcp2}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -2375,7 +2401,7 @@
             <dependency>
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-js</artifactId>
-                <version>${version.org.springframework.webflow}</version>
+                <version>2.4.8.RELEASE</version>
             </dependency>
 
             <dependency>

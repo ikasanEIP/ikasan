@@ -39,6 +39,10 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
@@ -47,7 +51,6 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.ikasan.testharness.flow.sftp.SftpRule;
 import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -59,13 +62,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.Session;
 import javax.sql.DataSource;
 import java.io.File;
 import java.io.IOException;

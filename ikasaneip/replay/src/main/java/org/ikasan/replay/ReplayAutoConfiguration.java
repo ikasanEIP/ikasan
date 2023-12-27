@@ -19,7 +19,7 @@ import java.util.Properties;
 @Configuration
 public class ReplayAutoConfiguration {
 
-    @Bean
+    @Bean(name = "replayManagementService")
     public ReplayManagementService replayManagementService(ReplayDao replayDao, ReplayAuditDao replayAuditDao) {
         return new ReplayManagementServiceImpl(replayDao, replayAuditDao);
     }
@@ -41,7 +41,7 @@ public class ReplayAutoConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean xaReplayEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -55,7 +55,7 @@ public class ReplayAutoConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean replayServiceEntityManager(@Qualifier("ikasan.ds")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -65,13 +65,5 @@ public class ReplayAutoConfiguration {
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:replay-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -14,78 +15,78 @@
     <name>H2 Server Stress With TX failing on DB pre-commit Integration Module</name>
     <description>H2 server persistence with precommit failure on the DB resource.</description>
 
- <dependencies>
+    <dependencies>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-eip-standalone</artifactId>
-   <version>${project.version}</version>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-eip-standalone</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-jms-spring-arjuna</artifactId>
-   <version>${project.version}</version>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-jms-spring-arjuna</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-test-endpoint</artifactId>
-   <version>${project.version}</version>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test-endpoint</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-h2-standalone-persistence</artifactId>
-   <version>${project.version}</version>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-h2-standalone-persistence</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-test</artifactId>
-   <version>${project.version}</version>
-   <scope>test</scope>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-test</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-nft-util</artifactId>
-   <version>${project.version}</version>
-   <scope>test</scope>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-nft-util</artifactId>
+            <version>${project.version}</version>
+            <scope>test</scope>
+        </dependency>
 
-  <dependency>
-   <groupId>org.apache.activemq</groupId>
-   <artifactId>activemq-client</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.apache.activemq</groupId>
-   <artifactId>activemq-kahadb-store</artifactId>
-   <version>5.15.8</version>
-  </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-kahadb-store</artifactId>
+            <version>5.15.8</version>
+        </dependency>
 
-  <dependency>
-   <groupId>org.apache.activemq</groupId>
-   <artifactId>activemq-broker</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.aspectj</groupId>
-   <artifactId>aspectjrt</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjrt</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.awaitility</groupId>
-   <artifactId>awaitility</artifactId>
-   <scope>test</scope>
-  </dependency>
-  <dependency>
-   <groupId>org.glassfish.jaxb</groupId>
-   <artifactId>jaxb-runtime</artifactId>
-   <version>2.3.9</version>
-   <scope>test</scope>
-  </dependency>
+        <dependency>
+            <groupId>org.awaitility</groupId>
+            <artifactId>awaitility</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.9</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

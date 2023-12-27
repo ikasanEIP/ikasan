@@ -55,7 +55,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 

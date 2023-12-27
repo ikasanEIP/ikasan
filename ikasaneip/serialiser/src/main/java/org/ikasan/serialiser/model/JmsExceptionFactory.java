@@ -40,7 +40,7 @@
  */
 package org.ikasan.serialiser.model;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 /**
  * JMS Exception factory.

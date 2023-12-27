@@ -40,7 +40,7 @@
  */
 package org.ikasan.filetransfer;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * CommonException exception extends the standard Exception

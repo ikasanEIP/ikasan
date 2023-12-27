@@ -40,14 +40,15 @@
  */
 package org.ikasan.component.endpoint.jms;
 
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageNotWriteableException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageNotWriteableException;
 
 /**
  * Implementation of the ManagedEventIdentifierService specifically for JMS.

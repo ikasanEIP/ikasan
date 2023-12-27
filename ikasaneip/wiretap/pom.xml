@@ -188,6 +188,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-transaction-arjuna</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.hibernate.orm</groupId>

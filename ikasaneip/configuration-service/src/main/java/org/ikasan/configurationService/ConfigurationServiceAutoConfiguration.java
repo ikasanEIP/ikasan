@@ -2,6 +2,7 @@ package org.ikasan.configurationService;
 
 import org.ikasan.configurationService.dao.ConfigurationDao;
 import org.ikasan.configurationService.dao.ConfigurationDaoHibernateImpl;
+import org.ikasan.configurationService.dao.XAConfigurationDaoHibernateImpl;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataProvider;
 import org.ikasan.configurationService.service.ConfiguredResourceConfigurationService;
@@ -13,9 +14,9 @@ import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -28,18 +29,21 @@ public class ConfigurationServiceAutoConfiguration {
     }
 
     @Bean
-    public ConfiguredResourceConfigurationService configurationService(ConfigurationDao configurationServiceDao, ConfigurationDao xaConfigurationServiceDao) {
+    public ConfiguredResourceConfigurationService configurationService(@Qualifier("configurationServiceDao") ConfigurationDao configurationServiceDao
+        , @Qualifier("xaConfigurationServiceDao") ConfigurationDao xaConfigurationServiceDao) {
         return new ConfiguredResourceConfigurationService(configurationServiceDao, xaConfigurationServiceDao);
     }
 
-    @Bean
+    @Bean(name = "configurationServiceDao")
+    @DependsOn("configurationServiceEntityManager")
     public ConfigurationDao configurationServiceDao() {
         return new ConfigurationDaoHibernateImpl();
     }
 
-    @Bean
+    @Bean(name = "xaConfigurationServiceDao")
+    @DependsOn("xaConfigurationServiceEntityManager")
     public ConfigurationDao xaConfigurationServiceDao() {
-        return new ConfigurationDaoHibernateImpl();
+        return new XAConfigurationDaoHibernateImpl();
     }
 
     @Bean
@@ -54,37 +58,29 @@ public class ConfigurationServiceAutoConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean xaConfigurationServiceEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("xa-configuration-service");
-        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:configuration-service-persistence.xml");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:/configuration-service-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean configurationServiceEntityManager(@Qualifier("ikasan.ds")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("configuration-service");
-        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:configuration-service-persistence.xml");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:/configuration-service-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

@@ -43,7 +43,7 @@ package org.ikasan.mapping.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.persistence.Id;
+import jakarta.persistence.*;
 
 /**
  * Model for representing the traded instrument.
@@ -51,20 +51,36 @@ import javax.persistence.Id;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSMappingConfiguration")
 public class MappingConfigurationLite implements Serializable
 {
     /** Auto generated serial id */
     private static final long serialVersionUID = 2490203288817051966L;
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     protected Long id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "SourceContextId", nullable = false)
     protected ConfigurationContext sourceContext;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "TargetContextId", nullable = false)
     protected ConfigurationContext targetContext;
+    @Column(name = "Description")
     protected String description = "";
+    @Column(name = "NumberOfParams")
     protected int numberOfParams = 1;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ConfigurationTypeId", nullable = false)
     protected ConfigurationType configurationType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ConfigurationServiceClientId", nullable = false)
     protected ConfigurationServiceClient configurationServiceClient;
-	protected String lastUpdatedBy = "";
-	protected int numberOfMappings = 0;
+    @Column(name = "LastUpdatedBy")
+    protected String lastUpdatedBy = "";
+    @Column(name = "NumberOfMappings")
+    protected int numberOfMappings = 0;
 
 
     /** The data time stamp when an instance was first created */

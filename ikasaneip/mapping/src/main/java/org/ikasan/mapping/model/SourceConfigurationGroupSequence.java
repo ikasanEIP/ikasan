@@ -41,13 +41,20 @@
 package org.ikasan.mapping.model;
 
 
+import jakarta.persistence.*;
+
 /**
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSSourceConfigGroupSeq")
 public class SourceConfigurationGroupSequence
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "Name")
     private Long sequenceNumber;
 
     /**

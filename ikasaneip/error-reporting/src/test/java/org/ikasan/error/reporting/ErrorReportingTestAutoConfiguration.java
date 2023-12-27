@@ -1,5 +1,7 @@
 package org.ikasan.error.reporting;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
+import com.arjuna.ats.jta.UserTransaction;
 import jakarta.persistence.EntityManagerFactory;
 import org.ikasan.serialiser.converter.JmsMapMessageConverter;
 import org.ikasan.serialiser.converter.JmsTextMessageConverter;
@@ -10,11 +12,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.jms.MapMessage;
-import javax.jms.TextMessage;
+import jakarta.jms.MapMessage;
+import jakarta.jms.TextMessage;
+import org.springframework.transaction.jta.JtaTransactionManager;
+
 import javax.sql.DataSource;
 import java.util.Map;
 import java.util.Properties;
@@ -41,10 +47,11 @@ public class ErrorReportingTestAutoConfiguration
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory moduleEntityManager) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(moduleEntityManager);
-        return transactionManager;
+    public PlatformTransactionManager transactionManager() {
+        TransactionManagerImple transactionManagerImple = new TransactionManagerImple();
+        JtaTransactionManager jtaTransactionManager = new JtaTransactionManager(UserTransaction.userTransaction(), transactionManagerImple);
+
+        return jtaTransactionManager;
     }
 
 
@@ -55,5 +62,13 @@ public class ErrorReportingTestAutoConfiguration
         platformJpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
 
         return platformJpaProperties;
+    }
+
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
+            = new HibernateJpaVendorAdapter();
+
+        return hibernateJpaVendorAdapter;
     }
 }

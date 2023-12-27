@@ -79,14 +79,17 @@ public class HibernateStartupControlDaoTest
 	@Autowired
 	private StartupControlDao startupControlDao;
 
-    @MockBean
+    @MockBean(name = "configurationService")
     private ConfigurationService configurationService;
 
     @MockBean(name = "liquibase")
     private Liquibase liquibase;
 
-    @MockBean
-    private DashboardRestService dashboardRestService;
+    @MockBean(name = "moduleMetadataDashboardRestService")
+    private DashboardRestService moduleMetadataDashboardRestService;
+
+    @MockBean(name = "configurationMetadataDashboardRestService")
+    private DashboardRestService configurationMetadataDashboardRestService;
 
     @MockBean(name = "wiretapFlowEventListener")
     private JobAwareFlowEventListener wiretapFlowEventListener;
@@ -97,7 +100,7 @@ public class HibernateStartupControlDaoTest
     @MockBean
     private HarvestingSchedulerService harvestingSchedulerService;
 
-    @MockBean
+    @MockBean(name = "systemEventService")
     private SystemEventService systemEventService;
 
     @Test

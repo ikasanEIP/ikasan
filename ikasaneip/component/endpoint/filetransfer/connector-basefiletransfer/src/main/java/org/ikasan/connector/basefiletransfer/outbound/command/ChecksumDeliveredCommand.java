@@ -50,7 +50,7 @@ import org.ikasan.filetransfer.util.checksum.ChecksumSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;

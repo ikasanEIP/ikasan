@@ -57,6 +57,7 @@ public class GenericWiretapEvent implements WiretapEvent<String>, Serializable
     /** immutable identifier */
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
+    @Column(name="Id")
     protected long identifier;
 
     /** immutable event creation timestamp */

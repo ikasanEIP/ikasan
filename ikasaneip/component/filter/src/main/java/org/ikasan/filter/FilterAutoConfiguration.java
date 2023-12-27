@@ -40,7 +40,7 @@ public class FilterAutoConfiguration {
 
     @Bean
     public LocalContainerEntityManagerFactoryBean xaFilterEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -50,13 +50,5 @@ public class FilterAutoConfiguration {
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:filter-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

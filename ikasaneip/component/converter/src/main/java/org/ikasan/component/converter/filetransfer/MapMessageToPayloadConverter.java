@@ -7,8 +7,8 @@ import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 /**
  * Created by amajewski on 26/12/2017.

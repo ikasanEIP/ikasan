@@ -8,7 +8,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 
-import javax.jms.*;
+import jakarta.jms.*;
 
 /**
  * Test cases for MessageListenerVerifier

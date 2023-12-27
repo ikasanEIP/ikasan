@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
+import jakarta.jms.*;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
@@ -47,7 +48,6 @@ import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.jms.*;
 import java.util.Map;
 
 /**

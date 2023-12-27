@@ -113,7 +113,7 @@ public class ModuleFactoryTest {
     public void testWiretapTriggersSetFromApplicationDotProperties() {
         assertEquals("""
                 ID,MODULENAME,FLOWNAME,RELATIONSHIP,FLOWELEMENTNAME,JOBNAME
-                1,moduleName,flowName,after,producerAFlowElement,wiretapJob
+                1,moduleName,flowName,AFTER,producerAFlowElement,wiretapJob
                 """,
             sqlOperationsRunner.exportRowsToCsv("select * from FLOWEVENTTRIGGER order by ID ASC"));
         assertEquals("""

@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public class BigQueueProducerBuilderTest {
 

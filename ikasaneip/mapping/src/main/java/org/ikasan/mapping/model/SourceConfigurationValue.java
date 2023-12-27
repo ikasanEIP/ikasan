@@ -40,6 +40,8 @@
  */
 package org.ikasan.mapping.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -50,26 +52,32 @@ import java.util.Set;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSSourceConfigValue")
 public class SourceConfigurationValue implements Serializable, Comparable<SourceConfigurationValue>
 {
     private static final long serialVersionUID = 7464033893694959176L;
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-
+    @Column(name = "SourceSystemValue")
     private String sourceSystemValue;
-
+    @Column(name = "Name")
     private String name = "";
-
+    @Column(name = "MappingConfigurationId")
     private Long mappingConfigurationId;
-
+    @Column(name = "SourceConfigGroupId")
     private Long sourceConfigGroupId;
-
+    @Column(name = "Name")
     private TargetConfigurationValue targetConfigurationValue;
 
     /** The data time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     /**

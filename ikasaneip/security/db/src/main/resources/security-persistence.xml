@@ -4,7 +4,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
   http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
-    <persistence-unit name="security">
+    <persistence-unit name="security" transaction-type="JTA">
         <class>org.ikasan.security.model.AuthenticationMethod</class>
         <class>org.ikasan.security.model.Authority</class>
         <class>org.ikasan.security.model.Policy</class>
@@ -20,7 +20,7 @@
         <class>org.ikasan.security.model.UserPrincipal</class>
     </persistence-unit>
 
-    <persistence-unit name="security-xa">
+    <persistence-unit name="security-xa" transaction-type="JTA">
         <class>org.ikasan.security.model.AuthenticationMethod</class>
         <class>org.ikasan.security.model.Authority</class>
         <class>org.ikasan.security.model.Policy</class>

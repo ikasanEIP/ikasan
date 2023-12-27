@@ -66,7 +66,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import java.util.List;
 
@@ -78,7 +78,6 @@ import java.util.List;
 @SuppressWarnings("unchecked")
 //specifies the Spring configuration to load for this test fixture
 @ContextConfiguration(locations={
-		"/exclusion-service-conf.xml",
 		"/datasource-conf.xml"
 })
 public class SampleFlowBuilderTest
@@ -141,7 +140,7 @@ public class SampleFlowBuilderTest
             }
         });
 
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+        String[] args = { "--server.port=" + TestSocketUtils.findAvailableTcpPort(),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
             """

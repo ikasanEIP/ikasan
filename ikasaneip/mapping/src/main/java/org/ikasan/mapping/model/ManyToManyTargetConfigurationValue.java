@@ -40,6 +40,8 @@
  */
 package org.ikasan.mapping.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Date;
 
@@ -49,22 +51,31 @@ import java.util.Date;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSManyToManyTargetConfigValue")
 public class ManyToManyTargetConfigurationValue implements Serializable
 {
     private static final long serialVersionUID = -1264606304216999864L;
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "GroupId", nullable = false)
     private Long groupId;
 
+    @Column(name = "TargetSystemValue", nullable = false)
     private String targetSystemValue;
 
+    @Column(name = "Name", nullable = false)
     private String name = "";
 
     /** The data time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     /**

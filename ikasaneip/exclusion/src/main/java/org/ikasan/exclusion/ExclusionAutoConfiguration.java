@@ -50,7 +50,7 @@ public class ExclusionAutoConfiguration
 
     @Bean
     public LocalContainerEntityManagerFactoryBean exclusionEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -60,13 +60,5 @@ public class ExclusionAutoConfiguration
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:exclusion-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

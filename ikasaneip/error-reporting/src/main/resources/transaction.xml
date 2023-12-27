@@ -45,33 +45,14 @@
 # //
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
 
-	<bean id="hospitalManagementService" class="org.ikasan.hospital.service.HospitalManagementServiceImpl">
-		<constructor-arg ref="hospitalDao" />
-	</bean>
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd">
 
-	<bean id="hospitalService" class="org.ikasan.hospital.service.HospitalServiceImpl">
-		<constructor-arg ref="moduleContainer" />
-		<constructor-arg ref="hospitalDao" />
-		<constructor-arg ref="exclusionManagementService" />
-	</bean>
-	
-	<bean id="hospitalDao" class="org.ikasan.hospital.dao.HibernateHospitalDao">
-		<property name="sessionFactory" ref="hospitalSessionFactory" />
-	</bean>
-
-	<bean id="hospitalSessionFactory"
-		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="ikasan.xads" />
-		<property name="mappingResources">
-			<list>
-				<value>/org/ikasan/hospital/model/ExclusionEventAction.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="platformHibernateProperties" />
-	</bean>
+    <aop:config>
+        <aop:pointcut id="errorReportingServiceInvocation" expression="execution(* org.ikasan.spec.error.reporting.ErrorReportingService.notify(..))"/>
+        <aop:advisor advice-ref="requiresNew-TransactionAdvice" pointcut-ref="errorReportingServiceInvocation"/>
+    </aop:config>
 
 </beans>

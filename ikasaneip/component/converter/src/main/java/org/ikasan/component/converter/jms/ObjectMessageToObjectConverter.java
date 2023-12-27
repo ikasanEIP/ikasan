@@ -43,8 +43,8 @@ package org.ikasan.component.converter.jms;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
 
 /**
  * Extracts object content given in jms object message.

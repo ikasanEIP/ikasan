@@ -1,7 +1,10 @@
 package org.ikasan.connector.basefiletransfer;
 
 import org.ikasan.connector.base.command.HibernateTransactionalResourceCommandDAO;
+import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
+import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.HibernateBaseFileTransferDaoImpl;
+import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.connector.util.chunking.model.dao.HibernateFileChunkDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -19,23 +22,23 @@ import java.util.Properties;
 public class BaseFileTransferAutoConfiguration {
 
     @Bean
-    public HibernateTransactionalResourceCommandDAO transactionalResourceCommandDAO() {
+    public TransactionalResourceCommandDAO transactionalResourceCommandDAO() {
         return new HibernateTransactionalResourceCommandDAO();
     }
 
     @Bean
-    public HibernateFileChunkDao fileChunkDao() {
+    public FileChunkDao fileChunkDao() {
         return new HibernateFileChunkDao();
     }
 
     @Bean
-    public HibernateBaseFileTransferDaoImpl baseFileTransferDao() {
+    public BaseFileTransferDao baseFileTransferDao() {
         return new HibernateBaseFileTransferDaoImpl();
     }
 
     @Bean
     public LocalContainerEntityManagerFactoryBean baseFileTransferEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -45,13 +48,5 @@ public class BaseFileTransferAutoConfiguration {
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:file-transfer-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

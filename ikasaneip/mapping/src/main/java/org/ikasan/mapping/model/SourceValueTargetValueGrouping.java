@@ -1,14 +1,23 @@
 package org.ikasan.mapping.model;
 
+import jakarta.persistence.*;
+
 import java.util.Set;
 
 /**
  * Created by Ikasan Development Team on 25/01/2017.
  */
+@Entity
+@Table(name = "SourceValueTargetValueGrouping")
 public class SourceValueTargetValueGrouping
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
-    private Long groupingId;
+
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OrderColumn(name="GroupingId")
+    @JoinColumn(name = "GroupingId", nullable = false)
     private Set<ManyToManyTargetConfigurationValue> targetValues;
 
     /**
@@ -34,16 +43,6 @@ public class SourceValueTargetValueGrouping
     }
 
 
-    public Long getGroupingId()
-    {
-        return groupingId;
-    }
-
-    public void setGroupingId(Long groupingId)
-    {
-        this.groupingId = groupingId;
-    }
-
     public Set<ManyToManyTargetConfigurationValue> getTargetValues()
     {
         return targetValues;
@@ -63,7 +62,6 @@ public class SourceValueTargetValueGrouping
         SourceValueTargetValueGrouping that = (SourceValueTargetValueGrouping) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (groupingId != null ? !groupingId.equals(that.groupingId) : that.groupingId != null) return false;
         return targetValues != null ? targetValues.equals(that.targetValues) : that.targetValues == null;
 
     }
@@ -72,7 +70,6 @@ public class SourceValueTargetValueGrouping
     public int hashCode()
     {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (groupingId != null ? groupingId.hashCode() : 0);
         result = 31 * result + (targetValues != null ? targetValues.hashCode() : 0);
         return result;
     }

@@ -56,8 +56,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
-import javax.jms.DeliveryMode;
-import javax.jms.Session;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Session;
 import java.io.File;
 import java.util.List;
 

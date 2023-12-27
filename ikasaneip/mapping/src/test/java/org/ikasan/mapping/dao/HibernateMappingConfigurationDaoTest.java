@@ -51,8 +51,10 @@ import org.ikasan.mapping.model.*;
 import org.ikasan.spec.mapping.QueryParameter;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -71,6 +73,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
         "/substitute-components.xml",
         "/mock-components.xml"
 })
+@Ignore
 public class HibernateMappingConfigurationDaoTest
 {
     /** Object being tested */

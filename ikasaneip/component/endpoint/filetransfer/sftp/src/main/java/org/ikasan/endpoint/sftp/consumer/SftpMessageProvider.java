@@ -41,10 +41,6 @@
 package org.ikasan.endpoint.sftp.consumer;
 
 import com.google.common.cache.Cache;
-import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
-import org.ikasan.spec.configuration.Configured;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
 import org.ikasan.connector.base.command.TransactionalResourceCommandDAO;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
@@ -53,16 +49,19 @@ import org.ikasan.connector.listener.TransactionCommitFailureListener;
 import org.ikasan.connector.sftp.outbound.SFTPConnectionSpec;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
 import org.ikasan.endpoint.sftp.FileTransferConnectionTemplate;
+import org.ikasan.endpoint.sftp.SftpResourceNotStartedException;
 import org.ikasan.filetransfer.Payload;
 import org.ikasan.framework.factory.DirectoryURLFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.quartz.JobExecutionContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.InvalidPropertyException;
+import jakarta.resource.ResourceException;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -40,6 +40,9 @@
  */
 package org.springframework.jms.core;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import org.ikasan.component.endpoint.jms.producer.JmsPostProcessor;
 import org.ikasan.component.endpoint.jms.producer.PostProcessor;
 import org.ikasan.spec.flow.FlowEvent;
@@ -56,7 +59,7 @@ import org.springframework.jms.support.converter.MessageConverter;
 public class IkasanJmsTemplate extends JmsTemplate
 {
     /** specific post processor implementation to be applied - ensure a default post-processor */
-    private PostProcessor<Object,Message> postProcessor = new JmsPostProcessor();
+    private PostProcessor<Object, Message> postProcessor = new JmsPostProcessor();
 
     /**
      * Default constructor

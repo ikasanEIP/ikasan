@@ -7,8 +7,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 import static org.junit.Assert.assertEquals;
 

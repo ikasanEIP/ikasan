@@ -4,7 +4,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
   http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
-    <persistence-unit name="module">
+    <persistence-unit name="module" transaction-type="JTA">
         <class>org.ikasan.module.startup.StartupControlImpl</class>
     </persistence-unit>
 

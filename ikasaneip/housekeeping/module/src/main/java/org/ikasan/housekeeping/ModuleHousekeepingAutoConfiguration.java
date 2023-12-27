@@ -6,8 +6,10 @@ import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.monitor.JobMonitor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  * This autoconfig should be excluded from dashboard.
  */
 @Configuration
+@DependsOn({"errorReportingManagementService", "replayManagementService", "wiretapService", "systemEventService", "managementFilterService", "messageHistoryService"})
 public class ModuleHousekeepingAutoConfiguration
 {
 
@@ -28,7 +31,8 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob replyHousekeepingJob(HousekeepService replayManagementService, Environment environment,
+    @DependsOn("replayManagementService")
+    public HousekeepingJob replyHousekeepingJob(@Qualifier("replayManagementService")HousekeepService replayManagementService, Environment environment,
                                                 JobMonitor jobMonitor)
     {
         HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("replayHousekeepingJob", replayManagementService, environment);
@@ -39,7 +43,8 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob wiretapHousekeepingJob(HousekeepService wiretapService, Environment environment,
+    @DependsOn("wiretapService")
+    public HousekeepingJob wiretapHousekeepingJob(@Qualifier("wiretapService")HousekeepService wiretapService, Environment environment,
                                                   JobMonitor jobMonitor)
     {
         HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("wiretapHousekeepingJob", wiretapService, environment);
@@ -50,7 +55,8 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob errorReportingHousekeepingJob(HousekeepService errorReportingManagementService, Environment environment,
+    @DependsOn("errorReportingManagementService")
+    public HousekeepingJob errorReportingHousekeepingJob(@Qualifier("errorReportingManagementService")HousekeepService errorReportingManagementService, Environment environment,
                                                          JobMonitor jobMonitor)
     {
         HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("errorReportingHousekeepingJob", errorReportingManagementService, environment);
@@ -61,7 +67,8 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob systemEventServiceHousekeepingJob(HousekeepService systemEventService, Environment environment,
+    @DependsOn("systemEventService")
+    public HousekeepingJob systemEventServiceHousekeepingJob(@Qualifier("systemEventService")HousekeepService systemEventService, Environment environment,
                                                              JobMonitor jobMonitor)
     {
         HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("systemEventServiceHousekeepingJob", systemEventService, environment);
@@ -72,7 +79,8 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob duplicateFilterHousekeepingJob(HousekeepService managementFilterService, Environment environment,
+    @DependsOn("managementFilterService")
+    public HousekeepingJob duplicateFilterHousekeepingJob(@Qualifier("managementFilterService")HousekeepService managementFilterService, Environment environment,
                                                           JobMonitor jobMonitor)
     {
         HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("duplicateFilterHousekeepingJob", managementFilterService, environment);
@@ -83,7 +91,8 @@ public class ModuleHousekeepingAutoConfiguration
     }
 
     @Bean
-    public HousekeepingJob messageHistoryHousekeepingJob(HousekeepService messageHistoryService, Environment environment,
+    @DependsOn("messageHistoryService")
+    public HousekeepingJob messageHistoryHousekeepingJob(@Qualifier("messageHistoryService")HousekeepService messageHistoryService, Environment environment,
                                                          JobMonitor jobMonitor)
     {
         HousekeepingJobImpl housekeepingJob = new HousekeepingJobImpl("messageHistoryHousekeepingJob", messageHistoryService, environment);

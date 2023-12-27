@@ -44,9 +44,9 @@ import org.apache.activemq.command.ActiveMQObjectMessage;
 import org.ikasan.serialiser.model.JmsObjectMessageDefaultImpl;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-import javax.jms.Session;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.Session;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

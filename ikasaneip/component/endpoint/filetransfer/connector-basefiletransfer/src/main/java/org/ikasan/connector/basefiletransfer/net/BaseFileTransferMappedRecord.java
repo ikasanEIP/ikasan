@@ -46,7 +46,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import javax.resource.cci.MappedRecord;
+import jakarta.resource.cci.MappedRecord;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

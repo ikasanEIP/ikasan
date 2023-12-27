@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.cci.ConnectionFactory;
+import jakarta.resource.cci.ConnectionFactory;
 
 /**
  * This interface defines the connectionFactory for 

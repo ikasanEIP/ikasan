@@ -40,7 +40,8 @@
  */
 package org.ikasan.component.endpoint.jms;
 
-import javax.jms.Destination;
+
+import jakarta.jms.Destination;
 
 /**
  * Contract for resolving and returning a destination when the destination

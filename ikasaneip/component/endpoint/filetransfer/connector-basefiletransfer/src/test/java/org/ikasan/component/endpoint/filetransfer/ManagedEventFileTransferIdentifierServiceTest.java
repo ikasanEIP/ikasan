@@ -47,7 +47,7 @@ import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * @author Ikasan Development Team

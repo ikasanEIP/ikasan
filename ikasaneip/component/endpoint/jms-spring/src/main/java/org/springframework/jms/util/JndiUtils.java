@@ -40,14 +40,14 @@
  */
 package org.springframework.jms.util;
 
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.XAConnectionFactory;
 import org.ikasan.component.endpoint.jms.AuthenticatedConnectionFactory;
 import org.ikasan.component.endpoint.jms.AuthenticatedXAConnectionFactory;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.jndi.JndiTemplate;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.Destination;
-import javax.jms.XAConnectionFactory;
 import javax.naming.NamingException;
 import java.util.Map;
 import java.util.Properties;

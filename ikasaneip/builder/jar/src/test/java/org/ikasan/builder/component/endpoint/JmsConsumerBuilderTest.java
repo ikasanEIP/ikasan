@@ -55,7 +55,7 @@ import org.junit.rules.ExpectedException;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.naming.Context;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
 

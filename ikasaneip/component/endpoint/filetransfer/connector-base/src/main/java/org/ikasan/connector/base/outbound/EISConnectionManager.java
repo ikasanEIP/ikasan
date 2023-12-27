@@ -42,10 +42,10 @@ package org.ikasan.connector.base.outbound;
 
 import java.io.Serializable;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  * @author Ikasan Development Team
  */ 
 public abstract class EISConnectionManager 
-    implements javax.resource.spi.ConnectionManager, Serializable 
+    implements jakarta.resource.spi.ConnectionManager, Serializable
 { 
     /** Serial GUID */
     private static final long serialVersionUID = 3076364861205203561L;

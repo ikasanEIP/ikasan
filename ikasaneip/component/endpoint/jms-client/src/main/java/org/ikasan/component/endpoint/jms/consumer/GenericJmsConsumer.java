@@ -40,9 +40,20 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.Destination;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
+import jakarta.jms.MessageConsumer;
+import jakarta.jms.JMSException;
+import jakarta.jms.ExceptionListener;
+import jakarta.jms.MessageListener;
+import jakarta.jms.Topic;
 import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -56,9 +67,7 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
 
-import javax.jms.*;
-import javax.jms.ExceptionListener;
-import javax.jms.MessageListener;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;

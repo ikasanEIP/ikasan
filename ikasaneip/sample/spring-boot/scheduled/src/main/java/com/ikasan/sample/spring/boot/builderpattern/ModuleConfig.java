@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {

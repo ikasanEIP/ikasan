@@ -43,8 +43,8 @@ package org.ikasan.serialiser.model;
 import java.util.Enumeration;
 import java.util.Properties;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 /**
  * Light JMS map message implementation purely for serialiser usage.

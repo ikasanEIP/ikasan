@@ -54,6 +54,14 @@ import java.io.Serializable;
 @PrimaryKeyJoinColumn(name = "Id")
 public class ConfigurationParameterBooleanImpl extends AbstractComponentParameter<Boolean> implements Serializable
 {
+    /** configuration name */
+    @Column(name="Name", nullable = false)
+    protected String name;
+
+    /** configuration description */
+    @Column(name="Description")
+    protected String description;
+
     /** configuration value */
     @Column(name="Value")
     protected Boolean value;
@@ -90,6 +98,34 @@ public class ConfigurationParameterBooleanImpl extends AbstractComponentParamete
         this.description = description;
     }
 
+    /**
+     * Constructor
+     */
+    protected ConfigurationParameterBooleanImpl()
+    {
+        // required by ORM
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public String getDescription() {
+        return description;
+    }
+
+    @Override
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public Boolean getValue() {
         return this.value;
@@ -101,10 +137,70 @@ public class ConfigurationParameterBooleanImpl extends AbstractComponentParamete
     }
 
     /**
-     * Constructor
+     * Utility method for object comparison
+     * @param object1
+     * @param object2
+     * @return
      */
-    protected ConfigurationParameterBooleanImpl()
+    protected boolean equalsOrNull(Object object1, Object object2)
     {
-        // required by ORM
+        if(object1 != null && object1.equals(object2))
+        {
+            return true;
+        }
+        else if(object1 == null && object2 == null)
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object object)
+    {
+        // is same instance
+        if(this == object)
+        {
+            return true;
+        }
+
+        // is an instanceof
+        if(object == null || !(object instanceof ConfigurationParameterBooleanImpl))
+        {
+            return false;
+        }
+
+        // is same object type
+        ConfigurationParameterBooleanImpl configurationParameter = (ConfigurationParameterBooleanImpl) object;
+        if( this.name.equals(configurationParameter.getName()) &&
+            equalsOrNull(this.getValue(), configurationParameter.getValue()) &&
+            equalsOrNull(this.description, configurationParameter.getDescription()) )
+        {
+            return true;
+        }
+
+        // nothing equal
+        return false;
+    }
+
+    /**
+     * HashCode default implementation
+     *
+     * @return int hashcode
+     */
+    @Override
+    public int hashCode()
+    {
+        int hash = 1;
+        hash = hash * 31 + this.name.hashCode();
+        hash = hash * 31 + (this.getValue() == null ? 0 : this.getValue().hashCode());
+        hash = hash * 31 + (this.description == null ? 0 : this.description.hashCode());
+        return hash;
     }
 }

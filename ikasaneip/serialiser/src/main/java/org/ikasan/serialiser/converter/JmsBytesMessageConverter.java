@@ -43,9 +43,9 @@ package org.ikasan.serialiser.converter;
 import org.ikasan.serialiser.model.JmsBytesMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-import javax.jms.BytesMessage;
-import javax.jms.JMSException;
-import javax.jms.MessageEOFException;
+import jakarta.jms.BytesMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MessageEOFException;
 
 /**
  * Simple converter of a vendor specific BytesMessage to an Ikasan bytes message for serialisation.

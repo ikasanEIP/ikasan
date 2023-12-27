@@ -53,7 +53,7 @@ import org.joda.time.DateTimeUtils;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.File;
 import java.util.Date;
 import java.util.regex.Matcher;

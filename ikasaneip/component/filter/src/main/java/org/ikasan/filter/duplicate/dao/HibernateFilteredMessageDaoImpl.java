@@ -48,17 +48,12 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.ikasan.filter.DefaultMessageFilter;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.HibernateCallback;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
 
 import java.util.ArrayList;
 import java.util.Collection;

@@ -39,6 +39,8 @@
 
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -61,15 +63,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
@@ -436,8 +435,6 @@ public class JmsSampleFlowTest {
         // Verify the exclusion was not stored to DB
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
-
-
     }
 
 

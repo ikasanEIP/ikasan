@@ -71,6 +71,11 @@
         </dependency>
 
         <dependency>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-exclusion-service</artifactId>
         </dependency>

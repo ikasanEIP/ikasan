@@ -40,6 +40,9 @@
  */
 package org.ikasan.component.endpoint.jms;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageNotWriteableException;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
@@ -49,10 +52,6 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageNotWriteableException;
 
 /**
  * Test class for JmsEventIdentifierServiceImpl.

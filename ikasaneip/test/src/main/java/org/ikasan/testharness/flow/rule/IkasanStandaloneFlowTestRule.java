@@ -64,7 +64,7 @@ import org.quartz.SchedulerException;
 import org.quartz.Trigger;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -128,7 +128,7 @@ public class IkasanStandaloneFlowTestRule implements TestRule
 
     public IkasanStandaloneFlowTestRule(String flowUnderTest,Class<?> applicationClass)
     {
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000) };
+        String[] args = { "--server.port=" + TestSocketUtils.findAvailableTcpPort() };
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(applicationClass,args);
 
         Module module = ikasanApplication.getModules().get(0);

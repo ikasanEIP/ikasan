@@ -64,7 +64,7 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,7 +160,7 @@ public class RouteBuilderTest
     public void setup()
     {
 
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+        String[] args = { "--server.port=" + TestSocketUtils.findAvailableTcpPort(),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
             """
