@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.endpoint.jms.producer;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.configuration.Configured;
@@ -47,8 +49,6 @@ import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
 import java.util.Map;
 
 /**
@@ -102,7 +102,7 @@ public class JmsPostProcessor<T> implements PostProcessor<T, Message>, Configure
     /**
      * Set the specified properties in the message.
      * @param properties
-     * @throws javax.jms.JMSException
+     * @throws jakarta.jms.JMSException
      */
     protected void setMessageProperties(Message message, Map<String,?> properties) throws JMSException
     {

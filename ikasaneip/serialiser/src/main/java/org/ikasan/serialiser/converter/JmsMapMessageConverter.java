@@ -42,8 +42,8 @@ package org.ikasan.serialiser.converter;
 
 import java.util.Enumeration;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;

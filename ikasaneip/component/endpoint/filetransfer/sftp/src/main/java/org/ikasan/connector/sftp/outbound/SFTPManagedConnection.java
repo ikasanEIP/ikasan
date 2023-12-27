@@ -41,8 +41,7 @@
 package org.ikasan.connector.sftp.outbound;
 
 import com.google.common.cache.Cache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.resource.ResourceException;
 import org.ikasan.connector.BaseFileTransferConnection;
 import org.ikasan.connector.base.command.TransactionalCommandConnection;
 import org.ikasan.connector.base.command.TransactionalResource;
@@ -51,9 +50,9 @@ import org.ikasan.connector.basefiletransfer.net.ClientInitialisationException;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.sftp.net.SFTPClient;
 import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
-import org.slf4j.event.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import javax.resource.ResourceException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.io.File;

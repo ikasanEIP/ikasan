@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {

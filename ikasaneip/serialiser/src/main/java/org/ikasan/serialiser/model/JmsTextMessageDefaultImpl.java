@@ -40,8 +40,8 @@
  */
 package org.ikasan.serialiser.model;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 
 /**
  * Light JMS text message implementation purely for serialiser usage.

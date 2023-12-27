@@ -91,10 +91,15 @@
             <artifactId>asm</artifactId>
         </dependency>
 
+<!--        <dependency>-->
+<!--            <groupId>org.apache.geronimo.specs</groupId>-->
+<!--            <artifactId>geronimo-jms_1.1_spec</artifactId>-->
+<!--            <version>${version.geronimo.jms.spec}</version>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jms_1.1_spec</artifactId>
-            <version>${version.geronimo.jms.spec}</version>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
         </dependency>
 
         <dependency>
@@ -162,6 +167,13 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.22.0</version>
             <scope>test</scope>
         </dependency>
 

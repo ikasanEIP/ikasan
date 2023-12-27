@@ -58,6 +58,7 @@ import org.ikasan.spec.module.StartupType;
  * 
  */
 @Entity
+@Table(name = "StartupControl")
 public class StartupControlImpl implements StartupControl
 {
     /**
@@ -82,6 +83,8 @@ public class StartupControlImpl implements StartupControl
     /**
      * Startup type
      */
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "StartupType", nullable = false)
     private StartupType startupType;
 

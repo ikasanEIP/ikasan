@@ -54,9 +54,9 @@ import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import javax.naming.Context;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -40,6 +40,7 @@
  */
 package org.springframework.jms.listener;
 
+import jakarta.jms.*;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
 import org.ikasan.component.endpoint.jms.spring.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
@@ -48,7 +49,6 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.springframework.jms.util.JndiUtils;
 
-import javax.jms.*;
 
 /**
  * Extend DefaultMessageListenerContainer to ensure standard defaults are set on the container being instantiated.

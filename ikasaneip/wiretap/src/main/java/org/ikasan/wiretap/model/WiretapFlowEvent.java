@@ -58,7 +58,7 @@ import java.util.Objects;
 public class WiretapFlowEvent extends GenericWiretapEvent implements WiretapEvent<String>, Serializable, HarvestEvent
 {
     /** related event id */
-    @Column(name="RelatedEventId", nullable = false)
+    @Column(name="RelatedEventId")
     private String relatedEventId;
 
     /** has the record been harvested */

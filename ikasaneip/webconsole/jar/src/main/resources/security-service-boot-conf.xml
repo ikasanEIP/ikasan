@@ -40,9 +40,6 @@
  supplies its own security. -->
 
 
-
-
-
 	<aop:config>
 		<aop:pointcut id="securityServiceMethods"
 			expression="execution(* org.ikasan.security.service.UserService.grantAuthority(..)) ||

@@ -40,10 +40,13 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageListener;
+import jakarta.jms.ExceptionListener;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
 import org.ikasan.component.endpoint.jms.consumer.JmsMessageConverter;
 import org.ikasan.component.endpoint.jms.consumer.MessageProvider;
-import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.component.transformation.Converter;
@@ -52,9 +55,9 @@ import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedIdentifierService;
-import org.ikasan.spec.event.Resubmission;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
@@ -62,10 +65,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.util.ErrorHandler;
 
-import javax.jms.ExceptionListener;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +74,7 @@ import java.util.List;
  */
 public class JmsContainerConsumer
         implements MessageListener, ExceptionListener, ErrorHandler,
-        Consumer<EventListener<?>,EventFactory>, Converter<Message,Object>,
+        Consumer<EventListener<?>, EventFactory>, Converter<Message,Object>,
         ManagedIdentifierService<ManagedRelatedEventIdentifierService>, ConfiguredResource<SpringMessageConsumerConfiguration>,
             ResubmissionService<Message>, IsExclusionServiceAware, MultiThreadedCapable
 {
@@ -280,7 +279,7 @@ public class JmsContainerConsumer
         try
         {
             if ( messageProvider instanceof IkasanMessageListenerContainer imlc
-                    && jmsException instanceof javax.jms.IllegalStateException)
+                    && jmsException instanceof jakarta.jms.IllegalStateException)
             {
                 imlc.recoverSharedConnection();
                 recovered = true;
@@ -373,7 +372,7 @@ public class JmsContainerConsumer
                 List<Object> msgs = new ArrayList<>();
                 for(Message msg:listMessage)
                 {
-                    msgs.add( JmsMessageConverter.extractContent(msg) );
+                    msgs.add(JmsMessageConverter.extractContent(msg) );
                 }
 
                 return msgs;

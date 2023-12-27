@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ManagedConnectionMetaData;
 
 /**
  * Abstract class to define and/or implement required methods

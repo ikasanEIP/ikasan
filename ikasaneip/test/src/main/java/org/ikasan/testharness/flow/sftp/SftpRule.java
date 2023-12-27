@@ -56,7 +56,7 @@ import org.ikasan.filetransfer.util.FileUtil;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -128,7 +128,7 @@ public class SftpRule extends ExternalResource
 
     public SftpRule()
     {
-        this("test", "test", null, SocketUtils.findAvailableTcpPort(8000, 9000));
+        this("test", "test", null, TestSocketUtils.findAvailableTcpPort());
     }
 
     public void putFile(String fileName, final String content) throws Exception

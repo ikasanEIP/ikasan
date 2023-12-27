@@ -45,17 +45,17 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import javax.resource.NotSupportedException;
-import javax.resource.ResourceException;
-import javax.resource.cci.Connection;
-import javax.resource.spi.ConnectionEvent;
-import javax.resource.spi.ConnectionEventListener;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.LocalTransaction;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
-import javax.resource.spi.ManagedConnectionMetaData;
-import javax.resource.spi.ResourceAdapterInternalException;
+import jakarta.resource.NotSupportedException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.cci.Connection;
+import jakarta.resource.spi.ConnectionEvent;
+import jakarta.resource.spi.ConnectionEventListener;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.LocalTransaction;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.spi.ManagedConnectionMetaData;
+import jakarta.resource.spi.ResourceAdapterInternalException;
 import javax.security.auth.Subject;
 import javax.transaction.xa.XAResource;
 
@@ -206,14 +206,14 @@ public abstract class EISManagedConnection implements ManagedConnection
      * requires the physical connection to the server to be present. If it is
      * not, it throws an exception.
      * 
-     * @throws javax.resource.spi.IllegalStateException - Exception if we've
+     * @throws jakarta.resource.spi.IllegalStateException - Exception if we've
      *             reached an illegal state
      */
-    protected void throwIfDestroyed() throws javax.resource.spi.IllegalStateException
+    protected void throwIfDestroyed() throws jakarta.resource.spi.IllegalStateException
     {
         if (this.destroyed)
         {
-            throw new javax.resource.spi.IllegalStateException("ManagedConnection is destroyed"); //$NON-NLS-1$
+            throw new jakarta.resource.spi.IllegalStateException("ManagedConnection is destroyed"); //$NON-NLS-1$
         }
     }
 
@@ -310,7 +310,7 @@ public abstract class EISManagedConnection implements ManagedConnection
     /**
      * Standard getter for the logWriter
      * 
-     * @see javax.resource.spi.ManagedConnectionFactory#getLogWriter()
+     * @see jakarta.resource.spi.ManagedConnectionFactory#getLogWriter()
      */
     public PrintWriter getLogWriter()
     {
@@ -321,7 +321,7 @@ public abstract class EISManagedConnection implements ManagedConnection
     /**
      * Standard setter for the logWriter
      * 
-     * @see javax.resource.spi.ManagedConnectionFactory#setLogWriter(java.io.PrintWriter)
+     * @see jakarta.resource.spi.ManagedConnectionFactory#setLogWriter(java.io.PrintWriter)
      */
     public void setLogWriter(PrintWriter writer)
     {

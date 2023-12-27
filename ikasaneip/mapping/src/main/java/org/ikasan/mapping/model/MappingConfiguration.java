@@ -40,6 +40,8 @@
  */
 package org.ikasan.mapping.model;
 
+import jakarta.persistence.*;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
@@ -51,29 +53,53 @@ import java.util.Set;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSMappingConfiguration")
 public class MappingConfiguration implements Serializable
 {
     /** Auto generated serial id */
     private static final long serialVersionUID = 2490203288817051966L;
 
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     protected Long id;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "SourceContextId", nullable = false)
     protected ConfigurationContext sourceContext;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "TargetContextId", nullable = false)
     protected ConfigurationContext targetContext;
+    @Column(name = "Description")
     protected String description = "";
+    @Column(name = "NumberOfParams")
     protected int numberOfParams = 1;
-	protected int numTargetValues = 1;
+    @Column(name = "NumTargetValues")
+    protected int numTargetValues = 1;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ConfigurationTypeId", nullable = false)
     protected ConfigurationType configurationType;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "ConfigurationServiceClientId", nullable = false)
     protected ConfigurationServiceClient configurationServiceClient;
+    @OneToMany(cascade = {CascadeType.ALL}, fetch = FetchType.EAGER)
+    @OrderColumn(name="SourceSystemValue")
+    @JoinColumn(name = "MappingConfigurationId", nullable = false)
     protected Set<SourceConfigurationValue> sourceConfigurationValues;
-	protected boolean isManyToMany = false;
-	protected boolean constrainParameterListSizes = false;
-	protected String lastUpdatedBy = "";
-	protected int numberOfMappings = 0;
+    @Column(name = "IsManyToMany")
+    protected boolean isManyToMany = false;
+    @Column(name = "ConstrainParameterListSizes")
+    protected boolean constrainParameterListSizes = false;
+    @Column(name = "LastUpdatedBy")
+    protected String lastUpdatedBy = "";
+    @Column(name = "NumberOfMappings")
+    protected int numberOfMappings = 0;
 
     /** The data time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     /**
@@ -84,7 +110,7 @@ public class MappingConfiguration implements Serializable
         long now = System.currentTimeMillis();
         this.createdDateTime = new Date(now);
         this.updatedDateTime = new Date(now);
-        this.sourceConfigurationValues = new HashSet<SourceConfigurationValue>();
+        this.sourceConfigurationValues = new HashSet<>();
         this.configurationServiceClient = new ConfigurationServiceClient();
         this.sourceContext = new ConfigurationContext();
         this.targetContext = new ConfigurationContext();

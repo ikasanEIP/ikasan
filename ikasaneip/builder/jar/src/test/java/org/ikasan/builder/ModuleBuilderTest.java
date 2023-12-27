@@ -55,7 +55,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 /**
  * This test class supports the <code>ModuleBuilder</code> class.
@@ -111,7 +111,7 @@ public class ModuleBuilderTest
             }
         });
 
-        String[] args = { "--server.port=" + SocketUtils.findAvailableTcpPort(8000, 9000),
+        String[] args = { "--server.port=" + TestSocketUtils.findAvailableTcpPort(),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
             """

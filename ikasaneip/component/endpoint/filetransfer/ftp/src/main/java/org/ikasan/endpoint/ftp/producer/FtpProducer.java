@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.jta.JtaTransactionManager;
 import org.springframework.util.StringUtils;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.IOException;
 import java.io.InputStream;
 

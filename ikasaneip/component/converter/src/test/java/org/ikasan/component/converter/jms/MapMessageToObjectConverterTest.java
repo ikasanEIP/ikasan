@@ -47,8 +47,8 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 import javax.xml.transform.TransformerException;
 
 import static org.junit.Assert.assertEquals;

@@ -45,7 +45,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.junit.Assert;
 

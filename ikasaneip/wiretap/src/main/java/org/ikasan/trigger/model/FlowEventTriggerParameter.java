@@ -9,7 +9,9 @@ public class FlowEventTriggerParameter {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long triggerId;
+    @Column(name="ParamName", nullable = false)
     private String paramName;
+    @Column(name="ParamValue", nullable = false)
     private String paramValue;
 
     public long getTriggerId() {

@@ -55,7 +55,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
@@ -94,7 +94,7 @@ public class FtpToJmsFlowTest
 
    @Before
     public void setup(){
-        ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
+        ftp  = new FtpRule("test","test",null, TestSocketUtils.findAvailableTcpPort());
         ftp.start();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Ftp To Jms Flow"));

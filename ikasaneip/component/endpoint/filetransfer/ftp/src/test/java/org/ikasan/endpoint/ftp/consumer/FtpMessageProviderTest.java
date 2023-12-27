@@ -58,7 +58,7 @@ import org.quartz.JobExecutionContext;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * Test class for {@link org.ikasan.endpoint.ftp.consumer.FtpMessageProvider}

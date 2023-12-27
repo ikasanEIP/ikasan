@@ -69,7 +69,8 @@ public class HibernateTriggerDao implements TriggerDao
      */
     public void delete(Trigger trigger)
     {
-        this.entityManager.remove(trigger);
+        this.entityManager.remove(entityManager.contains(trigger)
+            ? trigger : entityManager.merge(trigger));
     }
 
     /* (non-Javadoc)
@@ -91,7 +92,8 @@ public class HibernateTriggerDao implements TriggerDao
      * @see org.ikasan.trigger.dao.TriggerDao#save(org.ikasan.trigger.window.Trigger)
      */
     public void save(Trigger trigger) {
-        entityManager.persist(trigger);
+        entityManager.persist(entityManager.contains(trigger)
+            ? trigger : entityManager.merge(trigger));
     }
 
 	/* (non-Javadoc)

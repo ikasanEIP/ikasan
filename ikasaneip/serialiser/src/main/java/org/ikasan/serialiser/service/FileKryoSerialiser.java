@@ -40,18 +40,12 @@
  */
 package org.ikasan.serialiser.service;
 
-import java.io.File;
-import java.util.Enumeration;
-
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-
-import org.ikasan.serialiser.model.JmsMapMessageDefaultImpl;
-
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+
+import java.io.File;
 
 public class FileKryoSerialiser extends Serializer<File>
 {

@@ -95,7 +95,7 @@ public class IkasanTransactionConfiguration
      *
      *     </bean>
      */
-     @Bean
+    @Bean
     @ConditionalOnMissingBean
     public JtaTransactionManager transactionManager(UserTransaction userTransaction,
                                                     TransactionManager transactionManager,
@@ -199,7 +199,7 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XAConnectionFactoryWrapper.class)
         public XAConnectionFactoryWrapper xaConnectionFactoryWrapper(TransactionManager transactionManager,
                                                                      XARecoveryModule xaRecoveryModule, NarayanaProperties narayanaProperties) {
-            return new GenericXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule, null);
+            return new GenericXAConnectionFactoryWrapper(transactionManager, xaRecoveryModule, narayanaProperties.getRecoveryJmsCredentials());
         }
 
     }

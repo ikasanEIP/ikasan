@@ -7,8 +7,9 @@
             <pattern>%r %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
         </encoder>
-    </appender>    <logger name="org.springframework" level="WARN"/>
-    <logger name="org.ikasan" level="WARN"/>
+    </appender>
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.ikasan" level="INFO"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.springframework.core.env.StandardEnvironment" level="OFF"/>
 

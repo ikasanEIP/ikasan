@@ -40,9 +40,9 @@
  */
 package org.ikasan.serialiser.model;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
+import jakarta.jms.TextMessage;
 import java.io.Serializable;
 
 /**

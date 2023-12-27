@@ -572,10 +572,16 @@
                 <version>${version.org.springframework}</version>
             </dependency>
 
+<!--            <dependency>-->
+<!--                <groupId>javax.servlet</groupId>-->
+<!--                <artifactId>jstl</artifactId>-->
+<!--                <version>${version.javax.servlet.jstl}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
-                <version>${version.javax.servlet.jstl}</version>
+                <groupId>jakarta.servlet.jsp.jstl</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
+                <version>${version.jakarta.servlet.jsp.jstl}</version>
             </dependency>
 
 
@@ -585,11 +591,11 @@
                 <version>${version.geronimo.spec}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.geronimo.specs</groupId>
-                <artifactId>geronimo-jms_1.1_spec</artifactId>
-                <version>${version.geronimo.jms.spec}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.geronimo.specs</groupId>-->
+<!--                <artifactId>geronimo-jms_1.1_spec</artifactId>-->
+<!--                <version>${version.geronimo.jms.spec}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>jakarta.jms</groupId>
@@ -706,10 +712,16 @@
             </dependency>
 
             <!-- Swagger -->
+<!--            <dependency>-->
+<!--                <groupId>io.springfox</groupId>-->
+<!--                <artifactId>springfox-boot-starter</artifactId>-->
+<!--                <version>${version.io.spingfox.swagger}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${version.io.spingfox.swagger}</version>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+                <version>2.2.0</version>
             </dependency>
 
             <!-- Springboot -->
@@ -940,10 +952,16 @@
                 <version>${version.org.quartz-scheduler}</version>
             </dependency>
 
+<!--            <dependency>-->
+<!--                <groupId>javax.transaction</groupId>-->
+<!--                <artifactId>jta</artifactId>-->
+<!--                <version>${version.javax.transaction.jta}</version>-->
+<!--            </dependency>-->
+
             <dependency>
-                <groupId>javax.transaction</groupId>
-                <artifactId>jta</artifactId>
-                <version>${version.javax.transaction.jta}</version>
+                <groupId>jakarta.transaction</groupId>
+                <artifactId>jakarta.transaction-api</artifactId>
+                <version>2.0.0</version>
             </dependency>
 
             <dependency>
@@ -958,11 +976,11 @@
                 <version>${version.jakarta.servlet}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-jasper</artifactId>
-                <version>${version.tomcat}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tomcat.embed</groupId>-->
+<!--                <artifactId>tomcat-embed-jasper</artifactId>-->
+<!--                <version>${version.tomcat}</version>-->
+<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.apache.activemq</groupId>

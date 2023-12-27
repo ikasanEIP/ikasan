@@ -81,7 +81,7 @@ public class TriggerImpl implements Trigger
      * Name of the <code>Module</code> to which this <code>Trigger</code>
      * applies
      */
-    @Column(name="Module    Name", nullable = false)
+    @Column(name="ModuleName", nullable = false)
     private String moduleName;
 
     /** Additional parameters to be used when invoking jobs */
@@ -89,9 +89,13 @@ public class TriggerImpl implements Trigger
     @CollectionTable(name = "FlowEventTriggerParameters"
         , joinColumns = @JoinColumn(name = "TriggerId", nullable = false)
         , uniqueConstraints = @UniqueConstraint(columnNames = {"TriggerId"}))
+    @MapKeyColumn(name="ParamName")
+    @Column(name="ParamValue")
     private Map<String, String> params = new HashMap<String, String>();
 
     /** Either before or after */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "Relationship", nullable = false)
     private TriggerRelationship relationship;
 
     /** (Hibernate) Constructor */

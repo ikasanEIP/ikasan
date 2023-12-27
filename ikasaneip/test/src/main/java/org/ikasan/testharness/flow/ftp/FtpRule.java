@@ -46,14 +46,14 @@ import org.junit.rules.ExternalResource;
 import org.mockftpserver.fake.FakeFtpServer;
 import org.mockftpserver.fake.UserAccount;
 import org.mockftpserver.fake.filesystem.*;
-import org.mockftpserver.fake.filesystem.FileSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,7 +115,7 @@ public class FtpRule extends ExternalResource
 
     public FtpRule()
     {
-        this("test", "test", null, SocketUtils.findAvailableTcpPort(20000, 30000));
+        this("test", "test", null, TestSocketUtils.findAvailableTcpPort());
     }
 
     public void putFile(String fileName, final String content) throws Exception

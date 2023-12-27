@@ -42,7 +42,7 @@ package org.ikasan.connector.base.command;
 
 import java.util.Map;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import javax.transaction.xa.Xid;
 
 import org.ikasan.connector.base.journal.TransactionJournal;

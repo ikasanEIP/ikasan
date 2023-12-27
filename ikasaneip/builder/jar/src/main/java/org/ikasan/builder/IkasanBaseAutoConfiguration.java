@@ -40,20 +40,30 @@
  */
 package org.ikasan.builder;
 
+import org.ikasan.WiretapAutoConfiguration;
+import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
+import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
+import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
 import org.ikasan.exceptionResolver.ExceptionConfig;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.IgnoreAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
+import org.ikasan.exclusion.ExclusionAutoConfiguration;
+import org.ikasan.filter.FilterAutoConfiguration;
+import org.ikasan.hospital.HospitalAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.module.service.FlowStartupTypeConfigurationConverter;
 import org.ikasan.module.service.WiretapTriggerConfigurationConverter;
 import org.ikasan.monitor.IkasanMonitorAutoConfiguration;
+import org.ikasan.replay.ReplayAutoConfiguration;
 import org.ikasan.rest.module.IkasanRestAutoConfiguration;
+import org.ikasan.systemevent.SystemEventAutoConfiguration;
 import org.ikasan.transaction.IkasanTransactionConfiguration;
 import org.ikasan.web.IkasanWebAutoConfiguration;
 import org.ikasan.web.WebSecurityConfig;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.*;
@@ -65,23 +75,16 @@ import org.springframework.context.annotation.*;
         "classpath:ikasan-transaction-pointcut-quartz.xml",
         "classpath:serialiser-service-conf.xml",
         "classpath:scheduler-service-conf.xml",
-        "classpath:error-reporting-service-conf.xml",
         "classpath:recoveryManager-service-conf.xml",
-        "classpath:filter-service-conf.xml",
-        "classpath:configuration-service-conf.xml",
-        "classpath:systemevent-service-conf.xml",
-        "classpath:replay-service-conf.xml",
-        "classpath:wiretap-service-conf.xml",
-        "classpath:hospital-conf.xml",
-        "classpath:exclusion-service-conf.xml",
         "classpath:topology-conf.xml",
         "classpath:datasource-conf.xml",
         "classpath:security-service-boot-conf.xml",
         "classpath:springapp-servlet-boot.xml",
-
 } )
 @Import({ ExceptionConfig.class, IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
-            WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class})
+            WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class, ErrorReportingAutoConfiguration.class,
+            FilterAutoConfiguration.class, ConfigurationServiceAutoConfiguration.class,  SystemEventAutoConfiguration.class, ReplayAutoConfiguration.class,
+            WiretapAutoConfiguration.class, HospitalAutoConfiguration.class, ExclusionAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
 
@@ -95,13 +98,13 @@ public class IkasanBaseAutoConfiguration
         return new AopProxyProviderSpringImpl();
     }
 
-    @Bean
+    @Bean(name = "exceptionConfig")
     @ConfigurationProperties(prefix = "ikasan.exceptions")
     public ExceptionConfig exceptionConfig(){
         return new ExceptionConfig();
     }
     @Bean
-    public ExceptionResolver exceptionResolver(BuilderFactory builderFactory,ExceptionConfig exceptionConfig)
+    public ExceptionResolver exceptionResolver(BuilderFactory builderFactory, @Qualifier("exceptionConfig") ExceptionConfig exceptionConfig)
     {
         ExceptionResolverBuilder builder = builderFactory.getExceptionResolverBuilder();
 

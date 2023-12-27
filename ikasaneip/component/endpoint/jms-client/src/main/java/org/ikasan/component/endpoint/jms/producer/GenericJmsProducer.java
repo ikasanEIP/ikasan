@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.producer;
 
+import jakarta.jms.*;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.component.endpoint.jms.DestinationResolver;
 import org.ikasan.component.endpoint.jms.JmsEventIdentifierServiceImpl;
@@ -54,7 +55,6 @@ import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
-import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -90,7 +90,7 @@ public class GenericJmsProducer<T>
     protected GenericJmsProducerConfiguration configuration = new GenericJmsProducerConfiguration();
     
     /** default event identifier service - can be overridden via the setter */
-    protected ManagedEventIdentifierService<String,Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
+    protected ManagedEventIdentifierService<String, Message> managedEventIdentifierService = new JmsEventIdentifierServiceImpl();
 
     /** session has to be closed prior to connection being closed */
     protected Session session;

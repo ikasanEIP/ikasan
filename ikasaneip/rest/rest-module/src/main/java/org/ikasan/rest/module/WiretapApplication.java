@@ -188,7 +188,7 @@ public class WiretapApplication
     @RequestMapping(method = RequestMethod.DELETE,
                     value = "/trigger/{triggerId}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity delete(@PathVariable Long triggerId)
+    public ResponseEntity delete(@PathVariable("triggerId") Long triggerId)
     {
         try
         {

@@ -68,7 +68,7 @@ import org.quartz.Scheduler;
 import org.springframework.context.ApplicationContext;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 import static org.junit.Assert.assertTrue;
 

@@ -38,6 +38,10 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
+import jakarta.jms.Message;
+import jakarta.jms.Session;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.endpoint.ftp.producer.FtpProducerConfiguration;
 import org.ikasan.spec.flow.Flow;
@@ -56,13 +60,9 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
-import javax.jms.Session;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
@@ -97,7 +97,7 @@ public class JmsToFtpFlowTest
 
     @Before
     public void setup(){
-        ftp  = new FtpRule("test","test",null,SocketUtils.findAvailableTcpPort(20000, 21000));
+        ftp  = new FtpRule("test","test",null, TestSocketUtils.findAvailableTcpPort());
         ftp.start();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Ftp Flow"));

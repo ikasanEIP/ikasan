@@ -55,7 +55,7 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;

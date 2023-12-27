@@ -52,7 +52,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.test.util.TestSocketUtils;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;

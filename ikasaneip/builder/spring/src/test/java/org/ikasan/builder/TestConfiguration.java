@@ -16,7 +16,6 @@ import javax.annotation.Resource;
     "/substitute-components.xml",
     "/h2-datasource-conf.xml"
 })
-
 public class TestConfiguration
 {
     @Resource

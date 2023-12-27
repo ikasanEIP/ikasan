@@ -40,24 +40,34 @@
  */
 package org.ikasan.mapping.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
 /**
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSConfigurationContext")
 public class ConfigurationContext
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "Name", nullable = false)
     private String name;
 
+    @Column(name = "Description", nullable = false)
     private String description;
 
     /** The data time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     /**

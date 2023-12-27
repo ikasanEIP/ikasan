@@ -40,13 +40,12 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
-
-import javax.jms.Destination;
-import javax.jms.JMSException;
 
 /**
  * Functional unit test cases for <code>IkasanListMessage</code>.

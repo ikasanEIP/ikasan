@@ -14,19 +14,19 @@
         </constructor-arg>
         <constructor-arg name="converters">
             <map>
-                <entry key="javax.jms.TextMessage">
+                <entry key="jakarta.jms.TextMessage">
                     <bean class="org.ikasan.serialiser.converter.JmsTextMessageConverter"/>
                 </entry>
-                <entry key="javax.jms.MapMessage">
+                <entry key="jakarta.jms.MapMessage">
                     <bean class="org.ikasan.serialiser.converter.JmsMapMessageConverter"/>
                 </entry>
-                <entry key="javax.jms.ObjectMessage">
+                <entry key="jakarta.jms.ObjectMessage">
                     <bean class="org.ikasan.serialiser.converter.JmsObjectMessageConverter"/>
                 </entry>
-                <entry key="javax.jms.BytesMessage">
+                <entry key="jakarta.jms.BytesMessage">
                     <bean class="org.ikasan.serialiser.converter.JmsBytesMessageConverter"/>
                 </entry>
-                <entry key="javax.jms.StreamMessage">
+                <entry key="jakarta.jms.StreamMessage">
                     <bean class="org.ikasan.serialiser.converter.JmsStreamMessageConverter"/>
                 </entry>
             </map>

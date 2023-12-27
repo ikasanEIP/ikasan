@@ -40,9 +40,10 @@
  */
 package org.oclc.purl.dsdl.svrl;
 
-import javax.xml.bind.annotation.*;
-import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import jakarta.xml.bind.annotation.*;
+import jakarta.xml.bind.annotation.adapters.CollapsedStringAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
 import java.io.Serializable;
 
 /**
@@ -63,7 +64,7 @@ import java.io.Serializable;
  * 
  * 
  */
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(value = XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "ns-prefix-in-attribute-values")
 public class NsPrefixInAttributeValues implements Serializable

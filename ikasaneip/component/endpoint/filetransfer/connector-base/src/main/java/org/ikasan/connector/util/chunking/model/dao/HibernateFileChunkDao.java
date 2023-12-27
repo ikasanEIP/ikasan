@@ -40,26 +40,22 @@
  */
 package org.ikasan.connector.util.chunking.model.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import org.hibernate.HibernateException;
+import org.ikasan.connector.util.chunking.model.FileChunk;
+import org.ikasan.connector.util.chunking.model.FileChunkHeader;
+import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
+import org.ikasan.filetransfer.util.checksum.DigestChecksum;
+import org.ikasan.filetransfer.util.checksum.Md5Checksum;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.resource.ResourceException;
-
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.hibernate.HibernateException;
-import org.hibernate.SessionFactory;
-import org.hibernate.Session;
-import org.ikasan.filetransfer.util.checksum.DigestChecksum;
-import org.ikasan.filetransfer.util.checksum.Md5Checksum;
-import org.ikasan.connector.util.chunking.model.FileChunk;
-import org.ikasan.connector.util.chunking.model.FileChunkHeader;
-import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
 
 /**
  * Hibernate implementation of the FileChunkDao

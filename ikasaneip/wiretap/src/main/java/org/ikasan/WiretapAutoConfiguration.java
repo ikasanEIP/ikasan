@@ -44,7 +44,7 @@ public class WiretapAutoConfiguration {
     @Bean
     @DependsOn("liquibase")
     JobAwareFlowEventListener wiretapFlowEventListener(Map<String, FlowEventJob> flowEventJobs, TriggerDao triggerDao,
-                                                       DashboardRestService moduleMetadataDashboardRestService, ModuleService moduleService) {
+                                                       @Qualifier("moduleMetadataDashboardRestService") DashboardRestService moduleMetadataDashboardRestService, ModuleService moduleService) {
         return new JobAwareFlowEventListener(flowEventJobs, triggerDao, moduleService,moduleMetadataDashboardRestService);
     }
 
@@ -103,7 +103,7 @@ public class WiretapAutoConfiguration {
     }
     @Bean
     public LocalContainerEntityManagerFactoryBean wiretapEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -113,13 +113,5 @@ public class WiretapAutoConfiguration {
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:wiretap-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
-    }
-
-    @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
     }
 }

@@ -51,7 +51,6 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @author Ikasan Development Team
  */
 @SpringBootApplication
-
 public class MyApplication
 {
     public static void main(String[] args) {

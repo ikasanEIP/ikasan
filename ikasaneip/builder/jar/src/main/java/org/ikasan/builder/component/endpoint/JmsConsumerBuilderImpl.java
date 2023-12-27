@@ -52,10 +52,10 @@ import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapte
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.MessageListener;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.MessageListener;
 import javax.naming.Context;
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 import java.util.HashMap;
 import java.util.Map;
 

@@ -1,5 +1,7 @@
 package org.ikasan;
 
+import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
+import com.arjuna.ats.jta.UserTransaction;
 import jakarta.persistence.EntityManagerFactory;
 import liquibase.Liquibase;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
@@ -12,8 +14,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.jta.JtaTransactionManager;
 
 import javax.sql.DataSource;
 import java.util.Properties;
@@ -30,7 +35,7 @@ public class WiretapTestAutoConfiguration {
     Liquibase liquibase;
 
     @Mock
-    DashboardRestService dashboardRestService;
+    DashboardRestService moduleMetadataDashboardRestService;
 
     @Mock
     PlatformConfigurationService platformConfigurationService;
@@ -50,10 +55,11 @@ public class WiretapTestAutoConfiguration {
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory);
-        return transactionManager;
+    public PlatformTransactionManager transactionManager() {
+        TransactionManagerImple transactionManagerImple = new TransactionManagerImple();
+        JtaTransactionManager jtaTransactionManager = new JtaTransactionManager(UserTransaction.userTransaction(), transactionManagerImple);
+
+        return jtaTransactionManager;
     }
 
     @Bean
@@ -71,8 +77,8 @@ public class WiretapTestAutoConfiguration {
     }
 
     @Bean
-    DashboardRestService dashboardRestService() {
-        return this.dashboardRestService;
+    DashboardRestService moduleMetadataDashboardRestService() {
+        return this.moduleMetadataDashboardRestService;
     }
 
     @Bean
@@ -83,5 +89,13 @@ public class WiretapTestAutoConfiguration {
     @Bean
     Liquibase liquibase() {
         return this.liquibase;
+    }
+
+    @Bean
+    public JpaVendorAdapter jpaVendorAdapter() {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
+            = new HibernateJpaVendorAdapter();
+
+        return hibernateJpaVendorAdapter;
     }
 }

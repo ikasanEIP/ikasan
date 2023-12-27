@@ -44,12 +44,12 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.Set;
 
-import javax.resource.ResourceException;
-import javax.resource.spi.ConnectionManager;
-import javax.resource.spi.ConnectionRequestInfo;
-import javax.resource.spi.InvalidPropertyException;
-import javax.resource.spi.ManagedConnection;
-import javax.resource.spi.ManagedConnectionFactory;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ConnectionManager;
+import jakarta.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.InvalidPropertyException;
+import jakarta.resource.spi.ManagedConnection;
+import jakarta.resource.spi.ManagedConnectionFactory;
 import javax.security.auth.Subject;
 
 import org.slf4j.Logger;
@@ -156,7 +156,7 @@ public abstract class EISManagedConnectionFactory implements ManagedConnectionFa
     /**
      * Standard getter for the logWriter
      * 
-     * @see javax.resource.spi.ManagedConnectionFactory#getLogWriter()
+     * @see jakarta.resource.spi.ManagedConnectionFactory#getLogWriter()
      */
     public PrintWriter getLogWriter()
     {
@@ -167,7 +167,7 @@ public abstract class EISManagedConnectionFactory implements ManagedConnectionFa
     /**
      * Standard setter for the logWriter
      * 
-     * @see javax.resource.spi.ManagedConnectionFactory#setLogWriter(java.io.PrintWriter)
+     * @see jakarta.resource.spi.ManagedConnectionFactory#setLogWriter(java.io.PrintWriter)
      */
     public void setLogWriter(PrintWriter writer)
     {

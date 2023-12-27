@@ -49,7 +49,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import java.util.Map;
 
 /**
