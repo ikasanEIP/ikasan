@@ -40,6 +40,8 @@
  */
 package org.ikasan.compatibility.component.endpoint;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.jmock.Expectations;
@@ -48,8 +50,6 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
 
 /**
  * Functional unit test cases for

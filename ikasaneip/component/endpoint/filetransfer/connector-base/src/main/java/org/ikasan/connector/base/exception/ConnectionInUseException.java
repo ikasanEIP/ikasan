@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base.exception;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * ConnectionInUseException.

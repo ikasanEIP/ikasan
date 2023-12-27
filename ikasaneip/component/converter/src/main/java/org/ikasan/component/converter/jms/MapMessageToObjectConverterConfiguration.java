@@ -40,8 +40,6 @@
  */
 package org.ikasan.component.converter.jms;
 
-import java.util.Map;
-
 /**
  * Configuration for an MapMessage to Object converter.
  */

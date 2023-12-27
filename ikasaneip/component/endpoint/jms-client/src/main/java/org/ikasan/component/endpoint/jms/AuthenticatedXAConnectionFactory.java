@@ -40,11 +40,11 @@
  */
 package org.ikasan.component.endpoint.jms;
 
+import jakarta.jms.*;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.jms.*;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Properties;
@@ -74,6 +74,37 @@ public class AuthenticatedXAConnectionFactory implements XAConnectionFactory, Co
 
     /** credential */
     private String password;
+
+    // todo work out what need to be done below
+    @Override
+    public JMSContext createContext() {
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(String s, String s1) {
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(String s, String s1, int i) {
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(int i) {
+        return null;
+    }
+
+    @Override
+    public XAJMSContext createXAContext() {
+        return null;
+    }
+
+    @Override
+    public XAJMSContext createXAContext(String s, String s1) {
+        return null;
+    }
 
     public void setXAConnectionFactory(XAConnectionFactory xaConnectionFactory)
     {

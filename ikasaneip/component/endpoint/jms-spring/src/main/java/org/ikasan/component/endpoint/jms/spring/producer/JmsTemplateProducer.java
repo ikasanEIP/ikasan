@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.spring.producer;
 
+import jakarta.jms.*;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -48,7 +49,6 @@ import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.springframework.jms.core.IkasanJmsTemplate;
 import org.springframework.jms.util.JndiUtils;
 
-import javax.jms.*;
 
 /**
  * Default JMS Producer component based on Spring JMS template.

@@ -40,6 +40,9 @@
  */
 package org.springframework.jms.listener;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+import jakarta.jms.MessageConsumer;
 import org.ikasan.component.endpoint.jms.spring.consumer.IkasanListMessage;
 import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
 import org.ikasan.spec.exclusion.ExclusionService;
@@ -49,9 +52,6 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageConsumer;
 
 /**
  * Functional unit test cases for <code>IkasanMessageListenerContainer</code>.

@@ -40,9 +40,10 @@
  */
 package org.ikasan.component.endpoint.jms.spring.consumer;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
+
 import java.util.*;
 
 /**
@@ -64,6 +65,27 @@ public class IkasanListMessage extends ArrayList<Message> implements Message
     long jmsExpiration;
     int jmsPriority;
     Map<String, Object> properties = new HashMap<String,Object>();
+
+    // todo work out missing methods
+    @Override
+    public long getJMSDeliveryTime() throws JMSException {
+        return 0;
+    }
+
+    @Override
+    public void setJMSDeliveryTime(long l) throws JMSException {
+
+    }
+
+    @Override
+    public <T> T getBody(Class<T> aClass) throws JMSException {
+        return null;
+    }
+
+    @Override
+    public boolean isBodyAssignableTo(Class aClass) throws JMSException {
+        return false;
+    }
 
     @Override
     public String getJMSMessageID() throws JMSException

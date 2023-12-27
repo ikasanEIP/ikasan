@@ -40,6 +40,9 @@
  */
 package org.ikasan.component.endpoint.jms.spring.listener;
 
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.XAConnectionFactory;
+import jakarta.transaction.TransactionManager;
 import org.jboss.narayana.jta.jms.ConnectionFactoryProxy;
 import org.jboss.narayana.jta.jms.TransactionHelperImpl;
 import org.springframework.jms.listener.IkasanMessageListenerContainer;
@@ -48,9 +51,6 @@ import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerCo
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.configuration.Configured;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.XAConnectionFactory;
-import javax.transaction.TransactionManager;
 
 /**
  * Extend IkasanMessageListenerContainer to ensure standard defaults are set on the container being instantiated.

@@ -40,6 +40,8 @@
  */
 package org.ikasan.compatibility.component.converter;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.jmock.Expectations;
@@ -48,8 +50,6 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
 
 /**
  * Functional unit test cases for

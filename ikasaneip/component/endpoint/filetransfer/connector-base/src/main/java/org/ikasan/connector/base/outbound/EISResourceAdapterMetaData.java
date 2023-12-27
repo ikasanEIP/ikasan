@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.cci.ResourceAdapterMetaData;
+import jakarta.resource.cci.ResourceAdapterMetaData;
 
 /**
  * Implementation class provides info about the capabilities of a resource

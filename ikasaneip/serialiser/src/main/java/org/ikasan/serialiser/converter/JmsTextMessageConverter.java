@@ -42,8 +42,8 @@ package org.ikasan.serialiser.converter;
 
 import java.util.Enumeration;
 
-import javax.jms.JMSException;
-import javax.jms.TextMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.TextMessage;
 
 import org.ikasan.serialiser.model.JmsTextMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;

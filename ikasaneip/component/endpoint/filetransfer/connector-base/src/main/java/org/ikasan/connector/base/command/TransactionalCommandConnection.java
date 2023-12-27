@@ -41,8 +41,8 @@
 package org.ikasan.connector.base.command;
 
 import java.util.*;
-import javax.resource.ResourceException;
-import javax.resource.spi.ResourceAdapterInternalException;
+import jakarta.resource.ResourceException;
+import jakarta.resource.spi.ResourceAdapterInternalException;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;

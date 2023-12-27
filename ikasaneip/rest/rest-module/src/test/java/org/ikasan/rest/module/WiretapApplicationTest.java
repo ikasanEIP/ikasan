@@ -91,9 +91,6 @@ public class WiretapApplicationTest
     @WithMockUser(authorities = "WebServiceAdmin")
     public void createTriggerPUT_when_returns_200() throws Exception
     {
-
-
-
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/wiretap/trigger")
                                                               .content(createTriggerDto())
                                                               .accept(MediaType.APPLICATION_JSON_VALUE)
@@ -119,7 +116,6 @@ public class WiretapApplicationTest
     @WithMockUser(authorities = "WebServiceAdmin")
     public void createTriggerPUT_when_returns_401() throws Exception
     {
-
         Mockito.doThrow(new RuntimeException("issue persisting rigger"))
                .when(jobAwareFlowEventListener).addDynamicTrigger(Mockito.any(TriggerImpl.class));
 

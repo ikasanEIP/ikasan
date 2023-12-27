@@ -40,31 +40,39 @@
  */
 package org.ikasan.mapping.model;
 
+import jakarta.persistence.*;
+
 import java.util.Date;
 
 /**
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "MCSParameterName")
 public class ParameterName
 {
     public static final String SOURCE_CONTEXT = "SOURCE";
     public static final String TARGET_CONTEXT = "TARGET";
 
-    private Long id;
-
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
+    protected Long id;
+    @Column(name = "Name")
     private String name;
-
+    @Column(name = "Ordinal")
     private int ordinal;
-
+    @Column(name = "Context")
     private String context;
-
+    @Column(name = "MappingConfigurationId")
     private Long mappingConfigurationId;
 
     /** The data time stamp when an instance was first created */
+    @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
 
     /** The data time stamp when an instance was last updated */
+    @Column(name = "UpdatedDateTime", nullable = false)
     private Date updatedDateTime;
 
     public ParameterName()

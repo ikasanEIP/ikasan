@@ -7,7 +7,9 @@ import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.monitor.JobMonitor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
 
 import java.util.List;
@@ -16,6 +18,7 @@ import java.util.List;
  * Harvesting related configuration required by every module.
  * This autoconfig should be excluded from dashboard.
  */
+@DependsOn({"replayManagementService", "wiretapService", "errorReportingManagementService", "exclusionManagementService", "messageHistoryService", "systemEventService"})
 public class HarvestingAutoConfiguration
 {
     @Bean
@@ -26,8 +29,10 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob replyHarvestingJob(HarvestService replayManagementService, Environment environment, DashboardRestService replyDashboardRestService,
-                                            JobMonitor jobMonitor)
+    @DependsOn("replayManagementService")
+    public HarvestingJob replyHarvestingJob(@Qualifier("replayManagementService")HarvestService replayManagementService
+        , Environment environment, @Qualifier("replyDashboardRestService") DashboardRestService replyDashboardRestService
+        , JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("replayHarvestingJob", replayManagementService, environment, replyDashboardRestService);
         jobMonitor.setJobName(harvestingJob.getJobName());
@@ -37,8 +42,9 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob wiretapHarvestingJob(HarvestService wiretapService, Environment environment,
-        DashboardRestService wiretapDashboardRestService, JobMonitor jobMonitor)
+    @DependsOn("wiretapService")
+    public HarvestingJob wiretapHarvestingJob(@Qualifier("wiretapService")HarvestService wiretapService, Environment environment,
+        @Qualifier("wiretapDashboardRestService") DashboardRestService wiretapDashboardRestService, JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("wiretapHarvestingJob", wiretapService, environment, wiretapDashboardRestService);
         jobMonitor.setJobName(harvestingJob.getJobName());
@@ -48,8 +54,9 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob errorReportingHarvestingJob(HarvestService errorReportingManagementService,
-        Environment environment, DashboardRestService errorReportingDashboardRestService, JobMonitor jobMonitor)
+    @DependsOn("errorReportingManagementService")
+    public HarvestingJob errorReportingHarvestingJob(@Qualifier("errorReportingManagementService")HarvestService errorReportingManagementService,
+        Environment environment, @Qualifier("errorReportingDashboardRestService") DashboardRestService errorReportingDashboardRestService, JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("errorReportingHarvestingJob", errorReportingManagementService, environment,
             errorReportingDashboardRestService);
@@ -60,8 +67,10 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob exclusionHarvestingJob(HarvestService exclusionManagementService, Environment environment,DashboardRestService exclusionDashboardRestService,
-                                                JobMonitor jobMonitor)
+    @DependsOn("exclusionManagementService")
+    public HarvestingJob exclusionHarvestingJob(@Qualifier("exclusionManagementService")HarvestService exclusionManagementService, Environment environment
+        , @Qualifier("exclusionDashboardRestService") DashboardRestService exclusionDashboardRestService
+        , JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("exclusionHarvestingJob", exclusionManagementService, environment, exclusionDashboardRestService);
         jobMonitor.setJobName(harvestingJob.getJobName());
@@ -72,8 +81,9 @@ public class HarvestingAutoConfiguration
 
 
     @Bean
-    public HarvestingJob messageHistoryJob(HarvestService messageHistoryService, Environment environment, DashboardRestService metricsDashboardRestService,
-                                           JobMonitor jobMonitor)
+    @DependsOn("messageHistoryService")
+    public HarvestingJob messageHistoryJob(@Qualifier("messageHistoryService")HarvestService messageHistoryService, Environment environment
+        , @Qualifier("metricsDashboardRestService") DashboardRestService metricsDashboardRestService, JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("messageHistoryHarvestingJob", messageHistoryService, environment,metricsDashboardRestService);
         jobMonitor.setJobName(harvestingJob.getJobName());
@@ -83,8 +93,9 @@ public class HarvestingAutoConfiguration
     }
 
     @Bean
-    public HarvestingJob systemEventJob(HarvestService systemEventService, Environment environment, DashboardRestService systemEventsDashboardRestService,
-                                        JobMonitor jobMonitor)
+    @DependsOn("systemEventService")
+    public HarvestingJob systemEventJob(@Qualifier("systemEventService")HarvestService systemEventService, Environment environment
+        , @Qualifier("systemEventsDashboardRestService") DashboardRestService systemEventsDashboardRestService, JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("systemEventHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
         jobMonitor.setJobName(harvestingJob.getJobName());

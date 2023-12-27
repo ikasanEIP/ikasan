@@ -46,7 +46,7 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;

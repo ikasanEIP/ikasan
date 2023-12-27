@@ -40,7 +40,7 @@
  */
 package org.ikasan.connector.base.outbound;
 
-import javax.resource.spi.ConnectionRequestInfo;
+import jakarta.resource.spi.ConnectionRequestInfo;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

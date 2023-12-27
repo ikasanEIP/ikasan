@@ -50,7 +50,7 @@ import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

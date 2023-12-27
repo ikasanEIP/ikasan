@@ -76,8 +76,8 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
 {
     private ApplicationContext applicationContext;
 
-    @Autowired
-    ConfigurationService configurationService;
+//    @Autowired
+//    ConfigurationService configurationService;
 
     @Autowired
     @Qualifier("ikasan.xads") DataSource ikasanxads;
@@ -87,31 +87,29 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
         HousekeepingSchedulerService housekeepingSchedulerService,
-        HarvestingSchedulerService harvestingSchedulerService
-    ) {
+        HarvestingSchedulerService harvestingSchedulerService) {
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
              housekeepingSchedulerService, harvestingSchedulerService);
     }
 
     @Bean
+    @DependsOn({"moduleContainer", "systemEventService", "startupControlDao"})
     public ModuleServiceImpl moduleService(ModuleContainer moduleContainer, SystemEventService systemEventService,
         StartupControlDao startupControlDao){
         return new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao);
     }
 
     @Bean
+    @DependsOn({"systemEventService", "startupControlDao"})
     public StartupControlServiceImpl startupControlService(SystemEventService systemEventService, StartupControlDao startupControlDao){
         return new StartupControlServiceImpl(systemEventService,startupControlDao);
     }
-
-
 
     @Bean
     @ConfigurationProperties (prefix="ikasan.module.activator.startup.type")
     public BulkStartupTypeSetupServiceConfiguration bulkStartupTypeSetupServiceConfiguration(){
         return new BulkStartupTypeSetupServiceConfiguration();
     }
-
 
     @Bean
     @ConfigurationProperties (prefix="ikasan.module.activator.wiretap")
@@ -127,8 +125,6 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
             startupControlDao);
     }
 
-
-
     @Bean
     public WiretapTriggerSetupService wiretapTriggerSetupService(WiretapTriggerSetupServiceConfiguration
                                                                        wiretapTriggerSetupServiceConfiguration){
@@ -139,8 +135,9 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     }
 
     @Bean
-    public ModuleActivator moduleActivator(StartupControlDao startupControlDao, DashboardRestService moduleMetadataDashboardRestService,
-                                           DashboardRestService configurationMetadataDashboardRestService,
+    public ModuleActivator moduleActivator(ConfigurationService configurationService, StartupControlDao startupControlDao,
+                                           @Qualifier("moduleMetadataDashboardRestService") DashboardRestService moduleMetadataDashboardRestService,
+                                           @Qualifier("configurationMetadataDashboardRestService") DashboardRestService configurationMetadataDashboardRestService,
                                            BulkStartupTypeSetupService bulkStartupTypeSetupService,
                                            WiretapTriggerSetupService wiretapTriggerSetupService ) {
         return new ModuleActivatorDefaultImpl(configurationService, startupControlDao, moduleMetadataDashboardRestService,
@@ -152,20 +149,9 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
         return new ModuleContainerImpl();
     }
 
-//    @Bean
-//    public LocalSessionFactoryBean startupControlSessionFactory() {
-//        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-//        sessionFactoryBean.setDataSource(ikasanxads);
-//        sessionFactoryBean.setMappingResources("org/ikasan/module/startup/StartupControl.hbm.xml");
-//        Properties properties = new Properties();
-//        properties.putAll(platformHibernateProperties);
-//        sessionFactoryBean.setHibernateProperties(properties);
-//        return sessionFactoryBean;
-//    }
-
     @Bean
     public LocalContainerEntityManagerFactoryBean moduleEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, Properties platformJpaProperties) {
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
             = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
@@ -178,14 +164,7 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     }
 
     @Bean
-    public JpaVendorAdapter jpaVendorAdapter() {
-        HibernateJpaVendorAdapter hibernateJpaVendorAdapter
-            = new HibernateJpaVendorAdapter();
-
-        return hibernateJpaVendorAdapter;
-    }
-
-    @Bean
+    @DependsOn("moduleEntityManager")
     public StartupControlDao startupControlDao() {
 
         HibernateStartupControlDao startupControlDao = new HibernateStartupControlDao();

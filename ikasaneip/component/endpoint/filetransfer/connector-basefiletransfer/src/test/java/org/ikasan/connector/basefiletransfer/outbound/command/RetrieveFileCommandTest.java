@@ -54,7 +54,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 import java.io.File;
 import java.net.URISyntaxException;
 

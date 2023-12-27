@@ -42,7 +42,7 @@ package org.ikasan.connector.ftp.outbound;
 
 import java.io.Serializable;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;

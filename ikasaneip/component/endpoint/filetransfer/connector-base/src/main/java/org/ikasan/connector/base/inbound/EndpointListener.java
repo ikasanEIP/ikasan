@@ -42,7 +42,7 @@ package org.ikasan.connector.base.inbound;
 
 import java.util.List;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 /**
  * This interface provides the common default endpoints for all inbound resource

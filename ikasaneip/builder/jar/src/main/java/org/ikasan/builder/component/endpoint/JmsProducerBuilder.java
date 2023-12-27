@@ -47,7 +47,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 import java.util.Map;
 
 /**

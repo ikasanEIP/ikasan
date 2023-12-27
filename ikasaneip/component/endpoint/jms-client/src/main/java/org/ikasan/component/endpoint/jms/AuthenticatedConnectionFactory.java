@@ -40,12 +40,13 @@
  */
 package org.ikasan.component.endpoint.jms;
 
+import jakarta.jms.Connection;
+import jakarta.jms.ConnectionFactory;
+import jakarta.jms.JMSContext;
+import jakarta.jms.JMSException;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 
-import javax.jms.Connection;
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import java.util.Properties;
@@ -75,6 +76,27 @@ public class AuthenticatedConnectionFactory implements ConnectionFactory
 
     /** credential */
     private String password;
+
+    // todo work out what the below methods need
+    @Override
+    public JMSContext createContext() {
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(String s, String s1) {
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(String s, String s1, int i) {
+        return null;
+    }
+
+    @Override
+    public JMSContext createContext(int i) {
+        return null;
+    }
 
     public void setConnectionFactory(ConnectionFactory connectionFactory)
     {

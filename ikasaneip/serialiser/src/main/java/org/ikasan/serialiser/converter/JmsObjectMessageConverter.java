@@ -43,8 +43,8 @@ package org.ikasan.serialiser.converter;
 import org.ikasan.serialiser.model.JmsObjectMessageDefaultImpl;
 import org.ikasan.spec.serialiser.Converter;
 
-import javax.jms.JMSException;
-import javax.jms.ObjectMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.ObjectMessage;
 
 public class JmsObjectMessageConverter extends AbstractJmsMessageConverter<ObjectMessage,ObjectMessage> implements Converter<ObjectMessage, ObjectMessage>
 {   

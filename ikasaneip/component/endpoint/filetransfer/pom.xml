@@ -71,11 +71,11 @@
             <scope>provided</scope>
         </dependency>
         <!-- J2EE -->
-        <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-j2ee</artifactId>
-            <scope>provided</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>geronimo-spec</groupId>-->
+<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
         <!-- For persisting information about the connector such as chunking large messages -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>

@@ -6,7 +6,7 @@ import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSeri
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.serialiser.Serialiser;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 public class BigQueueProducerLRCOBuilderImpl implements BigQueueProducerLRCOBuilder {
 

@@ -40,12 +40,12 @@
  */
 package org.ikasan.builder.component.converter;
 
+import jakarta.xml.bind.ValidationEventHandler;
 import org.ikasan.component.converter.xml.XmlStringToObjectConfiguration;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.junit.Test;
 
-import javax.xml.bind.ValidationEventHandler;
 import java.util.ArrayList;
 import java.util.List;
 

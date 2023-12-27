@@ -45,7 +45,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import com.google.common.cache.Cache;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.jms.producer;
 
+import jakarta.jms.Message;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.jmock.Expectations;
@@ -48,8 +49,6 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.jms.Message;
 
 /**
  * Test class for JmsPostProcessor.

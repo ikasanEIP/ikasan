@@ -40,22 +40,20 @@
  */
 package org.ikasan.connector.base.command;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.resource.ResourceException;
-import javax.transaction.xa.Xid;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import jakarta.resource.ResourceException;
 import org.ikasan.connector.base.command.state.State;
 import org.ikasan.connector.base.command.state.StateManager;
 import org.ikasan.connector.base.command.state.Transition;
 import org.ikasan.connector.base.journal.TransactionJournal;
 import org.ikasan.connector.base.journal.TransactionJournalingException;
-import org.springframework.beans.factory.BeanFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.transaction.xa.Xid;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * This base implementation of the <code>TransactionalResourceCommand</code>

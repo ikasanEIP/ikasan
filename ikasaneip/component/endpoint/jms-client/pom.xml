@@ -54,10 +54,15 @@
     <dependencies>
         
         <!-- Standard J2ee spec -->
+<!--        <dependency>-->
+<!--            <groupId>geronimo-spec</groupId>-->
+<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
+<!--            <scope>provided</scope>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>geronimo-spec</groupId>
-            <artifactId>geronimo-spec-j2ee</artifactId>
-            <scope>provided</scope>
+            <groupId>jakarta.jms</groupId>
+            <artifactId>jakarta.jms-api</artifactId>
         </dependency>
 
         <dependency>

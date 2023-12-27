@@ -4,7 +4,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
   http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
-    <persistence-unit name="system-event">
+    <persistence-unit name="system-event" transaction-type="JTA">
         <class>org.ikasan.systemevent.model.SystemEventImpl</class>
     </persistence-unit>
 </persistence>

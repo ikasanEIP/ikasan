@@ -40,7 +40,8 @@
  */
 package org.ikasan.component.endpoint.jms.consumer;
 
-import javax.jms.*;
+import jakarta.jms.*;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;

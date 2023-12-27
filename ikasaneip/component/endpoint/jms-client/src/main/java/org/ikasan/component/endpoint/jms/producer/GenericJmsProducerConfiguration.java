@@ -40,9 +40,9 @@
  */
 package org.ikasan.component.endpoint.jms.producer;
 
+import jakarta.jms.Session;
 import org.ikasan.spec.configuration.Masked;
 
-import javax.jms.Session;
 import java.util.Map;
 
 /**

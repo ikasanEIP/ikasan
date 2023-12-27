@@ -43,7 +43,7 @@ package org.ikasan.connector.base.outbound;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import javax.resource.cci.ConnectionSpec;
+import jakarta.resource.cci.ConnectionSpec;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

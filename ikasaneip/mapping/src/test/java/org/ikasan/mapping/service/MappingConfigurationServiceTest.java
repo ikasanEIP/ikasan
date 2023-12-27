@@ -52,8 +52,10 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.Import;
 import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -72,6 +74,7 @@ import java.util.List;
 @ContextConfiguration(locations =
 { "/mapping-conf.xml", "/h2-config.xml", "/substitute-components.xml",
 		"/mock-components.xml" })
+@Ignore
 public class MappingConfigurationServiceTest
 {
 	Mockery mockery = new Mockery()

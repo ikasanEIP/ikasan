@@ -40,12 +40,12 @@
  */
 package org.ikasan.compatibility.component.endpoint;
 
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
 
 /**
  * Manages the event identifier setting/getting for messages to/from i8 JMS pub/sub

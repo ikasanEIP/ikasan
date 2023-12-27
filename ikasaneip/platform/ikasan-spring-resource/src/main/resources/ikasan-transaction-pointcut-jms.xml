@@ -7,7 +7,7 @@
 
     <!-- JMS contract message listnener pointcut -->
     <aop:config>
-        <aop:pointcut id="jmsMessagePointcut" expression="execution(* javax.jms.MessageListener.onMessage(..))" />
+        <aop:pointcut id="jmsMessagePointcut" expression="execution(* jakarta.jms.MessageListener.onMessage(..))" />
         <aop:advisor id="jmsPointcutAdvice" advice-ref="required-TransactionAdvice" pointcut-ref="jmsMessagePointcut" />
     </aop:config>
 

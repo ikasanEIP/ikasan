@@ -42,9 +42,9 @@ package org.ikasan.serialiser.model;
 
 import java.util.*;
 
-import javax.jms.Destination;
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.Destination;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 /**
  * Light JMS message implementation purely for serialiser usage.
@@ -344,7 +344,27 @@ public class JmsMessageDefaultImpl implements Message
     	// Not implemented
     }
 
-	/* (non-Javadoc)
+    @Override
+    public long getJMSDeliveryTime() throws JMSException {
+        return 0;
+    }
+
+    @Override
+    public void setJMSDeliveryTime(long l) throws JMSException {
+
+    }
+
+    @Override
+    public <T> T getBody(Class<T> aClass) throws JMSException {
+        return null;
+    }
+
+    @Override
+    public boolean isBodyAssignableTo(Class aClass) throws JMSException {
+        return false;
+    }
+
+    /* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override

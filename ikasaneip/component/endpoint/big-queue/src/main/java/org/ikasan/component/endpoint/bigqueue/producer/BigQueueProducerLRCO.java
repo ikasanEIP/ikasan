@@ -9,7 +9,7 @@ import org.ikasan.spec.serialiser.Serialiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.transaction.TransactionManager;
+import jakarta.transaction.TransactionManager;
 
 /**
  * Implementation of a BigQueue producer.

@@ -70,7 +70,6 @@ import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import javax.jms.JMSException;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
@@ -148,7 +147,7 @@ public class BigQueueSampleFlowTest {
         this.removeAllMessages();
         // Prepare test data
         String message = SAMPLE_MESSAGE;
-        logger.info("Sending a JMS message.[" + message + "]");
+        logger.info("Sending a BigQueue message.[" + message + "]");
 
         BigQueueMessageJsonSerialiser<String> serialiser = new BigQueueMessageJsonSerialiser();
 

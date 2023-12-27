@@ -5,12 +5,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
@@ -18,19 +23,20 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 @EnableWebSecurity
 @EnableWebMvc
 @EnableGlobalMethodSecurity(prePostEnabled = true)
+//    @DependsOn({"passwordEncoder", "userService", "ikasanAuthenticationProvider"})
 public class WebSecurityConfig //extends WebSecurityConfigurerAdapter
 {
-    @Autowired
-    PasswordEncoder passwordEncoder;
-
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    AuthenticationProvider ikasanAuthenticationProvider;
-
-    @Value("${ikasan.additional.unsecured.endpoint:/actuator/**}")
-    private String additionalUnsecuredEndpoints;
+//    @Autowired
+//    PasswordEncoder passwordEncoder;
+//
+//    @Autowired
+//    UserService userService;
+//
+//    @Autowired
+//    AuthenticationProvider ikasanAuthenticationProvider;
+//
+//    @Value("${ikasan.additional.unsecured.endpoint:/actuator/**}")
+//    private String additionalUnsecuredEndpoints;
 
 
 //    @Override protected void configure(AuthenticationManagerBuilder auth) throws Exception
@@ -42,13 +48,27 @@ public class WebSecurityConfig //extends WebSecurityConfigurerAdapter
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-            .httpBasic()
-            .and()
-            .authorizeRequests();
-
-        return http.getObject();
+        http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry
+            -> authorizationManagerRequestMatcherRegistry.requestMatchers("**").hasRole("USER"));
+        return http.build();
     }
+
+//    @Bean
+//    public UserDetailsService userDetailsService() {
+//        UserDetails user = User.withDefaultPasswordEncoder()
+//            .username("user")
+//            .password("password")
+//            .roles("USER")
+//            .build();
+//        return new InMemoryUserDetailsManager(user);
+//    }
+
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.authorizeHttpRequests(authorizationManagerRequestMatcherRegistry
+//            -> authorizationManagerRequestMatcherRegistry.requestMatchers("**"));
+//        return http.build();
+//    }
 
 //    @Bean
 //    public WebSecurityCustomizer webSecurityCustomizer() {

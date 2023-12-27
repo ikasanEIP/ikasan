@@ -42,7 +42,7 @@ package org.ikasan.connector.base.command;
 
 import java.util.HashMap;
 
-import javax.resource.ResourceException;
+import jakarta.resource.ResourceException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
