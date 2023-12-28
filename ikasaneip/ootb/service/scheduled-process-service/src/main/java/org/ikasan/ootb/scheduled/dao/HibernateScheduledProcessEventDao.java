@@ -41,21 +41,24 @@
 package org.ikasan.ootb.scheduled.dao;
 
 import com.google.common.collect.Lists;
-import org.hibernate.query.Query;
-import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.HibernateCallback;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
-
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
+import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.orm.hibernate5.HibernateCallback;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the Scheduled Process Event DAO based on Hibernate persistence.
@@ -63,7 +66,7 @@ import java.util.List;
  * @author Ikasan Development Team
  * 
  */
-public class HibernateScheduledProcessEventDao extends HibernateDaoSupport implements ScheduledProcessEventDao
+public class HibernateScheduledProcessEventDao implements ScheduledProcessEventDao
 {
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(HibernateScheduledProcessEventDao.class);
@@ -72,7 +75,10 @@ public class HibernateScheduledProcessEventDao extends HibernateDaoSupport imple
     public static final String NOW = "now";
 
     public static final String UPDATE_HARVESTED_QUERY = "update ScheduledProcessEventImpl w set w.harvestedDateTime = :"
-        + NOW + ", w.harvested = 1" + " where w.id in(:" + EVENT_IDS + ")";
+        + NOW + ", w.harvested = true" + " where w.id in(:" + EVENT_IDS + ")";
+
+    @PersistenceContext(unitName = "scheduled-process")
+    private EntityManager entityManager;
 
     /**
      * Constructor
@@ -83,50 +89,48 @@ public class HibernateScheduledProcessEventDao extends HibernateDaoSupport imple
 
     @Override
     public void save(ScheduledProcessEvent scheduledProcessEvent) {
-        getHibernateTemplate().saveOrUpdate(scheduledProcessEvent);
+        this.entityManager.persist(scheduledProcessEvent);
     }
 
     @Override
     public List<ScheduledProcessEvent> harvest(int housekeepingBatchSize) {
-        return (List<ScheduledProcessEvent>) this.getHibernateTemplate().execute((HibernateCallback) session -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<ScheduledProcessEventImpl> criteriaQuery = builder.createQuery(ScheduledProcessEventImpl.class);
-            Root<ScheduledProcessEventImpl> root = criteriaQuery.from(ScheduledProcessEventImpl.class);
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<ScheduledProcessEventImpl> criteriaQuery = builder.createQuery(ScheduledProcessEventImpl.class);
+        Root<ScheduledProcessEventImpl> root = criteriaQuery.from(ScheduledProcessEventImpl.class);
 
-            criteriaQuery.select(root)
-                .where(builder.equal(root.get("harvestedDateTime"), 0));
+        criteriaQuery.select(root)
+            .where(builder.equal(root.get("harvestedDateTime"), 0));
 
-            Query<ScheduledProcessEventImpl> query = session.createQuery(criteriaQuery);
-            query.setMaxResults(housekeepingBatchSize);
-            return query.getResultList();
-        });
+        TypedQuery<ScheduledProcessEventImpl> query = this.entityManager.createQuery(criteriaQuery);
+        query.setMaxResults(housekeepingBatchSize);
+        return query.getResultList().stream()
+            .map(scheduledProcessEvent -> (ScheduledProcessEvent)scheduledProcessEvent)
+            .collect(Collectors.toList());
     }
 
     @Override
     public boolean harvestableRecordsExist() {
-        return getHibernateTemplate().execute(session -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
-            Root<ScheduledProcessEventImpl> root = criteriaQuery.from(ScheduledProcessEventImpl.class);
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<ScheduledProcessEventImpl> root = criteriaQuery.from(ScheduledProcessEventImpl.class);
 
-            List<Predicate> predicates = new ArrayList<>();
-            predicates.add(builder.equal(root.get("harvestedDateTime"),0));
+        List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(root.get("harvestedDateTime"),0));
 
-            criteriaQuery.select(builder.count(root))
-                .where(predicates.toArray(new Predicate[predicates.size()]));
+        criteriaQuery.select(builder.count(root))
+            .where(predicates.toArray(new Predicate[predicates.size()]));
 
-            Query<Long> query = session.createQuery(criteriaQuery);
-            List<Long> rowCountList = query.getResultList();
+        TypedQuery<Long> query = this.entityManager.createQuery(criteriaQuery);
+        List<Long> rowCountList = query.getResultList();
 
-            Long rowCount = 0L;
-            if (!rowCountList.isEmpty())
-            {
-                rowCount = rowCountList.get(0);
-            }
+        Long rowCount = 0L;
+        if (!rowCountList.isEmpty())
+        {
+            rowCount = rowCountList.get(0);
+        }
 
-            logger.debug(rowCount + ", FlowInvocation harvestable records exist");
-            return rowCount>0;
-        });
+        logger.debug(rowCount + ", FlowInvocation harvestable records exist");
+        return rowCount>0;
     }
 
     @Override
@@ -136,35 +140,28 @@ public class HibernateScheduledProcessEventDao extends HibernateDaoSupport imple
 
     @Override
     public void updateAsHarvested(List<ScheduledProcessEvent> events) {
-        getHibernateTemplate().execute(session -> {
-            List<Long> scheduledProcessEventIds = new ArrayList();
+        List<Long> scheduledProcessEventIds = new ArrayList();
 
-            for(ScheduledProcessEvent event: events)
-            {
-                scheduledProcessEventIds.add(((ScheduledProcessEventImpl)event).getId());
-            }
+        for(ScheduledProcessEvent event: events)
+        {
+            scheduledProcessEventIds.add(((ScheduledProcessEventImpl)event).getId());
+        }
 
-            List<List<Long>> partitionedIds = Lists.partition(scheduledProcessEventIds, 300);
+        List<List<Long>> partitionedIds = Lists.partition(scheduledProcessEventIds, 300);
 
-            for(List<Long> eventIds: partitionedIds)
-            {
-                Query query = session.createQuery(UPDATE_HARVESTED_QUERY);
-                query.setParameter(NOW, System.currentTimeMillis());
-                query.setParameterList(EVENT_IDS, eventIds);
-                query.executeUpdate();
-            }
-
-            return null;
-        });
+        for(List<Long> eventIds: partitionedIds)
+        {
+            Query query = this.entityManager.createQuery(UPDATE_HARVESTED_QUERY);
+            query.setParameter(NOW, System.currentTimeMillis());
+            query.setParameter(EVENT_IDS, eventIds);
+            query.executeUpdate();
+        }
     }
 
     @Override
     public void housekeep() {
-        getHibernateTemplate().execute((session) -> {
-            Query query = session.createQuery("delete ScheduledProcessEventImpl s where s.harvested = true");
-            query.executeUpdate();
-            return null;
-        });
+        Query query = this.entityManager.createQuery("delete ScheduledProcessEventImpl s where s.harvested = true");
+        query.executeUpdate();
     }
 
     /**
@@ -173,13 +170,13 @@ public class HibernateScheduledProcessEventDao extends HibernateDaoSupport imple
      * @return
      */
     protected List<ScheduledProcessEvent> findAll() {
-        return (List<ScheduledProcessEvent>) this.getHibernateTemplate().execute((HibernateCallback) session -> {
-            CriteriaBuilder builder = session.getCriteriaBuilder();
-            CriteriaQuery<ScheduledProcessEventImpl> criteriaQuery = builder.createQuery(ScheduledProcessEventImpl.class);
-            criteriaQuery.from(ScheduledProcessEventImpl.class);
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<ScheduledProcessEventImpl> criteriaQuery = builder.createQuery(ScheduledProcessEventImpl.class);
+        criteriaQuery.from(ScheduledProcessEventImpl.class);
 
-            Query<ScheduledProcessEventImpl> query = session.createQuery(criteriaQuery);
-            return query.getResultList();
-        });
+        TypedQuery<ScheduledProcessEventImpl> query = this.entityManager.createQuery(criteriaQuery);
+        return query.getResultList().stream()
+            .map(scheduledProcessEvent -> (ScheduledProcessEvent)scheduledProcessEvent)
+            .collect(Collectors.toList());
     }
 }
