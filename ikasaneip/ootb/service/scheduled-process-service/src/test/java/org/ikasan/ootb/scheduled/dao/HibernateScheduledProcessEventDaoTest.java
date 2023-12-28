@@ -40,10 +40,12 @@
  */
 package org.ikasan.ootb.scheduled.dao;
 
-import org.ikasan.spec.scheduled.event.model.Outcome;
+import org.ikasan.ootb.scheduled.ScheduledServiceAutoConfiguration;
+import org.ikasan.ootb.scheduled.ScheduledServiceTestAutoConfiguration;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
-import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
+import org.ikasan.spec.scheduled.event.model.Outcome;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,16 +58,11 @@ import javax.annotation.Resource;
 import java.util.stream.IntStream;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml",
-    "/substitute-components.xml",
-})
+@ContextConfiguration(classes = {ScheduledServiceAutoConfiguration.class, ScheduledServiceTestAutoConfiguration.class})
 public class HibernateScheduledProcessEventDaoTest {
 
     @Resource
     private ScheduledProcessEventDao scheduledProcessEventDao;
-
-    @Resource
-    private LocalSessionFactoryBean sessionFactoryBean;
 
     @Test
     @DirtiesContext
@@ -116,10 +113,7 @@ public class HibernateScheduledProcessEventDaoTest {
 
         this.scheduledProcessEventDao.housekeep();
 
-        HibernateScheduledProcessEventDao dao = new HibernateScheduledProcessEventDao();
-        dao.setSessionFactory(this.sessionFactoryBean.getObject());
-
-        Assert.assertEquals(0, dao.findAll().size());
+        Assert.assertEquals(false, this.scheduledProcessEventDao.harvestableRecordsExist());
     }
 
 

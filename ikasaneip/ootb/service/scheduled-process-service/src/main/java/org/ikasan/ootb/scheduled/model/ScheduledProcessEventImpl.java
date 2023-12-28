@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduled.model;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.ikasan.harvest.HarvestEvent;
@@ -54,31 +55,59 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
  * @author Ikasan Development Team
  *
  */
+@Entity
+@Table(name = "ScheduledProcessEvent")
 public class ScheduledProcessEventImpl implements ScheduledProcessEvent<Outcome, DryRunParameters>, HarvestEvent
 {
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     protected Long id;
+    @Column(name = "AgentName", nullable = false)
     protected String agentName;
+    @Column(name = "AgentHostname")
     protected String agentHostname;
+    @Column(name = "JobName", nullable = false)
     protected String jobName;
+    @Column(name = "JobGroup", nullable = false)
     protected String jobGroup;
+    @Column(name = "JobDescription")
     protected String jobDescription;
+    @Column(name = "CommandLine")
     protected String commandLine;
+    @Column(name = "ReturnCode")
     protected int returnCode;
+    @Column(name = "Successful")
     protected boolean successful;
+    @Column(name = "Outcome")
+    @Enumerated(EnumType.STRING)
     protected Outcome outcome;
+    @Column(name = "ResultOutput")
     protected String resultOutput;
+    @Column(name = "ResultError")
     protected String resultError;
+    @Column(name = "Pid")
     protected long pid;
+    @Column(name = "User")
     protected String user;
+    @Column(name = "FireTime")
     protected long fireTime;
+    @Column(name = "NextFireTime")
     protected long nextFireTime;
+    @Column(name = "CompletionTime")
     protected long completionTime;
+    @Column(name = "Harvested", nullable = false)
     protected boolean harvested;
+    @Column(name = "HarvestedDateTime", nullable = false)
     protected long harvestedDateTime;
+    @Transient
     protected boolean dryRun = false;
+    @Transient
     protected boolean jobStarting = false;
+    @Transient
     protected DryRunParameters dryRunParameters;
+    @Transient
     private String executionDetails;
+    @Transient
     private ScheduledProcessEvent catalystEvent;
 
 

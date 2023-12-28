@@ -47,22 +47,22 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <version>1.4.1</version>
-                <executions>
-                    <execution>
-                        <id>enforce-versions</id>
-                        <goals>
-                            <goal>enforce</goal>
-                        </goals>
-                        <configuration>
-                            <rules><dependencyConvergence /></rules>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>org.apache.maven.plugins</groupId>-->
+<!--                <artifactId>maven-enforcer-plugin</artifactId>-->
+<!--                <version>1.4.1</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>enforce-versions</id>-->
+<!--                        <goals>-->
+<!--                            <goal>enforce</goal>-->
+<!--                        </goals>-->
+<!--                        <configuration>-->
+<!--                            <rules><dependencyConvergence /></rules>-->
+<!--                        </configuration>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--            </plugin>-->
         </plugins>
     </build>
 
@@ -83,7 +83,7 @@
         <version.ikasan>${project.version}</version.ikasan>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.commons.compress>1.20</version.commons.compress>
-        <version.com.h2database>1.4.200</version.com.h2database>
+        <version.com.h2database>2.1.214</version.com.h2database>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>

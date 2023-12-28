@@ -60,6 +60,8 @@ public class ExclusionTestAutoConfiguration
         Properties platformJpaProperties = new Properties();
         platformJpaProperties.put("hibernate.show_sql", false);
         platformJpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
+        platformJpaProperties.put("hibernate.transaction.jta.platform",
+            "org.hibernate.engine.transaction.jta.platform.internal.JBossStandAloneJtaPlatform");
 
         return platformJpaProperties;
     }

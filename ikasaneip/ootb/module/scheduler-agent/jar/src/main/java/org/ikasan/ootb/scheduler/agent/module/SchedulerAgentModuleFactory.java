@@ -72,17 +72,20 @@ public class SchedulerAgentModuleFactory
     @Resource
     SchedulerAgentFlowFactory schedulerAgentFlowFactory;
 
-    @Bean(name = "scheduler-agent-module")
-    public Module createModule()
-    {
-        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
+    @Bean
+    public SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration() {
+        return new SchedulerAgentConfiguredModuleConfiguration();
+    }
 
+    @Bean(name = "scheduler-agent-module")
+    public Module createModule(SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration)
+    {
         // get the module builder
         return builderFactory.getModuleBuilder(moduleName)
                 .withDescription("Scheduler Agent Integration Module.")
                 .withType(ModuleType.SCHEDULER_AGENT)
                 .withFlowFactory(schedulerAgentFlowFactory)
-                .setConfiguration(configuration)
+                .setConfiguration(schedulerAgentConfiguredModuleConfiguration)
             .build();
     }
 }
