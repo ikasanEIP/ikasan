@@ -9,7 +9,7 @@ import org.ikasan.spec.replay.ReplayAudit;
 public class ReplayAuditImpl implements ReplayAudit
 {
     @Id
-    @GeneratedValue(generator = "native")
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
 	private Long id;
     @Column(name="ReplayUser", nullable = false)
     private String user;

@@ -90,7 +90,6 @@ import org.ikasan.spec.scheduled.provision.JobProvisionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.io.IOException;
 
@@ -100,7 +99,7 @@ import java.io.IOException;
  * @author Ikasan Development Team
  */
 @Configuration
-@EnableSwagger2
+//@EnableSwagger2
 public class GeneralComponentFactory
 {
     @Value( "${module.name}" )

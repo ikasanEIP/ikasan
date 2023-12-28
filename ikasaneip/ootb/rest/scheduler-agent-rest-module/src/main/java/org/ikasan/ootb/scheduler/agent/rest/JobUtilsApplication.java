@@ -25,7 +25,7 @@ public class JobUtilsApplication
                     value = "/kill/{pid}",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity killPid(@PathVariable("pid") long pid, @RequestParam(defaultValue = "false") boolean destroy)
+    public ResponseEntity killPid(@PathVariable("pid") long pid, @RequestParam(name = "destroy", defaultValue = "false") boolean destroy)
     {
         try
         {

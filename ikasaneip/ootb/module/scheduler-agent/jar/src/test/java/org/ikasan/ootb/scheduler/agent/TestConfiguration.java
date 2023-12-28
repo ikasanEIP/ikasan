@@ -45,29 +45,28 @@ import org.ikasan.ootb.scheduler.agent.module.SchedulerAgentFlowFactory;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Primary;
-
-import javax.annotation.Resource;
 
 @org.springframework.boot.test.context.TestConfiguration
 public class TestConfiguration {
 
-    @Value( "${module.name}" )
-    String moduleName;
+//    @Value( "${module.name}" )
+//    String moduleName;
+//
+//    @Autowired
+//    BuilderFactory builderFactory;
+//
+//    @Autowired
+//    SchedulerAgentFlowFactory schedulerAgentFlowFactory;
 
-    @Resource
-    BuilderFactory builderFactory;
 
-    @Resource
-    SchedulerAgentFlowFactory schedulerAgentFlowFactory;
-
-
-    @Bean(name = "scheduler-agent-module")
+    @Bean
     @Primary
-    public Module createTestBeanModule()
-    {
+    public SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration() {
         SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
         configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
@@ -82,16 +81,38 @@ public class TestConfiguration {
         configuration.getFlowDefinitions().put("Housekeep Log Files Flow", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", "HOUSEKEEP_LOG");
 
-        configuration.setDryRunMode(false);
-
-        // get the module builder
-        return builderFactory.getModuleBuilder(moduleName)
-            .withDescription("Scheduler Agent Integration Module.")
-            .withType(ModuleType.SCHEDULER_AGENT)
-            .withFlowFactory(schedulerAgentFlowFactory)
-            .setConfiguration(configuration)
-            .build();
+        return configuration;
     }
+
+//    @Bean(name = {"scheduler-agent-module", "module"})
+//    @Primary
+//    @Lazy
+//    public Module createTestBeanModule()
+//    {
+//        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
+//        configuration.getFlowDefinitions().put("Scheduler Flow 1", "MANUAL");
+//        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
+//        configuration.getFlowDefinitions().put("Scheduler Flow 2", "MANUAL");
+//        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 2", "FILE");
+//        configuration.getFlowDefinitions().put("Scheduler Flow 3", "MANUAL");
+//        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 3", "LEGACY");
+//        configuration.getFlowDefinitions().put("Scheduler Flow 4", "MANUAL");
+//        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 4", "QUARTZ");
+//        configuration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "MANUAL");
+//        configuration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", "OUTBOUND");
+//        configuration.getFlowDefinitions().put("Housekeep Log Files Flow", "MANUAL");
+//        configuration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", "HOUSEKEEP_LOG");
+//
+//        configuration.setDryRunMode(false);
+//
+//        // get the module builder
+//        return builderFactory.getModuleBuilder(moduleName)
+//            .withDescription("Scheduler Agent Integration Module.")
+//            .withType(ModuleType.SCHEDULER_AGENT)
+//            .withFlowFactory(schedulerAgentFlowFactory)
+//            .setConfiguration(configuration)
+//            .build();
+//    }
 }
 
 

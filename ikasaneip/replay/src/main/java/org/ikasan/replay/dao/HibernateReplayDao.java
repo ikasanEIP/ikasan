@@ -112,7 +112,7 @@ public class HibernateReplayDao implements ReplayDao<Long>,ReplayAuditDao<Replay
 
     private boolean isHarvestQueryOrdered = false;
 
-    @PersistenceContext(unitName = "replay")
+    @PersistenceContext(unitName = "xa-replay")
     private EntityManager entityManager;
 
 

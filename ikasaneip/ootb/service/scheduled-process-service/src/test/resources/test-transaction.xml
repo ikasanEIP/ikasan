@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  /*
  * $Id$
@@ -41,30 +42,22 @@
  */
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <!-- =================================================================== -->
-    <!-- H2 provides an in-memory database                                   -->
-    <!-- =================================================================== -->
-    
-    <util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.hibernate.dialect.H2Dialect"/>
-        <entry key="hibernate.show_sql" value="false"/>
-        <entry key="hibernate.hbm2ddl.auto" value="create-drop"/>
-        <entry key="hibernate.flushMode" value="commit"/>
-        <entry key="hibernate.jdbc.batch_size" value="5"/>
-    </util:map>
+    <aop:config>
+        <aop:pointcut id="daoMethods"
+                      expression="execution(* org.ikasan.*.*.dao.*.*(..))"/>
+        <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>
+    </aop:config>
 
-    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver" />
-        <property name="url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1" />
-        <property name="username" value="sa" />
-        <property name="password" value="sa" />
-    </bean>
-  
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED"/>
+        </tx:attributes>
+    </tx:advice>
+
 </beans>

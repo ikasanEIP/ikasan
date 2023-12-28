@@ -149,7 +149,7 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
         return new ModuleContainerImpl();
     }
 
-    @Bean
+    @Bean(name = "moduleEntityManager")
     public LocalContainerEntityManagerFactoryBean moduleEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
         , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
@@ -166,7 +166,6 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     @Bean
     @DependsOn("moduleEntityManager")
     public StartupControlDao startupControlDao() {
-
         HibernateStartupControlDao startupControlDao = new HibernateStartupControlDao();
         return startupControlDao;
     }

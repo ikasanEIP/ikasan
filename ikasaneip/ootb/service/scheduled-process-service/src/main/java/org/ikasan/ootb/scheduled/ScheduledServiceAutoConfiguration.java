@@ -56,6 +56,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -70,41 +72,40 @@ public class ScheduledServiceAutoConfiguration
     public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";
 
     @Bean
-    public HarvestingJob scheduledProcessEventJob(HarvestService scheduledProcessService, Environment environment, DashboardRestService scheduleProcessEventsDashboardRestService)
+    public HarvestingJob scheduledProcessEventJob(@Qualifier("scheduledProcessService") HarvestService scheduledProcessService, Environment environment
+        , @Qualifier("scheduleProcessEventsDashboardRestService") DashboardRestService scheduleProcessEventsDashboardRestService)
     {
         return new HarvestingJobImpl("scheduledProcessEventJob", scheduledProcessService, environment, scheduleProcessEventsDashboardRestService);
     }
 
     @Bean
-    public HousekeepingJob scheduledProcessEventHousekeepingJob(HousekeepService scheduledProcessService, Environment environment)
+    public HousekeepingJob scheduledProcessEventHousekeepingJob(@Qualifier("scheduledProcessService") HousekeepService scheduledProcessService, Environment environment)
     {
         return new HousekeepingJobImpl("scheduledProcessEventHousekeepingJob", scheduledProcessService, environment);
     }
 
-    @Bean
-    public ScheduledProcessEventService scheduledProcessService(ScheduledProcessEventDao scheduledProcessEventDao) {
+    @Bean(name = "scheduledProcessService")
+    public ScheduledProcessServiceImpl scheduledProcessService(ScheduledProcessEventDao scheduledProcessEventDao) {
         return new ScheduledProcessServiceImpl(scheduledProcessEventDao);
     }
 
     @Bean
-    public ScheduledProcessEventDao scheduledProcessEventDao(SessionFactory sessionFactory) {
+    public ScheduledProcessEventDao scheduledProcessEventDao() {
         HibernateScheduledProcessEventDao scheduledProcessEventDao = new HibernateScheduledProcessEventDao();
-        scheduledProcessEventDao.setSessionFactory(sessionFactory   );
-
         return scheduledProcessEventDao;
     }
 
     @Bean
-    public SessionFactory sessionFactory(@Qualifier("ikasanXaDataSourceInstance") DataSource dataSource
-        , @Qualifier("platformHibernateProperties") Map hibernateProperties) throws IOException {
-        LocalSessionFactoryBean localSessionFactoryBean = new LocalSessionFactoryBean();
-        localSessionFactoryBean.setDataSource(dataSource);
-        Properties properties = new Properties();
-        properties.putAll(hibernateProperties);
-        localSessionFactoryBean.setHibernateProperties(properties);
-        localSessionFactoryBean.setMappingResources("org/ikasan/ootb/scheduled/model/ScheduledProcessEventImpl.hbm.xml");
-        localSessionFactoryBean.afterPropertiesSet();
+    public LocalContainerEntityManagerFactoryBean scheduledProcessEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+            = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("scheduled-process");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:scheduled-process-persistence.xml");
 
-        return localSessionFactoryBean.getObject();
+        return localContainerEntityManagerFactoryBean;
     }
 }

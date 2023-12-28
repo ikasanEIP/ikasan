@@ -176,7 +176,7 @@ public class SchedulerAgentRestDashboardClientTest
         HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory
             = new HttpComponentsClientHttpRequestFactory();
 
-        httpComponentsClientHttpRequestFactory.setReadTimeout(1000);
+        httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(1000);
 
         uut = new DashboardRestServiceImpl(new StandardEnvironment(), httpComponentsClientHttpRequestFactory, "/rest/harvest/scheduled");
 

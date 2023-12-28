@@ -1,8 +1,11 @@
-package org.ikasan.module;
+package org.ikasan.ootb.scheduled;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.jta.UserTransaction;
 import jakarta.persistence.EntityManagerFactory;
+import org.ikasan.spec.dashboard.DashboardRestService;
+import org.jmock.auto.Mock;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -20,16 +23,24 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @ImportResource("/test-transaction.xml")
-public class IkasanModuleTestAutoConfiguration
+public class ScheduledServiceTestAutoConfiguration
 {
+    @MockBean
+    DashboardRestService scheduleProcessEventsDashboardRestService;
+
     @Bean(name = {"ikasan.xads", "ikasan.ds"})
     public DataSource ikasanDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1");
+        dataSource.setUrl("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;NON_KEYWORDS=USER");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         return dataSource;
+    }
+
+    @Bean(name = "scheduleProcessEventsDashboardRestService")
+    public DashboardRestService scheduleProcessEventsDashboardRestService() {
+        return this.scheduleProcessEventsDashboardRestService;
     }
 
     @Bean

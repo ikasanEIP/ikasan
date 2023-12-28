@@ -40,6 +40,8 @@
  */
 package org.ikasan.ootb.scheduled.service;
 
+import org.ikasan.ootb.scheduled.ScheduledServiceAutoConfiguration;
+import org.ikasan.ootb.scheduled.ScheduledServiceTestAutoConfiguration;
 import org.ikasan.ootb.scheduled.model.ScheduledProcessEventImpl;
 import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.junit.Assert;
@@ -53,9 +55,7 @@ import javax.annotation.Resource;
 import java.util.stream.IntStream;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations={ "/h2-config.xml",
-    "/substitute-components.xml",
-})
+@ContextConfiguration(classes = {ScheduledServiceAutoConfiguration.class, ScheduledServiceTestAutoConfiguration.class})
 public class HibernateScheduledProcessEventServiceTest {
 
     @Resource
