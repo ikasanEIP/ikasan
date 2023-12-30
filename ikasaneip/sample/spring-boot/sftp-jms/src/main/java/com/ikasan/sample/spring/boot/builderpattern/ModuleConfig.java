@@ -13,8 +13,7 @@ import javax.annotation.Resource;
 
 @Configuration
 @ImportResource({ "classpath:ikasan-transaction-pointcut-jms.xml",
-                    "classpath:h2-datasource-conf.xml"
-                })
+                    "classpath:h2-datasource-conf.xml"})
 @Import(BaseFileTransferAutoConfiguration.class)
 public class ModuleConfig
 {

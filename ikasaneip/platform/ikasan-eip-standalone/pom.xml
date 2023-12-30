@@ -43,7 +43,8 @@
 # // Author:  Ikasan Development Team
 # //
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -55,250 +56,249 @@
     <artifactId>ikasan-eip-standalone</artifactId>
     <packaging>jar</packaging>
 
- <dependencies>
+    <dependencies>
 
-  <!-- Ikasan libraries -->
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-spring-resource</artifactId>
-  </dependency>
+        <!-- Ikasan libraries -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spring-resource</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-uber-spec</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-uber-spec</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-system-event</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-system-event</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-module</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-module</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-scheduler</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-scheduler</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-recovery-manager</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-recovery-manager</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-exclusion-service</artifactId>
-   <exclusions>
-    <exclusion>
-     <groupId>org.slf4j</groupId>
-     <artifactId>jcl-over-slf4j</artifactId>
-    </exclusion>
-   </exclusions>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-exclusion-service</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>jcl-over-slf4j</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-serialiser</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-serialiser</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-topology</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-topology</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-error-reporting-service</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-error-reporting-service</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-flow-visitorPattern</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-flow-visitorPattern</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-filter</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-filter</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-component-multiRecipient-router</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-multiRecipient-router</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-component-splitter</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-splitter</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-configuration-service</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-configuration-service</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-wiretap</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-wiretap</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-security-db</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security-db</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-security-rest</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security-rest</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-replay</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-replay</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-rest-module</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-rest-module</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-hospital</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-hospital</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-builder</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-builder-spring</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-builder-spring</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-monitor</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-monitor</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-persistence</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-persistence</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.hibernate.validator</groupId>
-   <artifactId>hibernate-validator</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+        </dependency>
 
-  <!-- web console -->
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-webconsole-jar</artifactId>
-  </dependency>
+        <!-- web console -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-webconsole-jar</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-webconsole-boot-war</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-webconsole-boot-war</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.apache.tomcat.embed</groupId>
-   <artifactId>tomcat-embed-jasper</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat.embed</groupId>
+            <artifactId>tomcat-embed-jasper</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.springframework.boot</groupId>
-   <artifactId>spring-boot-starter-actuator</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
-  <!-- Commons DBCP -->
-  <dependency>
-   <groupId>org.apache.commons</groupId>
-   <artifactId>commons-dbcp2</artifactId>
-  </dependency>
+        <!-- Commons DBCP -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-dbcp2</artifactId>
+        </dependency>
 
-  <!-- Hibernate ORM -->
-  <dependency>
-   <groupId>org.hibernate.orm</groupId>
-   <artifactId>hibernate-core</artifactId>
-  </dependency>
+        <!-- Hibernate ORM -->
+        <dependency>
+            <groupId>org.hibernate.orm</groupId>
+            <artifactId>hibernate-core</artifactId>
+        </dependency>
 
-  <!-- Hibernate dependency -->
-  <dependency>
-   <groupId>org.javassist</groupId>
-   <artifactId>javassist</artifactId>
-  </dependency>
+        <!-- Hibernate dependency -->
+        <dependency>
+            <groupId>org.javassist</groupId>
+            <artifactId>javassist</artifactId>
+        </dependency>
 
-  <!-- Spring -->
-  <dependency>
-   <groupId>org.springframework</groupId>
-   <artifactId>spring-core</artifactId>
-  </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.springframework</groupId>
-   <artifactId>spring-beans</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.springframework</groupId>
-   <artifactId>spring-context</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.springframework</groupId>
-   <artifactId>spring-orm</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-quartz-endpoint</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-quartz-endpoint</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.ikasan</groupId>
-   <artifactId>ikasan-utility-endpoint</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-utility-endpoint</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>com.github.ulisesbocchio</groupId>
-   <artifactId>jasypt-spring-boot-starter</artifactId>
-  </dependency>
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+        </dependency>
 
-  <!-- logging -->
-  <dependency>
-   <groupId>org.slf4j</groupId>
-   <artifactId>slf4j-api</artifactId>
-  </dependency>
+        <!-- logging -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
 
-  <!-- For point cut transaction management -->
-  <dependency>
-   <groupId>org.aspectj</groupId>
-   <artifactId>aspectjweaver</artifactId>
-  </dependency>
+        <!-- For point cut transaction management -->
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+        </dependency>
 
-  <dependency>
-   <groupId>org.springframework.boot</groupId>
-   <artifactId>spring-boot-starter-test</artifactId>
-   <scope>test</scope>
-   <version>${version.org.springboot}</version>
-  </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <version>${version.org.springboot}</version>
+        </dependency>
 
-  <dependency>
-   <groupId>junit</groupId>
-   <artifactId>junit</artifactId>
-   <scope>test</scope>
-  </dependency>
-  <dependency>
-   <groupId>org.glassfish.jaxb</groupId>
-   <artifactId>jaxb-runtime</artifactId>
-   <version>2.3.9</version>
-   <scope>test</scope>
-  </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.slf4j</groupId>

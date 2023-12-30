@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import jakarta.persistence.*;
 import jakarta.resource.ResourceException;
 
 import org.slf4j.Logger;
@@ -56,6 +57,9 @@ import org.ikasan.connector.util.chunking.model.dao.FileChunkDao;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@SecondaryTable(name = "FTCleanupChunksCommand")
+@DiscriminatorValue("CleanupChunks")
 public class CleanupChunksCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
@@ -67,6 +71,7 @@ public class CleanupChunksCommand extends AbstractBaseFileTransferTransactionalR
      * Note that this is not persisted. Only its id is persisted, and if
      * necessary this is later reloaded from the id
      */
+    @Transient
     private FileChunkHeader fileChunkHeader;
 
     /**
@@ -74,6 +79,7 @@ public class CleanupChunksCommand extends AbstractBaseFileTransferTransactionalR
      * 
      * Note that this is persisted
      */
+    @Column(name = "FileChunkHeaderId", table = "FTCleanupChunksCommand")
     private Long fileChunkHeaderId;
 
     /**

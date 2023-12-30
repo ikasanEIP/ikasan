@@ -9,6 +9,7 @@ import org.ikasan.connector.util.chunking.model.dao.HibernateFileChunkDao;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,21 +23,24 @@ import java.util.Properties;
 public class BaseFileTransferAutoConfiguration {
 
     @Bean
+    @DependsOn("transactionalResourceCommandEntityManager")
     public TransactionalResourceCommandDAO transactionalResourceCommandDAO() {
         return new HibernateTransactionalResourceCommandDAO();
     }
 
     @Bean
+    @DependsOn("fileChunkEntityManager")
     public FileChunkDao fileChunkDao() {
         return new HibernateFileChunkDao();
     }
 
     @Bean
+    @DependsOn("baseFileTransferEntityManager")
     public BaseFileTransferDao baseFileTransferDao() {
         return new HibernateBaseFileTransferDaoImpl();
     }
 
-    @Bean
+    @Bean(name = "baseFileTransferEntityManager")
     public LocalContainerEntityManagerFactoryBean baseFileTransferEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
         , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
@@ -46,6 +50,34 @@ public class BaseFileTransferAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("file-transfer");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:file-transfer-persistence.xml");
+
+        return localContainerEntityManagerFactoryBean;
+    }
+
+    @Bean(name = "fileChunkEntityManager")
+    public LocalContainerEntityManagerFactoryBean fileChunkEntityManager(@Qualifier("ikasan.ds")DataSource dataSource
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+            = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("file-chunk");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:file-chunk-persistence.xml");
+
+        return localContainerEntityManagerFactoryBean;
+    }
+
+    @Bean(name = "transactionalResourceCommandEntityManager")
+    public LocalContainerEntityManagerFactoryBean transactionalResourceCommandEntityManager(@Qualifier("ikasan.ds")DataSource dataSource
+        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
+        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
+            = new LocalContainerEntityManagerFactoryBean();
+        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
+        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
+        localContainerEntityManagerFactoryBean.setPersistenceUnitName("transactional-resource-command");
+        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:transactional-resource-command-persistence.xml");
 
         return localContainerEntityManagerFactoryBean;
     }

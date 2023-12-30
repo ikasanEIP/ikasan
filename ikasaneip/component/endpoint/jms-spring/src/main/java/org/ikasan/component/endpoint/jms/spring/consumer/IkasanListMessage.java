@@ -65,25 +65,25 @@ public class IkasanListMessage extends ArrayList<Message> implements Message
     long jmsExpiration;
     int jmsPriority;
     Map<String, Object> properties = new HashMap<String,Object>();
+    long jmsDeliveryTime;
 
-    // todo work out missing methods
     @Override
-    public long getJMSDeliveryTime() throws JMSException {
-        return 0;
+    public long getJMSDeliveryTime() {
+        return this.jmsDeliveryTime;
     }
 
     @Override
-    public void setJMSDeliveryTime(long l) throws JMSException {
-
+    public void setJMSDeliveryTime(long jmsDeliveryTime) {
+        this.jmsDeliveryTime = jmsDeliveryTime;
     }
 
     @Override
-    public <T> T getBody(Class<T> aClass) throws JMSException {
+    public <T> T getBody(Class<T> aClass) {
         return null;
     }
 
     @Override
-    public boolean isBodyAssignableTo(Class aClass) throws JMSException {
+    public boolean isBodyAssignableTo(Class aClass)  {
         return false;
     }
 

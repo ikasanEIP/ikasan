@@ -6,6 +6,7 @@ import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerCo
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,16 +24,15 @@ public class JmsToSftpChunkingFlowComponentFactory
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Bean
+    @Bean(name = "jmsSftpChunkingConsumerConfiguration")
     @ConfigurationProperties(prefix = "jms.to.sftp.chunking.flow.jms.consumer")
-
     public SpringMessageConsumerConfiguration jmsSftpChunkingConsumerConfiguration()
     {
         return new SpringMessageConsumerConfiguration();
     }
 
     @Bean
-    public Consumer jmsSftpChunkingConsumer(SpringMessageConsumerConfiguration jmsSftpChunkingConsumerConfiguration)
+    public Consumer jmsSftpChunkingConsumer(@Qualifier("jmsSftpChunkingConsumerConfiguration") SpringMessageConsumerConfiguration jmsSftpChunkingConsumerConfiguration)
     {
 
         ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
@@ -44,7 +44,7 @@ public class JmsToSftpChunkingFlowComponentFactory
 
     }
 
-    @Bean
+    @Bean(name = "sftpChunkingProducerConfiguration")
     @ConfigurationProperties(prefix = "jms.to.sftp.chunking.flow.sftp.producer")
     public SftpProducerConfiguration sftpChunkingProducerConfiguration()
     {
@@ -52,7 +52,7 @@ public class JmsToSftpChunkingFlowComponentFactory
     }
 
     @Bean
-    public Producer sftpChunkingProducer(SftpProducerConfiguration sftpChunkingProducerConfiguration)
+    public Producer sftpChunkingProducer(@Qualifier("sftpChunkingProducerConfiguration") SftpProducerConfiguration sftpChunkingProducerConfiguration)
     {
 
         return builderFactory.getComponentBuilder().chunkSftpProducer()

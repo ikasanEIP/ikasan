@@ -6,6 +6,7 @@ import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerCo
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,7 +24,7 @@ public class SftpToJmsFlowComponentFactory
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Bean
+    @Bean(name = "sftpConsumerConfiguration")
     @ConfigurationProperties(prefix = "sftp.to.jms.flow.sftp.consumer")
     public SftpConsumerConfiguration sftpConsumerConfiguration()
     {
@@ -31,7 +32,7 @@ public class SftpToJmsFlowComponentFactory
     }
 
     @Bean
-    public Consumer sftpConsumer(SftpConsumerConfiguration sftpConsumerConfiguration)
+    public Consumer sftpConsumer(@Qualifier("sftpConsumerConfiguration") SftpConsumerConfiguration sftpConsumerConfiguration)
     {
         return builderFactory.getComponentBuilder()
                              .sftpConsumer()
@@ -41,9 +42,8 @@ public class SftpToJmsFlowComponentFactory
                              .setScheduledJobName("SftpConsumer").build();
     }
 
-    @Bean
+    @Bean(name = "jmsProducerConfiguration")
     @ConfigurationProperties(prefix = "sftp.to.jms.flow.jms.producer")
-
     public SpringMessageProducerConfiguration jmsProducerConfiguration()
     {
         return new SpringMessageProducerConfiguration();
@@ -51,7 +51,7 @@ public class SftpToJmsFlowComponentFactory
 
 
     @Bean
-    public Producer jmsProducer(SpringMessageProducerConfiguration jmsProducerConfiguration)
+    public Producer jmsProducer(@Qualifier("jmsProducerConfiguration") SpringMessageProducerConfiguration jmsProducerConfiguration)
     {
         ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
 

@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import jakarta.persistence.*;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,38 +65,50 @@ import java.util.regex.Pattern;
  * 
  * @author Ikasan Development Team 
  */
+@Entity
+@SecondaryTable(name = "FTRetrieveFileCommand")
+@DiscriminatorValue("RetrieveFile")
 public class RetrieveFileCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(RetrieveFileCommand.class);
 
     /** Data Access Object for Base File Transfer */
+    @Transient
     protected BaseFileTransferDao dao;
 
     /** The original source path of the file we are retrieving */
+    @Column(name = "SourcePath", table = "FTRetrieveFileCommand")
     protected String sourcePath;
     
     /** Rename the file on successful retrieval */
+    @Column(name = "RenameOnSuccess", table = "FTRetrieveFileCommand")
     protected boolean renameOnSuccess;
     
     /** Extension with which to rename successfully retrieved files
      * As optional timestamp can be specified by using a pattern of
      * /[dateFormat]/ in the renameExtension
      * e.g. "/yyyyMMddHHmmss/.complete" */
+    @Column(name = "RenameExtension", table = "FTRetrieveFileCommand")
     protected String renameExtension;
 
     /** Move the remote file once successfully retrieved */
+    @Column(name = "MoveOnSuccess", table = "FTRetrieveFileCommand")
     private boolean moveOnSuccess;
 
     /** New path to move remote file to */
+    @Column(name = "MoveNewPath", table = "FTRetrieveFileCommand")
     private String moveOnSuccessNewPath;
 
     /** Whether or not to destroy the file after we pick it up */
+    @Column(name = "Destructive", table = "FTRetrieveFileCommand")
     protected boolean destructive;
 
     /** Pattern used in replacing a timestamp in a rename extension, for instance, captures /[dateFormat]/ */
+    @Transient
     protected Pattern renameTimestampExtensionPattern = Pattern.compile("(/[^/]+/)");
 
+    @Transient
     private DateTimeFormatter timestampFormatter;
     
     /**

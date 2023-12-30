@@ -53,13 +53,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.9</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-scheduler-agent-rest-dashboard-client</artifactId>
         </dependency>
@@ -162,11 +155,11 @@
         </dependency>
 
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <!-- AspectJ runtime version, in sync with compiler -->
-            <version>1.9.20</version>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <scope>test</scope>
         </dependency>
+
     </dependencies>
 
     <build>

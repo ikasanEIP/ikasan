@@ -38,22 +38,20 @@
  */
 package org.ikasan.connector.basefiletransfer.net;
 
-import java.io.File;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
+import org.ikasan.filetransfer.util.FileUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.sshd.client.subsystem.sftp.SftpPath;
-import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
-import org.ikasan.filetransfer.util.FileUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The <code>ClientListEntry</code> class holds information reflecting a

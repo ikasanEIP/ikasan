@@ -4,8 +4,7 @@
              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/persistence
   http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd"
              version="2.1">
-    <persistence-unit name="file-transfer" transaction-type="JTA">
-        <class>org.ikasan.connector.basefiletransfer.persistence.FileFilter</class>
+    <persistence-unit name="transactional-resource-command" transaction-type="JTA">
         <class>org.ikasan.connector.base.command.XidImpl</class>
         <class>org.ikasan.connector.base.command.AbstractTransactionalResourceCommand</class>
         <class>org.ikasan.connector.basefiletransfer.outbound.command.FileDiscoveryCommand</class>

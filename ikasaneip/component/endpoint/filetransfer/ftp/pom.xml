@@ -56,7 +56,6 @@
     <artifactId>ikasan-ftp-endpoint</artifactId>
     <packaging>jar</packaging>
 
-
     <dependencies>
 
         <!-- Used for the common filetransfer connector functionality for the ikasan platform -->
@@ -129,6 +128,5 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 
 </project>

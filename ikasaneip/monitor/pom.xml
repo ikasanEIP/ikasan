@@ -64,6 +64,16 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-dashboard-client</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-configuration</artifactId>
          </dependency>
 
@@ -195,7 +205,7 @@
         </dependency>
 
         <dependency>
-            <groupId>com.github.tomakehurst</groupId>
+            <groupId>org.wiremock</groupId>
             <artifactId>wiremock</artifactId>
             <scope>test</scope>
         </dependency>
@@ -245,6 +255,12 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.eclipse.jetty.http2</groupId>
+            <artifactId>http2-server</artifactId>
             <scope>test</scope>
         </dependency>
 

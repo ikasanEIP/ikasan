@@ -52,13 +52,6 @@
     <name>Ikasan Enterprise Integration Client JMS endpoints</name>
 
     <dependencies>
-        
-        <!-- Standard J2ee spec -->
-<!--        <dependency>-->
-<!--            <groupId>geronimo-spec</groupId>-->
-<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>jakarta.jms</groupId>

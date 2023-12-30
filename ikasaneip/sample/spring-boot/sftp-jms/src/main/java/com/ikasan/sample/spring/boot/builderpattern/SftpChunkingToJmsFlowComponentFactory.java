@@ -6,6 +6,7 @@ import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerCo
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import jakarta.jms.ConnectionFactory;
+import org.springframework.stereotype.Component;
 
 @Configuration
 public class SftpChunkingToJmsFlowComponentFactory
@@ -23,7 +25,7 @@ public class SftpChunkingToJmsFlowComponentFactory
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Bean
+    @Bean(name = "sftpChunkingConsumerConfiguration")
     @ConfigurationProperties(prefix = "sftp.chunking.to.jms.flow.sftp.consumer")
     public SftpConsumerConfiguration sftpChunkingConsumerConfiguration()
     {
@@ -31,7 +33,7 @@ public class SftpChunkingToJmsFlowComponentFactory
     }
 
     @Bean
-    public Consumer sftpChunkingConsumer(SftpConsumerConfiguration sftpChunkingConsumerConfiguration)
+    public Consumer sftpChunkingConsumer(@Qualifier("sftpChunkingConsumerConfiguration") SftpConsumerConfiguration sftpChunkingConsumerConfiguration)
     {
         return builderFactory.getComponentBuilder()
                              .sftpConsumer()
@@ -41,9 +43,8 @@ public class SftpChunkingToJmsFlowComponentFactory
                              .setScheduledJobName("SftpChunkingConsumer").build();
     }
 
-    @Bean
+    @Bean(name = "jmsChunkingProducerConfiguration")
     @ConfigurationProperties(prefix = "sftp.chunking.to.jms.flow.jms.producer")
-
     public SpringMessageProducerConfiguration jmsChunkingProducerConfiguration()
     {
         return new SpringMessageProducerConfiguration();
@@ -51,7 +52,7 @@ public class SftpChunkingToJmsFlowComponentFactory
 
 
     @Bean
-    public Producer jmsChunkingProducer(SpringMessageProducerConfiguration jmsChunkingProducerConfiguration)
+    public Producer jmsChunkingProducer(@Qualifier("jmsChunkingProducerConfiguration") SpringMessageProducerConfiguration jmsChunkingProducerConfiguration)
     {
         ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
 

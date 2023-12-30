@@ -50,6 +50,16 @@
             <artifactId>ikasan-builder</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>org.jboss.narayana.jta</groupId>
+            <artifactId>jms</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.narayana.jta</groupId>
+            <artifactId>jta</artifactId>
+        </dependency>
+
         <!-- Test -->
 
         <dependency>
@@ -106,12 +116,6 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <scope>test</scope>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>org.apache.tomcat.embed</groupId>-->
-<!--            <artifactId>tomcat-embed-jasper</artifactId>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>org.glassfish.jaxb</groupId>

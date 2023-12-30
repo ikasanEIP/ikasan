@@ -53,7 +53,6 @@
 
     <dependencies>
 
-
         <!-- Ikasan specs -->
         <dependency>
             <groupId>org.ikasan</groupId>

@@ -75,35 +75,34 @@ public class AuthenticatedXAConnectionFactory implements XAConnectionFactory, Co
     /** credential */
     private String password;
 
-    // todo work out what need to be done below
     @Override
     public JMSContext createContext() {
-        return null;
+        throw new UnsupportedOperationException("This method has not been implemented!");
     }
 
     @Override
     public JMSContext createContext(String s, String s1) {
-        return null;
+        throw new UnsupportedOperationException("This method has not been implemented!");
     }
 
     @Override
     public JMSContext createContext(String s, String s1, int i) {
-        return null;
+        throw new UnsupportedOperationException("This method has not been implemented!");
     }
 
     @Override
     public JMSContext createContext(int i) {
-        return null;
+        throw new UnsupportedOperationException("This method has not been implemented!");
     }
 
     @Override
     public XAJMSContext createXAContext() {
-        return null;
+        throw new UnsupportedOperationException("This method has not been implemented!");
     }
 
     @Override
     public XAJMSContext createXAContext(String s, String s1) {
-        return null;
+        throw new UnsupportedOperationException("This method has not been implemented!");
     }
 
     public void setXAConnectionFactory(XAConnectionFactory xaConnectionFactory)

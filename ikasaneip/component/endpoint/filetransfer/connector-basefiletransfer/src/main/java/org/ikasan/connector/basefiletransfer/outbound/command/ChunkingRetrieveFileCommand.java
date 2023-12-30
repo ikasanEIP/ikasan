@@ -46,6 +46,7 @@ import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.List;
 
+import jakarta.persistence.*;
 import jakarta.resource.ResourceException;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -70,27 +71,33 @@ import org.ikasan.connector.util.chunking.provider.ChunkableDataSourceException;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@SecondaryTable(name = "FTRetrieveFileCommand")
+@DiscriminatorValue("ChunkingRetrieveFile")
 public class ChunkingRetrieveFileCommand extends RetrieveFileCommand implements ChunkableDataProvider
 {
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(RetrieveFileCommand.class);
 
     /** The chunker for large files */
+    @Transient
     private Chunker chunker;
 
     /** The client that is invoking this command */
+    @Transient
     private String clientId;
 
     /**
      * maximum size of a file chunk Note must be >0
      */
+    @Transient
     private int chunkSize;
 
     /**
      * No args constructor as required by Hibernate
      */
     @SuppressWarnings("unused")
-    private ChunkingRetrieveFileCommand()
+    protected ChunkingRetrieveFileCommand()
     {
         super();
     }

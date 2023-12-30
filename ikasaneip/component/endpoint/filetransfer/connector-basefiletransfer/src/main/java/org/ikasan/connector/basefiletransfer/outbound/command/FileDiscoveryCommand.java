@@ -45,6 +45,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import jakarta.resource.ResourceException;
 
 import com.google.common.cache.Cache;
@@ -61,42 +64,55 @@ import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransf
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@DiscriminatorValue("FileDiscovery")
 public class FileDiscoveryCommand extends AbstractBaseFileTransferTransactionalResourceCommand
     /** The logger instance. */
 {
     private static Logger logger = LoggerFactory.getLogger(FileDiscoveryCommand.class);
 
     /** source directory */
+    @Transient
     private String sourceDirectory;
 
     /** dao class for base file transfer classes */
+    @Transient
     private BaseFileTransferDao persistence;
 
     /** regexp for pattern matching filenames */
+    @Transient
     private String filenamePattern;
 
     /** min age for matched files in seconds */
+    @Transient
     private long minAge;
 
     /** Whether we filter duplicates */
+    @Transient
     private boolean filterDuplicates;
 
     /** Whether we use File name in the duplicates filter */
+    @Transient
     private boolean filterOnFilename;
 
     /** Whether we use Last Modified date as a duplicates filter */
+    @Transient
     private boolean filterOnLastModifiedDate;
 
     /** Whether the file discovery will travers sub directories recursively  */
+    @Transient
     private boolean isRecursive;
 
     /** Whether the file discovery need to be sorted chronological **/
+    @Transient
     private boolean chronological;
 
     /** Whether we should only return the first found file that matches all filters **/
+    @Transient
     private boolean onlyFirstFile;
 
     /** The duplicate file cache **/
+    @Transient
     private Cache<String, Boolean> duplicateFilesCache;
 
     /** No args constructor as required by Hibernate */

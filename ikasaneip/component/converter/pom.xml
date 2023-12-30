@@ -52,12 +52,6 @@
     <name>Ikasan Enterprise Integration Converter Implementations</name>
 
     <dependencies>
-        <!-- Standard J2ee spec -->
-<!--        <dependency>-->
-<!--            <groupId>geronimo-spec</groupId>-->
-<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>jakarta.jms</groupId>
@@ -159,7 +153,6 @@
             <artifactId>ikasan-serialiser</artifactId>
             <scope>test</scope>
         </dependency>
-
 
     </dependencies>
 </project>

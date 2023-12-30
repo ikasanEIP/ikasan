@@ -115,7 +115,7 @@ public class SchedulerFactory
      */
     protected Scheduler newScheduler() throws SchedulerException
     {
-        System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        System.setProperty("org.quartz.scheduler.skipUpdateCheck", "true");
         return  StdSchedulerFactory.getDefaultScheduler();
     }
 

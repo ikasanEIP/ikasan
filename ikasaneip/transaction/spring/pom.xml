@@ -55,11 +55,7 @@
     <description>Ikasan Transaction extensions to support Spring transaction wrapper</description>
 
     <dependencies>
-   
-<!--        <dependency>-->
-<!--            <groupId>geronimo-spec</groupId>-->
-<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
-<!--        </dependency>-->
+
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
