@@ -60,22 +60,19 @@
     </modules>
 
     <dependencies>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
             <scope>provided</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
             <scope>provided</scope>
         </dependency>
-        <!-- J2EE -->
-<!--        <dependency>-->
-<!--            <groupId>geronimo-spec</groupId>-->
-<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
+
         <!-- For persisting information about the connector such as chunking large messages -->
         <dependency>
             <groupId>org.hibernate.orm</groupId>
@@ -123,11 +120,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>

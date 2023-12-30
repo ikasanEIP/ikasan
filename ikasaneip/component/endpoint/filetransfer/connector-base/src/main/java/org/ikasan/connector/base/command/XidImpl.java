@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.base.command;
 
+import jakarta.persistence.*;
 import org.ikasan.connector.util.HexConverter;
 
 import java.util.Date;
@@ -61,29 +62,38 @@ import javax.transaction.xa.Xid;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@Table(name = "FTXid")
 public class XidImpl implements Xid
 {
-
     /** Identity */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     /** Global Transaction Id */
-    private byte[] globalTransactionId;
+    @Column(name = "GlobalTransactionId", nullable = false)
+    private String globalTransactionIdString;
 
     /** Branch Qualifier */
-    private byte[] branchQualifier;
+    @Column(name = "BranchQualifier", nullable = false)
+    private String branchQualifierString;
 
     /** Format Id */
+    @Column(name = "FormatId", nullable = false)
     private int formatId;
 
     /** State */
+    @Column(name = "State", nullable = false)
     private String state = "test";
 
     /** Client Id */
+    @Column(name = "ClientId", nullable = false)
     private String clientId;
 
     /** Set of commands */
-    private Set<TransactionalResourceCommand> commands = new LinkedHashSet<TransactionalResourceCommand>();
+    @OneToMany(mappedBy="xid", fetch = FetchType.EAGER)
+    private Set<AbstractTransactionalResourceCommand> commands = new LinkedHashSet<>();
 
     /** Created Date Time */
     private long createdDateTime;
@@ -101,8 +111,8 @@ public class XidImpl implements Xid
     public XidImpl(byte[] globalTransactionId, byte[] branchQualifier, int formatId)
     {
         super();
-        this.globalTransactionId = globalTransactionId;
-        this.branchQualifier = branchQualifier;
+        this.globalTransactionIdString = HexConverter.byteArrayToHex(globalTransactionId);
+        this.branchQualifierString = HexConverter.byteArrayToHex(branchQualifier);
         this.formatId = formatId;
         long now = System.currentTimeMillis();
         this.createdDateTime = now;
@@ -129,7 +139,7 @@ public class XidImpl implements Xid
 
     public byte[] getBranchQualifier()
     {
-        return branchQualifier;
+        return HexConverter.hexStringToByteArray(branchQualifierString);
     }
 
     /**
@@ -138,7 +148,7 @@ public class XidImpl implements Xid
      */
     protected String getBranchQualifierString()
     {
-        return HexConverter.byteArrayToHex(branchQualifier);
+        return branchQualifierString;
     }
     
     public int getFormatId()
@@ -148,7 +158,7 @@ public class XidImpl implements Xid
 
     public byte[] getGlobalTransactionId()
     {
-        return globalTransactionId;
+        return HexConverter.hexStringToByteArray(globalTransactionIdString);
     }
 
     /**
@@ -157,7 +167,7 @@ public class XidImpl implements Xid
      */
     protected String getGlobalTransactionIdString()
     {
-        return HexConverter.byteArrayToHex(globalTransactionId);
+        return globalTransactionIdString;
     }
 
     /**
@@ -167,7 +177,7 @@ public class XidImpl implements Xid
      */
     protected void setBranchQualifierString(String branchQualifierAsString)
     {
-                this.branchQualifier = HexConverter.hexStringToByteArray(branchQualifierAsString);
+        this.branchQualifierString = branchQualifierAsString;
     }
 
     /**
@@ -177,7 +187,7 @@ public class XidImpl implements Xid
      */
     protected void setGlobalTransactionIdString(String globalTransactionIdAsString)
     {
-            this.globalTransactionId = HexConverter.hexStringToByteArray(globalTransactionIdAsString);
+        this.globalTransactionIdString = globalTransactionIdAsString;
     }
 
     /**
@@ -194,7 +204,7 @@ public class XidImpl implements Xid
     /**
      * @param transactionalResourceCommand
      */
-    public void addCommand(TransactionalResourceCommand transactionalResourceCommand)
+    public void addCommand(AbstractTransactionalResourceCommand transactionalResourceCommand)
     {
         commands.add(transactionalResourceCommand);
     }
@@ -266,7 +276,7 @@ public class XidImpl implements Xid
      */
     private String getFormattedBranchQualifier()
     {
-        return new String(branchQualifier);
+        return new String(HexConverter.hexStringToByteArray(branchQualifierString));
     }
 
     /**
@@ -276,7 +286,7 @@ public class XidImpl implements Xid
      */
     private String getFormattedGlobalTransactionId()
     {
-        return new String(globalTransactionId);
+        return new String(HexConverter.hexStringToByteArray(globalTransactionIdString));
     }
 
     /**
@@ -284,7 +294,7 @@ public class XidImpl implements Xid
      * 
      * @return the list of commands
      */
-    public Set<TransactionalResourceCommand> getCommands()
+    public Set<AbstractTransactionalResourceCommand> getCommands()
     {
         return commands;
     }

@@ -64,12 +64,6 @@
             <artifactId>ikasan-exclusion-service</artifactId>
         </dependency>
 
-        <!-- Standard J2ee spec -->
-<!--        <dependency>-->
-<!--            <groupId>org.apache.geronimo.specs</groupId>-->
-<!--            <artifactId>geronimo-jms_1.1_spec</artifactId>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>

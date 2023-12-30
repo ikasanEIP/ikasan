@@ -44,6 +44,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.util.UUID;
 
+import jakarta.persistence.*;
 import jakarta.resource.ResourceException;
 
 import org.slf4j.Logger;
@@ -60,15 +61,20 @@ import org.ikasan.connector.listener.TransactionCommitException;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@SecondaryTable(name = "FTDeliverBatchCommand")
+@DiscriminatorValue("DeliverBatch")
 public class DeliverBatchCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(DeliverBatchCommand.class);
 
     /** Directory on remote FS to deliver into */
+    @Column(name = "OutputDirectory", table = "FTDeliverBatchCommand")
     private String outputDirectory;
 
     /** Temp directory to deliver content to within the output directory */
+    @Column(name = "TempDirectory", table = "FTDeliverBatchCommand")
     private String tempDirectory;
 
     /**
@@ -76,23 +82,27 @@ public class DeliverBatchCommand extends AbstractBaseFileTransferTransactionalRe
      * 
      * Allow the delivery to overwrite any existing files of the same name
      */
+    @Transient
     private boolean overwriteExisting;
 
     /** Folder name for delivering these files into */
+    @Column(name = "BatchFolder", table = "FTDeliverBatchCommand")
     private String batchFolder;
 
     /**
      * Flag specifying whether or not an file transfer has actually been
      * attempted
      */
+    @Column(name = "PutAttempted", table = "FTDeliverBatchCommand")
     private boolean putAttempted = false;
 
     /** Id generator for generating temp dir names */
+    @Transient
     private UniqueIdGenerator idGenerator = new DefaultIdGenerator();
 
     /** No Args Constructor Required by Hibernate */
     @SuppressWarnings("unused")
-    private DeliverBatchCommand()
+    protected DeliverBatchCommand()
     {
         // Default constructor
     }

@@ -80,7 +80,11 @@
             <artifactId>spring-core</artifactId>
             <scope>provided</scope>
         </dependency>
-
+        <dependency>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
 </project>

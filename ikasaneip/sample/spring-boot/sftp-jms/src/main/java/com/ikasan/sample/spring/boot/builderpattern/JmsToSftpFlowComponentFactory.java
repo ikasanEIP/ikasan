@@ -6,6 +6,7 @@ import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerCo
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -23,16 +24,15 @@ public class JmsToSftpFlowComponentFactory
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Bean
+    @Bean(name = "jmsSftpConsumerConfiguration")
     @ConfigurationProperties(prefix = "jms.to.sftp.flow.jms.consumer")
-
     public SpringMessageConsumerConfiguration jmsSftpConsumerConfiguration()
     {
         return new SpringMessageConsumerConfiguration();
     }
 
     @Bean
-    public Consumer jmsSftpConsumer(SpringMessageConsumerConfiguration jmsSftpConsumerConfiguration)
+    public Consumer jmsSftpConsumer(@Qualifier("jmsSftpConsumerConfiguration") SpringMessageConsumerConfiguration jmsSftpConsumerConfiguration)
     {
 
         ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
@@ -44,7 +44,7 @@ public class JmsToSftpFlowComponentFactory
 
     }
 
-    @Bean
+    @Bean(name = "sftpProducerConfiguration")
     @ConfigurationProperties(prefix = "jms.to.sftp.flow.sftp.producer")
     public SftpProducerConfiguration sftpProducerConfiguration()
     {
@@ -52,7 +52,7 @@ public class JmsToSftpFlowComponentFactory
     }
 
     @Bean
-    public Producer sftpProducer(SftpProducerConfiguration sftpProducerConfiguration)
+    public Producer sftpProducer(@Qualifier("sftpProducerConfiguration") SftpProducerConfiguration sftpProducerConfiguration)
     {
 
         return builderFactory.getComponentBuilder().sftpProducer()

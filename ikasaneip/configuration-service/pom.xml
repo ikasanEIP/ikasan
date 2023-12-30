@@ -135,7 +135,6 @@
         </dependency>
 
         <!-- Test -->
-
         <dependency>
             <groupId>org.jmock</groupId>
             <artifactId>jmock</artifactId>

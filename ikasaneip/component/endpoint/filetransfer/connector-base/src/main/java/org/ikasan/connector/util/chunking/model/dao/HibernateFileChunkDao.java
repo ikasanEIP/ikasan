@@ -153,7 +153,7 @@ public class HibernateFileChunkDao implements FileChunkDao
 //        this.sessionFactory = sff.getSessionFactory();
 //    }
 
-    @PersistenceContext(unitName = "file-transfer")
+    @PersistenceContext(unitName = "file-chunk")
     private EntityManager entityManager;
 
     /**

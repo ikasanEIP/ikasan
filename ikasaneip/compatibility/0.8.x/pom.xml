@@ -52,12 +52,6 @@
     <name>Ikasan Enterprise Integration compatibility library between head and 0.8.x</name>
 
     <dependencies>
-        <!-- Standard J2ee spec -->
-<!--        <dependency>-->
-<!--            <groupId>geronimo-spec</groupId>-->
-<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
-<!--              <scope>provided</scope>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>jakarta.jms</groupId>

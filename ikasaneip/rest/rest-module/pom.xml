@@ -131,7 +131,6 @@
             <scope>provided</scope>
         </dependency>
 
-
         <!-- spring web -->
         <dependency>
             <groupId>org.springframework</groupId>
@@ -157,12 +156,6 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-config</artifactId>
         </dependency>
-
-<!--        <dependency>-->
-<!--            <groupId>io.springfox</groupId>-->
-<!--            <artifactId>springfox-boot-starter</artifactId>-->
-<!--            <version>${version.io.spingfox.swagger}</version>-->
-<!--        </dependency>-->
 
         <dependency>
             <groupId>org.springdoc</groupId>

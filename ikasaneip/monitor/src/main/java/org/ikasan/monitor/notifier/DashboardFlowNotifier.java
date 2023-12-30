@@ -43,7 +43,6 @@ package org.ikasan.monitor.notifier;
 import org.ikasan.monitor.notifier.model.FlowStateImpl;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.FlowNotifier;
-import org.ikasan.spec.monitor.Notifier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

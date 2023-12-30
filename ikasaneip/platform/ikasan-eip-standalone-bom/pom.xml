@@ -572,12 +572,6 @@
                 <version>${version.org.springframework}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>javax.servlet</groupId>-->
-<!--                <artifactId>jstl</artifactId>-->
-<!--                <version>${version.javax.servlet.jstl}</version>-->
-<!--            </dependency>-->
-
             <dependency>
                 <groupId>jakarta.servlet.jsp.jstl</groupId>
                 <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
@@ -590,12 +584,6 @@
                 <artifactId>geronimo-spec-j2ee</artifactId>
                 <version>${version.geronimo.spec}</version>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>org.apache.geronimo.specs</groupId>-->
-<!--                <artifactId>geronimo-jms_1.1_spec</artifactId>-->
-<!--                <version>${version.geronimo.jms.spec}</version>-->
-<!--            </dependency>-->
 
             <dependency>
                 <groupId>jakarta.jms</groupId>
@@ -710,13 +698,6 @@
                 <artifactId>spring-test</artifactId>
                 <version>${version.org.springframework}</version>
             </dependency>
-
-            <!-- Swagger -->
-<!--            <dependency>-->
-<!--                <groupId>io.springfox</groupId>-->
-<!--                <artifactId>springfox-boot-starter</artifactId>-->
-<!--                <version>${version.io.spingfox.swagger}</version>-->
-<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.springdoc</groupId>
@@ -952,12 +933,6 @@
                 <version>${version.org.quartz-scheduler}</version>
             </dependency>
 
-<!--            <dependency>-->
-<!--                <groupId>javax.transaction</groupId>-->
-<!--                <artifactId>jta</artifactId>-->
-<!--                <version>${version.javax.transaction.jta}</version>-->
-<!--            </dependency>-->
-
             <dependency>
                 <groupId>jakarta.transaction</groupId>
                 <artifactId>jakarta.transaction-api</artifactId>
@@ -975,12 +950,6 @@
                 <artifactId>jakarta.servlet-api</artifactId>
                 <version>${version.jakarta.servlet}</version>
             </dependency>
-
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat.embed</groupId>-->
-<!--                <artifactId>tomcat-embed-jasper</artifactId>-->
-<!--                <version>${version.tomcat}</version>-->
-<!--            </dependency>-->
 
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -1041,10 +1010,14 @@
             </dependency>
 
             <!-- The SFTP library -->
+<!--            <dependency>-->
+<!--                <groupId>com.jcraft</groupId>-->
+<!--                <artifactId>jsch</artifactId>-->
+<!--                <version>${version.com.jcraft.jsch}</version>-->
+<!--            </dependency>-->
             <dependency>
-                <groupId>com.jcraft</groupId>
+                <groupId>com.github.mwiede</groupId>
                 <artifactId>jsch</artifactId>
-                <version>${version.com.jcraft.jsch}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.sshd</groupId>

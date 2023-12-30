@@ -61,34 +61,30 @@
             <artifactId>narayana-spring-boot-starter</artifactId>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>javax.transaction</groupId>-->
-<!--            <artifactId>jta</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.jboss</groupId>
+            <artifactId>jboss-transaction-spi</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>jakarta.transaction</groupId>
             <artifactId>jakarta.transaction-api</artifactId>
-            <version>2.0.0</version>
         </dependency>
 
         <dependency>
             <groupId>org.jboss.narayana.jta</groupId>
             <artifactId>jta</artifactId>
-            <version>${version.org.jboss.narayana.jta}</version>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>javax.jms</groupId>-->
-<!--            <artifactId>javax.jms-api</artifactId>-->
-<!--        </dependency>-->
+        <dependency>
+            <groupId>org.jboss.narayana.arjunacore</groupId>
+            <artifactId>txoj</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>jakarta.jms</groupId>
             <artifactId>jakarta.jms-api</artifactId>
-            <version>3.1.0</version>
         </dependency>
-
 
         <!-- Spring -->
         <dependency>
@@ -105,7 +101,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
         </dependency>
-
 
         <dependency>
             <groupId>org.slf4j</groupId>
