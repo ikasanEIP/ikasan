@@ -184,12 +184,6 @@
             <scope>test</scope>
         </dependency>
 
-<!--        <dependency>-->
-<!--            <groupId>geronimo-spec</groupId>-->
-<!--            <artifactId>geronimo-spec-j2ee</artifactId>-->
-<!--            <scope>provided</scope>-->
-<!--        </dependency>-->
-
         <!-- TODO Upgrade this at some point -->
         <dependency>
             <groupId>org.javassist</groupId>

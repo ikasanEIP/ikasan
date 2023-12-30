@@ -40,7 +40,9 @@
  */
 package org.ikasan.connector.base.command;
 
+import jakarta.persistence.*;
 import jakarta.resource.ResourceException;
+import org.hibernate.annotations.Type;
 import org.ikasan.connector.base.command.state.State;
 import org.ikasan.connector.base.command.state.StateManager;
 import org.ikasan.connector.base.command.state.Transition;
@@ -62,6 +64,11 @@ import java.util.Map;
  * @author Ikasan Development Team
  * 
  */
+@Entity
+@Table(name = "FTTransactionalResourceCommand")
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name="Type",
+    discriminatorType = DiscriminatorType.STRING)
 public abstract class AbstractTransactionalResourceCommand implements TransactionalResourceCommand
 {
     /** The logger instance. */
@@ -72,21 +79,26 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      * resources To be able to resolve resources, this must be set following
      * explicit creation, and reloading from Hibernate
      */
+    @Transient
     private Map<String, Object> beanFactory = new HashMap<String,Object>();
 
     /**
      * Reference to the underlying resource or system of which we are providing
      * transactional management
      */
+    @Transient
     protected TransactionalResource transactionalResource;
 
     /** Timestamp format */
     private static final SimpleDateFormat timestampFormat = new SimpleDateFormat("dd/MM/yyyy kk:mm:ss.SSSS");
     
     /** Context object for encapsulating execution parameters */
+    @Transient
     protected ExecutionContext executionContext;
-    
+
+
     /** Journaling service for logging all significant state changes */
+    @Transient
     private TransactionJournal transactionJournal;
     
     // State Definitions
@@ -144,16 +156,20 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
     // State Model
     
     /** Contains all valid state transitions */
+    @Transient
     private static final StateManager stateManager = new StateManager();
 
     /**
      * Reference to the Transaction associated with this command
      */
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "Xid_Id")
     private XidImpl xid;
 
     /**
      * Formatted timestamp created when command is executed
      */
+    @Column(name = "ExecutionTimestamp")
     private String executionTimestamp;
     static
     {
@@ -175,15 +191,18 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      * 
      * The current state of this command
      */
-    private State state;
+    @Column(name = "State", nullable = false)
+    private String state;
     
     /** Unique id, assigned when persisted */
+    @Id
+    @GeneratedValue(strategy= GenerationType.IDENTITY)
     private Long id;
 
     /** Constructor */
     public AbstractTransactionalResourceCommand()
     {
-        this.state = INITIALISED_STATE;
+        this.state = INITIALISED_STATE.getName();
     }
 
     public void commit() throws ResourceException
@@ -201,11 +220,11 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      */
     private void attemptAction(String action) throws ResourceException
     {
-        if (!stateManager.isValidTransition(state, action))
+        if (!stateManager.isValidTransition(stateManager.getState(state), action))
         {
             reportIllegalTransition(action);
         }
-        this.state = stateManager.getEndState(state, action);
+        this.state = stateManager.getEndState(stateManager.getState(state), action).getName();
         try
         {
             transactionJournal.notifyUpdate(this);
@@ -262,7 +281,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
     {
         throw new RuntimeException(
             "Invalid state transition!!, [" + action + "] should not be called whilst in state [" //$NON-NLS-1$//$NON-NLS-2$
-                    + state.getName() + "] object is [" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                    + state + "] object is [" + this + "]"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     /**
@@ -272,7 +291,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
      */
     public String getState()
     {
-        return state.getName();
+        return state;
     }
 
     /**
@@ -332,7 +351,7 @@ public abstract class AbstractTransactionalResourceCommand implements Transactio
     @SuppressWarnings("unused")
     private void setState(String stateString)
     {
-        this.state = stateManager.getState(stateString);
+        this.state = stateString;
     }
 
     /**

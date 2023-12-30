@@ -68,10 +68,12 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-connector-base</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-persistence</artifactId>
@@ -121,6 +123,11 @@
             <artifactId>spring-orm</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>jakarta.resource</groupId>
+            <artifactId>jakarta.resource-api</artifactId>
+        </dependency>
+
         <!-- test -->
         <dependency>
             <groupId>junit</groupId>
@@ -152,6 +159,7 @@
             <artifactId>objenesis</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest-core</artifactId>
@@ -175,6 +183,7 @@
             <artifactId>h2</artifactId>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.apache.sshd</groupId>
             <artifactId>sshd-sftp</artifactId>

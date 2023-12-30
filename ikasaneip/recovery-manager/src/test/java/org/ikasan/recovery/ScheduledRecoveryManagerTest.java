@@ -227,7 +227,7 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_cancel_no_jobs() throws SchedulerException
     {
-        System.setProperty(StdSchedulerFactory.PROP_SCHED_SKIP_UPDATE_CHECK, "true");
+        System.setProperty("org.quartz.scheduler.skipUpdateCheck", "true");
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
         ScheduledRecoveryManager scheduledRecoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flow", "module");

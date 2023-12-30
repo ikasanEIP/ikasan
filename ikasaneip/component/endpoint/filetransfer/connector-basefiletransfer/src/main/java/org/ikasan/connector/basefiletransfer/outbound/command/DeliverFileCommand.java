@@ -38,6 +38,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import jakarta.persistence.*;
 import jakarta.resource.ResourceException;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.ikasan.connector.base.command.ExecutionContext;
@@ -56,45 +57,57 @@ import static org.slf4j.LoggerFactory.getLogger;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@SecondaryTable (name = "FTDeliverFileCommand")
+@DiscriminatorValue("DeliverFile")
 public class DeliverFileCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
     /** The logger instance. */
     private static Logger logger = getLogger(DeliverFileCommand.class);
 
     /** we are dealing with pathnames so make sure we stay platform independent */
+    @Transient
     final String FILE_SEPARATOR = System.getProperty("file.separator");
     
     /**
      * Temporary file extension to use when delivering
      */
+//    @Column(name = "RenameExtension", table = "FTDeliverFileCommand")
+    @Transient
     private String renameExtension;
 
     /**
      * Directory on remote FS to deliver into
      */
+    @Column(name = "OutputDirectory", table = "FTDeliverFileCommand")
     private String outputDirectory;
 
     /**
      * Name of the file we are delivering
      */
+    @Column(name = "FileName", table = "FTDeliverFileCommand")
     private String fileName;
 
     /**
      * Temporary name of the file until we commit the transaction
      */
+    @Column(name = "TempFileName", table = "FTDeliverFileCommand")
     private String tempFileName;
 
     /**
      * Allow the delivery to overwrite any existing files of the same name
      */
+    @Column(name = "OverwriteExisting", table = "FTDeliverFileCommand")
     private boolean overwriteExisting;
     
     /**
      * Flag specifying whether or not an put has actually been attempted
      */
+    @Column(name = "PutAttempted", table = "FTDeliverFileCommand")
     private boolean putAttempted = false;
 
     /** allow delivery to create any parent directory in the delivery directory structure if missing */
+    @Transient
     private boolean createParentDirectory = false;
     
     /** Default Constructor for Hibernate */

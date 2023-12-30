@@ -83,6 +83,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
+    properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsToSftpFlowTest
@@ -172,8 +173,8 @@ public class JmsToSftpFlowTest
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
               .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
+        Thread.sleep(5000);
+
         assertNotNull(sftp.getFileContent("/source/generatedSftpProducertest.out", Charset.defaultCharset()));
-
-
     }
 }

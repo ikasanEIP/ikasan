@@ -40,6 +40,7 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import jakarta.persistence.*;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ChecksumFailedException;
@@ -64,6 +65,9 @@ import java.net.URISyntaxException;
  * 
  * @author Ikasan Development Team
  */
+@Entity
+@SecondaryTable(name = "FTChecksumCommand")
+@DiscriminatorValue("ChecksumValidator")
 public class ChecksumValidatorCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
 
@@ -71,15 +75,19 @@ public class ChecksumValidatorCommand extends AbstractBaseFileTransferTransactio
     private static Logger logger = LoggerFactory.getLogger(FileDiscoveryCommand.class);
 
     /** Parser used to consume checksum foreign checksum file */
+    @Transient
     private ChecksumSupplier checksumSupplier;
     
     /** Flag to skip execution if set */
+    @Transient
     private boolean skip = false;
 
     /** The path of the checksum file we are validating against */
+    @Column(name = "ChecksumFilePath", table = "FTChecksumCommand")
     protected String checksumFilePath;
     
     /** Flag for deletion of the checksum file after successful pickup */
+    @Column(name = "Destructive", table = "FTChecksumCommand")
     private boolean destructive = false;
     
     /** Default constructor for Hibernate */

@@ -72,6 +72,7 @@ public class FileFilter
     private String clientId;
 
     /** URI */
+    @Transient
     private String uri;
 
     /** last modified */

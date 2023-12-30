@@ -40,6 +40,9 @@
  */
 package org.ikasan.connector.basefiletransfer.outbound.command;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Transient;
 import org.ikasan.connector.base.command.ExecutionContext;
 import org.ikasan.connector.base.command.ExecutionOutput;
 import org.ikasan.connector.basefiletransfer.net.ChecksumFailedException;
@@ -62,12 +65,15 @@ import java.net.URISyntaxException;
  *
  * @author Ikasan Development Team
  */
+@Entity
+@DiscriminatorValue("ChecksumDelivered")
 public class ChecksumDeliveredCommand extends AbstractBaseFileTransferTransactionalResourceCommand
 {
 
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(ChecksumDeliveredCommand.class);
 
+    @Transient
     private ChecksumSupplier checksumSupplier;
 
     /**

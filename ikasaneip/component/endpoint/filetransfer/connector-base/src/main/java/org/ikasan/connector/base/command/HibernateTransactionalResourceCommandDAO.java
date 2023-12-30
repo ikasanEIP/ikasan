@@ -85,7 +85,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
     /** The logger instance. */
     private static Logger logger = LoggerFactory.getLogger(HibernateTransactionalResourceCommandDAO.class);
 
-    @PersistenceContext(unitName = "file-transfer")
+    @PersistenceContext(unitName = "transactional-resource-command")
     private EntityManager entityManager;
 
     public void save(TransactionalResourceCommand command) throws TransactionalResourceCommandPersistenceException

@@ -83,20 +83,6 @@ public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
         registry.viewResolver(resolver);
     }
 
-//    @Autowired
-//    ModuleService moduleService;
-
-//    @Autowired
-//    Scheduler scheduler;
-
-//    @Autowired
-//    SystemEventService systemEventService;
-//
-//    @Autowired
-//    WiretapService wiretapService;
-
-//    @Resource Map platformHibernateProperties;
-
     @Autowired
     @Qualifier("ikasan.ds")
     DataSource ikasands;
@@ -147,53 +133,11 @@ public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
         return new WiretapEventsSearchFormController(wiretapService, moduleService);
     }
 
-
-//    @Bean public PasswordEncoder passwordEncoder()
-//    {
-//        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-//    }
-//
-//    @Bean
-//    public SecurityService securityService()
-//    {
-//        HibernateSecurityDao securityDao = new HibernateSecurityDao();
-////        securityDao.setSessionFactory(securitySessionFactory().getObject());
-//        return new SecurityServiceImpl(securityDao);
-//    }
-
-//    @Bean
-//    public UserService userService(Environment environment)
-//    {
-//        HibernateUserDao userDao = new HibernateUserDao();
-////        userDao.setSessionFactory(securitySessionFactory().getObject());
-//        return new UserServiceImpl(userDao, securityService(), passwordEncoder(), this.preventLocalAuthentication);
-//    }
-
     @Bean(name = "dashboardUserService")
     public UserService dashboardUserService(Environment environment)
     {
         return new DashboardUserServiceImpl(environment);
     }
-
-
-//    @Bean
-//    public LocalSessionFactoryBean securitySessionFactory()
-//    {
-//        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-//        sessionFactoryBean.setDataSource(ikasands);
-//        sessionFactoryBean.setMappingResources("/org/ikasan/security/model/Principal.hbm.xml",
-//            "/org/ikasan/security/model/Role.hbm.xml", "/org/ikasan/security/model/RoleModule.hbm.xml",
-//            "/org/ikasan/security/model/Policy.hbm.xml", "/org/ikasan/security/model/User.hbm.xml",
-//            "/org/ikasan/security/model/Authority.hbm.xml", "/org/ikasan/security/model/AuthenticationMethod.hbm.xml",
-//            "/org/ikasan/security/model/PolicyLink.hbm.xml", "/org/ikasan/security/model/PolicyLinkType.hbm.xml",
-//            "/org/ikasan/security/model/RoleJobPlan.hbm.xml");
-//        Properties properties = new Properties();
-//        properties.putAll(platformHibernateProperties);
-//        sessionFactoryBean.setHibernateProperties(properties);
-//
-//        return sessionFactoryBean;
-//    }
-
 
     @Bean
     public AuthenticationProvider ikasanAuthenticationProvider(Environment environment, SecurityService securityService
@@ -245,7 +189,7 @@ public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
         return new UserServiceImpl(userDao, securityService, passwordEncoder, this.preventLocalAuthentication);
     }
 
-    @Bean // todo work out why we need a been named entity manager factory in the context
+    @Bean(name = "entityManagerFactory") // todo work out why we need a been named entity manager factory in the context
     public LocalContainerEntityManagerFactoryBean entityManagerFactory(@Qualifier("ikasan.ds")DataSource dataSource
         , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties") Properties platformJpaProperties) {
         LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
