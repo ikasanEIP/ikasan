@@ -72,8 +72,12 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
+public class IkasanWebAutoConfiguration
 {
+    @Autowired
+    @Qualifier("ikasan.ds")
+    private DataSource ikasands;
+
     public void configureViewResolvers(ViewResolverRegistry registry)
     {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
@@ -82,10 +86,6 @@ public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
         resolver.setViewClass(JstlView.class);
         registry.viewResolver(resolver);
     }
-
-    @Autowired
-    @Qualifier("ikasan.ds")
-    DataSource ikasands;
 
     @Value("${ikasan.dashboard.extract.enabled:false}")
     boolean preventLocalAuthentication;
@@ -127,7 +127,8 @@ public class IkasanWebAutoConfiguration //extends WebMvcConfigurerAdapter
         return new UsersController(userService,dashboardUserService,environment);
     }
 
-    @Bean @DependsOn({"wiretapService", "moduleService"})
+    @Bean
+    @DependsOn({"wiretapService", "moduleService"})
     public WiretapEventsSearchFormController wiretapEventsSearchFormController(WiretapService wiretapService, ModuleService moduleService)
     {
         return new WiretapEventsSearchFormController(wiretapService, moduleService);

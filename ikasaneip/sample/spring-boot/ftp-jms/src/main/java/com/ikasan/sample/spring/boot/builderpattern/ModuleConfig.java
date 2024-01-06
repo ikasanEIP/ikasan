@@ -21,9 +21,7 @@ import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-jms.xml",
-        "classpath:h2-datasource-conf.xml"
-
+    "classpath:h2-datasource-conf.xml"
 } )
 @Import(BaseFileTransferAutoConfiguration.class)
 public class ModuleConfig {
@@ -80,13 +78,13 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-ftp-jms");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("demo-ftp");
 
         Flow jmsToFtpFlow = getJmsToFtpFlow(mb,builderFactory.getComponentBuilder());
         Flow ftpToJmsFlow = getFtpConsumerFlow(mb,builderFactory.getComponentBuilder());
 
         Module module = mb.withDescription("Ftp Jms Sample Module")
-                .addFlow(ftpToJmsFlow).addFlow(jmsToFtpFlow).build();
+            .addFlow(ftpToJmsFlow).addFlow(jmsToFtpFlow).build();
         return module;
 
     }
@@ -101,33 +99,32 @@ public class ModuleConfig {
             .setConfiguredResourceId("ftpJmsProducer")
             .build();
 
-        FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("Ftp To Jms Flow");
+        FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("fileSystemToJMSFlow");
         Flow ftpToJmsFlow = ftpToLogFlowBuilder
-                .withDescription("Ftp to Jms")
-                .consumer("Ftp Consumer", componentBuilder.ftpConsumer()
-                    .setCronExpression(ftpConsumerCronExpression)
-                    .setClientID(ftpConsumerClientID)
-                    .setUsername(ftpConsumerUsername)
-                    .setPassword(ftpConsumerPassword)
-                    .setRemoteHost(ftpConsumerRemoteHost)
-                    .setRemotePort(ftpConsumerRemotePort)
-                    .setSourceDirectory(ftpConsumerSourceDirectory)
-                    .setFilenamePattern(ftpConsumerFilenamePattern)
-                    .setChronological(true)
-                    .setAgeOfFiles(30)
-                    .setMinAge(1l)
-                    .setFilterDuplicates(true)
-                    .setFilterOnLastModifiedDate(true)
-                    .setRenameOnSuccess(false)
-                    .setRenameOnSuccessExtension(".tmp")
-                    .setDestructive(false)
-                    .setChunking(false)
-                    .setConfiguredResourceId("configuredResourceId")
-                    .setScheduledJobGroupName("FtpToLogFlow")
-                    .setScheduledJobName("FtpConsumer")
-                    .build())
-                .converter("Ftp Payload to Map Converter",new PayloadToMapConverter())
-                .producer("Ftp Jms Producer", jmsProducer).build();
+            .withDescription("Ftp to Jms")
+            .consumer("Ftp Consumer", componentBuilder.ftpConsumer()
+                .setCronExpression(ftpConsumerCronExpression)
+                .setClientID(ftpConsumerClientID)
+                .setUsername(ftpConsumerUsername)
+                .setPassword(ftpConsumerPassword)
+                .setRemoteHost(ftpConsumerRemoteHost)
+                .setRemotePort(ftpConsumerRemotePort)
+                .setSourceDirectory(ftpConsumerSourceDirectory)
+                .setFilenamePattern(ftpConsumerFilenamePattern)
+                .setChronological(true)
+                .setAgeOfFiles(30)
+                .setMinAge(1l)
+                .setFilterDuplicates(true)
+                .setFilterOnLastModifiedDate(true)
+                .setRenameOnSuccess(false)
+                .setRenameOnSuccessExtension(".tmp")
+                .setDestructive(false)
+                .setChunking(false)
+                .setConfiguredResourceId("configuredResourceId")
+                .setScheduledJobGroupName("FtpToLogFlow")
+                .setScheduledJobName("FtpConsumer"))
+            .converter("Ftp Payload to Map Converter",new PayloadToMapConverter())
+            .producer("Ftp Jms Producer", jmsProducer).build();
         return ftpToJmsFlow;
     }
 
@@ -137,7 +134,6 @@ public class ModuleConfig {
         Consumer ftpJmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
             .setConnectionFactory(consumerConnectionFactory)
             .setDestinationJndiName("ftp.private.jms.queue")
-            //.setAutoContentConversion(true)
             .setConfiguredResourceId("ftpJmsConsumer")
             .build();
 
@@ -152,13 +148,13 @@ public class ModuleConfig {
             .setConfiguredResourceId("ftpProducerConfiguration")
             .build();
 
-        FlowBuilder jmsToFtpFlowBuilder = moduleBuilder.getFlowBuilder("Jms To Ftp Flow");
+        FlowBuilder jmsToFtpFlowBuilder = moduleBuilder.getFlowBuilder("jmsToFileSystemFlow");
         Flow jmsToftpFlow = jmsToFtpFlowBuilder
-                .withDescription("Receives Text Jms message and sends it to FTP as file")
-                .consumer("Ftp Jms Consumer", ftpJmsConsumer)
-                .converter("MapMessage to FTP Payload Converter",new MapMessageToPayloadConverter())
-                .producer("Ftp Producer", ftpProducer)
-                .build();
+            .withDescription("Receives Text Jms message and sends it to FTP as file")
+            .consumer("Ftp Jms Consumer", ftpJmsConsumer)
+            .converter("MapMessage to FTP Payload Converter",new MapMessageToPayloadConverter())
+            .producer("Ftp Producer", ftpProducer)
+            .build();
 
         return jmsToftpFlow;
     }

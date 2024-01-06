@@ -46,18 +46,12 @@
  Application context definition for "springapp" DispatcherServlet.
 -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:webflow="http://www.springframework.org/schema/webflow-config"
-	xmlns:context="http://www.springframework.org/schema/context"
-	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:webflow="http://www.springframework.org/schema/webflow-config"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
            http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
            http://www.springframework.org/schema/webflow-config
-           http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd
-           http://www.springframework.org/schema/context 
-           http://www.springframework.org/schema/context/spring-context-3.1.xsd
-           http://www.springframework.org/schema/mvc
-           http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd">
+           http://www.springframework.org/schema/webflow-config/spring-webflow-config-2.3.xsd">
 
 
 	<bean id="urlMapping"

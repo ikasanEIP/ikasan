@@ -261,6 +261,7 @@
         <version.org.springframework.security>6.2.1</version.org.springframework.security>
         <version.org.springframework.ldap>3.2.1</version.org.springframework.ldap>
         <version.org.springframework.webflow>3.0.0</version.org.springframework.webflow>
+        <version.org.springframework.webflow-spring-js>2.4.8.RELEASE</version.org.springframework.webflow-spring-js>
         <version.spring.cloud.config.client>4.1.0</version.spring.cloud.config.client>
         <version.org.springboot>3.2.1</version.org.springboot>
         <version.org.springframework.shell>3.1.6</version.org.springframework.shell>
@@ -1561,6 +1562,12 @@
                 <groupId>org.springframework.shell</groupId>
                 <artifactId>spring-shell-starter</artifactId>
                 <version>${version.org.springframework.shell}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-messaging</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -2429,7 +2436,7 @@
             <dependency>
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-js</artifactId>
-                <version>2.4.8.RELEASE</version>
+                <version>${version.org.springframework.webflow-spring-js}</version>
             </dependency>
 
             <dependency>

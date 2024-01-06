@@ -63,8 +63,8 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.jms.TextMessage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;

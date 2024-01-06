@@ -104,7 +104,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import javax.jms.TextMessage;
+import jakarta.jms.TextMessage;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
