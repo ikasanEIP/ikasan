@@ -41,9 +41,12 @@
 package com.ikasan.sample.person.dao;
 
 import com.ikasan.sample.person.model.Person;
-import org.hibernate.criterion.DetachedCriteria;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 
 import java.util.List;
 
@@ -51,47 +54,40 @@ import java.util.List;
  * Hibernate implementation for a PersonDAO
  * @author Ikasan Development Team
  */
-public class PersonHibernateImpl extends HibernateDaoSupport
-    implements PersonDao
+public class PersonHibernateImpl implements PersonDao
 {
+    @PersistenceContext(unitName = "person")
+    EntityManager entityManager;
+
     @Override
     public Person findById(long id)
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Person.class);
-        criteria.add(Restrictions.eq("id", id));
-        List<Person> people = (List<Person>)getHibernateTemplate().findByCriteria(criteria);
-        if(people == null || people.size() == 0)
-        {
-            return null;
-        }
-
-        return people.get(0);
+        return this.entityManager.find(Person.class, id);
     }
 
     @Override
     public void saveOrUpdate(Person person)
     {
-        getHibernateTemplate().saveOrUpdate(person);
+        this.entityManager.persist(entityManager.contains(person)
+                ? person : entityManager.merge(person));
     }
 
     @Override
     public void delete(Person person)
     {
-        getHibernateTemplate().delete(person);
+        this.entityManager.remove(entityManager.contains(person)
+                ? person : entityManager.merge(person));
     }
 
     @Override
     public List<Person> findAll()
     {
-        DetachedCriteria criteria = DetachedCriteria.forClass(Person.class);
-
-        List<Person> people = (List<Person>)getHibernateTemplate().findByCriteria(criteria);
-        if(people == null || people.size() == 0)
-        {
-            return null;
-        }
-
-        return people;
+        CriteriaBuilder cb = this.entityManager.getCriteriaBuilder();
+        CriteriaQuery<Person> cq = cb.createQuery(Person.class);
+        Root<Person> rootEntry = cq.from(Person.class);
+        CriteriaQuery<Person> all = cq.select(rootEntry);
+        TypedQuery<Person> allQuery = this.entityManager.createQuery(all);
+        return allQuery.getResultList();
     }
 
 

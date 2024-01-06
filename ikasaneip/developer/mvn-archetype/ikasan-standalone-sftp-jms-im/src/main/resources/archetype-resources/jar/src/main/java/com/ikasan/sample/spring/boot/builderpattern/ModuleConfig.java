@@ -15,15 +15,15 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
+import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
         "classpath:ikasan-transaction-pointcut-jms.xml",
-        "classpath:filetransfer-service-conf.xml",
         "classpath:h2-datasource-conf.xml"
 
 } )
+@Import(BaseFileTransferAutoConfiguration.class)
 public class ModuleConfig {
 
     @Resource

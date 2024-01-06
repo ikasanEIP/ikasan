@@ -59,8 +59,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
-import javax.jms.TextMessage;
+import jakarta.annotation.Resource;
+import jakarta.jms.TextMessage;
 import java.io.IOException;
 import java.util.List;
 

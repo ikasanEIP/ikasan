@@ -60,10 +60,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
-import javax.jms.TextMessage;
+import jakarta.jms.TextMessage;
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -77,7 +79,7 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(locations = {
-        "/transaction-pointcut-components-on-test.xml"
+    "/transaction-pointcut-components-on-test.xml"
 })
 public class ApplicationTest
 {
@@ -113,6 +115,7 @@ public class ApplicationTest
     @After
     public void shutdown() throws IOException
     {
+        System.out.println("Calling shutdown!");
         flowTestRule.stopFlow();
 
         List<Person> persons = personDao.findAll();
@@ -140,17 +143,26 @@ public class ApplicationTest
             .producer("JMS Producer");
 
         flowTestRule.startFlow();
+        System.out.println("started flow!");
         flowTestRule.sleep(1000L);
         flowTestRule.fireScheduledConsumer();
 
         // wait for a brief while to let the flow complete
-        flowTestRule.sleep(1000L);
+//        flowTestRule.sleep(1000L);
 
-        flowTestRule.assertIsSatisfied();
+        System.out.println("Asserting flow components!");
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
+                flowTestRule.assertIsSatisfied()
+            );
+//        flowTestRule.assertIsSatisfied();
 
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
+                assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1)
+            );
         // Set expectation
         String expectedPersonXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><person><id>1</id><name>ikasan</name><dobDayOfMonth>6</dobDayOfMonth><dobMonthOfYear>7</dobMonthOfYear><dobYear>2005</dobYear></person>";
-        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
         assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(), expectedPersonXml);
     }
 
@@ -177,9 +189,10 @@ public class ApplicationTest
         System.out.println("Sending a JMS message.[" + personXml + "]");
         jmsTemplate.convertAndSend("private.file.queue.test", personXml);
 
-        flowTestRule.sleep(1000L);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
+                flowTestRule.assertIsSatisfied()
+            );
 
         List<Person> persons = personDao.findAll();
         assertNotNull("One person should exist", persons);

@@ -40,10 +40,11 @@
  */
 package com.ikasan.sample.person.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import jakarta.persistence.*;
+import jakarta.xml.bind.annotation.XmlAccessType;
+import jakarta.xml.bind.annotation.XmlAccessorType;
+import jakarta.xml.bind.annotation.XmlRootElement;
+import jakarta.xml.bind.annotation.XmlType;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -54,28 +55,35 @@ import java.time.Period;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "", propOrder = {
-        "id",
-        "name",
-        "dobDayOfMonth",
-        "dobMonthOfYear",
-        "dobYear"
+    "id",
+    "name",
+    "dobDayOfMonth",
+    "dobMonthOfYear",
+    "dobYear"
 })
 @XmlRootElement(name = "person")
+@Entity
+@Table(name="Person")
 public class Person
 {
     // surrogate id assigned by persistence
+    @Id
     long id;
 
     // person name
+    @Column(name = "Name", nullable = false)
     String name;
 
     // date of birth day
+    @Column(name = "DobDayOfMonth", nullable = false)
     int dobDayOfMonth;
 
     // date of birth month
+    @Column(name = "DobMonthOfYear", nullable = false)
     int dobMonthOfYear;
 
     // date of birth dobYear
+    @Column(name = "DobYear", nullable = false)
     int dobYear;
 
     public long getId()
@@ -137,12 +145,12 @@ public class Person
     public String toString()
     {
         return "Person{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", dobDayOfMonth=" + dobDayOfMonth +
-                ", dobMonthOfYear=" + dobMonthOfYear +
-                ", dobYear=" + dobYear +
-                '}';
+            "id='" + id + '\'' +
+            ", name='" + name + '\'' +
+            ", dobDayOfMonth=" + dobDayOfMonth +
+            ", dobMonthOfYear=" + dobMonthOfYear +
+            ", dobYear=" + dobYear +
+            '}';
     }
 
     @Override
