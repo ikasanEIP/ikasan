@@ -62,9 +62,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
-import javax.jms.DeliveryMode;
-import javax.jms.Session;
+import jakarta.annotation.Resource;
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Session;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,9 +77,9 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
  */
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-jms.xml",
-        "classpath:personDB-conf.xml",
-        "classpath:h2-datasource-conf.xml"
+    "classpath:ikasan-transaction-pointcut-jms.xml",
+    "classpath:personDB-conf.xml",
+    "classpath:h2-datasource-conf.xml"
 } )
 public class ComponentFactory
 {
@@ -111,10 +111,10 @@ public class ComponentFactory
     Consumer getDBConsumer()
     {
         return builderFactory.getComponentBuilder().scheduledConsumer()
-                .setCronExpression(cronExpression)
-                .setConfiguredResourceId(dbConsumerConfiguredResourceId)
-                .setMessageProvider(personMessageProvider)
-                .build();
+            .setCronExpression(cronExpression)
+            .setConfiguredResourceId(dbConsumerConfiguredResourceId)
+            .setMessageProvider(personMessageProvider)
+            .build();
     }
 
     /**
@@ -130,36 +130,36 @@ public class ComponentFactory
     {
         ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
 
-       return builderFactory.getComponentBuilder().jmsConsumer()
-                .setConnectionFactory(connectionFactory)
-                .setDestinationJndiName("jms.topic.test")
-                .setDurableSubscriptionName("testDurableSubscription")
-                .setDurable(true)
-                .setAutoContentConversion(true)
-                .setAutoSplitBatch(true)
-                .setBatchMode(false)
-                .setBatchSize(1)
-                .setCacheLevel(CACHE_CONNECTION)
-                .setConcurrentConsumers(1)
-                .setMaxConcurrentConsumers(1)
-                .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
-                .setSessionTransacted(true)
-                .setPubSubDomain(false)
-                .build();
+        return builderFactory.getComponentBuilder().jmsConsumer()
+            .setConnectionFactory(connectionFactory)
+            .setDestinationJndiName("jms.topic.test")
+            .setDurableSubscriptionName("testDurableSubscription")
+            .setDurable(true)
+            .setAutoContentConversion(true)
+            .setAutoSplitBatch(true)
+            .setBatchMode(false)
+            .setBatchSize(1)
+            .setCacheLevel(CACHE_CONNECTION)
+            .setConcurrentConsumers(1)
+            .setMaxConcurrentConsumers(1)
+            .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
+            .setSessionTransacted(true)
+            .setPubSubDomain(false)
+            .build();
     }
 
     Converter getObjectToXmlStringConverter()
     {
         return builderFactory.getComponentBuilder().objectToXmlStringConverter()
-                .setObjectClass(Person.class)
-                .build();
+            .setObjectClass(Person.class)
+            .build();
     }
 
     Converter getXmlToObjectConverter()
     {
         return builderFactory.getComponentBuilder().xmlStringToObjectConverter()
-                .setClassToBeBound(com.ikasan.sample.person.model.Person.class)
-                .build();
+            .setClassToBeBound(com.ikasan.sample.person.model.Person.class)
+            .build();
     }
 
     Filter getFilter()
@@ -175,18 +175,18 @@ public class ComponentFactory
         ActiveMQXAConnectionFactory connectionFactory = new ActiveMQXAConnectionFactory(jmsProviderUrl);
 
         return builderFactory.getComponentBuilder().jmsProducer()
-                .setConfiguredResourceId(jmsProducerConfiguredResourceId)
-                .setDestinationJndiName("jms.topic.test")
-                .setConnectionFactory(connectionFactory)
-                .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
-                .setSessionTransacted(true)
-                .setPubSubDomain(false)
-                .setDeliveryPersistent(true)
-                .setDeliveryMode(DeliveryMode.PERSISTENT)
-                .setExplicitQosEnabled(true)
-                .setMessageIdEnabled(true)
-                .setMessageTimestampEnabled(true)
-                .build();
+            .setConfiguredResourceId(jmsProducerConfiguredResourceId)
+            .setDestinationJndiName("jms.topic.test")
+            .setConnectionFactory(connectionFactory)
+            .setSessionAcknowledgeMode(Session.SESSION_TRANSACTED)
+            .setSessionTransacted(true)
+            .setPubSubDomain(false)
+            .setDeliveryPersistent(true)
+            .setDeliveryMode(DeliveryMode.PERSISTENT)
+            .setExplicitQosEnabled(true)
+            .setMessageIdEnabled(true)
+            .setMessageTimestampEnabled(true)
+            .build();
     }
 
     ExceptionResolver getSourceFlowExceptionResolver()

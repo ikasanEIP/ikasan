@@ -311,7 +311,6 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
             Query query = entityManager.createQuery(HOUSEKEEP_QUERY);
             query.setParameter(EXPIRY, new Date());
             query.executeUpdate();
-
         }
         else {
             batchHousekeepDelete();

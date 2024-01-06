@@ -31,18 +31,13 @@ import java.io.File;
 
 @Configuration
 @EnableConfigurationProperties({
-                                   //JtaProperties.class,
                                    NarayanaProperties.class
                                })
 public class IkasanTransactionConfiguration
 {
-//    private final JtaProperties jtaProperties;
-
     private final TransactionManagerCustomizers transactionManagerCustomizers;
 
-    public IkasanTransactionConfiguration(
-                                          ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
-//        this.jtaProperties = jtaProperties;
+    public IkasanTransactionConfiguration(ObjectProvider<TransactionManagerCustomizers> transactionManagerCustomizers) {
         this.transactionManagerCustomizers = transactionManagerCustomizers.getIfAvailable();
     }
 
@@ -132,11 +127,6 @@ public class IkasanTransactionConfiguration
             return;
         }
 
-//        if (!StringUtils.isEmpty(this.jtaProperties.getLogDir())) {
-//            properties.setLogDir(this.jtaProperties.getLogDir());
-//        } else {
-//            properties.setLogDir(getLogDir().getAbsolutePath());
-//        }
         properties.setLogDir(getLogDir().getAbsolutePath());
     }
 
@@ -151,9 +141,6 @@ public class IkasanTransactionConfiguration
     }
 
     private File getLogDir() {
-//        if (StringUtils.hasLength(this.jtaProperties.getLogDir())) {
-//            return new File(this.jtaProperties.getLogDir());
-//        }
         File home = new ApplicationHome().getDir();
         return new File(home, "transaction-logs");
     }
@@ -168,7 +155,7 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule) {
-            return new GenericXADataSourceWrapper(xaRecoveryModule);
+            return new GenericXADataSourceWrapper(xaRecoveryModule, narayanaProperties.getRecoveryDbCredentials());
         }
 
     }
@@ -183,7 +170,7 @@ public class IkasanTransactionConfiguration
         @ConditionalOnMissingBean(XADataSourceWrapper.class)
         public XADataSourceWrapper xaDataSourceWrapper(NarayanaProperties narayanaProperties,
                                                        XARecoveryModule xaRecoveryModule, TransactionManager transactionManager) {
-            return new GenericXADataSourceWrapper(xaRecoveryModule);
+            return new GenericXADataSourceWrapper(xaRecoveryModule, narayanaProperties.getRecoveryDbCredentials());
         }
 
     }

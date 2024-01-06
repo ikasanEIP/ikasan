@@ -53,14 +53,18 @@
 
     <properties>
         <maven.javadoc.skip>true</maven.javadoc.skip>
-        <maven.compiler.source>17</maven.compiler.source>
-        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
-        <maven.compiler.target>17</maven.compiler.target>
-        <version.com.h2database>2.1.214</version.com.h2database>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>3.2.2</version.ikasan>
-        <version.activemq>5.16.3</version.activemq>
     </properties>
+
+<!--    <properties>-->
+<!--        <maven.javadoc.skip>true</maven.javadoc.skip>-->
+<!--        <maven.compiler.source>17</maven.compiler.source>-->
+<!--        <version.org.springboot>2.3.4.RELEASE</version.org.springboot>-->
+<!--        <maven.compiler.target>17</maven.compiler.target>-->
+<!--        <version.com.h2database>2.1.214</version.com.h2database>-->
+<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--        <version.ikasan>3.2.2</version.ikasan>-->
+<!--        <version.activemq>5.16.3</version.activemq>-->
+<!--    </properties>-->
 
     <build>
         <plugins>

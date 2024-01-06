@@ -588,7 +588,7 @@
             <dependency>
                 <groupId>jakarta.jms</groupId>
                 <artifactId>jakarta.jms-api</artifactId>
-                <version>${version.javax.jms-api}</version>
+                <version>${version.jakarta.jms-api}</version>
             </dependency>
 
             <dependency>
@@ -745,7 +745,7 @@
             <dependency>
                 <groupId>org.springframework.webflow</groupId>
                 <artifactId>spring-js</artifactId>
-                <version>${version.org.springframework.webflow}</version>
+                <version>${version.org.springframework.webflow-spring-js}</version>
             </dependency>
 
             <dependency>
@@ -1010,15 +1010,12 @@
             </dependency>
 
             <!-- The SFTP library -->
-<!--            <dependency>-->
-<!--                <groupId>com.jcraft</groupId>-->
-<!--                <artifactId>jsch</artifactId>-->
-<!--                <version>${version.com.jcraft.jsch}</version>-->
-<!--            </dependency>-->
             <dependency>
-                <groupId>com.github.mwiede</groupId>
+                <groupId>com.jcraft</groupId>
                 <artifactId>jsch</artifactId>
+                <version>${version.com.jcraft.jsch}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-core</artifactId>
