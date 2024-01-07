@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-ootb-service</artifactId>
-        <version>3.3.3</version>
+        <version>3.3.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>

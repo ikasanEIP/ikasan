@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-mvn-archetype</artifactId>
-        <version>3.3.3</version>
+        <version>3.3.4-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-standalone-filesystem-im-maven-plugin</artifactId>
