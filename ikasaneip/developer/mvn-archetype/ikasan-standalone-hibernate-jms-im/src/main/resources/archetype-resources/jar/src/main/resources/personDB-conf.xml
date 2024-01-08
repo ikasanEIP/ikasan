@@ -4,44 +4,8 @@
 	   xmlns:jdbc="http://www.springframework.org/schema/jdbc"
 	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd">
 
-	<bean id="personMessageProvider" class="com.ikasan.sample.person.PersonMessageProvider">
-		<constructor-arg ref="personService"/>
-	</bean>
-
-	<bean id="personService" class="com.ikasan.sample.person.service.PersonServiceImpl">
-		<constructor-arg ref="xaPersonDao"/>
-    </bean>
-
-	<bean id="xaPersonDao" class="com.ikasan.sample.person.dao.PersonHibernateImpl">
-		<property name="sessionFactory" ref="xaPersonSessionFactory"/>
-	</bean>
-
-	<bean id="xaPersonSessionFactory" class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
-		<property name="dataSource" ref="personDataSource"/>
-		<property name="mappingResources">
-			<list>
-				<value>person.hbm.xml</value>
-			</list>
-		</property>
-		<property name="hibernateProperties" ref="personHibernateProperties"/>
-	</bean>
-
-	<util:map id="personHibernateProperties">
-		<entry key="hibernate.dialect" value="${person.db.dialect}"/>
-		<entry key="hibernate.show_sql" value="${person.db.show-sql}"/>
-		<entry key="hibernate.hbm2ddl.auto" value="${person.db.hbm2ddl.auto}"/>
-        <entry key="hibernate.transaction.coordinator_class" value="jta" />
-        <entry key="hibernate.transaction.jta.platform" value="JBossTS" />
-	</util:map>
-
-	<bean name="personDataSource" class="org.h2.jdbcx.JdbcDataSource">
-		<property name="url" value="${person.db.url}"/>
-		<property name="user" value="${person.db.username}"/>
-		<property name="password" value="${person.db.password}"/>
-	</bean>
-
 	<jdbc:initialize-database data-source="personDataSource"  >
-	 <jdbc:script location="classpath:personDBCreation.sql"/>
+	    <jdbc:script location="classpath:personDBCreation.sql"/>
 	</jdbc:initialize-database>
 
 </beans>
