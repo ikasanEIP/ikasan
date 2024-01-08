@@ -5,6 +5,7 @@ import org.ikasan.builder.*;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.component.converter.filetransfer.MapMessageToPayloadConverter;
 import org.ikasan.component.converter.filetransfer.PayloadToMapConverter;
+import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
@@ -12,6 +13,7 @@ import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
@@ -19,8 +21,8 @@ import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-pointcut-jms.xml",
-        "classpath:h2-datasource-conf.xml"
+    "classpath:ikasan-transaction-pointcut-jms.xml",
+    "classpath:h2-datasource-conf.xml"
 
 } )
 @Import(BaseFileTransferAutoConfiguration.class)
@@ -80,13 +82,13 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("${artifactId}");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("demo-sftp");
 
         Flow jmsToSftpFlow = getJmsToSftpFlow(mb,builderFactory.getComponentBuilder());
         Flow sftpToJmsFlow = getSftpConsumerFlow(mb,builderFactory.getComponentBuilder());
 
         Module module = mb.withDescription("Sftp Jms Sample Module")
-                .addFlow(sftpToJmsFlow).addFlow(jmsToSftpFlow).build();
+            .addFlow(sftpToJmsFlow).addFlow(jmsToSftpFlow).build();
         return module;
 
     }
@@ -101,34 +103,34 @@ public class ModuleConfig {
             .setConfiguredResourceId("sftpJmsProducer")
             .build();
 
-        FlowBuilder sftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("${sourceFlowName}");
+        FlowBuilder sftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("fileSystemToJMSFlow");
         Flow sftpToJmsFlow = sftpToLogFlowBuilder
-                .withDescription("Sftp to Jms")
-                .consumer("Sftp Consumer", componentBuilder.sftpConsumer()
-                        .setCronExpression(sftpConsumerCronExpression)
-                        .setClientID(sftpConsumerClientID)
-                        .setUsername(sftpConsumerUsername)
-                        .setPassword(sftpConsumerPassword)
-                        .setRemoteHost(sftpConsumerRemoteHost)
-                        .setRemotePort(sftpConsumerRemotePort)
-                        .setSourceDirectory(sftpConsumerSourceDirectory)
-                        .setFilenamePattern(sftpConsumerFilenamePattern)
-                        .setKnownHostsFilename(sftpConsumerKnownHosts)
-                        .setChronological(true)
-                        .setCleanupJournalOnComplete(false)
-                        .setAgeOfFiles(30)
-                        .setMinAge(1l)
-                        .setFilterDuplicates(true)
-                        .setFilterOnLastModifiedDate(true)
-                        .setRenameOnSuccess(false)
-                        .setRenameOnSuccessExtension(".tmp")
-                        .setDestructive(false)
-                        .setChunking(false)
-                        .setConfiguredResourceId("configuredResourceId")
-                        .setScheduledJobGroupName("SftpToLogFlow")
-                        .setScheduledJobName("SftpConsumer"))
-                .converter("Sftp Payload to Map Converter",new PayloadToMapConverter())
-                .producer("Sftp Jms Producer", jmsProducer).build();
+            .withDescription("Sftp to Jms")
+            .consumer("Sftp Consumer", componentBuilder.sftpConsumer()
+                .setCronExpression(sftpConsumerCronExpression)
+                .setClientID(sftpConsumerClientID)
+                .setUsername(sftpConsumerUsername)
+                .setPassword(sftpConsumerPassword)
+                .setRemoteHost(sftpConsumerRemoteHost)
+                .setRemotePort(sftpConsumerRemotePort)
+                .setSourceDirectory(sftpConsumerSourceDirectory)
+                .setFilenamePattern(sftpConsumerFilenamePattern)
+                .setKnownHostsFilename(sftpConsumerKnownHosts)
+                .setChronological(true)
+                .setCleanupJournalOnComplete(false)
+                .setAgeOfFiles(30)
+                .setMinAge(1l)
+                .setFilterDuplicates(true)
+                .setFilterOnLastModifiedDate(true)
+                .setRenameOnSuccess(false)
+                .setRenameOnSuccessExtension(".tmp")
+                .setDestructive(false)
+                .setChunking(false)
+                .setConfiguredResourceId("configuredResourceId")
+                .setScheduledJobGroupName("SftpToLogFlow")
+                .setScheduledJobName("SftpConsumer"))
+            .converter("Sftp Payload to Map Converter",new PayloadToMapConverter())
+            .producer("Sftp Jms Producer", jmsProducer).build();
         return sftpToJmsFlow;
     }
 
@@ -151,16 +153,14 @@ public class ModuleConfig {
             .setConfiguredResourceId("sftpProducerConfiguration")
             .build();
 
-        FlowBuilder jmsToSftpFlowBuilder = moduleBuilder.getFlowBuilder("${targetFlowName}");
+        FlowBuilder jmsToSftpFlowBuilder = moduleBuilder.getFlowBuilder("jmsToFileSystemFlow");
         Flow timeGeneratorToSftpFlow = jmsToSftpFlowBuilder
-                .withDescription("Receives Text Jms message and sends it to sftp as file")
-                .consumer("Sftp Jms Consumer", sftpJmsConsumer)
-                .converter("MapMessage to SFTP Payload Converter",new MapMessageToPayloadConverter())
-                .producer("Sftp Producer", sftpProducer)
-                .build();
+            .withDescription("Receives Text Jms message and sends it to sftp as file")
+            .consumer("Sftp Jms Consumer", sftpJmsConsumer)
+            .converter("MapMessage to SFTP Payload Converter",new MapMessageToPayloadConverter())
+            .producer("Sftp Producer", sftpProducer)
+            .build();
 
         return timeGeneratorToSftpFlow;
     }
-
-
 }
