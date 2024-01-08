@@ -3,7 +3,7 @@ package com.ikasan.sample.person;
 import com.ikasan.sample.person.dao.PersonDao;
 import com.ikasan.sample.person.model.Person;
 import org.jmock.Mockery;
-import org.jmock.lib.legacy.ClassImposteriser;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,9 +24,9 @@ import java.util.List;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class},
-        webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(locations = {
-        "/transaction-pointcut-components-on-test.xml"
+    "/transaction-pointcut-components-on-test.xml"
 })
 public class PersonMessageProviderTest
 {
@@ -39,7 +39,7 @@ public class PersonMessageProviderTest
     private final Mockery mockery = new Mockery()
     {
         {
-            setImposteriser(ClassImposteriser.INSTANCE);
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
 
