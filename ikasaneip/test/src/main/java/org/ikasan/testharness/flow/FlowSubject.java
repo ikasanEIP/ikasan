@@ -51,21 +51,19 @@ public interface FlowSubject
     /**
      * Add a flow test observer.
      * 
-     * @param flowtestObserver The flow test observer to add
+     * @param observer The flow test observer to add
      */
     public void addObserver(FlowObserver observer);
 
     /**
      * Remove a flow test observer.
      * 
-     * @param flowTestObserver The flow test observer to remove
+     * @param observer The flow test observer to remove
      */
     public void removeObserver(FlowObserver observer);
 
     /**
      * Remove all flow test observers.
-     * 
-     * @param flowTestObserver The flow test observer to remove
      */
     public void removeAllObservers();
 

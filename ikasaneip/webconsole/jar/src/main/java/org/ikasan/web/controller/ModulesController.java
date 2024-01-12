@@ -96,7 +96,6 @@ public class ModulesController
      * Constructor
      * 
      * @param moduleService - The module service
-     * @param monitor - A moitor of module's flows
      */
     @Autowired
     public ModulesController(final ModuleService moduleService)
@@ -162,8 +161,9 @@ public class ModulesController
      * Control the initiator (stop, start etc)
      * 
      * @param moduleName The name of the module
-     * @param initiatorName - The name of the initiator
-     * @param initiatorAction - The controlling action for the initiator
+     * @param flowName - The name of the flow
+     * @param startupType - The startup type
+     * @param startupComment - The startup comment
      * @return "modules/viewModule"
      * @throws Exception - Exception if we cannot control the initiator
      */

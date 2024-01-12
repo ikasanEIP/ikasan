@@ -58,7 +58,7 @@ import java.util.List;
 
 /**
  * Custom Spring Security authentication provider which tries to bind to an LDAP server with the passed-in credentials;
- * of note, when used with the custom {@link LdapAuthenticatorImpl}, <strong>does<strong> require an LDAP username
+ * of note, when used with the custom {@link LdapAuthenticator}, <strong>does<strong> require an LDAP username
  * and password for initial binding.
  * 
  * @author Ikasan Development Team

@@ -42,13 +42,21 @@ package org.ikasan.setup.persistence.service;
 
 import javax.annotation.Resource;
 
+import liquibase.configuration.LiquibaseConfiguration;
+import liquibase.logging.core.DefaultLoggerConfiguration;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 /**
  * JUnit based test class for testing HibernatePointToPointFlowProfileDao
@@ -72,6 +80,16 @@ public class PersistenceServiceImplTest
 
     @Resource
     PersistenceService persistenceService;
+
+    @Before
+    public void setup() {
+        System.setOut(new PrintStream(new OutputStream() {
+            @Override
+            public void write(int arg0) throws IOException {
+
+            }
+        }));
+    }
 
     /**
      * Test

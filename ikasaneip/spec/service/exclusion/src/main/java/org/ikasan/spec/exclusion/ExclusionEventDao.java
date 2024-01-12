@@ -54,14 +54,12 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
     /**
      * Save the event
      * @param event
-     * @return
      */
     public void save(EVENT event);
 
     /**
      * Save a list of events
      * @param events
-     * @return
      */
     public void save(List<EVENT> events);
 
@@ -70,14 +68,12 @@ public interface ExclusionEventDao<IDENTIFIER,EVENT>
      * @param moduleName
      * @param flowName
      * @param identifier
-     * @return
      */
     public void delete(String moduleName, String flowName, IDENTIFIER identifier);
     
     /**
      * Remove the event
      * @param errorUri
-     * @return
      */
     public void delete(String errorUri);
 

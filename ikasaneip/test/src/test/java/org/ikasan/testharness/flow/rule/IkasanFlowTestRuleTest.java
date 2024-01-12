@@ -145,6 +145,4 @@ public class IkasanFlowTestRuleTest
         IkasanFlowTestRule rule = new IkasanFlowTestRule();
         rule.withFlow(null);
     }
-
-
 }

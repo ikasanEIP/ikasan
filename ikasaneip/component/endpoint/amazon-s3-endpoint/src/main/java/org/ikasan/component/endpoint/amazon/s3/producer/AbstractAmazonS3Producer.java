@@ -1,12 +1,5 @@
 package org.ikasan.component.endpoint.amazon.s3.producer;
 
-import com.amazonaws.AmazonClientException;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.util.CollectionUtils;
 import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Client;
 import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Configuration;
 import org.ikasan.component.endpoint.amazon.s3.validation.BeanValidator;
@@ -18,15 +11,6 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Used to upload a file or a byte[] to S3 depending on the provided payload

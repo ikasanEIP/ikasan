@@ -218,7 +218,7 @@
 
         <!-- Commons DBCP -->
         <dependency>
-            <groupId>org.apache.commons</groupId>
+            <groupId>org.ikasan</groupId>
             <artifactId>commons-dbcp2</artifactId>
         </dependency>
 
@@ -274,6 +274,19 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
+        </dependency>
+
+        <!-- logback framework -->
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <version>${version.logback.core}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${version.logback.core}</version>
         </dependency>
 
         <!-- For point cut transaction management -->

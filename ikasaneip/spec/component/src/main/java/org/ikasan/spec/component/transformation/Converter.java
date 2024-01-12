@@ -43,7 +43,8 @@ package org.ikasan.spec.component.transformation;
 /**
  * Sometimes it is essential to translate data syntax (that is the representation of data)
  * being transported within a flow. Such translation is particularly necessary at both
- * ends of the flow: {@link Initiator} and {@link Endpoint} as data must be translated
+ * ends of the flow: {@link org.ikasan.spec.component.endpoint.Consumer}
+ * and {@link org.ikasan.spec.component.endpoint.Producer} as data must be translated
  * from one domain object to another.
  * 
  * A {@link Converter} defines a contract for such translation.
@@ -57,7 +58,7 @@ public interface Converter<SOURCE,TARGET>
 {
     /**
      * Convert source object into target object of type T.
-     * @param source object to be converted
+     * @param payload object to be converted
      * @return conversion result
      * @throws TransformationException if error converting S to T
      */

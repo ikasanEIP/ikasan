@@ -3,6 +3,7 @@ package org.ikasan.monitor;
 import org.ikasan.monitor.notifier.*;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.monitor.*;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -73,7 +74,8 @@ public class IkasanMonitorAutoConfiguration
     @Bean
     @ConditionalOnBean({NotifierFactory.class})
     @ConditionalOnProperty(prefix = "ikasan.dashboard.extract", name = "enabled", havingValue = "true")
-    public FlowNotifier dashboardFlowNotifier(NotifierFactory notifierFactory, DashboardRestService flowCacheStateRestService){
+    public FlowNotifier dashboardFlowNotifier(NotifierFactory notifierFactory
+        , @Qualifier("flowCacheStateRestService") DashboardRestService flowCacheStateRestService){
         return notifierFactory.getDashboardFlowNotifier(flowCacheStateRestService);
     }
 

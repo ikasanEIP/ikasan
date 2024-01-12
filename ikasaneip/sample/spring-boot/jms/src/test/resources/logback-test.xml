@@ -1,20 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <configuration scan="true">
-    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>application.log</file>
+        <append>true</append>
+        <!-- set immediateFlush to false for much higher logging throughput -->
+        <immediateFlush>true</immediateFlush>
         <encoder>
             <charset>utf-8</charset>
             <pattern>%r %d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
             </pattern>
         </encoder>
     </appender>
-    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework" level="ERROR"/>
     <logger name="org.ikasan" level="INFO"/>
+    <logger name="liquibase" level="OFF"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.springframework.core.env.StandardEnvironment" level="OFF"/>
 
-    <root level="WARN">
-        <appender-ref ref="CONSOLE"/>
+    <root level="ERROR">
+        <appender-ref ref="FILE"/>
     </root>
 
 </configuration>

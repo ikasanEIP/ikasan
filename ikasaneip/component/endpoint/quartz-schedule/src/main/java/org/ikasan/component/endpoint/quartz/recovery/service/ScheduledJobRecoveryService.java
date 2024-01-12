@@ -55,7 +55,6 @@ public interface ScheduledJobRecoveryService<CONTEXT>
      * @param name
      * @param group
      * @param nextFireTime
-     * @return
      */
     void setNextFireTime(String name, String group, Date nextFireTime);
 

@@ -51,7 +51,7 @@ public interface ExpectationComparator<E,A>
     /**
      * Compares the two incoming objects to ensure the expectation is 
      * satisifed by the actual.
-     * @param expectation
+     * @param expected
      * @param actual
      */
     void compare(E expected, A actual);

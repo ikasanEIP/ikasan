@@ -69,7 +69,7 @@ public interface HospitalService<EVENT>
      * @param moduleName The name of the module we are re-submitting to.
      * @param flowName The name of the flow we are re-submitting to.
      * @param errorUri The error uri of the event being resubmitted.
-     * @param principal The the user name we are resubmitting on behalf of.
+     * @param userName The the user name we are resubmitting on behalf of.
      */
     void resubmit(String moduleName, String flowName, String errorUri, String userName);
 
@@ -92,7 +92,7 @@ public interface HospitalService<EVENT>
      * @param moduleName The name of the module we are re-submitting to.
      * @param flowName The name of the flow we are re-submitting to.
      * @param errorUri The error uri of the event being resubmitted.
-     * @param principal The principal object of the user we are resubmitting on behalf of.
+     * @param userName The principal object of the user we are resubmitting on behalf of.
      */
     void ignore(String moduleName, String flowName, String errorUri, String userName);
 }

@@ -59,5 +59,8 @@ public class ModuleTestConfig
         return jmsTemplate;
     }
 
-
+    @Bean
+    LiquibaseConsoleService liquibaseConsoleService() {
+        return new LiquibaseConsoleService();
+    }
 }

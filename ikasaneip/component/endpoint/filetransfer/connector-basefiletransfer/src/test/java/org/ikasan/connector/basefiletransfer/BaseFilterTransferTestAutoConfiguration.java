@@ -41,7 +41,7 @@ public class BaseFilterTransferTestAutoConfiguration {
     @Bean
     Properties platformJpaProperties() {
         Properties platformJpaProperties = new Properties();
-        platformJpaProperties.put("hibernate.show_sql", true);
+        platformJpaProperties.put("hibernate.show_sql", false);
         platformJpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
 
         return platformJpaProperties;

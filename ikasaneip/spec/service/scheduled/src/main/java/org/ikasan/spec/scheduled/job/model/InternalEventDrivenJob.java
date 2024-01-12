@@ -142,7 +142,6 @@ public interface InternalEventDrivenJob extends SchedulerJob, Serializable {
      *
      * To set, passing a pipe delimited string to represent the String array that represent the commands that will be
      * used by the java.lang.ProcessBuilder to set how we want to execute the script from getCommandLine
-     * @return
      */
     void setExecutionEnvironmentProperties(String executionEnvironmentProperties);
 

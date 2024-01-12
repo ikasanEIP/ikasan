@@ -1,17 +1,10 @@
 package org.ikasan.component.endpoint.amazon.s3.validation;
 
-import com.amazonaws.util.CollectionUtils;
-import org.ikasan.spec.component.endpoint.EndpointException;
 import org.junit.Test;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 public class BeanValidatorTest {
 
@@ -71,11 +64,4 @@ public class BeanValidatorTest {
             this.telephoneNumber = telephoneNumber;
         }
     }
-
-//    if (!CollectionUtils.isNullOrEmpty(violations)){
-//        String constraintViolations =
-//            violations.stream().map(v->v.getPropertyPath() + " " + v.getMessage()).collect(Collectors.toList()).toString();
-//        throw new EndpointException("Instance of " + validatableBean.getClass().getSimpleName()
-//            + " has the following constraint violations :- " + constraintViolations);
-//    }
 }

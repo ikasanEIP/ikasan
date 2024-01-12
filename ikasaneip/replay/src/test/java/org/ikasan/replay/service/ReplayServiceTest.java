@@ -135,13 +135,6 @@ public class ReplayServiceTest
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
                         .withBody("Event resubmitted!")));
-		wireMockRule.addMockServiceRequestListener(new RequestListener() {
-			@Override
-			public void requestReceived(Request request, Response response) {
-			//	System.out.print(request);
-			//	System.out.print(response);
-			}
-		});
 	}
 
 
@@ -323,11 +316,6 @@ public class ReplayServiceTest
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId2));
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId3));
 		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId4));
-
-
-		System.out.println("Number of replay events: " + replayEvents.size());
-		System.out.println("Number of replay audits: " + replayAudits.size());
-		System.out.println("Number of replay audit events: " + auditEvents.size());
 
 		this.replayDao.housekeep(1000);
 

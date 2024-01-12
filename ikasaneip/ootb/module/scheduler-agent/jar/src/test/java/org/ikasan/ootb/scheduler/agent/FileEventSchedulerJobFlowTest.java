@@ -79,16 +79,20 @@ import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.quartz.TriggerBuilder.newTrigger;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -100,6 +104,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestConfiguration.class})
+@Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class FileEventSchedulerJobFlowTest {
     @Resource
     private Module<Flow> moduleUnderTest;
@@ -301,10 +306,9 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(5000);
 
-        flowTestRule.assertIsSatisfied();
-
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
         fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
@@ -337,7 +341,6 @@ public class FileEventSchedulerJobFlowTest {
 
         // Confirm that the correlating identifier has been carried through.
         Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-
 
         flowTestRule.stopFlow();
     }
@@ -553,7 +556,9 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.sleep(2000);
 
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
         // Note, since the ContextInstanceFilter no longer requires plan name, and the reacts to a
         // JobExecutionContextImpl not a CorrelatedFileList, the flow will continue. This test could be expended with
         // a more complex scenario or make use of JobExecutionContext later

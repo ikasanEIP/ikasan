@@ -93,8 +93,6 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
 
     /**
      * Set sort based on the lastModifiedDateTime
-     *
-     * @return
      */
     void setSortByModifiedDateTime(boolean sortByModifiedDateTime);
 

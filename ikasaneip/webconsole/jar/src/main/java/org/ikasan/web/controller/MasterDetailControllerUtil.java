@@ -104,7 +104,7 @@ public class MasterDetailControllerUtil {
 	/**
 	 * Standardises the orderAsc field to use false if otherwise not supplied
 	 * 
-	 * @param orderAsc
+	 * @param input
 	 * @return
 	 */
 	public static boolean defaultFalse(Boolean input) {

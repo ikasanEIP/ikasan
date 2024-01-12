@@ -40,13 +40,11 @@
  */
 package org.ikasan.serialiser.converter;
 
-import org.apache.activemq.command.ActiveMQObjectMessage;
-import org.ikasan.serialiser.model.JmsObjectMessageDefaultImpl;
-import org.junit.Test;
-
 import jakarta.jms.JMSException;
 import jakarta.jms.ObjectMessage;
 import jakarta.jms.Session;
+import org.apache.activemq.command.ActiveMQObjectMessage;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

@@ -74,8 +74,8 @@ public interface RecoveryManager<RESOLVER, CONTEXT, ID>
      * @param throwable
      * @param event
      * @param identifier
-     * @param <EVENT>
-     * @param <ID>
+     * @param event
+     * @param identifier
      */
     <EVENT> void recover(CONTEXT context, Throwable throwable, EVENT event, ID identifier);
 

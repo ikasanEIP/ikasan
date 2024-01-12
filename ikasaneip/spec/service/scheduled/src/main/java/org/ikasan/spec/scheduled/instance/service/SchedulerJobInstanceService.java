@@ -124,7 +124,7 @@ public interface SchedulerJobInstanceService {
      *
      * @param contextInstanceId the id of the context instance that we want the jobs for.
      *
-     * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
+     * @return Map&lt;String, InternalEventDrivenJobInstance&gt; containing the command execution jobs
      * keyed on their identifier.
      */
     Map<String, InternalEventDrivenJobInstance> getCommandExecutionJobsForContextInstance(String contextInstanceId);
@@ -137,7 +137,7 @@ public interface SchedulerJobInstanceService {
      *
      * @param contextInstanceId the id of the context instance that we want the jobs for.
      *
-     * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
+     * @return Map&lt;String, InternalEventDrivenJobInstance&gt; containing the command execution jobs
      * keyed on their identifier.
      */
     Map<String, InternalEventDrivenJobInstance> getCommandExecutionJobsForContextInstanceChildContext(String contextInstanceId);

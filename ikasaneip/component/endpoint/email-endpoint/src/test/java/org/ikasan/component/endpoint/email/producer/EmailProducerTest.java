@@ -238,9 +238,8 @@ public class EmailProducerTest {
             InputStream resourceAsStream = getClass().getResourceAsStream("/testAttachment.csv");
             payload.addAttachment("testAttachment", "text/csv", IOUtils.toByteArray(resourceAsStream));
         }
-        System.out.println(payload.toString());
-        return payload;
 
+        return payload;
     }
 
     private EmailProducerConfiguration getConfiguration(boolean hasAttachment, String emailBody) {

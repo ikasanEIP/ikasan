@@ -1,6 +1,6 @@
 package org.ikasan.component.endpoint.amazon.s3.producer;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * Used to transfer a byte array payload to S3.

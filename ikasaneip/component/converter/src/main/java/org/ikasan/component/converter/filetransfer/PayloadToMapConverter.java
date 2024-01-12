@@ -47,7 +47,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Converts File Transfer payload to Map<String,String>
+ * Converts File Transfer payload to Map of String, Object
  * Created by Ikasan Development Team
  */
 public class PayloadToMapConverter implements Converter<Payload,Map<String,Object>>

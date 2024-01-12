@@ -10,7 +10,6 @@ public interface ContextInstanceRegistrationService {
      * Method to prepare a future context instance.
      *
      * @param contextName
-     * @return
      */
     void prepareFutureContextInstance(String contextName);
 
@@ -20,7 +19,6 @@ public interface ContextInstanceRegistrationService {
      * or blackout windows.
      *
      * @param contextName
-     * @return
      */
     void reSchedule(String contextName);
 
@@ -28,7 +26,6 @@ public interface ContextInstanceRegistrationService {
      * Method to register a context by name.
      *
      * @param contextName
-     * @return
      */
     void register(String contextName);
 

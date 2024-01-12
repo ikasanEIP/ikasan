@@ -141,7 +141,6 @@ public class JmsSampleFlowTest {
 
     @After
     public void teardown() throws Exception {
-        System.out.println("In teardown method for test " + name.getMethodName());
         browseMessagesOnQueueVerifier.stop();
         removeAllMessages();
         clearDatabase();
@@ -162,7 +161,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_Jms_Sample_Flow() throws Exception {
-        System.out.println("test_Jms_Sample_Flow");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -218,7 +216,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_exclusion() {
-        System.out.println("test_exclusion");
 
         // Prepare test data
         String message = SAMPLE_MESSAGE;
@@ -262,8 +259,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_exclusion_followed_by_resubmission() {
-        System.out.println("test_exclusion_followed_by_resubmission");
-
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -337,7 +332,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_exclusion_followed_by_ignore() {
-        System.out.println("test_exclusion_followed_by_ignore");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -395,8 +389,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_flow_in_recovery() {
-        System.out.println("test_flow_in_recovery");
-
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -440,8 +432,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_flow_in_scheduled_recovery() {
-        System.out.println("test_flow_in_scheduled_recovery");
-
         // Prepare test data
         String message = SAMPLE_MESSAGE;
 
@@ -499,8 +489,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_flow_stopped_in_error() {
-        System.out.println("test_flow_stopped_in_error");
-
         // setup custom broker to throw an exception
         ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
         exceptionGeneratingBroker.setShouldThrowStoppedInErrorException(true);
@@ -547,7 +535,6 @@ public class JmsSampleFlowTest {
 
     @Test
     public void test_transaction_timeout_stopped_in_error() {
-        System.out.println("test_transaction_timeout_stopped_in_error");
         // Prepare test data
         String message = SAMPLE_MESSAGE;
         logger.info("Sending a JMS message.[" + message + "]");
@@ -580,8 +567,6 @@ public class JmsSampleFlowTest {
         ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
         assertEquals(EndpointException.class.getName(), error.getExceptionClass());
         assertEquals("Retry (delay=10000, maxRetries=10)", error.getAction());
-
-
     }
 
 }

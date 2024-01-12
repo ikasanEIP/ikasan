@@ -236,7 +236,7 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
      * age of creation and their clientId
      * <p>
      * TODO  This is _not_ a platform independent solution
-     * as we are using a Sybase specific functions (dateadd() & getdate())
+     * as we are using a Sybase specific functions (dateadd() and getdate())
      *
      * @param clientId
      * @param ageOfFiles

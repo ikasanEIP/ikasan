@@ -51,7 +51,6 @@ public interface CallBackMessageConsumer<MESSAGE>
      * Invokes the underlying tech implementation of message provider.
      *
      * @param message
-     * @return
      */
     void invoke(MESSAGE message);
 }

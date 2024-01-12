@@ -124,7 +124,6 @@ public interface ExclusionEventAction<EVENT>
      * Set the comment.
      *
      * @param comment
-     * @return
      */
     public void setComment(String comment);
 

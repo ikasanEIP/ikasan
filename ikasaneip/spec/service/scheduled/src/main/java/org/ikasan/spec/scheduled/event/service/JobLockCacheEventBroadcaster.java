@@ -48,7 +48,6 @@ public interface JobLockCacheEventBroadcaster {
      * Register a listener for job lock cache events.
      *
      * @param listener
-     * @return
      */
     void register(JobLockCacheEventBroadcastListener listener);
 
