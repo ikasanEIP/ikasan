@@ -101,7 +101,7 @@ Roles with the scheduler-write, scheduler-read policies and scheduler-admin poli
 | Action - Hold All Command Execution Jobs                         | :white_check_mark:                    |  :white_check_mark:                   |                                               |       |
 | Action - Release All Held Jobs                                   | :white_check_mark:                    |   :white_check_mark:                  |                                               |       |
 | Action - Disabled Scheduled Jobs                                 | :white_check_mark:                    |   :white_check_mark:                  |                                               |       |
-| Action - Ignore Job Plan Duration                                | :white_check_mark:                    |  :white_check_mark:                   |                                               |       |
+| Action - Ignore Job Plan Duration                                | :white_check_mark:                    |                                       |                                               |       |
 | Action - Manage Job Plan Instance Parameters                     |  :white_check_mark:                   |   :white_check_mark:                  |                                               |       |
 | Action - Reset Job Plan                                          | :white_check_mark:                    |   :white_check_mark:                  |                                               |       |
 | Job Plan Instance Tree View Tab - Open Tree Node Visualisation   | :white_check_mark:                    | :white_check_mark:                    |   :white_check_mark:                                            |       |
