@@ -63,25 +63,34 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 import org.springframework.web.servlet.view.JstlView;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-public class IkasanWebAutoConfiguration
+@EnableWebMvc
+public class IkasanWebAutoConfiguration implements WebMvcConfigurer
 {
     @Autowired
     @Qualifier("ikasan.ds")
     private DataSource ikasands;
 
+    @Override
     public void configureViewResolvers(ViewResolverRegistry registry)
     {
         InternalResourceViewResolver resolver = new InternalResourceViewResolver();
         resolver.setPrefix("/WEB-INF/jsp/");
+        resolver.setSuffix(".jsp");
+        resolver.setViewClass(JstlView.class);
+        registry.viewResolver(resolver);
+
+        resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/WEB-INF/");
         resolver.setSuffix(".jsp");
         resolver.setViewClass(JstlView.class);
         registry.viewResolver(resolver);

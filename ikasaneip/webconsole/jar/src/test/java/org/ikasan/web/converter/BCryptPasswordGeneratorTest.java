@@ -59,13 +59,11 @@ public class BCryptPasswordGeneratorTest
      * Test null to map.
      */
     @Test
+    // todo make this test meaningful
     public void test_map_converter_with_null_value() throws Exception
     {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String hashedPassword = passwordEncoder.encode("admin");
-
-        System.out.println(hashedPassword);
-
     }
 
 

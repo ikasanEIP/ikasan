@@ -93,7 +93,6 @@ public class TCPSocketTest
      */
     @Before public void setUp()
     {
-        System.out.println("setUp");
         uut = new TCPSocket();
         ReflectionTestUtils.setField(uut, "bons", mockOutputStream);
     }
@@ -107,8 +106,6 @@ public class TCPSocketTest
         // assert
         final byte[] expectedData = "|sampleData|".getBytes();
         Assert.assertTrue(isMockedFlushHit);
-        System.out.println("Expected:" + new String(expectedData));
-        System.out.println("Actual:" + new String(mockedOutputStreamWriteResult));
         Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
@@ -123,8 +120,6 @@ public class TCPSocketTest
         // assert
         final byte[] expectedData = "|sampleData|".getBytes();
         Assert.assertTrue(isMockedFlushHit);
-        System.out.println("Expected:" + new String(expectedData, CHARSET_ISO_88591));
-        System.out.println("Actual:" + new String(mockedOutputStreamWriteResult, CHARSET_ISO_88591));
         Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
@@ -140,8 +135,6 @@ public class TCPSocketTest
         final byte[] expectedData = "|{|}~¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñò|"
                 .getBytes(CHARSET_ISO_88591);
         Assert.assertTrue(isMockedFlushHit);
-        System.out.println("Expected:" + new String(expectedData, CHARSET_ISO_88591));
-        System.out.println("Actual--:" + new String(mockedOutputStreamWriteResult, CHARSET_ISO_88591));
         Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
@@ -158,8 +151,6 @@ public class TCPSocketTest
         final byte[] expectedData = "|{|}~¡¢£¤¥¦§¨©ª«¬­®¯°±²³´µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñò|"
                 .getBytes();
         Assert.assertTrue(isMockedFlushHit);
-        System.out.println("Expected:" + new String(expectedData, CHARSET_UTF8));
-        System.out.println("Actual--:" + new String(mockedOutputStreamWriteResult, CHARSET_UTF8));
         Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
@@ -174,27 +165,20 @@ public class TCPSocketTest
         // assert
         final byte[] expectedData = "|simpleData|".getBytes();
         Assert.assertTrue(isMockedFlushHit);
-        System.out.println("Expected:" + new String(expectedData));
-        System.out.println("Actual--:" + new String(mockedOutputStreamWriteResult));
         Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
-    private void printByteArrays(byte[] bytes)
-    {
+    private void printByteArrays(byte[] bytes) {
         StringBuilder sb = new StringBuilder();
         for (byte b : bytes)
         {
             sb.append("%02X ".formatted(b));
         }
-        System.out.println(sb.toString());
     }
 
     /**
      * Tear down after each test
      */
-    @After public void tearDown()
-    {
-        // nothing to tear down
-        System.out.println("tearDown");
+    @After public void tearDown() {
     }
 }

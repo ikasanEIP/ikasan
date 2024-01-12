@@ -281,7 +281,7 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      *
      * @param contextName the name of the context that we want the jobs for.
      *
-     * @return Map<String, InternalEventDrivenJobInstance> containing the command execution jobs
+     * @return Map&lt;String, InternalEventDrivenJobInstance&gt; containing the command execution jobs
      * keyed on their identifier.
      */
     Map<String, InternalEventDrivenJob> getCommandExecutionJobsForContext(String contextName);

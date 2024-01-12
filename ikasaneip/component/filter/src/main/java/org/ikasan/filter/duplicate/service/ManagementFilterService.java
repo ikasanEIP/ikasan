@@ -97,7 +97,6 @@ public interface ManagementFilterService
      *
      * @param criteria to be deleted
      * @param clientId to be deleted
-     * @return
      */
     void delete(Integer criteria, String clientId);
 

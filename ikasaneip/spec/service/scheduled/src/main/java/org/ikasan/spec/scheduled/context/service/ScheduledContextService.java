@@ -73,8 +73,6 @@ public interface ScheduledContextService {
 
     /**
      * Save a context view.
-     *
-     * @return
      */
     void saveContextView(ScheduledContextViewRecord contextView);
 

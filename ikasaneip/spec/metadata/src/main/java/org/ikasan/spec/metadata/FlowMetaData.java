@@ -85,7 +85,6 @@ public interface FlowMetaData
      * Set the flow startup type.
      *
      * @param flowStartupType
-     * @return
      */
     public void setFlowStartupType(String flowStartupType);
 
@@ -100,7 +99,6 @@ public interface FlowMetaData
      * Set the flow startup type.
      *
      * @param flowStartupComment
-     * @return
      */
     public void setFlowStartupComment(String flowStartupComment);
 

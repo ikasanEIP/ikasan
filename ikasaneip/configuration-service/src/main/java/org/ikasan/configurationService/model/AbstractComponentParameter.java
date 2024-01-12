@@ -58,14 +58,6 @@ public abstract class AbstractComponentParameter<T> implements Serializable, Con
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     protected Long id;
 
-//    /** configuration name */
-//    @Column(name="Name", nullable = false)
-//    protected String name;
-//
-//    /** configuration description */
-//    @Column(name="Description")
-//    protected String description;
-
     /**
      * Getter for id
      * @return

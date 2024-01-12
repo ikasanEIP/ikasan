@@ -21,7 +21,6 @@ public interface ScheduledContextInstanceDao {
      * Delete context instance record by id.
      *
      * @param id
-     * @return
      */
     void deleteById(String id);
 

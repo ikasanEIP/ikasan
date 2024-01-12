@@ -1,6 +1,6 @@
 package org.ikasan.component.endpoint.amazon.s3.client;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * The Amazon S3 Configuration

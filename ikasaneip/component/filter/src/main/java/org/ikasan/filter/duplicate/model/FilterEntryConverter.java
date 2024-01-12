@@ -52,7 +52,7 @@ public interface FilterEntryConverter<T>
 {
     /**
      * Convert any object to a {@link FilterEntry} instance
-     * @param object The instance to convert
+     * @param message The instance to convert
      * @return A {@link FilterEntry} representation of an object
      * @throws FilterEntryConverterException allow configuration of the flow to
      * skip filter entry issues caused by data

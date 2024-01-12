@@ -50,12 +50,15 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
 import javax.annotation.Resource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
 
 /**
  * This test class supports the <code>ModuleFactory</code> class.
@@ -65,6 +68,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {MyApplication.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@Sql(scripts = {"/cleanDbTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class ModuleFactoryTest {
     @Resource
     private Module<Flow> module;
@@ -79,6 +83,7 @@ public class ModuleFactoryTest {
      * Test successful flow creation.
      */
     @Test
+    @DirtiesContext
     public void test_successful_moduleCreation() {
         Assert.assertTrue("module name should be 'moduleName'", "moduleName".equals(module.getName()));
         Assert.assertTrue("module description should be 'moduleDescription'", "moduleDescription".equals(module.getDescription()));
@@ -99,6 +104,7 @@ public class ModuleFactoryTest {
     }
 
     @Test
+    @DirtiesContext
     public void testStartupTypeOnFlowsSetFromApplicationDotProperties() {
         assertEquals("""
                 ID,MODULENAME,FLOWNAME,STARTUPTYPE,COMMENT
@@ -110,6 +116,7 @@ public class ModuleFactoryTest {
 
 
     @Test
+    @DirtiesContext
     public void testWiretapTriggersSetFromApplicationDotProperties() {
         assertEquals("""
                 ID,MODULENAME,FLOWNAME,RELATIONSHIP,FLOWELEMENTNAME,JOBNAME

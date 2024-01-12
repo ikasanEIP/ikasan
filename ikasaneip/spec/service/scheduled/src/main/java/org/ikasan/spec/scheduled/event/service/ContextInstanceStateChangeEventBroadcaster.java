@@ -48,7 +48,6 @@ public interface ContextInstanceStateChangeEventBroadcaster {
      * Register a listener for context instance state change events.
      *
      * @param listener
-     * @return
      */
     void register(ContextInstanceStateChangeEventBroadcastListener listener);
 

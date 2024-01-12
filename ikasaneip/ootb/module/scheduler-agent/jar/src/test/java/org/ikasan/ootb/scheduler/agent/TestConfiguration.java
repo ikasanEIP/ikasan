@@ -54,16 +54,6 @@ import org.springframework.context.annotation.Primary;
 @org.springframework.boot.test.context.TestConfiguration
 public class TestConfiguration {
 
-//    @Value( "${module.name}" )
-//    String moduleName;
-//
-//    @Autowired
-//    BuilderFactory builderFactory;
-//
-//    @Autowired
-//    SchedulerAgentFlowFactory schedulerAgentFlowFactory;
-
-
     @Bean
     @Primary
     public SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration() {

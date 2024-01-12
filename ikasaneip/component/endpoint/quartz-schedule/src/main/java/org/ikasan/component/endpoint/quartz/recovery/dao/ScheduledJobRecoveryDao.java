@@ -65,7 +65,6 @@ public interface ScheduledJobRecoveryDao<MODEL>
      * Delete any recovery state for the given job name and group.
      * @param name
      * @param group
-     * @return
      */
     void deleteRecovery(String name, String group);
 

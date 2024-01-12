@@ -59,6 +59,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.Resource;
@@ -73,6 +74,7 @@ import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
  * This test Sftp To JMS Flow.
@@ -84,6 +86,7 @@ import static org.junit.Assert.assertEquals;
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Sql(scripts = {"/cleanChunkingTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class SftpChunkingToJmsFlowTest
 {
 
@@ -146,9 +149,7 @@ public class SftpChunkingToJmsFlowTest
     @Test
     public void test_file_download() throws Exception
     {
-
         // Upload data to fake SFTP
-
         sftp.putFile("/source/bigTextFile.txt",generateMassiveString());
 
         //Update Sftp Consumer config
@@ -186,6 +187,7 @@ public class SftpChunkingToJmsFlowTest
             """));
 
 
+        System.out.println(content);
         Assert.assertTrue((content.toString()).endsWith("""
             </chunkTimeStamp><clientId\
             >sftpToJmsFlow</clientId><fileName>bigTextFile\

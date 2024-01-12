@@ -69,6 +69,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -81,6 +82,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -92,6 +94,7 @@ import static org.junit.Assert.assertEquals;
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestConfiguration.class})
+@Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class JobProcessingFlowTest {
 
     @Value( "${module.name}" )

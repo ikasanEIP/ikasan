@@ -56,7 +56,7 @@ public interface Translator<T>
     /**
      * Transforms or otherwise changes the passed in <code>Event</code>
      * 
-     * @param event Event to transform
+     * @param payload Event to transform
      * @throws TransformationException Exception if we could not transform
      */
     public void translate(T payload) throws TransformationException;

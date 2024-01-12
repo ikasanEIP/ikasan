@@ -144,17 +144,15 @@ public class IkasanFlowTestRule implements TestRule
             @Override
             public void evaluate() throws Throwable
             {
-                base.evaluate();
-                if (flow != null && flowTestHarness != null)
-                {
-                    System.out.println("Calling stop in IkasanFlowTestRule");
-                    flow.stop();
-                    assertEquals("in rule apply - flow should be stopped", errorEndState ?
-                            "stoppedInError" :
-                            "stopped", flow.getState());
-                    flowTestHarness.assertIsSatisfied();
-                }
-                System.out.println("In evaluate of IkasanFlowTestRule - end");
+            base.evaluate();
+            if (flow != null && flowTestHarness != null)
+            {
+                flow.stop();
+                assertEquals("in rule apply - flow should be stopped", errorEndState ?
+                        "stoppedInError" :
+                        "stopped", flow.getState());
+                flowTestHarness.assertIsSatisfied();
+            }
             }
         };
     }

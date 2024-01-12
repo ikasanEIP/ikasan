@@ -1,7 +1,6 @@
 package org.ikasan.component.endpoint.amazon.s3.producer;
 
 import org.ikasan.component.endpoint.amazon.s3.client.AmazonS3Client;
-import org.ikasan.component.endpoint.amazon.s3.validation.BeanValidator;
 import org.ikasan.component.endpoint.amazon.s3.validation.InvalidAmazonS3PayloadException;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.slf4j.Logger;

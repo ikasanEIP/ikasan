@@ -45,7 +45,7 @@ package org.ikasan.spec.component.endpoint;
  * 
  * A {@link Producer} defines a contract for such translation.
  * 
- * @param <TARGET> Type of conversion result
+ * <TARGET> Type of conversion result
  *
  * @author Ikasan Development Teams
  */
@@ -53,7 +53,7 @@ public interface Producer<T>
 {
     /**
      * Push payload to a protocol endpoint
-     * @param <T> payload
+     * @param payload
      * @throws EndpointException
      */
     public void invoke(final T payload) throws EndpointException;

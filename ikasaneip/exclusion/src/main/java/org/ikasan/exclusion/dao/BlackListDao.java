@@ -57,7 +57,6 @@ public interface BlackListDao<IDENTIFIER,EVENT>
      * @param moduleName
      * @param flowName
      * @param identifier
-     * @return
      */
     public void delete(String moduleName, String flowName, IDENTIFIER identifier);
 

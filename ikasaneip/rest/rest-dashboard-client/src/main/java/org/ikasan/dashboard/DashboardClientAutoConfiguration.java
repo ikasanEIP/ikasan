@@ -56,14 +56,14 @@ public class DashboardClientAutoConfiguration
         return httpComponentsClientHttpRequestFactory;
     }
 
-    @Bean
+    @Bean(name = "replyDashboardRestService")
     public DashboardRestService replyDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, REPLAY_PATH);
     }
 
-    @Bean
+    @Bean(name = "wiretapDashboardRestService")
     public DashboardRestService wiretapDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
@@ -71,14 +71,14 @@ public class DashboardClientAutoConfiguration
 
     }
 
-    @Bean
+    @Bean(name = "errorReportingDashboardRestService")
     public DashboardRestService errorReportingDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, ERROR_PATH);
     }
 
-    @Bean
+    @Bean(name = "exclusionDashboardRestService")
     public DashboardRestService exclusionDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
@@ -86,21 +86,21 @@ public class DashboardClientAutoConfiguration
     }
 
 
-    @Bean
+    @Bean(name = "metricsDashboardRestService")
     public DashboardRestService metricsDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, METRICS_PATH);
     }
 
-    @Bean
+    @Bean(name = "systemEventsDashboardRestService")
     public DashboardRestService systemEventsDashboardRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, SYSTEM_EVENTS_PATH);
     }
 
-    @Bean
+    @Bean(name = "moduleMetadataDashboardRestService")
     public DashboardRestService moduleMetadataDashboardRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory,
         ModuleMetadataConverter moduleMetadataConverter)
     {
@@ -108,13 +108,13 @@ public class DashboardClientAutoConfiguration
 
     }
 
-    @Bean
+    @Bean(name = "moduleMetadataConverter")
     public ModuleMetadataConverter moduleMetadataConverter(ModuleMetaDataProvider<String> jsonModuleMetaDataProvider
         , ModuleService moduleService) {
         return new ModuleMetadataConverter(jsonModuleMetaDataProvider,moduleService);
     }
 
-    @Bean
+    @Bean(name = "configurationMetadataDashboardRestService")
     public DashboardRestService configurationMetadataDashboardRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory,
         ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataProvider)
     {
@@ -122,7 +122,7 @@ public class DashboardClientAutoConfiguration
             (Converter<Module, List>) module -> configurationMetaDataProvider.getComponentsConfiguration(module));
     }
 
-    @Bean
+    @Bean(name = "flowCacheStateRestService")
     public DashboardRestService flowCacheStateRestService(Environment environment
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {

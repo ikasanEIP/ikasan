@@ -77,9 +77,9 @@
 	</bean>
 
 
-<!-- ************************ -->
-<!-- Webflow integraion below -->
-<!-- ************************ -->
+    <!-- ************************ -->
+    <!-- Webflow integraion below -->
+    <!-- ************************ -->
 
 	<!-- Enables FlowHandler URL mapping -->
 	<bean class="org.springframework.webflow.mvc.servlet.FlowHandlerAdapter">
@@ -115,9 +115,9 @@
 	<!-- Having WebFlow present stuffs up some of the default behaviour of the DispatcherServlet, including the following fixes this -->
 	<bean id="controllerHandlerAdapter" class="org.springframework.web.servlet.mvc.SimpleControllerHandlerAdapter"/>
 
-<!-- ************************ -->
-<!--  end Webflow integraion  -->
-<!-- ************************ -->
+    <!-- ************************ -->
+    <!--  end Webflow integraion  -->
+    <!-- ************************ -->
 
 	<bean id="triggerDetailsService" class="org.ikasan.web.service.TriggerDetailsService">
 		<constructor-arg ref="wiretapFlowEventListener"/>

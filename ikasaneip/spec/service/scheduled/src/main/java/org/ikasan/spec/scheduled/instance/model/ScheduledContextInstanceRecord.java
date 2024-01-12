@@ -98,8 +98,6 @@ public interface ScheduledContextInstanceRecord {
 
     /**
      * Set the start time.
-     *
-     * @return
      */
     void setStartTime(long endTime);
 
@@ -112,8 +110,6 @@ public interface ScheduledContextInstanceRecord {
 
     /**
      * Set the end time.
-     *
-     * @return
      */
     void setEndTime(long endTime);
 

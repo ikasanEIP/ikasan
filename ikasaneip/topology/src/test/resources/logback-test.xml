@@ -7,7 +7,7 @@
             <Pattern>[%p] %c - %m%n</Pattern>
         </encoder>
     </appender>
-    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework" level="ERROR"/>
     <logger name="org.hibernate" level="ERROR"/>
     <logger name="org.apache.catalina.startup.DigesterFactory" level="OFF"/>
     <logger name="org.springframework.core.env.StandardEnvironment" level="OFF"/>
@@ -19,7 +19,7 @@
     <!-- wiremock has per endpoint servlet logging -->
     <logger name="/" level="WARN"/>
 
-    <root level="WARN">
+    <root level="ERROR">
         <appender-ref ref="CONSOLE"/>
     </root>
 

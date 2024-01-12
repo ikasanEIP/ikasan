@@ -79,6 +79,7 @@ import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -89,6 +90,7 @@ import java.util.*;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.quartz.TriggerBuilder.newTrigger;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
  * This test class supports the <code>vanilla integration module</code> application.
@@ -100,6 +102,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
     properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestConfiguration.class})
+@Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class HousekeepingLogFilesFlowTest {
     @Resource
     private Module<Flow> moduleUnderTest;

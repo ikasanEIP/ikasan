@@ -1,0 +1,6 @@
+DELETE FROM StartupControl;
+DELETE FROM FlowEventTriggerParameters;
+DELETE FROM FlowEventTrigger;
+
+ALTER TABLE StartupControl ALTER COLUMN Id RESTART WITH 1;
+ALTER TABLE FlowEventTrigger ALTER COLUMN Id RESTART WITH 1;

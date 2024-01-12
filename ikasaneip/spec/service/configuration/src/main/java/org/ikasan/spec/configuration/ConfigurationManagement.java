@@ -57,7 +57,7 @@ public interface ConfigurationManagement<RESOURCE,MODEL>
     
     /**
      * Create a configuration instance for the given configured resource id.
-     * @param configuredResource
+     * @param configuredResourceId
      * @return
      */
     public MODEL getConfiguration(String configuredResourceId);
@@ -77,13 +77,13 @@ public interface ConfigurationManagement<RESOURCE,MODEL>
 
     /**
      * Save the given configuration.
-     * @param configuredResource
+     * @param configuration
      */
     public void saveConfiguration(MODEL configuration);
 
     /**
      * Delete the given configuration.
-     * @param configuredResource
+     * @param configuration
      */
     public void deleteConfiguration(MODEL configuration);
 }
