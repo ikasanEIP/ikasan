@@ -30,7 +30,6 @@ public interface ModuleMetaData
     /**
      * Set the url of the module.
      *
-     * @return
      */
     public void setUrl(String url);
 

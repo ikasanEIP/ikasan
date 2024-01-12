@@ -250,8 +250,6 @@ public interface ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMS extends DryRunPar
 
     /**
      * Set the boolean flag to indicate if the job was a dry run.
-     *
-     * @return
      */
     void setJobStarting(boolean jobStarting);
 
@@ -264,8 +262,6 @@ public interface ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMS extends DryRunPar
 
     /**
      * Set the boolean flag to indicate if the job was a dry run.
-     *
-     * @return
      */
     void setDryRun(boolean dryRun);
 

@@ -1,7 +1,6 @@
 package org.ikasan.component.endpoint.amazon.s3.producer;
 
-import javax.validation.constraints.NotNull;
-import java.io.File;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * The data commmon to all S3 Payloads

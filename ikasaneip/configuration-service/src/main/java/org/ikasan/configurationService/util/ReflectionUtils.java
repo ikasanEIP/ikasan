@@ -226,7 +226,7 @@ public class ReflectionUtils
 	 * Get all fields of the given class and all parent classes regardless of access (public, protected, private, ..).
 	 *
 	 * @param cls
-	 * @return Map<String,Field>
+	 * @return declared fields
 	 */
 	protected static Map<String,Field> getDeclaredFields(Class cls)
 	{

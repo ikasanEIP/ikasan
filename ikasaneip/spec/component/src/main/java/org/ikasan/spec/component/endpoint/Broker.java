@@ -42,8 +42,6 @@ package org.ikasan.spec.component.endpoint;
 
 /**
  * Component broker for request/response scenario from an endpoint.
- * 
- * @return <SOURCE> 
  *
  * @author Ikasan Development Teams
  */
@@ -51,8 +49,8 @@ public interface Broker<SEND,RECEIVE>
 {
     /**
      * Synchronous Request/response based contract with an endpoint.
-     * @param <SEND>
-     * @return <RECEIVE>
+     * @param send
+     * @return RECEIVE
      * @throws EndpointException
      */
     public RECEIVE invoke(SEND send) throws EndpointException;

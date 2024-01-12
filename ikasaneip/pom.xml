@@ -256,7 +256,7 @@
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>6.4.1.Final</version.org.hibernate>
-        <version.org.hibernate-validator>6.0.20.Final</version.org.hibernate-validator>
+        <version.org.hibernate-validator>8.0.1.Final</version.org.hibernate-validator>
         <version.org.springframework>6.1.2</version.org.springframework>
         <version.org.springframework.security>6.2.1</version.org.springframework.security>
         <version.org.springframework.ldap>3.2.1</version.org.springframework.ldap>
@@ -294,7 +294,7 @@
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
         <version.commons-io>2.7</version.commons-io>
-        <version.commons-dbcp2>2.11.1-SNAPSHOT</version.commons-dbcp2>
+        <version.ikasan.commons-dbcp2>1.0.0-SNAPSHOT</version.ikasan.commons-dbcp2>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.9</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
@@ -319,6 +319,7 @@
         <version.org.aspectjrt>1.9.21</version.org.aspectjrt>
         <version.jakarta.servlet>6.1.0-M1</version.jakarta.servlet>
         <version.jakarta.servlet.jsp.jstl>3.0.0</version.jakarta.servlet.jsp.jstl>
+        <version.glassfish.jakarta.servlet.jsp.jstl>3.0.0</version.glassfish.jakarta.servlet.jsp.jstl>
         <version.activemq>6.0.1</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
@@ -350,8 +351,8 @@
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.aws.java.sdk>1.11.837</version.aws.java.sdk>
         <version.bouncycastle>1.46</version.bouncycastle>
-        <version.javax.validation.api>2.0.1.Final</version.javax.validation.api>
-        <version.glassfish.javax.el>3.0.0</version.glassfish.javax.el>
+        <version.jakarta.validation.api>3.1.0-M1</version.jakarta.validation.api>
+        <version.jakarta.el>6.0.0-M1</version.jakarta.el>
         <version.commons-io>2.8.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
@@ -739,7 +740,6 @@
                 <module>platform</module>
                 <module>builder</module>
                 <module>compatibility</module>
-<!--                <module>mapping</module>-->
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
@@ -793,7 +793,6 @@
                 <activeByDefault>false</activeByDefault>
             </activation>
             <modules>
-<!--                <module>mapping</module>-->
                 <module>platform</module>
                 <module>hospital</module>
                 <module>webconsole</module>
@@ -1076,12 +1075,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-spec-mapping</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-event</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -1173,12 +1166,6 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-consumer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-mapping</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1466,6 +1453,12 @@
             </dependency>
 
             <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${version.logback.core}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>org.apache.maven.shared</groupId>
                 <artifactId>maven-invoker</artifactId>
                 <version>${version.maven-invoker}</version>
@@ -1593,9 +1586,21 @@
             </dependency>
 
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-messaging</artifactId>
+                <version>${version.org.springframework}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>jakarta.servlet.jsp.jstl</groupId>
                 <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
                 <version>${version.jakarta.servlet.jsp.jstl}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                <version>${version.glassfish.jakarta.servlet.jsp.jstl}</version>
             </dependency>
 
 
@@ -2223,9 +2228,9 @@
             </dependency>
 
             <dependency>
-                <groupId>org.apache.commons</groupId>
+                <groupId>org.ikasan</groupId>
                 <artifactId>commons-dbcp2</artifactId>
-                <version>${version.commons-dbcp2}</version>
+                <version>${version.ikasan.commons-dbcp2}</version>
                 <exclusions>
                     <exclusion>
                         <groupId>commons-logging</groupId>
@@ -2695,15 +2700,15 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>${version.javax.validation.api}</version>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${version.jakarta.validation.api}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>${version.glassfish.javax.el}</version>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>${version.jakarta.el}</version>
             </dependency>
 
         </dependencies>

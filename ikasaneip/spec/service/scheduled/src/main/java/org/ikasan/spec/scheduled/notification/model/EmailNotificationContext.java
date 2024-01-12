@@ -106,7 +106,6 @@ public interface EmailNotificationContext extends Serializable  {
 
     /**
      * Set notification templates for subject
-     * @return
      */
     void setEmailSubjectNotificationTemplate(Map<String, String> emailSubjectNotificationTemplate);
 

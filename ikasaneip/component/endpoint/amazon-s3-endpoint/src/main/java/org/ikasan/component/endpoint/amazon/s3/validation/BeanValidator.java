@@ -1,19 +1,17 @@
 package org.ikasan.component.endpoint.amazon.s3.validation;
 
 import com.amazonaws.util.CollectionUtils;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+import org.hibernate.validator.messageinterpolation.ParameterMessageInterpolator;
 import org.ikasan.spec.component.endpoint.EndpointException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-import javax.validation.ValidatorFactory;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 
@@ -32,7 +30,10 @@ public class BeanValidator<T> {
      * @throws EndpointException thrown if validation fails
      */
     public void validateBean(T validatableBean, Consumer<String> exceptionThrower ) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        ValidatorFactory factory = Validation.byDefaultProvider()
+            .configure()
+            .messageInterpolator(new ParameterMessageInterpolator())
+            .buildValidatorFactory();
         Validator validator = factory.getValidator();
         List<ConstraintViolation<T>> violations = new ArrayList(validator.validate(validatableBean));
         violations.sort(Comparator.comparing(o -> o.getPropertyPath().toString()));

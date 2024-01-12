@@ -46,8 +46,6 @@ package org.ikasan.spec.component.endpoint;
  * Component consumer for retrieving from an endpoint.
  * 
  * A {@link Consumer} defines a contract for such translation.
- * 
- * @return <SOURCE> 
  *
  * @author Ikasan Development Teams
  */

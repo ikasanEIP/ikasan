@@ -42,15 +42,12 @@ public class SFTPClientTest
             null, null);
 
         uut.connect();
-
     }
 
     @After
     public void teardown()
     {
-
         server.stop();
-
     }
 
     @Test

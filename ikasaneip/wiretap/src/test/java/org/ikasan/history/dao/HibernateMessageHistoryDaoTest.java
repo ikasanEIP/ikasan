@@ -223,11 +223,8 @@ public class HibernateMessageHistoryDaoTest
             (0, 10, null, true, Collections.singleton("moduleName"), null
                 , null, null, null, null, null);
 
-        System.out.println("Number of records to delete: " + results.getResultSize());
-
         messageHistoryDao.deleteHarvestableRecords(events);
 
-        System.out.println("Starting to delete records: " + System.currentTimeMillis());
         events =  messageHistoryDao.getHarvestedRecords(50);
         messageHistoryDao.deleteHarvestableRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
@@ -274,13 +271,8 @@ public class HibernateMessageHistoryDaoTest
         messageHistoryDao.deleteHarvestableRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
         messageHistoryDao.deleteHarvestableRecords(events);
-
-
-        System.out.println("Completed deleting records: " + System.currentTimeMillis());
 
     	results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-
-        System.out.println("Delete completed records: " + results.getResultSize());
 
         Assert.assertEquals(5, results.getPagedResults().size());
     }
@@ -326,19 +318,13 @@ public class HibernateMessageHistoryDaoTest
             messageHistoryDao.save(flowInvocationMetric);
         }
 
-        System.out.println("Started deleting message history records: " + System.currentTimeMillis());
-
         messageHistoryDao.setHousekeepingBatchSize(500);
         messageHistoryDao.setTransactionBatchSize(10500);
         messageHistoryDao.setBatchHousekeepDelete(true);
 
         messageHistoryDao.deleteAllExpired();
 
-        System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
-
         PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-
-        System.out.println("Delete completed records: " + results.getResultSize());
 
         Assert.assertEquals(5, results.getPagedResults().size());
     }

@@ -223,12 +223,6 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-spec-mapping</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-spec-event</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -326,12 +320,6 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-consumer</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.ikasan</groupId>
-                <artifactId>ikasan-mapping</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -576,6 +564,12 @@
                 <groupId>jakarta.servlet.jsp.jstl</groupId>
                 <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
                 <version>${version.jakarta.servlet.jsp.jstl}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                <version>${version.glassfish.jakarta.servlet.jsp.jstl}</version>
             </dependency>
 
 
@@ -920,6 +914,19 @@
                 <version>${version.org.slf4j}</version>
             </dependency>
 
+            <!-- logback framework -->
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-core</artifactId>
+                <version>${version.logback.core}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>ch.qos.logback</groupId>
+                <artifactId>logback-classic</artifactId>
+                <version>${version.logback.core}</version>
+            </dependency>
+
             <!-- to be used in test cases -->
             <dependency>
                 <groupId>org.slf4j</groupId>
@@ -1048,15 +1055,15 @@
             </dependency>
 
             <dependency>
-                <groupId>javax.validation</groupId>
-                <artifactId>validation-api</artifactId>
-                <version>${version.javax.validation.api}</version>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${version.jakarta.validation.api}</version>
             </dependency>
 
             <dependency>
-                <groupId>org.glassfish</groupId>
-                <artifactId>javax.el</artifactId>
-                <version>${version.glassfish.javax.el}</version>
+                <groupId>jakarta.el</groupId>
+                <artifactId>jakarta.el-api</artifactId>
+                <version>${version.jakarta.el}</version>
             </dependency>
 
         </dependencies>
