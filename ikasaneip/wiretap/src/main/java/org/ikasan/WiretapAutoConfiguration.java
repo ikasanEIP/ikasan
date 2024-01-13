@@ -23,6 +23,7 @@ import org.ikasan.wiretap.serialiser.WiretapSerialiserService;
 import org.ikasan.wiretap.service.WiretapServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
@@ -42,9 +43,10 @@ public class WiretapAutoConfiguration {
     private int wiretapHouseKeepingBatchSize;
 
     @Bean
-    @DependsOn("liquibase")
-    JobAwareFlowEventListener wiretapFlowEventListener(Map<String, FlowEventJob> flowEventJobs, TriggerDao triggerDao,
-                                                       @Qualifier("moduleMetadataDashboardRestService") DashboardRestService moduleMetadataDashboardRestService, ModuleService moduleService) {
+    @DependsOn({"liquibase","moduleMetadataDashboardRestService"})
+    JobAwareFlowEventListener wiretapFlowEventListener(Map<String, FlowEventJob> flowEventJobs, TriggerDao triggerDao
+        , @Qualifier("moduleMetadataDashboardRestService") DashboardRestService moduleMetadataDashboardRestService
+        , ModuleService moduleService) {
         return new JobAwareFlowEventListener(flowEventJobs, triggerDao, moduleService,moduleMetadataDashboardRestService);
     }
 

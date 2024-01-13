@@ -21,7 +21,7 @@ import java.util.List;
 @DependsOn({"replayManagementService", "wiretapService", "errorReportingManagementService", "exclusionManagementService", "messageHistoryService", "systemEventService"})
 public class HarvestingAutoConfiguration
 {
-    @Bean
+    @Bean(name = "harvestingSchedulerService")
     public HarvestingSchedulerService harvestingSchedulerService(List<HarvestingJob> harvestingJobs)
     {
         return new HarvestingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
