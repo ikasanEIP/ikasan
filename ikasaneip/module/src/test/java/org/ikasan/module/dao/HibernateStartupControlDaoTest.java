@@ -94,10 +94,10 @@ public class HibernateStartupControlDaoTest
     @MockBean(name = "wiretapFlowEventListener")
     private JobAwareFlowEventListener wiretapFlowEventListener;
 
-    @MockBean
+    @MockBean(name = "housekeepingSchedulerService")
     private HousekeepingSchedulerService housekeepingSchedulerService;
 
-    @MockBean
+    @MockBean(name = "harvestingSchedulerService")
     private HarvestingSchedulerService harvestingSchedulerService;
 
     @MockBean(name = "systemEventService")
