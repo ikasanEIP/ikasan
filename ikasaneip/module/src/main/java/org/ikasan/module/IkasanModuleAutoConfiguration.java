@@ -76,18 +76,16 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
 {
     private ApplicationContext applicationContext;
 
-//    @Autowired
-//    ConfigurationService configurationService;
 
     @Autowired
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
     @Bean
-    @DependsOn({"liquibase"})
+    @DependsOn({"liquibase", "housekeepingSchedulerService", "harvestingSchedulerService"})
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
-        HousekeepingSchedulerService housekeepingSchedulerService,
-        HarvestingSchedulerService harvestingSchedulerService) {
+        @Qualifier("housekeepingSchedulerService") HousekeepingSchedulerService housekeepingSchedulerService,
+        @Qualifier("harvestingSchedulerService") HarvestingSchedulerService harvestingSchedulerService) {
         return new ModuleInitialisationServiceImpl(moduleContainer, moduleActivator,
              housekeepingSchedulerService, harvestingSchedulerService);
     }

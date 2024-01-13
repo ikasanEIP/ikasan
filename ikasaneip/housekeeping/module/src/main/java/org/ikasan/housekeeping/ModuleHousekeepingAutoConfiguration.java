@@ -23,7 +23,7 @@ import java.util.List;
 public class ModuleHousekeepingAutoConfiguration
 {
 
-    @Bean
+    @Bean(name = "housekeepingSchedulerService")
     public HousekeepingSchedulerService housekeepingSchedulerService(List<HousekeepingJob> housekeepingJobs)
     {
         return new HousekeepingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
