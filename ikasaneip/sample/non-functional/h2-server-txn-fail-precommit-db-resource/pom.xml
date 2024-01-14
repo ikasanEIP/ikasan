@@ -112,12 +112,13 @@
                 <version>2.22.2</version>
                 <configuration>
                     <argLine>
-                        -javaagent:"${settings.localRepository}"/org/aspectj/aspectjweaver/1.9.5/aspectjweaver-1.9.5.jar
+                        -javaagent:"${settings.localRepository}"/org/aspectj/aspectjweaver/${version.org.aspectj}/aspectjweaver-${version.org.aspectj}.jar
                     </argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <forkMode>always</forkMode>
                 </configuration>
             </plugin>
+
             <plugin>
                 <groupId>com.nickwongdev</groupId>
                 <artifactId>aspectj-maven-plugin</artifactId>
