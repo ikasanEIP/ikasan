@@ -1494,7 +1494,6 @@
                         <artifactId>xml-apis</artifactId>
                     </exclusion>
                 </exclusions>
-
             </dependency>
 
             <dependency>
