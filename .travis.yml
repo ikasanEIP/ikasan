@@ -17,7 +17,7 @@ before_install:
 
 install: skip
 
-script: mvn clean --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
+script: mvn install --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
 
 deploy:
   # deploy develop 3.2.x to oss

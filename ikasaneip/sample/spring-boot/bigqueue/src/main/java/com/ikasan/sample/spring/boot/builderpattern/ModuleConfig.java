@@ -60,7 +60,6 @@ import java.io.IOException;
 
 @Configuration
 @ImportResource( {
-        "classpath:ikasan-transaction-conf.xml",
         "classpath:ikasan-transaction-pointcut-ikasanMessageListener.xml",
         "classpath:h2-datasource-conf.xml"
 } )
