@@ -15,21 +15,23 @@ before_install:
   - if [ ! -d $M2_HOME/bin ]; then curl https://archive.apache.org/dist/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz | tar zxf - -C $HOME; fi
   - export PATH=$M2_HOME/bin:$PATH
 
-install: mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
+install: skip
+
+script: mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
 
 deploy:
-  # deploy develop 3.2.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 3.2.x
   # deploy develop 3.3.x to oss
   - provider: script
     skip_cleanup: true
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
       branch: 3.3.x
+  # deploy develop 3.3.x to oss
+  - provider: script
+    skip_cleanup: true
+    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
+      branch: 4.0.x
   # Push release to oss
   - provider: script
     skip_cleanup: true
