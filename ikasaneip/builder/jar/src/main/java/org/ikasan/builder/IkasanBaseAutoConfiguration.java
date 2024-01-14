@@ -89,8 +89,7 @@ import org.springframework.context.annotation.ImportResource;
 @Import({ ExceptionConfig.class, IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
             WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class, ErrorReportingAutoConfiguration.class,
             FilterAutoConfiguration.class, ConfigurationServiceAutoConfiguration.class,  SystemEventAutoConfiguration.class, ReplayAutoConfiguration.class,
-            WiretapAutoConfiguration.class, HospitalAutoConfiguration.class, ExclusionAutoConfiguration.class, DashboardClientAutoConfiguration.class,
-            HarvestingAutoConfiguration.class, ModuleHousekeepingAutoConfiguration.class})
+            WiretapAutoConfiguration.class, HospitalAutoConfiguration.class, ExclusionAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
 
