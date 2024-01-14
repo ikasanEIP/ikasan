@@ -17,7 +17,7 @@ before_install:
 
 install: skip
 
-script: mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
+script: mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V -rf :sample-spring-boot-bigqueue
 
 deploy:
   # deploy develop 3.2.x to oss
