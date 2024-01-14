@@ -81,8 +81,6 @@ public class LogFileStreamApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    // todo work out why this fails on travis at times
-    @Ignore
     public void logsAndCanNotExceedMaxThreads() throws Exception {
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
