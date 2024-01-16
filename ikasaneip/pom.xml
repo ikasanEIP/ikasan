@@ -306,7 +306,7 @@
         </version.org.apache.directory.server.apached-server-unit>
         <version.com.unboundid>6.0.9</version.com.unboundid>
         <version.org.quartz-scheduler>2.3.2</version.org.quartz-scheduler>
-        <version.com.h2database>2.1.214</version.com.h2database>
+        <version.com.h2database>2.2.220</version.com.h2database>
         <version.org.liquibase>4.25.1</version.org.liquibase>
         <version.org.yaml.snakeyaml>2.2</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
