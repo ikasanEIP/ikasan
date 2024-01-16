@@ -339,7 +339,7 @@
         <version.com.fasterxml.jackson.core.databind>2.16.0</version.com.fasterxml.jackson.core.databind>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>33.0.0-jre</version.com.google.guava>
-        <version.tomcat>10.1.5</version.tomcat>
+        <version.tomcat>10.1.16</version.tomcat>
         <version.wiremock>3.0.1</version.wiremock>
         <version.org.apache.httpcomponents>5.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
