@@ -23,18 +23,18 @@ deploy:
   # deploy develop 3.3.x to oss
   - provider: script
     skip_cleanup: true
-    script: travis_wait 30 mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml 1> /dev/null
+    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
       branch: 3.3.x
   # deploy develop 3.3.x to oss
   - provider: script
     skip_cleanup: true
-    script: travis_wait 30 mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml 1> /dev/null
+    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
       branch: 4.0.x
   # Push release to oss
   - provider: script
     skip_cleanup: true
-    script: travis_wait 30 mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml 1> /dev/null
+    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
     on:
       tags: true
