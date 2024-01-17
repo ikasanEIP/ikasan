@@ -44,14 +44,16 @@ import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.kex.BuiltinDHFactories;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.common.random.JceRandomFactory;
+import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.UserAuth;
+import org.apache.sshd.server.auth.UserAuthFactory;
 import org.apache.sshd.server.auth.pubkey.UserAuthPublicKeyFactory;
 import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.config.keys.AuthorizedKeysAuthenticator;
 import org.apache.sshd.server.kex.DHGServer;
-import org.apache.sshd.server.scp.ScpCommandFactory;
-import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
+import org.apache.sshd.server.subsystem.SubsystemFactory;
+import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -78,7 +80,7 @@ public class SftpServerWithPublickeyAuthenticator
         sshd.setKeyExchangeFactories(singletonList(DHGServer.newFactory(BuiltinDHFactories.dhg1)));
         sshd.setRandomFactory(new JceRandomFactory());
 
-        List<NamedFactory<UserAuth>> userAuthFactories = new ArrayList<>();
+        List<UserAuthFactory> userAuthFactories = new ArrayList<>();
         userAuthFactories.add(new UserAuthPublicKeyFactory());
         sshd.setUserAuthFactories(userAuthFactories);
 
@@ -86,7 +88,7 @@ public class SftpServerWithPublickeyAuthenticator
 
         sshd.setCommandFactory(new ScpCommandFactory());
 
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
+        List<SubsystemFactory> namedFactoryList = new ArrayList<>();
         namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
     }

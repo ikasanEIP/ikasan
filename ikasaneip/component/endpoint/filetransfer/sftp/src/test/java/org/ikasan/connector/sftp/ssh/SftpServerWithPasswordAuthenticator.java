@@ -42,13 +42,15 @@ package org.ikasan.connector.sftp.ssh;
 
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.file.virtualfs.VirtualFileSystemFactory;
+import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.auth.UserAuth;
+import org.apache.sshd.server.auth.UserAuthFactory;
 import org.apache.sshd.server.auth.password.UserAuthPasswordFactory;
 import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.scp.ScpCommandFactory;
-import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
+import org.apache.sshd.server.subsystem.SubsystemFactory;
+import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -69,7 +71,7 @@ public class SftpServerWithPasswordAuthenticator {
 
         sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider());
 
-        List<NamedFactory<UserAuth>> userAuthFactories = new ArrayList<>();
+        List<UserAuthFactory> userAuthFactories = new ArrayList<>();
         userAuthFactories.add(new UserAuthPasswordFactory());
         sshd.setUserAuthFactories(userAuthFactories);
 
@@ -77,7 +79,7 @@ public class SftpServerWithPasswordAuthenticator {
 
         sshd.setCommandFactory(new ScpCommandFactory());
 
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
+        List<SubsystemFactory> namedFactoryList = new ArrayList<>();
         namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
 

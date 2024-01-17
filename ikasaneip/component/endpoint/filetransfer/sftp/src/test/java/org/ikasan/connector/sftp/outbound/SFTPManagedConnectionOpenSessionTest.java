@@ -75,7 +75,7 @@ public class SFTPManagedConnectionOpenSessionTest
             setThreadingPolicy(new Synchroniser());
         }
     };
-    //private  TemporaryFolder testFolder = new TemporaryFolder();
+
     private static final int SFTP_PORT_PASSWORD = TestSocketUtils.findAvailableTcpPort();
     private static final int SFTP_PORT_PUBLICKEY = TestSocketUtils.findAvailableTcpPort();
     private static final int SFTP_PORT_PASSPHRASE_PUBLICKEY = TestSocketUtils.findAvailableTcpPort();
@@ -180,7 +180,7 @@ public class SFTPManagedConnectionOpenSessionTest
                 atLeast(1).of(connectionRequestInfo).getConnectionTimeout();
                 will(returnValue(300000));
                 atLeast(1).of(connectionRequestInfo).getPreferredKeyExchangeAlgorithm();
-                will(returnValue("diffie-hellman-group1-sha1"));
+                will(returnValue("diffie-hellman-group-exchange-sha256"));
             }
         });
 
