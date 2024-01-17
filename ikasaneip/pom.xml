@@ -2618,11 +2618,13 @@
                 <artifactId>sshd-core</artifactId>
                 <version>${version.org.apache.sshd}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-sftp</artifactId>
                 <version>${version.org.apache.sshd}</version>
             </dependency>
+
             <dependency>
                 <groupId>org.apache.sshd</groupId>
                 <artifactId>sshd-scp</artifactId>
