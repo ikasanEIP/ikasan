@@ -38,7 +38,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
@@ -47,7 +46,10 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -64,6 +66,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import static com.github.stefanbirkner.fakesftpserver.lambda.FakeSftpServer.withSftpServer;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
@@ -99,8 +102,8 @@ public class JmsToSftpChunkingFlowTest
     public IkasanFlowTestRule sftpToJmsChunkingFlowTestRule = new IkasanFlowTestRule( );
     public IkasanFlowTestRule jmsToSftpChunkingFlowTestRule = new IkasanFlowTestRule( );
 
-    @Rule
-    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
+//    @Rule
+//    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
 
     String homeDir;
 
@@ -109,15 +112,12 @@ public class JmsToSftpChunkingFlowTest
     {
         FileTestUtil.deleteFile(new File(objectStoreDir));
         homeDir = "/home/" +System.getProperty("user.name");
-        sftp.createDirectories("/source","/target");
         sftpToJmsChunkingFlowTestRule.withFlow(moduleUnderTest.getFlow("Sftp Chunking To Jms Flow"));
         jmsToSftpChunkingFlowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Chunking Flow"));
     }
 
     @After public void teardown() throws InterruptedException, SQLException, IOException
     {
-        sftp.deleteAllFilesAndDirectories();
-
         String currentState = sftpToJmsChunkingFlowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
             sftpToJmsChunkingFlowTestRule.stopFlow();
@@ -140,52 +140,56 @@ public class JmsToSftpChunkingFlowTest
     @Test
     public void test_file_download() throws Exception
     {
+        withSftpServer(sftp -> {
+            sftp.addUser("test", "test");
+            sftp.createDirectories("/source","/target");
 
-        // Upload data to fake SFTP
-        String bigFileStringContent = generateMassiveString();
-        sftp.putFile("/source/bigTextFile.txt", bigFileStringContent.getBytes());
-        //Update Sftp Consumer config
-        SftpConsumerConfiguration consumerConfiguration = sftpToJmsChunkingFlowTestRule
-            .getComponentConfig("Sftp Chunking Consumer",SftpConsumerConfiguration.class);
-        consumerConfiguration.setSourceDirectory("/source");
-        consumerConfiguration.setRemotePort(sftp.getPort());
+            // Upload data to fake SFTP
+            String bigFileStringContent = generateMassiveString();
+            sftp.putFile("/source/bigTextFile.txt", bigFileStringContent.getBytes());
+            //Update Sftp Consumer config
+            SftpConsumerConfiguration consumerConfiguration = sftpToJmsChunkingFlowTestRule
+                .getComponentConfig("Sftp Chunking Consumer",SftpConsumerConfiguration.class);
+            consumerConfiguration.setSourceDirectory("/source");
+            consumerConfiguration.setRemotePort(sftp.getPort());
 
-        SftpProducerConfiguration producerConfiguration = jmsToSftpChunkingFlowTestRule
-            .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
-        producerConfiguration.setOutputDirectory(".");
-        producerConfiguration.setRemotePort(sftp.getPort());
+            SftpProducerConfiguration producerConfiguration = jmsToSftpChunkingFlowTestRule
+                .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
+            producerConfiguration.setOutputDirectory(".");
+            producerConfiguration.setRemotePort(sftp.getPort());
 
-        //Setup component expectations
+            //Setup component expectations
 
-        sftpToJmsChunkingFlowTestRule.consumer("Sftp Chunking Consumer")
-                    .converter("Sftp Payload to Map Converter")
-                    .producer("Sftp Chunking Jms Producer");
-
-
-        jmsToSftpChunkingFlowTestRule
-            .consumer("Sftp Jms Consumer")
-            .converter("MapMessage to SFTP Payload Converter")
-            .producer("Sftp Producer");
+            sftpToJmsChunkingFlowTestRule.consumer("Sftp Chunking Consumer")
+                .converter("Sftp Payload to Map Converter")
+                .producer("Sftp Chunking Jms Producer");
 
 
-        // start the flow and assert it runs
-        jmsToSftpChunkingFlowTestRule.startFlow();
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("running", jmsToSftpChunkingFlowTestRule.getFlowState()));
+            jmsToSftpChunkingFlowTestRule
+                .consumer("Sftp Jms Consumer")
+                .converter("MapMessage to SFTP Payload Converter")
+                .producer("Sftp Producer");
 
 
-        sftpToJmsChunkingFlowTestRule.startFlow();
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("running", sftpToJmsChunkingFlowTestRule.getFlowState()));
+            // start the flow and assert it runs
+            jmsToSftpChunkingFlowTestRule.startFlow();
+            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("running", jmsToSftpChunkingFlowTestRule.getFlowState()));
 
-        sftpToJmsChunkingFlowTestRule.fireScheduledConsumer();
 
-        with().pollInterval(500, TimeUnit.MILLISECONDS)
-              .pollDelay(5,TimeUnit.SECONDS)
-              .and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() ->  jmsToSftpChunkingFlowTestRule.assertIsSatisfied());
+            sftpToJmsChunkingFlowTestRule.startFlow();
+            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("running", sftpToJmsChunkingFlowTestRule.getFlowState()));
 
-        assertEquals(bigFileStringContent,sftp.getFileContent(homeDir+"/bigTextFile.txt", Charset.defaultCharset()));
+            sftpToJmsChunkingFlowTestRule.fireScheduledConsumer();
+
+            with().pollInterval(500, TimeUnit.MILLISECONDS)
+                .pollDelay(5,TimeUnit.SECONDS)
+                .and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() ->  jmsToSftpChunkingFlowTestRule.assertIsSatisfied());
+
+            assertEquals(bigFileStringContent,sftp.getFileContent(homeDir+"/bigTextFile.txt", Charset.defaultCharset()));
+        });
     }
 
     private String generateMassiveString()

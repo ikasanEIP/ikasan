@@ -38,7 +38,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import org.apache.activemq.command.ActiveMQMapMessage;
 import org.ikasan.connector.util.chunking.model.FileChunkHeader;
 import org.ikasan.connector.util.chunking.model.FileConstituentHandle;
@@ -70,6 +69,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static com.github.stefanbirkner.fakesftpserver.lambda.FakeSftpServer.withSftpServer;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
@@ -113,16 +113,13 @@ public class SftpChunkingToJmsFlowTest
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    @Rule
-    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
-
     public MessageListenerVerifier messageListenerVerifier;
 
     @Before
     public void setup() throws IOException
     {
         FileTestUtil.deleteFile(new File(objectStoreDir));
-        sftp.createDirectories("/source","/");
+
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.chunking.private.jms.queue", registry);
         messageListenerVerifier.start();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp Chunking To Jms Flow"));
@@ -130,7 +127,6 @@ public class SftpChunkingToJmsFlowTest
 
     @After public void teardown() throws  SQLException, IOException
     {
-        sftp.deleteAllFilesAndDirectories();
         messageListenerVerifier.stop();
         String currentState = flowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
@@ -138,7 +134,6 @@ public class SftpChunkingToJmsFlowTest
         }
         new ActiveMqHelper().removeAllMessages();
         new DatabaseHelper(ikasanxads).clearExtendedDatabaseTables();
-
     }
 
     @AfterClass
@@ -149,57 +144,61 @@ public class SftpChunkingToJmsFlowTest
     @Test
     public void test_file_download() throws Exception
     {
-        // Upload data to fake SFTP
-        sftp.putFile("/source/bigTextFile.txt",generateMassiveString());
+        withSftpServer(sftp -> {
+            sftp.addUser("test", "test");
+            sftp.createDirectories("/source","/");
+            // Upload data to fake SFTP
+            sftp.putFile("/source/bigTextFile.txt",generateMassiveString());
 
-        //Update Sftp Consumer config
-        SftpConsumerConfiguration consumerConfiguration = flowTestRule
-            .getComponentConfig("Sftp Chunking Consumer",SftpConsumerConfiguration.class);
-        consumerConfiguration.setSourceDirectory("/source");
-        consumerConfiguration.setRemotePort(sftp.getPort());
+            //Update Sftp Consumer config
+            SftpConsumerConfiguration consumerConfiguration = flowTestRule
+                .getComponentConfig("Sftp Chunking Consumer",SftpConsumerConfiguration.class);
+            consumerConfiguration.setSourceDirectory("/source");
+            consumerConfiguration.setRemotePort(sftp.getPort());
 
-        //Setup component expectations
+            //Setup component expectations
 
-        flowTestRule.consumer("Sftp Chunking Consumer")
-            .converter("Sftp Payload to Map Converter")
-            .producer("Sftp Chunking Jms Producer");
+            flowTestRule.consumer("Sftp Chunking Consumer")
+                .converter("Sftp Payload to Map Converter")
+                .producer("Sftp Chunking Jms Producer");
 
-        // start the flow and assert it runs
-        flowTestRule.startFlow();
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+            // start the flow and assert it runs
+            flowTestRule.startFlow();
+            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
-        flowTestRule.fireScheduledConsumer();
+            flowTestRule.fireScheduledConsumer();
 
 
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and()
-              .pollDelay(3,TimeUnit.SECONDS)
-              .await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
+            with().pollInterval(500, TimeUnit.MILLISECONDS).and()
+                .pollDelay(3,TimeUnit.SECONDS)
+                .await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
 
-        flowTestRule.assertIsSatisfied();
+            flowTestRule.assertIsSatisfied();
 
-        ActiveMQMapMessage mapMessage = (ActiveMQMapMessage) messageListenerVerifier.getCaptureResults().get(0);
-        Object content = mapMessage.getContentMap().get("content");
-        Assert.assertTrue((content.toString()).startsWith("""
+            ActiveMQMapMessage mapMessage = (ActiveMQMapMessage) messageListenerVerifier.getCaptureResults().get(0);
+            Object content = mapMessage.getContentMap().get("content");
+            Assert.assertTrue((content.toString()).startsWith("""
             <?xml version="1.0" encoding="UTF-8" \
             standalone="yes"?><fileChunkHeader><chunkTimeStamp>\
             """));
 
 
-        System.out.println(content);
-        Assert.assertTrue((content.toString()).endsWith("""
+            System.out.println(content);
+            Assert.assertTrue((content.toString()).endsWith("""
             </chunkTimeStamp><clientId\
             >sftpToJmsFlow</clientId><fileName>bigTextFile\
             .txt</fileName><id>1</id><internalMd5Hash>7e7972ac876df6b7528eb183e811bc99</internalMd5Hash\
             ><sequenceLength>11</sequenceLength></fileChunkHeader>\
             """));
-        FileChunkHeader header = fileChunkDao.load(1l);
-        Assert.assertEquals(Long.valueOf(11l),header.getSequenceLength());
-        Assert.assertEquals("bigTextFile.txt",header.getFileName());
+            FileChunkHeader header = fileChunkDao.load(1l);
+            Assert.assertEquals(Long.valueOf(11l),header.getSequenceLength());
+            Assert.assertEquals("bigTextFile.txt",header.getFileName());
 
-        List<FileConstituentHandle> chunks = fileChunkDao.findChunks(header.getFileName(),header.getChunkTimeStamp(),header.getSequenceLength(),null);
-        Assert.assertEquals(11,chunks.size());
+            List<FileConstituentHandle> chunks = fileChunkDao.findChunks(header.getFileName(),header.getChunkTimeStamp(),header.getSequenceLength(),null);
+            Assert.assertEquals(11,chunks.size());
+        });
     }
 
     private byte[] generateMassiveString()

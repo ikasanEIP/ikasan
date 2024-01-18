@@ -38,7 +38,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
 import jakarta.jms.JMSException;
 import jakarta.jms.MapMessage;
 import jakarta.jms.Message;
@@ -51,7 +50,10 @@ import org.ikasan.spec.module.Module;
 import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +73,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import static com.github.stefanbirkner.fakesftpserver.lambda.FakeSftpServer.withSftpServer;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
@@ -107,21 +110,16 @@ public class JmsToSftpFlowTest
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
 
-    @Rule
-    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
-
     @Before
     public void setup() throws IOException
     {
         FileTestUtil.deleteFile(new File(objectStoreDir));
-        sftp.createDirectories("/source");
         flowTestRule.withFlow(moduleUnderTest.getFlow("Jms To Sftp Flow"));
     }
 
     @After
     public void teardown() throws InterruptedException, SQLException, IOException
     {
-        sftp.deleteAllFilesAndDirectories();
         String currentState = flowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)){
             flowTestRule.stopFlow();
@@ -140,41 +138,44 @@ public class JmsToSftpFlowTest
     @Test
     public void test_file_upload() throws Exception
     {
+        withSftpServer(sftp -> {
+            sftp.addUser("test", "test");
+            sftp.createDirectories("/source");
+            //Update Sftp Consumer config
+            SftpProducerConfiguration consumerConfiguration = flowTestRule
+                .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
+            consumerConfiguration.setOutputDirectory("/source");
+            consumerConfiguration.setRemotePort(sftp.getPort());
+            consumerConfiguration.setOverwrite(true);
 
-        //Update Sftp Consumer config
-        SftpProducerConfiguration consumerConfiguration = flowTestRule
-            .getComponentConfig("Sftp Producer", SftpProducerConfiguration.class);
-        consumerConfiguration.setOutputDirectory("/source");
-        consumerConfiguration.setRemotePort(sftp.getPort());
-        consumerConfiguration.setOverwrite(true);
+            //Setup component expectations
+            flowTestRule
+                .consumer("Sftp Jms Consumer")
+                .converter("MapMessage to SFTP Payload Converter")
+                .producer("Sftp Producer");
 
-        //Setup component expectations
-        flowTestRule
-            .consumer("Sftp Jms Consumer")
-            .converter("MapMessage to SFTP Payload Converter")
-            .producer("Sftp Producer");
+            // start the flow and assert it runs
+            flowTestRule.startFlow();
 
-        // start the flow and assert it runs
-        flowTestRule.startFlow();
-
-        // Prepare test data
-        logger.info("Sending a JMS message.[" + SAMPLE_MESSAGE + "]");
-        jmsTemplate.send("sftp.private.jms.queue", new MessageCreator()
-        {
-            @Override public Message createMessage(Session session) throws JMSException
+            // Prepare test data
+            logger.info("Sending a JMS message.[" + SAMPLE_MESSAGE + "]");
+            jmsTemplate.send("sftp.private.jms.queue", new MessageCreator()
             {
-                MapMessage mapMessage = new ActiveMQMapMessage();
-                mapMessage.setString("content",SAMPLE_MESSAGE);
-                mapMessage.setString("fileName","generatedSftpProducertest.out");
-                return mapMessage;
-            }
+                @Override public Message createMessage(Session session) throws JMSException
+                {
+                    MapMessage mapMessage = new ActiveMQMapMessage();
+                    mapMessage.setString("content",SAMPLE_MESSAGE);
+                    mapMessage.setString("fileName","generatedSftpProducertest.out");
+                    return mapMessage;
+                }
+            });
+
+            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+            Thread.sleep(5000);
+
+            assertNotNull(sftp.getFileContent("/source/generatedSftpProducertest.out", Charset.defaultCharset()));
         });
-
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-              .untilAsserted(() -> flowTestRule.assertIsSatisfied());
-
-        Thread.sleep(5000);
-
-        assertNotNull(sftp.getFileContent("/source/generatedSftpProducertest.out", Charset.defaultCharset()));
     }
 }

@@ -47,11 +47,12 @@ import com.jcraft.jsch.Session;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.sshd.common.NamedFactory;
+import org.apache.sshd.scp.server.ScpCommandFactory;
 import org.apache.sshd.server.SshServer;
 import org.apache.sshd.server.command.Command;
 import org.apache.sshd.server.keyprovider.SimpleGeneratorHostKeyProvider;
-import org.apache.sshd.server.scp.ScpCommandFactory;
-import org.apache.sshd.server.subsystem.sftp.SftpSubsystemFactory;
+import org.apache.sshd.server.subsystem.SubsystemFactory;
+import org.apache.sshd.sftp.server.SftpSubsystemFactory;
 import org.ikasan.filetransfer.util.FileUtil;
 import org.junit.rules.ExternalResource;
 import org.slf4j.Logger;
@@ -121,7 +122,7 @@ public class SftpRule extends ExternalResource
         sshd.setKeyPairProvider(new SimpleGeneratorHostKeyProvider(Paths.get("target/hostkey.ser")));
         sshd.setPasswordAuthenticator((s, s1, serverSession) -> true);
         sshd.setCommandFactory(new ScpCommandFactory());
-        List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
+        List<SubsystemFactory> namedFactoryList = new ArrayList<>();
         namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
     }

@@ -38,8 +38,6 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import com.github.stefanbirkner.fakesftpserver.rule.FakeSftpServerRule;
-
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.nonfunctional.test.util.FileTestUtil;
 import org.ikasan.spec.flow.Flow;
@@ -48,7 +46,10 @@ import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.MessageListenerVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -66,6 +67,7 @@ import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.concurrent.TimeUnit;
 
+import static com.github.stefanbirkner.fakesftpserver.lambda.FakeSftpServer.withSftpServer;
 import static org.awaitility.Awaitility.with;
 import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
@@ -103,15 +105,11 @@ public class SftpToJmsFlowTest {
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
-    @Rule
-    public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
-
     public MessageListenerVerifier messageListenerVerifier;
 
     @Before
     public void setup() throws IOException {
         FileTestUtil.deleteFile(new File(objectStoreDir));
-        sftp.createDirectories("/source");
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
         messageListenerVerifier.start();
         flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
@@ -120,7 +118,6 @@ public class SftpToJmsFlowTest {
     @After
     public void teardown() throws SQLException, IOException {
         messageListenerVerifier.stop();
-        sftp.deleteAllFilesAndDirectories();
         String currentState = flowTestRule.getFlowState();
         if (currentState.equals(RECOVERING) || currentState.equals(RUNNING)) {
             flowTestRule.stopFlow();
@@ -137,27 +134,30 @@ public class SftpToJmsFlowTest {
 
     @Test
     public void test_file_download() throws Exception {
+        withSftpServer(sftp -> {
+            sftp.addUser("test", "test");
+            sftp.createDirectories("/source");
+            // Upload data to fake SFTP
+            sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());
 
-        // Upload data to fake SFTP
-        sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());
+            // Update Sftp Consumer config
+            SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer", SftpConsumerConfiguration.class);
+            consumerConfiguration.setSourceDirectory("/source");
+            consumerConfiguration.setRemotePort(sftp.getPort());
 
-        // Update Sftp Consumer config
-        SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer", SftpConsumerConfiguration.class);
-        consumerConfiguration.setSourceDirectory("/source");
-        consumerConfiguration.setRemotePort(sftp.getPort());
+            // Setup component expectations
+            flowTestRule.consumer("Sftp Consumer")
+                .converter("Sftp Payload to Map Converter")
+                .producer("Sftp Jms Producer");
 
-        // Setup component expectations
-        flowTestRule.consumer("Sftp Consumer")
-            .converter("Sftp Payload to Map Converter")
-            .producer("Sftp Jms Producer");
+            // start the flow and assert it runs
+            flowTestRule.startFlow();
 
-        // start the flow and assert it runs
-        flowTestRule.startFlow();
+            flowTestRule.fireScheduledConsumer();
 
-        flowTestRule.fireScheduledConsumer();
-
-        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-            .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
-        flowTestRule.assertIsSatisfied();
+            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+            flowTestRule.assertIsSatisfied();
+        });
     }
 }
