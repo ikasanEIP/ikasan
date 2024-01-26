@@ -222,7 +222,8 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
 
         try
         {
-            this.entityManager.persist(o);
+            this.entityManager.persist(this.entityManager.contains(o)
+                ? o : this.entityManager.merge(o));
         }
         catch (ConstraintViolationException cve)
         {
@@ -263,7 +264,9 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
 
         query.setMaxResults(maxRows);
 
-        query.getResultList().stream().forEach(fileFilter -> this.entityManager.remove(fileFilter));
+        query.getResultList().stream().forEach(fileFilter
+            -> this.entityManager.remove(this.entityManager.contains(fileFilter)
+                ? fileFilter : this.entityManager.merge(fileFilter)));
     }
 
     public FileFilter findById(int id)
@@ -290,7 +293,8 @@ public class HibernateBaseFileTransferDaoImpl implements BaseFileTransferDao
 
     public FileFilter save(FileFilter fileFilter)
     {
-        this.entityManager.persist(fileFilter);
+        this.entityManager.persist(this.entityManager.contains(fileFilter)
+            ? fileFilter : this.entityManager.merge(fileFilter));
         return fileFilter;
     }
 
