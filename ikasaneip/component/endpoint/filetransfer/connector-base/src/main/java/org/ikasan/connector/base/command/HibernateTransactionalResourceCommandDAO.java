@@ -93,7 +93,8 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         logger.debug("save called with command [" + command + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         try
         {
-            this.entityManager.persist(command);
+            this.entityManager.persist(this.entityManager.contains(command)
+                ? command : this.entityManager.merge(command));
         }
         catch (HibernateException e)
         {
@@ -106,7 +107,7 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
     public List<TransactionalResourceCommand> findCommandsByTransaction(Xid xid)
             throws TransactionalResourceCommandPersistenceException
     {
-        List<TransactionalResourceCommand> result = new ArrayList<TransactionalResourceCommand>();
+        List<TransactionalResourceCommand> result;
         XidImpl xidImpl = find(xid);
         if (xidImpl == null)
         {
@@ -196,7 +197,8 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
         logger.debug("save called with xid [" + xid + "]"); //$NON-NLS-1$ //$NON-NLS-2$
         try
         {
-            this.entityManager.persist(xid);
+            this.entityManager.persist(this.entityManager.contains(xid)
+                ? xid : this.entityManager.merge(xid));
         }
         catch (HibernateException e)
         {
@@ -242,7 +244,8 @@ public class HibernateTransactionalResourceCommandDAO implements TransactionalRe
     {
         try
         {
-            this.entityManager.remove(obj);
+            this.entityManager.remove(this.entityManager.contains(obj)
+                ? obj : this.entityManager.merge(obj));
         }
         catch (HibernateException e)
         {

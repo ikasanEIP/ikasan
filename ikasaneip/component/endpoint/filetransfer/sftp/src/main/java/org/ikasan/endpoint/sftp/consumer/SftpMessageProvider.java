@@ -223,7 +223,7 @@ public class SftpMessageProvider implements Configured<SftpConsumerConfiguration
     }
 
     /**
-     * @param alternate the {@link org.ikasan.client.FileTransferConnectionTemplate} alternate to use
+     * @param alternate the {@link org.ikasan.endpoint.sftp.FileTransferConnectionTemplate} alternate to use
      */
     public void setAlternateFileTransferConnectionTemplate(final FileTransferConnectionTemplate alternate)
     {
