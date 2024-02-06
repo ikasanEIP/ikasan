@@ -75,7 +75,6 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {Application.class},
-    properties = {"spring.main.allow-bean-definition-overriding=true"},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql(scripts = {"/cleanErrorTables.sql"}, executionPhase = AFTER_TEST_METHOD)

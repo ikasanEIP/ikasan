@@ -25,7 +25,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ImportResource("/transaction.xml")
+@ImportResource("/error-reporting-transaction.xml")
 public class ErrorReportingAutoConfiguration
 {
     @Bean
