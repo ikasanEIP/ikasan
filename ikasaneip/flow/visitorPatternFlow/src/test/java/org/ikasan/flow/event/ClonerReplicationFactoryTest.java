@@ -81,7 +81,6 @@ public class ClonerReplicationFactoryTest
      * StringBuilder payload.
      */
     @Test
-    @Ignore // TODO: 07/11/2023 revist this test
     public void test_replication_flowEvent_StringBuilderPayload()
     {
         flowEvent.setPayload(new StringBuilder("this is a stringBuilder payload"));

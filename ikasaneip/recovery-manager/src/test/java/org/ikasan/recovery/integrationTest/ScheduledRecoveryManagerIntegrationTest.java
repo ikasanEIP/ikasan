@@ -70,7 +70,6 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.quartz.JobKey;
 import org.quartz.Scheduler;
@@ -164,7 +163,6 @@ public class ScheduledRecoveryManagerIntegrationTest
      * specified.
      */
     @Test
-    @Ignore
     public void test_recoveryManager_default_stop_when_no_resolver()
     {
         RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
@@ -196,7 +194,6 @@ public class ScheduledRecoveryManagerIntegrationTest
      * Test recovery manager with resolver for stop action.
      */
     @Test
-    @Ignore
     public void test_recoveryManager_resolver_to_stopAction()
     {
         //

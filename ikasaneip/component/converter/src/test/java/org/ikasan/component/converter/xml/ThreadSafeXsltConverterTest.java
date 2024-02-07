@@ -68,7 +68,6 @@ import java.util.Map;
  *
  */
 @SuppressWarnings("unqualified-field-access")
-@Ignore
 public class ThreadSafeXsltConverterTest
 {
     private final static String CLASSPATH_URL_PREFIX = "classpath:";
