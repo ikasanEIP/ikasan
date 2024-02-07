@@ -47,7 +47,6 @@ import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.xml.sax.InputSource;
 
@@ -68,7 +67,6 @@ import java.util.Map;
  * 
  */
 @SuppressWarnings("unqualified-field-access")
-@Ignore
 public class XsltConverterTest
 {
     private final static String CLASSPATH_URL_PREFIX = "classpath:";

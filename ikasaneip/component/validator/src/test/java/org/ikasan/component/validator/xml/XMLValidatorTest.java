@@ -21,7 +21,6 @@ import java.io.IOException;
 /**
  * Created by elliga on 18/11/2015.
  */
-@Ignore
 public class XMLValidatorTest
 {
     private String xml =
@@ -66,7 +65,6 @@ public class XMLValidatorTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
-    //    States test = classMockery.states("test");
 
     /**
      * SAX Parser factory mockery

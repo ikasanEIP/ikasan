@@ -40,7 +40,10 @@
  */
 package org.ikasan.connector.base.socket;
 
-import org.junit.*;
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.BufferedOutputStream;
@@ -138,7 +141,6 @@ public class TCPSocketTest
         Assert.assertArrayEquals(expectedData, mockedOutputStreamWriteResult);
     }
 
-    @Ignore
     @Test
     public void test_send_when_characterset_was_set_to_utf8_and_input_has_complex_characters() throws IOException
     {
