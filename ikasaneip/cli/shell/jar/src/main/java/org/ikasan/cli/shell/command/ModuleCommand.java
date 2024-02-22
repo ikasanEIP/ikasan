@@ -43,6 +43,8 @@ package org.ikasan.cli.shell.command;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -52,7 +54,7 @@ import org.springframework.shell.standard.ShellOption;
  *
  * @author Ikasan Development Team
  */
-@ShellComponent
+@Command
 public class ModuleCommand extends ActionCommand
 {
     @Value("${module.name:null}")
@@ -67,10 +69,9 @@ public class ModuleCommand extends ActionCommand
      * @param altCommand
      * @return
      */
-    @ShellMethod(value = "Start Integration Module JVM", group = "Ikasan Commands", key = "start-module")
-    public String startmodule(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
-                              @ShellOption(value = "-command", defaultValue = "")  String altCommand)
-    {
+    @Command(description = "Start Integration Module JVM", group = "Ikasan Commands", command = "start-module")
+    public String startmodule(@Option(longNames = "name", defaultValue = "")  String altModuleName,
+                              @Option(longNames = "command", defaultValue = "")  String altCommand) {
         return _startmodule(altModuleName, altCommand).toString();
     }
 
@@ -101,8 +102,8 @@ public class ModuleCommand extends ActionCommand
      * @param altModuleName
      * @return
      */
-    @ShellMethod(value = "Stop Integration Module JVM", group = "Ikasan Commands", key = "stop-module")
-    public String stopmodule(@ShellOption(value = "-name", defaultValue="") String altModuleName)
+    @Command(description = "Stop Integration Module JVM", group = "Ikasan Commands", command = "stop-module")
+    public String stopmodule(@Option(longNames = "name", defaultValue="") String altModuleName)
     {
         return _stopmodule(altModuleName).toString();
     }

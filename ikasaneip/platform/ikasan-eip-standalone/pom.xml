@@ -228,6 +228,14 @@
             <artifactId>hibernate-core</artifactId>
         </dependency>
 
+        <!-- hibernate requires that the scope of the byte-buddy be changed to runtime as they have bundled it as
+             test and it is required at runtime too. -->
+        <dependency>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
         <!-- Hibernate dependency -->
         <dependency>
             <groupId>org.javassist</groupId>

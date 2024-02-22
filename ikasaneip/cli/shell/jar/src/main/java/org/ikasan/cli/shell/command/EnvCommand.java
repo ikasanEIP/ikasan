@@ -47,11 +47,13 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.MutablePropertySources;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Properties;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -62,18 +64,18 @@ import java.util.stream.StreamSupport;
  *
  * @author Ikasan Developmnent Team
  */
-@ShellComponent
+@Command
 public class EnvCommand extends AbstractCommand
 {
     @Autowired
     private Environment environment;
 
-    @ShellMethod(value = "Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]", group = "Ikasan Commands", key = "env")
-    public String env(@ShellOption(defaultValue="") String variable,
-                      @ShellOption({"-n", "-name", "-names"}) boolean names,
-                      @ShellOption({"-v", "-value", "-values"}) boolean values,
-                      @ShellOption(value = "-no-expand") boolean noExpand,
-                      @ShellOption({"-l", "-list"}) boolean list)
+    @Command(description = "Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]", group = "Ikasan Commands", command = "env")
+    public String env(@Option(defaultValue="") String variable,
+                      @Option(longNames = {"n", "name", "names"}) boolean names,
+                      @Option(longNames = {"v", "value", "values"}) boolean values,
+                      @Option(longNames = "no-expand") boolean noExpand,
+                      @Option(longNames = {"l", "list"}) boolean list)
     {
         Properties props = new Properties();
         MutablePropertySources propSrcs = ((AbstractEnvironment) environment).getPropertySources();
