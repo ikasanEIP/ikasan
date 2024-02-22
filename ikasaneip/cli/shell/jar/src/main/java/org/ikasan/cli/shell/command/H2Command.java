@@ -43,16 +43,15 @@ package org.ikasan.cli.shell.command;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.shell.standard.ShellComponent;
-import org.springframework.shell.standard.ShellMethod;
-import org.springframework.shell.standard.ShellOption;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.Option;
 
 /**
  * Process commands for start, query, stop of the H2 process.
  *
  * @author Ikasan Developmnent Team
  */
-@ShellComponent
+@Command
 public class H2Command extends ActionCommand
 {
     @Value("${module.name:null}")
@@ -70,9 +69,9 @@ public class H2Command extends ActionCommand
      * @param altCommand
      * @return
      */
-    @ShellMethod(value = "Start H2 persistence JVM", group = "Ikasan Commands", key = "start-h2")
-    public String starth2(@ShellOption(value = "-name", defaultValue = "")  String altModuleName,
-                          @ShellOption(value = "-command", defaultValue = "")  String altCommand)
+    @Command(description = "Start H2 persistence JVM", group = "Ikasan Commands", command = "start-h2")
+    public String starth2(@Option(longNames = "name", defaultValue = "")  String altModuleName,
+                          @Option(longNames = "command", defaultValue = "")  String altCommand)
     {
         return this._starth2(altModuleName, altCommand).toString();
     }
@@ -107,11 +106,12 @@ public class H2Command extends ActionCommand
 
     /**
      * Stop H2 process.
+     *
      * @param altModuleName
      * @return
      */
-    @ShellMethod(value = "Stop H2 persistence JVM", group = "Ikasan Commands", key = "stop-h2")
-    public String stoph2(@ShellOption(value = "-name", defaultValue="") String altModuleName)
+    @Command(description = "Stop H2 persistence JVM", group = "Ikasan Commands", command = "stop-h2")
+    public String stoph2(@Option(longNames = "name", defaultValue="") String altModuleName)
     {
         return _stoph2(altModuleName).toString();
     }

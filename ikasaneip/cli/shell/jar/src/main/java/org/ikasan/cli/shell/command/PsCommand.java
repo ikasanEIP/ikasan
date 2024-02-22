@@ -45,6 +45,8 @@ import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.ikasan.cli.shell.reporting.ProcessInfos;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.shell.command.annotation.Command;
+import org.springframework.shell.command.annotation.Option;
 import org.springframework.shell.standard.ShellComponent;
 import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
@@ -56,17 +58,17 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-@ShellComponent
+@Command
 public class PsCommand extends AbstractCommand
 {
     @Value("${module.name:null}")
     String moduleName;
 
-    @ShellMethod(value = "Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]", group = "Ikasan Commands", key = "ps")
-    public String ps(@ShellOption(value = "-name", defaultValue = "")  String optionalModuleName,
-                     @ShellOption(value = "-user", defaultValue = "")  String optionalUsername)
+    @Command(description = "Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]", group = "Ikasan Commands", command = "ps")
+    public String ps(@Option(longNames = "name", defaultValue = "")  String optionalModuleName,
+                     @Option(longNames = "user", defaultValue = "")  String optionalUsername)
     {
-       return _ps(optionalModuleName, optionalModuleName).toString();
+       return _ps(optionalModuleName, optionalUsername).toString();
     }
 
     JSONObject _ps(String optionalModuleName, String optionalUsername)
