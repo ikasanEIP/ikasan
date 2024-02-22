@@ -96,6 +96,7 @@ public class DefaultOperationImpl implements Operation
     public Process start(ProcessType processType, List<String> commands, String name) throws IOException
     {
         ProcessBuilder processBuilder = getProcessBuilder(commands);
+
         if(processType.getOutputLog() != null && !processType.getOutputLog().isEmpty())
         {
             File outputLog = new File(processType.getOutputLog());

@@ -154,7 +154,7 @@ public class ProcessUtils
                 commands[i+1] = expandWildcardNotation( commands[i+1] );
             }
         }
-        return Arrays.asList(commands);
+        return new ArrayList<>(Arrays.asList(commands));
     }
 
     protected static String expandWildcardNotation(String wildcardNotation)

@@ -83,7 +83,7 @@
         <version.ikasan>${project.version}</version.ikasan>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.commons.compress>1.20</version.commons.compress>
-        <version.com.h2database>2.1.214</version.com.h2database>
+        <version.com.h2database>2.2.224</version.com.h2database>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>

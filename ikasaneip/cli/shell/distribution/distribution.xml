@@ -1,30 +1,46 @@
 <assembly>
-<id>dist</id>
-<formats>
-    <format>zip</format>
-</formats>
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
 
-<fileSets>
-    <fileSet>
-        <directory>../bin</directory>
-        <filtered>true</filtered>
-        <fileMode>755</fileMode>
-        <outputDirectory>./</outputDirectory>
-    </fileSet>
+    <fileSets>
+        <fileSet>
+            <directory>../bin</directory>
+            <filtered>true</filtered>
+            <fileMode>755</fileMode>
+            <outputDirectory>./</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>../sql/migration</directory>
+            <filtered>true</filtered>
+            <fileMode>755</fileMode>
+            <outputDirectory>./lib/migration</outputDirectory>
+        </fileSet>
+    </fileSets>
 
-</fileSets>
+    <includeBaseDirectory>false</includeBaseDirectory>
 
-<includeBaseDirectory>false</includeBaseDirectory>
+    <dependencySets>
+        <dependencySet>
+            <!-- Enable access to all projects in the current multimodule build! -->
+            <useProjectArtifact>false</useProjectArtifact>
+            <!-- Now, select which projects to include in this module-set. -->
+            <includes>
+                <include>org.ikasan:ikasan-shell</include>
+            </includes>
+            <outputDirectory>lib</outputDirectory>
+        </dependencySet>
+    </dependencySets>
 
-<dependencySets>
-    <dependencySet>
-        <!-- Enable access to all projects in the current multimodule build! -->
-        <useProjectArtifact>false</useProjectArtifact>
-        <!-- Now, select which projects to include in this module-set. -->
-        <includes>
-            <include>org.ikasan:ikasan-shell</include>
-        </includes>
-        <outputDirectory>lib</outputDirectory>
-    </dependencySet>
-</dependencySets>
+    <files>
+        <file>
+            <source>target/h2-1.4.200.jar</source>
+            <outputDirectory>lib/migration</outputDirectory>
+        </file>
+        <file>
+            <source>target/h2-2.2.224.jar</source>
+            <outputDirectory>lib/migration</outputDirectory>
+        </file>
+    </files>
 </assembly>

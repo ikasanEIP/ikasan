@@ -59,6 +59,7 @@ public interface Operation
 
     /**
      * Get default instance of an Operation.
+     *
      * @return Operation
      */
     static Operation getInstance()
