@@ -90,7 +90,6 @@ public class PersistenceServiceImpl implements PersistenceService
 		{
 			Contexts contexts 
 				= new Contexts(BASELINE, POST_BASELINE);
-			
 			this.generalLiquibase.update(contexts);
 		} 
 		catch (LiquibaseException e)

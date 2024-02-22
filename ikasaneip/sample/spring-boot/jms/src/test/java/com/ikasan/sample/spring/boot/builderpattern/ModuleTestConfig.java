@@ -58,9 +58,4 @@ public class ModuleTestConfig
         JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));
         return jmsTemplate;
     }
-
-    @Bean
-    LiquibaseConsoleService liquibaseConsoleService() {
-        return new LiquibaseConsoleService();
-    }
 }
