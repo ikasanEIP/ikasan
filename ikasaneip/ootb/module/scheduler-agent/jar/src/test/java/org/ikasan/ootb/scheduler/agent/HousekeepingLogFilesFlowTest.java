@@ -81,6 +81,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.Resource;
 import java.io.File;
@@ -114,10 +115,11 @@ public class HousekeepingLogFilesFlowTest {
 
     @Before
     public void setup() throws IOException {
+        FileSystemUtils.deleteRecursively(Paths.get("./target/logs"));
         Files.walk(Paths.get("./src/test/resources/logs"))
             .forEach(source -> {
                 Path destination = Paths.get("./target", source.toString()
-                    .substring("./test/resources/logs".length()));
+                    .substring("./src/test/resources/".length()));
                 try {
                     Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
