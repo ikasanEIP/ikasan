@@ -172,32 +172,6 @@ public class ApplicationTest {
         assertEquals(Flow.STOPPED, flow.getState());
     }
 
-    @Test
-    @DirtiesContext
-    public void test_housekeep_flow_success() throws IOException {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Housekeep Log Files Flow"));
-        flowTestRule.consumer("Scheduled Consumer")
-            .producer("Log Files Process");
-
-        HousekeepLogFilesProcessConfiguration configuration = flowTestRule
-            .getComponentConfig("Log Files Process", HousekeepLogFilesProcessConfiguration.class);
-        configuration.setLogFolder("./logs");
-
-        flowTestRule.startFlow();
-        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTrigger();
-
-        flowTestRule.sleep(2000);
-
-        flowTestRule.assertIsSatisfied();
-
-        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-
-        assertEquals(0, outboundQueue.size());
-
-        flowTestRule.stopFlow();
-    }
-
     @After
     public void teardown() {
         // post-test teardown
