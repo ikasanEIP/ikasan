@@ -1,6 +1,7 @@
 package org.ikasan.cli.shell.operation.h2.migration;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Disabled;
@@ -8,8 +9,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.util.ResourceUtils;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 
+import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -23,7 +28,6 @@ public class H2DatabaseMigrationSourcePostProcessTest {
      * Tests the scenario where the post processing is successful.
      */
     @Test
-    @Disabled("work out why failing on travis")
     public void testExecuteSuccess() throws IOException {
         String inputFilePath = "classpath:migration/script.sql";
         String outputFilePath = "./target/testOutputFile.sql";
@@ -40,9 +44,10 @@ public class H2DatabaseMigrationSourcePostProcessTest {
 
         assertEquals(expected, result);
 
-        Assert.assertEquals("The files differ!",
-            FileUtils.readFileToString(ResourceUtils.getFile("classpath:migration/expected.sql"), "utf-8"),
-            FileUtils.readFileToString(ResourceUtils.getFile("./target/testOutputFile.sql"), "utf-8"));
+        Reader reader1 = new BufferedReader(new FileReader(ResourceUtils.getFile("classpath:migration/expected.sql")));
+        Reader reader2 = new BufferedReader(new FileReader(ResourceUtils.getFile("./target/testOutputFile.sql")));
+
+        assertTrue("The post processed and expected files differ!", IOUtils.contentEqualsIgnoreEOL(reader1, reader2));
     }
 
 

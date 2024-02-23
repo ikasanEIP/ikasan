@@ -85,6 +85,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.*;
 import java.util.*;
 
 import static org.junit.Assert.assertEquals;
@@ -111,6 +112,19 @@ public class HousekeepingLogFilesFlowTest {
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
+    @Before
+    public void setup() throws IOException {
+        Files.walk(Paths.get("./src/test/resources/logs"))
+            .forEach(source -> {
+                Path destination = Paths.get("./target", source.toString()
+                    .substring("./test/resources/logs".length()));
+                try {
+                    Files.copy(source, destination, StandardCopyOption.REPLACE_EXISTING);
+                } catch (IOException e) {
+                   throw new RuntimeException(e);
+                }
+            });
+    }
 
     @Test
     @DirtiesContext
