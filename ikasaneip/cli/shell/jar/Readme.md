@@ -63,6 +63,7 @@ where non-interactive commands can be one or more of
 - ```stop``` - stop the Integration Module followed by stopping the Integration Module's H2 process
 - ```start-h2``` - start the Integration Module's H2 process
 - ```stop-h2``` - stop the Integration Module's H2 process
+- ```migrate-h2``` - migrate the Integration Module's H2 database from one version to another
 - ```start-module``` - start the Integration Module
 - ```stop-module``` - stop the Integration Module
 - ```env``` - show runtime environment variables
@@ -104,20 +105,23 @@ Ikasan Shell:> help
 AVAILABLE COMMANDS
 
 Built-In Commands
-        clear: Clear the shell screen.
-        exit, quit: Exit the shell.
-        help: Display help about available commands.
-        history: Display or save the history of previously run commands
-        script: Read and execute commands from a file.
-        stacktrace: Display the full stacktrace of the last error.
+       help: Display help about available commands
+       stacktrace: Display the full stacktrace of the last error.
+       clear: Clear the shell screen.
+       quit, exit: Exit the shell.
+       history: Display or save the history of previously run commands
+       version: Show version info
+       script: Read and execute commands from a file.
 
 Ikasan Commands
-        env: Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]
-        ps: Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]
-        start-h2: Start H2 persistence JVM
-        start-module: Start Integration Module JVM
-        stop-h2: Stop H2 persistence JVM
-        stop-module: Stop Integration Module JVM
+       stop-module: Stop Integration Module JVM
+       start-module: Start Integration Module JVM
+       migrate-h2: Migrate H2 persistence
+       ps: Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]
+       stop-h2: Stop H2 persistence JVM
+       env: Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]
+       start-h2: Start H2 persistence JVM
+
 
 
 Ikasan Shell:> 
@@ -125,17 +129,18 @@ Ikasan Shell:>
 
 #### Command Options
 
-| Command | Description | Options | Examples |
-| :---    | :---    | :---   | :---   | 
-| env     | Displays the runtime environment variables currently picked up by the CLI shell. Specifying a regexp of a variable name will only show those variables matching.| -names boolean to display variable names only. <br/>-no-expand boolean to specify no wildcard expansion of variables. <br/> -list return the results as a list. | Example 1. <br/> ```env h2.java.process``` - will only show the h2.java.process variable. <br/><br/> Example 2. <br/> ```env h2 -names``` - will only show the variable names matching h2. <br/><br/>Example 3. <br/> ```env h2 -list``` - will show the variables matching h2 as a list. <br/><br/>Example 4. <br/> ```env h2 -no-expand``` - will show the variable without expanding wildcards. |
-| ps      | Displays the status of the H2 JVM and Integration Module JVM as running, true or false. Uses default Integration Module name and username running the CLI. | -name <Alternate Module Name> |
-|         |  | -user <Alternate Username> |
-| start-h2 | Starts the H2 JVM process for this Integration Module. Uses default Integration Module name and user. | -name <Alternate Module Name> |
-|         |  | -command <Alternate JVM Command> which overrides h2.java.command |
-| stop-h2 | Stops the H2 JVM process for this Integration Module. | -name <Alternate Module Name> |
-| start-module | Starts the Integration Module JVM process. Uses default Integration Module name and user. | -name <Alternate Module Name> |
-|         |  | -command <Alternate JVM Command> which overrides module.java.command |
-| stop-module | Stops the Integration Module JVM process. | -name <Alternate Module Name> |
+| Command      | Description                                                                                                                                                                           | Options                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Examples                                                                                                                                                                                                                                                                                                                                                                                           |
+|:-------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------| 
+| env          | Displays the runtime environment variables currently picked up by the CLI shell. Specifying a regexp of a variable name will only show those variables matching.                      | -names boolean to display variable names only. <br/>-no-expand boolean to specify no wildcard expansion of variables. <br/> -list return the results as a list.                                                                                                                                                                                                                                                                                                                                                                                                                       | Example 1. <br/> ```env h2.java.process``` - will only show the h2.java.process variable. <br/><br/> Example 2. <br/> ```env h2 -names``` - will only show the variable names matching h2. <br/><br/>Example 3. <br/> ```env h2 -list``` - will show the variables matching h2 as a list. <br/><br/>Example 4. <br/> ```env h2 -no-expand``` - will show the variable without expanding wildcards. |
+| ps           | Displays the status of the H2 JVM and Integration Module JVM as running, true or false. Uses default Integration Module name and username running the CLI.                            | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|              |                                                                                                                                                                                       | -user <Alternate Username>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| start-h2     | Starts the H2 JVM process for this Integration Module. Uses default Integration Module name and user.                                                                                 | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|              |                                                                                                                                                                                       | -command <Alternate JVM Command> which overrides h2.java.command                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| stop-h2      | Stops the H2 JVM process for this Integration Module.                                                                                                                                 | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| migrate-h2   |  Migrate H2 persistence                                                                                                                                                               | --source-h2-version The version of the H2 database we are migrating from. [Optional, default = 1.4.200] </br> --target-h2-version The version of the H2 database we are migrating to. [Optional, default = 2.2.224] <br/> --h2-user The username of the H2 database to use for the migration. [Optional, default = sa] <br/> --h2-password The password of the H2 database to use for the migration. [Optional, default = sa] <br/> --h2-database-location The path to the database. The general Ikasan convention [<persistence-dir>/<module-name>-db/esb] will be used by default. [Optional] |
+| start-module | Starts the Integration Module JVM process. Uses default Integration Module name and user.                                                                                             | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+|              |                                                                                                                                                                                       | -command <Alternate JVM Command> which overrides module.java.command                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| stop-module  | Stops the Integration Module JVM process.                                                                                                                                             | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 
 #### Sample Usage
 Command
