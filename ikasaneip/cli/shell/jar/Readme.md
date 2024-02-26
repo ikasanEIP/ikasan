@@ -1,4 +1,4 @@
-![Problem Domain](../../docs/quickstart-images/Ikasan-title-transparent.png)
+![Problem Domain](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Command-Line Interface (CLI) Shell
 
 The Ikasan CLI Shell is a cross-platform client interface for IkasanESB.
