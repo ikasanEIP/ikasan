@@ -7,10 +7,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CleanTransientDirectoriesExecutableOperation implements ExecutableOperation {
+public class DefaultCleanTransientDirectoriesExecutableOperationImpl implements ExecutableOperation {
     private List<File> directoriesToRemove;
 
-    public CleanTransientDirectoriesExecutableOperation(List<File> directoriesToRemove) {
+    public DefaultCleanTransientDirectoriesExecutableOperationImpl(List<File> directoriesToRemove) {
         this.directoriesToRemove = directoriesToRemove;
         if(this.directoriesToRemove == null) {
             throw new IllegalArgumentException("directoriesToRemove cannot be null!");

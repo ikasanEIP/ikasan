@@ -2,7 +2,7 @@ package org.ikasan.cli.shell.operation;
 
 import org.ikasan.cli.shell.migration.service.MigrationService;
 
-public class CheckMigrationRunOperation implements ExecutableOperation {
+public class DefaultCheckMigrationRunOperationImpl implements ExecutableOperation {
     private MigrationService migrationService;
     private String type;
     private String sourceVersion;
@@ -12,7 +12,7 @@ public class CheckMigrationRunOperation implements ExecutableOperation {
      * CheckMigrationRunOperation class represents an executable operation that checks if a migration run
      * can be performed based on the given type, source version, and target version.
      */
-    public CheckMigrationRunOperation(MigrationService migrationService, String type
+    public DefaultCheckMigrationRunOperationImpl(MigrationService migrationService, String type
         , String sourceVersion, String targetVersion) {
         this.migrationService = migrationService;
         if(this.migrationService == null) {

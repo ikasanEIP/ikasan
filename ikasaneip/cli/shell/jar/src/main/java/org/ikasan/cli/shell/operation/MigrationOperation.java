@@ -5,24 +5,24 @@ public interface MigrationOperation {
     String RUN_PREVIOUSLY = "RUN_PREVIOUSLY";
 
     /**
-     * Retrieves a {@link CheckMigrationRunOperation} object.
+     * Retrieves a {@link DefaultCheckMigrationRunOperationImpl} object.
      *
-     * @return the {@link CheckMigrationRunOperation} object
+     * @return the {@link DefaultCheckMigrationRunOperationImpl} object
      */
-     CheckMigrationRunOperation getCheckMigrationRunOperation();
+     ExecutableOperation getCheckMigrationRunOperation();
 
 
      /**
-      * Retrieves a {@link MarkMigrationRunOperation} object.
+      * Retrieves a {@link DefaultMarkMigrationRunOperationImpl} object.
       *
-      * @return the {@link MarkMigrationRunOperation} object
+      * @return the {@link DefaultMarkMigrationRunOperationImpl} object
       */
-     MarkMigrationRunOperation getMarkMigrationRunOperation();
+     ExecutableOperation getMarkMigrationRunOperation();
 
 
      /**
       * Cleans transient working directories.
       */
-     CleanTransientDirectoriesExecutableOperation getCleanTransientDirectoriesExecutableOperation();
+     ExecutableOperation getCleanTransientDirectoriesExecutableOperation();
 
 }
