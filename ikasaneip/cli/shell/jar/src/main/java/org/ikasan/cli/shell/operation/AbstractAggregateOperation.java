@@ -27,7 +27,7 @@ public abstract class AbstractAggregateOperation {
      */
     public String execute() throws AggregateOperationException {
         if(this instanceof MigrationOperation) {
-            CheckMigrationRunOperation checkMigrationRunOperation = ((MigrationOperation) this).getCheckMigrationRunOperation();
+            ExecutableOperation checkMigrationRunOperation = ((MigrationOperation) this).getCheckMigrationRunOperation();
             if(checkMigrationRunOperation.execute().equals(MigrationOperation.RUN_PREVIOUSLY)){
                 return String.format("This migration process has been run already and will not be re-run!");
             }
@@ -49,8 +49,12 @@ public abstract class AbstractAggregateOperation {
         });
 
         if(this instanceof MigrationOperation) {
-            result.get().append(((MigrationOperation) this).getMarkMigrationRunOperation().execute()).append("\r\n");
-            result.get().append(((MigrationOperation) this).getCleanTransientDirectoriesExecutableOperation().execute()).append("\r\n");
+            if(((MigrationOperation) this).getMarkMigrationRunOperation() != null) {
+                result.get().append(((MigrationOperation) this).getMarkMigrationRunOperation().execute()).append("\r\n");
+            }
+            if(((MigrationOperation) this).getCleanTransientDirectoriesExecutableOperation() != null) {
+                result.get().append(((MigrationOperation) this).getCleanTransientDirectoriesExecutableOperation().execute()).append("\r\n");
+            }
         }
 
         result.get().append("The aggregate operation has been migrated successfully!").append("\r\n");

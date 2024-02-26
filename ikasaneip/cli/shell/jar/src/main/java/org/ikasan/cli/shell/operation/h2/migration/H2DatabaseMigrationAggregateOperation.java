@@ -133,19 +133,19 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     }
 
     @Override
-    public CheckMigrationRunOperation getCheckMigrationRunOperation() {
-        return new CheckMigrationRunOperation(MigrationService.instance(this.persistenceDir)
+    public DefaultCheckMigrationRunOperationImpl getCheckMigrationRunOperation() {
+        return new DefaultCheckMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
             , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version);
     }
 
     @Override
-    public MarkMigrationRunOperation getMarkMigrationRunOperation() {
-        return new MarkMigrationRunOperation(MigrationService.instance(this.persistenceDir)
+    public DefaultMarkMigrationRunOperationImpl getMarkMigrationRunOperation() {
+        return new DefaultMarkMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
                 , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version);
     }
 
     @Override
-    public CleanTransientDirectoriesExecutableOperation getCleanTransientDirectoriesExecutableOperation() {
-        return new CleanTransientDirectoriesExecutableOperation(List.of(new File(this.dbMigrationWorkingDirectory)));
+    public DefaultCleanTransientDirectoriesExecutableOperationImpl getCleanTransientDirectoriesExecutableOperation() {
+        return new DefaultCleanTransientDirectoriesExecutableOperationImpl(List.of(new File(this.dbMigrationWorkingDirectory)));
     }
 }
