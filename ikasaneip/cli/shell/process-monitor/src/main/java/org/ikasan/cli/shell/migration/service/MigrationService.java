@@ -57,7 +57,7 @@ public interface MigrationService {
      * @return an instance of MigrationService
      */
     static MigrationService instance(String persistenceDir) {
-        return new DefaultMigrationServiceImpl(new KryoMigrationPersistenceDaoImpl(persistenceDir));
+        return new DefaultMigrationServiceImpl(new KryoMigrationPersistenceDaoImpl(persistenceDir+"/migration_manifest"));
     }
 
     /**

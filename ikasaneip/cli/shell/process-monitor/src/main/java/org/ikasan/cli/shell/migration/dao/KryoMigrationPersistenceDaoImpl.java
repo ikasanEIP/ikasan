@@ -90,15 +90,22 @@ public class KryoMigrationPersistenceDaoImpl implements MigrationPersistenceDao
     public KryoMigrationPersistenceDaoImpl(String persistenceDir)
     {
         this.persistenceDir = persistenceDir;
-        if(persistenceDir == null)
-        {
+        if(persistenceDir == null) {
             throw new IllegalArgumentException("persistence directory cannot be 'null");
         }
 
         this.persistenceDirFile = new File(persistenceDir);
-        if(!persistenceDirFile.exists())
-        {
+        if(!persistenceDirFile.exists()) {
             persistenceDirFile.mkdirs();
+            File directorySafeGuardFile = new File(this.persistenceDir + "/DO_NOT_DELETE_ANY_FILES_IN_THIS_DIRECTORY");
+            if(!directorySafeGuardFile.exists()) {
+                try {
+                    directorySafeGuardFile.createNewFile();
+                }
+                catch (IOException e) {
+                    logger.warn("An error has occurred creating the directory safe guard file!", e);
+                }
+            }
         }
     }
 
