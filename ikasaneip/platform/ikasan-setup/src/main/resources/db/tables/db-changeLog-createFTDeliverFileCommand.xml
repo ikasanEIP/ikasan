@@ -55,7 +55,7 @@
 
         <createTable tableName="FTDeliverFileCommand">
             <column name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTDeliverFileCommandPK"/>
             </column>
             <column name="FileName" type="VARCHAR(255)"/>
             <column name="TempFileName" type="VARCHAR(255)"/>
@@ -70,10 +70,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTDeliverFileCommand', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTDeliverFileCommand01u" tableName="FTDeliverFileCommand" unique="true">
-            <column name="Id"/>
-        </createIndex>
 
     </changeSet>
 

@@ -56,7 +56,7 @@
         <createTable tableName="FTXid">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="FTXid01u"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTXidPK"/>
             </column>
             <column name="State" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -84,10 +84,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTXid', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTXid01u" tableName="FTXid" unique="true">
-            <column name="Id"/>
-        </createIndex>
 
 		<createIndex indexName="FTXid02u" tableName="FTXid" unique="true">
             <column name="GlobalTransactionId"/>

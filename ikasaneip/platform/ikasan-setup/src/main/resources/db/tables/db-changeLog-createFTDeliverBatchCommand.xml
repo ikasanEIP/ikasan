@@ -56,7 +56,7 @@
         <createTable tableName="FTDeliverBatchCommand">
         
             <column name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTDeliverBatchCommandPK"/>
             </column>
             <column name="OutputDirectory" type="VARCHAR(255)"/>
             <column name="TempDirectory" type="VARCHAR(255)"/>
@@ -69,10 +69,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTDeliverBatchCommand', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTDeliverBatchCommand01u" tableName="FTDeliverBatchCommand" unique="true">
-            <column name="Id"/>
-        </createIndex>
 
     </changeSet>
 

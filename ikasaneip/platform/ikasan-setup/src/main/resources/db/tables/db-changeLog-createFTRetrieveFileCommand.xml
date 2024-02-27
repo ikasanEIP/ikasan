@@ -56,7 +56,7 @@
         <createTable tableName="FTRetrieveFileCommand">
         
             <column name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTRetrieveFileCommandPK"/>
             </column>
             <column name="Destructive" type="BIT">
                 <constraints nullable="false"/>
@@ -75,10 +75,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTRetrieveFileCommand', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTRetrieveFileCommand01u" tableName="FTRetrieveFileCommand" unique="true">
-            <column name="Id"/>
-        </createIndex>
  
     </changeSet>
 

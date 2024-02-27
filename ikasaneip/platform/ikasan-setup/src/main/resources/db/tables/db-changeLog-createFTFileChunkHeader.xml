@@ -56,7 +56,7 @@
         <createTable tableName="FTFileChunkHeader">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="FTFileChunkHeader01u"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTFileChunkHeaderPK"/>
             </column>
             <column name="SequenceLength" type="numeric(18)">
                 <constraints nullable="false"/>
@@ -75,10 +75,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTFileChunkHeader', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTFileChunkHeader01u" tableName="FTFileChunkHeader" unique="true">
-            <column name="Id"/>
-        </createIndex>
         
     </changeSet>
 

@@ -56,7 +56,7 @@
         <createTable tableName="FTFileFilter">
         
             <column autoIncrement="${autoincrement}" name="Id" type="${identity}">
-                <constraints nullable="false" primaryKey="true" primaryKeyName="FTFileFilter01u"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTFileFilter01PK"/>
             </column>
             <column name="ClientId" type="VARCHAR(255)">
                 <constraints nullable="false"/>
@@ -81,10 +81,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTFileFilter', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTFileFilter01u" tableName="FTFileFilter" unique="true">
-            <column name="Id"/>
-        </createIndex>
         
         <createIndex indexName="FTFileFilter02u" tableName="FTFileFilter" unique="true">
             <column name="ClientId"/>
