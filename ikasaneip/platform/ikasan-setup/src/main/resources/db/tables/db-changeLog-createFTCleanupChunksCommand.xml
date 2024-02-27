@@ -56,7 +56,7 @@
         <createTable tableName="FTCleanupChunksCommand">
         
             <column name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTCleanupChunksCommandPK"/>
             </column>
             <column name="FileChunkHeaderId" type="numeric(18)"/>
             
@@ -64,10 +64,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTCleanupChunksCommand', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTCleanupChunksCommand01u" tableName="FTCleanupChunksCommand" unique="true">
-            <column name="Id"/>
-        </createIndex>
         
     </changeSet>
 

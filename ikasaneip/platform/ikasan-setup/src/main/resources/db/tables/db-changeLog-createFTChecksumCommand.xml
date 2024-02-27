@@ -56,7 +56,7 @@
         <createTable tableName="FTChecksumCommand">
         
             <column name="Id" type="numeric(18)">
-                <constraints nullable="false"/>
+                <constraints nullable="false" primaryKey="true" primaryKeyName="FTChecksumCommandPK"/>
             </column>
             <column name="Destructive" type="BIT">
                 <constraints nullable="false"/>
@@ -67,10 +67,6 @@
         
         <!-- The statement below is required by sybase to set the identity gap to 1. -->
         <sql dbms="sybase">sp_chgattribute 'FTChecksumCommand', 'identity_gap', 1</sql>
-        
-        <createIndex indexName="FTChecksumCommand01u" tableName="FTChecksumCommand" unique="true">
-            <column name="Id"/>
-        </createIndex>
 
     </changeSet>
     
