@@ -29,7 +29,7 @@ public abstract class AbstractAggregateOperation {
         if(this instanceof MigrationOperation) {
             ExecutableOperation checkMigrationRunOperation = ((MigrationOperation) this).getCheckMigrationRunOperation();
             if(checkMigrationRunOperation.execute().equals(MigrationOperation.RUN_PREVIOUSLY)){
-                return String.format("This migration process has been run already and will not be re-run!");
+                return String.format("The H2 migration process has been run already and will not be re-run!");
             }
         }
 
