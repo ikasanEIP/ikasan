@@ -71,17 +71,12 @@ public class KryoMigrationPersistenceDaoImpl implements MigrationPersistenceDao
     /**
      * Thread local instance of Kyro instance.
      */
-    private static final ThreadLocal<Kryo> kryoThreadLocal = new ThreadLocal<Kryo>()
-    {
-        @Override
-        protected Kryo initialValue()
-        {
-            Kryo kryo = new Kryo();
-            kryo.register(IkasanProcess.class);
-            kryo.register(org.ikasan.cli.shell.migration.model.IkasanMigration.class);
-            return kryo;
-        }
-    };
+    private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
+        Kryo kryo = new Kryo();
+        kryo.register(IkasanProcess.class);
+        kryo.register(IkasanMigration.class);
+        return kryo;
+    });
 
     /**
      * Constructor

@@ -21,7 +21,7 @@ public class Command
 
     /** supported non-interactive commands and script contents for backward compatibility */
     static Map<String,String> noninteractiveCommands = Map.of(
-        "start","start-h2\nstart-module",
+        "start","migrate-h2\nstart-h2\nstart-module",
         "stop","stop-module\nstop-h2");
 
     public static String NON_INTERACTIVE_PREFIX = "@";
