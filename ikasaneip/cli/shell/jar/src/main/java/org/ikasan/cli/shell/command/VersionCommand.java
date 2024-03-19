@@ -40,89 +40,37 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.model.ProcessType;
+import org.ikasan.cli.shell.version.model.IkasanVersion;
 import org.ikasan.cli.shell.version.service.IkasanVersionService;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.command.annotation.Command;
-import org.springframework.shell.command.annotation.Option;
 
 /**
- * Commands to start and stop the integration module.
+ * Command to get the Ikasan version of the module.
  *
  * @author Ikasan Development Team
  */
 @Command
-public class ModuleCommand extends ActionCommand
+public class VersionCommand
 {
-    @Value("${module.name:null}")
-    String moduleName;
-
-    @Value("${module.java.command:null}")
-    String moduleJavaCommand;
-
     @Value("${persistence.dir}")
     private String persistenceDir;
 
-    @Value("${pom.version}")
-    private String pomVersion;
-
     /**
-     * Start Integration Module.
-     * @param altModuleName
-     * @param altCommand
-     * @return
+     * Get the Ikasan version of the module.
+     *
+     * @return the module version
      */
-    @Command(description = "Start Integration Module JVM", group = "Ikasan Commands", command = "start-module")
-    public String startmodule(@Option(longNames = "name", defaultValue = "")  String altModuleName,
-                              @Option(longNames = "command", defaultValue = "")  String altCommand) {
-        return _startmodule(altModuleName, altCommand).toString();
-    }
+    @Command(description = "Get the Ikasan version of the module", group = "Ikasan Commands", command = "version")
+    public String version() {
+        IkasanVersion ikasanVersion =  IkasanVersionService.instance(this.persistenceDir).find();
 
-    JSONObject _startmodule(String altModuleName, String altCommand)
-    {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
-        {
-            name = altModuleName;
+        if(ikasanVersion != null) {
+            return ikasanVersion.getVersion();
         }
-
-        String command = moduleJavaCommand;
-        if(altCommand != null && !altCommand.isEmpty())
-        {
-            command = altCommand;
+        else {
+            return "The module version is not available!";
         }
-
-        // Write the ikasan version to the non-transient persistent file system.
-        IkasanVersionService.instance(this.persistenceDir).writeVersion(this.pomVersion);
-
-        return this.start(this.processType, name, command);
     }
 
-    public ProcessType getProcessType()
-    {
-        return ProcessType.getModuleInstance();
-    }
-
-    /**
-     * Stop Integration Module.
-     * @param altModuleName
-     * @return
-     */
-    @Command(description = "Stop Integration Module JVM", group = "Ikasan Commands", command = "stop-module")
-    public String stopmodule(@Option(longNames = "name", defaultValue="") String altModuleName)
-    {
-        return _stopmodule(altModuleName).toString();
-    }
-
-    JSONObject _stopmodule(String altModuleName)
-    {
-        String name = moduleName;
-        if(altModuleName != null && !altModuleName.isEmpty())
-        {
-            name = altModuleName;
-        }
-
-        return this.stop(this.processType, name, username);
-    }
 }
