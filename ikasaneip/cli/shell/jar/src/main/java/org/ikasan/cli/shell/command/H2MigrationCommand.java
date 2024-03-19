@@ -60,37 +60,40 @@ public class H2MigrationCommand
     private static Logger logger = LoggerFactory.getLogger(H2MigrationCommand.class);
 
     @Value("${module.name:null}")
-    String moduleName;
+    private String moduleName;
 
     @Value("${h2.script.command:null}")
-    String h2ScriptJavaCommand;
+    private String h2ScriptJavaCommand;
 
     @Value("${h2.runscript.command:null}")
-    String h2RunScriptJavaCommand;
+    private String h2RunScriptJavaCommand;
 
     @Value("${h2.changelog.runscript.command}")
-    String h2ChangeLogRunScriptJavaCommand;
+    private String h2ChangeLogRunScriptJavaCommand;
 
     @Value("${h2.logging.file:logs/h2.log}")
-    String h2Log;
+    private String h2Log;
 
     @Value("${supported.h2.migration.source.versions}")
-    List<String> supportedH2MigrationSourceVersions;
+    private List<String> supportedH2MigrationSourceVersions;
 
     @Value("${supported.h2.migration.target.versions}")
-    List<String> supportedH2MigrationTargetVersions;
+    private List<String> supportedH2MigrationTargetVersions;
 
     @Value("${persistence.dir}")
-    String persistenceDir;
+    private String persistenceDir;
 
-    @Value("${db.migration.working.directory:./db-migration/}")
-    String dbMigrationWorkingDirectory;
+    @Value("${h2.db.migration.working.directory:./db-migration/}")
+    private String dbMigrationWorkingDirectory;
 
-    @Value("${db.migrated.sql.filename:migrated.sql}")
-    String migratedOutputSqlFileName;
+    @Value("${h2.db.migrated.sql.filename:migrated.sql}")
+    private String migratedOutputSqlFileName;
 
-    @Value("${db.post.processed.sql.filename:migrated.sql}")
-    String postProcessedOutputSqlFileName;
+    @Value("${h2.db.post.processed.sql.filename:migrated.sql}")
+    private String postProcessedOutputSqlFileName;
+
+    @Value("${h2.db.migration.should.run:true}")
+    private boolean dbMigrationShouldRun;
 
     /**
      * Migrates H2 persistence.
@@ -111,6 +114,8 @@ public class H2MigrationCommand
                             @Option(description = "The password of the H2 database to use for the migration.", longNames = "h2-password",defaultValue = "sa")  String h2Password,
                             @Option(description = "The path to the database. The general Ikasan convention [<persistence-dir>/<module-name>-db/esb]" +
                                 " will be used by default.", longNames = "h2-database-location",defaultValue = "")  String databaseLocation) {
+        if(!dbMigrationShouldRun) return "H2 DB migration will not run. Property h2.db.migration.should.run is set to false.";
+
         H2DatabaseMigrationAggregateOperation h2DatabaseMigrationAggregateOperation
             = new H2DatabaseMigrationAggregateOperation(this.h2ScriptJavaCommand, this.h2RunScriptJavaCommand
                 , this.h2ChangeLogRunScriptJavaCommand, sourceH2Version

@@ -40,15 +40,17 @@
  */
 package org.ikasan.cli.shell.migration.dao;
 
-import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.cli.shell.migration.model.IkasanMigration;
-import org.ikasan.cli.shell.operation.model.IkasanProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -58,32 +60,24 @@ import java.nio.file.Path;
  *
  * @author Ikasan Development Team
  */
-public class KryoMigrationPersistenceDaoImpl implements MigrationPersistenceDao
+public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
 {
     /** logger instance */
-    private static Logger logger = LoggerFactory.getLogger(KryoMigrationPersistenceDaoImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(MigrationPersistenceDaoImpl.class);
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     /** persistence directory */
-    String persistenceDir;
+    private String persistenceDir;
 
-    File persistenceDirFile;
+    private File persistenceDirFile;
 
-    /**
-     * Thread local instance of Kyro instance.
-     */
-    private static final ThreadLocal<Kryo> kryoThreadLocal = ThreadLocal.withInitial(() -> {
-        Kryo kryo = new Kryo();
-        kryo.register(IkasanProcess.class);
-        kryo.register(IkasanMigration.class);
-        return kryo;
-    });
 
     /**
      * Constructor
      * @param persistenceDir
      */
-    public KryoMigrationPersistenceDaoImpl(String persistenceDir)
-    {
+    public MigrationPersistenceDaoImpl(String persistenceDir) {
         this.persistenceDir = persistenceDir;
         if(persistenceDir == null) {
             throw new IllegalArgumentException("persistence directory cannot be 'null");
@@ -107,58 +101,41 @@ public class KryoMigrationPersistenceDaoImpl implements MigrationPersistenceDao
     @Override
     public void save(IkasanMigration ikasanMigration)
     {
-        Kryo kryo = kryoThreadLocal.get();
         String path = getPidFQN(ikasanMigration.getType()
             , ikasanMigration.getSourceVersion(), ikasanMigration.getTargetVersion());
 
-        try
-        {
-            Output output = new Output(new FileOutputStream(path) );
-            kryo.writeClassAndObject(output, ikasanMigration);
-            output.close(); // flush should be called within the close() method
+        try(Output output = new Output(new FileOutputStream(path))) {
+            objectMapper.writeValue(output, ikasanMigration);
         }
-        catch(FileNotFoundException e)
-        {
+        catch(IOException e) {
             throw new RuntimeException("Failed to save the IkasanProcess", e);
         }
     }
 
     @Override
-    public IkasanMigration find(String type, String sourceVersion, String targetVersion)
-    {
-        Kryo kryo = kryoThreadLocal.get();
+    public IkasanMigration find(String type, String sourceVersion, String targetVersion) {
         String path = getPidFQN(type, sourceVersion, targetVersion);
-        try (Input input = new Input(new FileInputStream(path)))
-        {
-            return (IkasanMigration) kryo.readClassAndObject(input);
+        try (Input input = new Input(new FileInputStream(path))) {
+            return this.objectMapper.readValue(input, IkasanMigration.class);
         }
-        catch(FileNotFoundException e)
-        {
+        catch(IOException e) {
             logger.debug("File [" + path + "] not found", e);
-            return null;
-        }
-        catch(IndexOutOfBoundsException ioobe) {
-            logger.error("An attempt to read the pid file has failed, if running new jars against old instance, this can be ignored");
             return null;
         }
     }
 
     @Override
-    public void delete(String type, String sourceVersion, String targetVersion)
-    {
+    public void delete(String type, String sourceVersion, String targetVersion) {
         String path = getPidFQN(type, sourceVersion, targetVersion);
-        try
-        {
+        try {
             Files.delete(Path.of(path));
         }
-        catch(IOException e)
-        {
+        catch(IOException e) {
             logger.warn("Failed to delete [" + path + "] file may be missing or some other IO issue" + e.getMessage());
         }
     }
 
-    protected String getPidFQN(String type, String sourceVersion, String targetVersion)
-    {
+    protected String getPidFQN(String type, String sourceVersion, String targetVersion) {
         return persistenceDir + FileSystems.getDefault().getSeparator() + type + "_" + sourceVersion + "_" + targetVersion;
     }
 

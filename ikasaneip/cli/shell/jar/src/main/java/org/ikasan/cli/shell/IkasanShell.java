@@ -18,7 +18,6 @@ import java.util.List;
  */
 @SpringBootApplication
 @CommandScan
-//@EnableCommand(H2MigrationCommand.class)
 public class IkasanShell
 {
     public static void main(String[] args)

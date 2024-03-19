@@ -1,31 +1,22 @@
 package org.ikasan.cli.shell.migration.dao;
 
-import com.esotericsoftware.kryo.Kryo;
-import com.esotericsoftware.kryo.io.Input;
 import org.ikasan.cli.shell.migration.model.IkasanMigration;
 import org.ikasan.cli.shell.migration.model.MigrationType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
 /**
  * Test methods for KryoMigrationPersistenceDaoImpl
  */
-class KryoMigrationPersistenceDaoImplTest {
+class MigrationPersistenceDaoImplTest {
 
     private static final String PERSISTENCE_DIR = "./persistence";
 
@@ -40,7 +31,7 @@ class KryoMigrationPersistenceDaoImplTest {
      */
     @Test
     void save_and_find_success() {
-        KryoMigrationPersistenceDaoImpl persistenceDao = new KryoMigrationPersistenceDaoImpl("testDir");
+        MigrationPersistenceDaoImpl persistenceDao = new MigrationPersistenceDaoImpl("testDir");
         IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "1.0", "2.0"
             , 1234);
 
@@ -52,7 +43,7 @@ class KryoMigrationPersistenceDaoImplTest {
 
     @Test
     void given_ikasan_migration_exists_when_find_then_successful() {
-        KryoMigrationPersistenceDaoImpl dao = new KryoMigrationPersistenceDaoImpl(PERSISTENCE_DIR);
+        MigrationPersistenceDaoImpl dao = new MigrationPersistenceDaoImpl(PERSISTENCE_DIR);
         String type = MigrationType.H2_MIGRATION;
         String sourceVersion = "1.0";
         String targetVersion = "2.0";
@@ -69,7 +60,7 @@ class KryoMigrationPersistenceDaoImplTest {
 
     @Test
     void test_find_given_ikasan_migration_does_not_exists_then_null_is_returned() {
-        KryoMigrationPersistenceDaoImpl dao = new KryoMigrationPersistenceDaoImpl(PERSISTENCE_DIR);
+        MigrationPersistenceDaoImpl dao = new MigrationPersistenceDaoImpl(PERSISTENCE_DIR);
         String type = MigrationType.H2_MIGRATION;
         String sourceVersion = "3.0";
         String targetVersion = "4.0";
@@ -85,7 +76,7 @@ class KryoMigrationPersistenceDaoImplTest {
      */
     @Test
     void save_and_find_delete_success() {
-        KryoMigrationPersistenceDaoImpl persistenceDao = new KryoMigrationPersistenceDaoImpl("testDir");
+        MigrationPersistenceDaoImpl persistenceDao = new MigrationPersistenceDaoImpl("testDir");
         IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "1.0", "2.0"
             , 1234);
 
