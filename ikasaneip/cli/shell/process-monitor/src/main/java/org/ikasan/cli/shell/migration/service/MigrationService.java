@@ -40,10 +40,8 @@
  */
 package org.ikasan.cli.shell.migration.service;
 
-import org.ikasan.cli.shell.migration.dao.KryoMigrationPersistenceDaoImpl;
+import org.ikasan.cli.shell.migration.dao.MigrationPersistenceDaoImpl;
 import org.ikasan.cli.shell.migration.model.IkasanMigration;
-
-import java.nio.file.FileSystems;
 
 /**
  * Process persistence contract.
@@ -57,7 +55,7 @@ public interface MigrationService {
      * @return an instance of MigrationService
      */
     static MigrationService instance(String persistenceDir) {
-        return new DefaultMigrationServiceImpl(new KryoMigrationPersistenceDaoImpl(persistenceDir+"/migration_manifest"));
+        return new DefaultMigrationServiceImpl(new MigrationPersistenceDaoImpl(persistenceDir+"/migration_manifest"));
     }
 
     /**
