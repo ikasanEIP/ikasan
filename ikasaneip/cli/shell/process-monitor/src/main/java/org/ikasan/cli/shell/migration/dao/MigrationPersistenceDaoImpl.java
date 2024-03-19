@@ -101,7 +101,7 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
     @Override
     public void save(IkasanMigration ikasanMigration)
     {
-        String path = getPidFQN(ikasanMigration.getType()
+        String path = getMigrationManifestFilePath(ikasanMigration.getType()
             , ikasanMigration.getSourceVersion(), ikasanMigration.getTargetVersion());
 
         try(Output output = new Output(new FileOutputStream(path))) {
@@ -114,7 +114,7 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
 
     @Override
     public IkasanMigration find(String type, String sourceVersion, String targetVersion) {
-        String path = getPidFQN(type, sourceVersion, targetVersion);
+        String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion);
         try (Input input = new Input(new FileInputStream(path))) {
             return this.objectMapper.readValue(input, IkasanMigration.class);
         }
@@ -126,7 +126,7 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
 
     @Override
     public void delete(String type, String sourceVersion, String targetVersion) {
-        String path = getPidFQN(type, sourceVersion, targetVersion);
+        String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion);
         try {
             Files.delete(Path.of(path));
         }
@@ -135,7 +135,7 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
         }
     }
 
-    protected String getPidFQN(String type, String sourceVersion, String targetVersion) {
+    protected String getMigrationManifestFilePath(String type, String sourceVersion, String targetVersion) {
         return persistenceDir + FileSystems.getDefault().getSeparator() + type + "_" + sourceVersion + "_" + targetVersion;
     }
 
