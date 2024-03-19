@@ -49,6 +49,7 @@ import org.ikasan.cli.shell.migration.model.IkasanMigration;
  * @author Ikasan Development Team
  */
 public interface MigrationService {
+
     /**
      * Returns an instance of MigrationService.
      *
