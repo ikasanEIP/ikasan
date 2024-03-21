@@ -48,9 +48,12 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -222,7 +225,16 @@ public class DefaultOperationImpl implements Operation
         // TODO - check how many instances found
         for(ProcessHandle processHandle:processHandles)
         {
+            CompletableFuture<ProcessHandle> completableFuture = processHandle.onExit();
             processHandle.destroy();
+
+            try {
+                logger.info("Process shutdown complete: " + completableFuture.get());
+            }
+            catch (Exception e) {
+                logger.error("Error occurred while waiting for process shutdown", e);
+                throw new RuntimeException(e);
+            }
         }
 
         // remove persistence
