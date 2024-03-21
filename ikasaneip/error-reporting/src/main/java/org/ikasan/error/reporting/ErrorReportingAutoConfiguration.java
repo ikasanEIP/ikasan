@@ -46,12 +46,6 @@ public class ErrorReportingAutoConfiguration
         return new ErrorReportingManagementServiceImpl(errorManagementDao, errorReportingServiceDao);
     }
 
-//    @Bean(name = "errorReportingHouseKeepingService")
-//    public HousekeepService errorReportingHouseKeepingService(ErrorReportingServiceDao errorReportingServiceDao
-//        , ErrorManagementDao errorManagementDao) {
-//        return (HousekeepService) this.errorReportingManagementService(errorReportingServiceDao, errorManagementDao);
-//    }
-
     @Bean
     public ErrorReportingServiceDao errorReportingServiceDao() {
         return new HibernateErrorReportingServiceDao();
