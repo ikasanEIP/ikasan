@@ -120,6 +120,7 @@ public class ModuleBuilderTest
             ,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration\
             ,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration\
             ,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration\
+            ,org.ikasan.backup.IkasanBackupAutoConfiguration\
             """
 
         };

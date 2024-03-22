@@ -51,7 +51,15 @@ public class H2ConnectionUrlUtils {
             String start = connectionUrl.substring(0, connectionUrl.indexOf(":", connectionUrl.indexOf(":")+1));
             URI uri = new URI(connectionUrl.substring(start.length()+1));
 
-            String dbName = uri.getPath().substring(uri.getPath().lastIndexOf("/")+1, uri.getPath().indexOf(";"));
+            String dbName;
+
+            if(uri.getScheme().equals("mem")) {
+                dbName = uri.getSchemeSpecificPart().substring(0, uri.getSchemeSpecificPart().indexOf(";"));
+            }
+            else {
+                dbName = uri.getPath().substring(uri.getPath().lastIndexOf("/")+1, uri.getPath().indexOf(";"));
+            }
+
 
             return dbName;
         }
