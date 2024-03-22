@@ -2,6 +2,7 @@ package org.ikasan.backup.h2.service;
 
 import org.ikasan.backup.IkasanBackupAutoConfiguration;
 import org.ikasan.backup.h2.IkasanBackupAutoTestConfiguration;
+import org.ikasan.backup.h2.IkasanBackupWithEaiAutoTestConfiguration;
 import org.ikasan.backup.h2.lifecycle.H2DatabaseBackupShutdownListener;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
@@ -16,7 +17,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {IkasanBackupAutoConfiguration.class, IkasanBackupAutoTestConfiguration.class})
+@ContextConfiguration(classes = {IkasanBackupWithEaiAutoTestConfiguration.class, IkasanBackupAutoConfiguration.class})
 @TestPropertySource("classpath:test-application-with-eai.properties")
 public class H2BackupServiceImplWithEaiDbConfiguredTest {
 

@@ -130,11 +130,7 @@ public class IkasanBackupAutoConfiguration {
      * @return the eai H2DatabaseBackup object
      */
     @Bean("eaiDatabaseBackupDetails")
-    @ConditionalOnProperty(name =
-        {   "eai.datasource.url",
-            "eai.datasource.username",
-            "eai.datasource.password"
-        })
+    @ConditionalOnBean(name = "eaiXaDataSource")
     public H2DatabaseBackup eaiDatabaseBackupDetails() {
         H2DatabaseBackup h2DatabaseBackupDetails = new H2DatabaseBackup();
         h2DatabaseBackupDetails.setDbUrl(this.eaiIkasanDatabaseUrl);
