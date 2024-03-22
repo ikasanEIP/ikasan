@@ -48,7 +48,7 @@ public class IkasanBackupAutoConfiguration {
     @Value("${eai.datasource.password:}")
     private String eaiIkasanDatabasePassword;
 
-    @Value("${eai.ikasan.h2.backup.num.to.retain:2}")
+    @Value("${eai.h2.backup.num.to.retain:2}")
     private int eaiIkasanDatabaseBackupNumToRetain;
 
     @Value("${eai.h2.backup.cron.expression:17 0/1 * * * ?}")
