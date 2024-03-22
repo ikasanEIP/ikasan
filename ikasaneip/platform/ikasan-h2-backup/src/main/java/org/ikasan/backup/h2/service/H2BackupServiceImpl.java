@@ -1,17 +1,18 @@
 package org.ikasan.backup.h2.service;
 
 import org.h2.tools.Server;
-import org.h2.util.IOUtils;
 import org.ikasan.backup.h2.exception.H2DatabaseValidationException;
 import org.ikasan.backup.h2.exception.InvalidH2ConnectionUrlException;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
+import org.ikasan.backup.h2.util.H2BackupUtils;
 import org.ikasan.backup.h2.util.H2ConnectionUrlUtils;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.TestSocketUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -21,15 +22,9 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
-/**
- * A implementation of HousekeepService that performs database backups for H2 databases.
- */
 public class H2BackupServiceImpl implements HousekeepService {
 
     private static Logger logger = LoggerFactory.getLogger(H2BackupServiceImpl.class);
@@ -39,8 +34,8 @@ public class H2BackupServiceImpl implements HousekeepService {
         "   CONSTRAINT %s \n" +
         "     PRIMARY KEY (IDENTIFIER))";
 
-    private static final String BACKUP_DIRECTORY = "db-backup";
-    private static final String TEST_DIRECTORY = BACKUP_DIRECTORY
+    public static final String BACKUP_DIRECTORY = "db-backup";
+    public static final String TEST_DIRECTORY = BACKUP_DIRECTORY
         + FileSystems.getDefault().getSeparator() + "test-directory";
     private static final String BACKUP_QUERY = "BACKUP TO '";
 
@@ -82,6 +77,9 @@ public class H2BackupServiceImpl implements HousekeepService {
         // not needed
     }
 
+    /**
+     * Performs a backup of the H2 database.
+     */
     public void backup() {
         this.createBackupDirectoryIfItDoesNotExist();
 
@@ -117,7 +115,7 @@ public class H2BackupServiceImpl implements HousekeepService {
      * @throws IOException if an I/O exception occurs
      * @throws H2DatabaseValidationException if a database validation exception occurs
      */
-    private void runDatabaseValidationTest(String backupFileName) throws InvalidH2ConnectionUrlException, SQLException
+    protected void runDatabaseValidationTest(String backupFileName) throws InvalidH2ConnectionUrlException, SQLException
         , IOException, H2DatabaseValidationException {
         String testDbFilePath = this.h2DatabaseBackup.getDbBackupBaseDirectory() + FileSystems.getDefault().getSeparator()
             + TEST_DIRECTORY;
@@ -174,28 +172,8 @@ public class H2BackupServiceImpl implements HousekeepService {
      * @throws IOException if an I/O error occurs during unzipping
      */
     private void unzipBackedUpDatabaseFile(String backupFileName) throws IOException {
-        File unzipDir = new File(this.h2DatabaseBackup.getDbBackupBaseDirectory()
+        H2BackupUtils.unzipFile(backupFileName, this.h2DatabaseBackup.getDbBackupBaseDirectory()
             + FileSystems.getDefault().getSeparator() + TEST_DIRECTORY);
-
-        if(unzipDir.exists()) unzipDir.delete();
-
-        try (java.util.zip.ZipFile zipFile = new ZipFile(new File(backupFileName))) {
-            if(zipFile.size() != 1) throw new IOException("Database backup zip file cannot be empty!");
-            Enumeration<? extends ZipEntry> entries = zipFile.entries();
-            while (entries.hasMoreElements()) {
-                ZipEntry entry = entries.nextElement();
-                File entryDestination = new File(unzipDir, entry.getName());
-                if (entry.isDirectory()) {
-                    entryDestination.mkdirs();
-                } else {
-                    entryDestination.getParentFile().mkdirs();
-                    try (InputStream in = zipFile.getInputStream(entry);
-                         OutputStream out = new FileOutputStream(entryDestination)) {
-                        IOUtils.copy(in, out);
-                    }
-                }
-            }
-        }
     }
 
     /**
@@ -204,17 +182,8 @@ public class H2BackupServiceImpl implements HousekeepService {
      * @throws IOException if an I/O error occurs during file deletion.
      */
     private void cleanTestDirectory() throws IOException {
-        Path dir = Paths.get(this.h2DatabaseBackup.getDbBackupBaseDirectory()
+        H2BackupUtils.cleanDirectory(this.h2DatabaseBackup.getDbBackupBaseDirectory()
             + FileSystems.getDefault().getSeparator() + TEST_DIRECTORY);
-
-        List<Path> files = Files
-            .walk(dir) // Traverse the file tree in depth-first order
-            .sorted(Comparator.reverseOrder())
-            .collect(Collectors.toList());
-
-        for(Path file: files) {
-            Files.delete(file);
-        }
     }
 
     /**
@@ -321,17 +290,14 @@ public class H2BackupServiceImpl implements HousekeepService {
      * @param filePath the path of the file to be deleted
      */
     private void deleteFile(String filePath) {
-        try {
-            File file = new File(filePath);
-            if(file.exists()) {
-                Files.delete(file.toPath());
-            }
-        }
-        catch (IOException e) {
-            logger.warn("Unable to delete file: " + filePath, e);
-        }
+        H2BackupUtils.deleteFile(filePath);
     }
 
+    /**
+     * Retrieves the H2 database backup details.
+     *
+     * @return the H2 database backup details
+     */
     public H2DatabaseBackup getH2DatabaseBackup() {
         return h2DatabaseBackup;
     }

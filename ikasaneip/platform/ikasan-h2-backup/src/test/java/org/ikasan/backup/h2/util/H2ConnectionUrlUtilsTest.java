@@ -104,6 +104,17 @@ public class H2ConnectionUrlUtilsTest {
     }
 
     @Test
+    public void test_getDatabaseName_returns_correct_db_name_in_memory_db() {
+        String connectionUrl = "jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1";
+        try {
+            String dbName = H2ConnectionUrlUtils.getDatabaseName(connectionUrl);
+            assertEquals("The extracted database name should be 'testdb'", "testdb", dbName);
+        } catch (InvalidH2ConnectionUrlException e) {
+            fail("No exception expected, but got: " + e.getMessage());
+        }
+    }
+
+    @Test
     public void test_getDatabaseName_throws_exception_for_invalid_url() {
         String connectionUrl = "this_is_not_valid_url";
         assertThrows(InvalidH2ConnectionUrlException.class, () -> H2ConnectionUrlUtils.getDatabaseName(connectionUrl));
