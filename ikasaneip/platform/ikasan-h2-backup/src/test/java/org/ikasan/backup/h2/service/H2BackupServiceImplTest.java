@@ -7,14 +7,16 @@ import org.ikasan.backup.h2.exception.H2DatabaseValidationException;
 import org.ikasan.backup.h2.exception.InvalidH2ConnectionUrlException;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
 import org.ikasan.backup.h2.util.H2BackupUtils;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
+import org.ikasan.spec.module.Module;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -29,11 +31,11 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.fail;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {IkasanBackupAutoConfiguration.class, IkasanBackupAutoTestConfiguration.class})
 @TestPropertySource("classpath:test-application.properties")
-@EnableConfigurationProperties
 public class H2BackupServiceImplTest {
 
     private static final String DATABASE_DIRECTORY = Paths.get("./target", "database-dir").toString();
@@ -41,6 +43,9 @@ public class H2BackupServiceImplTest {
 
     @Autowired
     List<HousekeepingJob> housekeepingJobs;
+
+    @Autowired
+    Module<Flow> module;
 
     int port = TestSocketUtils.findAvailableTcpPort();
 
@@ -71,7 +76,7 @@ public class H2BackupServiceImplTest {
         h2DatabaseBackup.setNumOfBackupsToRetain(3);
         h2DatabaseBackup.setDbBackupBaseDirectory(DATABASE_DIRECTORY);
 
-        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup);
+        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup, module, false);
         h2BackupService.backup();
 
         // There will be 2 files as there is the warning file written to the backup directory.
@@ -89,7 +94,7 @@ public class H2BackupServiceImplTest {
         h2DatabaseBackup.setNumOfBackupsToRetain(3);
         h2DatabaseBackup.setDbBackupBaseDirectory(DATABASE_DIRECTORY);
 
-        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup);
+        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup, module, false);
 
         // take 6 backups
         h2BackupService.backup();
@@ -117,13 +122,47 @@ public class H2BackupServiceImplTest {
 
         H2BackupUtils.deleteFile(DATABASE_DIRECTORY+FileSystems.getDefault().getSeparator()+"esb.mv.db");
 
-        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup);
+        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup, module, false);
         h2BackupService.backup();
 
         // Only the warning file will exist in the backup directory.
         Assert.assertEquals(1, Files.list(Paths.get(DATABASE_DIRECTORY
                 + FileSystems.getDefault().getSeparator() + H2BackupServiceImpl.BACKUP_DIRECTORY))
             .collect(Collectors.toList()).size());
+
+        verifyNoInteractions(module);
+    }
+
+    @Test
+    public void test_backup_empty_zip_after_db_file_deleted_stop_flows() throws IOException {
+        Flow flow1 = Mockito.mock(Flow.class);
+        Flow flow2 = Mockito.mock(Flow.class);
+        when(module.getFlows()).thenReturn(List.of(flow1, flow2));
+
+        H2DatabaseBackup h2DatabaseBackup = new H2DatabaseBackup();
+        h2DatabaseBackup.setDbUrl("jdbc:h2:tcp://localhost:"+port+"/"+DATABASE_DIRECTORY+"/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE");
+        h2DatabaseBackup.setUsername("sa");
+        h2DatabaseBackup.setPassword("sa");
+        h2DatabaseBackup.setNumOfBackupsToRetain(3);
+        h2DatabaseBackup.setDbBackupBaseDirectory(DATABASE_DIRECTORY);
+
+        H2BackupUtils.deleteFile(DATABASE_DIRECTORY+FileSystems.getDefault().getSeparator()+"esb.mv.db");
+
+        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup, module, true);
+        h2BackupService.backup();
+
+        // Only the warning file will exist in the backup directory.
+        Assert.assertEquals(1, Files.list(Paths.get(DATABASE_DIRECTORY
+                + FileSystems.getDefault().getSeparator() + H2BackupServiceImpl.BACKUP_DIRECTORY))
+            .collect(Collectors.toList()).size());
+
+        verify(module).getFlows();
+        verify(flow1).stop();
+        verify(flow2).stop();
+
+        verifyNoMoreInteractions(module);
+        verifyNoMoreInteractions(flow1);
+        verifyNoMoreInteractions(flow2);
     }
 
     @Test(expected = H2DatabaseValidationException.class)
@@ -136,7 +175,7 @@ public class H2BackupServiceImplTest {
         h2DatabaseBackup.setNumOfBackupsToRetain(3);
         h2DatabaseBackup.setDbBackupBaseDirectory(DATABASE_DIRECTORY);
 
-        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup);
+        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup, module, false);
         h2BackupService.runDatabaseValidationTest("./src/test/resources/data/corrupt-db.zip");
     }
 
@@ -150,7 +189,7 @@ public class H2BackupServiceImplTest {
         h2DatabaseBackup.setNumOfBackupsToRetain(3);
         h2DatabaseBackup.setDbBackupBaseDirectory(CORRUPT_DATABASE_DIRECTORY);
 
-        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup);
+        H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup, module, false);
 
         try {
             h2BackupService.runDatabaseValidationTest("./src/test/resources/data/esb-backup-20240321-06-11-00.zip");
