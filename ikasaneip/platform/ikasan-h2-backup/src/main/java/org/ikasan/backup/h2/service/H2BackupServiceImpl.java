@@ -6,7 +6,9 @@ import org.ikasan.backup.h2.exception.InvalidH2ConnectionUrlException;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
 import org.ikasan.backup.h2.util.H2BackupUtils;
 import org.ikasan.backup.h2.util.H2ConnectionUrlUtils;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.housekeeping.HousekeepService;
+import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.test.util.TestSocketUtils;
@@ -39,9 +41,13 @@ public class H2BackupServiceImpl implements HousekeepService {
         + FileSystems.getDefault().getSeparator() + "test-directory";
     private static final String BACKUP_QUERY = "BACKUP TO '";
 
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-hh-mm-ss");
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH-mm-ss");
 
-    private H2DatabaseBackup h2DatabaseBackup;;
+    private H2DatabaseBackup h2DatabaseBackup;
+
+    private Module<Flow> module;
+
+    private boolean stopFlowsOnCorruptDatabaseDetection;
 
     /**
      * Constructs an instance of H2BackupServiceImpl.
@@ -50,11 +56,18 @@ public class H2BackupServiceImpl implements HousekeepService {
      *
      * @throws IllegalArgumentException    if h2DatabaseBackupDetails or persistenceDirectory is null
      */
-    public H2BackupServiceImpl(H2DatabaseBackup h2DatabaseBackup) {
+    public H2BackupServiceImpl(H2DatabaseBackup h2DatabaseBackup, Module<Flow> module,
+                               boolean stopFlowsOnCorruptDatabaseDetection) {
         this.h2DatabaseBackup = h2DatabaseBackup;
         if(this.h2DatabaseBackup == null) {
             throw new IllegalArgumentException("h2DatabaseBackupDetails cannot be null!");
         }
+        this.module = module;
+        if(this.module == null) {
+            throw new IllegalArgumentException("module cannot be null!");
+        }
+
+        this.stopFlowsOnCorruptDatabaseDetection = stopFlowsOnCorruptDatabaseDetection;
     }
 
     @Override
@@ -99,7 +112,18 @@ public class H2BackupServiceImpl implements HousekeepService {
                 deleteFile(backupFilePath);
             }
 
-            logger.error("An error has occurred performing H2 database backup!", e);
+            if(this.stopFlowsOnCorruptDatabaseDetection) {
+                logger.warn("All flows are stopping due to an error validating the backed up H2 database! " +
+                    "This indicates that the database is corrupt!");
+                this.module.getFlows().forEach(flow -> flow.stop());
+                logger.error("An error has occurred validating a H2 database backup! As a preventative action" +
+                    " all flows have been stopped!", e);
+            }
+            else {
+                logger.error("An error has occurred validating a H2 database backup! The flows will NOT be stopped as " +
+                    "property [h2.backup.stop.flows.on.corrupt.database.detection=false]. " +
+                    "This indicates that the database is corrupt!", e);
+            }
         }
     }
 
