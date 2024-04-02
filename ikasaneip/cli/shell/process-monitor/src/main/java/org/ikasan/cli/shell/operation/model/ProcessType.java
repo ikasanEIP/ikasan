@@ -49,6 +49,7 @@ public class ProcessType
 {
     public static ProcessType H2 = getH2Instance();
     public static ProcessType MODULE = getModuleInstance();
+    public static ProcessType SOLR = getSolrInstance();
     public static ProcessType GENERIC = getGenericInstance();
 
     private String name;
@@ -67,6 +68,11 @@ public class ProcessType
     public static ProcessType getModuleInstance()
     {
         return new ProcessType("Module", true, "logs/application.log", "logs/application.log", "spring.jta.logDir");
+    }
+
+    public static ProcessType getSolrInstance()
+    {
+        return new ProcessType("Solr", true, "solr/server/logs/solr.log", "solr/server/logs/solr.log", "spring.jta.logDir");
     }
 
     public static ProcessType getGenericInstance()

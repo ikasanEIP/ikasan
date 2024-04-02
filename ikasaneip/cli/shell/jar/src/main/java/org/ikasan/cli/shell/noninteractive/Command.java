@@ -53,9 +53,9 @@ public class Command
         {
             if(noninteractiveCommandContent != null)
             {
-                if(Files.notExists(commandFilePath, new LinkOption[]{ LinkOption.NOFOLLOW_LINKS}) )
+                if(Files.notExists(commandFilePath, LinkOption.NOFOLLOW_LINKS) )
                 {
-                    if(Files.notExists(nonInteractiveCommandPath, new LinkOption[]{ LinkOption.NOFOLLOW_LINKS}))
+                    if(Files.notExists(nonInteractiveCommandPath, LinkOption.NOFOLLOW_LINKS))
                     {
                         Files.createDirectories(nonInteractiveCommandPath);
                     }
