@@ -42,8 +42,6 @@ package org.ikasan.builder;
 
 import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
-import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
-import org.ikasan.dashboard.DashboardClientAutoConfiguration;
 import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
 import org.ikasan.exceptionResolver.ExceptionConfig;
 import org.ikasan.exceptionResolver.ExceptionResolver;
@@ -53,9 +51,7 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
 import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.filter.FilterAutoConfiguration;
-import org.ikasan.harvesting.HarvestingAutoConfiguration;
 import org.ikasan.hospital.HospitalAutoConfiguration;
-import org.ikasan.housekeeping.ModuleHousekeepingAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.module.service.FlowStartupTypeConfigurationConverter;
 import org.ikasan.module.service.WiretapTriggerConfigurationConverter;
