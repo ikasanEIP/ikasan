@@ -40,25 +40,13 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.builder.component.Builder;
 import org.ikasan.builder.invoker.Configuration;
 import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
-import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
-import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
-import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
-import org.ikasan.exceptionResolver.ExceptionConfig;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.filter.FilterAutoConfiguration;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.*;
-import org.ikasan.hospital.HospitalAutoConfiguration;
-import org.ikasan.module.IkasanModuleAutoConfiguration;
-import org.ikasan.monitor.IkasanMonitorAutoConfiguration;
-import org.ikasan.replay.ReplayAutoConfiguration;
-import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.sample.MyConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -82,10 +70,6 @@ import org.ikasan.spec.flow.FlowInvocationContextListener;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.systemevent.SystemEventAutoConfiguration;
-import org.ikasan.transaction.IkasanTransactionConfiguration;
-import org.ikasan.web.IkasanWebAutoConfiguration;
-import org.ikasan.web.WebSecurityConfig;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
@@ -94,11 +78,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.util.TestSocketUtils;
@@ -112,7 +93,6 @@ import java.util.List;
  *
  * @author Ikasan Development Team
  */
-@SuppressWarnings("unchecked")
 public class FlowBuilderTest
 {
     /**
@@ -197,6 +177,7 @@ public class FlowBuilderTest
         String[] args = { "--server.port=" + TestSocketUtils.findAvailableTcpPort(),
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
+            "--ikasan.error.occurrence.ttl.milliseconds=30000",
             """
             --spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration\
             ,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration\
@@ -2028,6 +2009,14 @@ public class FlowBuilderTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_successful_error_occurrence_property_set()
+    {
+        BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        FlowBuilder flowBuilder = builderFactory.getFlowBuilder("moduleName", "flowName");
+        Assert.assertEquals(Long.valueOf(30000L), flowBuilder.errorReportingServiceTimeToLive);
+    }
+
     /**
      * Test successful flow creation.
      * This test is to ensure we can pass exceptionResolver with explicit instance or builder instance
@@ -2130,17 +2119,17 @@ public class FlowBuilderTest
                 .build();
 
         // todo work out how to pull in BaseFileTransferAutoConfiguration as part of the unit test
-//        // implicit
-//        builderFactory.getFlowBuilder("moduleName", "flowName")
-//                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer())
-//                .producer("producerName", producer)
-//                .build();
-//
-//        // explicit
-//        builderFactory.getFlowBuilder("moduleName", "flowName")
-//                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer().build())
-//                .producer("producerName", producer)
-//                .build();
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().ftpConsumer().build())
+                .producer("producerName", producer)
+                .build();
 
         // implicit
         builderFactory.getFlowBuilder("moduleName", "flowName")
@@ -2154,17 +2143,17 @@ public class FlowBuilderTest
                 .producer("producerName", producer)
                 .build();
 
-//        // implicit
-//        builderFactory.getFlowBuilder("moduleName", "flowName")
-//                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer())
-//                .producer("producerName", producer)
-//                .build();
-//
-//        // explicit
-//        builderFactory.getFlowBuilder("moduleName", "flowName")
-//                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer().build())
-//                .producer("producerName", producer)
-//                .build();
+        // implicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer())
+                .producer("producerName", producer)
+                .build();
+
+        // explicit
+        builderFactory.getFlowBuilder("moduleName", "flowName")
+                .consumer("consumerName", builderFactory.getComponentBuilder().sftpConsumer().build())
+                .producer("producerName", producer)
+                .build();
 
         // implicit
         builderFactory.getFlowBuilder("moduleName", "flowName")

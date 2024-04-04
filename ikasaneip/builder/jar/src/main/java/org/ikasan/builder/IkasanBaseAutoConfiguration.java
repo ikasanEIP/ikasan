@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
+import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
 import org.ikasan.dashboard.DashboardClientAutoConfiguration;
 import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
 import org.ikasan.exceptionResolver.ExceptionConfig;
@@ -89,7 +90,7 @@ import org.springframework.context.annotation.ImportResource;
 @Import({ ExceptionConfig.class, IkasanTransactionConfiguration.class, IkasanWebAutoConfiguration.class, IkasanModuleAutoConfiguration.class,
             WebSecurityConfig.class, IkasanRestAutoConfiguration.class, IkasanMonitorAutoConfiguration.class, ErrorReportingAutoConfiguration.class,
             FilterAutoConfiguration.class, ConfigurationServiceAutoConfiguration.class,  SystemEventAutoConfiguration.class, ReplayAutoConfiguration.class,
-            WiretapAutoConfiguration.class, HospitalAutoConfiguration.class, ExclusionAutoConfiguration.class})
+            WiretapAutoConfiguration.class, HospitalAutoConfiguration.class, ExclusionAutoConfiguration.class, BaseFileTransferAutoConfiguration.class})
 public class IkasanBaseAutoConfiguration
 {
 

@@ -94,6 +94,7 @@ import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
@@ -168,7 +169,8 @@ public class FlowBuilder implements ApplicationContextAware
     @Autowired
     ErrorReportingService errorReportingService;
 
-    /** error reporting service time to live */
+    /** error reporting service time to live - 30 days default */
+    @Value("${ikasan.error.occurrence.ttl.milliseconds:2592000000}")
     Long errorReportingServiceTimeToLive;
 
     /** message history service */

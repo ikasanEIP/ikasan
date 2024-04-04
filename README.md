@@ -10,7 +10,6 @@
     - [Replay Service](ikasaneip/replay/Readme.md)
     - [Wiretap Service](ikasaneip/wiretap/Readme.md)
     - [Configuration Service](ikasaneip/configuration-service/Readme.md)
-    - [Mapping Service](ikasaneip/mapping/Readme.md)
     - [Monitoring Service](ikasaneip/monitor/Readme.md)
     
 - Developer

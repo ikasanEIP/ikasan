@@ -1,7 +1,7 @@
 [../](../../Readme.md)
 ![Problem Domain](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
  # Wiretap Service
-<img src="../developer/docs/quickstart-images/wiretap.gif" width="200px" align="left"> 
+<img src="../developer/docs/quickstart-images/wiretap.gif" width="200px" align="left" style="margin-right: 10px"> 
 The Wiretap Service allows for data to be collected and inspected, as it flows through the Ikasan service bus. This Wiretap Service is an invaluable tool allowing for end to
 end tracking of data events, in real time, as data flows and mutates. Wiretap events are captured with a time stamp with millisecond precision along with the location of where the wiretap was triggered.
 They are also captured with a life identifier that remains immutable for the data event for its entire journey throughout the bus, even if the undelying data mutates. The correalting elements of the wiretap
