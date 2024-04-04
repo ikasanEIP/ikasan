@@ -56,7 +56,7 @@ import java.util.Map;
  */
 public interface ErrorReportingService<FAILED_EVENT,ERROR_REPORTING_EVENT>
 {
-    /** one year default time to live */
+    /** 30 day default time to live */
     public static final long DEFAULT_TIME_TO_LIVE = Long.valueOf(1000l * 60l * 60l * 24l * 30l);
 
     /**
