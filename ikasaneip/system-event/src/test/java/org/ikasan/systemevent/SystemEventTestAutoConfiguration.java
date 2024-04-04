@@ -4,9 +4,12 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImpl
 import com.arjuna.ats.jta.UserTransaction;
 import jakarta.persistence.EntityManagerFactory;
 import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.systemevent.SystemEventDao;
+import org.ikasan.systemevent.dao.HibernateSystemEventDao;
 import org.ikasan.systemevent.service.TestModuleContainer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -23,6 +26,13 @@ import java.util.Properties;
 @EnableTransactionManagement
 @ImportResource("/transactions.xml")
 public class SystemEventTestAutoConfiguration {
+
+    @Bean(name = "deleteOnceHarvestedSystemEventDao")
+    @DependsOn("systemEventEntityManager")
+    public SystemEventDao<?> deleteOnceHarvestedSystemEventDao() {
+        return new HibernateSystemEventDao(true, 100
+            , 1000, true);
+    }
 
     @Bean(name = {"ikasan.xads", "ikasan.ds"})
     public DataSource ikasanXaDataSource() {

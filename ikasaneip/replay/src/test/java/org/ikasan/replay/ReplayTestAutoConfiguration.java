@@ -4,14 +4,20 @@ import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImpl
 import com.arjuna.ats.jta.UserTransaction;
 import jakarta.jms.MapMessage;
 import jakarta.jms.TextMessage;
+import org.ikasan.replay.dao.HibernateReplayDao;
+import org.ikasan.replay.service.ReplayManagementServiceImpl;
 import org.ikasan.serialiser.converter.JmsMapMessageConverter;
 import org.ikasan.serialiser.converter.JmsTextMessageConverter;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
 import org.ikasan.spec.module.ModuleContainer;
+import org.ikasan.spec.replay.ReplayAuditDao;
+import org.ikasan.spec.replay.ReplayDao;
+import org.ikasan.spec.replay.ReplayManagementService;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
@@ -54,6 +60,17 @@ public class ReplayTestAutoConfiguration
     @Bean
     public ModuleContainer moduleContainer() {
         return mockery.mock(ModuleContainer.class);
+    }
+
+    @Bean(name = "deleteOnceHarvestedReplayManagementService")
+    public ReplayManagementService deleteOnceHarvestedReplayManagementService(@Qualifier("deleteOnceHarvestedReplayDao")ReplayDao replayDao
+        , ReplayAuditDao replayAuditDao) {
+        return new ReplayManagementServiceImpl(replayDao, replayAuditDao);
+    }
+
+    @Bean(name = "deleteOnceHarvestedReplayDao")
+    public ReplayDao deleteOnceHarvestedReplayDao() {
+        return new HibernateReplayDao(true);
     }
 
     @Bean(name = {"ikasan.xads", "ikasan.ds"})

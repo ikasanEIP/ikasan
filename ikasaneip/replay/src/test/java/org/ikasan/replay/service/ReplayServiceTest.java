@@ -90,10 +90,11 @@ public class ReplayServiceTest
 
 	@Resource ReplayDao replayDao;
 
-
-	@Resource(name = "replayDao") ReplayAuditDao<ReplayAuditImpl, ReplayAuditEventImpl> replayAuditDao;
-
 	@Resource ReplayService<ReplayEvent, ReplayAuditEventImpl, ReplayResponse, BulkReplayResponse> replayService;
+
+    @Resource ReplayManagementServiceImpl replayManagementService;
+
+    @Resource ReplayManagementServiceImpl deleteOnceHarvestedReplayManagementService;
 	
 	@Resource SerialiserFactory ikasanSerialiserFactory;
 	
@@ -113,8 +114,7 @@ public class ReplayServiceTest
         for(int i=0; i<50; i++)
 		{
 			ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri-" + i, "this is a test event".getBytes(), "this is a test event", "moduleName", "flowName", 0);
-			
-	        
+            replayEvent.setHarvested(true);
 			this.replayDao.saveOrUpdate(replayEvent);
 		}
 
@@ -123,6 +123,7 @@ public class ReplayServiceTest
         for(int i=50; i<100; i++)
         {
             ReplayEventImpl replayEvent = new ReplayEventImpl("errorUri-" + i, "this is a test event".getBytes(), "this is a test event", "moduleName", "flowName", 0);
+            replayEvent.setHarvested(true);
             replayEvents.add(replayEvent);
         }
 
@@ -130,7 +131,6 @@ public class ReplayServiceTest
 
         stubFor(put(urlEqualTo("/moduleName/rest/replay/eventReplay/moduleName/flowName"))
                 .withHeader(HttpHeaders.USER_AGENT, equalTo("moduleName"))
-
 				.willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/xml")
@@ -176,98 +176,98 @@ public class ReplayServiceTest
     	this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
     	
     	
-    	List<ReplayAuditImpl> replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	List<ReplayAuditImpl> replayAudits = this.replayManagementService.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	ReplayAuditImpl replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
-    	replayAudits = this.replayAuditDao.getReplayAudits(moduleNames, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(moduleNames, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
-    	replayAudits = this.replayAuditDao.getReplayAudits(moduleNames, flowNames, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(moduleNames, flowNames, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
-    	replayAudits = this.replayAuditDao.getReplayAudits(null, flowNames, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(null, flowNames, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
-    	replayAudits = this.replayAuditDao.getReplayAudits(moduleNames, flowNames, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(moduleNames, flowNames, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     
-    	replayAudits = this.replayAuditDao.getReplayAudits(moduleNames, flowNames, null, "user", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(moduleNames, flowNames, null, "user", new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
-    	replayAudits = this.replayAuditDao.getReplayAudits(moduleNames, flowNames, "errorUri-10", "user", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(moduleNames, flowNames, "errorUri-10", "user", new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     	
-    	replayAudits = this.replayAuditDao.getReplayAudits(moduleNames, flowNames, "errorUri-10", "user", new Date(0), new Date(System.currentTimeMillis() + 1000000));
+    	replayAudits = this.replayManagementService.getReplayAudits(moduleNames, flowNames, "errorUri-10", "user", new Date(0), new Date(System.currentTimeMillis() + 1000000));
     	
     	Assert.assertTrue(replayAudits.size() == 1);
     	
     	replayAudit = replayAudits.get(0);
-    	replayAudit = this.replayAuditDao.getReplayAuditById(replayAudit.getId());
+    	replayAudit = this.replayManagementService.getReplayAuditById(replayAudit.getId());
     	
-    	Assert.assertTrue(this.replayAuditDao.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
+    	Assert.assertTrue(this.replayManagementService.getReplayAuditEventsByAuditId(replayAudit.getId()).size() == 100);
     	
     	Assert.assertTrue(listener.count == 100);
     }
 
 	@Test
 	@DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-	public void test_delete_success() throws MalformedURLException
+	public void test_delete_success()
 	{
 		// expectations
 		mockery.checking(new Expectations()
@@ -305,34 +305,103 @@ public class ReplayServiceTest
 		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
 		this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
 
-		List<ReplayAuditImpl> replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+		List<ReplayAuditImpl> replayAudits = this.replayManagementService.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 
 		Long auditId1 = replayAudits.get(0).getId();
 		Long auditId2 = replayAudits.get(1).getId();
 		Long auditId3 = replayAudits.get(2).getId();
 		Long auditId4 = replayAudits.get(3).getId();
 
-		List<ReplayAuditEventImpl> auditEvents = this.replayAuditDao.getReplayAuditEventsByAuditId(auditId1);
-		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId2));
-		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId3));
-		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId4));
+		List<ReplayAuditEventImpl> auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(auditId1);
+		auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId2));
+		auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId3));
+		auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId4));
 
-		this.replayDao.housekeep(1000);
+		this.replayManagementService.housekeep();
 
-		replayAudits = this.replayAuditDao.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+		replayAudits = this.replayManagementService.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
 		replayEvents = this.replayDao.getReplayEvents
 				(moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000), 100);
-		auditEvents = this.replayAuditDao.getReplayAuditEventsByAuditId(auditId1);
-		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId2));
-		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId3));
-		auditEvents.addAll(this.replayAuditDao.getReplayAuditEventsByAuditId(auditId4));
+		auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(auditId1);
+		auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId2));
+		auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId3));
+		auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId4));
 
 		Assert.assertTrue("Replay audits must be empty!", replayAudits.size() == 0);
 		Assert.assertTrue("Replay events must be empty!", replayEvents.size() == 0);
 		Assert.assertTrue("Replay audit events must be empty!", auditEvents.size() == 0);
 	}
-    
-    
+
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
+    public void test_delete_after_harvesting_success()
+    {
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                for(int i=0; i<100; i++)
+                {
+                    // get each flow name
+                    one(ikasanSerialiserFactory).getDefaultSerialiser();
+                    will(returnValue(serialiser));
+                    one(serialiser).deserialise("event".getBytes());
+                    will(returnValue("event".getBytes()));
+                }
+
+            }
+        });
+
+        ReplayListenerImpl listener = new ReplayListenerImpl();
+        this.replayService.addReplayListener(listener);
+
+        ArrayList<String> moduleNames = new ArrayList<String>();
+        moduleNames.add("moduleName");
+
+        ArrayList<String> flowNames = new ArrayList<String>();
+        flowNames.add("flowName");
+
+        List<ReplayEvent> replayEvents = this.replayDao.getReplayEvents
+            (moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000), 100);
+
+        HashMap<String, String> contextMappings = new HashMap<>();
+        contextMappings.put("moduleName", "moduleName");
+
+        this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
+        this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
+        this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
+        this.replayService.replay(baseUri, replayEvents, "user", "password", "user", "this is a test!", contextMappings);
+
+        List<ReplayAuditImpl> replayAudits = this.deleteOnceHarvestedReplayManagementService.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+
+        Long auditId1 = replayAudits.get(0).getId();
+        Long auditId2 = replayAudits.get(1).getId();
+        Long auditId3 = replayAudits.get(2).getId();
+        Long auditId4 = replayAudits.get(3).getId();
+
+        List<ReplayAuditEventImpl> auditEvents = this.deleteOnceHarvestedReplayManagementService.getReplayAuditEventsByAuditId(auditId1);
+        auditEvents.addAll(this.deleteOnceHarvestedReplayManagementService.getReplayAuditEventsByAuditId(auditId2));
+        auditEvents.addAll(this.deleteOnceHarvestedReplayManagementService.getReplayAuditEventsByAuditId(auditId3));
+        auditEvents.addAll(this.deleteOnceHarvestedReplayManagementService.getReplayAuditEventsByAuditId(auditId4));
+
+        this.deleteOnceHarvestedReplayManagementService.housekeep();
+
+        replayAudits = this.replayManagementService.getReplayAudits(null, null, null, null, new Date(0), new Date(System.currentTimeMillis() + 1000000));
+        replayEvents = this.replayDao.getReplayEvents
+            (moduleNames, flowNames, "", "", new Date(0), new Date(System.currentTimeMillis() + 1000000), 100);
+        auditEvents = this.replayManagementService.getReplayAuditEventsByAuditId(auditId1);
+        auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId2));
+        auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId3));
+        auditEvents.addAll(this.replayManagementService.getReplayAuditEventsByAuditId(auditId4));
+
+        Assert.assertTrue("Replay audits must be empty!", replayAudits.size() == 0);
+        Assert.assertTrue("Replay events must be empty!", replayEvents.size() == 0);
+        Assert.assertTrue("Replay audit events must be empty!", auditEvents.size() == 0);
+    }
+
+
+
     class ReplayListenerImpl implements ReplayListener<ReplayAuditEventImpl>
     {
     	public int count = 0;

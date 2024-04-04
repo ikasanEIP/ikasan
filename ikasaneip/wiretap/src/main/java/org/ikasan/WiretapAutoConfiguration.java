@@ -42,6 +42,9 @@ public class WiretapAutoConfiguration {
     @Value("${wiretap.housekeeping.batch.size:1000}")
     private int wiretapHouseKeepingBatchSize;
 
+    @Value("${wiretapHousekeepingJob-deleteOnceHarvested:false}")
+    private boolean deleteOnceHarvested;
+
     @Bean
     @DependsOn({"liquibase","moduleMetadataDashboardRestService"})
     JobAwareFlowEventListener wiretapFlowEventListener(Map<String, FlowEventJob> flowEventJobs, TriggerDao triggerDao
@@ -51,7 +54,8 @@ public class WiretapAutoConfiguration {
     }
 
     @Bean
-    WiretapService wiretapService(WiretapDao wiretapDao, ModuleService moduleService, WiretapEventFactory wiretapEventFactory) {
+    WiretapService wiretapService(@Qualifier("wiretapDao") WiretapDao wiretapDao
+            , ModuleService moduleService, WiretapEventFactory wiretapEventFactory) {
         return new WiretapServiceImpl(wiretapDao, moduleService, wiretapEventFactory);
     }
 
@@ -69,9 +73,9 @@ public class WiretapAutoConfiguration {
         return messageHistoryService;
     }
 
-    @Bean
+    @Bean(name = "wiretapDao")
     WiretapDao wiretapDao() {
-        return new HibernateWiretapDao(true, wiretapHouseKeepingBatchSize);
+        return new HibernateWiretapDao(true, wiretapHouseKeepingBatchSize, deleteOnceHarvested);
     }
 
     @Bean

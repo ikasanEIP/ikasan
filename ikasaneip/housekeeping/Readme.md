@@ -15,6 +15,7 @@ Each and every one of the jobs can be tuned and configured by following set of p
 - {jobName}-houseKeepingBatchSize defaults to 2500
 - {jobName}-transactionBatchSize defaults to 200
 - {jobName}-cronExpression defaults to '0 0/1 * * * ?'
+- {jobName}-deleteOnceHarvested defaults to false (NB applicable for replayHousekeepingJob, wiretapHousekeepingJob, errorReportingHousekeepingJob, systemEventServiceHousekeepingJob)
 - {jobName}-enabled defaults to true
 
 
@@ -27,24 +28,28 @@ Each and every one of the jobs can be tuned and configured by following set of p
 replayHousekeepingJob-houseKeepingBatchSize=2500
 replayHousekeepingJob-transactionBatchSize defaults=200
 replayHousekeepingJob-cronExpression=0 0/1 * * * ?
+replayHousekeepingJob-deleteOnceHarvested=false
 replayHousekeepingJob-enabled=true
 
 # Wiretap housekeeping settings
 wiretapHousekeepingJob-houseKeepingBatchSize=2500
 wiretapHousekeepingJob-transactionBatchSize defaults=200
 wiretapHousekeepingJob-cronExpression=0 0/1 * * * ?
+wiretapHousekeepingJob-deleteOnceHarvested=false
 wiretapHousekeepingJob-enabled=true
 
 # Error housekeeping settings
 errorReportingHousekeepingJob-houseKeepingBatchSize=2500
 errorReportingHousekeepingJob-transactionBatchSize defaults=200
 errorReportingHousekeepingJob-cronExpression=0 0/1 * * * ?
+errorReportingHousekeepingJob-deleteOnceHarvested=false
 errorReportingHousekeepingJob-enabled=true
 
 # SystemEvents housekeeping settings
 systemEventServiceHousekeepingJob-houseKeepingBatchSize=2500
 systemEventServiceHousekeepingJob-transactionBatchSize defaults=200
 systemEventServiceHousekeepingJob-cronExpression=0 0/1 * * * ?
+systemEventServiceHousekeepingJob-deleteOnceHarvested=false
 systemEventServiceHousekeepingJob-enabled=true
 
 # Duplicate Filter housekeeping settings

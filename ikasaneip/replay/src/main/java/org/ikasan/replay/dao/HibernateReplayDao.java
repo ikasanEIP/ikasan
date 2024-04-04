@@ -93,6 +93,8 @@ public class HibernateReplayDao implements ReplayDao<Long>,ReplayAuditDao<Replay
 	public static final String REPLAY_EVENTS_TO_DELETE_QUERY = "select id from ReplayEventImpl re " +
 			" where re.expiry < :" + NOW;
 
+    public static final String HARVESTED_REPLAY_EVENTS_TO_DELETE_QUERY = "select id from ReplayEventImpl re " +
+        " where re.harvested=true order by re.timestamp ASC";
 	public static final String REPLAY_EVENTS_DELETE_QUERY = "delete ReplayEventImpl re " +
 			" where re.id in(:" + EVENT_IDS + ")";
 
@@ -111,14 +113,19 @@ public class HibernateReplayDao implements ReplayDao<Long>,ReplayAuditDao<Replay
         " where w.id in(:" + EVENT_IDS + ")";
 
     private boolean isHarvestQueryOrdered = false;
+    private boolean deleteOnceHarvested;
 
     @PersistenceContext(unitName = "xa-replay")
     private EntityManager entityManager;
 
 
-    public HibernateReplayDao()
-    {
-
+    /**
+     * Constructs a new instance of the {@link HibernateReplayDao} class with the specified deleteOnceHarvested flag.
+     *
+     * @param deleteOnceHarvested a boolean value indicating whether replay events should be deleted once harvested
+     */
+    public HibernateReplayDao(boolean deleteOnceHarvested) {
+        this.deleteOnceHarvested = deleteOnceHarvested;
     }
 
     /* (non-Javadoc)
@@ -305,7 +312,6 @@ public class HibernateReplayDao implements ReplayDao<Long>,ReplayAuditDao<Replay
 
         if (payloadContent != null && payloadContent.length() > 0)
         {
-            //criteria.add(Restrictions.like("eventAsString", payloadContent, MatchMode.ANYWHERE));
             predicates.add( builder.like(root.get("eventAsString"),payloadContent));
         }
 
@@ -407,8 +413,9 @@ public class HibernateReplayDao implements ReplayDao<Long>,ReplayAuditDao<Replay
 	@Override
 	public void housekeep(final Integer numToHousekeep)
 	{
-        Query query = this.entityManager.createQuery(REPLAY_EVENTS_TO_DELETE_QUERY);
-        query.setParameter(NOW, System.currentTimeMillis());
+        Query query = this.entityManager.createQuery(this.deleteOnceHarvested ?
+            HARVESTED_REPLAY_EVENTS_TO_DELETE_QUERY : REPLAY_EVENTS_TO_DELETE_QUERY);
+        if(!this.deleteOnceHarvested)query.setParameter(NOW, System.currentTimeMillis());
         query.setMaxResults(numToHousekeep);
 
         List<Long> replayEventIds = query.getResultList();

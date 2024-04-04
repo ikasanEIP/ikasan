@@ -73,7 +73,11 @@ import java.util.List;
 public class HibernateWiretapDaoTest
 {
 	/** Object being tested */
-	@Resource private WiretapDao wiretapDao;
+	@Resource
+    private WiretapDao wiretapDao;
+
+    @Resource
+    private WiretapDao wiretapDaoDeleteOnceHarvested;
 
 	@Before
 	public void setup() {
@@ -87,6 +91,7 @@ public class HibernateWiretapDaoTest
 
             timestamp++;
 
+            event.setHarvested(true);
 			this.wiretapDao.save(event);
 		}
 
@@ -101,6 +106,7 @@ public class HibernateWiretapDaoTest
 
             timestamp++;
 
+            event.setHarvested(true);
             events.add(event);
         }
 
@@ -195,7 +201,7 @@ public class HibernateWiretapDaoTest
     }
 
     @Test
-    public void test_housekeep()
+    public void test_housekeep_batch()
     {
         wiretapDao.setBatchHousekeepDelete(true);
         wiretapDao.deleteAllExpired();
@@ -204,11 +210,11 @@ public class HibernateWiretapDaoTest
         PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
             flowNames, null, null, null, null, null, null);
 
-        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 8000);
+        Assert.assertEquals("Wiretap event result size == 8000", events.getResultSize(), 8000);
     }
 
     @Test
-    public void test_housekeep_batch()
+    public void test_housekeep()
     {
         wiretapDao.setBatchHousekeepDelete(false);
         wiretapDao.deleteAllExpired();
@@ -217,7 +223,33 @@ public class HibernateWiretapDaoTest
         PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
             flowNames, null, null, null, null, null, null);
 
-        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 0);
+        Assert.assertEquals("Wiretap event result size == 0", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_housekeep_delete_once_harvested()
+    {
+        this.wiretapDaoDeleteOnceHarvested.setBatchHousekeepDelete(false);
+        this.wiretapDaoDeleteOnceHarvested.deleteAllExpired();
+
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDao.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 0", events.getResultSize(), 0);
+    }
+
+    @Test
+    public void test_housekeep_batch_delete_once_harvested()
+    {
+        this.wiretapDaoDeleteOnceHarvested.setBatchHousekeepDelete(true);
+        this.wiretapDaoDeleteOnceHarvested.deleteAllExpired();
+
+        HashSet<String> flowNames = new HashSet<>();
+        PagedSearchResult<WiretapEvent> events = this.wiretapDaoDeleteOnceHarvested.findWiretapEvents(0, 1, null, false, null,
+            flowNames, null, null, null, null, null, null);
+
+        Assert.assertEquals("Wiretap event result size == 1", events.getResultSize(), 8000);
     }
 
     @Test
