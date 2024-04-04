@@ -30,17 +30,20 @@ public class SystemEventAutoConfiguration {
     @Value("${system.event.transaction.batch.size:1000}")
     private int systemEventTransactionBatchSize;
 
+    @Value("${systemEventServiceHousekeepingJob-deleteOnceHarvested:false}")
+    private boolean deleteOnceHarvested;
+
     @Bean
     @DependsOn({"systemEventDao", "moduleContainer"})
-    public SystemEventService systemEventService(SystemEventDao systemEventDao, ModuleContainer moduleContainer) {
+    public SystemEventService systemEventService(@Qualifier("systemEventDao") SystemEventDao systemEventDao, ModuleContainer moduleContainer) {
         return new SystemEventServiceImpl(systemEventDao, systemEventExpiryMinutes, moduleContainer);
     }
 
-    @Bean
+    @Bean(name = "systemEventDao")
     @DependsOn("systemEventEntityManager")
     public SystemEventDao<?> systemEventDao() {
-        return new HibernateSystemEventDao(true
-            , systemEventHouseKeepingBatchSize, systemEventTransactionBatchSize);
+        return new HibernateSystemEventDao(true, systemEventHouseKeepingBatchSize
+            , systemEventTransactionBatchSize, this.deleteOnceHarvested);
     }
 
     @Bean

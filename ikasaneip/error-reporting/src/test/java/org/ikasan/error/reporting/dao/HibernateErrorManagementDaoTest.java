@@ -73,6 +73,9 @@ public class HibernateErrorManagementDaoTest
 {    
     @Resource
     ErrorManagementDao errorManagementDao;
+
+    @Resource
+    ErrorManagementDao deleteOnceHarvestedErrorManagementDao;
     
     @Resource
 	ErrorReportingServiceDao errorReportingServiceDao;
@@ -125,9 +128,7 @@ public class HibernateErrorManagementDaoTest
     	this.errorReportingServiceDao.save(eo);
     	this.errorReportingServiceDao.save(eo1);
     	this.errorReportingServiceDao.save(eo2);
-    	
-    	System.out.println(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)));
-    	
+
     	Assert.assertTrue(this.errorManagementDao.getNumberOfModuleErrors("moduleName", false, false, new Date(System.currentTimeMillis() - 100000000), new Date(System.currentTimeMillis() + 100000000)) == 3);
     }
 
@@ -147,11 +148,50 @@ public class HibernateErrorManagementDaoTest
             errorOccurrences.add(eo);
         }
 
-        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+        Assert.assertEquals("Harvestable records == 1000", 1000, this.errorManagementDao.getHarvestableRecords(5000).size());
 
         this.errorManagementDao.updateAsHarvested(errorOccurrences);
 
-        Assert.assertEquals("Harvestable records == 0", this.errorManagementDao.getHarvestableRecords(5000).size(), 0);
+        Assert.assertEquals("Harvestable records == 0", 0, this.errorManagementDao.getHarvestableRecords(5000).size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_housekeep_success()
+    {
+        this.errorManagementDao.setHarvestQueryOrdered(true);
+
+        for(int i=0; i<1000; i++)
+        {
+            ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100, new byte[100], "errorString");
+            this.errorReportingServiceDao.save(eo);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.errorManagementDao.housekeep(100);
+
+        Assert.assertEquals("Harvestable records == 900", this.errorManagementDao.getHarvestableRecords(5000).size(), 900);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_housekeep_once_harvested_success()
+    {
+        this.deleteOnceHarvestedErrorManagementDao.setHarvestQueryOrdered(true);
+
+        for(int i=0; i<1000; i++)
+        {
+            ErrorOccurrenceImpl eo = new ErrorOccurrenceImpl("moduleName", "flowName", "flowElementName", "errorDetail", "errorMessage", "exceptionClass", 100000000L, new byte[100], "errorString");
+            eo.setHarvested(true);
+            this.errorReportingServiceDao.save(eo);
+        }
+
+        Assert.assertEquals("Harvestable records == 1000", this.errorManagementDao.getHarvestableRecords(5000).size(), 1000);
+
+        this.deleteOnceHarvestedErrorManagementDao.housekeep(100);
+
+        Assert.assertEquals("Harvestable records == 900", this.errorManagementDao.getHarvestableRecords(5000).size(), 900);
     }
 
     @Test

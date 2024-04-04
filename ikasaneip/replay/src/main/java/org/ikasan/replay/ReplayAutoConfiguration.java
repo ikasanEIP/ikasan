@@ -7,6 +7,7 @@ import org.ikasan.replay.service.ReplayServiceImpl;
 import org.ikasan.spec.replay.*;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -19,8 +20,11 @@ import java.util.Properties;
 @Configuration
 public class ReplayAutoConfiguration {
 
+    @Value("${replayHousekeepingJob-deleteOnceHarvested:false}")
+    private boolean deleteOnceHarvested;
+
     @Bean(name = "replayManagementService")
-    public ReplayManagementService replayManagementService(ReplayDao replayDao, ReplayAuditDao replayAuditDao) {
+    public ReplayManagementService replayManagementService(@Qualifier("replayDao")ReplayDao replayDao, ReplayAuditDao replayAuditDao) {
         return new ReplayManagementServiceImpl(replayDao, replayAuditDao);
     }
 
@@ -30,13 +34,14 @@ public class ReplayAutoConfiguration {
     }
 
     @Bean
-    public ReplayRecordService replayRecordService(ReplayDao replayDao, SerialiserFactory serialiserFactory) {
+    public ReplayRecordService replayRecordService(@Qualifier("replayDao")ReplayDao replayDao
+        , SerialiserFactory serialiserFactory) {
         return new ReplayRecordServiceImpl(serialiserFactory, replayDao);
     }
 
-    @Bean
+    @Bean(name = "replayDao")
     public ReplayDao replayDao() {
-        return new HibernateReplayDao();
+        return new HibernateReplayDao(this.deleteOnceHarvested);
     }
 
     @Bean

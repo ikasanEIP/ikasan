@@ -65,10 +65,12 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.*;
 
 /**
- * Hibernate implementation of the <code>WiretapDao</code>
- * 
- * @author Ikasan Development Team
- * 
+ * The HibernateWiretapDao class is an implementation of the WiretapDao interface using Hibernate as the underlying persistence framework.
+ *
+ * This class provides methods for saving wiretap events, finding wiretap events based on various criteria, deleting expired wiretaps,
+ * performing housekeeping operations, and managing configuration properties such as batch housekeeping and transaction batch size.
+ *
+ * @author Your Name
  */
 public class HibernateWiretapDao implements WiretapDao<Long>
 {
@@ -80,13 +82,13 @@ public class HibernateWiretapDao implements WiretapDao<Long>
 
     private static final String EXPIRY = "expiry";
     private static final String EVENT_ID = "eventId";
-    private static final String BATCH_SIZE = "batchSize";
     public static final String EVENT_IDS = "eventIds";
     public static final String CURRENT_DATE_TIME = "currentDateTime";
     public static final String NOW = "now";
 
     /** Query used for housekeeping expired persistence events */
     private static final String HOUSEKEEP_DELETE_QUERY = "delete WiretapFlowEvent w where w.expiry <= :" + EXPIRY;
+    private static final String HARVESTED_HOUSEKEEP_DELETE_QUERY = "delete WiretapFlowEvent w where w.harvested=true";
 
     /** Query for finding all persistence events with the same payloadId */
     private static final String WIRETAP_IDS_FOR_GROUPED_EVENT_ID = "select w.id from WiretapFlowEvent w where w.eventId = :" + EVENT_ID;
@@ -94,6 +96,9 @@ public class HibernateWiretapDao implements WiretapDao<Long>
 
     public static final String WIRETAP_EVENTS_TO_DELETE_QUERY = "select id from WiretapFlowEvent w " +
             " where w.expiry < :" + NOW;
+
+    public static final String HARVESTED_WIRETAP_EVENTS_TO_DELETE_QUERY = "select id from WiretapFlowEvent w " +
+        " where w.harvested= true ORDER BY w.timestamp asc";
 
     public static final String WIRETAP_EVENTS_DELETE_QUERY = "delete WiretapFlowEvent w " +
             " where w.id in(:" + EVENT_IDS + ")";
@@ -114,6 +119,7 @@ public class HibernateWiretapDao implements WiretapDao<Long>
     private String housekeepQuery;
 
     private boolean isHarvestQueryOrdered = false;
+    private boolean deleteOnceHarvested;
 
     /**
      * Constructor
@@ -129,32 +135,43 @@ public class HibernateWiretapDao implements WiretapDao<Long>
      * @param housekeepingBatchSize - batch size, only respected if set to use batching
      */
     public HibernateWiretapDao(boolean batchHousekeepDelete,
-            Integer housekeepingBatchSize) {
+            Integer housekeepingBatchSize, boolean deleteOnceHarvested) {
         this();
         this.batchHousekeepDelete = batchHousekeepDelete;
         this.housekeepingBatchSize = housekeepingBatchSize;
+        this.deleteOnceHarvested = deleteOnceHarvested;
     }
 
+
     /**
-     * Save the wiretapFlowEvent
+     * Saves a WiretapEvent in the database.
      *
-     * @see
-     * WiretapDao#save(WiretapEvent)
+     * @param wiretapEvent the WiretapEvent object to be saved
      */
     public void save(WiretapEvent wiretapEvent)
     {
         this.entityManager.persist(wiretapEvent);
     }
 
+    /**
+     * Saves a list of wiretap events.
+     *
+     * @param wiretapEvents the list of wiretap events to be saved
+     */
     @Override
     public void save(List<WiretapEvent> wiretapEvents) {
         wiretapEvents.forEach(wiretapEvent -> this.save(wiretapEvent));
     }
 
+
     /**
-     * Find the Wiretap by its Id
+     * Finds a WiretapEvent object by its identifier.
+     *
+     * @param identifier the unique identifier of the WiretapEvent
+     *
+     * @return the WiretapEvent object with the specified identifier,
+     *         or null if no WiretapEvent is found
      */
-    @SuppressWarnings("unchecked")
     @Override
     public WiretapEvent findById(final Long identifier) {
         WiretapFlowEvent wiretapEvent = this.entityManager.find(WiretapFlowEvent.class, identifier);
@@ -200,7 +217,7 @@ public class HibernateWiretapDao implements WiretapDao<Long>
      *
      * @return PagedSearchResult
      */
-    @SuppressWarnings("unchecked")
+    @Override
     public PagedSearchResult<WiretapEvent> findWiretapEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
             final Set<String> moduleNames, final String moduleFlow, final String componentName, final String eventId, final String payloadId, final Date fromDate, final Date untilDate,
             final String payloadContent) {
@@ -219,10 +236,24 @@ public class HibernateWiretapDao implements WiretapDao<Long>
 
     }
 
-    /* (non-Javadoc)
-	 * @see org.ikasan.spec.persistence.WiretapDao#findWiretapEvents(int, int, java.lang.String, boolean, java.util.Set, java.util.Set, java.util.Set, java.lang.String, java.lang.String, java.util.Date, java.util.Date, java.lang.String)
-	 */
-    @SuppressWarnings({ "rawtypes", "unchecked" })
+    /**
+     * Finds wiretap events based on the specified search criteria.
+     *
+     * @param pageNo         The page number of the results.
+     * @param pageSize       The number of results per page.
+     * @param orderBy        The attribute to order the results by.
+     * @param orderAscending Specifies whether the results should be ordered in ascending order.
+     * @param moduleNames    Set of module names to filter the results.
+     * @param moduleFlows    Set of module flows to filter the results.
+     * @param componentNames Set of component names to filter the results.
+     * @param eventId        The event ID to filter the results.
+     * @param payloadId      The payload ID to filter the results.
+     * @param fromDate       The start date to filter the results.
+     * @param untilDate      The end date to filter the results.
+     * @param payloadContent The content of the payload to filter the results.
+     *
+     * @return A PagedSearchResult containing the wiretap events that match the specified criteria.
+     */
     @Override
     public PagedSearchResult<WiretapEvent> findWiretapEvents(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
             final Set<String> moduleNames, final Set<String> moduleFlows, final Set<String> componentNames, final String eventId, final String payloadId,
@@ -266,6 +297,24 @@ public class HibernateWiretapDao implements WiretapDao<Long>
         return new ArrayListPagedSearchResult(results, firstResult, rowCount);
     }
 
+    /**
+     * Calculates the total number of rows for a paged search based on the specified criteria.
+     *
+     * @param pageNo           The page number to retrieve.
+     * @param pageSize         The size of the page.
+     * @param orderBy          The field to order the results by.
+     * @param orderAscending   The flag indicating whether to sort in ascending order.
+     * @param moduleNames      The set of module names.
+     * @param moduleFlows      The set of module flows.
+     * @param componentNames   The set of component names.
+     * @param eventId          The event ID.
+     * @param payloadId        The payload ID.
+     * @param fromDate         The starting date.
+     * @param untilDate        The ending date.
+     * @param payloadContent   The payload content.
+     *
+     * @return The total number of rows.
+     */
     private Long rowCount(final int pageNo, final int pageSize, final String orderBy, final boolean orderAscending,
                           final Set<String> moduleNames, final Set<String> moduleFlows, final Set<String> componentNames, final String eventId, final String payloadId,
                           final Date fromDate, final Date untilDate, final String payloadContent){
@@ -292,6 +341,7 @@ public class HibernateWiretapDao implements WiretapDao<Long>
 
     /**
      * Create a criteria instance for each invocation of data or metadata queries.
+     *
      * @param builder
      * @param root
      * @return
@@ -368,11 +418,12 @@ public class HibernateWiretapDao implements WiretapDao<Long>
     /**
      * Delete all of the expired wiretaps
      */
+    @Override
     public void deleteAllExpired()
     {
         if (!batchHousekeepDelete) {
-            Query query = this.entityManager.createQuery(HOUSEKEEP_DELETE_QUERY);
-            query.setParameter(EXPIRY, System.currentTimeMillis());
+            Query query = this.entityManager.createQuery(deleteOnceHarvested? HARVESTED_HOUSEKEEP_DELETE_QUERY : HOUSEKEEP_DELETE_QUERY);
+            if(!deleteOnceHarvested)query.setParameter(EXPIRY, System.currentTimeMillis());
             query.executeUpdate();
         }
         else {
@@ -397,8 +448,9 @@ public class HibernateWiretapDao implements WiretapDao<Long>
 
             numberDeleted += this.housekeepingBatchSize;
 
-            Query query = this.entityManager.createQuery(WIRETAP_EVENTS_TO_DELETE_QUERY);
-            query.setParameter(NOW, System.currentTimeMillis());
+            Query query = this.entityManager
+                .createQuery(deleteOnceHarvested ? HARVESTED_WIRETAP_EVENTS_TO_DELETE_QUERY : WIRETAP_EVENTS_TO_DELETE_QUERY);
+            if(!deleteOnceHarvested)query.setParameter(NOW, System.currentTimeMillis());
             query.setMaxResults(housekeepingBatchSize);
 
             List<Long> wiretapEventIds = (List<Long>)query.getResultList();
@@ -418,13 +470,20 @@ public class HibernateWiretapDao implements WiretapDao<Long>
      *
      * @return true if there is at least 1 expired WiretapFlowEvent
      */
+    @Override
     public boolean housekeepablesExist() {
         CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
         Root<WiretapFlowEvent> root = criteriaQuery.from(WiretapFlowEvent.class);
 
-        criteriaQuery.select(builder.count(root))
-            .where(builder.lessThan(root.get("expiry"),System.currentTimeMillis()));
+        if(this.deleteOnceHarvested) {
+            criteriaQuery.select(builder.count(root))
+                .where(builder.equal(root.get("harvested"), true));
+        }
+        else {
+            criteriaQuery.select(builder.count(root))
+                .where(builder.lessThan(root.get("expiry"), System.currentTimeMillis()));
+        }
 
 
         Query query = this.entityManager.createQuery(criteriaQuery);
@@ -439,6 +498,13 @@ public class HibernateWiretapDao implements WiretapDao<Long>
         return Boolean.valueOf(rowCount > 0);
     }
 
+    /**
+     * Retrieves a list of harvestable wiretap records.
+     *
+     * @param housekeepingBatchSize the maximum number of records to retrieve
+     * @return a list of harvestable wiretap records
+     */
+    @Override
     public List<WiretapEvent> getHarvestableRecords(final int housekeepingBatchSize) {
         CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
         CriteriaQuery<WiretapEvent> criteriaQuery = builder.createQuery(WiretapEvent.class);
@@ -458,6 +524,12 @@ public class HibernateWiretapDao implements WiretapDao<Long>
         return query.getResultList();
     }
 
+    /**
+     * Update the given list of WiretapEvents as harvested.
+     *
+     * @param events The list of WiretapEvents to be updated
+     */
+    @Override
     public void updateAsHarvested(List<WiretapEvent> events) {
         List<Long> wiretapEventIds = new ArrayList<Long>();
 
@@ -477,48 +549,92 @@ public class HibernateWiretapDao implements WiretapDao<Long>
         }
     }
 
+
+    /**
+     * Returns the value of the batchHousekeepDelete flag.
+     *
+     * @return the value of the batchHousekeepDelete flag
+     */
+    @Override
     public boolean isBatchHousekeepDelete()
     {
         return batchHousekeepDelete;
     }
 
+    /**
+     * Sets the flag for batch housekeeping deletion.
+     *
+     * @param batchHousekeepDelete true to enable batch deleting, false otherwise
+     */
+    @Override
     public void setBatchHousekeepDelete(boolean batchHousekeepDelete)
     {
         this.batchHousekeepDelete = batchHousekeepDelete;
     }
 
+    /**
+     * Retrieves the batch size for housekeeping.
+     *
+     * @return The batch size for housekeeping
+     */
+    @Override
     public Integer getHousekeepingBatchSize()
     {
         return housekeepingBatchSize;
     }
 
+
+    /**
+     * Sets the batch size for housekeeping.
+     *
+     * @param housekeepingBatchSize the size of the batch for housekeeping
+     */
+    @Override
     public void setHousekeepingBatchSize(Integer housekeepingBatchSize)
     {
         this.housekeepingBatchSize = housekeepingBatchSize;
     }
 
+
     /**
-     * @return the transactionBatchSize
+     * Retrieves the transaction batch size.
+     *
+     * @return The transaction batch size
      */
+    @Override
     public Integer getTransactionBatchSize()
     {
         return transactionBatchSize;
     }
 
+
     /**
-     * @param transactionBatchSize the transactionBatchSize to set
+     * Sets the transaction batch size.
+     *
+     * @param transactionBatchSize The size of the transaction batch.
      */
+    @Override
     public void setTransactionBatchSize(Integer transactionBatchSize)
     {
         this.transactionBatchSize = transactionBatchSize;
     }
 
-    @Override 
+    /**
+     * Sets the housekeep query to be used for deleting expired wiretaps.
+     *
+     * @param housekeepQuery the SQL query for deleting expired wiretaps
+     */
+    @Override
     public void setHousekeepQuery(String housekeepQuery)
     {
         this.housekeepQuery = housekeepQuery;
     }
 
+    /**
+     * Sets whether the harvest query should be ordered.
+     *
+     * @param isHarvestQueryOrdered true if the harvest query should be ordered, false otherwise
+     */
     @Override
     public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {
         this.isHarvestQueryOrdered = isHarvestQueryOrdered;

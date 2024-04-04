@@ -73,6 +73,9 @@ public class HibernateSystemEventDaoTest
     @Autowired
     private SystemEventDao systemEventDao;
 
+    @Autowired
+    private SystemEventDao deleteOnceHarvestedSystemEventDao;
+
     @Test
     public void test_deleteExpiredWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000() {
         systemEventDao.setBatchHousekeepDelete(true);
@@ -88,6 +91,72 @@ public class HibernateSystemEventDaoTest
         while(systemEventDao.housekeepablesExist())
         {
             this.systemEventDao.deleteExpired();
+        }
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void test_deleteExpiredWithBatchHousekeepDeleteFalse() {
+        systemEventDao.setBatchHousekeepDelete(false);
+
+        for(int i=0; i< 10000; i++)
+        {
+            systemEventDao.save(new SystemEventImpl("subject", "action", new Date()
+                , "actor", new Date(System.currentTimeMillis() - 1000000000)));
+        }
+
+        while(systemEventDao.housekeepablesExist())
+        {
+            this.systemEventDao.deleteExpired();
+        }
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void test_deleteOnceHarvestedWithBatchHousekeepDeleteTrueAndTransactionBatchSize2000() {
+        deleteOnceHarvestedSystemEventDao.setBatchHousekeepDelete(true);
+        deleteOnceHarvestedSystemEventDao.setHousekeepingBatchSize(100);
+        deleteOnceHarvestedSystemEventDao.setTransactionBatchSize(2000);
+
+        for(int i=0; i< 10000; i++)
+        {
+            SystemEventImpl systemEvent = new SystemEventImpl("subject", "action", new Date()
+                , "actor", new Date(System.currentTimeMillis() - 1000000000));
+            systemEvent.setHarvested(true);
+            deleteOnceHarvestedSystemEventDao.save(systemEvent);
+        }
+
+        while(deleteOnceHarvestedSystemEventDao.housekeepablesExist())
+        {
+            this.deleteOnceHarvestedSystemEventDao.deleteExpired();
+        }
+
+        List<SystemEvent> result = systemEventDao.list(null,null,null,null);
+
+        assertEquals(0, result.size());
+    }
+
+    @Test
+    public void test_deleteOnceHarvestedWithBatchHousekeepDeleteFalse() {
+        deleteOnceHarvestedSystemEventDao.setBatchHousekeepDelete(false);
+
+        for(int i=0; i< 10000; i++)
+        {
+            SystemEventImpl systemEvent = new SystemEventImpl("subject", "action", new Date()
+                , "actor", new Date(System.currentTimeMillis() - 1000000000));
+            systemEvent.setHarvested(true);
+            deleteOnceHarvestedSystemEventDao.save(systemEvent);
+        }
+
+        while(deleteOnceHarvestedSystemEventDao.housekeepablesExist())
+        {
+            this.deleteOnceHarvestedSystemEventDao.deleteExpired();
         }
 
         List<SystemEvent> result = systemEventDao.list(null,null,null,null);

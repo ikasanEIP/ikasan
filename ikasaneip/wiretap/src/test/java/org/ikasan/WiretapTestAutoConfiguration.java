@@ -7,6 +7,8 @@ import liquibase.Liquibase;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.wiretap.WiretapDao;
+import org.ikasan.wiretap.dao.HibernateWiretapDao;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +44,11 @@ public class WiretapTestAutoConfiguration {
 
     public WiretapTestAutoConfiguration() {
         MockitoAnnotations.openMocks(this);
+    }
+
+    @Bean
+    WiretapDao wiretapDaoDeleteOnceHarvested() {
+        return new HibernateWiretapDao(true, 1000, true);
     }
 
     @Bean(name = {"ikasan.xads", "ikasan.ds"})

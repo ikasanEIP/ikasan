@@ -88,8 +88,13 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
      */
     private static final String HOUSEKEEP_QUERY = "delete SystemEventImpl w where w.expiry <= :" + EXPIRY;
 
+    private static final String HARVESTED_HOUSEKEEP_QUERY = "delete SystemEventImpl w where w.harvested = true";
+
     public static final String SYSTEM_EVENTS_TO_DELETE_QUERY =
-        "select id from SystemEventImpl se " + " where se.expiry < :" + NOW;
+        "select id from SystemEventImpl se where se.expiry < :" + NOW;
+
+    public static final String HARVESTED_SYSTEM_EVENTS_TO_DELETE_QUERY =
+        "select id from SystemEventImpl se where se.harvested = true order by se.timestamp";
 
     public static final String SYSTEM_EVENTS_DELETE_QUERY =
         "delete SystemEventImpl se " + " where se.id in(:" + EVENT_IDS + ")";
@@ -118,21 +123,23 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
      */
     private Integer transactionBatchSize = 1000;
 
-    private String housekeepQuery;
+    private boolean deleteOnceHarvested;
 
     /**
      * Constructor
      *
      * @param batchHousekeepDelete  - pass true if you want to use batch deleting
-     * @param housekeepingBatchSize - batch size, only respected if set to use
-     *                              batching
+     * @param housekeepingBatchSize - batch size, only respected if set to use batching
+     * @param transactionBatchSize - the over all size of the batch to delete
+     * @param deleteOnceHarvested - flag to indicate if we should delete entities once harvested or wait until expiry
      */
     public HibernateSystemEventDao(boolean batchHousekeepDelete, Integer housekeepingBatchSize,
-                                   Integer transactionBatchSize) {
+                                   Integer transactionBatchSize, boolean deleteOnceHarvested) {
         this();
         this.batchHousekeepDelete = batchHousekeepDelete;
         this.housekeepingBatchSize = housekeepingBatchSize;
         this.transactionBatchSize = transactionBatchSize;
+        this.deleteOnceHarvested = deleteOnceHarvested;
     }
 
     /**
@@ -308,8 +315,8 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
      */
     public void deleteExpired() {
         if ( !batchHousekeepDelete ) {
-            Query query = entityManager.createQuery(HOUSEKEEP_QUERY);
-            query.setParameter(EXPIRY, new Date());
+            Query query = entityManager.createQuery(this.deleteOnceHarvested ? HARVESTED_HOUSEKEEP_QUERY : HOUSEKEEP_QUERY);
+            if(!this.deleteOnceHarvested)query.setParameter(EXPIRY, new Date());
             query.executeUpdate();
         }
         else {
@@ -331,8 +338,9 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
         while (housekeepablesExist() && numberDeleted < this.transactionBatchSize) {
             numberDeleted += this.housekeepingBatchSize;
 
-            Query query = entityManager.createQuery(SYSTEM_EVENTS_TO_DELETE_QUERY);
-            query.setParameter(NOW, new Date());
+            Query query = entityManager.createQuery(this.deleteOnceHarvested ? HARVESTED_SYSTEM_EVENTS_TO_DELETE_QUERY
+                : SYSTEM_EVENTS_TO_DELETE_QUERY);
+            if(!this.deleteOnceHarvested)query.setParameter(NOW, new Date());
             query.setMaxResults(housekeepingBatchSize);
 
             List<Long> wiretapEventIds = (List<Long>) query.getResultList();
@@ -358,7 +366,12 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
         CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
         Root<SystemEventImpl> root = criteriaQuery.from(SystemEventImpl.class);
 
-        criteriaQuery.select(builder.count(root)).where(builder.lessThan(root.get("expiry"), new Date()));
+        if(this.deleteOnceHarvested) {
+            criteriaQuery.select(builder.count(root)).where(builder.equal(root.get("harvested"), true));
+        }
+        else {
+            criteriaQuery.select(builder.count(root)).where(builder.lessThan(root.get("expiry"), new Date()));
+        }
 
         Query query = entityManager.createQuery(criteriaQuery);
         List<Long> rowCountList = query.getResultList();
@@ -394,11 +407,6 @@ public class HibernateSystemEventDao implements SystemEventDao<SystemEvent>
     @Override
     public void setTransactionBatchSize(Integer transactionBatchSize) {
         this.transactionBatchSize = transactionBatchSize;
-    }
-
-    @Override
-    public void setHousekeepQuery(String housekeepQuery) {
-        this.housekeepQuery = housekeepQuery;
     }
 
     @Override

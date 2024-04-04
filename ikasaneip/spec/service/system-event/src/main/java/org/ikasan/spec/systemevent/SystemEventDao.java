@@ -117,8 +117,6 @@ public interface SystemEventDao<EVENT> {
 	 */
 	void setTransactionBatchSize(Integer transactionBatchSize);
 
-	void setHousekeepQuery(String housekeepQuery);
-
     /**
      * Get (housekeepingBatchSize) harvestable records.
      *

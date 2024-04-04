@@ -3,6 +3,8 @@ package org.ikasan.error.reporting;
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.jta.UserTransaction;
 import jakarta.persistence.EntityManagerFactory;
+import org.ikasan.error.reporting.dao.ErrorManagementDao;
+import org.ikasan.error.reporting.dao.HibernateErrorManagementDao;
 import org.ikasan.serialiser.converter.JmsMapMessageConverter;
 import org.ikasan.serialiser.converter.JmsTextMessageConverter;
 import org.ikasan.serialiser.service.SerialiserFactoryKryoImpl;
@@ -30,6 +32,11 @@ import java.util.Properties;
 @ImportResource("/test-transaction.xml")
 public class ErrorReportingTestAutoConfiguration
 {
+    @Bean(name = "deleteOnceHarvestedErrorManagementDao")
+    public ErrorManagementDao deleteOnceHarvestedErrorManagementDao() {
+        return new HibernateErrorManagementDao(true);
+    }
+
     @Bean(name = {"ikasan.xads", "ikasan.ds"})
     public DataSource ikasanDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();

@@ -73,6 +73,9 @@ public class HibernateErrorManagementDao implements ErrorManagementDao
     public static final String ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrenceImpl eo " +
             " where eo.expiry < :" + NOW;
 
+    public static final String HARVESTED_ERROR_OCCURRENCES_TO_DELETE_QUERY = "select uri from ErrorOccurrenceImpl eo " +
+        " where eo.harvested = true order by eo.timestamp";
+
     public static final String ERROR_OCCURRENCE_DELETE_QUERY = "delete ErrorOccurrenceImpl eo " +
             " where eo.uri in(:" + EVENT_IDS + ")";
 
@@ -84,7 +87,21 @@ public class HibernateErrorManagementDao implements ErrorManagementDao
     @PersistenceContext(unitName = "error-reporting")
     private EntityManager entityManager;
 
-	@Override
+    private boolean deleteOnceHarvested;
+
+    /**
+     * HibernateErrorManagementDao is a class that represents a data access object for managing errors in Hibernate.
+     * It provides methods for saving, deleting, and finding error occurrences, as well as housekeeping
+     * and updating harvested records.
+     *
+     * @param deleteOnceHarvested a boolean flag indicating whether harvested error occurrences should be deleted
+     *                            after being processed
+     */
+    public HibernateErrorManagementDao(boolean deleteOnceHarvested) {
+        this.deleteOnceHarvested = deleteOnceHarvested;
+    }
+
+    @Override
 	public void saveErrorOccurrence(ErrorOccurrence errorOccurrence)
 	{
 		this.entityManager.persist(this.entityManager.contains(errorOccurrence) ? errorOccurrence : entityManager.merge(errorOccurrence));
@@ -243,8 +260,9 @@ public class HibernateErrorManagementDao implements ErrorManagementDao
 
 	@Override
 	public void housekeep(final Integer numToHousekeep) {
-		Query query = this.entityManager.createQuery(ERROR_OCCURRENCES_TO_DELETE_QUERY);
-        query.setParameter(NOW, System.currentTimeMillis());
+		Query query = this.entityManager.createQuery(this.deleteOnceHarvested
+            ? HARVESTED_ERROR_OCCURRENCES_TO_DELETE_QUERY : ERROR_OCCURRENCES_TO_DELETE_QUERY);
+        if(!this.deleteOnceHarvested)query.setParameter(NOW, System.currentTimeMillis());
         query.setMaxResults(numToHousekeep);
 
         List<Long> errorUris = (List<Long>)query.getResultList();

@@ -12,6 +12,7 @@ import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,9 @@ import java.util.Properties;
 @ImportResource("/error-reporting-transaction.xml")
 public class ErrorReportingAutoConfiguration
 {
+    @Value("${errorReportingHousekeepingJob-deleteOnceHarvested:false}")
+    private boolean deleteOnceHarvested;
+
     @Bean
     @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
     public ErrorReportingService errorReportingService(ErrorReportingServiceFactory errorReportingServiceFactory) {
@@ -42,7 +46,7 @@ public class ErrorReportingAutoConfiguration
 
     @Bean(name = "errorReportingManagementService")
     public ErrorReportingManagementService errorReportingManagementService(ErrorReportingServiceDao errorReportingServiceDao
-        , ErrorManagementDao errorManagementDao) {
+        , @Qualifier("errorManagementDao") ErrorManagementDao errorManagementDao) {
         return new ErrorReportingManagementServiceImpl(errorManagementDao, errorReportingServiceDao);
     }
 
@@ -51,9 +55,9 @@ public class ErrorReportingAutoConfiguration
         return new HibernateErrorReportingServiceDao();
     }
 
-    @Bean
+    @Bean(name = "errorManagementDao")
     public ErrorManagementDao errorManagementDao() {
-        return new HibernateErrorManagementDao();
+        return new HibernateErrorManagementDao(this.deleteOnceHarvested);
     }
 
     @Bean
