@@ -43,6 +43,7 @@ package org.ikasan.cli.shell.command;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.List;
@@ -54,6 +55,9 @@ import java.util.List;
  */
 public abstract class ActionCommand extends AbstractCommand
 {
+    @Value("${command.stop.process.wait.timeout.seconds:300}")
+    int commandStopProcessWaitTimeoutSeconds;
+
     ProcessType processType = getProcessType();
 
     /**
@@ -118,7 +122,7 @@ public abstract class ActionCommand extends AbstractCommand
                 processInfo.setRunning(false);
             }
 
-            operation.stop(processType, name, username);
+            operation.stop(processType, name, username, this.commandStopProcessWaitTimeoutSeconds);
             processInfo.setRunning(false);
         }
         catch (IOException e)

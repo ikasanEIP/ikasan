@@ -143,6 +143,8 @@ Ikasan Shell:>
 | stop-module  | Stops the Integration Module JVM process.                                                                                                                        | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | version      | Get the Ikasan version of the module.                                                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
+The configuration property `command.stop.process.wait.timeout.seconds` can be added to the application properties to configure a wait time for processes to stop. This has a default value of 300 seconds.
+
 #### Sample Usage
 Command
 

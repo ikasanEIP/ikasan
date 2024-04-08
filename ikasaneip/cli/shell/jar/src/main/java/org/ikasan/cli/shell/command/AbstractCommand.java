@@ -41,14 +41,14 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.Operation;
+import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Abstract command base class.
  *
  * @author Ikasan Developmnent Team
  */
-public abstract class AbstractCommand
-{
+public abstract class AbstractCommand {
     Operation operation = Operation.getInstance();
 
     String username = System.getProperty("user.name");
