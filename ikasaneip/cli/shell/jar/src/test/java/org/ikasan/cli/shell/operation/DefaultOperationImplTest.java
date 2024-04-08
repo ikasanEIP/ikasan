@@ -55,6 +55,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * This test class supports the <code>efaultOperationImpl</code> class.
@@ -80,6 +84,11 @@ class DefaultOperationImplTest
 
     /** Mock IkasanProcess */
     final PersistenceService persistenceService = mockery.mock(PersistenceService.class, "mockPersistenceService");
+
+    final Process mockProcess = mockery.mock(Process.class, "mockProcess");
+    final ProcessHandle mockProcessHandle = mockery.mock(ProcessHandle.class, "mockProcessHandle");
+
+    final CompletableFuture mockCompletableFuture = mockery.mock(CompletableFuture.class, "mockCompletableFuture");
 
     @Test
     void successful_start_with_persistence() throws IOException
@@ -295,7 +304,7 @@ class DefaultOperationImplTest
 
         Operation operation = new DefaultOperationImpl(persistenceService);
         Assertions.assertThrows(IOException.class,
-            () -> operation.stop(processType, "name", "username"));
+            () -> operation.stop(processType, "name", "username", 300));
 
         mockery.assertIsSatisfied();
     }
@@ -332,8 +341,43 @@ class DefaultOperationImplTest
         });
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        operation.stop(processType, "sampleProcess", null);
+        operation.stop(processType, "sampleProcess", null, 300);
         mockery.assertIsSatisfied();
+    }
+
+    @Test()
+    void exception_stop_process_timeout_exceeded() throws ExecutionException, InterruptedException {
+        processes.add(this.mockProcess);
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(persistenceService).find("processTypeName", "sampleProcess");
+                will(returnValue(mockProcessHandle));
+
+                exactly(1).of(mockProcessHandle).isAlive();
+                will(returnValue(true));
+
+                exactly(1).of(mockProcess).isAlive();
+                will(returnValue(false));
+
+                exactly(1).of(mockProcessHandle).onExit();
+                will(returnValue(mockCompletableFuture));
+
+                exactly(1).of(mockProcessHandle).destroy();
+
+                exactly(1).of(mockCompletableFuture).orTimeout(15, TimeUnit.SECONDS);
+
+                exactly(1).of(mockCompletableFuture).get();
+                will(throwException(new ExecutionException(new TimeoutException("A timeout has occurred!"))));
+
+                exactly(1).of(processType).getName();
+                will(returnValue("processTypeName"));
+            }
+        });
+
+        Operation operation = new DefaultOperationImpl(persistenceService);
+        Assert.assertThrows(RuntimeException.class, () -> operation
+            .stop(processType, "sampleProcess", null, 15));
     }
 
     @Test
