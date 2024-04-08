@@ -41,7 +41,6 @@
 package org.ikasan.cli.shell.command;
 
 import org.ikasan.cli.shell.operation.Operation;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Abstract command base class.
