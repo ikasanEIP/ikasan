@@ -54,6 +54,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -75,7 +76,7 @@ public class DefaultOperationImpl implements Operation
 
     /**
      * Constructor
-     * @param persistenceService
+     * @param persistenceService the process info persistence service
      */
     public DefaultOperationImpl(PersistenceService persistenceService)
     {
@@ -214,7 +215,7 @@ public class DefaultOperationImpl implements Operation
     }
 
     @Override
-    public void stop(ProcessType processType, String name, String username) throws IOException
+    public void stop(ProcessType processType, String name, String username, int shutdownTimeoutSeconds) throws IOException
     {
         List<ProcessHandle> processHandles = getProcessHandles(processType, name, username);
         if(processHandles == null || processHandles.size() == 0)
@@ -229,11 +230,18 @@ public class DefaultOperationImpl implements Operation
             processHandle.destroy();
 
             try {
+                // Will wait for the timeout or throw a TimeoutException
+                // if the timeout is exceeded.
+                completableFuture.orTimeout(shutdownTimeoutSeconds, TimeUnit.SECONDS);
                 logger.info("Process shutdown complete: " + completableFuture.get());
             }
-            catch (Exception e) {
+            catch (ExecutionException | InterruptedException e) {
                 logger.error("Error occurred while waiting for process shutdown", e);
-                throw new RuntimeException(e);
+                throw new RuntimeException(String.format("An error has occurred waiting for the process to shutdown. " +
+                    " This is likely to be a timout waiting for the process to end. The timeout is currently configured to " +
+                    "[%s] seconds. This can be adjusted by setting command.stop.process.wait.timeout.seconds in the application" +
+                    " properties.", shutdownTimeoutSeconds)
+                    , e);
             }
         }
 
@@ -259,5 +267,4 @@ public class DefaultOperationImpl implements Operation
         // remove persistence
         persistenceService.remove(processType.getName(), name);
     }
-
 }

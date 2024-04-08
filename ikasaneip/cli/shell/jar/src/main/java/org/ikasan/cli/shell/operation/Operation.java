@@ -68,6 +68,7 @@ public interface Operation
     }
 
     /**
+     * Method to start a new process.
      *
      * @param processType
      * @param name
@@ -85,15 +86,17 @@ public interface Operation
     List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username);
 
     /**
+     * Method to gracefully shutdown the underlying process.
      *
      * @param processType
      * @param name
      * @param username
      * @throws IOException
      */
-    void stop(ProcessType processType, String name, String username) throws IOException;
+    void stop(ProcessType processType, String name, String username, int shutdownTimeoutSeconds) throws IOException;
 
     /**
+     * Method to kill the underlying process.
      *
      * @param processType
      * @param name
