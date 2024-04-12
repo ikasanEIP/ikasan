@@ -3,10 +3,10 @@ package org.ikasan.cli.shell.operation;
 import org.ikasan.cli.shell.migration.service.MigrationService;
 
 public class DefaultCheckMigrationRunOperationImpl implements ExecutableOperation {
-    private MigrationService migrationService;
-    private String type;
-    private String sourceVersion;
-    private String targetVersion;
+    protected MigrationService migrationService;
+    protected String type;
+    protected String sourceVersion;
+    protected String targetVersion;
 
     /**
      * CheckMigrationRunOperation class represents an executable operation that checks if a migration run

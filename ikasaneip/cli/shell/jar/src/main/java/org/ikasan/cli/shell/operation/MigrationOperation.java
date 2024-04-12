@@ -4,6 +4,8 @@ public interface MigrationOperation {
     String NOT_YET_RUN = "NOT_YET_RUN";
     String RUN_PREVIOUSLY = "RUN_PREVIOUSLY";
 
+    String NOT_REQUIRED = "NOT_REQUIRED";
+
     /**
      * Retrieves a {@link DefaultCheckMigrationRunOperationImpl} object.
      *

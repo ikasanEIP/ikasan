@@ -28,8 +28,12 @@ public abstract class AbstractAggregateOperation {
     public String execute() throws AggregateOperationException {
         if(this instanceof MigrationOperation) {
             ExecutableOperation checkMigrationRunOperation = ((MigrationOperation) this).getCheckMigrationRunOperation();
-            if(checkMigrationRunOperation.execute().equals(MigrationOperation.RUN_PREVIOUSLY)){
-                return String.format("The H2 migration process has been run already and will not be re-run!");
+            String migrationRunCheck = checkMigrationRunOperation.execute();
+            if(migrationRunCheck.equals(MigrationOperation.RUN_PREVIOUSLY)){
+                return String.format("The migration process has been run already and will not be re-run!");
+            }
+            else if(migrationRunCheck.equals(MigrationOperation.NOT_REQUIRED)) {
+                return String.format("The migration is not required.");
             }
         }
 

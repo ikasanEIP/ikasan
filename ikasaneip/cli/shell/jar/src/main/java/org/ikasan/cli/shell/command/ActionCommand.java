@@ -56,7 +56,7 @@ import java.util.List;
 public abstract class ActionCommand extends AbstractCommand
 {
     @Value("${command.stop.process.wait.timeout.seconds:300}")
-    int commandStopProcessWaitTimeoutSeconds;
+    int commandStopProcessWaitTimeoutSeconds = 300;
 
     ProcessType processType = getProcessType();
 
