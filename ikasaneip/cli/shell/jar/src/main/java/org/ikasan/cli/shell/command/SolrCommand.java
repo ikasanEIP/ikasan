@@ -40,9 +40,12 @@
  */
 package org.ikasan.cli.shell.command;
 
+import org.ikasan.cli.shell.operation.DefaultOperationImpl;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
@@ -51,6 +54,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Process commands for start, query, stop of the H2 process.
@@ -60,10 +64,13 @@ import java.util.concurrent.ExecutionException;
 @Command
 public class SolrCommand extends ActionCommand
 {
+    /** logger instance */
+    private static Logger logger = LoggerFactory.getLogger(SolrCommand.class);
+
     @Value("${module.name:null}")
     String moduleName;
 
-    @Value("${  solr.java.start.command:null}")
+    @Value("${solr.java.start.command:null}")
     String solrStartJavaCommand;
 
     @Value("${solr.java.stop.command:null}")
@@ -108,10 +115,10 @@ public class SolrCommand extends ActionCommand
     @Command(description = "Stop Solr", group = "Ikasan Commands", command = "stop-solr")
     public String stopSolr(@Option(longNames = "name", defaultValue="") String altModuleName)
     {
-        return _stopSolr(altModuleName).toString();
+        return _stopSolr(altModuleName, null).toString();
     }
 
-    JSONObject _stopSolr(String altModuleName)
+    JSONObject _stopSolr(String altModuleName, String altCommand)
     {
         String name = moduleName;
         if(altModuleName != null && !altModuleName.isEmpty())
@@ -119,29 +126,47 @@ public class SolrCommand extends ActionCommand
             name = altModuleName;
         }
 
-        return this.stop(this.processType, name, username);
+        String command = solrStopJavaCommand;
+        if(altCommand != null && !altCommand.isEmpty())
+        {
+            command = altCommand;
+        }
+
+        return this.stop(this.processType, name, username, command);
     }
 
-    @Override
-    JSONObject stop(ProcessType processType, String name, String username) {
+    JSONObject stop(ProcessType processType, String name, String username, String command) {
         ProcessInfo processInfo = ProcessUtils.createProcessInfo()
             .setStopOperation()
             .setProcessType(processType)
             .setName(name)
-            .setCommandLine(this.solrStopJavaCommand)
+            .setCommandLine(command)
             .setUsername(username);
 
         try
         {
-            Process process = operation.start(processType, ProcessUtils.getCommands(this.solrStopJavaCommand, name), name);
+            Process process = operation.start(processType, ProcessUtils.getCommands(command, name), name);
             processInfo.setProcess(process);
 
-            CompletableFuture<Process> completableFuture =  process.onExit();
+            CompletableFuture<Process> completableFuture = process.onExit();
 
-            // wait for the shutdown to complete
-            completableFuture.get();
+            try {
+                // Will wait for the timeout or throw a TimeoutException
+                // if the timeout is exceeded.
+                completableFuture.orTimeout(super.commandStopProcessWaitTimeoutSeconds, TimeUnit.SECONDS);
+                logger.info("Solr process shutdown complete: " + completableFuture.get());
+                processInfo.setRunning(false);
+            }
+            catch (ExecutionException | InterruptedException e) {
+                logger.error("Error occurred while waiting for process shutdown", e);
+                throw new RuntimeException(String.format("An error has occurred waiting for the Solr process to shutdown. " +
+                    " This is likely to be a timout waiting for the process to end. The timeout is currently configured to " +
+                    "[%s] seconds. This can be adjusted by setting command.stop.process.wait.timeout.seconds in the application" +
+                    " properties.", super.commandStopProcessWaitTimeoutSeconds)
+                    , e);
+            }
         }
-        catch (IOException | InterruptedException | ExecutionException e)
+        catch (IOException e)
         {
             processInfo.setException(e);
         }

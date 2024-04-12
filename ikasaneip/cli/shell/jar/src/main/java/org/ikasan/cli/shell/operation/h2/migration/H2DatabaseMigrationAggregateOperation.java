@@ -134,8 +134,8 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
 
     @Override
     public DefaultCheckMigrationRunOperationImpl getCheckMigrationRunOperation() {
-        return new DefaultCheckMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
-            , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version);
+        return new H2CheckMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
+            , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version, this.databasePath);
     }
 
     @Override
