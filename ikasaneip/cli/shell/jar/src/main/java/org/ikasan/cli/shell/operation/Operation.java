@@ -57,51 +57,62 @@ public interface Operation
 {
     String defaultPidDirectory = "." + FileSystems.getDefault().getSeparator() + "pid";
 
+
     /**
-     * Get default instance of an Operation.
+     * Returns an instance of the Operation interface with the default implementation.
+     * The instance is created using the DefaultOperationImpl class along with the
+     * DefaultPersistenceServiceImpl and the KryoProcessPersistenceImpl classes.
      *
-     * @return Operation
+     * @return an instance of the Operation interface
      */
     static Operation getInstance()
     {
         return new DefaultOperationImpl( new DefaultPersistenceServiceImpl( new KryoProcessPersistenceImpl(defaultPidDirectory) ) );
     }
 
+
+
     /**
-     * Method to start a new process.
+     * Starts a process of the specified type with the given commands and name.
      *
-     * @param processType
-     * @param name
-     * @throws IOException
+     * @param processType The type of the process
+     * @param commands    The commands to be executed
+     * @param name        The name of the process
+     * @return The started process
+     * @throws IOException If an I/O error occurs while starting the process
      */
     Process start(ProcessType processType, List<String> commands, String name) throws IOException;
 
+
     /**
+     * Retrieves a list of ProcessHandles based on the given criteria.
      *
-     * @param processType
-     * @param name
-     * @param username
-     * @return
+     * @param processType The type of the process
+     * @param name The name of the process
+     * @param username The username associated with the process
+     * @return A list of ProcessHandles matching the given criteria
      */
     List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username);
 
+
     /**
-     * Method to gracefully shutdown the underlying process.
+     * Stops a process of the specified type, with the given name and username, within the specified timeout period.
      *
-     * @param processType
-     * @param name
-     * @param username
-     * @throws IOException
+     * @param processType             The type of the process to stop
+     * @param name                    The name of the process to stop
+     * @param username                The username associated with the process
+     * @param shutdownTimeoutSeconds  The timeout period in seconds for stopping the process
+     * @throws IOException            If an I/O error occurs while stopping the process
      */
     void stop(ProcessType processType, String name, String username, int shutdownTimeoutSeconds) throws IOException;
 
     /**
      * Method to kill the underlying process.
      *
-     * @param processType
-     * @param name
-     * @param username
-     * @throws IOException
+     * @param processType             The type of the process to kill
+     * @param name                    The name of the process to kill
+     * @param username                The username associated with the process
+     * @throws IOException            If an I/O error occurs while killing the process
      */
     void kill(ProcessType processType, String name, String username) throws IOException;
 
