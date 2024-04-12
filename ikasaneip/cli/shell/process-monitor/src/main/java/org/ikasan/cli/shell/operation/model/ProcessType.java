@@ -72,7 +72,7 @@ public class ProcessType
 
     public static ProcessType getSolrInstance()
     {
-        return new ProcessType("Solr", true, "solr/server/logs/solr.log", "solr/server/logs/solr.log", "spring.jta.logDir");
+        return new ProcessType("Solr", true, "solr/server/logs/solr.log", "solr/server/logs/solr.log", "");
     }
 
     public static ProcessType getGenericInstance()
