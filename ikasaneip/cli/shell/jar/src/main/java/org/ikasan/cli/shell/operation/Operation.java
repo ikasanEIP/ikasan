@@ -83,6 +83,18 @@ public interface Operation
      */
     Process start(ProcessType processType, List<String> commands, String name) throws IOException;
 
+    /**
+     * Starts a process of the specified type with the given commands and name.
+     *
+     * @param processType               The type of the process
+     * @param commands                  The commands to be executed
+     * @param name                      The name of the process
+     * @param startupTimeoutSeconds     The timeout period in seconds for starting the process
+     * @return The started process
+     * @throws IOException If an I/O error occurs while starting the process
+     */
+    Process start(ProcessType processType, List<String> commands, String name, int startupTimeoutSeconds) throws IOException;
+
 
     /**
      * Retrieves a list of ProcessHandles based on the given criteria.

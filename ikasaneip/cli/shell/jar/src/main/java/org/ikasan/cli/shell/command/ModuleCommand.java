@@ -96,7 +96,7 @@ public class ModuleCommand extends ActionCommand
         // Write the ikasan version to the non-transient persistent file system.
         IkasanVersionService.instance(this.persistenceDir).writeVersion(this.pomVersion);
 
-        return this.start(this.processType, name, command);
+        return this.start(this.processType, name, command, -1);
     }
 
     public ProcessType getProcessType()

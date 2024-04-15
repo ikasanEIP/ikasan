@@ -70,6 +70,21 @@ public class EnvCommand extends AbstractCommand
     @Autowired
     private Environment environment;
 
+    /**
+     * Show runtime environment variables.
+     *
+     * Syntax: env [regexp variable name - to match specific variable names]
+     * [-names - to display variable name(s) only]
+     * [-no-expand - do not expand variable wildcards]
+     * [-list - returns results as a list]
+     *
+     * @param variable the variable name to match (regexp format)
+     * @param names whether to display variable name(s) only
+     * @param values whether to display variable value(s) only
+     * @param noExpand whether to expand variable wildcards
+     * @param list whether to return results as a list
+     * @return the environment variables based on the options
+     */
     @Command(description = "Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]", group = "Ikasan Commands", command = "env")
     public String env(@Option(defaultValue="") String variable,
                       @Option(longNames = {"n", "name", "names"}) boolean names,
@@ -148,6 +163,12 @@ public class EnvCommand extends AbstractCommand
         return jsonProps.toString();
     }
 
+    /**
+     * Expand the property values in the given Properties object.
+     *
+     * @param properties the properties to expand
+     * @return a new Properties object with expanded property values
+     */
     Properties getExpandedPropertyValues(Properties properties)
     {
         Properties expandedProperties = new Properties( properties.size() );
@@ -159,11 +180,13 @@ public class EnvCommand extends AbstractCommand
         return expandedProperties;
     }
 
+
     /**
      * Match on specifically named properties.
-     * @param properties
-     * @param patternToMatch
-     * @return
+     *
+     * @param properties    the properties to match
+     * @param patternToMatch    the pattern to match the keys against
+     * @return a new properties object containing the matched keys and their corresponding values
      */
     protected Properties match(Properties properties, String patternToMatch)
     {

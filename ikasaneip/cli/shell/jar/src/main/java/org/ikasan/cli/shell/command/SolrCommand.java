@@ -55,7 +55,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Process commands for start, query, stop of the H2 process.
+ * Process commands for start, query, stop of the Solr process.
  *
  * @author Ikasan Developmnent Team
  */
@@ -74,19 +74,32 @@ public class SolrCommand extends ActionCommand
     @Value("${solr.java.stop.command:null}")
     String solrStopJavaCommand;
 
+    @Value("${solr.command.start.process.wait.timeout.seconds:60}")
+    int commandStartProcessWaitTimeoutSeconds = 60;
+
+
     /**
-     * Start H2 process.
-     * @param altModuleName
-     * @param altCommand
-     * @return
+     * Start the Solr instance associated with the Ikasan Dashboard.
+     *
+     * @param altModuleName optional alternative module name
+     * @param altCommand optional alternative command
+     * @return a String representation of the result of starting the Solr instance
      */
-    @Command(description = "Start Solr", group = "Ikasan Commands", command = "start-solr")
+    @Command(description = "Start the Solr instance associated with the Ikasan Dashboard"
+        , group = "Ikasan Commands", command = "start-solr")
     public String startSolr(@Option(longNames = "name", defaultValue = "")  String altModuleName,
                           @Option(longNames = "command", defaultValue = "")  String altCommand)
     {
         return this._startSolr(altModuleName, altCommand).toString();
     }
 
+    /**
+     * Starts the Solr instance with the specified module name and command.
+     *
+     * @param altModuleName optional alternative module name
+     * @param altCommand optional alternative command
+     * @return a JSONObject representation of the result of starting the Solr instance
+     */
     JSONObject _startSolr(String altModuleName, String altCommand)
     {
         String name = moduleName;
@@ -101,21 +114,33 @@ public class SolrCommand extends ActionCommand
             command = altCommand;
         }
 
-        return this.start(processType, name, command);
+        // We need to force the running flag to be set to true.
+        JSONObject jsonObject = this.start(processType, name, command, this.commandStartProcessWaitTimeoutSeconds);
+        jsonObject.put("running", true);
+
+        return jsonObject;
     }
 
     /**
-     * Stop H2 process.
+     * Stops the Solr instance associated with the Ikasan Dashboard.
      *
-     * @param altModuleName
-     * @return
+     * @param altModuleName optional alternative module name
+     * @return a String representation of the result of stopping the Solr instance
      */
-    @Command(description = "Stop Solr", group = "Ikasan Commands", command = "stop-solr")
+    @Command(description = "Stop the Solr instance associated with the Ikasan Dashboard"
+        , group = "Ikasan Commands", command = "stop-solr")
     public String stopSolr(@Option(longNames = "name", defaultValue="") String altModuleName)
     {
         return _stopSolr(altModuleName, null).toString();
     }
 
+    /**
+     * Stops the Solr instance with the specified module name and command.
+     *
+     * @param altModuleName optional alternative module name
+     * @param altCommand optional alternative command
+     * @return a JSONObject representation of the result of stopping the Solr instance
+     */
     JSONObject _stopSolr(String altModuleName, String altCommand)
     {
         String name = moduleName;
@@ -133,6 +158,15 @@ public class SolrCommand extends ActionCommand
         return this.stop(this.processType, name, username, command);
     }
 
+    /**
+     * Stops a process based on the given process type, name, username, and command.
+     *
+     * @param processType the type of the process to be stopped
+     * @param name the name of the process to be stopped
+     * @param username the username associated with the process
+     * @param command the command used to start the process
+     * @return a JSONObject representation of the process information after stopping the process
+     */
     JSONObject stop(ProcessType processType, String name, String username, String command) {
         ProcessInfo processInfo = ProcessUtils.createProcessInfo()
             .setStopOperation()
@@ -172,6 +206,11 @@ public class SolrCommand extends ActionCommand
         return processInfo.toJSON();
     }
 
+    /**
+     * Retrieves the process type associated with the current command.
+     *
+     * @return the ProcessType object representing the process type
+     */
     public ProcessType getProcessType()
     {
         return ProcessType.getSolrInstance();

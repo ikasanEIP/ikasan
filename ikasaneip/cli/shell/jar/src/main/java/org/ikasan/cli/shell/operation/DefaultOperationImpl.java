@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,6 +77,7 @@ public class DefaultOperationImpl implements Operation
 
     /**
      * Constructor
+     *
      * @param persistenceService the process info persistence service
      */
     public DefaultOperationImpl(PersistenceService persistenceService)
@@ -89,6 +91,7 @@ public class DefaultOperationImpl implements Operation
 
     /**
      * Factory method to aid testing
+     *
      * @param commands
      * @return
      */
@@ -99,6 +102,11 @@ public class DefaultOperationImpl implements Operation
 
     public Process start(ProcessType processType, List<String> commands, String name) throws IOException
     {
+        return this.start(processType, commands, name, -1);
+    }
+
+    @Override
+    public Process start(ProcessType processType, List<String> commands, String name, int startupTimeoutSeconds) throws IOException {
         ProcessBuilder processBuilder = getProcessBuilder(commands);
 
         if(processType.getOutputLog() != null && !processType.getOutputLog().isEmpty())
@@ -128,6 +136,18 @@ public class DefaultOperationImpl implements Operation
         }
 
         Process process = processBuilder.start();
+
+        if(startupTimeoutSeconds > 0) {
+            try {
+                boolean started = process.waitFor(startupTimeoutSeconds, TimeUnit.SECONDS);
+                if(!started) {
+                    throw new RuntimeException("");
+                }
+            }
+            catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }
 
         // persist the process
         try

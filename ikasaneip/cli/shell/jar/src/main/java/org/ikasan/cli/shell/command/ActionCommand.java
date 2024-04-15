@@ -60,15 +60,17 @@ public abstract class ActionCommand extends AbstractCommand
 
     ProcessType processType = getProcessType();
 
+
     /**
-     * Start process.
+     * Starts a process.
      *
-     * @param processType
-     * @param name
-     * @param command
-     * @return
+     * @param processType the type of the process to be started
+     * @param name the name of the process
+     * @param command the command to start the process
+     * @param commandStartProcessWaitTimeoutSeconds the timeout in seconds to wait for the process to start
+     * @return a JSONObject representing the process information after starting
      */
-    JSONObject start(ProcessType processType, String name, String command)
+    JSONObject start(ProcessType processType, String name, String command, int commandStartProcessWaitTimeoutSeconds)
     {
         ProcessInfo processInfo = ProcessUtils.createProcessInfo()
             .setStartOperation()
@@ -86,7 +88,8 @@ public abstract class ActionCommand extends AbstractCommand
             }
             else
             {
-                Process process = operation.start(processType, ProcessUtils.getCommands(command, name), name);
+                Process process = operation.start(processType, ProcessUtils.getCommands(command, name)
+                    , name, commandStartProcessWaitTimeoutSeconds);
                 processInfo.setProcess(process);
             }
         }
@@ -98,13 +101,14 @@ public abstract class ActionCommand extends AbstractCommand
         return processInfo.toJSON();
     }
 
+
     /**
-     * Stop process.
+     * Stops a process.
      *
-     * @param processType
-     * @param name
-     * @param username
-     * @return
+     * @param processType the type of the process to be stopped
+     * @param name the name of the process to be stopped
+     * @param username the username associated with the process to be stopped
+     * @return a JSONObject representing the process information after stopping
      */
     JSONObject stop(ProcessType processType, String name, String username)
     {
@@ -133,6 +137,11 @@ public abstract class ActionCommand extends AbstractCommand
         return processInfo.toJSON();
     }
 
+    /**
+     * Retrieves the ProcessType associated with this command.
+     *
+     * @return the ProcessType associated with this command.
+     */
     public abstract ProcessType getProcessType();
 
 }

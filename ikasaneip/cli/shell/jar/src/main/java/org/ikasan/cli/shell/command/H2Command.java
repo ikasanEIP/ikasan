@@ -96,7 +96,7 @@ public class H2Command extends ActionCommand
             this.processType.setErrorLog(this.h2Log);
         }
 
-        return this.start(processType, name, command);
+        return this.start(processType, name, command, -1);
     }
 
     public ProcessType getProcessType()

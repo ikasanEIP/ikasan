@@ -64,6 +64,13 @@ public class PsCommand extends AbstractCommand
     @Value("${module.name:null}")
     String moduleName;
 
+    /**
+     * Check running process.
+     *
+     * @param optionalModuleName The optional module name for filtering processes
+     * @param optionalUsername The optional username for filtering processes
+     * @return A string representation of the running processes
+     */
     @Command(description = "Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]", group = "Ikasan Commands", command = "ps")
     public String ps(@Option(longNames = "name", defaultValue = "")  String optionalModuleName,
                      @Option(longNames = "user", defaultValue = "")  String optionalUsername)
@@ -71,6 +78,13 @@ public class PsCommand extends AbstractCommand
        return _ps(optionalModuleName, optionalUsername).toString();
     }
 
+    /**
+     * Check running processes and return them as a JSON object.
+     *
+     * @param optionalModuleName The optional module name for filtering processes
+     * @param optionalUsername The optional username for filtering processes
+     * @return The running processes as a JSON object
+     */
     JSONObject _ps(String optionalModuleName, String optionalUsername)
     {
         String _moduleName = moduleName;
@@ -93,11 +107,13 @@ public class PsCommand extends AbstractCommand
         return processInfos.toJSON();
     }
 
+
     /**
-     * Create responses based on running processes
-     * @param processHandles
-     * @param processType
-     * @return
+     * Retrieves process information for a list of process handles and a given process type.
+     *
+     * @param processHandles The list of process handles
+     * @param processType The process type
+     * @return The ProcessInfos object containing the process information
      */
     protected ProcessInfos getProcessInfos(List<ProcessHandle> processHandles, ProcessType processType)
     {

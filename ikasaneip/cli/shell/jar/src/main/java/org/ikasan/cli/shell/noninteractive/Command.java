@@ -34,7 +34,7 @@ public class Command
      * @param commands
      * @return
      */
-    public static String getNonInterative(String[] commands)
+    public static String getNonInteractive(String[] commands)
     {
         Path nonInteractiveCommandPath = Paths.get(tmpDir + System.currentTimeMillis());
         Path commandFilePath = Paths.get(nonInteractiveCommandPath + FileSystems.getDefault().getSeparator() + commands[0]);
