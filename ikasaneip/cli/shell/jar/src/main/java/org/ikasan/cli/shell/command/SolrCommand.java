@@ -40,7 +40,6 @@
  */
 package org.ikasan.cli.shell.command;
 
-import org.ikasan.cli.shell.operation.DefaultOperationImpl;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.ikasan.cli.shell.reporting.ProcessInfo;
 import org.json.JSONObject;
@@ -51,7 +50,6 @@ import org.springframework.shell.command.annotation.Command;
 import org.springframework.shell.command.annotation.Option;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;

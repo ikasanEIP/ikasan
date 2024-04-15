@@ -52,5 +52,5 @@ if [[ -f "$LOCAL_ENV" ]]; then
     . ${LOCAL_ENV}
 fi
 
-$JAVA_HOME/bin/java --illegal-access=deny -Dspring.cloud.config.enabled=false -jar $SCRIPT_DIR/lib/ikasan-shell-${project.version}.jar "$@"
+$JAVA_HOME/bin/java -Dspring.cloud.config.enabled=false -jar $SCRIPT_DIR/lib/ikasan-shell-${project.version}.jar "$@"
 
