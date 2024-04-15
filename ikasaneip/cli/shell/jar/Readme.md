@@ -61,13 +61,17 @@ For Windows,
 where non-interactive commands can be one or more of
 - ```start``` - start the Integration Module's h2 process and then the Integration Module
 - ```stop``` - stop the Integration Module followed by stopping the Integration Module's H2 process
+- ```start-dashboard``` - start the Ikasan Dashboard's h2 process, Solr instance and then the Dashboard
+- ```stop-dashboard``` - stop the Ikasan Dashboard followed by stopping the Solr instance and then Dashboard's H2 process
 - ```start-h2``` - start the Integration Module's H2 process
 - ```stop-h2``` - stop the Integration Module's H2 process
 - ```migrate-h2``` - migrate the Integration Module's H2 database from one version to another
 - ```start-module``` - start the Integration Module
 - ```stop-module``` - stop the Integration Module
+- ```start-solr``` - start the Solr instance associated with the dashboard
+- ```stop-solr``` - stop the Solr instance associated with the dashboard
 - ```env``` - show runtime environment variables
-- ```ps``` - check whether the Integration Module or associated H2 processes are running
+- ```ps``` - check whether the Integration Module, Solr or associated H2 processes are running
 
 
 ### Interactive Shell
@@ -110,7 +114,6 @@ Built-In Commands
        clear: Clear the shell screen.
        quit, exit: Exit the shell.
        history: Display or save the history of previously run commands
-       version: Show version info
        script: Read and execute commands from a file.
 
 Ikasan Commands
@@ -118,11 +121,12 @@ Ikasan Commands
        start-module: Start Integration Module JVM
        migrate-h2: Migrate H2 persistence
        ps: Check running process. Syntax: ps [process name] | [-name <process name>] [-user <user name>]
+       stop-solr: Stop the Solr instance associated with the Ikasan Dashboard
+       start-solr: Start the Solr instance associated with the Ikasan Dashboard
        stop-h2: Stop H2 persistence JVM
        env: Show runtime environment variables. Syntax: env [regexp variable name - to match specific variable names] [-names - to display variable name(s) only] [-no-expand - do not expand variable wildcards] [-list - returns results as a list]
+       version: Get the Ikasan version of the module
        start-h2: Start H2 persistence JVM
-
-
 
 Ikasan Shell:> 
 ```
@@ -139,8 +143,9 @@ Ikasan Shell:>
 | stop-h2      | Stops the H2 JVM process for this Integration Module.                                                                                                            | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | migrate-h2   | Migrate H2 persistence                                                                                                                                           | --source-h2-version The version of the H2 database we are migrating from. [Optional, default = 1.4.200] </br> --target-h2-version The version of the H2 database we are migrating to. [Optional, default = 2.2.224] <br/> --h2-user The username of the H2 database to use for the migration. [Optional, default = sa] <br/> --h2-password The password of the H2 database to use for the migration. [Optional, default = sa] <br/> --h2-database-location The path to the database. The general Ikasan convention [<persistence-dir>/<module-name>-db/esb] will be used by default. [Optional] |
 | start-module | Starts the Integration Module JVM process. Uses default Integration Module name and user.                                                                        | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-|              |                                                                                                                                                                  | -command <Alternate JVM Command> which overrides module.java.command                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
-| stop-module  | Stops the Integration Module JVM process.                                                                                                                        | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| stop-module  | Stops the Integration Module JVM process.                                                                                                                        | -command <Alternate JVM Command> which overrides module.java.command                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| start-solr   | Start the Solr instance associated with the Ikasan Dashboard                                                                                                     |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| stop-solr    | Stop the Solr instance associated with the Ikasan Dashboard                                                                                                      | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | version      | Get the Ikasan version of the module.                                                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
 
 The configuration property `command.stop.process.wait.timeout.seconds` can be added to the application properties to configure a wait time for processes to stop. This has a default value of 300 seconds.

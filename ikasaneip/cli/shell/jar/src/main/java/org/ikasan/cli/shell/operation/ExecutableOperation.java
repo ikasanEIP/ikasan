@@ -1,7 +1,7 @@
 package org.ikasan.cli.shell.operation;
 
 /**
- * Represents an executable operation that can be executed.
+ * Represents an operation that can be executed.
  */
 public interface ExecutableOperation {
 

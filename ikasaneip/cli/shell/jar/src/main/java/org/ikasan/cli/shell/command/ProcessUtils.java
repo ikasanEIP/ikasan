@@ -66,21 +66,47 @@ public class ProcessUtils
     public static String JAR = "-jar";
     public static String WILDCARD = "*";
 
+    /**
+     * Retrieves information about a process.
+     *
+     * @param process The process object from which to retrieve information. Must not be null.
+     * @param name The name of the process. Can be null.
+     * @return A string containing the information about the process. Returns null if the process is null or the process info is not available.
+     */
     public static String getProcessInfo(Process process, String name)
     {
         return getProcessInfo(null, process, name);
     }
 
+    /**
+     * Creates an instance of ProcessInfo.
+     *
+     * @return A new instance of ProcessInfo.
+     */
     public static ProcessInfo createProcessInfo()
     {
         return new ProcessInfo();
     }
 
+    /**
+     * Creates an instance of ProcessInfos.
+     *
+     * @return A new instance of ProcessInfos.
+     */
     public static ProcessInfos createProcessInfos()
     {
         return new ProcessInfos();
     }
 
+    /**
+     * Retrieves information about a process.
+     *
+     * @param type The type of the process. Can be null.
+     * @param process The process object from which to retrieve information. Must not be null.
+     * @param name The name of the process. Can be null.
+     * @return A string containing the information about the process. Returns null if the process is null
+     * or the process info is not available.
+     */
     public static String getProcessInfo(String type, Process process, String name)
     {
         if(process == null)
@@ -119,6 +145,14 @@ public class ProcessUtils
         return null;
     }
 
+    /**
+     * This method retrieves a list of commands based on the command string and module name.
+     *
+     * @param commandStr The command string to parse. Can be null.
+     * @param moduleName The name of the module. Can be null.
+     *
+     * @return A list of commands. Returns an empty list if the command string is null.
+     */
     public static List<String> getCommands(String commandStr, String moduleName)
     {
         if(commandStr == null)
@@ -135,6 +169,13 @@ public class ProcessUtils
         return commands;
     }
 
+    /**
+     * This method retrieves a list of commands based on the command string.
+     *
+     * @param commandStr The command string to parse. Can be null.
+     *
+     * @return A list of commands. Returns an empty list if the command string is null.
+     */
     public static List<String> getCommands(String commandStr)
     {
         if(commandStr == null)
@@ -157,12 +198,18 @@ public class ProcessUtils
         return new ArrayList<>(Arrays.asList(commands));
     }
 
+    /**
+     * Expands wildcard notation in a file path.
+     *
+     * @param wildcardNotation The file path with wildcard notation. Must not be null.
+     * @return The expanded file path without wildcard notation. Returns the original file path if there are no wildcards.
+     * @throws RuntimeException if there is an error expanding the wildcard notation.
+     */
     protected static String expandWildcardNotation(String wildcardNotation)
     {
         if(wildcardNotation.contains(WILDCARD))
         {
             // Do not use NIO for sourcing file systems as a full path as any wildcards cause issues
-
             File file = new File(wildcardNotation);
             String parent = file.getParent();
             String name = file.getName();
@@ -184,6 +231,14 @@ public class ProcessUtils
         return wildcardNotation;
     }
 
+
+    /**
+     * Expands wildcard notation in an array of file paths.
+     *
+     * @param wildcardNotationParts An array of file paths with wildcard notation. Must not be null.
+     * @return The expanded file paths without wildcard notation. Returns the original file paths if there are no wildcards.
+     * @throws RuntimeException if there is an error expanding the wildcard notation.
+     */
     protected static String expandWildcardNotation(String[] wildcardNotationParts)
     {
         StringBuilder stringBuilder = new StringBuilder();

@@ -128,6 +128,11 @@ public class H2MigrationCommand
         return h2DatabaseMigrationAggregateOperation.execute();
     }
 
+    /**
+     * Builds the database path using the persistence directory and module name.
+     *
+     * @return The database path.
+     */
     private String buildDatabasePath() {
         return this.persistenceDir + "/" + this.moduleName + "-db/esb";
     }
