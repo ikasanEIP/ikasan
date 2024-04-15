@@ -72,7 +72,7 @@ public class ProcessType
 
     public static ProcessType getSolrInstance()
     {
-        return new ProcessType("Solr", true, "solr/server/logs/solr.log", "solr/server/logs/solr.log", "");
+        return new ProcessType("Solr", true, "solr/server/logs/solr.log", "solr/server/logs/solr.log", "-Dsolr.default.confdir=");
     }
 
     public static ProcessType getGenericInstance()

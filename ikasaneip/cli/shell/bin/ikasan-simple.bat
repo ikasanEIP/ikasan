@@ -51,4 +51,4 @@ set localEnv=%currentDir%\simple-env.bat
 IF EXIST %localEnv% (
     CALL %localEnv%
 )
-"%JAVA_HOME%\bin\java" --illegal-access=deny -Dspring.cloud.config.enabled=false -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
+"%JAVA_HOME%\bin\java" -Dspring.cloud.config.enabled=false -jar %currentDir%\lib\ikasan-shell-${project.version}.jar %*
