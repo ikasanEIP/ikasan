@@ -89,6 +89,7 @@ public class PsCommand extends AbstractCommand
 
         ProcessInfos processInfos = getProcessInfos( operation.getProcessHandles(ProcessType.H2, _moduleName, _username), ProcessType.H2 );
         processInfos.add( getProcessInfos( operation.getProcessHandles(ProcessType.MODULE, _moduleName, _username), ProcessType.MODULE ) );
+        processInfos.add( getProcessInfos( operation.getProcessHandles(ProcessType.SOLR, _moduleName, _username), ProcessType.SOLR ) );
         return processInfos.toJSON();
     }
 

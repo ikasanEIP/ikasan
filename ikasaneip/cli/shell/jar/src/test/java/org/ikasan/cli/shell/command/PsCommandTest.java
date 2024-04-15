@@ -163,7 +163,7 @@ class PsCommandTest
     @Test
     void successful_ps_no_h2_match_module_match() throws IOException, JSONException
     {
-        List<String> firstProcess = new ArrayList<String>();
+        List<String> firstProcess = new ArrayList<>();
         firstProcess.add("java");
         firstProcess.add("-classpath");
         firstProcess.add("cli/shell/target/test-classes:target/test-classes");
@@ -174,7 +174,7 @@ class PsCommandTest
         Process process = processBuilder.start();
         processes.add(process);
 
-        List<String> secondProcess = new ArrayList<String>();
+        List<String> secondProcess = new ArrayList<>();
         secondProcess.add("java");
         secondProcess.add("-classpath");
         secondProcess.add("cli/shell/target/test-classes:target/test-classes");
@@ -200,7 +200,7 @@ class PsCommandTest
 
         JSONObject resultProcess = (JSONObject)processes.get(0);
         Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
-        Assert.assertTrue("type should be H2", resultProcess.get("type").equals("Module"));
+        Assert.assertTrue("type should be Module", resultProcess.get("type").equals("Module"));
         Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
         Assert.assertNotNull("username should be not null", resultProcess.get("username"));
         Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
