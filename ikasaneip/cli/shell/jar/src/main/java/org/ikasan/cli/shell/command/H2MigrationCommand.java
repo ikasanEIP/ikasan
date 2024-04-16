@@ -71,6 +71,9 @@ public class H2MigrationCommand
     @Value("${h2.changelog.runscript.command}")
     private String h2ChangeLogRunScriptJavaCommand;
 
+    @Value("${h2.determine.if.db.file.already.target.version.command}")
+    private String determineIfDbFileAlreadyTargetVersionCommand;
+
     @Value("${h2.logging.file:logs/h2.log}")
     private String h2Log;
 
@@ -118,7 +121,7 @@ public class H2MigrationCommand
 
         H2DatabaseMigrationAggregateOperation h2DatabaseMigrationAggregateOperation
             = new H2DatabaseMigrationAggregateOperation(this.h2ScriptJavaCommand, this.h2RunScriptJavaCommand
-                , this.h2ChangeLogRunScriptJavaCommand, sourceH2Version
+                , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
                 , targetH2Version, h2User, h2Password, databaseLocation == null || databaseLocation.isEmpty()
                     ? this.buildDatabasePath(): databaseLocation, this.dbMigrationWorkingDirectory
                 , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir);
