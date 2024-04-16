@@ -114,7 +114,8 @@ public class SolrCommand extends ActionCommand
             command = altCommand;
         }
 
-        // We need to force the running flag to be set to true.
+        // We need to force the running flag to be set to true as we are now waiting
+        // for the process to finish which is technically false.
         JSONObject jsonObject = this.start(processType, name, command, this.commandStartProcessWaitTimeoutSeconds);
         jsonObject.put("running", true);
 

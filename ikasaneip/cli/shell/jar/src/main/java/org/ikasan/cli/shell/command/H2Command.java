@@ -63,6 +63,9 @@ public class H2Command extends ActionCommand
     @Value("${h2.logging.file:logs/h2.log}")
     String h2Log;
 
+    @Value("${h2.command.start.process.wait.timeout.seconds:60}")
+    int commandStartProcessWaitTimeoutSeconds = 60;
+
     /**
      * Start H2 process.
      * @param altModuleName
@@ -96,7 +99,12 @@ public class H2Command extends ActionCommand
             this.processType.setErrorLog(this.h2Log);
         }
 
-        return this.start(processType, name, command, -1);
+        // We need to force the running flag to be set to true as we are now waiting
+        // for the process to finish which is technically false.
+        JSONObject jsonObject =  this.start(processType, name, command, this.commandStartProcessWaitTimeoutSeconds);
+        jsonObject.put("running", true);
+
+        return jsonObject;
     }
 
     public ProcessType getProcessType()

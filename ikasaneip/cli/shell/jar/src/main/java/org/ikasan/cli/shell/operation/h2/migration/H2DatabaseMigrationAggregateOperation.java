@@ -14,6 +14,7 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     private String h2ScriptJavaCommand;
     private String h2RunScriptJavaCommand;
     private String h2ChangeLogRunScriptJavaCommand;
+    private String determineIfDbFileAlreadyTargetVersionCommand;
     private String sourceH2Version;
     private String targetH2Version;
     private String h2User;
@@ -29,7 +30,8 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
      * Represents an aggregate operation for migrating H2 databases.
      */
     public H2DatabaseMigrationAggregateOperation(String h2ScriptJavaCommand, String h2RunScriptJavaCommand
-        , String h2ChangeLogRunScriptJavaCommand , String sourceH2Version, String targetH2Version
+        , String h2ChangeLogRunScriptJavaCommand, String determineIfDbFileAlreadyTargetVersionCommand
+        , String sourceH2Version, String targetH2Version
         , String h2User, String h2Password, String databasePath, String dbMigrationWorkingDirectory
         , String migratedOutputSqlFileName, String postProcessedOutputSqlFileName, String persistenceDir) {
         this.h2ScriptJavaCommand = h2ScriptJavaCommand;
@@ -43,6 +45,10 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
         this.h2ChangeLogRunScriptJavaCommand = h2ChangeLogRunScriptJavaCommand;
         if (this.h2ChangeLogRunScriptJavaCommand == null) {
             throw new IllegalArgumentException("h2ChangeLogRunScriptJavaCommand cannot be null!");
+        }
+        this.determineIfDbFileAlreadyTargetVersionCommand = determineIfDbFileAlreadyTargetVersionCommand;
+        if (this.determineIfDbFileAlreadyTargetVersionCommand == null) {
+            throw new IllegalArgumentException("determineIfDbFileAlreadyTargetVersionCommand cannot be null!");
         }
         this.sourceH2Version = sourceH2Version;
         if (this.sourceH2Version == null) {
@@ -135,7 +141,8 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     @Override
     public DefaultCheckMigrationRunOperationImpl getCheckMigrationRunOperation() {
         return new H2CheckMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
-            , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version, this.databasePath);
+            , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version, this.databasePath
+            , List.of(this.performTokenReplacements(determineIfDbFileAlreadyTargetVersionCommand)));
     }
 
     @Override
