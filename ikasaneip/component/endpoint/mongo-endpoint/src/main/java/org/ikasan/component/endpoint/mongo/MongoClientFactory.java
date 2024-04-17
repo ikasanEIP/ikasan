@@ -183,6 +183,10 @@ public class MongoClientFactory
         {
             builder.sslInvalidHostNameAllowed(configuration.getSslInvalidHostNameAllowed());
         }
+        if (configuration.getApplicationName() != null)
+        {
+            builder.applicationName(configuration.getApplicationName());
+        }
         return builder;
     }
 
