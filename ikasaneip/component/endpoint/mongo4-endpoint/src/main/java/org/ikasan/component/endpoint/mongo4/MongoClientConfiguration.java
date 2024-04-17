@@ -78,6 +78,9 @@ public class MongoClientConfiguration
     /** database name */
     protected String databaseName;
 
+    /** Application name to be passed to Mongo connection string */
+    protected String applicationName;
+
     /** collection key name and actual name */
     protected Map<String,String> collectionNames = new HashMap<String,String>();
 
@@ -198,6 +201,16 @@ public class MongoClientConfiguration
 
     public void setDatabaseName(String databaseName) {
         this.databaseName = databaseName;
+    }
+
+    public String getApplicationName()
+    {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName)
+    {
+        this.applicationName = applicationName;
     }
 
     public Map<String,String> getCollectionNames() {

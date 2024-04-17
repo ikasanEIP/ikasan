@@ -61,6 +61,11 @@ public class MongoClientFactory
 
         url += "&ssl=" + falseIfNull(configuration.getSslEnabled());
 
+        if (configuration.getApplicationName() != null)
+        {
+            url += "&appName=" + configuration.getApplicationName();
+        }
+
         return url;
     }
 
