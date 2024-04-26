@@ -284,4 +284,18 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @param ableToRunConcurrently
      */
     void setAbleToRunConcurrently(boolean ableToRunConcurrently);
+
+    /**
+     * Used to determine the order this contet has relative to other contexts when treated as a group of contexts
+     *
+     * @param ableToRunConcurrently
+     */
+    void setOrdinal(int ordinal);
+
+    /**
+     * Get the ordinal.
+     *
+     * @param ableToRunConcurrently
+     */
+    int getOrdinal();
 }
