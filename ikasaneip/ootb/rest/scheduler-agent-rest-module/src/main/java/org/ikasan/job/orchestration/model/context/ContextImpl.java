@@ -26,6 +26,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     int treeViewExpandLevel = 1;
     private boolean ableToRunConcurrently;
     private boolean useDisplayName = false;
+    private int ordinal = -1;
 
     @Override
     public String getName() {
@@ -180,6 +181,16 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public void setUseDisplayName(boolean useDisplayName) {
         this.useDisplayName = useDisplayName;
+    }
+
+    @Override
+    public int getOrdinal() {
+        return ordinal;
+    }
+
+    @Override
+    public void setOrdinal(int ordinal) {
+        this.ordinal = ordinal;
     }
 
     @Override
