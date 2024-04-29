@@ -1,5 +1,4 @@
-<!--
- /*
+/*
  * $Id$
  * $URL$
  *
@@ -39,32 +38,54 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
--->
-<beans xmlns="http://www.springframework.org/schema/beans"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:util="http://www.springframework.org/schema/util"
-    xsi:schemaLocation="
-       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+package org.ikasan.persistence.dao;
 
-    <!-- =================================================================== -->
-    <!-- H2 provides an in-memory database                                   -->
-    <!-- =================================================================== -->
-    
-    <util:map id="platformHibernateProperties">
-        <entry key="hibernate.dialect" value="org.ikasan.persistence.hibernate.IkasanSybaseASE157Dialect"/>
-        <entry key="hibernate.show_sql" value="false"/>
-        <entry key="hibernate.hbm2ddl.auto" value="false"/>
-        <entry key="hibernate.flushMode" value="commit"/>
-    </util:map>
+import org.ikasan.persistence.PersistenceAutoConfiguration;
+import org.ikasan.persistence.PersistenceTestAutoConfiguration;
+import org.ikasan.spec.persistence.dao.GeneralDatabaseDao;
+import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+import org.springframework.test.context.jdbc.SqlConfig;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-    <bean id="ikasan.ds" name="ikasan.xads ikasan.ds"
-          class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="com.sybase.jdbc4.jdbc.SybDriver" />
-        <property name="url" value="jdbc:sybase:Tds:svc-esbdb01n:50100/Ikasan01" />
-        <property name="username" value="ikasan01n" />
-        <property name="password" value="A1ler0n" />
-    </bean>
-    
-  
-</beans>
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
+
+
+/**
+ * @author Ikasan Development Team
+ *
+ */
+@SuppressWarnings("unqualified-field-access")
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(classes={PersistenceAutoConfiguration.class, PersistenceTestAutoConfiguration.class})
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Sql(scripts = {"/createDbTablesAndPopulate.sql"},
+    executionPhase = BEFORE_TEST_CLASS,
+    config = @SqlConfig(dataSource = "ikasan.ds"))
+public class GeneralDatabaseDaoImplTest
+{
+	/** Object being tested */
+	@Autowired
+    private GeneralDatabaseDao generalDatabaseDao;
+
+	@Test
+	public void test_get_count_success() {
+		Assert.assertNotNull(generalDatabaseDao);
+        Assert.assertEquals(generalDatabaseDao.getRecordCountForDatabaseTable("Test1"), 1);
+        Assert.assertEquals(generalDatabaseDao.getRecordCountForDatabaseTable("Test2"), 5);
+	}
+
+    @Test(expected = RuntimeException.class)
+    public void test_exception_bad_table_name() {
+        Assert.assertNotNull(generalDatabaseDao);
+        generalDatabaseDao.getRecordCountForDatabaseTable("BadTableName");
+    }
+
+
+}

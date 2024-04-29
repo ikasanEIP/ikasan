@@ -1,3 +1,2 @@
 org.ikasan.rest.module.IkasanRestAutoConfiguration
 org.ikasan.rest.module.IkasanRestFileAutoConfiguration
-#org.ikasan.rest.module.SwaggerConfig

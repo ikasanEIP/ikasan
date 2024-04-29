@@ -125,6 +125,10 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     public SchedulerApplication schedulerApplication() {
         return new SchedulerApplication();
     }
+    
+    @Bean PersistenceApplication persistenceApplication() {
+        return new PersistenceApplication();
+    }
 
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters){
