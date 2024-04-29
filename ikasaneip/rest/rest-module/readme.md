@@ -187,12 +187,12 @@ REST endpoints which allows users to obtain the row count for database tables.
 
 ### GET Table Row Count
 
-| Parameter | Value                                                                                                                                    | 
-|--- |------------------------------------------------------------------------------------------------------------------------------------------|
-| Request Method | GET                                                                                                                                      |
-| Service Context | {module-root-context}/rest/persistence/rowCount/{tableName}                                                                              |
-| Requires Path parameter tableName | The name of the table to the rowc ount for.                                                                                              |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                            |
+| Parameter | Value                                                                                                                                   | 
+|--- |-----------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method | GET                                                                                                                                     |
+| Service Context | {module-root-context}/rest/persistence/rowCount/{tableName}                                                                             |
+| Requires Path parameter tableName | The name of the table to the row count for.                                                                                             |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                           |
 | Returns | HTTP 200 status with below payload. A json serialised [TableRowCountDto](src/main/java/org/ikasan/rest/moduleTableRowCountDto/dto/.java) |
 
 <details>
