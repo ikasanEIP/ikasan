@@ -77,9 +77,8 @@ public class PersistenceApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            """
-            {"tableName":"TestTableName","rowCount":5}
-            """,
+
+            "{\"tableName\":\"TestTableName\",\"rowCount\":5}",
             result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
 
         Mockito.verify(this.generalDatabaseService).getRecordCountForDatabaseTable("TestTableName");
@@ -100,10 +99,9 @@ public class PersistenceApplicationTest
 
         assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
         JSONAssert.assertEquals("JSON Result must equal!",
-            """
-            {"errorMessage":"An error has occurred requesting row count for table [TestTableName]. Error[TestTableName is not valid!]"}
-            """,
-            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
+            "{\"errorMessage\":\"An error has occurred requesting row count for table [TestTableName]." +
+                " Error[TestTableName is not valid!]\"}",
+        result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
 
         Mockito.verify(this.generalDatabaseService).getRecordCountForDatabaseTable("TestTableName");
         Mockito.verifyNoMoreInteractions(this.generalDatabaseService);
