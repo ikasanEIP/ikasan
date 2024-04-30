@@ -82,6 +82,12 @@ public class GeneralDatabaseServiceImplTest
         Assert.assertEquals(generalDatabaseDao.getRecordCountForDatabaseTable("Test2"), 5);
 	}
 
+    @Test
+    public void test_get_count_in_doubt_success() {
+        Assert.assertNotNull(generalDatabaseDao);
+        Assert.assertEquals(generalDatabaseDao.getRecordCountForDatabaseTable("INFORMATION_SCHEMA.IN_DOUBT"), 0);
+    }
+
     @Test(expected = RuntimeException.class)
     public void test_exception_bad_table_name() {
         Assert.assertNotNull(generalDatabaseDao);
