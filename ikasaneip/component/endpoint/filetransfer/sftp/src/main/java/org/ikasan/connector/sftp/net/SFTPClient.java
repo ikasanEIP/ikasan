@@ -109,6 +109,8 @@ public class SFTPClient implements FileTransferClient
 
     /** Default authentication order */
     private static final String DEFAULT_PREFERRED_AUTHENTICATIONS = "publickey,password,gssapi-with-mic";
+    private static final String SERVER_HOST_KEY = "server_host_key";
+    private static final String PUB_KEY_ACCEPTED_ALGORITHMS = "PubkeyAcceptedAlgorithms";
 
     /** Destroy files after successful get */
     private boolean getDestructive;
@@ -199,6 +201,10 @@ public class SFTPClient implements FileTransferClient
         {
             this.connectionTimeout = connectionTimeout;
         }
+
+        // Need to include ssh-rsa since jcraft upgrade.
+        JSch.setConfig(SERVER_HOST_KEY, JSch.getConfig(SERVER_HOST_KEY) + ",ssh-rsa");
+        JSch.setConfig(PUB_KEY_ACCEPTED_ALGORITHMS, JSch.getConfig(PUB_KEY_ACCEPTED_ALGORITHMS) + ",ssh-rsa");
     }
 
     /**
@@ -232,6 +238,10 @@ public class SFTPClient implements FileTransferClient
         this.prvKey = new File(homeDir + lfs + sshDir + lfs + prvKeyFile);
         this.knownHosts = new File(homeDir + lfs + sshDir + lfs + knownHostsFile);
         this.remotePort = 22;
+
+        // Need to include ssh-rsa since jcraft upgrade.
+        JSch.setConfig(SERVER_HOST_KEY, JSch.getConfig(SERVER_HOST_KEY) + ",ssh-rsa");
+        JSch.setConfig(PUB_KEY_ACCEPTED_ALGORITHMS, JSch.getConfig(PUB_KEY_ACCEPTED_ALGORITHMS) + ",ssh-rsa");
     }
 
     /**
