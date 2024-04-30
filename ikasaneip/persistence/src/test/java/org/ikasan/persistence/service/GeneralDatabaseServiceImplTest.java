@@ -53,7 +53,6 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_CLASS;
 
 
 /**
@@ -65,7 +64,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @ContextConfiguration(classes={PersistenceAutoConfiguration.class, PersistenceTestAutoConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Sql(scripts = {"/createDbTablesAndPopulate.sql"},
-    executionPhase = BEFORE_TEST_CLASS,
+    executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD,
+    config = @SqlConfig(dataSource = "ikasan.ds"))
+@Sql(scripts = {"/dropDbTables.sql"},
+    executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD,
     config = @SqlConfig(dataSource = "ikasan.ds"))
 public class GeneralDatabaseServiceImplTest
 {
