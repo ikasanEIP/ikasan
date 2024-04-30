@@ -3,10 +3,7 @@ package org.ikasan.persistence.dao;
 import org.ikasan.spec.persistence.dao.GeneralDatabaseDao;
 
 import javax.sql.DataSource;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class GeneralDatabaseDaoImpl implements GeneralDatabaseDao {
     public static final String TABLE_COUNT_QUERY = "SELECT COUNT(*) AS COUNT FROM %s";
@@ -31,10 +28,30 @@ public class GeneralDatabaseDaoImpl implements GeneralDatabaseDao {
         int count = 0;
         try {
             connection = dataSource.getConnection();
+            DatabaseMetaData databaseMetaData = connection.getMetaData();
+
+            ResultSet resultSet = databaseMetaData.getTables(null, null
+                , null, new String[] {"TABLE"});
+
+            boolean tableNameExists = false;
+            while (resultSet.next()) {
+                String name = resultSet.getString("TABLE_NAME");
+                String schema = resultSet.getString("TABLE_SCHEM");
+                String fullyQualifiedName = schema + "." + name;
+                if(name.equalsIgnoreCase(tableName) || fullyQualifiedName.equalsIgnoreCase(tableName)) {
+                    tableNameExists=true;
+                    break;
+                }
+            }
+
+            if(!tableNameExists) {
+                throw new RuntimeException(String.format("An exception has occurred querying count for table[%s]! The " +
+                    "table does not exist in the database", tableName));
+            }
 
             Statement statement = connection.createStatement();
 
-            ResultSet resultSet = statement.executeQuery(String.format(TABLE_COUNT_QUERY, tableName));
+            resultSet = statement.executeQuery(String.format(TABLE_COUNT_QUERY, tableName));
 
             resultSet.next();
             count = resultSet.getInt("COUNT");
