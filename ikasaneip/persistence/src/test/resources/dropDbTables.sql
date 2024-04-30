@@ -1,0 +1,2 @@
+DROP TABLE Test1;
+DROP TABLE Test2;
