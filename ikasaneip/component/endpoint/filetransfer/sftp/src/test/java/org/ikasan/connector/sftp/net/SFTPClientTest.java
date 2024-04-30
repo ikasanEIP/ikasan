@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.tuple;
 /**
  * Created by amajewski on 24/06/15.
  */
-public class    SFTPClientTest
+public class SFTPClientTest
 {
 
     private SftpServerWithPasswordAuthenticator server;

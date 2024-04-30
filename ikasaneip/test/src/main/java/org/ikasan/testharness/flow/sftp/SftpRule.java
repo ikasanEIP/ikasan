@@ -77,6 +77,9 @@ public class SftpRule extends ExternalResource
 {
     Logger log = LoggerFactory.getLogger(this.getClass());
 
+    private static final String SERVER_HOST_KEY = "server_host_key";
+    private static final String PUB_KEY_ACCEPTED_ALGORITHMS = "PubkeyAcceptedAlgorithms";
+
     private SshServer sshd;
 
     private List<Path> filesToCleanup = new ArrayList<>();
@@ -124,6 +127,10 @@ public class SftpRule extends ExternalResource
         List<NamedFactory<Command>> namedFactoryList = new ArrayList<>();
         namedFactoryList.add(new SftpSubsystemFactory());
         sshd.setSubsystemFactories(namedFactoryList);
+
+        // Need to include ssh-rsa since jcraft upgrade.
+        JSch.setConfig(SERVER_HOST_KEY, JSch.getConfig(SERVER_HOST_KEY) + ",ssh-rsa");
+        JSch.setConfig(PUB_KEY_ACCEPTED_ALGORITHMS, JSch.getConfig(PUB_KEY_ACCEPTED_ALGORITHMS) + ",ssh-rsa");
     }
 
     public SftpRule()
