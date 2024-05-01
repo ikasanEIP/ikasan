@@ -28,15 +28,15 @@ public class GeneralDatabaseDaoImpl implements GeneralDatabaseDao {
         int count = 0;
         try {
             connection = dataSource.getConnection();
-            DatabaseMetaData databaseMetaData = connection.getMetaData();
 
-            ResultSet resultSet = databaseMetaData.getTables(null, null
-                , null, new String[] {"TABLE"});
+            Statement statement = connection.createStatement();
+
+            ResultSet resultSet = statement.executeQuery("SELECT * FROM INFORMATION_SCHEMA.TABLES");
 
             boolean tableNameExists = false;
             while (resultSet.next()) {
                 String name = resultSet.getString("TABLE_NAME");
-                String schema = resultSet.getString("TABLE_SCHEM");
+                String schema = resultSet.getString("TABLE_SCHEMA");
                 String fullyQualifiedName = schema + "." + name;
                 if(name.equalsIgnoreCase(tableName) || fullyQualifiedName.equalsIgnoreCase(tableName)) {
                     tableNameExists=true;
@@ -49,7 +49,7 @@ public class GeneralDatabaseDaoImpl implements GeneralDatabaseDao {
                     "table does not exist in the database", tableName));
             }
 
-            Statement statement = connection.createStatement();
+            statement = connection.createStatement();
 
             resultSet = statement.executeQuery(String.format(TABLE_COUNT_QUERY, tableName));
 
