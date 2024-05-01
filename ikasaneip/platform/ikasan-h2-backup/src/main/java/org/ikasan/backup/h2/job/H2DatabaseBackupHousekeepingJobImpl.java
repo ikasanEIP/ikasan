@@ -2,7 +2,6 @@ package org.ikasan.backup.h2.job;
 
 import org.ikasan.backup.h2.service.H2BackupServiceImpl;
 import org.ikasan.housekeeping.HousekeepingJobImpl;
-import org.ikasan.spec.housekeeping.H2DatabaseBackupHousekeepingJob;
 import org.springframework.core.env.Environment;
 
 import java.util.StringJoiner;

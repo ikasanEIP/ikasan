@@ -1,9 +1,9 @@
 package org.ikasan.backup.h2.service;
 
-import org.h2.tools.Server;
-import org.ikasan.backup.h2.exception.H2DatabaseValidationException;
 import org.ikasan.backup.h2.exception.InvalidH2ConnectionUrlException;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
+import org.ikasan.backup.h2.persistence.model.H2DatabaseBackupManifest;
+import org.ikasan.backup.h2.persistence.service.H2DatabaseBackupManifestService;
 import org.ikasan.backup.h2.util.H2BackupUtils;
 import org.ikasan.backup.h2.util.H2ConnectionUrlUtils;
 import org.ikasan.spec.flow.Flow;
@@ -11,16 +11,19 @@ import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.test.util.TestSocketUtils;
+import org.springframework.util.SocketUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.BindException;
 import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Comparator;
 import java.util.Date;
@@ -37,8 +40,7 @@ public class H2BackupServiceImpl implements HousekeepService {
         "     PRIMARY KEY (IDENTIFIER))";
 
     public static final String BACKUP_DIRECTORY = "db-backup";
-    public static final String TEST_DIRECTORY = BACKUP_DIRECTORY
-        + FileSystems.getDefault().getSeparator() + "test-directory";
+
     private static final String BACKUP_QUERY = "BACKUP TO '";
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyyMMdd-HH-mm-ss");
@@ -49,15 +51,32 @@ public class H2BackupServiceImpl implements HousekeepService {
 
     private boolean stopFlowsOnCorruptDatabaseDetection;
 
+    private int maxRetriesPortClash;
+    private int h2BackupNumberOfInvalidBackupsBeforeStoppingFlows;
+    private String databaseName;
+
+    private H2DatabaseValidator h2DatabaseValidator;
+
+    private H2DatabaseBackupManifestService h2DatabaseBackupManifestService;
+
     /**
      * Constructs an instance of H2BackupServiceImpl.
      *
      * @param h2DatabaseBackup the H2 database backup details
+     * @param module the module we are managing flows on behalf of
+     * @param stopFlowsOnCorruptDatabaseDetection flag to indicate we stop flows if corrupted db is encountered
+     * @param maxRetriesPortClash max retries for a port clash when testing a db backup
+     * @param h2BackupNumberOfInvalidBackupsBeforeStoppingFlows the number of failed backups before stopping flows in the module
+     * @param h2DatabaseValidator the validator used to test the backed up database
+     * @param h2DatabaseBackupManifestService the manifest service used to track db backup failures
      *
      * @throws IllegalArgumentException    if h2DatabaseBackupDetails or persistenceDirectory is null
      */
     public H2BackupServiceImpl(H2DatabaseBackup h2DatabaseBackup, Module<Flow> module,
-                               boolean stopFlowsOnCorruptDatabaseDetection) {
+                               boolean stopFlowsOnCorruptDatabaseDetection, int maxRetriesPortClash,
+                               int h2BackupNumberOfInvalidBackupsBeforeStoppingFlows,
+                               H2DatabaseValidator h2DatabaseValidator,
+                               H2DatabaseBackupManifestService h2DatabaseBackupManifestService) {
         this.h2DatabaseBackup = h2DatabaseBackup;
         if(this.h2DatabaseBackup == null) {
             throw new IllegalArgumentException("h2DatabaseBackupDetails cannot be null!");
@@ -66,8 +85,27 @@ public class H2BackupServiceImpl implements HousekeepService {
         if(this.module == null) {
             throw new IllegalArgumentException("module cannot be null!");
         }
+        this.h2DatabaseValidator = h2DatabaseValidator;
+        if(this.h2DatabaseValidator == null) {
+            throw new IllegalArgumentException("h2DatabaseValidator cannot be null!");
+        }
 
         this.stopFlowsOnCorruptDatabaseDetection = stopFlowsOnCorruptDatabaseDetection;
+        this.maxRetriesPortClash = maxRetriesPortClash;
+        this.h2BackupNumberOfInvalidBackupsBeforeStoppingFlows
+                = h2BackupNumberOfInvalidBackupsBeforeStoppingFlows;
+
+        this.h2DatabaseBackupManifestService = h2DatabaseBackupManifestService;
+        if(this.h2DatabaseBackupManifestService == null) {
+            throw new IllegalArgumentException("h2DatabaseBackupManifestService cannot be null!");
+        }
+
+        try {
+            this.databaseName = H2ConnectionUrlUtils.getDatabaseName(h2DatabaseBackup.getDbUrl());
+        }
+        catch (InvalidH2ConnectionUrlException e) {
+            throw new IllegalArgumentException(h2DatabaseBackup.getDbUrl() + " is an invalid H2 URL", e);
+        }
     }
 
     @Override
@@ -94,6 +132,15 @@ public class H2BackupServiceImpl implements HousekeepService {
      * Performs a backup of the H2 database.
      */
     public void backup() {
+        H2DatabaseBackupManifest h2DatabaseBackupManifest = this.h2DatabaseBackupManifestService.find();
+        if(h2DatabaseBackupManifest != null &&
+                h2DatabaseBackupManifest.getRetryCount() >= this.h2BackupNumberOfInvalidBackupsBeforeStoppingFlows) {
+            logger.info(String.format("H2 database backup[%s] has detected database corruption [%s] times which exceeds the" +
+                    "configured corruption tolerance. There will be no further attempts to back up this database."
+                    , this.h2DatabaseBackup.toString(), h2DatabaseBackupManifest.getRetryCount()));
+            return;
+        }
+
         this.createBackupDirectoryIfItDoesNotExist();
 
         String backupFilePath = null;
@@ -104,110 +151,81 @@ public class H2BackupServiceImpl implements HousekeepService {
 
             con.prepareStatement(this.buildDatabaseBackupQuery(backupFilePath)).executeUpdate();
 
-            this.runDatabaseValidationTest(backupFilePath);
+            int retry = 0;
+
+            while(retry < this.maxRetriesPortClash) {
+                try {
+                    this.h2DatabaseValidator.runDatabaseValidationTest(backupFilePath
+                            , retry == 0 ? this.h2DatabaseBackup.getTestH2Port() : SocketUtils.findAvailableTcpPort());
+                    // We do not want to retry if no exception thrown so set retry to max.
+                    retry = this.maxRetriesPortClash;
+                }
+                catch (SQLException sqlException) {
+                    if(sqlException.getCause() instanceof BindException) {
+                        logger.info(String.format("Encountered a bind exception attempting to test backed up H2 database[%s]. " +
+                                "Message[%s], Retry[%s]", this.h2DatabaseBackup.toString(), sqlException.getCause().getMessage(), retry));
+                        retry++;
+                    }
+                    else {
+                        throw sqlException;
+                    }
+
+                    if(retry == this.maxRetriesPortClash) logger.info(String.format("Could not test backed up database due to the number" +
+                            " of port clashes exceeding [%s]! The number of retries can be configured using property " +
+                            "h2.backup.database.test.port.bind.retries if the retry number needs to be increased beyond the default of 5 fr" +
+                             " database backup [%s].", this.maxRetriesPortClash, this.h2DatabaseBackup));
+                }
+            }
 
             this.rollRetainedBackupFiles();
+            // we remove the manifest off the file system if there is one if the backup was successful.
+            this.h2DatabaseBackupManifestService.delete();
         } catch(Exception e) {
             if(backupFilePath != null) {
                 deleteFile(backupFilePath);
             }
 
-            if(this.stopFlowsOnCorruptDatabaseDetection) {
-                logger.warn("All flows are stopping due to an error validating the backed up H2 database! " +
-                    "This indicates that the database is corrupt!");
+            h2DatabaseBackupManifest = this.getH2DatabaseBackupManifest();
+            h2DatabaseBackupManifest.setFailureMessage(e.getMessage());
+            h2DatabaseBackupManifest.setRetryCount(h2DatabaseBackupManifest.getRetryCount()+1);
+            h2DatabaseBackupManifest.setFailureTimestamp(System.currentTimeMillis());
+
+            this.h2DatabaseBackupManifestService.save(h2DatabaseBackupManifest);
+
+            if(this.stopFlowsOnCorruptDatabaseDetection
+                    &&  h2DatabaseBackupManifest.getRetryCount() >= this.h2BackupNumberOfInvalidBackupsBeforeStoppingFlows) {
+                logger.warn(String.format("All flows are stopping due to an error validating the backed up H2 database [%s]! " +
+                    "This indicates that the database is corrupt!", this.h2DatabaseBackup.toString()));
                 this.module.getFlows().forEach(flow -> flow.stop());
-                logger.error("An error has occurred validating a H2 database backup! As a preventative action" +
-                    " all flows have been stopped!", e);
+                logger.error(String.format("An error has occurred validating a H2 database backup! As a preventative action" +
+                    " all flows have been stopped for backup [%s]!", this.h2DatabaseBackup.toString()), e);
+            }
+            else if (this.stopFlowsOnCorruptDatabaseDetection == false
+                    &&  h2DatabaseBackupManifest.getRetryCount() >= this.h2BackupNumberOfInvalidBackupsBeforeStoppingFlows){
+                logger.warn(String.format("An error has occurred validating a H2 database backup! The flows will NOT be stopped as " +
+                    "property [h2.backup.stop.flows.on.corrupt.database.detection=false]. " +
+                    "This indicates that the database is corrupt! The service is configured to re-attempt [%s] times before," +
+                        "discontinuing taking backups for [%s].", this.h2BackupNumberOfInvalidBackupsBeforeStoppingFlows
+                        , this.h2DatabaseBackup.toString()));
             }
             else {
-                logger.error("An error has occurred validating a H2 database backup! The flows will NOT be stopped as " +
-                    "property [h2.backup.stop.flows.on.corrupt.database.detection=false]. " +
-                    "This indicates that the database is corrupt!", e);
+                logger.info(String.format("An error has occurred validating a H2 database backup! " +
+                                "This indicates that the database is corrupt! The service is configured to re-attempt [%s] times before," +
+                                " discontinuing taking backups for %s.", this.h2BackupNumberOfInvalidBackupsBeforeStoppingFlows
+                        , this.h2DatabaseBackup.toString()));
             }
         }
     }
 
-
-
-    /**
-     * Runs a database validation test using the provided backup file.
-     *
-     * @param backupFileName the name of the backup file to use for the test
-     *
-     * @throws URISyntaxException if a URI syntax exception occurs
-     * @throws SQLException if an SQL exception occurs
-     * @throws IOException if an I/O exception occurs
-     * @throws H2DatabaseValidationException if a database validation exception occurs
-     */
-    protected void runDatabaseValidationTest(String backupFileName) throws InvalidH2ConnectionUrlException, SQLException
-        , IOException, H2DatabaseValidationException {
-        String testDbFilePath = this.h2DatabaseBackup.getDbBackupBaseDirectory() + FileSystems.getDefault().getSeparator()
-            + TEST_DIRECTORY;
-        int port = TestSocketUtils.findAvailableTcpPort();
-        String testDbUrl = this.getTestDbUrl(h2DatabaseBackup.getDbUrl(), Integer.toString(port), testDbFilePath);
-        Server server = Server.createTcpServer("-tcpPort", Integer.toString(port), "-tcpAllowOthers");
-        this.unzipBackedUpDatabaseFile(backupFileName);
-        server.start();
-        this.testDb(testDbUrl, h2DatabaseBackup);
-        server.stop();
-        this.cleanTestDirectory();
-    }
-
-    /**
-     * Tests the provided database connection by creating a test table, executing a select count(*) query on it,
-     * and then dropping the test table.
-     *
-     * @param testDbUrl the URL of the test database
-     * @param h2DatabaseBackupDetails the details of the H2 database backup
-     *
-     * @throws H2DatabaseValidationException if a database validation exception occurs
-     */
-    private void testDb(String testDbUrl, H2DatabaseBackup h2DatabaseBackupDetails) throws H2DatabaseValidationException {
-        try (Connection con = DriverManager.getConnection(testDbUrl
-            , h2DatabaseBackupDetails.getUsername(), h2DatabaseBackupDetails.getPassword())) {
-            Statement statement = con.createStatement();
-            this.createDatabaseTable("TestTable", con);
-            ResultSet resultSet = statement.executeQuery("select count(*) as count from TestTable");
-            resultSet.next();
-            con.prepareStatement("drop TABLE TestTable").executeUpdate();
-        } catch(SQLException ex) {
-            throw new H2DatabaseValidationException("An error has occurred validating the backed up H2 database!", ex);
+    private H2DatabaseBackupManifest getH2DatabaseBackupManifest() {
+        H2DatabaseBackupManifest h2DatabaseBackupManifest = this.h2DatabaseBackupManifestService.find();
+        if(h2DatabaseBackupManifest == null) {
+            h2DatabaseBackupManifest = new H2DatabaseBackupManifest();
+            h2DatabaseBackupManifest.setBackupName(this.databaseName);
+            h2DatabaseBackupManifest.setRetryCount(0);
         }
-    }
 
-    /**
-     * Creates a database table with the provided name using the given connection.
-     *
-     * @param tableName   the name of the table to be created
-     * @param connection  the database connection
-     *
-     * @throws SQLException if a SQL exception occurs
-     */
-    private void createDatabaseTable(String tableName, Connection connection) throws SQLException {
-        Statement statement = connection.createStatement();
-        statement.execute(String.format(CREATE_TABLE_SQL, tableName, tableName + "_PK"));
-    }
-
-    /**
-     * Unzips a backed up database file.
-     *
-     * @param backupFileName the name of the backup file to unzip
-     *
-     * @throws IOException if an I/O error occurs during unzipping
-     */
-    private void unzipBackedUpDatabaseFile(String backupFileName) throws IOException {
-        H2BackupUtils.unzipFile(backupFileName, this.h2DatabaseBackup.getDbBackupBaseDirectory()
-            + FileSystems.getDefault().getSeparator() + TEST_DIRECTORY);
-    }
-
-    /**
-     * Cleans the test directory by deleting all files and directories within it.
-     *
-     * @throws IOException if an I/O error occurs during file deletion.
-     */
-    private void cleanTestDirectory() throws IOException {
-        H2BackupUtils.cleanDirectory(this.h2DatabaseBackup.getDbBackupBaseDirectory()
-            + FileSystems.getDefault().getSeparator() + TEST_DIRECTORY);
+        return h2DatabaseBackupManifest;
     }
 
     /**
@@ -244,21 +262,6 @@ public class H2BackupServiceImpl implements HousekeepService {
      */
     private String buildDatabaseBackupQuery(String backupFileName) {
         return BACKUP_QUERY + backupFileName + "'";
-    }
-
-    /**
-     * Returns the URL for testing a backed up database.
-     *
-     * @param url the original connection URL
-     * @param port the port to be used for the test
-     * @param testDbFilePath the file path for the test database
-     *
-     * @return the URL for testing the backed up database
-     *
-     * @throws URISyntaxException if a URI syntax exception occurs
-     */
-    private String getTestDbUrl(String url, String port, String testDbFilePath) throws InvalidH2ConnectionUrlException {
-        return H2ConnectionUrlUtils.createTestUrl(url, port, testDbFilePath);
     }
 
     /**
@@ -324,5 +327,14 @@ public class H2BackupServiceImpl implements HousekeepService {
      */
     public H2DatabaseBackup getH2DatabaseBackup() {
         return h2DatabaseBackup;
+    }
+
+    /**
+     * Get the H2 Database Backup Manifest Service
+     *
+     * @return the H2 Database Backup Manifest Service
+     */
+    protected H2DatabaseBackupManifestService getH2DatabaseBackupManifestService() {
+        return h2DatabaseBackupManifestService;
     }
 }
