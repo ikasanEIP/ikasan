@@ -11,7 +11,7 @@ import org.ikasan.spec.housekeeping.HousekeepService;
 import org.ikasan.spec.module.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -156,7 +156,7 @@ public class H2BackupServiceImpl implements HousekeepService {
             while(retry < this.maxRetriesPortClash) {
                 try {
                     this.h2DatabaseValidator.runDatabaseValidationTest(backupFilePath
-                            , retry == 0 ? this.h2DatabaseBackup.getTestH2Port() : SocketUtils.findAvailableTcpPort());
+                            , retry == 0 ? this.h2DatabaseBackup.getTestH2Port() : TestSocketUtils.findAvailableTcpPort());
                     // We do not want to retry if no exception thrown so set retry to max.
                     retry = this.maxRetriesPortClash;
                 }

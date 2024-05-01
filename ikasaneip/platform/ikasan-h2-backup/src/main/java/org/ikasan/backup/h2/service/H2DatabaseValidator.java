@@ -1,12 +1,11 @@
 package org.ikasan.backup.h2.service;
 
+import org.h2.tools.Server;
 import org.ikasan.backup.h2.exception.H2DatabaseValidationException;
 import org.ikasan.backup.h2.exception.InvalidH2ConnectionUrlException;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
 import org.ikasan.backup.h2.util.H2BackupUtils;
 import org.ikasan.backup.h2.util.H2ConnectionUrlUtils;
-import org.h2.tools.Server;
-import org.springframework.util.SocketUtils;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

@@ -1,5 +1,6 @@
 package org.ikasan.backup.h2.service;
 
+import org.h2.tools.Server;
 import org.ikasan.backup.IkasanBackupAutoConfiguration;
 import org.ikasan.backup.h2.IkasanBackupAutoTestConfiguration;
 import org.ikasan.backup.h2.exception.H2DatabaseValidationException;
@@ -9,7 +10,6 @@ import org.ikasan.backup.h2.persistence.model.H2DatabaseBackupManifest;
 import org.ikasan.backup.h2.persistence.service.H2DatabaseBackupManifestService;
 import org.ikasan.backup.h2.util.H2BackupUtils;
 import org.ikasan.backup.h2.util.H2ConnectionUrlUtils;
-import org.h2.tools.Server;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.housekeeping.HousekeepingJob;
 import org.ikasan.spec.module.Module;
@@ -18,16 +18,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.util.SocketUtils;
+import org.springframework.test.util.TestSocketUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -38,7 +35,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static org.awaitility.Awaitility.with;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -57,7 +53,7 @@ public class H2BackupServiceImplTest {
 
     private H2DatabaseValidator mockH2DatabaseValidator = Mockito.mock(H2DatabaseValidator.class);
 
-    int port = SocketUtils.findAvailableTcpPort();
+    int port = TestSocketUtils.findAvailableTcpPort();
 
     Server server;
 
