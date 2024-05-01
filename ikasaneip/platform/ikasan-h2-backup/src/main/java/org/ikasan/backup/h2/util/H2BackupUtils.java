@@ -70,6 +70,7 @@ public class H2BackupUtils {
 
     /**
      * Cleans the directory by deleting all files and directories within it.
+     * @param directory the directory to clean
      *
      * @throws IOException if an I/O error occurs during file deletion.
      */

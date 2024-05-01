@@ -10,8 +10,10 @@ public class H2DatabaseBackup {
     private String dbBackupBaseDirectory;
     private int numOfBackupsToRetain = 2;
 
+    private int testH2Port;
+
     public String getDbUrl() {
-        return dbUrl;
+        return dbUrl.replaceAll("\\\\", "/");
     }
 
     public void setDbUrl(String dbUrl) {
@@ -58,6 +60,14 @@ public class H2DatabaseBackup {
         this.numOfBackupsToRetain = numOfBackupsToRetain;
     }
 
+    public int getTestH2Port() {
+        return testH2Port;
+    }
+
+    public void setTestH2Port(int testH2Port) {
+        this.testH2Port = testH2Port;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", H2DatabaseBackup.class.getSimpleName() + "[", "]")
@@ -66,7 +76,7 @@ public class H2DatabaseBackup {
             .add("password='*********'")
             .add("dbBackupCronSchedule='" + dbBackupCronSchedule + "'")
             .add("dbBackupBaseDirectory='" + dbBackupBaseDirectory + "'")
-            .add("numOfBackupsToRetain=" + numOfBackupsToRetain)
+            .add("numOfBackupsToRetain=" + numOfBackupsToRetain).add("testH2Port=" + testH2Port)
             .toString();
     }
 }

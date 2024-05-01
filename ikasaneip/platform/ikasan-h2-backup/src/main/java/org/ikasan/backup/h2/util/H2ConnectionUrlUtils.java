@@ -18,10 +18,11 @@ public class H2ConnectionUrlUtils {
      *
      * @return the test URL for the backed up database
      *
-     * @throws URISyntaxException if a URI syntax exception occurs
+     * @throws InvalidH2ConnectionUrlException if the connection url is invalid
      */
     public static String createTestUrl(String connectionUrl, String port, String replacementFilePath) throws InvalidH2ConnectionUrlException {
         try {
+            connectionUrl = connectionUrl.replaceAll("\\\\", "/");
             String start = connectionUrl.substring(0, connectionUrl.indexOf(":", connectionUrl.indexOf(":") + 1));
             URI uri = new URI(connectionUrl.substring(start.length() + 1));
 
@@ -44,10 +45,11 @@ public class H2ConnectionUrlUtils {
      *
      * @return the name of the database
      *
-     * @throws URISyntaxException if a URI syntax exception occurs
+     * @throws InvalidH2ConnectionUrlException if the connection url is invalid
      */
     public static String getDatabaseName(String connectionUrl) throws InvalidH2ConnectionUrlException {
         try {
+            connectionUrl = connectionUrl.replaceAll("\\\\", "/");
             String start = connectionUrl.substring(0, connectionUrl.indexOf(":", connectionUrl.indexOf(":")+1));
             URI uri = new URI(connectionUrl.substring(start.length()+1));
 
