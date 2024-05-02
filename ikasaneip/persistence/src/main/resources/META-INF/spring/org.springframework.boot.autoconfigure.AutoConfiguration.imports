@@ -1,1 +1,2 @@
 org.ikasan.persistence.PersistenceAutoConfiguration
+org.ikasan.persistence.InDoubtTransactionAutoConfiguration

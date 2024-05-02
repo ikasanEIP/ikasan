@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.ikasan.persistence.PersistenceAutoConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.ikasan.persistence.PersistenceAutoConfiguration\
+  ,org.ikasan.persistence.InDoubtTransactionAutoConfiguration
