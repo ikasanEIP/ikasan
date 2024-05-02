@@ -145,6 +145,21 @@ is done by the scheduler. The `Command Execution Job` notifies the `Ikasan Enter
 also monitors the process until it is complete. Once the job is complete the `Ikasan Enterprise Scheduler Dashboard` is notified of
 success or failure outcome of the job.
 
+[!IMPORTANT] 
+When the Ikasan Scheduler Agent executes a command execution job, a separate process is forked and it is the responsibility
+of the `Job Monitoring Broker` to monitor for the successful completion or error completion of the job. As with all process management,
+a job that is being monitored can timeout after a period of time, at which point the process managing the job will be terminated and 
+an error returned to the Ikasan Enterprise Scheduler Dashboard. The default timeout is 240 minutes (4 hours). However this can be configured
+to any number of minutes. 
+
+There are 2 configurations that need to be understood in order to extend the job execute timeout. The `ikasan.default.transaction.timeout.seconds`
+MUST be greater than the `job.monitoring.broker.timeout.minutes`. Please be mindful of the minutes vs seconds precision of the 2 different configurations.
+
+| Property Name                              | Data Type | Description                                                                                |
+|--------------------------------------------|-----------|--------------------------------------------------------------------------------------------|
+| job.monitoring.broker.timeout.minutes      | long      | The timeout in minutes for that the job monitoring broker will wait for a job to complete. |
+| ikasan.default.transaction.timeout.seconds | long      | The transaction timeout in seconds that is assigned to the transaction manager.            |
+
 The below diagram outlines the components and the flow of control that supports the `Command Execution Job`.
 
 ![cej](../../images/command-execution-job.png)
