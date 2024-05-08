@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Configuration application implementing the REST contract
+ * This class is the REST controller for the persistence operations.
+ * It handles requests related to retrieving the total record count for a given database table.
  */
 @RequestMapping("/rest/persistence")
 @RestController
@@ -29,7 +30,6 @@ public class PersistenceApplication
     public PersistenceApplication() {
     }
 
-    @Deprecated
     @RequestMapping(method = RequestMethod.GET,
                     value = "/rowCount/{tableName}",
                     produces = { "application/json" })

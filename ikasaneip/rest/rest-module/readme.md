@@ -16,13 +16,13 @@ The set of REST endpoints which allows you to:
  
 ### GET Flows state
 
-| Parameter | Value  | 
-|--- | --- |
-| Request Method | GET |
-| Service Context | {module-root-context}/rest/moduleControl/{moduleName} |
-| Requires Path parameter moduleName | Module Name |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Returns | HTTP 200 status and  json serialised [ModuleDto](src/main/java/org/ikasan/rest/module/dto/ModuleDto.java) |
+| Parameter                            | Value                                                                                                     | 
+|--------------------------------------|-----------------------------------------------------------------------------------------------------------|
+| Request Method                       | GET                                                                                                       |
+| Service Context                      | {module-root-context}/rest/moduleControl/{moduleName}                                                     |
+| Requires Path parameter moduleName   | Module Name                                                                                               |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                             |
+| Returns                              | HTTP 200 status and  json serialised [ModuleDto](src/main/java/org/ikasan/rest/module/dto/ModuleDto.java) |
  
  <details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>
@@ -49,14 +49,14 @@ The set of REST endpoints which allows you to:
 
 ### GET Flow state
 
-| Parameter | Value  | 
-|--- | --- |
-| Request Method | GET |
-| Service Context | {module-root-context}/rest/moduleControl/{moduleName}/{flowName} |
-| Requires Path parameter moduleName | Module Name |
-| Requires Path parameter flowName | Flow Name |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Returns | HTTP 200 status with below payload. A json serialised [FlowDto](src/main/java/org/ikasan/rest/module/dto/FlowDto.java) |
+| Parameter                            | Value                                                                                                                  | 
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------|
+| Request Method                       | GET                                                                                                                    |
+| Service Context                      | {module-root-context}/rest/moduleControl/{moduleName}/{flowName}                                                       |
+| Requires Path parameter moduleName   | Module Name                                                                                                            |
+| Requires Path parameter flowName     | Flow Name                                                                                                              |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                          |
+| Returns                              | HTTP 200 status with below payload. A json serialised [FlowDto](src/main/java/org/ikasan/rest/module/dto/FlowDto.java) |
 
 <details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>
@@ -75,13 +75,13 @@ The set of REST endpoints which allows you to:
 
 ### Change Flow state
 
-| Parameter | Value  | 
-|--- | --- |
-| Request Method | PUT |
-| Service Context | {module-root-context}/rest/moduleControl |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ChangeFlowStateDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStateDto.java) |
-| Returns | HTTP 200 status if state was changed successfully. |
+| Parameter                            | Value                                                                                                    | 
+|--------------------------------------|----------------------------------------------------------------------------------------------------------|
+| Request Method                       | PUT                                                                                                      |
+| Service Context                      | {module-root-context}/rest/moduleControl                                                                 |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                            |
+| Payload                              | A json serialised [ChangeFlowStateDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStateDto.java) |
+| Returns                              | HTTP 200 status if state was changed successfully.                                                       |
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -100,13 +100,13 @@ The set of REST endpoints which allows you to:
 
 ### Change Flow startup type
 
-| Parameter | Value  | 
-|--- | --- |
-| Request Method | PUT |
-| Service Context | {module-root-context}/rest/moduleControl/startupMode |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ChangeFlowStartupModeDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStartupModeDto.java) |
-| Returns | HTTP 200 status if startup type was changed successfully. |
+| Parameter                            | Value                                                                                                                | 
+|--------------------------------------|----------------------------------------------------------------------------------------------------------------------|
+| Request Method                       | PUT                                                                                                                  |
+| Service Context                      | {module-root-context}/rest/moduleControl/startupMode                                                                 |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                        |
+| Payload                              | A json serialised [ChangeFlowStartupModeDto](src/main/java/org/ikasan/rest/module/dto/ChangeFlowStartupModeDto.java) |
+| Returns                              | HTTP 200 status if startup type was changed successfully.                                                            |
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -129,13 +129,13 @@ REST endpoints which allows user to resubmit or ignore excluded events.
 
 ### Resubmission Endpoint
 
-| Parameter | Value  | 
-|--- | --- |
-| Request Method | PUT |
-| Service Context | {module-root-context}/rest/resubmission |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ResubmissionRequestDto](src/main/java/org/ikasan/rest/module/dto/ResubmissionRequestDto.java) |
-| Returns | HTTP 200 status if startup type was changed successfully. |
+| Parameter                            | Value                                                                                                            | 
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| Request Method                       | PUT                                                                                                              |
+| Service Context                      | {module-root-context}/rest/resubmission                                                                          |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                    |
+| Payload                              | A json serialised [ResubmissionRequestDto](src/main/java/org/ikasan/rest/module/dto/ResubmissionRequestDto.java) |
+| Returns                              | HTTP 200 status if startup type was changed successfully.                                                        |
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -159,13 +159,13 @@ REST endpoints which allows user to replay given recorded event.
 
 ### Replay Endpoint
 
-| Parameter | Value  | 
-|--- | --- |
-| Request Method | PUT |
-| Service Context | {module-root-context}/rest/replay |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN} |
-| Payload | A json serialised [ReplayRequestDto](src/main/java/org/ikasan/rest/module/dto/ReplayRequestDto.java) |
-| Returns | HTTP 200 status if startup type was changed successfully. |
+| Parameter                            | Value                                                                                                | 
+|--------------------------------------|------------------------------------------------------------------------------------------------------|
+| Request Method                       | PUT                                                                                                  |
+| Service Context                      | {module-root-context}/rest/replay                                                                    |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                        |
+| Payload                              | A json serialised [ReplayRequestDto](src/main/java/org/ikasan/rest/module/dto/ReplayRequestDto.java) |
+| Returns                              | HTTP 200 status if startup type was changed successfully.                                            |
 
 <details>
     <summary>Click to view the sample JSON payload expected by the service.</summary>
@@ -184,16 +184,21 @@ REST endpoints which allows user to replay given recorded event.
 
 ## Persistence Service
 REST endpoints which allows users to obtain the row count for database tables.
+> [!IMPORTANT]
+> If the `org.ikasan.persistence.PersistenceAutoConfiguration` has been excluded, then the Persistence Service rest services
+> will not ba available. This is likely to be the case if a DBMS platform other than H2 has been used by Ikasan. In which
+> case an implementation of the `org.ikasan.spec.persistence.service.GeneralDatabaseService` will need to be provided for the
+> relevant RDMS.
 
 ### GET Table Row Count
 
-| Parameter | Value                                                                                                                                   | 
-|--- |-----------------------------------------------------------------------------------------------------------------------------------------|
-| Request Method | GET                                                                                                                                     |
-| Service Context | {module-root-context}/rest/persistence/rowCount/{tableName}                                                                             |
-| Requires Path parameter tableName | The name of the table to the row count for.                                                                                             |
-| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                           |
-| Returns | HTTP 200 status with below payload. A json serialised [TableRowCountDto](src/main/java/org/ikasan/rest/moduleTableRowCountDto/dto/.java) |
+| Parameter                            | Value                                                                                                                                    | 
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method                       | GET                                                                                                                                      |
+| Service Context                      | {module-root-context}/rest/persistence/rowCount/{tableName}                                                                              |
+| Requires Path parameter tableName    | The name of the table to the row count for.                                                                                              |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                            |
+| Returns                              | HTTP 200 status with below payload. A json serialised [TableRowCountDto](src/main/java/org/ikasan/rest/module/dto/TableRowCountDto.java) |
 
 <details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>
@@ -208,3 +213,86 @@ REST endpoints which allows users to obtain the row count for database tables.
 
 </p>
 </details>
+
+## In Doubt Transaction Service
+REST endpoints which allow for the discovery and management of IN_DOUBT database transactions.
+
+> [!IMPORTANT]
+> If the `org.ikasan.persistence.InDoubtTransactionAutoConfiguration` has been excluded, then the In Doubt Transaction Service rest services
+> will not ba available. This is likely to be the case if a DBMS platform other than H2 has been used by Ikasan. In which
+> case an implementation of the `org.ikasan.spec.persistence.service.InDoubtTransactionService` will need to be provided for the
+> relevant RDMS.
+
+### Get All In Doubt Transactions
+
+| Parameter                            | Value                                                                                                                                                      | 
+|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method                       | GET                                                                                                                                                        |
+| Service Context                      | {module-root-context}/rest/transaction/inDoubt/all                                                                                                         |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                              |
+| Returns                              | HTTP 200 status with below payload. A json serialised List of [InDoubtTransactionDto](src/main/java/org/ikasan/rest/module/dto/InDoubtTransactionDto.java) |
+
+<details>
+    <summary>Click to view the sample JSON payload provided by the service.</summary>
+<p>
+
+````json
+[
+      {
+          "transactionName":"TRANS_1",
+          "transactionState":"IN_DOUBT"
+      },
+      {
+          "transactionName":"TRANS_2",
+          "transactionState":"IN_DOUBT"
+      }
+]
+````
+
+</p>
+</details>
+
+### Get In Doubt Transaction By Name
+
+| Parameter                               | Value                                                                                                                                              | 
+|-----------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method                          | GET                                                                                                                                                |
+| Service Context                         | {module-root-context}/rest/transaction/inDoubt/get/{transactionName}                                                                               |
+| Requires Path parameter transactionName | The name of the transaction we are requesting details of.                                                                                          |
+| Requires 'Authorization' HTTP Header    | Basic {TOKEN}                                                                                                                                      |
+| Returns                                 | HTTP 200 status with below payload. A json serialised [InDoubtTransactionDto](src/main/java/org/ikasan/rest/module/dto/InDoubtTransactionDto.java) |
+
+<details>
+    <summary>Click to view the sample JSON payload provided by the service.</summary>
+<p>
+
+````json
+{
+  "transactionName":"TRANS_1",
+  "transactionState":"IN_DOUBT"
+}
+````
+
+</p>
+</details>
+
+### Commit In Doubt Transaction
+
+| Parameter                               | Value                                                                   | 
+|-----------------------------------------|-------------------------------------------------------------------------|
+| Request Method                          | PUT                                                                     |
+| Service Context                         | {module-root-context}/rest/transaction/inDoubt/commit/{transactionName} |
+| Requires Path parameter transactionName | The name of the transaction we are committing.                          |
+| Requires 'Authorization' HTTP Header    | Basic {TOKEN}                                                           |
+| Returns                                 | HTTP 200 status                                                         |
+
+
+### Rollback In Doubt Transaction
+
+| Parameter                               | Value                                                                     | 
+|-----------------------------------------|---------------------------------------------------------------------------|
+| Request Method                          | PUT                                                                       |
+| Service Context                         | {module-root-context}/rest/transaction/inDoubt/rollback/{transactionName} |
+| Requires Path parameter transactionName | The name of the transaction we are rolling back.                          |
+| Requires 'Authorization' HTTP Header    | Basic {TOKEN}                                                             |
+| Returns                                 | HTTP 200 status                                                           |

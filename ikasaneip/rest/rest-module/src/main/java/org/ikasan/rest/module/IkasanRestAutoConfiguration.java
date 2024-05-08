@@ -48,6 +48,9 @@ import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataIm
 import org.ikasan.rest.module.sse.MonitoringFileService;
 import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
+import org.ikasan.spec.persistence.service.GeneralDatabaseService;
+import org.ikasan.spec.persistence.service.InDoubtTransactionService;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -125,9 +128,15 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     public SchedulerApplication schedulerApplication() {
         return new SchedulerApplication();
     }
-    
+
+    @ConditionalOnBean(GeneralDatabaseService.class)
     @Bean PersistenceApplication persistenceApplication() {
         return new PersistenceApplication();
+    }
+
+    @ConditionalOnBean(InDoubtTransactionService.class)
+    @Bean InDoubtTransactionsApplication inDoubtTransactionsApplication() {
+        return new InDoubtTransactionsApplication();
     }
 
     @Override
