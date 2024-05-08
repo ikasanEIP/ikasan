@@ -186,7 +186,7 @@ REST endpoints which allows user to replay given recorded event.
 REST endpoints which allows users to obtain the row count for database tables.
 > [!IMPORTANT]
 > If the `org.ikasan.persistence.PersistenceAutoConfiguration` has been excluded, then the Persistence Service rest services
-> will not ba available. This is likely to be the case if a DBMS platform other than H2 has been used by Ikasan. In which
+> will not be available. This is likely to be the case if a DBMS platform other than H2 has been used by Ikasan. In which
 > case an implementation of the `org.ikasan.spec.persistence.service.GeneralDatabaseService` will need to be provided for the
 > relevant RDMS.
 
@@ -219,7 +219,7 @@ REST endpoints which allow for the discovery and management of IN_DOUBT database
 
 > [!IMPORTANT]
 > If the `org.ikasan.persistence.InDoubtTransactionAutoConfiguration` has been excluded, then the In Doubt Transaction Service rest services
-> will not ba available. This is likely to be the case if a DBMS platform other than H2 has been used by Ikasan. In which
+> will not be available. This is likely to be the case if a DBMS platform other than H2 has been used by Ikasan. In which
 > case an implementation of the `org.ikasan.spec.persistence.service.InDoubtTransactionService` will need to be provided for the
 > relevant RDMS.
 
