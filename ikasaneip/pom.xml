@@ -349,7 +349,7 @@
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.aws.java.sdk>1.11.837</version.aws.java.sdk>
-        <version.bouncycastle>1.77</version.bouncycastle>
+        <version.bouncycastle>1.78</version.bouncycastle>
         <version.jakarta.validation.api>3.1.0-M1</version.jakarta.validation.api>
         <version.jakarta.el>6.0.0-M1</version.jakarta.el>
         <version.commons-io>2.8.0</version.commons-io>
