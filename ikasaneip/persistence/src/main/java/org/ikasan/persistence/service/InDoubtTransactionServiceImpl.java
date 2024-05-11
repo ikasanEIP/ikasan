@@ -48,4 +48,16 @@ public class InDoubtTransactionServiceImpl implements InDoubtTransactionService 
     public void rollbackInDoubtTransaction(String transactionName) {
         this.inDoubtTransactionDao.rollbackInDoubtTransaction(transactionName);
     }
+
+    @Override
+    public void commitAllInDoubtTransactions() {
+        this.inDoubtTransactionDao.getInDoubtTransactions()
+            .forEach(inDoubtTransaction -> this.commitInDoubtTransaction(inDoubtTransaction.getTransactionName()));
+    }
+
+    @Override
+    public void rollbackAllInDoubtTransactions() {
+        this.inDoubtTransactionDao.getInDoubtTransactions()
+            .forEach(inDoubtTransaction -> this.rollbackInDoubtTransaction(inDoubtTransaction.getTransactionName()));
+    }
 }

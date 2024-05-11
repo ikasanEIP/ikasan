@@ -40,35 +40,7 @@ public class InDoubtTransactionServiceImplTest {
         server = Server.createTcpServer("-tcpPort", Integer.toString(18082), "-tcpAllowOthers", "-ifNotExists");
         server.start();
 
-        org.h2.Driver.load();
-
-        try (Connection conn = DriverManager.getConnection
-            ("jdbc:h2:tcp://localhost:18082/./target/persistence/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE"
-            , "sa", "sa")) {
-            try (Statement st = conn.createStatement()) {
-                st.executeUpdate("CREATE TABLE IF NOT EXISTS dataTable("
-                    + "dataStamp BIGINT PRIMARY KEY, "
-                    + "data BLOB)");
-            }
-
-            conn.setAutoCommit(false);
-            Random rnd = new Random(0);
-            try (PreparedStatement pstmt = conn.prepareStatement("INSERT INTO dataTable VALUES(?, ?)")) {
-                for (int i = 0; i < 100; ++i) {
-                    int numBytes = 1024 * 1024;
-                    byte[] data = new byte[numBytes];
-                    rnd.nextBytes(data);
-                    pstmt.setLong(1, i);
-                    pstmt.setBytes(2, data);
-                    pstmt.executeUpdate();
-                }
-            }
-            try (Statement st = conn.createStatement()) {
-                st.executeUpdate("PREPARE COMMIT lobtx");
-                st.execute("SHUTDOWN IMMEDIATELY");
-            }
-        }
-
+        this.createInDoubtTransaction("lobtx");
     }
 
     @After
@@ -113,6 +85,20 @@ public class InDoubtTransactionServiceImplTest {
             , 100, this.getNumLobRecords());
     }
 
+    @Test
+    public void test_commit_all_in_doubt_transactions_success() throws SQLException {
+        Assert.assertEquals("There should be 1 in doubt transactions!"
+            , 1, inDoubtTransactionService.getInDoubtTransactions().size());
+
+        inDoubtTransactionService.commitAllInDoubtTransactions();
+
+        Assert.assertEquals("There should be 0 in doubt transactions!"
+            , 0, inDoubtTransactionService.getInDoubtTransactions().size());
+
+        Assert.assertEquals("We should have successfully committed the transaction with 100 records!"
+            , 100, this.getNumLobRecords());
+    }
+
     @Test(expected = RuntimeException.class)
     public void test_commit_in_doubt_transaction_exception_bad_transaction_name() {
         inDoubtTransactionService.commitInDoubtTransaction("BAD TRANSACTION NAME!");
@@ -126,7 +112,21 @@ public class InDoubtTransactionServiceImplTest {
         Assert.assertEquals("There should be 0 in doubt transactions!"
             , 0, inDoubtTransactionService.getInDoubtTransactions().size());
 
-        Assert.assertEquals("We should have successfully rolloed back the transaction!"
+        Assert.assertEquals("We should have successfully rolled back the transaction!"
+            , 0, this.getNumLobRecords());
+    }
+
+    @Test
+    public void test_rollback_all_in_doubt_transactions_success() throws SQLException {
+        Assert.assertEquals("There should be 1 in doubt transactions!"
+            , 1, inDoubtTransactionService.getInDoubtTransactions().size());
+
+        inDoubtTransactionService.rollbackAllInDoubtTransactions();
+
+        Assert.assertEquals("There should be 0 in doubt transactions!"
+            , 0, inDoubtTransactionService.getInDoubtTransactions().size());
+
+        Assert.assertEquals("We should have successfully rolled back the transaction!"
             , 0, this.getNumLobRecords());
     }
 
@@ -160,6 +160,39 @@ public class InDoubtTransactionServiceImplTest {
 
         for(Path file: files) {
             Files.delete(file);
+        }
+    }
+
+    private void createInDoubtTransaction(String transactionName) {
+        org.h2.Driver.load();
+
+        try (Connection conn = DriverManager.getConnection
+            ("jdbc:h2:tcp://localhost:18082/./target/persistence/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE"
+                , "sa", "sa")) {
+            try (Statement st = conn.createStatement()) {
+                st.executeUpdate("CREATE TABLE IF NOT EXISTS dataTable("
+                    + "dataStamp BIGINT PRIMARY KEY, "
+                    + "data BLOB)");
+            }
+
+            conn.setAutoCommit(false);
+            Random rnd = new Random(0);
+            try (PreparedStatement pstmt = conn.prepareStatement("INSERT INTO dataTable VALUES(?, ?)")) {
+                for (int i = 0; i < 100; ++i) {
+                    int numBytes = 1024 * 1024;
+                    byte[] data = new byte[numBytes];
+                    rnd.nextBytes(data);
+                    pstmt.setLong(1, i);
+                    pstmt.setBytes(2, data);
+                    pstmt.executeUpdate();
+                }
+            }
+            try (Statement st = conn.createStatement()) {
+                st.executeUpdate("PREPARE COMMIT " + transactionName);
+                st.execute("SHUTDOWN IMMEDIATELY");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

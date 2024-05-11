@@ -70,7 +70,7 @@ public class InDoubtTransactionsApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testGetAllInboundTransactions() throws Exception
+    public void testGetAllInDoubtTransactions() throws Exception
     {
         Mockito.when(this.inDoubtTransactionService.getInDoubtTransactions())
             .thenReturn(List.of(createInDoubtTransaction("TRANS_1"), createInDoubtTransaction("TRANS_2")));
@@ -101,7 +101,7 @@ public class InDoubtTransactionsApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testGetInboundTransaction() throws Exception
+    public void testGetInDoubtTransaction() throws Exception
     {
         Mockito.when(this.inDoubtTransactionService.getInDoubtTransaction("TRANS_1"))
             .thenReturn(createInDoubtTransaction("TRANS_1"));
@@ -123,7 +123,7 @@ public class InDoubtTransactionsApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void testGetInboundTransactionInvalidTransactionName() throws Exception
+    public void testGetInDoubtTransactionInvalidTransactionName() throws Exception
     {
         Mockito.when(this.inDoubtTransactionService.getInDoubtTransaction("TRANS_1"))
             .thenReturn(null);
@@ -149,7 +149,7 @@ public class InDoubtTransactionsApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void tesCommitInboundTransactionSuccess() throws Exception
+    public void tesCommitInDoubtTransactionSuccess() throws Exception
     {
         Mockito.doNothing().when(this.inDoubtTransactionService).commitInDoubtTransaction("TRANS_1");
 
@@ -158,11 +158,51 @@ public class InDoubtTransactionsApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
-        Assert.assertEquals("JSON Result must equal!",
+        Assert.assertEquals("Result must equal!",
             "\"Transaction[TRANS_1] successfully committed!\"",
             result.getResponse().getContentAsString());
 
         Mockito.verify(this.inDoubtTransactionService).commitInDoubtTransaction("TRANS_1");
+        Mockito.verifyNoMoreInteractions(this.inDoubtTransactionService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void tesCommitAllInDoubtTransactionsSuccess() throws Exception
+    {
+        Mockito.doNothing().when(this.inDoubtTransactionService).commitAllInDoubtTransactions();
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/transaction/inDoubt/commitAll")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        Assert.assertEquals("Result must equal!",
+            "\"All in doubt transactions have been successfully committed!\"",
+            result.getResponse().getContentAsString());
+
+        Mockito.verify(this.inDoubtTransactionService).commitAllInDoubtTransactions();
+        Mockito.verifyNoMoreInteractions(this.inDoubtTransactionService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void tesCommitAllInDoubtTransactionsException() throws Exception
+    {
+        Mockito.doThrow(new RuntimeException("Exception committing!")).when(this.inDoubtTransactionService).commitAllInDoubtTransactions();
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/transaction/inDoubt/commitAll")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        JSONAssert.assertEquals("Result must equal!",
+            """
+            {"errorMessage":"An error has occurred committing all in doubt transactions. Some of the transactions may have committed successfully. Please query the /rest/transaction/inDoubt/all service to determine which transactions are still waiting to be committed. Error[Exception committing!]"}
+            """,
+            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
+
+        Mockito.verify(this.inDoubtTransactionService).commitAllInDoubtTransactions();
         Mockito.verifyNoMoreInteractions(this.inDoubtTransactionService);
     }
 
@@ -199,7 +239,7 @@ public class InDoubtTransactionsApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void tesRollbackInboundTransactionSuccess() throws Exception
+    public void tesRollbackInDoubtTransactionSuccess() throws Exception
     {
         Mockito.doNothing().when(this.inDoubtTransactionService).rollbackInDoubtTransaction("TRANS_1");
 
@@ -218,7 +258,48 @@ public class InDoubtTransactionsApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void tesRollbackInboundTransactionInvalidTransactionNames() throws Exception
+    public void testRollbackAllInDoubtTransactionsSuccess() throws Exception
+    {
+        Mockito.doNothing().when(this.inDoubtTransactionService).rollbackAllInDoubtTransactions();
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/transaction/inDoubt/rollbackAll")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        Assert.assertEquals("Result must equal!",
+            "\"All in doubt transactions have been successfully rolled back!\"",
+            result.getResponse().getContentAsString());
+
+        Mockito.verify(this.inDoubtTransactionService).rollbackAllInDoubtTransactions();
+        Mockito.verifyNoMoreInteractions(this.inDoubtTransactionService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testRollbackAllInDoubtTransactionsException() throws Exception
+    {
+        Mockito.doThrow(new RuntimeException("Error rolling back!"))
+            .when(this.inDoubtTransactionService).rollbackAllInDoubtTransactions();
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/transaction/inDoubt/rollbackAll")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        JSONAssert.assertEquals("Result must equal!",
+            """
+                {"errorMessage":"An error has occurred rolling back all in doubt transactions. Some of the transactions may have rolled back successfully. Please query the /rest/transaction/inDoubt/all service to determine which transactions are still waiting to be rolled back. Error[Error rolling back!]"}
+                """,
+            result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
+
+        Mockito.verify(this.inDoubtTransactionService).rollbackAllInDoubtTransactions();
+        Mockito.verifyNoMoreInteractions(this.inDoubtTransactionService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void tesRollbackInDoubtTransactionInvalidTransactionNames() throws Exception
     {
         Mockito.doThrow(new RuntimeException("In Doubt Transaction not found!"))
             .when(this.inDoubtTransactionService).rollbackInDoubtTransaction("TRANS_1");
