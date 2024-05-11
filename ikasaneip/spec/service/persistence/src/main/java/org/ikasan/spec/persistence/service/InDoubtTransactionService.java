@@ -4,6 +4,9 @@ import org.ikasan.spec.persistence.model.InDoubtTransaction;
 
 import java.util.List;
 
+/**
+ * The InDoubtTransactionService interface provides methods for retrieving, committing, and rolling back in-doubt transactions.
+ */
 public interface InDoubtTransactionService {
 
     /**
@@ -35,4 +38,24 @@ public interface InDoubtTransactionService {
      * @param transactionName the name of the in-doubt transaction to rollback
      */
     void rollbackInDoubtTransaction(String transactionName);
+
+    /**
+     * Commits all in-doubt transactions.
+     *
+     * This method initiates the commit process for all in-doubt transactions. An in-doubt transaction
+     * is a transaction that has not yet been committed or rolled back and is in an uncertain state.
+     * By calling this method, all in-doubt transactions will be committed and their state will be
+     * updated accordingly.
+     */
+    void commitAllInDoubtTransactions();
+
+    /**
+     * Rolls back all in-doubt transactions.
+     *
+     * This method initiates the rollback process for all in-doubt transactions. An in-doubt transaction
+     * is a transaction that has not yet been committed or rolled back and is in an uncertain state.
+     * By calling this method, all in-doubt transactions will be rolled back and their state will be
+     * updated accordingly.
+     */
+    void rollbackAllInDoubtTransactions();
 }

@@ -93,6 +93,22 @@ public class InDoubtTransactionsApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
+        value = "/commitAll")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity commitAllTransactions() {
+        try {
+            this.inDoubtTransactionService.commitAllInDoubtTransactions();
+        }
+        catch (Exception e) {
+            return new ResponseEntity(new ErrorDto(String.format("An error has occurred committing all in doubt transactions." +
+                " Some of the transactions may have committed successfully. Please query the /rest/transaction/inDoubt/all service" +
+                " to determine which transactions are still waiting to be committed." +
+                " Error[%s]", e.getMessage())), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity(String.format("All in doubt transactions have been successfully committed!"), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.PUT,
         value = "/rollback/{transactionName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity rollbackTransaction(@PathVariable("transactionName") String transactionName) {
@@ -105,6 +121,24 @@ public class InDoubtTransactionsApplication
         }
         return new ResponseEntity("Transaction[%s] successfully rolled back!".formatted(transactionName), HttpStatus.OK);
     }
+
+    @RequestMapping(method = RequestMethod.PUT,
+        value = "/rollbackAll")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity rollbackAllTransactions() {
+        try {
+            this.inDoubtTransactionService.rollbackAllInDoubtTransactions();
+        }
+        catch (Exception e) {
+            return new ResponseEntity(new ErrorDto(String.format("An error has occurred rolling back all in doubt transactions." +
+                " Some of the transactions may have rolled back successfully. Please query the /rest/transaction/inDoubt/all service" +
+                " to determine which transactions are still waiting to be rolled back." +
+                " Error[%s]", e.getMessage())), HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity("All in doubt transactions have been successfully rolled back!", HttpStatus.OK);
+    }
+
+
 
     private InDoubtTransactionDto convert(InDoubtTransaction inDoubtTransaction) {
         InDoubtTransactionDto inDoubtTransactionDto = new InDoubtTransactionDto();
