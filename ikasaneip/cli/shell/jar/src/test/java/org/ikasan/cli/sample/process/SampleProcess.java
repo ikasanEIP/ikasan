@@ -25,7 +25,7 @@ public class SampleProcess
         }
         catch(InterruptedException e)
         {
-
+            e.printStackTrace();
         }
     }
 }
