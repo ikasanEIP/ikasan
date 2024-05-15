@@ -51,16 +51,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
 /**
  * This test class supports the <code>efaultOperationImpl</code> class.
@@ -198,11 +194,19 @@ class DefaultOperationImplTest
 
     @Test
     void successful_isRunning_persisted_process_found_correlates_with_running_process() throws IOException, InterruptedException, ExecutionException {
-        ProcessBuilder processBuilder
-            = new ProcessBuilder("java", "-Dmodule.name=name"
-            ,"-cp","./target/test-classes","org.ikasan.cli.sample.process.SampleProcess");
+        List<String> commands = new ArrayList<String>();
+        commands.add("java");
+        commands.add("-classpath");
+        commands.add("cli/shell/target/test-classes");
+        commands.add("org.ikasan.cli.sample.process.SampleProcess");
+        commands.add("-Dmodule.name=sampleProcess");
+        commands.add("-DcommandSignature=commandSignature");
 
-        ProcessHandle javaProcess = processBuilder.start().toHandle();
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        processes.add(process);
+
+        ProcessHandle javaProcess = process.toHandle();
 
         mockery.checking(new Expectations()
         {
@@ -213,14 +217,14 @@ class DefaultOperationImplTest
                 exactly(1).of(processType).getName();
                 will(returnValue("processTypeName"));
 
-                exactly(1).of(persistenceService).find("processTypeName", "name");
+                exactly(1).of(persistenceService).find("processTypeName", "sampleProcess");
                 will(returnValue(javaProcess));
             }
         });
 
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name"
+        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess"
             , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.get(0).isAlive());
         mockery.assertIsSatisfied();
@@ -230,11 +234,19 @@ class DefaultOperationImplTest
 
     @Test
     void successful_isRunning_persisted_process_found_does_not_correlate_with_running_process_bad_process_name() throws IOException, InterruptedException, ExecutionException {
-        ProcessBuilder processBuilder
-            = new ProcessBuilder("java", "-Dmodule.name=differentProcessName"
-            ,"-cp","./target/test-classes","org.ikasan.cli.sample.process.SampleProcess");
+        List<String> commands = new ArrayList<String>();
+        commands.add("java");
+        commands.add("-classpath");
+        commands.add("cli/shell/target/test-classes");
+        commands.add("org.ikasan.cli.sample.process.SampleProcess");
+        commands.add("-Dmodule.name=differentProcessName");
+        commands.add("-DcommandSignature=commandSignature");
 
-        ProcessHandle javaProcess = processBuilder.start().toHandle();
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        processes.add(process);
+
+        ProcessHandle javaProcess = process.toHandle();
 
         mockery.checking(new Expectations()
         {
@@ -245,30 +257,36 @@ class DefaultOperationImplTest
                 exactly(2).of(processType).getName();
                 will(returnValue("processTypeName"));
 
-                exactly(1).of(persistenceService).find("processTypeName", "name");
+                exactly(1).of(persistenceService).find("processTypeName", "sampleProcess");
                 will(returnValue(javaProcess));
 
-                exactly(1).of(persistenceService).remove("processTypeName", "name");
+                exactly(1).of(persistenceService).remove("processTypeName", "sampleProcess");
             }
         });
 
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name"
+        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess"
             , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.size() == 0);
         mockery.assertIsSatisfied();
-
-        javaProcess.destroyForcibly();
     }
 
     @Test
     void successful_isRunning_persisted_process_found_does_not_correlate_with_running_process_bad_command_signature() throws IOException, InterruptedException, ExecutionException {
-        ProcessBuilder processBuilder
-            = new ProcessBuilder("java", "-Dmodule.name=name"
-            ,"-cp","./target/test-classes","org.ikasan.cli.sample.process.SampleProcess");
+        List<String> commands = new ArrayList<String>();
+        commands.add("java");
+        commands.add("-classpath");
+        commands.add("cli/shell/target/test-classes");
+        commands.add("org.ikasan.cli.sample.process.SampleProcess");
+        commands.add("-Dmodule.name=sampleProcess");
+        commands.add("-DcommandSignature=commandSignature");
 
-        ProcessHandle javaProcess = processBuilder.start().toHandle();
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        processes.add(process);
+
+        ProcessHandle javaProcess = process.toHandle();
 
         mockery.checking(new Expectations()
         {
@@ -279,21 +297,19 @@ class DefaultOperationImplTest
                 exactly(2).of(processType).getName();
                 will(returnValue("processTypeName"));
 
-                exactly(1).of(persistenceService).find("processTypeName", "name");
+                exactly(1).of(persistenceService).find("processTypeName", "sampleProcess");
                 will(returnValue(javaProcess));
 
-                exactly(1).of(persistenceService).remove("processTypeName", "name");
+                exactly(1).of(persistenceService).remove("processTypeName", "sampleProcess");
             }
         });
 
 
         Operation operation = new DefaultOperationImpl(persistenceService);
-        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name"
+        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess"
             , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.size() == 0);
         mockery.assertIsSatisfied();
-
-        javaProcess.destroyForcibly();
     }
 
     @Test
@@ -427,38 +443,40 @@ class DefaultOperationImplTest
     }
 
     @Test()
-    void exception_stop_process_timeout_exceeded() throws ExecutionException, InterruptedException {
-        processes.add(this.mockProcess);
+    void exception_stop_process_timeout_exceeded() throws IOException {
+        List<String> commands = new ArrayList<String>();
+        commands.add("java");
+        commands.add("-classpath");
+        commands.add("cli/shell/target/test-classes");
+        commands.add("org.ikasan.cli.sample.process.SampleProcess");
+        commands.add("-Dmodule.name=sampleProcess");
+
+        ProcessBuilder processBuilder = new ProcessBuilder(commands);
+        Process process = processBuilder.start();
+        processes.add(process);
+
+
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(persistenceService).remove("processTypeName", "sampleProcess");
                 exactly(1).of(persistenceService).find("processTypeName", "sampleProcess");
-                will(returnValue(mockProcessHandle));
-
-                exactly(1).of(mockProcessHandle).isAlive();
-                will(returnValue(true));
+                will(returnValue(process.toHandle()));
 
                 exactly(1).of(mockProcess).isAlive();
                 will(returnValue(false));
 
-                exactly(1).of(mockProcessHandle).onExit();
-                will(returnValue(mockCompletableFuture));
-
-                exactly(1).of(mockProcessHandle).destroy();
-
-                exactly(1).of(mockCompletableFuture).orTimeout(15, TimeUnit.SECONDS);
-
-                exactly(1).of(mockCompletableFuture).get();
-                will(throwException(new ExecutionException(new TimeoutException("A timeout has occurred!"))));
-
-                exactly(1).of(processType).getName();
+                exactly(2).of(processType).getName();
                 will(returnValue("processTypeName"));
+
+                exactly(1).of(processType).getCommandSignature();
+                will(returnValue("org.ikasan.cli.sample.process.SampleProcess"));
             }
         });
 
         Operation operation = new DefaultOperationImpl(persistenceService);
         Assert.assertThrows(RuntimeException.class, () -> operation
-            .stop(processType, "sampleProcess", null, 15));
+            .stop(processType, "sampleProcess", process.toHandle().info().user().get(), 0));
     }
 
     @Test
