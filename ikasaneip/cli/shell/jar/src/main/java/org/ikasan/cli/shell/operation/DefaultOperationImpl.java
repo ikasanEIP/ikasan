@@ -191,14 +191,21 @@ public class DefaultOperationImpl implements Operation
     @Override
     public List<ProcessHandle> getProcessHandles(ProcessType processType, String name, String username)
     {
+        // firstly lets try and see if there are any running processes
+        // for the module that match the command signature
+        List<ProcessHandle> filteredRunningProcessHandles =
+            this.getFilteredProcessHandles(username, processType.getCommandSignature(), name);
+
         // can we find by the persisted process
         ProcessHandle processHandle = persistenceService.find(processType.getName(), name);
         if (processHandle != null)
         {
-            // check we have a live process matching the persisted pid
-            if(processHandle.isAlive())
+            // check we have a live process matching the persisted pid and
+            // that we can correlate it with an existing running process. This
+            // is to rule out the possibility that we have a pid clash.
+            if(processHandle.isAlive() && filteredRunningProcessHandles.size() > 0)
             {
-                List<ProcessHandle> processHandles = new ArrayList<ProcessHandle>();
+                List<ProcessHandle> processHandles = new ArrayList<>();
                 processHandles.add(processHandle);
                 return processHandles;
             }
@@ -207,12 +214,25 @@ public class DefaultOperationImpl implements Operation
             persistenceService.remove(processType.getName(), name);
         }
 
-        // not persisted, try checking if we can see a process running for that module of that type for that user
+        return filteredRunningProcessHandles;
+    }
+
+    /**
+     * Filters a list of {@link ProcessHandle} objects based on the given criteria.
+     *
+     * @param username The username to filter by. If null, no filtering by username will be applied.
+     * @param commandSignature The command signature to filter by. If null or empty, no filtering by
+     *                         command signature will be applied.
+     * @param moduleName The module name to filter by.
+     * @return A list of filtered {@link ProcessHandle} objects that match the given criteria.
+     */
+    private List<ProcessHandle> getFilteredProcessHandles(String username, String commandSignature, String moduleName) {
+        // try checking if we can see a process running for that module of that type for that user
         Stream<ProcessHandle> liveProcesses = ProcessHandle.allProcesses();
 
-        // filter processes by name
+        // filter processes by module name
         liveProcesses = liveProcesses.filter(ProcessHandle::isAlive)
-            .filter(ph -> isSameModuleName(ph.info().commandLine(), name) );
+            .filter(ph -> isSameModuleName(ph.info().commandLine(), moduleName) );
 
         // filter processes by username
         if(username != null)
@@ -223,11 +243,11 @@ public class DefaultOperationImpl implements Operation
         }
 
         // filter by type
-        if(processType.getCommandSignature() != null && processType.getCommandSignature().length() > 0)
+        if(commandSignature != null && commandSignature.length() > 0)
         {
             liveProcesses = liveProcesses
-                .filter(ph -> ph.info().commandLine().isPresent()
-                    && ph.info().commandLine().get().toLowerCase().contains(processType.getCommandSignature().toLowerCase()));
+                .filter(ph -> !ph.info().commandLine().isEmpty()
+                    && ph.info().commandLine().get().toLowerCase().contains(commandSignature.toLowerCase()));
         }
 
         // return whats left

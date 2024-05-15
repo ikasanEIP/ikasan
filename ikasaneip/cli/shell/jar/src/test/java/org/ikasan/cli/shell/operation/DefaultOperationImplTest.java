@@ -51,8 +51,10 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -195,24 +197,103 @@ class DefaultOperationImplTest
     }
 
     @Test
-    void successful_isRunning_persisted_process_found() throws IOException
-    {
-        ProcessHandle processHandle = ProcessHandle.current();
+    void successful_isRunning_persisted_process_found_correlates_with_running_process() throws IOException, InterruptedException, ExecutionException {
+        ProcessBuilder processBuilder
+            = new ProcessBuilder("java", "-Dmodule.name=name"
+            ,"-cp","./target/test-classes","org.ikasan.cli.sample.process.SampleProcess");
+
+        ProcessHandle javaProcess = processBuilder.start().toHandle();
+
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(processType).getCommandSignature();
+                will(returnValue("org.ikasan.cli.sample.process.SampleProcess"));
+
                 exactly(1).of(processType).getName();
                 will(returnValue("processTypeName"));
 
                 exactly(1).of(persistenceService).find("processTypeName", "name");
-                will(returnValue(processHandle));
+                will(returnValue(javaProcess));
             }
         });
 
+
         Operation operation = new DefaultOperationImpl(persistenceService);
-        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name", "username");
+        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name"
+            , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.get(0).isAlive());
         mockery.assertIsSatisfied();
+
+        javaProcess.destroyForcibly();
+    }
+
+    @Test
+    void successful_isRunning_persisted_process_found_does_not_correlate_with_running_process_bad_process_name() throws IOException, InterruptedException, ExecutionException {
+        ProcessBuilder processBuilder
+            = new ProcessBuilder("java", "-Dmodule.name=differentProcessName"
+            ,"-cp","./target/test-classes","org.ikasan.cli.sample.process.SampleProcess");
+
+        ProcessHandle javaProcess = processBuilder.start().toHandle();
+
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(processType).getCommandSignature();
+                will(returnValue("org.ikasan.cli.sample.process.SampleProcess"));
+
+                exactly(2).of(processType).getName();
+                will(returnValue("processTypeName"));
+
+                exactly(1).of(persistenceService).find("processTypeName", "name");
+                will(returnValue(javaProcess));
+
+                exactly(1).of(persistenceService).remove("processTypeName", "name");
+            }
+        });
+
+
+        Operation operation = new DefaultOperationImpl(persistenceService);
+        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name"
+            , javaProcess.info().user().get());
+        Assert.assertTrue(processHandles.size() == 0);
+        mockery.assertIsSatisfied();
+
+        javaProcess.destroyForcibly();
+    }
+
+    @Test
+    void successful_isRunning_persisted_process_found_does_not_correlate_with_running_process_bad_command_signature() throws IOException, InterruptedException, ExecutionException {
+        ProcessBuilder processBuilder
+            = new ProcessBuilder("java", "-Dmodule.name=name"
+            ,"-cp","./target/test-classes","org.ikasan.cli.sample.process.SampleProcess");
+
+        ProcessHandle javaProcess = processBuilder.start().toHandle();
+
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(processType).getCommandSignature();
+                will(returnValue("bad command signature"));
+
+                exactly(2).of(processType).getName();
+                will(returnValue("processTypeName"));
+
+                exactly(1).of(persistenceService).find("processTypeName", "name");
+                will(returnValue(javaProcess));
+
+                exactly(1).of(persistenceService).remove("processTypeName", "name");
+            }
+        });
+
+
+        Operation operation = new DefaultOperationImpl(persistenceService);
+        List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "name"
+            , javaProcess.info().user().get());
+        Assert.assertTrue(processHandles.size() == 0);
+        mockery.assertIsSatisfied();
+
+        javaProcess.destroyForcibly();
     }
 
     @Test
@@ -297,7 +378,7 @@ class DefaultOperationImplTest
                 exactly(1).of(processType).getName();
                 will(returnValue("processTypeName"));
 
-                exactly(2).of(processType).getCommandSignature();
+                exactly(1).of(processType).getCommandSignature();
                 will(returnValue("commandSignature"));
             }
         });
@@ -392,7 +473,7 @@ class DefaultOperationImplTest
                 exactly(1).of(persistenceService).find("processTypeName", "name");
                 will(returnValue(null));
 
-                exactly(2).of(processType).getCommandSignature();
+                exactly(1).of(processType).getCommandSignature();
                 will(returnValue("commandSignature"));
             }
         });
