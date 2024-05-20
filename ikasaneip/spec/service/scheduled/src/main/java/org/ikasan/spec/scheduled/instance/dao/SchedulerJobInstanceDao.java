@@ -44,7 +44,17 @@ public interface SchedulerJobInstanceDao {
      * @param sortDirection
      * @return
      */
-    SearchResults<SchedulerJobInstanceRecord> getSchedulerJobInstancesByContextName(String contextName, int limit, int offset, String sortField, String sortDirection);
+    SearchResults<SchedulerJobInstanceRecord> getSchedulerJobInstancesByContextName(String contextName
+        , int limit, int offset, String sortField, String sortDirection);
+
+
+    /**
+     * Checks if a job plan instance contains any repeating jobs.
+     *
+     * @param contextInstanceId the ID of the context instance
+     * @return true if the job plan instance contains repeating jobs, otherwise false
+     */
+    boolean doesJobPlanInstanceContainRepeatingJobs(String contextInstanceId);
 
 
     /**
