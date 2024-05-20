@@ -118,6 +118,20 @@ public interface ScheduledContextInstanceRecord {
     void setEndTime(long endTime);
 
     /**
+     * Checks if the ScheduledContextInstanceRecord contains any repeating jobs.
+     *
+     * @return true if the ScheduledContextInstanceRecord contains repeating jobs, false otherwise.
+     */
+    boolean isContainsRepeatingJobs();
+
+    /**
+     * Sets whether the ScheduledContextInstanceRecord contains any repeating jobs.
+     *
+     * @param containsRepeatingJobs true if the ScheduledContextInstanceRecord contains repeating jobs, false otherwise.
+     */
+    void setContainsRepeatingJobs(boolean containsRepeatingJobs);
+
+    /**
      * Get the modified by.
      *
      * @return
