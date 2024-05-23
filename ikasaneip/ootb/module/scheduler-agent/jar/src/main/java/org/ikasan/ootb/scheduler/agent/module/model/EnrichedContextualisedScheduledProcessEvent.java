@@ -24,11 +24,14 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
         this.detachableProcess = detachableProcess;
     }
 
-    @JsonIgnore
     /*
-     * The identity is used during persistence of the process details to assist restart after agent restart
+     * This identity is used to recover the persisted process's output/return code if the agent is restarted after
+     * a crash or an orderly shutdown occurred when a command execution job was in flight.
+     * With recurring job, the context instance ID does not change for each repetition but, the nature of the
+     * queueing mechanism means they each recurrence waits for the previous to finish, so they can't overlap,
+     * so this key is unique enough.
      */
-    public String getProcessIdentity() {
+    public String generateProcessIdentity() {
         String despacedJobName = getJobName() == null ? getJobName() : getJobName().replaceAll(" ", "_");
         return getContextInstanceId() + "-" + despacedJobName;
     }
@@ -63,7 +66,6 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
         this.contextParameters = contextParameters;
     }
 
-
     /**
      * Set the context parameters.
      *
@@ -77,8 +79,21 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
     @Override
     public String toString() {
         return "EnrichedContextualisedScheduledProcessEvent{" +
+            // this
             ", detachableProcess=" + detachableProcess +
             ", contextParameters=" + contextParameters +
+
+            // ContextualisedScheduledProcessEventImpl
+            ", contextId=" + getContextName() +
+            ", childContextIds=" + getChildContextNames() +
+            ", contextInstanceId=" + getContextInstanceId() +
+            ", skipped=" + isSkipped() +
+            // getInternalEventDrivenJob() prevents further logging so is suppressed.
+            //", internalEventDrivenJob=" + getInternalEventDrivenJob() +
+            ", raisedDueToFailureResubmission=" + isRaisedDueToFailureResubmission() +
+            ", catalystEvent=" + getCatalystEvent() +
+
+            // ScheduledProcessEventImpl
             ", id=" + id +
             ", agentName='" + agentName + '\'' +
             ", agentHostname='" + agentHostname + '\'' +

@@ -53,6 +53,7 @@ public class JobStartingBrokerTest {
     final String IDENTITY = INSTANCE_ID + "-" + "XYZ_AA_B";
     private String errorLog;
     private String outputLog;
+    private long fireTime;
 
     private EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent = null;
     @Before
@@ -78,8 +79,10 @@ public class JobStartingBrokerTest {
 
         errorLog = tmpFolder.getRoot().getAbsolutePath()+"/err";
         outputLog = tmpFolder.getRoot().getAbsolutePath()+"/out";
+        fireTime = 1L;
         enrichedContextualisedScheduledProcessEvent.setResultError(errorLog);
         enrichedContextualisedScheduledProcessEvent.setResultOutput(outputLog);
+        enrichedContextualisedScheduledProcessEvent.setFireTime(fireTime);
         enrichedContextualisedScheduledProcessEvent.setContextInstanceId(INSTANCE_ID);
         enrichedContextualisedScheduledProcessEvent.setJobName(JOB_NAME);
 
@@ -271,7 +274,7 @@ public class JobStartingBrokerTest {
 
         when(processHandleMock.pid()).thenReturn(pid);
         when(schedulerPersistenceServiceMock.find(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(processHandleMock);
-        when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, pid, "me", outputLog, errorLog));
+        when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, pid, "me", outputLog, errorLog, fireTime));
 
         enrichedContextualisedScheduledProcessEvent = jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
 
