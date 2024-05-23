@@ -67,7 +67,7 @@ import java.util.Map;
  * @author Ikasan Development Team
  */
 public class JobStartingBroker implements Broker<EnrichedContextualisedScheduledProcessEvent, EnrichedContextualisedScheduledProcessEvent>,
-                                          ConfiguredResource<JobStartingBrokerConfiguration>
+    ConfiguredResource<JobStartingBrokerConfiguration>
 {
     /** logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(JobStartingBroker.class);
@@ -77,7 +77,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
 
     private String configuredResourceId;
     private JobStartingBrokerConfiguration configuration;
-    
+
     private final DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
     private final SchedulerPersistenceService schedulerPersistenceService;
     public JobStartingBroker(SchedulerPersistenceService schedulerPersistenceService) {
@@ -87,6 +87,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
     @Override
     public EnrichedContextualisedScheduledProcessEvent invoke(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) throws EndpointException
     {
+        LOGGER.info("Start JobStartingBroker with event " + scheduledProcessEvent);
         scheduledProcessEvent.setJobStarting(true);
         scheduledProcessEvent.setOutcome(Outcome.EXECUTION_INVOKED);
 
@@ -99,8 +100,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         // week that is defined.
         if(scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun() != null
             && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun().isEmpty()
-            && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun()
-            .contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) {
+            && !scheduledProcessEvent.getInternalEventDrivenJob().getDaysOfWeekToRun().contains(Calendar.getInstance().get(Calendar.DAY_OF_WEEK))) {
             return scheduledProcessEvent;
         }
 
@@ -109,18 +109,18 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                 schedulerPersistenceService,
                 new ProcessBuilder(),
                 StringUtils.split(scheduledProcessEvent.getInternalEventDrivenJob().getExecutionEnvironmentProperties(), "|"),
-                scheduledProcessEvent.getProcessIdentity()
+                scheduledProcessEvent.generateProcessIdentity()
             );
         scheduledProcessEvent.setDetachableProcess(detachableProcessBuilder.getDetachableProcess());
-        detachableProcessBuilder.command(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
 
         File outputLog;
         File errorLog;
+        long fireTime;
 
         if( ! scheduledProcessEvent.getDetachableProcess().isDetached()) {
             // This is a new process, setup appropriately
             if(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory() != null
-                && scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory().length() > 0) {
+                && !scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory().isEmpty()) {
                 File workingDirectory = new File(scheduledProcessEvent.getInternalEventDrivenJob().getWorkingDirectory());
                 detachableProcessBuilder.directory(workingDirectory);
             }
@@ -128,6 +128,8 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             FileUtil.createMissingParentDirectories(outputLog);
             detachableProcessBuilder.setInitialResultOutput(outputLog.getAbsolutePath());
             String formattedDate = formatter.format(LocalDateTime.now());
+
+            // Output log
             if(outputLog.exists()) {
                 String newFileName = scheduledProcessEvent.getResultOutput() + "." + formattedDate;
                 if (!outputLog.renameTo(new File(newFileName))) {
@@ -136,6 +138,7 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             }
             detachableProcessBuilder.redirectOutput(outputLog);
 
+            // Error log
             errorLog = new File(scheduledProcessEvent.getResultError());
             FileUtil.createMissingParentDirectories(errorLog);
             detachableProcessBuilder.setInitialErrorOutput(errorLog.getAbsolutePath());
@@ -146,6 +149,11 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                 }
             }
             detachableProcessBuilder.redirectError(errorLog);
+
+            // fire time
+            fireTime = scheduledProcessEvent.getFireTime();
+            detachableProcessBuilder.setInitialFireTime(fireTime);
+            detachableProcessBuilder.command(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine());
 
             // Some environments like cmd.exe will not persist an environment value if it is empty. This will identify
             // based on a list of environments provided in the broker configuration if a space should be added to the
@@ -177,21 +185,21 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             }
 
         } else {
-            // Once detached, configuration on the process must not change, most will have been deserialized already.
+            // Once detached, the location of output/error/firetime MUST come from the serialized process.
             outputLog = new File(detachableProcessBuilder.getInitialResultOutput());
             errorLog = new File(detachableProcessBuilder.getInitialErrorOutput());
+            fireTime = detachableProcessBuilder.getInitialFireTime();
         }
 
-        // These came from the event but may have been updated by a deserialized detached process, or fully qualified name.
         scheduledProcessEvent.setResultOutput(outputLog.getAbsolutePath());
         scheduledProcessEvent.setResultError(errorLog.getAbsolutePath());
+        scheduledProcessEvent.setFireTime(fireTime);
 
         try {
             // Start the process and enrich the payload.
             StringBuffer processStartString = new StringBuffer("\nExecuting Job -> Context Name[")
                 .append(scheduledProcessEvent.getContextName())
-                .append("] Job Name[")
-                .append(scheduledProcessEvent.getInternalEventDrivenJob().getJobName())
+                .append("] Job Name[").append(scheduledProcessEvent.getInternalEventDrivenJob().getJobName())
                 .append("]\n\n");
 
             processStartString.append("Job Parameters -> ").append("\n");
@@ -201,27 +209,21 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             }
             else {
                 scheduledProcessEvent.getContextParameters()
-                    .forEach(contextParameter -> processStartString.append("Name[")
-                        .append(contextParameter.getName())
-                        .append("] Value[")
-                        .append(contextParameter.getValue())
-                        .append("]")
-                        .append("\n"));
+                    .forEach(contextParameter -> processStartString
+                        .append("Name[").append(contextParameter.getName())
+                        .append("] Value[").append(contextParameter.getValue())
+                        .append("]").append("\n"));
             }
 
-            processStartString.append("Name[")
-                .append(LOG_FILE_PATH)
-                .append("] Value[")
-                .append(scheduledProcessEvent.getResultOutput())
-                .append("]")
-                .append("\n");
+            processStartString
+                .append("Name[").append(LOG_FILE_PATH)
+                .append("] Value[").append(scheduledProcessEvent.getResultOutput())
+                .append("]").append("\n");
 
-            processStartString.append("Name[")
-                .append(ERROR_LOG_FILE_PATH)
-                .append("] Value[")
-                .append(scheduledProcessEvent.getResultError())
-                .append("]")
-                .append("\n");
+            processStartString
+                .append("Name[").append(ERROR_LOG_FILE_PATH)
+                .append("] Value[").append(scheduledProcessEvent.getResultError())
+                .append("]").append("\n");
 
             StringBuffer commandString = new StringBuffer("Process Command -> ").append("\n");
             detachableProcessBuilder.command().stream().forEach(command -> commandString.append(command).append("\n\n"));
@@ -242,7 +244,6 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
         catch (IOException e) {
             throw new EndpointException(e);
         }
-
         return scheduledProcessEvent;
     }
 

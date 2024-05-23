@@ -1,8 +1,5 @@
 package org.ikasan.ootb.scheduler.agent.module.service.processtracker;
 
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.CommandProcessor;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcess;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -35,12 +32,13 @@ public class DetachableProcessBuilderTest {
     private static final String[] COMMANDS = { "X", "Y" } ;
     private static final String STARDARD_OUTPUT_FILE = "OutputFileName";
     private static final String ERROR_FILE = "ErrortFileName";
+    private static final long FIRE_TIME = 1L;
 
     private static final Long PROCESS_ID = 999L;
 
     @Test
     public void if_the_underlying_process_had_previously_started_and_is_now_completed() {
-        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE);
+        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE, FIRE_TIME);
 
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(schedulerIkasanProcess);
         when(schedulerPersistenceServiceMock.find(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(null);
@@ -52,13 +50,14 @@ public class DetachableProcessBuilderTest {
         assertThat(detachableProcess.isDetached()).isTrue();
         assertThat(detachableProcessBuilder.getInitialResultOutput()).isEqualTo(STARDARD_OUTPUT_FILE);
         assertThat(detachableProcessBuilder.getInitialErrorOutput()).isEqualTo(ERROR_FILE);
+        assertThat(detachableProcessBuilder.getInitialFireTime()).isEqualTo(FIRE_TIME);
         assertThat(detachableProcess.isDetachedAlreadyFinished()).isTrue();
         assertThat(detachableProcess.getPid()).isEqualTo(PROCESS_ID);
     }
 
     @Test
     public void if_the_underlying_process_had_previously_started_and_is_not_yet_completed() {
-        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE);
+        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE, FIRE_TIME);
 
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(schedulerIkasanProcess);
         when(schedulerPersistenceServiceMock.find(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(processHandleMock);
@@ -71,6 +70,7 @@ public class DetachableProcessBuilderTest {
         assertThat(detachableProcess.isDetached()).isTrue();
         assertThat(detachableProcessBuilder.getInitialResultOutput()).isEqualTo(STARDARD_OUTPUT_FILE);
         assertThat(detachableProcessBuilder.getInitialErrorOutput()).isEqualTo(ERROR_FILE);
+        assertThat(detachableProcessBuilder.getInitialFireTime()).isEqualTo(FIRE_TIME);
         assertThat(detachableProcess.isDetachedAlreadyFinished()).isFalse();
         assertThat(detachableProcess.getPid()).isEqualTo(PROCESS_ID);
     }
@@ -85,6 +85,7 @@ public class DetachableProcessBuilderTest {
         assertThat(detachableProcess.isDetached()).isFalse();
         assertThat(detachableProcessBuilder.getInitialResultOutput()).isNull();
         assertThat(detachableProcessBuilder.getInitialErrorOutput()).isNull();
+        assertThat(detachableProcessBuilder.getInitialFireTime()).isEqualTo(0);
         assertThat(detachableProcess.isDetachedAlreadyFinished()).isFalse();
         assertThat(detachableProcess.getPid()).isEqualTo(0);
     }
@@ -99,11 +100,14 @@ public class DetachableProcessBuilderTest {
     @Test
     public void when_command_called_with_valid_params_expect_them_to_be_set_on_internal_processBuilder() throws IOException {
         final String COMMAND = "dir";
-        CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
+        CommandProcessor cp = CommandProcessor.getCommandProcessor(COMMANDS);
         when(schedulerPersistenceServiceMock.createCommandScript(IDENTITY, cp.getScriptFilePostfix(), COMMAND)).thenReturn("XX");
         when(schedulerPersistenceServiceMock.getResultAbsoluteFilePath(IDENTITY)).thenReturn(STARDARD_OUTPUT_FILE);
 
         detachableProcessBuilder = new DetachableProcessBuilder(schedulerPersistenceServiceMock, new ProcessBuilder(), COMMANDS, IDENTITY);
+        detachableProcessBuilder.setInitialErrorOutput("errorfile");
+        detachableProcessBuilder.setInitialResultOutput("resultfile");
+        detachableProcessBuilder.setInitialFireTime(2L);
         detachableProcessBuilder.command(COMMAND);
 
         List<String> commands = detachableProcessBuilder.getProcessBuilder().command();
@@ -111,6 +115,8 @@ public class DetachableProcessBuilderTest {
         assertThat(commands.size()).isEqualTo(3);
         assertThat(commands.get(0)).isEqualTo(cp.getCommandArgs()[0]);
         assertThat(commands.get(1)).isEqualTo(cp.getCommandArgs()[1]);
+
+        // Part of the functionality attempts to guess the OS and act accordingly, hence this test can run on Windows or Unix.
         if (cp.equals(CommandProcessor.UNIX_BASH)) {
             assertThat(commands.get(2)).isEqualTo(
                 """
@@ -134,9 +140,9 @@ public class DetachableProcessBuilderTest {
     @Test
     public void if_process_is_not_detached_and_start_is_called_ensure_new_process_starts() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
-
         when(processBuilderMock.start()).thenReturn(processMock);
         when(processMock.pid()).thenReturn(PROCESS_ID);
+        when(processMock.toHandle()).thenReturn(processHandleMock);
 
         detachableProcessBuilder = new DetachableProcessBuilder(schedulerPersistenceServiceMock, processBuilderMock, cp.getCommandArgs(), IDENTITY);
         detachableProcessBuilder.start();
@@ -148,12 +154,12 @@ public class DetachableProcessBuilderTest {
         assertThat(detachableProcess.getProcess()).isEqualTo(processMock);
         assertThat(detachableProcess.getPid()).isEqualTo(PROCESS_ID);
 
-        Mockito.verify(schedulerPersistenceServiceMock, times(1)).persist(any(), any(), any(), any(), any());
+        Mockito.verify(schedulerPersistenceServiceMock, times(1)).persist(any(), any(), any(ProcessHandle.class), any(), any(), anyLong());
     }
 
     @Test
     public void if_process_is_detached_and_start_is_called_ensure_new_process_is_not_created() throws IOException {
-        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE);
+        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY, PROCESS_ID, "David", STARDARD_OUTPUT_FILE, ERROR_FILE, 1L);
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         when(schedulerPersistenceServiceMock.findIkasanProcess(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(schedulerIkasanProcess);
         when(schedulerPersistenceServiceMock.find(SCHEDULER_PROCESS_TYPE, IDENTITY)).thenReturn(processHandleMock);
@@ -169,6 +175,6 @@ public class DetachableProcessBuilderTest {
         assertThat(detachableProcess.getProcessHandle()).isEqualTo(processHandleMock);
         assertThat(detachableProcess.getPid()).isEqualTo(PROCESS_ID);
 
-        Mockito.verify(schedulerPersistenceServiceMock, times(0)).persist(any(), any(), any(), any(), any());
+        Mockito.verify(schedulerPersistenceServiceMock, times(0)).persist(any(), any(), any(Process.class), any(), any(), anyLong());
     }
 }
