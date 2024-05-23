@@ -1,14 +1,11 @@
 package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
 
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerProcessPersistenceDao;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
-import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -23,9 +20,9 @@ public class SchedulerKryoProcessPersistenceImplTest {
     }
 
     @Test
-    void successful_save_find_delete() throws IOException
+    void successful_save_find_delete()
     {
-        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess("type", "name", 12345, "user", "outdir", "errdir");
+        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess("type", "name", 12345, "user", "outdir", "errdir", 1L);
         schedulerKryoProcessPersistence.save(schedulerIkasanProcess);
 
         SchedulerIkasanProcess schedulerIkasanProcess1 = schedulerKryoProcessPersistence.find("type", "name");
