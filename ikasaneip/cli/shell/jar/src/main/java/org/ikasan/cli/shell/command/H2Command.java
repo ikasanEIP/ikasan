@@ -63,8 +63,8 @@ public class H2Command extends ActionCommand
     @Value("${h2.logging.file:logs/h2.log}")
     String h2Log;
 
-    @Value("${h2.command.start.process.wait.timeout.seconds:60}")
-    int commandStartProcessWaitTimeoutSeconds = 60;
+    @Value("${h2.command.start.process.wait.timeout.seconds:-1}")
+    int commandStartProcessWaitTimeoutSeconds = -1;
 
     /**
      * Start H2 process.
