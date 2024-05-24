@@ -113,7 +113,7 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
             return this.objectMapper.readValue(input, H2DatabaseBackupManifest.class);
         }
         catch(IOException e) {
-            logger.debug("File [" + path + "] not found");
+            logger.info("Backup manifest file [" + path + "] not found");
             return null;
         }
     }
