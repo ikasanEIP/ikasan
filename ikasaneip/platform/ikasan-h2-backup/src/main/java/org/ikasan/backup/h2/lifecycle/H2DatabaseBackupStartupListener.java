@@ -6,9 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextClosedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.context.event.ContextStartedEvent;
 
-public class H2DatabaseBackupStartupListener implements ApplicationListener<ContextStartedEvent> {
+public class H2DatabaseBackupStartupListener implements ApplicationListener<ContextRefreshedEvent> {
 
     private static Logger logger = LoggerFactory.getLogger(H2DatabaseBackupStartupListener.class);
 
@@ -22,7 +23,7 @@ public class H2DatabaseBackupStartupListener implements ApplicationListener<Cont
     }
 
     @Override
-    public void onApplicationEvent(ContextStartedEvent event) {
+    public void onApplicationEvent(ContextRefreshedEvent event) {
         logger.info("Removing H2 database backup manifest on startup.");
         try {
             this.h2DatabaseBackupManifestService.delete();
