@@ -139,9 +139,12 @@ public class DefaultOperationImpl implements Operation
 
         if(startupTimeoutSeconds > 0) {
             try {
+                // some processes fork another process on startup and we need to wait
+                // until the forked process has started.
                 boolean started = process.waitFor(startupTimeoutSeconds, TimeUnit.SECONDS);
                 if(!started) {
-                    throw new RuntimeException("");
+                    throw new RuntimeException(String.format("The startup process that was being waited upon has either timed out or " +
+                        "not started successfully. Process Type[%s], Module Name[%s], Timeout Seconds[%s.]"));
                 }
             }
             catch (InterruptedException e) {
