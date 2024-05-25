@@ -18,7 +18,7 @@ public class CustomMetric implements Serializable
     @Column(name="Name", nullable = false)
     private String name;
 
-    @Column(name="CustomValue", nullable = false)
+    @Column(name="Value", nullable = false)
     private String value;
 
 	protected CustomMetric() 
