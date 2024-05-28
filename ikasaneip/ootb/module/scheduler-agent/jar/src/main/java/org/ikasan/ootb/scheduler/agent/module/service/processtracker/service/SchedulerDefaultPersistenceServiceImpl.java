@@ -21,22 +21,6 @@ public class SchedulerDefaultPersistenceServiceImpl extends DefaultPersistenceSe
     }
 
     @Override
-    public void persist(String type, String name, Process process, String resultOutput, String errorOutput, long fireTime)
-    {
-        Optional<String> user = process.info().user();
-        processPersistenceDao.save(
-            new SchedulerIkasanProcess(
-                type,
-                name,
-                process.pid(),
-                user.orElse(null),
-                resultOutput,
-                errorOutput,
-                fireTime)
-        );
-    }
-
-    @Override
     public void persist(String type, String name, ProcessHandle processHandle, String resultOutput, String errorOutput, long fireTime)
     {
         Optional<String> user = processHandle.info().user();

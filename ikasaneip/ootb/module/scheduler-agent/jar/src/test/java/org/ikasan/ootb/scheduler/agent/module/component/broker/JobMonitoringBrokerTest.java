@@ -2,13 +2,15 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.CommandProcessor;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcess;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.ProcessStatusDao;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.ProcessStatusDaoFSImp;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
+import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerProcessPersistenceDao;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
 import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
-import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.InternalEventDrivenJobInstanceDto;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -33,7 +35,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.stream.IntStream;
 
 import static org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker.DEFAULT_ERROR_RETURN_CODE;
-import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,8 +42,12 @@ public class JobMonitoringBrokerTest {
     private static final Long DEFAULT_TIMEOUT = 240L;
     @Mock
     private Process processMock;
+
     @Mock
-    private SchedulerPersistenceService schedulerPersistenceServiceMock;
+    private SchedulerProcessPersistenceDao schedulerProcessPersistenceDaoMock;
+    @Mock
+    private ProcessStatusDao processStatusDaoMock;
+
     @Mock
     private ProcessHandle processHandleMock;
     @Mock
@@ -236,15 +241,17 @@ public class JobMonitoringBrokerTest {
 
     @Test
     public void test_job_monitor_running_too_long() throws InterruptedException, IOException {
+        SchedulerPersistenceService schedulerPersistenceService = new SchedulerDefaultPersistenceServiceImpl(schedulerProcessPersistenceDaoMock, processStatusDaoMock);
+
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
-        Long timeout = 1L;
+        long timeout = 1L;
         when(processMock.waitFor(timeout, TimeUnit.MINUTES)).thenReturn(false);
         configuration.setTimeout(timeout);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getMockedEnrichedContextualisedScheduledProcessEvent(false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.createEnrichedContextualisedScheduledProcessEvent(false, false);
         event.setContextInstanceId(INSTANCE_ID);
         event.setJobName(JOB_NAME);
-        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceServiceMock, IDENTITY, cp);
+        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceService, IDENTITY, cp);
         detachableProcess.setDetached(false);
         detachableProcess.setDetachedAlreadyFinished(false);
         detachableProcess.setProcess(processMock);
@@ -264,21 +271,21 @@ public class JobMonitoringBrokerTest {
 
         Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting."));
 
-        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
-        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
     }
 
     @Test
     public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_ends_inside_timeout() throws IOException {
+        SchedulerPersistenceService schedulerPersistenceService = new SchedulerDefaultPersistenceServiceImpl(schedulerProcessPersistenceDaoMock, processStatusDaoMock);
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
-        when(schedulerPersistenceServiceMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
+        when(processStatusDaoMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
         when(processHandleMock.onExit()).thenReturn(completableFutureMock);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getMockedEnrichedContextualisedScheduledProcessEvent(false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.createEnrichedContextualisedScheduledProcessEvent(false, false);
         event.setContextInstanceId(INSTANCE_ID);
         event.setJobName(JOB_NAME);
-        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceServiceMock, IDENTITY, cp);
+        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceService, IDENTITY, cp);
         detachableProcess.setDetached(true);
         detachableProcess.setDetachedAlreadyFinished(false);
         detachableProcess.setProcess(null);
@@ -298,20 +305,20 @@ public class JobMonitoringBrokerTest {
         Assert.assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
         Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
 
-        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
-        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
     }
 
     @Test
     public void test_job_monitor_when_recovered_from_agent_crash_and_process_finished_during_agent_outage() throws IOException {
+        SchedulerPersistenceService schedulerPersistenceService = new SchedulerDefaultPersistenceServiceImpl(schedulerProcessPersistenceDaoMock, processStatusDaoMock);
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
-        when(schedulerPersistenceServiceMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
+        when(processStatusDaoMock.getPersistedReturnCode(IDENTITY)).thenReturn("0");
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getMockedEnrichedContextualisedScheduledProcessEvent(false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.createEnrichedContextualisedScheduledProcessEvent(false, false);
         event.setContextInstanceId(INSTANCE_ID);
         event.setJobName(JOB_NAME);
-        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceServiceMock, IDENTITY, cp);
+        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceService, IDENTITY, cp);
         detachableProcess.setDetached(true);
         detachableProcess.setDetachedAlreadyFinished(true);
         detachableProcess.setProcess(null);
@@ -331,21 +338,21 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getDetachableProcess().isDetachedAlreadyFinished());
         Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
 
-        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
-        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
     }
     @Test
     public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_does_not_end_within_timeout() throws ExecutionException, InterruptedException, TimeoutException, IOException {
+        SchedulerPersistenceService schedulerPersistenceService = new SchedulerDefaultPersistenceServiceImpl(schedulerProcessPersistenceDaoMock, processStatusDaoMock);
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
 
         when(processHandleMock.onExit()).thenReturn(completableFutureMock);
         when(completableFutureMock.get(DEFAULT_TIMEOUT, TimeUnit.MINUTES)).thenThrow(new TimeoutException());
         when(processHandleMock.destroy()).thenReturn(true);
 
-        EnrichedContextualisedScheduledProcessEvent event = this.getMockedEnrichedContextualisedScheduledProcessEvent(false, false);
+        EnrichedContextualisedScheduledProcessEvent event = this.createEnrichedContextualisedScheduledProcessEvent(false, false);
         event.setContextInstanceId(INSTANCE_ID);
         event.setJobName(JOB_NAME);
-        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceServiceMock, IDENTITY, cp);
+        DetachableProcess detachableProcess = new DetachableProcess(schedulerPersistenceService, IDENTITY, cp);
         detachableProcess.setDetached(true);
         detachableProcess.setDetachedAlreadyFinished(false);
         detachableProcess.setProcess(null);
@@ -365,8 +372,7 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally"));
         Assert.assertTrue(event.getExecutionDetails().contains("WARNING : There were problems getting the return status from the detached process, it will be treated as an error, issue was"));
 
-        verify(schedulerPersistenceServiceMock, times(0)).remove(SCHEDULER_PROCESS_TYPE, IDENTITY);
-        verify(schedulerPersistenceServiceMock, times(1)).removeAll(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
     }
 
     private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip
@@ -386,12 +392,6 @@ public class JobMonitoringBrokerTest {
 
         this.invokeJobStarting(enrichedContextualisedScheduledProcessEvent);
 
-        return enrichedContextualisedScheduledProcessEvent;
-    }
-
-    private EnrichedContextualisedScheduledProcessEvent getMockedEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip) {
-        EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent =
-            this.createEnrichedContextualisedScheduledProcessEvent(dryRun, skip);
         return enrichedContextualisedScheduledProcessEvent;
     }
 
