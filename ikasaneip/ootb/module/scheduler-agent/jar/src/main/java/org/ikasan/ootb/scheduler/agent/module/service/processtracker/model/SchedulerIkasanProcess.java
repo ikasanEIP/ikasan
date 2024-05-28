@@ -31,14 +31,10 @@ public class SchedulerIkasanProcess extends IkasanProcess {
     public String getErrorOutput() {
         return errorOutput;
     }
-    public void setErrorOutput(String errorOutput) {
-        this.errorOutput = errorOutput;
-    }
 
     public long getFireTme() {
         return fireTme;
     }
-    public void setFireTme(long fireTme) { this.fireTme = fireTme; }
 
     @Override
     public boolean equals(Object o) {
