@@ -6,8 +6,6 @@ import java.io.IOException;
 
 public interface SchedulerPersistenceService extends PersistenceService {
 
-    void persist(String type, String name, Process process, String resultOutput, String errorOutput, long fireTime);
-
     void persist(String type, String name, ProcessHandle process, String resultOutput, String errorOutput, long fireTime);
 
     void removeAll(String processIdentity, String scriptPostfix) throws IOException;

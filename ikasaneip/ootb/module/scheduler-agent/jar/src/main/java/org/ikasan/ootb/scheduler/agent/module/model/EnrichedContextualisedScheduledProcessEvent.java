@@ -39,8 +39,8 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
     @JsonIgnore
     public void setDetailsFromProcess() {
         if (detachableProcess.isDetachedAlreadyFinished()) {
-            setUser("Detatched process");
-            setCommandLine("Detatched process");
+            setUser("Detached process");
+            setCommandLine("Detached process");
         } else {
             ProcessHandle.Info info = detachableProcess.getInfo();
             if(info != null && info.user().isPresent()) {
