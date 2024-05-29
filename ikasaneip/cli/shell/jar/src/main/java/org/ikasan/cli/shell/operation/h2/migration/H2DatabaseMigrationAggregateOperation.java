@@ -23,8 +23,8 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     private String dbMigrationWorkingDirectory;
     private String migratedOutputSqlFileName;
     private String postProcessedOutputSqlFileName;
-
     private String persistenceDir;
+    private boolean isEsbDatabase;
 
     /**
      * Represents an aggregate operation for migrating H2 databases.
@@ -33,7 +33,8 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
         , String h2ChangeLogRunScriptJavaCommand, String determineIfDbFileAlreadyTargetVersionCommand
         , String sourceH2Version, String targetH2Version
         , String h2User, String h2Password, String databasePath, String dbMigrationWorkingDirectory
-        , String migratedOutputSqlFileName, String postProcessedOutputSqlFileName, String persistenceDir) {
+        , String migratedOutputSqlFileName, String postProcessedOutputSqlFileName, String persistenceDir
+        , boolean isEsbDatabase) {
         this.h2ScriptJavaCommand = h2ScriptJavaCommand;
         if(this.h2ScriptJavaCommand == null) {
             throw new IllegalArgumentException("h2ScriptJavaCommand cannot be null!");
@@ -86,6 +87,7 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
         if (this.persistenceDir == null) {
             throw new IllegalArgumentException("persistenceDir cannot be null!");
         }
+        this.isEsbDatabase = isEsbDatabase;
         super.operations = initialiseExecutableOperations();
     }
 
@@ -106,9 +108,11 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
             List.of(performTokenReplacements(this.h2RunScriptJavaCommand)), "migrate-h2");
         executableOperations.add(migrateDataToNewTarget);
 
-        DefaultForkedExecutableOperationImpl updateChangeLogSql = new DefaultForkedExecutableOperationImpl(ProcessType.getH2Instance(),
-            List.of(performTokenReplacements(this.h2ChangeLogRunScriptJavaCommand)), "migrate-h2");
-        executableOperations.add(updateChangeLogSql);
+        if(this.isEsbDatabase) {
+            DefaultForkedExecutableOperationImpl updateChangeLogSql = new DefaultForkedExecutableOperationImpl(ProcessType.getH2Instance(),
+                List.of(performTokenReplacements(this.h2ChangeLogRunScriptJavaCommand)), "migrate-h2");
+            executableOperations.add(updateChangeLogSql);
+        }
 
         H2DatabaseMigrationSourceDatabaseFileRenameOperation h2DatabaseMigrationSourceDatabaseFileRenameOperation
             = new H2DatabaseMigrationSourceDatabaseFileRenameOperation(this.sourceH2Version, databasePath.substring(0, databasePath.lastIndexOf("/")), "esb");
@@ -142,7 +146,7 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     public DefaultCheckMigrationRunOperationImpl getCheckMigrationRunOperation() {
         return new H2CheckMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
             , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version, this.databasePath
-            , List.of(this.performTokenReplacements(determineIfDbFileAlreadyTargetVersionCommand)));
+            , List.of(this.performTokenReplacements(this.determineIfDbFileAlreadyTargetVersionCommand)));
     }
 
     @Override
