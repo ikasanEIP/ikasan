@@ -98,6 +98,9 @@ public class H2MigrationCommand
     @Value("${h2.db.migration.should.run:true}")
     private boolean dbMigrationShouldRun;
 
+    @Value("${h2.db.migration.module.name.persistence.file.suffix:-db}")
+    private String moduleNamePersistenceFileSuffix;
+
     /**
      * Migrates H2 persistence.
      *
@@ -116,7 +119,9 @@ public class H2MigrationCommand
                             @Option(description = "The username of the H2 database to use for the migration.", longNames = "h2-user",defaultValue = "sa")  String h2User,
                             @Option(description = "The password of the H2 database to use for the migration.", longNames = "h2-password",defaultValue = "sa")  String h2Password,
                             @Option(description = "The path to the database. The general Ikasan convention [<persistence-dir>/<module-name>-db/esb]" +
-                                " will be used by default.", longNames = "h2-database-location",defaultValue = "")  String databaseLocation) {
+                                " will be used by default.", longNames = "h2-database-location",defaultValue = "")  String databaseLocation,
+                            @Option(description = "Boolean flag to indicate whether the database being migrated is a " +
+                                "core Ikasan ESB database or not.", longNames = "h2-database-is-esb-database",defaultValue = "true") boolean isEsbDatabase) {
         if(!dbMigrationShouldRun) return "H2 DB migration will not run. Property h2.db.migration.should.run is set to false.";
 
         H2DatabaseMigrationAggregateOperation h2DatabaseMigrationAggregateOperation
@@ -124,7 +129,7 @@ public class H2MigrationCommand
                 , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
                 , targetH2Version, h2User, h2Password, databaseLocation == null || databaseLocation.isEmpty()
                     ? this.buildDatabasePath(): databaseLocation, this.dbMigrationWorkingDirectory
-                , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir);
+                , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase);
 
         logger.info(sourceH2Version + targetH2Version + h2User + h2Password);
 
@@ -137,6 +142,6 @@ public class H2MigrationCommand
      * @return The database path.
      */
     private String buildDatabasePath() {
-        return this.persistenceDir + "/" + this.moduleName + "-db/esb";
+        return this.persistenceDir + "/" + this.moduleName + this.moduleNamePersistenceFileSuffix + "/esb";
     }
 }
