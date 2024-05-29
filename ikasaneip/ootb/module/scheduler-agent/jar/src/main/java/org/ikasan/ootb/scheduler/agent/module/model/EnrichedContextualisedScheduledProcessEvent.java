@@ -89,7 +89,6 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
             ", contextInstanceId=" + getContextInstanceId() +
             ", skipped=" + isSkipped() +
             // getInternalEventDrivenJob() prevents further logging so is suppressed.
-            //", internalEventDrivenJob=" + getInternalEventDrivenJob() +
             ", raisedDueToFailureResubmission=" + isRaisedDueToFailureResubmission() +
             ", catalystEvent=" + getCatalystEvent() +
 
