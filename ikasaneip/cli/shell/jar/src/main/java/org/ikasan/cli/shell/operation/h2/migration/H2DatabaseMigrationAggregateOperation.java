@@ -119,7 +119,7 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
         executableOperations.add(h2DatabaseMigrationSourceDatabaseFileRenameOperation);
 
         H2DatabaseMigrationTargetDatabaseFileRenameOperation h2DatabaseMigrationTargetDatabaseFileRenameOperation
-            = new H2DatabaseMigrationTargetDatabaseFileRenameOperation(databasePath.substring(0, databasePath.lastIndexOf("/")), "esb");
+            = new H2DatabaseMigrationTargetDatabaseFileRenameOperation(databasePath.substring(0, databasePath.lastIndexOf("/")), databasePath.substring(databasePath.lastIndexOf("/")+1));
         executableOperations.add(h2DatabaseMigrationTargetDatabaseFileRenameOperation);
 
         return executableOperations;
