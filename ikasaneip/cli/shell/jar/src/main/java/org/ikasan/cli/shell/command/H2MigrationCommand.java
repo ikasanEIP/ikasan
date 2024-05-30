@@ -98,8 +98,8 @@ public class H2MigrationCommand
     @Value("${h2.db.migration.should.run:true}")
     private boolean dbMigrationShouldRun;
 
-    @Value("${h2.db.migration.module.name.persistence.file.suffix:-db}")
-    private String moduleNamePersistenceFileSuffix;
+    @Value("${h2.db.migration.module.name.persistence.directory.suffix:-db}")
+    private String moduleNamePersistenceDirectorySuffix;
 
     /**
      * Migrates H2 persistence.
@@ -142,6 +142,6 @@ public class H2MigrationCommand
      * @return The database path.
      */
     private String buildDatabasePath() {
-        return this.persistenceDir + "/" + this.moduleName + this.moduleNamePersistenceFileSuffix + "/esb";
+        return this.persistenceDir + "/" + this.moduleName + this.moduleNamePersistenceDirectorySuffix + "/esb";
     }
 }

@@ -48,7 +48,7 @@ public abstract class AbstractAggregateOperation {
             }
             catch (Exception e) {
                 throw new AggregateOperationException(String.format("An exception has occurred executing " +
-                    "an executable operation! The following steps executed successfully:\r\n", result.get().toString()), e);
+                    "an executable operation! The following steps executed successfully:\r\n%s", result.get().toString()), e);
             }
         });
 
