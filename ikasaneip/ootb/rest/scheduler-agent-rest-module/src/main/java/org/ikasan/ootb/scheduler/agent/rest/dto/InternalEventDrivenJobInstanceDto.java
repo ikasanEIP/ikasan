@@ -40,6 +40,7 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     private Map<String, Boolean> skippedContexts;
     private Map<String, Boolean> heldContexts;
     private boolean jobRepeatable;
+    private boolean killed;
     private int ordinal = -1;
 
     @Override
@@ -330,6 +331,16 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     @Override
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
+    }
+
+    @Override
+    public boolean isKilled() {
+        return killed;
+    }
+
+    @Override
+    public void setKilled(boolean killed) {
+        this.killed = killed;
     }
 
     @Override

@@ -21,6 +21,7 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
     private boolean participatesInLock;
     private String executionEnvironmentProperties;
     private boolean repeatable;
+    private boolean killed;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -130,6 +131,16 @@ public class InternalEventDrivenJobImpl extends SchedulerJobImpl implements Inte
     @Override
     public boolean isJobRepeatable() {
         return this.repeatable;
+    }
+
+    @Override
+    public boolean isKilled() {
+        return killed;
+    }
+
+    @Override
+    public void setKilled(boolean killed) {
+        this.killed = killed;
     }
 
     @Override
