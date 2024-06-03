@@ -152,10 +152,27 @@ public interface InternalEventDrivenJob extends SchedulerJob, Serializable {
      */
     void setJobRepeatable(boolean jobRepeatable);
 
+
     /**
-     * Set flag to indicate that a job can be repeated.
+     * Check if the job can be repeated.
      *
-     * @return
+     * @return true if the job can be repeated, false otherwise
      */
     boolean isJobRepeatable();
+
+
+    /**
+     * Sets the 'killed' flag for the SchedulerJob.
+     *
+     * @param killed the new value of the 'killed' flag
+     */
+    void setKilled(boolean killed);
+
+
+    /**
+     * Checks if the SchedulerJob is killed.
+     *
+     * @return true if the job is killed, false otherwise
+     */
+    boolean isKilled();
 }
