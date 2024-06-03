@@ -40,6 +40,7 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private Map<String, Boolean> heldContexts;
     private String executionEnvironmentProperties;
     private boolean jobRepeatable;
+    private boolean killed;
     private int ordinal = -1;
 
     @Override
@@ -330,6 +331,16 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setOrdinal(int ordinal) {
         this.ordinal = ordinal;
+    }
+
+    @Override
+    public boolean isKilled() {
+        return killed;
+    }
+
+    @Override
+    public void setKilled(boolean killed) {
+        this.killed = killed;
     }
 
     @Override
