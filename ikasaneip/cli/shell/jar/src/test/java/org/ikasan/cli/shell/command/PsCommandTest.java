@@ -117,6 +117,58 @@ class PsCommandTest
     }
 
     @Test
+    void successful_ps_h2_and_module_match_with_prefix_on_module_name() throws IOException, JSONException
+    {
+        List<String> firstProcess = new ArrayList<String>();
+        firstProcess.add("java");
+        firstProcess.add("-classpath");
+        firstProcess.add("cli/shell/target/test-classes:target/test-classes");
+        firstProcess.add("org.ikasan.cli.sample.process.SampleProcess");
+        firstProcess.add("-Dmodule.name=h2-sampleProcess");
+        firstProcess.add("-DfakeH2Signature=org.h2.tools.Server");
+
+        ProcessBuilder processBuilder = new ProcessBuilder(firstProcess);
+        Process process = processBuilder.start();
+        processes.add(process);
+
+        List<String> secondProcess = new ArrayList<String>();
+        secondProcess.add("java");
+        secondProcess.add("-classpath");
+        secondProcess.add("cli/shell/target/test-classes:target/test-classes");
+        secondProcess.add("org.ikasan.cli.sample.process.SampleProcess");
+        secondProcess.add("-Dmodule.name=h2-sampleProcess");
+        secondProcess.add("-DfakeModuleSignature=spring.jta.logDir");
+
+        processBuilder = new ProcessBuilder(secondProcess);
+        process = processBuilder.start();
+        processes.add(process);
+
+        // give process time to start
+        pause(1000);
+
+        PsCommand command = new PsCommand();
+
+        // test all match
+        JSONObject result = command._ps("sampleProcess", null);
+        JSONArray processes = (JSONArray)result.get("Processes");
+        Assert.assertTrue(processes.length() == 2);
+
+        JSONObject resultProcess = (JSONObject)processes.get(0);
+        Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
+        Assert.assertTrue("type should be H2, but returned " + resultProcess.get("type"), resultProcess.get("type").equals("H2"));
+        Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
+        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
+        Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
+
+        resultProcess = (JSONObject)processes.get(1);
+        Assert.assertTrue("running should be true", resultProcess.get("running").equals(true));
+        Assert.assertTrue("type should be H2", resultProcess.get("type").equals("Module"));
+        Assert.assertTrue("operation should be ps", resultProcess.get("operation").equals("ps"));
+        Assert.assertNotNull("username should be not null", resultProcess.get("username"));
+        Assert.assertNotNull("pid should be not null", resultProcess.get("pid"));
+    }
+
+    @Test
     void successful_ps_h2_match_no_module_match() throws IOException, JSONException
     {
         List<String> firstProcess = new ArrayList<String>();

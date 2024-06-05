@@ -146,7 +146,13 @@ Ikasan Shell:>
 | stop-solr    | Stop the Solr instance associated with the Ikasan Dashboard                                                                                                      | -name <Alternate Module Name>                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 The configuration property `command.stop.process.wait.timeout.seconds` can be added to the application properties to configure a wait time for processes to stop. This has a default value of 300 seconds.
-The configuration property `h2.db.migration.module.name.persistence.directory.suffix` can be added to the properties of there is a suffix added to the module name for the database file location. The default is `-db`. 
+
+The configuration property `h2.db.migration.module.persistence.database.path` is mandatory. It is the full path to the default ESB database of the module. For example `/opt/data/my-module/db/esb` where 
+the database on the file system is `/opt/data/my-module/db/esb.mv.db`.
+> [!WARNING]
+> If the property `h2.db.migration.module.persistence.database.path` has not been defined in the properties of the module, an exception will be thrown
+> by the Ikasan Shell.
+
 #### Sample Usage
 Command
 

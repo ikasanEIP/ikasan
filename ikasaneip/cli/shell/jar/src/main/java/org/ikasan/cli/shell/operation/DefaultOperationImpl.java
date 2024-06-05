@@ -184,7 +184,7 @@ public class DefaultOperationImpl implements Operation
                 String[] moduleNameParts = param.split("=");
                 if(moduleNameParts.length == 2)
                 {
-                    return moduleNameParts[1].trim().toLowerCase().equals(name.toLowerCase());
+                    return moduleNameParts[1].trim().toLowerCase().endsWith(name.toLowerCase());
                 }
             }
         }
