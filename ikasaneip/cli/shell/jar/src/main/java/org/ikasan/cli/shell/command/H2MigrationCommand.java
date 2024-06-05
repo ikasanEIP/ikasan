@@ -62,10 +62,10 @@ public class H2MigrationCommand
     @Value("${module.name:null}")
     private String moduleName;
 
-    @Value("${h2.script.command:null}")
+    @Value("${h2.script.command:#{null}}")
     private String h2ScriptJavaCommand;
 
-    @Value("${h2.runscript.command:null}")
+    @Value("${h2.runscript.command:#{null}}")
     private String h2RunScriptJavaCommand;
 
     @Value("${h2.changelog.runscript.command}")
@@ -98,8 +98,8 @@ public class H2MigrationCommand
     @Value("${h2.db.migration.should.run:true}")
     private boolean dbMigrationShouldRun;
 
-    @Value("${h2.db.migration.module.name.persistence.directory.suffix:-db}")
-    private String moduleNamePersistenceDirectorySuffix;
+    @Value("${h2.db.migration.module.persistence.database.path:#{null}}")
+    private String modulePersistenceDatabasePath;
 
     /**
      * Migrates H2 persistence.
@@ -124,24 +124,20 @@ public class H2MigrationCommand
                                 "core Ikasan ESB database or not.", longNames = "h2-database-is-esb-database",defaultValue = "true") boolean isEsbDatabase) {
         if(!dbMigrationShouldRun) return "H2 DB migration will not run. Property h2.db.migration.should.run is set to false.";
 
+        if(this.modulePersistenceDatabasePath == null || this.modulePersistenceDatabasePath.isEmpty()) {
+            throw new RuntimeException("Property h2.db.migration.module.persistence.database.path has not been defined " +
+                "and as a result the H2 database migration cannot run. Please see documentation for further details.");
+        }
+
         H2DatabaseMigrationAggregateOperation h2DatabaseMigrationAggregateOperation
             = new H2DatabaseMigrationAggregateOperation(this.h2ScriptJavaCommand, this.h2RunScriptJavaCommand
                 , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
                 , targetH2Version, h2User, h2Password, databaseLocation == null || databaseLocation.isEmpty()
-                    ? this.buildDatabasePath(): databaseLocation, this.dbMigrationWorkingDirectory
+                    ? this.modulePersistenceDatabasePath: databaseLocation, this.dbMigrationWorkingDirectory
                 , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase);
 
         logger.info(sourceH2Version + targetH2Version + h2User + h2Password);
 
         return h2DatabaseMigrationAggregateOperation.execute();
-    }
-
-    /**
-     * Builds the database path using the persistence directory and module name.
-     *
-     * @return The database path.
-     */
-    private String buildDatabasePath() {
-        return this.persistenceDir + "/" + this.moduleName + this.moduleNamePersistenceDirectorySuffix + "/esb";
     }
 }
