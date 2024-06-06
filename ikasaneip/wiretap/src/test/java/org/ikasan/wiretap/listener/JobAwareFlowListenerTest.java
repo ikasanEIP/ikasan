@@ -57,6 +57,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -73,6 +74,7 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={WiretapAutoConfiguration.class, WiretapTestAutoConfiguration.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@Sql(scripts = "/alter-flow-event-trigger-remove-hibernate-auto-create-enum-constraint.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 public class JobAwareFlowListenerTest
 {
 
@@ -100,8 +102,6 @@ public class JobAwareFlowListenerTest
 	@Before
 	public void setup()
 	{
-	    //String moduleName, String flowName, String relationshipDescription, String jobName
-
         Trigger trigger1Before = new TriggerImpl(MODULE_1,FLOW_1, TriggerRelationship.BEFORE.getDescription(),"trigger1Before");
         Trigger trigger1After = new TriggerImpl(MODULE_1,FLOW_1, TriggerRelationship.AFTER.getDescription(),"trigger1After");
         Trigger trigger2Before = new TriggerImpl(MODULE_1,FLOW_2, TriggerRelationship.BEFORE.getDescription(),"trigger2Before");
