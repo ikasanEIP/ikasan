@@ -11,14 +11,17 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @EnableWebMvc
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
-    @Value("${ikasan.additional.unsecured.endpoint:/actuator/**}")
-    private String additionalUnsecuredEndpoints;
+    @Value("${ikasan.additional.unsecured.endpoint:}")
+    private List<String> additionalUnsecuredEndpoints = new ArrayList<>();
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
@@ -27,11 +30,12 @@ public class WebSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        additionalUnsecuredEndpoints.addAll(List.of("/login.jsp", "/css/**", "/images/**", "/js/**", "/rest/**", "/actuator/**"));
         http
             .httpBasic(httpSecurityHttpBasicConfigurer -> {})
             .authorizeHttpRequests(authorizationManagerRequestMatcherRegistry
                 -> authorizationManagerRequestMatcherRegistry
-                    .requestMatchers("/login.jsp", "/css/**", "/images/**", "/js/**", "/rest/**", additionalUnsecuredEndpoints)
+                    .requestMatchers(additionalUnsecuredEndpoints.toArray(new String[additionalUnsecuredEndpoints.size()]))
                     .permitAll()
                     .requestMatchers("/admin/**")
                     .hasAnyAuthority("ALL", "WebServiceAdmin", "WriteBlueConsole")
