@@ -41,6 +41,9 @@
 package org.ikasan.trigger.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Check;
+import org.hibernate.annotations.ColumnTransformer;
+import org.hibernate.annotations.Type;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
 
@@ -95,6 +98,7 @@ public class TriggerImpl implements Trigger
 
     /** Either before or after */
     @Enumerated(EnumType.STRING)
+    @ColumnTransformer(read = "UPPER(Relationship)", write = "LOWER(?)")
     @Column(name = "Relationship", nullable = false)
     private TriggerRelationship relationship;
 

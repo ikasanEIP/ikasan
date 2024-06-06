@@ -2,7 +2,6 @@ package org.ikasan;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.jta.UserTransaction;
-import jakarta.persistence.EntityManagerFactory;
 import liquibase.Liquibase;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -15,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;

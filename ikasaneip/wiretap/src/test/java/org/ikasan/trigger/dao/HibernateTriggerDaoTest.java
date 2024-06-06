@@ -42,14 +42,6 @@ package org.ikasan.trigger.dao;
 
 import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.WiretapTestAutoConfiguration;
-import org.ikasan.history.dao.MessageHistoryDao;
-import org.ikasan.history.model.ComponentInvocationMetricImpl;
-import org.ikasan.history.model.CustomMetric;
-import org.ikasan.history.model.FlowInvocationMetricImpl;
-import org.ikasan.history.model.MetricEvent;
-import org.ikasan.spec.history.ComponentInvocationMetric;
-import org.ikasan.spec.history.FlowInvocationMetric;
-import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.trigger.Trigger;
 import org.ikasan.spec.trigger.TriggerRelationship;
 import org.ikasan.trigger.model.TriggerImpl;
@@ -59,11 +51,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.SimplePropertyRowMapper;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -81,7 +72,8 @@ import static org.junit.Assert.assertEquals;
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes={WiretapAutoConfiguration.class, WiretapTestAutoConfiguration.class})
 @DirtiesContext
-public class HibernatTriggerDaoTest
+@Sql(scripts = "/alter-flow-event-trigger-remove-hibernate-auto-create-enum-constraint.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
+public class HibernateTriggerDaoTest
 {
     @Resource
     private TriggerDao triggerDao;
@@ -99,18 +91,8 @@ public class HibernatTriggerDaoTest
             values
                 (  ?, ?, ?, ?)\
         """;
- String insertSqlFlowEventTriggerParameters = """
-        insert\s
-            into
-                FlowEventTriggerParameters
-                (  ParamName, ParamValue)\s
-            values
-                ( ?, ?)\
-        """;
 
     String deleteAllSql = "delete from FlowEventTrigger";
-
-    String selectSql = "SELECT * FROM  FlowEventTrigger";
 
     @Before
     public void setup()
@@ -119,64 +101,74 @@ public class HibernatTriggerDaoTest
     }
 
 
+    @Test(expected = IllegalArgumentException.class)
+    public void test_bad_relationship_name_exception(){
+        new TriggerImpl("testModule","testFlow","BAD_RELATIONSHIP","test");
+    }
 
     @Test
-    public void testSaveFind(){
-
+    public void test_save_find_success_lower_case_relationship(){
         Trigger trigger =  new TriggerImpl("testModule","testFlow","after","test");
         triggerDao.save(trigger);
 
-        Assert.assertTrue(trigger.getId() >0);
+        Assert.assertTrue(trigger.getId() > 0);
 
         List<Trigger> all = triggerDao.findAll();
 
         Assert.assertEquals(1,all.size());
-
+        Assert.assertEquals(TriggerRelationship.AFTER,all.get(0).getRelationship());
     }
 
     @Test
-    public void testMigratedData(){
+    public void test_save_find_success_upper_case_relationship(){
+        Trigger trigger =  new TriggerImpl("testModule","testFlow","AFTER","test");
+        triggerDao.save(trigger);
 
-//        Trigger trigger =  new TriggerImpl("testModule","testFlow","after","test");
-//        triggerDao.save(trigger);
-//
-//        List<Map<String,Object>> result = jdbcTemplate.queryForList(selectSql);
-//        assertEquals(0, result.size());
+        Assert.assertTrue(trigger.getId() > 0);
 
+        List<Trigger> all = triggerDao.findAll();
 
-//        Object[] params0 = new Object[] { "timeToLive", "100"
-//        };
-//        int[] types0 = new int[] {Types.VARCHAR, Types.VARCHAR
-//        };
-//        // add data to FlowEventTriggerParameters table
-//        int row0 = jdbcTemplate.update(insertSqlFlowEventTriggerParameters, params0, types0);
+        Assert.assertEquals(1,all.size());
+        Assert.assertEquals(TriggerRelationship.AFTER,all.get(0).getRelationship());
+    }
 
-
+    @Test
+    public void test_insert_relationship_lower_case_success(){
 
         Object[] params = new Object[] { "testFlow", "test", "testModule", "after"
         };
         int[] types = new int[] { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR
         };
         // add data to FileFilter table
-        int row = jdbcTemplate.update(insertSql, params, types);
-
-
+        jdbcTemplate.update(insertSql, params, types);
 
 
         List<Trigger> all = triggerDao.findAll();
 
         Assert.assertEquals(1,all.size());
         Assert.assertEquals(TriggerRelationship.AFTER,all.get(0).getRelationship());
-
-
     }
 
+    @Test
+    public void test_insert_relationship_upper_case_success(){
+
+        Object[] params = new Object[] { "testFlow", "test", "testModule", "AFTER"
+        };
+        int[] types = new int[] { Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR
+        };
+        // add data to FileFilter table
+        jdbcTemplate.update(insertSql, params, types);
+
+
+        List<Trigger> all = triggerDao.findAll();
+
+        Assert.assertEquals(1,all.size());
+        Assert.assertEquals(TriggerRelationship.AFTER,all.get(0).getRelationship());
+    }
 
     @After
     public void teardown()
     {
         jdbcTemplate.update(deleteAllSql, new Object[] {}, new int[] {});
     }
-
-
 }
