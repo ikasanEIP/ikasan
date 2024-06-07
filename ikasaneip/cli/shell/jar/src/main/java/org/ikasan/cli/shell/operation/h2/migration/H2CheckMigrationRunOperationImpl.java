@@ -29,9 +29,9 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
      * @throws IllegalArgumentException if any of the parameters are null or empty
      */
     public H2CheckMigrationRunOperationImpl(MigrationService migrationService, String type
-        , String sourceVersion, String targetVersion, String databaseLocation
+        , String sourceVersion, String targetVersion, String databaseLocation, String databaseName
         , List<String> checkDbVersionCommands) {
-        super(migrationService, type, sourceVersion, targetVersion);
+        super(migrationService, type, sourceVersion, targetVersion, databaseName);
         this.databaseLocation = databaseLocation;
         if(this.databaseLocation == null || this.databaseLocation.isEmpty()) {
             throw new IllegalArgumentException("databaseLocation cannot be null or empty!");
@@ -44,11 +44,16 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
 
     @Override
     public String execute() throws RuntimeException {
+        String result = super.execute();
+
+        if(result.equals(MigrationOperation.RUN_PREVIOUSLY)) return result;
+
         if(!new File(this.databaseLocation+".mv.db").exists()) {
             IkasanMigration ikasanMigration = new IkasanMigration
-                (type, sourceVersion, targetVersion, System.currentTimeMillis());
+                (type, sourceVersion, targetVersion, this.databaseLocation.substring(this.databaseLocation.lastIndexOf("/")+1)
+                    , System.currentTimeMillis());
             this.migrationService.save(ikasanMigration);
-            return MigrationOperation.NOT_REQUIRED;
+            return MigrationOperation.MIGRATION_FILE_NOT_FOUND;
         }
         else {
             DefaultForkedExecutableOperationImpl testDbNoAlreadyOnLatestVersion = new DefaultForkedExecutableOperationImpl(ProcessType.getH2Instance(),
@@ -57,7 +62,8 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
             try {
                 testDbNoAlreadyOnLatestVersion.execute();
                 IkasanMigration ikasanMigration = new IkasanMigration
-                    (type, sourceVersion, targetVersion, System.currentTimeMillis());
+                    (type, sourceVersion, targetVersion, this.databaseLocation.substring(this.databaseLocation.lastIndexOf("/")+1)
+                        , System.currentTimeMillis());
                 this.migrationService.save(ikasanMigration);
                 return MigrationOperation.NOT_REQUIRED;
             }
@@ -66,6 +72,6 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
             }
         }
 
-        return super.execute();
+        return result;
     }
 }

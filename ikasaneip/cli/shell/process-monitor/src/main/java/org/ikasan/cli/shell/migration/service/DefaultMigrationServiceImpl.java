@@ -23,15 +23,15 @@ public class DefaultMigrationServiceImpl implements MigrationService{
     }
 
     @Override
-    public IkasanMigration find(String type, String sourceVersion, String targetVersion) {
-        return this.migrationPersistenceDao.find(type, sourceVersion, targetVersion);
+    public IkasanMigration find(String type, String sourceVersion, String targetVersion, String label) {
+        return this.migrationPersistenceDao.find(type, sourceVersion, targetVersion, label);
     }
 
     @Override
-    public void delete(String type, String sourceVersion, String targetVersion) {
+    public void delete(String type, String sourceVersion, String targetVersion, String label) {
         if(type == null || sourceVersion == null || targetVersion == null) {
             throw new IllegalArgumentException("type, sourceVersion or targetVersion cannot be null!");
         }
-        this.migrationPersistenceDao.delete(type, sourceVersion, targetVersion);
+        this.migrationPersistenceDao.delete(type, sourceVersion, targetVersion, label);
     }
 }

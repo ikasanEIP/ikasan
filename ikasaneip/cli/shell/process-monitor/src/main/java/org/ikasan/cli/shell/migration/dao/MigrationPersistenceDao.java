@@ -57,24 +57,27 @@ public interface MigrationPersistenceDao
     void save(IkasanMigration ikasanMigration);
 
 
+
     /**
-     * Finds an IkasanMigration object based on the given type, sourceVersion, and targetVersion.
+     * Finds an IkasanMigration object based on the given parameters.
      *
-     * @param type           the type of the IkasanMigration
-     * @param sourceVersion  the source version of the IkasanMigration
-     * @param targetVersion  the target version of the IkasanMigration
-     *
+     * @param type            the type of the migration
+     * @param sourceVersion   the source version of the migration
+     * @param targetVersion   the target version of the migration
+     * @param label    the label associated with the migration
      * @return the found IkasanMigration object, or null if not found
      */
-    IkasanMigration find(String type, String sourceVersion, String targetVersion);
+    IkasanMigration find(String type, String sourceVersion, String targetVersion, String label);
+
 
 
     /**
-     * Deletes IkasanMigration based on the given type, source version, and target version.
+     * Delete the migration manifest file for the given type, sourceVersion, targetVersion, and databaseName.
      *
-     * @param type            the type of the entry to be deleted
-     * @param sourceVersion   the source version of the entry to be deleted
-     * @param targetVersion   the target version of the entry to be deleted
+     * @param type             the type of the migration
+     * @param sourceVersion    the source version of the migration
+     * @param targetVersion    the target version of the migration
+     * @param label    the label associated with the migration
      */
-    void delete(String type, String sourceVersion, String targetVersion);
+    void delete(String type, String sourceVersion, String targetVersion, String label);
 }

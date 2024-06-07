@@ -7,6 +7,7 @@ public class IkasanMigration {
     private String type;
     private String sourceVersion;
     private String targetVersion;
+    private String label;
     private long migrationExecutionTimestamp;
 
     /**
@@ -14,7 +15,18 @@ public class IkasanMigration {
      */
     private IkasanMigration(){}
 
-    public IkasanMigration(String type, String sourceVersion, String targetVersion, long migrationExecutionTimestamp) {
+    /**
+     * Creates a new instance of IkasanMigration.
+     *
+     * @param type The type of migration.
+     * @param sourceVersion The source version of the migration.
+     * @param targetVersion The target version of the migration.
+     * @param label The label associated with the migrations.
+     * @param migrationExecutionTimestamp The timestamp of the migration execution.
+     * @throws IllegalArgumentException if any of the parameters are null.
+     */
+    public IkasanMigration(String type, String sourceVersion, String targetVersion
+        , String label, long migrationExecutionTimestamp) {
         this.type = type;
         if(this.type == null) {
             throw new IllegalArgumentException("type cannot be 'null'");
@@ -26,6 +38,10 @@ public class IkasanMigration {
         this.targetVersion = targetVersion;
         if(this.targetVersion == null) {
             throw new IllegalArgumentException("targetVersion cannot be 'null'");
+        }
+        this.label = label;
+        if(this.label == null) {
+            throw new IllegalArgumentException("label cannot be 'null'");
         }
         this.migrationExecutionTimestamp = migrationExecutionTimestamp;
     }
@@ -42,6 +58,10 @@ public class IkasanMigration {
         return targetVersion;
     }
 
+    public String getLabel() {
+        return label;
+    }
+
     public long getMigrationExecutionTimestamp() {
         return migrationExecutionTimestamp;
     }
@@ -50,12 +70,14 @@ public class IkasanMigration {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof IkasanMigration that)) return false;
-        return migrationExecutionTimestamp == that.migrationExecutionTimestamp && Objects.equals(type, that.type) && Objects.equals(sourceVersion, that.sourceVersion) && Objects.equals(targetVersion, that.targetVersion);
+        return migrationExecutionTimestamp == that.migrationExecutionTimestamp
+            && Objects.equals(type, that.type) && Objects.equals(sourceVersion, that.sourceVersion)
+            && Objects.equals(targetVersion, that.targetVersion) && Objects.equals(label, that.label);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type, sourceVersion, targetVersion, migrationExecutionTimestamp);
+        return Objects.hash(type, sourceVersion, targetVersion, label, migrationExecutionTimestamp);
     }
 
     @Override
@@ -64,6 +86,7 @@ public class IkasanMigration {
             .add("type='" + type + "'")
             .add("sourceVersion='" + sourceVersion + "'")
             .add("targetVersion='" + targetVersion + "'")
+            .add("label='" + label + "'")
             .add("migrationExecutionTimestamp=" + migrationExecutionTimestamp)
             .toString();
     }

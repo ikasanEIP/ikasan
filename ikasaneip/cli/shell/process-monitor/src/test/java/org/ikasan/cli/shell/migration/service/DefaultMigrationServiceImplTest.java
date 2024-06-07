@@ -49,18 +49,18 @@ public class DefaultMigrationServiceImplTest {
     }
 
     /**
-     * Method to test the success scenario of the {@link DefaultMigrationServiceImpl#find(String, String, String)} method.
+     * Method to test the success scenario of the {@link DefaultMigrationServiceImpl#find(String, String, String, String)} method.
      */
     @Test
     public void test_find_success() {
         // Arrange
         MigrationPersistenceDao migrationPersistenceDao = mock(MigrationPersistenceDao.class);
         DefaultMigrationServiceImpl service = new DefaultMigrationServiceImpl(migrationPersistenceDao);
-        IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "v1.0.0", "v2.0.0", System.currentTimeMillis());
-        when(migrationPersistenceDao.find(MigrationType.H2_MIGRATION, "v1.0.0", "v2.0.0")).thenReturn(migration);
+        IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "v1.0.0", "v2.0.0", "EAI", System.currentTimeMillis());
+        when(migrationPersistenceDao.find(MigrationType.H2_MIGRATION, "v1.0.0", "v2.0.0", "EAI")).thenReturn(migration);
 
         // Act
-        IkasanMigration result = service.find(MigrationType.H2_MIGRATION, "v1.0.0", "v2.0.0");
+        IkasanMigration result = service.find(MigrationType.H2_MIGRATION, "v1.0.0", "v2.0.0", "EAI");
 
         // Assert
         assertNotNull(result, "The found migration should not be null.");
@@ -69,11 +69,11 @@ public class DefaultMigrationServiceImplTest {
         assertEquals("v2.0.0", result.getTargetVersion());
 
         verify(migrationPersistenceDao, times(1)).find(MigrationType.H2_MIGRATION
-            , "v1.0.0", "v2.0.0");
+            , "v1.0.0", "v2.0.0", "EAI");
     }
 
     /**
-     * Test method for {@link DefaultMigrationServiceImpl#delete(String, String, String)}.
+     * Test method for {@link DefaultMigrationServiceImpl#delete(String, String, String, String)}.
      *
      * Verifies that the delete method on the MigrationPersistenceDao is called with the correct parameters.
      */
@@ -91,10 +91,10 @@ public class DefaultMigrationServiceImplTest {
         String targetVersion = "2.0";
 
         // Call method under test
-        defaultMigrationService.delete(type, sourceVersion, targetVersion);
+        defaultMigrationService.delete(type, sourceVersion, targetVersion, "EAI");
 
         // Verify that the delete method on DAO was called with the right parameters
-        verify(migrationPersistenceDao, times(1)).delete(MigrationType.H2_MIGRATION, sourceVersion, targetVersion);
+        verify(migrationPersistenceDao, times(1)).delete(MigrationType.H2_MIGRATION, sourceVersion, targetVersion, "EAI");
     }
 
     /**
@@ -111,10 +111,10 @@ public class DefaultMigrationServiceImplTest {
 
         // Call method under test with null strings
         assertThrows(IllegalArgumentException.class, () -> {
-            defaultMigrationService.delete(null, null, null);
+            defaultMigrationService.delete(null, null, null, null);
         });
 
         // Verify that the delete method on DAO was never called
-        verify(migrationPersistenceDao,never()).delete(null, null, null);
+        verify(migrationPersistenceDao,never()).delete(null, null, null, null);
     }
 }

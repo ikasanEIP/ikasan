@@ -102,7 +102,7 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
     public void save(IkasanMigration ikasanMigration)
     {
         String path = getMigrationManifestFilePath(ikasanMigration.getType()
-            , ikasanMigration.getSourceVersion(), ikasanMigration.getTargetVersion());
+            , ikasanMigration.getSourceVersion(), ikasanMigration.getTargetVersion(), ikasanMigration.getLabel());
 
         try(Output output = new Output(new FileOutputStream(path))) {
             objectMapper.writeValue(output, ikasanMigration);
@@ -113,8 +113,8 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
     }
 
     @Override
-    public IkasanMigration find(String type, String sourceVersion, String targetVersion) {
-        String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion);
+    public IkasanMigration find(String type, String sourceVersion, String targetVersion, String label) {
+        String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion, label);
         try (Input input = new Input(new FileInputStream(path))) {
             return this.objectMapper.readValue(input, IkasanMigration.class);
         }
@@ -125,8 +125,8 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
     }
 
     @Override
-    public void delete(String type, String sourceVersion, String targetVersion) {
-        String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion);
+    public void delete(String type, String sourceVersion, String targetVersion, String label) {
+        String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion, label);
         try {
             Files.delete(Path.of(path));
         }
@@ -135,8 +135,9 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
         }
     }
 
-    protected String getMigrationManifestFilePath(String type, String sourceVersion, String targetVersion) {
-        return persistenceDir + FileSystems.getDefault().getSeparator() + type + "_" + sourceVersion + "_" + targetVersion;
+    protected String getMigrationManifestFilePath(String type, String sourceVersion, String targetVersion, String label) {
+        return persistenceDir + FileSystems.getDefault().getSeparator() + type + "_"
+            + sourceVersion + "_" + targetVersion + "_" + label;
     }
 
 }

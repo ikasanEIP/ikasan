@@ -36,4 +36,9 @@ public class H2DatabaseMigrationSourcePostProcessOperation implements Executable
                 "H2 database SQL file."), e);
         }
     }
+
+    @Override
+    public String getCommand() {
+        return String.format("Post processing file[%s]", this,inputFilePath);
+    }
 }

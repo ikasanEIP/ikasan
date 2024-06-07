@@ -67,24 +67,28 @@ public interface MigrationService {
     void save(IkasanMigration ikasanMigration);
 
 
-    /**
-     * Finds an IkasanMigration object based on the given type, sourceVersion, and targetVersion.
-     *
-     * @param type           the type of the IkasanMigration
-     * @param sourceVersion  the source version of the IkasanMigration
-     * @param targetVersion  the target version of the IkasanMigration
-     *
-     * @return the found IkasanMigration object, or null if not found
-     */
-    IkasanMigration find(String type, String sourceVersion, String targetVersion);
-
 
     /**
-     * Deletes IkasanMigration based on the given type, source version, and target version.
+     * Finds an instance of IkasanMigration based on the given parameters.
      *
-     * @param type            the type of the entry to be deleted
-     * @param sourceVersion   the source version of the entry to be deleted
-     * @param targetVersion   the target version of the entry to be deleted
+     * @param type            the type of IkasanMigration to find
+     * @param sourceVersion   the source version of the IkasanMigration to find
+     * @param targetVersion   the target version of the IkasanMigration to find
+     * @param label    the label associated with the migration
+     *
+     * @return the found instance of IkasanMigration, or null if not found
      */
-    void delete(String type, String sourceVersion, String targetVersion);
+    IkasanMigration find(String type, String sourceVersion, String targetVersion, String label);
+
+
+
+    /**
+     * Deletes an instance of IkasanMigration based on the given parameters.
+     *
+     * @param type the type of IkasanMigration to delete
+     * @param sourceVersion the source version of the IkasanMigration to delete
+     * @param targetVersion the target version of the IkasanMigration to delete
+     * @param label the label associated with the migration
+     */
+    void delete(String type, String sourceVersion, String targetVersion, String label);
 }

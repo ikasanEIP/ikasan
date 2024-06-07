@@ -56,4 +56,9 @@ public class H2DatabaseMigrationSourceDatabaseFileRenameOperation implements Exe
                 persistenceDirectory + "/" + sourceDatabaseName + ".mv.db", backupName), e);
         }
     }
+
+    @Override
+    public String getCommand() {
+        return String.format("Backing up file[%s]" ,persistenceDirectory + "/" + sourceDatabaseName + ".mv.db");
+    }
 }

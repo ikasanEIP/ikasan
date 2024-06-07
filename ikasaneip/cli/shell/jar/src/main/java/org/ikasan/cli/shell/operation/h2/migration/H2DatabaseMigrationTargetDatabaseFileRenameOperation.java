@@ -43,4 +43,12 @@ public class H2DatabaseMigrationTargetDatabaseFileRenameOperation implements Exe
                     + targetDatabaseName + ".mv.db"), e);
         }
     }
+
+    @Override
+    public String getCommand() {
+        return String.format("Renaming newly created target database to the original database name " +
+                "from [%s] to [%s]",
+            persistenceDirectory + "/" + targetDatabaseName + "-new.mv.db",
+            persistenceDirectory + "/" + targetDatabaseName + ".mv.db");
+    }
 }
