@@ -7,13 +7,14 @@ public class DefaultCheckMigrationRunOperationImpl implements ExecutableOperatio
     protected String type;
     protected String sourceVersion;
     protected String targetVersion;
+    protected String label;
 
     /**
      * CheckMigrationRunOperation class represents an executable operation that checks if a migration run
      * can be performed based on the given type, source version, and target version.
      */
     public DefaultCheckMigrationRunOperationImpl(MigrationService migrationService, String type
-        , String sourceVersion, String targetVersion) {
+        , String sourceVersion, String targetVersion, String label) {
         this.migrationService = migrationService;
         if(this.migrationService == null) {
             throw new IllegalArgumentException("migrationService cannot be 'null'");
@@ -30,14 +31,23 @@ public class DefaultCheckMigrationRunOperationImpl implements ExecutableOperatio
         if(this.targetVersion == null) {
             throw new IllegalArgumentException("targetVersion cannot be 'null'");
         }
+        this.label = label;
+        if(this.label == null) {
+            throw new IllegalArgumentException("label cannot be 'null'");
+        }
     }
 
     @Override
     public String execute() throws RuntimeException {
-        if(this.migrationService.find(this.type, this.sourceVersion, this.targetVersion) != null) {
+        if(this.migrationService.find(this.type, this.sourceVersion, this.targetVersion, this.label) != null) {
             return MigrationOperation.RUN_PREVIOUSLY;
         }
 
         return MigrationOperation.NOT_YET_RUN;
+    }
+
+    @Override
+    public String getCommand() {
+        return this.getClass().getName();
     }
 }

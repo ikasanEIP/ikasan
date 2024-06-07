@@ -32,12 +32,12 @@ class MigrationPersistenceDaoImplTest {
     @Test
     void save_and_find_success() {
         MigrationPersistenceDaoImpl persistenceDao = new MigrationPersistenceDaoImpl("testDir");
-        IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "1.0", "2.0"
+        IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "1.0", "2.0", "EAI"
             , 1234);
 
         persistenceDao.save(migration);
 
-        IkasanMigration returnedMigration = persistenceDao.find(MigrationType.H2_MIGRATION, "1.0", "2.0");
+        IkasanMigration returnedMigration = persistenceDao.find(MigrationType.H2_MIGRATION, "1.0", "2.0", "EAI");
         assertEquals(migration, returnedMigration, "Save method did not correctly save the migration object.");
     }
 
@@ -49,10 +49,10 @@ class MigrationPersistenceDaoImplTest {
         String targetVersion = "2.0";
 
         // Assume that ikasanMigration file is created in the persistence directory
-        IkasanMigration ikasanMigration = new IkasanMigration(type, sourceVersion, targetVersion, System.currentTimeMillis());
+        IkasanMigration ikasanMigration = new IkasanMigration(type, sourceVersion, targetVersion, "EAI", System.currentTimeMillis());
         dao.save(ikasanMigration);
 
-        IkasanMigration foundIkasanMigration = dao.find(type, sourceVersion, targetVersion);
+        IkasanMigration foundIkasanMigration = dao.find(type, sourceVersion, targetVersion, "EAI");
 
         assertNotNull(foundIkasanMigration);
         assertEquals(ikasanMigration, foundIkasanMigration);
@@ -66,7 +66,7 @@ class MigrationPersistenceDaoImplTest {
         String targetVersion = "4.0";
 
         // No IkasanMigration file is created before the find method is called
-        IkasanMigration foundIkasanMigration = dao.find(type, sourceVersion, targetVersion);
+        IkasanMigration foundIkasanMigration = dao.find(type, sourceVersion, targetVersion, "EAI");
 
         assertNull(foundIkasanMigration);
     }
@@ -77,17 +77,17 @@ class MigrationPersistenceDaoImplTest {
     @Test
     void save_and_find_delete_success() {
         MigrationPersistenceDaoImpl persistenceDao = new MigrationPersistenceDaoImpl("testDir");
-        IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "1.0", "2.0"
+        IkasanMigration migration = new IkasanMigration(MigrationType.H2_MIGRATION, "1.0", "2.0", "EAI"
             , 1234);
 
         persistenceDao.save(migration);
 
-        IkasanMigration returnedMigration = persistenceDao.find(MigrationType.H2_MIGRATION, "1.0", "2.0");
+        IkasanMigration returnedMigration = persistenceDao.find(MigrationType.H2_MIGRATION, "1.0", "2.0", "EAI");
         assertEquals(migration, returnedMigration, "Save method did not correctly save the migration object.");
 
-        persistenceDao.delete(MigrationType.H2_MIGRATION, "1.0", "2.0");
+        persistenceDao.delete(MigrationType.H2_MIGRATION, "1.0", "2.0", "EAI");
 
-        returnedMigration = persistenceDao.find(MigrationType.H2_MIGRATION, "1.0", "2.0");
+        returnedMigration = persistenceDao.find(MigrationType.H2_MIGRATION, "1.0", "2.0", "EAI");
 
         assertNull(returnedMigration);
     }

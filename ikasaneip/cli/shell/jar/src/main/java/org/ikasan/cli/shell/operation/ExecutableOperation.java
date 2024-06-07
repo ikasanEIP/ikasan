@@ -11,4 +11,12 @@ public interface ExecutableOperation {
      * @throws RuntimeException
      */
     String execute() throws RuntimeException;
+
+
+    /**
+     * Returns the command associated with the ExecutableOperation.
+     *
+     * @return the command associated with the ExecutableOperation
+     */
+    String getCommand();
 }

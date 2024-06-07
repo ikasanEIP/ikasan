@@ -115,13 +115,17 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
         }
 
         H2DatabaseMigrationSourceDatabaseFileRenameOperation h2DatabaseMigrationSourceDatabaseFileRenameOperation
-            = new H2DatabaseMigrationSourceDatabaseFileRenameOperation(this.sourceH2Version, databasePath.substring(0, databasePath.lastIndexOf("/")), "esb");
+            = new H2DatabaseMigrationSourceDatabaseFileRenameOperation(this.sourceH2Version, databasePath.substring(0, databasePath.lastIndexOf("/"))
+                , databasePath.substring(databasePath.lastIndexOf("/")+1));
         executableOperations.add(h2DatabaseMigrationSourceDatabaseFileRenameOperation);
 
         H2DatabaseMigrationTargetDatabaseFileRenameOperation h2DatabaseMigrationTargetDatabaseFileRenameOperation
-            = new H2DatabaseMigrationTargetDatabaseFileRenameOperation(databasePath.substring(0, databasePath.lastIndexOf("/")), databasePath.substring(databasePath.lastIndexOf("/")+1));
+            = new H2DatabaseMigrationTargetDatabaseFileRenameOperation(databasePath.substring(0, databasePath.lastIndexOf("/"))
+                , databasePath.substring(databasePath.lastIndexOf("/")+1));
         executableOperations.add(h2DatabaseMigrationTargetDatabaseFileRenameOperation);
 
+        super.setFileNotFoundMessage(String.format("Database file[%s] was not found so there is nothing to migrate. A new empty database will be" +
+            " created when the module is next started.", this.databasePath + ".mv.db"));
         return executableOperations;
     }
 
@@ -146,13 +150,15 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     public DefaultCheckMigrationRunOperationImpl getCheckMigrationRunOperation() {
         return new H2CheckMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
             , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version, this.databasePath
+            , databasePath.substring(databasePath.lastIndexOf("/")+1)
             , List.of(this.performTokenReplacements(this.determineIfDbFileAlreadyTargetVersionCommand)));
     }
 
     @Override
     public DefaultMarkMigrationRunOperationImpl getMarkMigrationRunOperation() {
         return new DefaultMarkMigrationRunOperationImpl(MigrationService.instance(this.persistenceDir)
-                , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version);
+                , MigrationType.H2_MIGRATION, this.sourceH2Version, this.targetH2Version
+                , this.databasePath.substring(this.databasePath.lastIndexOf("/")+1));
     }
 
     @Override

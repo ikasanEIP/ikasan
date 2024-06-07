@@ -9,13 +9,14 @@ public class DefaultMarkMigrationRunOperationImpl implements ExecutableOperation
     private String type;
     private String sourceVersion;
     private String targetVersion;
+    private String label;
 
     /**
      * MarkMigrationRunOperation class represents an executable operation that marks a migration as run
      * based on the given type, source version, and target version.
      */
     public DefaultMarkMigrationRunOperationImpl(MigrationService migrationService, String type
-        , String sourceVersion, String targetVersion) {
+        , String sourceVersion, String targetVersion, String label) {
         this.migrationService = migrationService;
         if(this.migrationService == null) {
             throw new IllegalArgumentException("migrationService cannot be 'null'");
@@ -32,17 +33,29 @@ public class DefaultMarkMigrationRunOperationImpl implements ExecutableOperation
         if(this.targetVersion == null) {
             throw new IllegalArgumentException("targetVersion cannot be 'null'");
         }
+        this.label = label;
+        if(this.label == null) {
+            throw new IllegalArgumentException("label cannot be 'null'");
+        }
     }
 
     @Override
     public String execute() throws RuntimeException {
         try {
-            IkasanMigration ikasanMigration = new IkasanMigration(type, sourceVersion, targetVersion, System.currentTimeMillis());
+            IkasanMigration ikasanMigration = new IkasanMigration(this.type, this.sourceVersion, this.targetVersion
+                , this.label, System.currentTimeMillis());
             this.migrationService.save(ikasanMigration);
             return String.format("The following migration has been marked as executed: %s", ikasanMigration);
         }
         catch (Exception e) {
-            throw new RuntimeException("Failed to IkasanMigration", e);
+            throw new RuntimeException(String.format("Failed to mark the following operation as run: type[%s], sourceVersion[%s], targetVersion[%s], label[%s]."
+                , this.type, this.sourceVersion, this.targetVersion, this.label), e);
         }
+    }
+
+    @Override
+    public String getCommand() {
+        return String.format("Marking the following operation as run: type[%s], sourceVersion[%s], targetVersion[%s], label[%s]."
+            , this.type, this.sourceVersion, this.targetVersion, this.label);
     }
 }

@@ -39,4 +39,10 @@ public class DefaultForkedExecutableOperationImpl implements ExecutableOperation
             throw new RuntimeException(String.format("An error has occurred processing forked executable operation"), e);
         }
     }
+
+    @Override
+    public String getCommand() {
+        return commands.stream()
+            .collect(Collectors.joining("\r\n"));
+    }
 }

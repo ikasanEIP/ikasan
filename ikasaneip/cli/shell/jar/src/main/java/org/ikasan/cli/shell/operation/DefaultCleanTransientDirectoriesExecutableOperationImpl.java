@@ -30,4 +30,11 @@ public class DefaultCleanTransientDirectoriesExecutableOperationImpl implements 
         return String.format("Successfully deleted the following transient directories[%s]"
             , this.directoriesToRemove.stream().map(dir -> dir.getName()).collect(Collectors.joining(", ")));
     }
+
+    @Override
+    public String getCommand() {
+        return "Attempting to remove directories " + this.directoriesToRemove.stream()
+            .map(file -> file.getAbsolutePath())
+            .collect(Collectors.joining("\r\n"));
+    }
 }
