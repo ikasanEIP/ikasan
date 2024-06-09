@@ -101,6 +101,12 @@ public class H2MigrationCommand
     @Value("${h2.db.migration.module.persistence.database.path:#{null}}")
     private String modulePersistenceDatabasePath;
 
+    @Value("${datasource.username:#{null}}")
+    private String dbMigrationDatabaseUsername;
+
+    @Value("${datasource.password:#{null}}")
+    private String dbMigrationDatabasePassword;
+
     /**
      * Migrates H2 persistence.
      *
@@ -116,8 +122,8 @@ public class H2MigrationCommand
     @Command(description = "Migrate H2 persistence", group = "Ikasan Commands", command = "migrate-h2")
     public String migrateH2(@Option(description = "The version of the H2 database we are migrating from.", longNames = "source-h2-version", defaultValue = "1.4.200")  String sourceH2Version,
                             @Option(description = "The version of the H2 database we are migrating to.", longNames = "target-h2-version",defaultValue = "2.2.224")  String targetH2Version,
-                            @Option(description = "The username of the H2 database to use for the migration.", longNames = "h2-user",defaultValue = "sa")  String h2User,
-                            @Option(description = "The password of the H2 database to use for the migration.", longNames = "h2-password",defaultValue = "sa")  String h2Password,
+                            @Option(description = "The username of the H2 database to use for the migration.", longNames = "h2-user", defaultValue = "")  String h2User,
+                            @Option(description = "The password of the H2 database to use for the migration.", longNames = "h2-password", defaultValue = "")  String h2Password,
                             @Option(description = "The path to the database. The general Ikasan convention [<persistence-dir>/<module-name>-db/esb]" +
                                 " will be used by default.", longNames = "h2-database-location",defaultValue = "")  String databaseLocation,
                             @Option(description = "Boolean flag to indicate whether the database being migrated is a " +
@@ -129,14 +135,20 @@ public class H2MigrationCommand
                 "and as a result the H2 database migration cannot run. Please see documentation for further details.");
         }
 
+        if((h2User == null || h2User.isEmpty()) && (this.dbMigrationDatabaseUsername == null || this.dbMigrationDatabaseUsername.isEmpty())) {
+            throw new RuntimeException("Shell option h2-user and property 'datasource.username' cannot both be null or empty.");
+        }
+
+        if((h2Password == null || h2Password.isEmpty()) && (this.dbMigrationDatabasePassword == null || this.dbMigrationDatabasePassword.isEmpty())) {
+            throw new RuntimeException("Shell option h2-password and property 'datasource.password' cannot both be null or empty.");
+        }
+
         H2DatabaseMigrationAggregateOperation h2DatabaseMigrationAggregateOperation
             = new H2DatabaseMigrationAggregateOperation(this.h2ScriptJavaCommand, this.h2RunScriptJavaCommand
                 , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
-                , targetH2Version, h2User, h2Password, databaseLocation == null || databaseLocation.isEmpty()
-                    ? this.modulePersistenceDatabasePath: databaseLocation, this.dbMigrationWorkingDirectory
+                , targetH2Version, h2User != null ? h2User : this.dbMigrationDatabaseUsername, h2Password != null ? h2Password : this.dbMigrationDatabasePassword
+                , databaseLocation == null || databaseLocation.isEmpty() ? this.modulePersistenceDatabasePath: databaseLocation, this.dbMigrationWorkingDirectory
                 , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase);
-
-        logger.info(sourceH2Version + targetH2Version + h2User + h2Password);
 
         return h2DatabaseMigrationAggregateOperation.execute();
     }
