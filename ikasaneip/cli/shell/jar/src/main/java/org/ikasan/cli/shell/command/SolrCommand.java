@@ -194,8 +194,8 @@ public class SolrCommand extends ActionCommand
                 logger.error("Error occurred while waiting for process shutdown", e);
                 throw new RuntimeException(String.format("An error has occurred waiting for the Solr process to shutdown. " +
                     " This is likely to be a timout waiting for the process to end. The timeout is currently configured to " +
-                    "[%s] seconds. This can be adjusted by setting command.stop.process.wait.timeout.seconds in the application" +
-                    " properties.", super.commandStopProcessWaitTimeoutSeconds)
+                    "[%s] seconds. This can be adjusted by setting `ikasan.shell.command.stop.process.wait.timeout.seconds` " +
+                    "in the application properties.", super.commandStopProcessWaitTimeoutSeconds)
                     , e);
             }
         }
