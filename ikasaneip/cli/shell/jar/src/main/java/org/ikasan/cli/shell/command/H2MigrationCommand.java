@@ -107,7 +107,7 @@ public class H2MigrationCommand
     @Value("${datasource.password:#{null}}")
     private String dbMigrationDatabasePassword;
 
-    @Value("${forked.process.timeout:300}")
+    @Value("${ikasan.shell.migration.forked.process.timeout:300}")
     private long forkedProcessTimeout;
 
     /**
