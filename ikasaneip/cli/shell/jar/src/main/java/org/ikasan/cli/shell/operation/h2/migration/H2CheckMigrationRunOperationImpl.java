@@ -14,6 +14,7 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
 
     private String databaseLocation;
     private List<String> checkDbVersionCommands;
+    private long forkedProcessTimeout;
 
 
     /**
@@ -30,7 +31,7 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
      */
     public H2CheckMigrationRunOperationImpl(MigrationService migrationService, String type
         , String sourceVersion, String targetVersion, String databaseLocation, String databaseName
-        , List<String> checkDbVersionCommands) {
+        , List<String> checkDbVersionCommands, long forkedProcessTimeout) {
         super(migrationService, type, sourceVersion, targetVersion, databaseName);
         this.databaseLocation = databaseLocation;
         if(this.databaseLocation == null || this.databaseLocation.isEmpty()) {
@@ -40,6 +41,7 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
         if(this.checkDbVersionCommands == null || this.checkDbVersionCommands.isEmpty()) {
             throw new IllegalArgumentException("checkDbVersionCommands cannot be null or empty!");
         }
+        this.forkedProcessTimeout = forkedProcessTimeout;
     }
 
     @Override
@@ -57,7 +59,7 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
         }
         else {
             DefaultForkedExecutableOperationImpl testDbNoAlreadyOnLatestVersion = new DefaultForkedExecutableOperationImpl(ProcessType.getH2Instance(),
-                this.checkDbVersionCommands, "check-h2");
+                this.checkDbVersionCommands, "check-h2", forkedProcessTimeout);
 
             try {
                 testDbNoAlreadyOnLatestVersion.execute();

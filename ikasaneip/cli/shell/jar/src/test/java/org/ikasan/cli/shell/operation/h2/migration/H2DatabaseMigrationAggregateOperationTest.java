@@ -40,7 +40,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            false
+            false,
+            300
         );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();
@@ -76,7 +77,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            true
+            true,
+            300
             );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();
@@ -115,7 +117,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            false
+            false,
+            300
         );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();
@@ -148,7 +151,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            true
+            true,
+            300
         );
 
         result = h2DatabaseMigrationAggregateOperation.execute();
@@ -187,7 +191,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            true
+            true,
+            300
         );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();
@@ -212,7 +217,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            false
+            false,
+            300
         );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();
@@ -237,7 +243,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            true
+            true,
+            300
         );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();
@@ -262,7 +269,8 @@ public class H2DatabaseMigrationAggregateOperationTest {
             "migrated.sql",
             "post-processed-migrated.sql",
             ".",
-            true
+            true,
+            300
         );
 
         String result = h2DatabaseMigrationAggregateOperation.execute();

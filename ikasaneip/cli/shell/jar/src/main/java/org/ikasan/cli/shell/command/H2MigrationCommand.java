@@ -107,6 +107,9 @@ public class H2MigrationCommand
     @Value("${datasource.password:#{null}}")
     private String dbMigrationDatabasePassword;
 
+    @Value("${forked.process.timeout:300}")
+    private long forkedProcessTimeout;
+
     /**
      * Migrates H2 persistence.
      *
@@ -148,7 +151,7 @@ public class H2MigrationCommand
                 , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
                 , targetH2Version, h2User != null ? h2User : this.dbMigrationDatabaseUsername, h2Password != null ? h2Password : this.dbMigrationDatabasePassword
                 , databaseLocation == null || databaseLocation.isEmpty() ? this.modulePersistenceDatabasePath: databaseLocation, this.dbMigrationWorkingDirectory
-                , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase);
+                , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase, this.forkedProcessTimeout);
 
         return h2DatabaseMigrationAggregateOperation.execute();
     }
