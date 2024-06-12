@@ -82,7 +82,7 @@ public class HibernateSecurityDao implements SecurityDao
     public void saveOrUpdatePolicy(Policy policy)
     {
     	policy.setUpdatedDateTime(new Date());
-    	this.entityManager.persist(policy);
+    	this.entityManager.persist(this.entityManager.contains(policy) ? policy : entityManager.merge(policy));
     }
 
     /*
@@ -308,7 +308,7 @@ public class HibernateSecurityDao implements SecurityDao
 
     @Override
     public void saveRoleModule(RoleModule roleModule) {
-        this.entityManager.remove(roleModule);
+        this.entityManager.remove(this.entityManager.contains(roleModule) ? roleModule : entityManager.merge(roleModule));
     }
 
     @Override
@@ -318,7 +318,7 @@ public class HibernateSecurityDao implements SecurityDao
 
     @Override
     public void saveRoleJobPlan(RoleJobPlan roleJobPlan) {
-        this.entityManager.persist(roleJobPlan);
+        this.entityManager.persist(this.entityManager.contains(roleJobPlan) ? roleJobPlan : entityManager.merge(roleJobPlan));
     }
 
     /*
@@ -337,7 +337,7 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
 	{
-		this.entityManager.persist(authenticationMethod);
+		this.entityManager.persist(this.entityManager.contains(authenticationMethod) ? authenticationMethod : entityManager.merge(authenticationMethod));
 	}
 
 	/* (non-Javadoc)
@@ -457,7 +457,7 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
 	{
-		this.entityManager.persist(policyLink);
+		this.entityManager.persist(this.entityManager.contains(policyLink) ? policyLink : entityManager.merge(policyLink));
 	}
 
 	/* (non-Javadoc)
@@ -466,7 +466,7 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType)
 	{
-		this.entityManager.persist(policyLinkType);
+		this.entityManager.persist(this.entityManager.contains(policyLinkType) ? policyLinkType : entityManager.merge(policyLinkType));
 	}
 
 	/* (non-Javadoc)
@@ -495,7 +495,7 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod)
 	{
-		this.entityManager.remove(authenticationMethod);
+		this.entityManager.remove(this.entityManager.contains(authenticationMethod) ? authenticationMethod : entityManager.merge(authenticationMethod));
 	}
 
 	/* (non-Javadoc)
