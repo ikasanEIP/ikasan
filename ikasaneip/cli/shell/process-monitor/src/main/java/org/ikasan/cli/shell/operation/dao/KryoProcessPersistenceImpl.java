@@ -158,4 +158,9 @@ public class KryoProcessPersistenceImpl implements ProcessPersistenceDao
         return persistenceDir + FileSystems.getDefault().getSeparator() + type + "_" + name;
     }
 
+    protected String getPidBaseDir()
+    {
+        return persistenceDir + FileSystems.getDefault().getSeparator();
+    }
+
 }
