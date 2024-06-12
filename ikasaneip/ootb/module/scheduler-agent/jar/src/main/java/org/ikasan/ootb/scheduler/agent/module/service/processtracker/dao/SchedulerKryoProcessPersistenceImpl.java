@@ -7,8 +7,10 @@ import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.Sched
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Arrays;
 
 public class SchedulerKryoProcessPersistenceImpl extends KryoProcessPersistenceImpl implements SchedulerProcessPersistenceDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerKryoProcessPersistenceImpl.class);
@@ -42,5 +44,26 @@ public class SchedulerKryoProcessPersistenceImpl extends KryoProcessPersistenceI
             LOGGER.debug("File [" + path + "] not found", e);
             return null;
         }
+    }
+
+    @Override
+    public SchedulerIkasanProcess find(long pid) {
+        Kryo kryo = kryoThreadLocal.get();
+
+        File pidDir = new File(getPidBaseDir());
+
+        for(File pidFile: pidDir.listFiles()) {
+            try (Input input = new Input(new FileInputStream(pidFile)))
+            {
+                 SchedulerIkasanProcess process = (SchedulerIkasanProcess)kryo.readClassAndObject(input);
+                 if(process.getPid() == pid) return process;
+            }
+            catch(Exception e)
+            {
+                LOGGER.info("File [" + pidFile.getAbsolutePath() + "] not found", e);
+            }
+        }
+
+        return null;
     }
 }

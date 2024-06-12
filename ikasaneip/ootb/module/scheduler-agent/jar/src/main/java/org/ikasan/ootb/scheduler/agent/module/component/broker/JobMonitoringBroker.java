@@ -193,16 +193,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
             }
 
             // Only clean up persistent pid if we were not interrupted by InterruptedException i.e. module shutdown
-            try {
-                scheduledProcessEvent.getDetachableProcess().removePersistedProcessData();
-            } catch (IOException ioe) {
-                LOGGER.warn("Attempt to tidy process and results file for " + scheduledProcessEvent.getJobName() +
-                    " with identity " + scheduledProcessEvent.getDetachableProcess().getIdentity() +
-                    " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe.getMessage());
-
-                // write this error to the error reporting service for visibility
-                this.errorReportingService.notify(this.flowName, scheduledProcessEvent, ioe, "WARNING");
-            }
+            this.clearPersistedPid(scheduledProcessEvent);
         }
         catch(InterruptedException e) {
             // If a job has failed we do not want to notify the orchestration that we have been successful.
@@ -284,6 +275,19 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
         scheduledProcessEvent.setSuccessful(true);
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+    }
+
+    private void clearPersistedPid(EnrichedContextualisedScheduledProcessEvent scheduledProcessEvent) {
+        try {
+            scheduledProcessEvent.getDetachableProcess().removePersistedProcessData();
+        } catch (IOException ioe) {
+            LOGGER.warn("Attempt to tidy process and results file for " + scheduledProcessEvent.getJobName() +
+                " with identity " + scheduledProcessEvent.getDetachableProcess().getIdentity() +
+                " failed, non fatal error but may require manual housekeeping of the agents pid directory", ioe.getMessage());
+
+            // write this error to the error reporting service for visibility
+            this.errorReportingService.notify(this.flowName, scheduledProcessEvent, ioe, "WARNING");
+        }
     }
 
     @Override
