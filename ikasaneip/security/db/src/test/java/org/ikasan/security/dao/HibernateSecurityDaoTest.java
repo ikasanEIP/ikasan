@@ -46,7 +46,9 @@ import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
+import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
+import org.ikasan.security.service.AuthenticationServiceException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,9 +79,11 @@ public class HibernateSecurityDaoTest
     @Autowired
     private SecurityDao xaSecurityDao;
 
+
     /**
-     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
-     * being tested
+     * Setup method for the unit test of class HibernateSecurityDaoTest.
+     * It initializes the necessary data for the test by creating roles, policies, principals,
+     * and policy link types.
      */
     @Before public void setup()
     {
@@ -193,6 +197,36 @@ public class HibernateSecurityDaoTest
         Assert.assertNotNull(principal);
 
         Assert.assertEquals(principal.getRoles().size(), 10);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_save_find_delete_authentication_method() throws AuthenticationServiceException
+    {
+        AuthenticationMethod authMethod = new AuthenticationMethod();
+        authMethod.setOrder(1L);
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
+
+        this.xaSecurityDao.saveOrUpdateAuthenticationMethod(authMethod);
+
+        List<AuthenticationMethod> authenticationMethods = this.xaSecurityDao.getAuthenticationMethods();
+        Assert.assertEquals(1, authenticationMethods.size());
+
+        authenticationMethods.forEach(authenticationMethod -> {
+            authenticationMethod.setOrder(2L);
+            this.xaSecurityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
+        });
+
+        authenticationMethods = this.xaSecurityDao.getAuthenticationMethods();
+        Assert.assertEquals(1, authenticationMethods.size());
+
+        authenticationMethods.forEach(authenticationMethod -> {
+            Assert.assertEquals(2L, authenticationMethod.getOrder().intValue());
+            this.xaSecurityDao.deleteAuthenticationMethod(authenticationMethod);
+        });
+
+        authenticationMethods = this.xaSecurityDao.getAuthenticationMethods();
+        Assert.assertEquals(0, authenticationMethods.size());
     }
 
     @Test 
