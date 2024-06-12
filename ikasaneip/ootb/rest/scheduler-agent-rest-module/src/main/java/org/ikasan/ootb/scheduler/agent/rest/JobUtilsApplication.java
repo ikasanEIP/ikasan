@@ -17,6 +17,8 @@ public class JobUtilsApplication
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(JobUtilsApplication.class);
 
+//    private SchedulerPersistenceService schedulerPersistenceService;
+
 
     /**
      * Allows to kill a job by a given pid.

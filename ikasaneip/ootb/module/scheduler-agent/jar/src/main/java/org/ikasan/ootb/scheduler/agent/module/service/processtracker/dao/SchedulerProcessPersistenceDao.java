@@ -5,4 +5,6 @@ import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.Sched
 
 public interface SchedulerProcessPersistenceDao extends ProcessPersistenceDao {
     SchedulerIkasanProcess find(String type, String name);
+
+    SchedulerIkasanProcess find(long pid);
 }
