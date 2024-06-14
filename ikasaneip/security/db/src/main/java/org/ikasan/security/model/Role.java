@@ -66,9 +66,13 @@ public class Role implements Comparable<Role>
         inverseJoinColumns = { @JoinColumn(name = "PolicyId") }
     )
     private Set<Policy> policies = new HashSet<>();
-    @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+
+    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
+    private Set<IkasanPrincipal> principals = new HashSet<>();;
+
+    @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     private Set<RoleModule> roleModules = new HashSet<>();
-    @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     private Set<RoleJobPlan> roleJobPlans = new HashSet<>();
 
     /** The date time stamp when an instance was first created */
@@ -148,7 +152,15 @@ public class Role implements Comparable<Role>
         }
     }
 
-	/**
+    public Set<IkasanPrincipal> getPrincipals() {
+        return principals;
+    }
+
+    public void setPrincipals(Set<IkasanPrincipal> principals) {
+        this.principals = principals;
+    }
+
+    /**
      * @return the id
      */
     public Long getId()
@@ -258,6 +270,12 @@ public class Role implements Comparable<Role>
 
     public void setRoleJobPlans(Set<RoleJobPlan> roleJobPlans) {
         this.roleJobPlans = roleJobPlans;
+    }
+
+    @PreRemove
+    private void removeBookAssociations() {
+        this.principals.forEach(ikasanPrincipal
+            -> ikasanPrincipal.getRoles().remove(this));
     }
 
     @Override

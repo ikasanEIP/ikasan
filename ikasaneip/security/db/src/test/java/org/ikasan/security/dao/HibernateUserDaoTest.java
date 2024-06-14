@@ -43,6 +43,7 @@ package org.ikasan.security.dao;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
 import org.ikasan.security.TestImportConfig;
+import org.ikasan.security.model.IkasanPrincipal;
 import org.ikasan.security.model.JobPlanGrantedAuthority;
 import org.ikasan.security.model.ModuleGrantedAuthority;
 import org.ikasan.security.model.User;
@@ -74,6 +75,9 @@ public class HibernateUserDaoTest
 {
 	@Autowired
 	private UserDao xaUserDao;
+
+    @Autowired
+    private SecurityDao xaSecurityDao;
 
 	/**
 	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
@@ -181,4 +185,58 @@ public class HibernateUserDaoTest
 		Assert.assertTrue(users.size() == 0);
 	}
 
+    @Test
+    @DirtiesContext
+    public void test_add_principals_to_user()
+    {
+        List<User> users = this.xaUserDao.getUsers();
+
+        Assert.assertEquals(1, users.size());
+
+        User user = users.get(0);
+
+        List<IkasanPrincipal> principals = this.xaSecurityDao.getAllPrincipals();
+
+        Assert.assertEquals(2, principals.size());
+        Assert.assertEquals(2, user.getPrincipals().size());
+
+        IkasanPrincipal principal = new IkasanPrincipal();
+        principal.setName("name");
+        principal.setDescription("description");
+        principal.setType("type");
+        principal.setApplicationSecurityBaseDn("baseDn");
+
+        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+
+        principals = this.xaSecurityDao.getAllPrincipals();
+        Assert.assertEquals(3, principals.size());
+
+        Assert.assertTrue(principals.size() > 0);
+
+        principals.forEach(p -> user.addPrincipal(p));
+
+        this.xaUserDao.save(user);
+
+        Assert.assertEquals(3, user.getPrincipals().size());
+
+        principal = new IkasanPrincipal();
+        principal.setName("another name");
+        principal.setDescription("another description");
+        principal.setType("another type");
+        principal.setApplicationSecurityBaseDn("another baseDn");
+
+        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+
+        User dbUser = this.xaUserDao.getUser(user.getUsername());
+
+        Assert.assertEquals(3, dbUser.getPrincipals().size());
+
+        dbUser.addPrincipal(principal);
+
+        this.xaUserDao.save(dbUser);
+
+        dbUser = this.xaUserDao.getUser(user.getUsername());
+
+        Assert.assertEquals(4, dbUser.getPrincipals().size());
+    }
 }

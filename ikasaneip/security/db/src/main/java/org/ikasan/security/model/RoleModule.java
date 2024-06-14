@@ -13,7 +13,7 @@ public class RoleModule
     private Long id;
     @Column(name = "ModuleName", nullable = false)
     private String moduleName;
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name="RoleId", nullable=false, updatable = false)
     private Role role;
 

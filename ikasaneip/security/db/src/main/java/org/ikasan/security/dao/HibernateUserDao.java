@@ -96,7 +96,10 @@ public class HibernateUserDao implements UserDao
 
     public void save(User user)
     {
-        this.entityManager.persist(this.entityManager.contains(user) ? user : entityManager.merge(user));
+        if(!this.entityManager.contains(user)) {
+            user = entityManager.merge(user);
+        }
+        this.entityManager.persist(user);
     }
 
     /* (non-Javadoc)
