@@ -57,8 +57,8 @@ public interface SecurityConstants
 	
 	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
             " User as u " +
-            " where  u.id = up.userId" +
-            " and up.ikasanPrincipalId = :" + PRINCIPAL_ID;
+            " where  u.id = up.id.userId" +
+            " and up.id.ikasanPrincipalId = :" + PRINCIPAL_ID;
 
     public static final String GET_POLICY_WITH_ROLE_QUERY = """
         select p from Policy as p \

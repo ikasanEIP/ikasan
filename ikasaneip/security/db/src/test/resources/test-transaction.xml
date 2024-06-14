@@ -68,8 +68,8 @@
                    || execution(* org.ikasan.security.dao.SecurityDao.saveOrUpdateRole(..))
                    || execution(* org.ikasan.security.dao.UserDao.delete(..))
                    || execution(* org.ikasan.security.dao.UserDao.save(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveRoleModule(..))
-                   || execution(* org.ikasan.security.dao.SecurityDao.saveRoleJobPlan(..))
+                   || execution(* org.ikasan.security.dao.SecurityDao.*(..))
+                   || execution(* org.ikasan.security.dao.SecurityDao.*(..))
                    || execution(* org.ikasan.security.dao.AuthorityDao.save(..))"/>
                 
         <aop:advisor advice-ref="txAdvice" pointcut-ref="daoMethods"/>

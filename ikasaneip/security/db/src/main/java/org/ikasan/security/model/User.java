@@ -95,7 +95,7 @@ public class User implements UserDetails, Principal
     private boolean enabled;
 
     /** All <code>IkasanPrincipals</code> held by the owner for the system */
-    @ManyToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
     @JoinTable(
         name = "UserPrincipal",
         joinColumns = { @JoinColumn(name = "UserId") },

@@ -392,7 +392,7 @@ public class LdapServiceImpl implements LdapService
                     continue;
                 }
 
-                List<IkasanPrincipal> ikasanPrincipals = new ArrayList<IkasanPrincipal>();
+                List<IkasanPrincipal> ikasanPrincipals = new ArrayList<>();
                 User user = userDao.getUser(ldapUser.accountName);
 
                 if (user == null)

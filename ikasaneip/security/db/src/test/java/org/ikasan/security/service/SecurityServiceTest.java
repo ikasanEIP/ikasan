@@ -62,6 +62,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Unit test for {@link SecurityService}
@@ -453,10 +454,16 @@ public class SecurityServiceTest
         role.setPolicies(policies);
         this.xaSecurityDao.saveOrUpdateRole(role);
 
+        IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+        principal.addRole(role);
+
+        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+
         List<Role> roles = this.xaSecurityDao.getAllRoles();
 
         Assert.assertTrue(roles.size() == 11);
 
+        role = this.xaSecurityService.getRoleById(role.getId());
         this.xaSecurityService.deleteRole(role);
 
         roles = this.xaSecurityDao.getAllRoles();
@@ -748,4 +755,86 @@ public class SecurityServiceTest
         Assert.assertEquals(policies.size(), policies2.size());
     }
 
+    @Test
+    @DirtiesContext
+    public void test_complex_add_policy_to_role()
+    {
+        Role role = new Role();
+        role.setName("role_new");
+        role.setDescription("description");
+
+        HashSet<Policy> policies = new HashSet<>();
+
+        for(int j=0; j<10; j++)
+        {
+            Policy policy = new Policy();
+            policy.setName("policy" + j);
+            policy.setDescription("description");
+            this.xaSecurityService.savePolicy(policy);
+            policies.add(policy);
+        }
+
+        // insert the role into the db
+        this.xaSecurityService.saveRole(role);
+
+        // add a policy to the role and save the role
+        List<Policy> dbPolicies = this.xaSecurityService.getAllPolicies();
+        role.addPolicy(dbPolicies.get(0));
+        this.xaSecurityService.saveRole(role);
+
+        Assert.assertEquals(1, role.getPolicies().size());
+
+        // add another policy to the role along with the existing and save the role
+        role.addPolicy(dbPolicies.get(0));
+        role.addPolicy(dbPolicies.get(1));
+
+        // save the role
+        this.xaSecurityService.saveRole(role);
+        // make sure there are only 2 policies associated with the role
+        Assert.assertEquals(2, role.getPolicies().size());
+
+        // refresh the role from the DB
+        role = this.xaSecurityService.getAllRoles().stream()
+            .filter(role1 -> role1.getName().equals("role_new"))
+            .collect(Collectors.toList()).get(0);
+
+        // make sure there are still only 2 policies associated with the role
+        Assert.assertEquals(2, role.getPolicies().size());
+
+        // now add some more policies including ones that are already associated
+        // with the role
+        role.addPolicy(dbPolicies.get(0));
+        role.addPolicy(dbPolicies.get(0));
+        role.addPolicy(dbPolicies.get(1));
+        role.addPolicy(dbPolicies.get(2));
+
+        // save the role.
+        this.xaSecurityService.saveRole(role);
+        Assert.assertEquals(3, role.getPolicies().size());
+
+        // get the role from the db again.
+        role = this.xaSecurityService.getAllRoles().stream()
+            .filter(role1 -> role1.getName().equals("role_new"))
+            .collect(Collectors.toList()).get(0);
+
+        // make sure we have the expected number of policies on the role
+        Assert.assertEquals(3, role.getPolicies().size());
+
+        // now we'll remove a policy from a role
+        Policy policy = role.getPolicies().stream().findFirst().get();
+        role.getPolicies().remove(policy);
+
+        // save the role
+        this.xaSecurityService.saveRole(role);
+        // confirm the number of policies
+        Assert.assertEquals(2, role.getPolicies().size());
+
+        // get the role from the db again.
+        role = this.xaSecurityService.getAllRoles().stream()
+            .filter(role1 -> role1.getName().equals("role_new"))
+            .collect(Collectors.toList()).get(0);
+
+        // make sure we have the expected number of policies on the role
+        Assert.assertEquals(2, role.getPolicies().size());
+    }
 }

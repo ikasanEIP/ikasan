@@ -71,7 +71,10 @@ public class HibernateSecurityDao implements SecurityDao
     public void saveOrUpdateRole(Role role)
     {
     	role.setUpdatedDateTime(new Date());
-    	this.entityManager.persist(this.entityManager.contains(role) ? role : entityManager.merge(role));
+        if(!this.entityManager.contains(role)) {
+            role = entityManager.merge(role);
+        }
+    	this.entityManager.persist(role);
     }
 
     /*
@@ -82,7 +85,10 @@ public class HibernateSecurityDao implements SecurityDao
     public void saveOrUpdatePolicy(Policy policy)
     {
     	policy.setUpdatedDateTime(new Date());
-    	this.entityManager.persist(this.entityManager.contains(policy) ? policy : entityManager.merge(policy));
+        if(!this.entityManager.contains(policy)) {
+            policy = entityManager.merge(policy);
+        }
+    	this.entityManager.persist(policy);
     }
 
     /*
@@ -93,7 +99,10 @@ public class HibernateSecurityDao implements SecurityDao
     public void saveOrUpdatePrincipal(IkasanPrincipal principal)
     {
     	principal.setUpdatedDateTime(new Date());
-    	this.entityManager.persist(this.entityManager.contains(principal) ? principal : entityManager.merge(principal));
+        if(!this.entityManager.contains(principal)) {
+            principal = entityManager.merge(principal);
+        }
+    	this.entityManager.persist(principal);
     }
 
     /*
@@ -318,7 +327,10 @@ public class HibernateSecurityDao implements SecurityDao
 
     @Override
     public void saveRoleJobPlan(RoleJobPlan roleJobPlan) {
-        this.entityManager.persist(this.entityManager.contains(roleJobPlan) ? roleJobPlan : entityManager.merge(roleJobPlan));
+        if(!this.entityManager.contains(roleJobPlan)) {
+            roleJobPlan = entityManager.merge(roleJobPlan);
+        }
+        this.entityManager.persist(roleJobPlan);
     }
 
     /*
@@ -337,7 +349,10 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
 	{
-		this.entityManager.persist(this.entityManager.contains(authenticationMethod) ? authenticationMethod : entityManager.merge(authenticationMethod));
+        if(!this.entityManager.contains(authenticationMethod)) {
+            authenticationMethod = entityManager.merge(authenticationMethod);
+        }
+		this.entityManager.persist(authenticationMethod);
 	}
 
 	/* (non-Javadoc)
@@ -457,7 +472,10 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
 	{
-		this.entityManager.persist(this.entityManager.contains(policyLink) ? policyLink : entityManager.merge(policyLink));
+        if(!this.entityManager.contains(policyLink)) {
+            policyLink = entityManager.merge(policyLink);
+        }
+		this.entityManager.persist(policyLink);
 	}
 
 	/* (non-Javadoc)
@@ -466,7 +484,10 @@ public class HibernateSecurityDao implements SecurityDao
 	@Override
 	public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType)
 	{
-		this.entityManager.persist(this.entityManager.contains(policyLinkType) ? policyLinkType : entityManager.merge(policyLinkType));
+        if(!this.entityManager.contains(policyLinkType)) {
+            policyLinkType = entityManager.merge(policyLinkType);
+        }
+		this.entityManager.persist(policyLinkType);
 	}
 
 	/* (non-Javadoc)

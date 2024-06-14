@@ -56,6 +56,9 @@ public class SecurityTestAutoConfiguration
         Properties platformJpaProperties = new Properties();
         platformJpaProperties.put("hibernate.show_sql", false);
         platformJpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
+        platformJpaProperties.put("hibernate.event.merge.entity_copy_observer", "allow");
+        platformJpaProperties.put("hibernate.transaction.jta.platform",
+            "org.hibernate.engine.transaction.jta.platform.internal.JBossStandAloneJtaPlatform");
 
         return platformJpaProperties;
     }
