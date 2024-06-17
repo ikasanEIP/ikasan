@@ -72,6 +72,11 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-process-monitor</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test</artifactId>
             <exclusions>
                 <exclusion>
@@ -119,6 +124,19 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-inline</artifactId>
+            <version>3.12.4</version>
             <scope>test</scope>
         </dependency>
 

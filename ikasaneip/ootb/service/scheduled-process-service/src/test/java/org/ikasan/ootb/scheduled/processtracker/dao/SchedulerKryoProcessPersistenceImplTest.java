@@ -1,6 +1,6 @@
-package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
+package org.ikasan.ootb.scheduled.processtracker.dao;
 
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduled.processtracker.model.SchedulerIkasanProcess;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

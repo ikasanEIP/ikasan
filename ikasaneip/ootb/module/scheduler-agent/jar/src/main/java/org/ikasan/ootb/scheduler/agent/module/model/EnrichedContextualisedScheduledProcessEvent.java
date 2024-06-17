@@ -2,7 +2,7 @@ package org.ikasan.ootb.scheduler.agent.module.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcess;
+import org.ikasan.ootb.scheduled.processtracker.DetachableProcess;
 import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 
 import java.util.List;
