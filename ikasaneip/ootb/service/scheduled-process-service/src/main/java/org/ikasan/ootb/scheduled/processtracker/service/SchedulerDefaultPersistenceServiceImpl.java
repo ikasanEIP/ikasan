@@ -1,14 +1,15 @@
-package org.ikasan.ootb.scheduler.agent.module.service.processtracker.service;
+package org.ikasan.ootb.scheduled.processtracker.service;
 
 import org.ikasan.cli.shell.operation.service.DefaultPersistenceServiceImpl;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.ProcessStatusDao;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerProcessPersistenceDao;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduled.processtracker.dao.ProcessStatusDao;
+import org.ikasan.ootb.scheduled.processtracker.dao.SchedulerProcessPersistenceDao;
 
 import java.io.IOException;
 import java.util.Optional;
 
-import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import org.ikasan.ootb.scheduled.processtracker.model.SchedulerIkasanProcess;
+
+import static org.ikasan.ootb.scheduled.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
 
 public class SchedulerDefaultPersistenceServiceImpl extends DefaultPersistenceServiceImpl implements SchedulerPersistenceService {
     SchedulerProcessPersistenceDao schedulerProcessPersistenceDao;

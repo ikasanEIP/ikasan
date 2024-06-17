@@ -1,6 +1,6 @@
-package org.ikasan.ootb.scheduler.agent.module.service.processtracker;
+package org.ikasan.ootb.scheduled.processtracker;
 
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
 
 import java.io.IOException;
 
