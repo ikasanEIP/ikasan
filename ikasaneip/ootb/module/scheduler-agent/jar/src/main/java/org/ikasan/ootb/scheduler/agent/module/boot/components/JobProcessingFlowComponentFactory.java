@@ -91,6 +91,7 @@ import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfigu
 import org.ikasan.ootb.scheduled.processtracker.dao.ProcessStatusDaoFSImp;
 import org.ikasan.ootb.scheduled.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
 import org.ikasan.ootb.scheduled.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
@@ -154,7 +155,8 @@ public class JobProcessingFlowComponentFactory {
     @Resource
     BuilderFactory builderFactory;
 
-    String defaultPidDirectory = "." + FileSystems.getDefault().getSeparator() + "pid";
+    @Resource
+    SchedulerPersistenceService schedulerPersistenceService;
 
     /**
      * Get the big queue consumer
@@ -211,10 +213,7 @@ public class JobProcessingFlowComponentFactory {
      */
     public Broker getJobStartingBroker() {
         JobStartingBroker jobStartingBroker =
-            new JobStartingBroker(
-                new SchedulerDefaultPersistenceServiceImpl(
-                    new SchedulerKryoProcessPersistenceImpl(defaultPidDirectory),
-                    new ProcessStatusDaoFSImp(defaultPidDirectory)));
+            new JobStartingBroker(schedulerPersistenceService);
         JobStartingBrokerConfiguration configuration = new JobStartingBrokerConfiguration();
         configuration.setEnvironmentToAddSpaceForEmptyContextParam(this.environmentToAddSpaceForEmptyContextParam);
         
