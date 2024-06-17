@@ -40,67 +40,9 @@
  */
 package org.ikasan.ootb.scheduled;
 
-import org.ikasan.harvesting.HarvestingJobImpl;
-import org.ikasan.housekeeping.HousekeepingJobImpl;
-import org.ikasan.ootb.scheduled.dao.HibernateScheduledProcessEventDao;
-import org.ikasan.ootb.scheduled.service.ScheduledProcessServiceImpl;
-import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.harvest.HarvestService;
-import org.ikasan.spec.harvest.HarvestingJob;
-import org.ikasan.spec.housekeeping.HousekeepService;
-import org.ikasan.spec.housekeeping.HousekeepingJob;
-import org.ikasan.spec.scheduled.event.dao.ScheduledProcessEventDao;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
-import org.springframework.orm.jpa.JpaVendorAdapter;
-import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-
-import javax.sql.DataSource;
-import java.util.Properties;
-
 /**
  * Scheduler service related configuration required by the scheduler ootb module.
  */
-public class ScheduledServiceAutoConfiguration
-{
-    public static final String SCHEDULED_PROCESS_EVENTS_PATH = "/rest/harvest/scheduled";
+public class ScheduledServiceAutoConfiguration {
 
-    @Bean
-    public HarvestingJob scheduledProcessEventJob(@Qualifier("scheduledProcessService") HarvestService scheduledProcessService, Environment environment
-        , @Qualifier("scheduleProcessEventsDashboardRestService") DashboardRestService scheduleProcessEventsDashboardRestService)
-    {
-        return new HarvestingJobImpl("scheduledProcessEventJob", scheduledProcessService, environment, scheduleProcessEventsDashboardRestService);
-    }
-
-    @Bean
-    public HousekeepingJob scheduledProcessEventHousekeepingJob(@Qualifier("scheduledProcessService") HousekeepService scheduledProcessService, Environment environment)
-    {
-        return new HousekeepingJobImpl("scheduledProcessEventHousekeepingJob", scheduledProcessService, environment);
-    }
-
-    @Bean(name = "scheduledProcessService")
-    public ScheduledProcessServiceImpl scheduledProcessService(ScheduledProcessEventDao scheduledProcessEventDao) {
-        return new ScheduledProcessServiceImpl(scheduledProcessEventDao);
-    }
-
-    @Bean
-    public ScheduledProcessEventDao scheduledProcessEventDao() {
-        HibernateScheduledProcessEventDao scheduledProcessEventDao = new HibernateScheduledProcessEventDao();
-        return scheduledProcessEventDao;
-    }
-
-    @Bean
-    public LocalContainerEntityManagerFactoryBean scheduledProcessEntityManager(@Qualifier("ikasan.xads")DataSource dataSource
-        , JpaVendorAdapter jpaVendorAdapter, @Qualifier("platformJpaProperties")Properties platformJpaProperties) {
-        LocalContainerEntityManagerFactoryBean localContainerEntityManagerFactoryBean
-            = new LocalContainerEntityManagerFactoryBean();
-        localContainerEntityManagerFactoryBean.setDataSource(dataSource);
-        localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
-        localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
-        localContainerEntityManagerFactoryBean.setPersistenceUnitName("scheduled-process");
-        localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:scheduled-process-persistence.xml");
-
-        return localContainerEntityManagerFactoryBean;
-    }
 }
