@@ -40,9 +40,36 @@
  */
 package org.ikasan.ootb.scheduled;
 
+import org.ikasan.ootb.scheduled.processtracker.dao.ProcessStatusDao;
+import org.ikasan.ootb.scheduled.processtracker.dao.ProcessStatusDaoFSImp;
+import org.ikasan.ootb.scheduled.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
+import org.ikasan.ootb.scheduled.processtracker.dao.SchedulerProcessPersistenceDao;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+
 /**
  * Scheduler service related configuration required by the scheduler ootb module.
  */
 public class ScheduledServiceAutoConfiguration {
 
+    @Value("${scheduled.process.pid.directory:#{'.' + T(java.nio.file.FileSystems).getDefault().getSeparator() + 'pid'}}")
+    String defaultPidDirectory;
+
+    @Bean
+    SchedulerPersistenceService schedulerPersistenceService(SchedulerProcessPersistenceDao schedulerProcessPersistenceDao,
+                                                            ProcessStatusDao processStatusDao) {
+        return new SchedulerDefaultPersistenceServiceImpl(schedulerProcessPersistenceDao, processStatusDao);
+    }
+
+    @Bean
+    SchedulerProcessPersistenceDao schedulerProcessPersistenceDao() {
+        return new SchedulerKryoProcessPersistenceImpl(defaultPidDirectory);
+    }
+
+    @Bean
+    ProcessStatusDao processStatusDao() {
+        return new ProcessStatusDaoFSImp(defaultPidDirectory);
+    }
 }
