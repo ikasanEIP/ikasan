@@ -72,7 +72,8 @@ public class DefaultOperationImpl implements Operation
 
     /**
      * Constructor
-     * @param persistenceService
+     *
+     * @param persistenceService the process info persistence service
      */
     public DefaultOperationImpl(PersistenceService persistenceService)
     {
@@ -96,6 +97,7 @@ public class DefaultOperationImpl implements Operation
     public Process start(ProcessType processType, List<String> commands, String name) throws IOException
     {
         ProcessBuilder processBuilder = getProcessBuilder(commands);
+
         if(processType.getOutputLog() != null && !processType.getOutputLog().isEmpty())
         {
             File outputLog = new File(processType.getOutputLog());
@@ -155,7 +157,7 @@ public class DefaultOperationImpl implements Operation
                 String[] moduleNameParts = param.split("=");
                 if(moduleNameParts.length == 2)
                 {
-                    return moduleNameParts[1].trim().toLowerCase().equals(name.toLowerCase());
+                    return moduleNameParts[1].trim().toLowerCase().endsWith(name.toLowerCase());
                 }
             }
         }
