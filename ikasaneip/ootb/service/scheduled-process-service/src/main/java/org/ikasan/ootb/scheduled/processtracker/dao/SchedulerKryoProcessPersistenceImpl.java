@@ -1,16 +1,15 @@
-package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
+package org.ikasan.ootb.scheduled.processtracker.dao;
 
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.io.Input;
 import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduled.processtracker.model.SchedulerIkasanProcess;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.util.Arrays;
 
 public class SchedulerKryoProcessPersistenceImpl extends KryoProcessPersistenceImpl implements SchedulerProcessPersistenceDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(SchedulerKryoProcessPersistenceImpl.class);

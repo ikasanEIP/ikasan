@@ -1,10 +1,11 @@
-package org.ikasan.ootb.scheduler.agent.module.service.processtracker;
+package org.ikasan.ootb.scheduled.processtracker;
 
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.ProcessStatusDao;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao.SchedulerProcessPersistenceDao;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.service.SchedulerPersistenceService;
+
+import org.ikasan.ootb.scheduled.processtracker.dao.ProcessStatusDao;
+import org.ikasan.ootb.scheduled.processtracker.dao.SchedulerProcessPersistenceDao;
+import org.ikasan.ootb.scheduled.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ikasan.ootb.scheduler.agent.module.service.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
+import static org.ikasan.ootb.scheduled.processtracker.DetachableProcessBuilder.SCHEDULER_PROCESS_TYPE;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)

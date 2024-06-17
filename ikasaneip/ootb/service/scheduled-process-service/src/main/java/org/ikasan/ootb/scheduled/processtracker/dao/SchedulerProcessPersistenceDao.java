@@ -1,7 +1,7 @@
-package org.ikasan.ootb.scheduler.agent.module.service.processtracker.dao;
+package org.ikasan.ootb.scheduled.processtracker.dao;
 
 import org.ikasan.cli.shell.operation.dao.ProcessPersistenceDao;
-import org.ikasan.ootb.scheduler.agent.module.service.processtracker.model.SchedulerIkasanProcess;
+import org.ikasan.ootb.scheduled.processtracker.model.SchedulerIkasanProcess;
 
 public interface SchedulerProcessPersistenceDao extends ProcessPersistenceDao {
     SchedulerIkasanProcess find(String type, String name);
