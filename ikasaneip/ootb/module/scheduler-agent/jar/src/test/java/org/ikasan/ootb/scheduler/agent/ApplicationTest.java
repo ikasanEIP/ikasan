@@ -116,14 +116,7 @@ public class ApplicationTest {
     @Test
     @DirtiesContext
     public void test_create_module_start_and_stop_flow() throws Exception {
-        Flow flow = moduleUnderTest.getFlow("Scheduler Flow 3");
-        flow.start();
-        assertEquals(Flow.RUNNING, flow.getState());
-
-        flow.stop();
-        assertEquals(Flow.STOPPED, flow.getState());
-
-        flow = moduleUnderTest.getFlow("Scheduler Flow 1");
+        Flow flow = moduleUnderTest.getFlow("Scheduler Flow 1");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 

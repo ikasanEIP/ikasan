@@ -73,8 +73,6 @@ public class TestConfiguration {
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 1", "SCHEDULER_JOB");
         configuration.getFlowDefinitions().put("Scheduler Flow 2", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 2", "FILE");
-        configuration.getFlowDefinitions().put("Scheduler Flow 3", "MANUAL");
-        configuration.getFlowDefinitionProfiles().put("Scheduler Flow 3", "LEGACY");
         configuration.getFlowDefinitions().put("Scheduler Flow 4", "MANUAL");
         configuration.getFlowDefinitionProfiles().put("Scheduler Flow 4", "QUARTZ");
         configuration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "MANUAL");

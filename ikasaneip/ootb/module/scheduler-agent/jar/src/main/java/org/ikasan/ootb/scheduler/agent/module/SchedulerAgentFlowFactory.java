@@ -75,9 +75,6 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     FileEventSchedulerJobFlowFactory fileEventSchedulerJobFlowFactory;
 
     @Resource
-    LegacyJobProcessingFlowFactory legacyJobProcessingFlowFactory;
-
-    @Resource
     ScheduledProcessEventOutboundFlowFactory scheduledProcessEventOutboundFlowFactory;
 
     @Resource
@@ -89,8 +86,8 @@ public class SchedulerAgentFlowFactory implements FlowFactory
         try {
             logger.info("Loading job: " + jobName + " with profile " + profile);
             if(profile == null) {
-                profile = "LEGACY";
-                logger.info("Jobs with NULL profile are reverted to the legacy LEGACY profile");
+                throw new RuntimeException(String.format("Job name[%s] has a null profile! A profile must be provided " +
+                    "in order to bootstrap a scheduler job!", jobName));
             }
             switch (profile) {
                 case AgentFlowProfiles.FILE: {
@@ -101,9 +98,6 @@ public class SchedulerAgentFlowFactory implements FlowFactory
                 }
                 case AgentFlowProfiles.QUARTZ: {
                     return this.createQuartzFlows(jobName);
-                }
-                case AgentFlowProfiles.LEGACY: {
-                    return this.createLegacyEventFlows(jobName);
                 }
                 case AgentFlowProfiles.OUTBOUND: {
                     return this.createOutboundScheduledEventFlows();
@@ -152,16 +146,6 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     }
 
     /**
-     * Helper method to create legacy event flows.
-     *
-     * @param jobName
-     * @return
-     */
-    private List<Flow> createLegacyEventFlows(String jobName) {
-        return List.of(this.legacyJobProcessingFlowFactory.create(jobName));
-    }
-
-    /**
      * Helper method that creates the outbound flows to publish scheduled events to the dashboard.
      *
      * @return
@@ -171,6 +155,12 @@ public class SchedulerAgentFlowFactory implements FlowFactory
         return List.of(this.scheduledProcessEventOutboundFlowFactory.create());
     }
 
+    /**
+     * Creates a list of flows for housekeeping job of generated log files.
+     *
+     * @return List of flows
+     * @throws IOException if an IO error occurs
+     */
     private List<Flow> createHousekeepLogFilesFlows() throws IOException {
         return List.of(this.housekeepLogFilesFlowFactory.create());
     }
