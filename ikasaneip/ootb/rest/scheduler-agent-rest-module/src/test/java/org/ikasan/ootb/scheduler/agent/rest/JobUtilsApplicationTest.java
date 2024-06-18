@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
 import org.hamcrest.core.IsInstanceOf;
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.ootb.scheduler.agent.rest.util.JavaUtilsTestHelper;
 import org.junit.Before;
 import org.junit.Rule;
@@ -8,8 +9,10 @@ import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -35,6 +38,9 @@ public class JobUtilsApplicationTest
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
+    @MockBean
+    private SchedulerPersistenceService schedulerPersistenceService;
+
 
     @Before
     public void setUp()
@@ -50,6 +56,8 @@ public class JobUtilsApplicationTest
         RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/jobUtils/kill/9")
             .accept(MediaType.APPLICATION_JSON_VALUE);
         mockMvc.perform(requestBuilder).andReturn();
+
+        Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
     @Test
@@ -63,6 +71,8 @@ public class JobUtilsApplicationTest
         assertEquals(400, result.getResponse().getStatus());
 
         assertEquals("\"pid not found!\"", result.getResponse().getContentAsString());
+
+        Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
     @Test
@@ -76,6 +86,8 @@ public class JobUtilsApplicationTest
         assertEquals(400, result.getResponse().getStatus());
 
         assertEquals("\"pid not found!\"", result.getResponse().getContentAsString());
+
+        Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
     @Test
@@ -89,6 +101,9 @@ public class JobUtilsApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
+
+        Mockito.verify(schedulerPersistenceService).removeAll(process.pid());
+        Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
     @Test
@@ -102,6 +117,9 @@ public class JobUtilsApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
+
+        Mockito.verify(schedulerPersistenceService).removeAll(process.pid());
+        Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
 }

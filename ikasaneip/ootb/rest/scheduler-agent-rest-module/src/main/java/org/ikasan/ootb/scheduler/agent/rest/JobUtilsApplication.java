@@ -1,13 +1,16 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
+import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.Optional;
 
 @RequestMapping("/rest/jobUtils")
@@ -17,7 +20,8 @@ public class JobUtilsApplication
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(JobUtilsApplication.class);
 
-//    private SchedulerPersistenceService schedulerPersistenceService;
+    @Autowired
+    private SchedulerPersistenceService schedulerPersistenceService;
 
 
     /**
@@ -39,6 +43,7 @@ public class JobUtilsApplication
             else {
                 boolean result = destroy ? processHandleOptional.get().destroyForcibly() : processHandleOptional.get().destroy();
                 if (result) {
+                    this.schedulerPersistenceService.removeAll(pid);
                     return new ResponseEntity(HttpStatus.OK);
                 }
                 else {

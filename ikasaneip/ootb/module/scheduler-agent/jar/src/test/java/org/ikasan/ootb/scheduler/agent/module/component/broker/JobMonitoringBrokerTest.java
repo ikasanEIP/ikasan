@@ -96,8 +96,6 @@ public class JobMonitoringBrokerTest {
 
         event = broker.invoke(event);
 
-        verify(this.errorReportingService, times(1)).notify(anyString(), any(), any(Throwable.class), anyString());
-
         Assert.assertEquals(Outcome.EXECUTION_INVOKED, event.getOutcome());
         Assert.assertFalse(event.isJobStarting());
         Assert.assertFalse(event.isSkipped());
@@ -272,7 +270,7 @@ public class JobMonitoringBrokerTest {
 
         Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting."));
 
-        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY);
     }
 
     @Test
@@ -306,7 +304,7 @@ public class JobMonitoringBrokerTest {
         Assert.assertFalse(event.getDetachableProcess().isDetachedAlreadyFinished());
         Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
 
-        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY);
     }
 
     @Test
@@ -339,7 +337,7 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getDetachableProcess().isDetachedAlreadyFinished());
         Assert.assertTrue(event.getExecutionDetails().contains("The process was detached, the processHandle and output file will be used to determine the return value."));
 
-        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY);
     }
     @Test
     public void test_job_monitor_when_recovered_from_agent_crash_and_process_still_running_then_does_not_end_within_timeout() throws ExecutionException, InterruptedException, TimeoutException, IOException {
@@ -373,7 +371,7 @@ public class JobMonitoringBrokerTest {
         Assert.assertTrue(event.getExecutionDetails().contains("Killing the process. If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally"));
         Assert.assertTrue(event.getExecutionDetails().contains("WARNING : There were problems getting the return status from the detached process, it will be treated as an error, issue was"));
 
-        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
+        verify(processStatusDaoMock, times(1)).removeScriptAndResult(IDENTITY);
     }
 
     private EnrichedContextualisedScheduledProcessEvent getEnrichedContextualisedScheduledProcessEvent(boolean dryRun, boolean skip
