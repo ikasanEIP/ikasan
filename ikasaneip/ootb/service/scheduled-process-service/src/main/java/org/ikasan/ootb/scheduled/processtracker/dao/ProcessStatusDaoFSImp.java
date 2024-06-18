@@ -107,26 +107,26 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
      * The script file was generated to hold the commands to execute, the result file holds the returned result of the commands
      * Once they have served their purpose, they need to be housekept.
      * @param processIdentity which will be used to generate the file names
-     * @param scriptPostfix that was used to create the commandds script
      * @throws IOException if there were issues removing the file
      */
-    public void removeScriptAndResult(String processIdentity, String scriptPostfix) throws IOException {
-        Path fileToDeletePath = Paths.get(getScriptFilePath(processIdentity, scriptPostfix));
-        Files.delete(fileToDeletePath);
-
-        // The wrapper is not always used / needed
-        fileToDeletePath = Paths.get(getWrapperScriptFilePath(processIdentity, scriptPostfix));
-        if (Files.exists(fileToDeletePath)) {
-            Files.delete(fileToDeletePath);
-        }
-
-        fileToDeletePath = Paths.get(getResultFilePath(processIdentity));
-        Files.delete(fileToDeletePath);
+    public void removeScriptAndResult(String processIdentity) throws IOException {
+        Files.list(Path.of(this.persistenceDir))
+            .filter(p -> p.toString().contains(getScriptFilePath(processIdentity))
+                ||  p.toString().contains(getWrapperScriptFilePath(processIdentity))
+                ||  p.toString().contains(getResultFilePath(processIdentity)))
+            .forEach((p) -> {
+            try {
+                Files.deleteIfExists(p);
+                LOGGER.info(String.format("Successfully deleted process file[%s].", p));
+            } catch (Exception e) {
+                LOGGER.info(String.format("Failed to delete file[%s]. Error message[%s].", p, e.getMessage()));
+            }
+        });
     }
 
 
     private String getResultFilePath(String processIdentity) {
-        return persistenceDir + FileSystems.getDefault().getSeparator() + processIdentity + RESULTS_FILE_POSTFIX;
+        return processIdentity + RESULTS_FILE_POSTFIX;
     }
 
     public String getResultAbsoluteFilePath(String processIdentity) {
@@ -135,11 +135,16 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
         return file.getAbsolutePath();
     }
 
+    public String getScriptFilePath(String processIdentity)  {
+        return processIdentity + SCRIPT_FILE_POSTFIX;
+    }
+
+    @Override
     public String getScriptFilePath(String processIdentity, String scriptPostfix)  {
         return persistenceDir + FileSystems.getDefault().getSeparator() + processIdentity + SCRIPT_FILE_POSTFIX + scriptPostfix;
     }
 
-    public String getWrapperScriptFilePath(String processIdentity, String scriptPostfix)  {
-        return persistenceDir + FileSystems.getDefault().getSeparator() + processIdentity + SCRIPT_FILE_POSTFIX + WRAPPER_FILE_POSTFIX + scriptPostfix;
+    public String getWrapperScriptFilePath(String processIdentity)  {
+        return processIdentity + SCRIPT_FILE_POSTFIX + WRAPPER_FILE_POSTFIX;
     }
 }

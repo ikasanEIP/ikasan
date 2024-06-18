@@ -197,7 +197,8 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
         }
         catch(InterruptedException e) {
             // If a job has failed we do not want to notify the orchestration that we have been successful.
-            LOGGER.warn("process.waitFor interrupted, this could be due to the agent being stopped while processes are running, these should re-attached upon restart", e);
+            LOGGER.warn("process.waitFor interrupted, this could be due to the agent being stopped while processes are running" +
+                ", these should re-attached upon restart", e);
             throw new RuntimeException(e);
         }
         scheduledProcessEvent.setDetailsFromProcess();
