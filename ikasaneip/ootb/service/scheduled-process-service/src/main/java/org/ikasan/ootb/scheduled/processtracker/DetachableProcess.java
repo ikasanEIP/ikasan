@@ -41,7 +41,7 @@ public class DetachableProcess {
     }
 
     public void removePersistedProcessData() throws IOException {
-        schedulerPersistenceService.removeAll(identity, commandProcessor.getScriptFilePostfix());
+        schedulerPersistenceService.removeAll(identity);
     }
 
     public Process getProcess() {

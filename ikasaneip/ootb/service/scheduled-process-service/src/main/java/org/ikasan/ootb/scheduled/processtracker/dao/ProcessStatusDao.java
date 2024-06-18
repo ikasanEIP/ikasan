@@ -10,7 +10,7 @@ public interface ProcessStatusDao {
 
     String getPersistedReturnCode(String processIdentity);
 
-    void removeScriptAndResult(String processIdentity, String scriptPostfix) throws IOException ;
+    void removeScriptAndResult(String processIdentity) throws IOException ;
 
     String getResultAbsoluteFilePath(String processIdentity);
 

@@ -94,7 +94,7 @@ public class ProcessStatusDaoFSImpTest {
         assertThat(resultsFile.exists()).isTrue();
         assertThat(scriptFile.exists()).isTrue();
 
-        processStatusDao.removeScriptAndResult(IDENTITY, cp.getScriptFilePostfix());
+        processStatusDao.removeScriptAndResult(IDENTITY);
 
         assertThat(resultsFile.exists()).isFalse();
         assertThat(scriptFile.exists()).isFalse();
