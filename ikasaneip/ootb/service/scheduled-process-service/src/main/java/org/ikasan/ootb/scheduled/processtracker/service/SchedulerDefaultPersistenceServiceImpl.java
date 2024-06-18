@@ -53,9 +53,9 @@ public class SchedulerDefaultPersistenceServiceImpl extends DefaultPersistenceSe
     }
 
     @Override
-    public void removeAll(String processIdentity, String scriptPostfix) throws IOException {
+    public void removeAll(String processIdentity) throws IOException {
         remove(SCHEDULER_PROCESS_TYPE, processIdentity);
-        processStatusDao.removeScriptAndResult(processIdentity, scriptPostfix);
+        processStatusDao.removeScriptAndResult(processIdentity);
     }
 
     @Override
@@ -63,6 +63,7 @@ public class SchedulerDefaultPersistenceServiceImpl extends DefaultPersistenceSe
         SchedulerIkasanProcess schedulerIkasanProcess = this.schedulerProcessPersistenceDao.find(pid);
         if(schedulerIkasanProcess != null) {
             remove(SCHEDULER_PROCESS_TYPE, schedulerIkasanProcess.getName());
+            processStatusDao.removeScriptAndResult(schedulerIkasanProcess.getName());
         }
     }
 

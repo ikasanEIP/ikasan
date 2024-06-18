@@ -83,6 +83,11 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>scheduled-process-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-utility-endpoint</artifactId>
         </dependency>
 
