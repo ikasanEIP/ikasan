@@ -104,7 +104,7 @@ public class DetachableProcessBuilder {
         if (detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_CMD) || detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_POWSHELL)) {
             String wrapperScriptCommands = getWindowsWrapperCommands(commandScriptPath, processExitStatusFile);
             try {
-                commandScriptPath = schedulerPersistenceService.createCommandWrapperScript(detachableProcess.getIdentity(), detachableProcess.getCommandProcessor().getScriptFilePostfix(), wrapperScriptCommands);
+                commandScriptPath = schedulerPersistenceService.createCommandWrapperScript(detachableProcess.getIdentity(), CommandProcessor.WINDOWS_POWSHELL.getScriptFilePostfix(), wrapperScriptCommands);
             } catch (IOException e) {
                 throw new EndpointException(e);
             }
@@ -136,7 +136,7 @@ public class DetachableProcessBuilder {
         isInitialised("Attempt to set command " + commandLineScriptName);
         List<String> commands = new ArrayList<>();
         if (detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_CMD) || detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_POWSHELL)) {
-            commands.addAll(Arrays.asList(detachableProcess.getCommandProcessor().getCommandArgs()));
+            commands.addAll(Arrays.asList(CommandProcessor.WINDOWS_POWSHELL.getCommandArgs()));
             commands.add("Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError \"" + getInitialErrorOutput() + "\" -RedirectStandardOutput \"" + getInitialResultOutput() + "\" -PassThru -ArgumentList \"/c\", " +
                 "\"" + commandLineScriptName + "\"");
         } else {
