@@ -108,6 +108,8 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
             new DetachableProcessBuilder(
                 schedulerPersistenceService,
                 new ProcessBuilder(),
+                // The split of the ExecutionEnvironmentProperties supported the Dashboard sending pipe delimited commands
+                // sadly this is now obsolete but this code is retained for the short term for regression support.
                 StringUtils.split(scheduledProcessEvent.getInternalEventDrivenJob().getExecutionEnvironmentProperties(), "|"),
                 scheduledProcessEvent.generateProcessIdentity()
             );
@@ -183,7 +185,6 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                         }
                     });
             }
-
         } else {
             // Once detached, the location of output/error/firetime MUST come from the serialized process.
             outputLog = new File(detachableProcessBuilder.getInitialResultOutput());
