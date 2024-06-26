@@ -16,11 +16,9 @@ import java.util.*;
  * Its aim is to start the Command Execution Job on the target OS, if the invoker
  * crashed, the process would still continue and leave its error/output/return status in such a way that
  * the invoker could determine success/failure when the invoker was restarted.
- *
  * This is achieved by taking the commands that would have been directly executed by processBuilder, bundling them
  * up in a script, then executing the script and redirecting the return value to file system file, so that it is
  * persisted.
- *
  * It currently supports the command processors on Unix and Windows hosts.
  */
 public class DetachableProcessBuilder {
@@ -100,7 +98,7 @@ public class DetachableProcessBuilder {
         }
         String processExitStatusFile = schedulerPersistenceService.getResultAbsoluteFilePath(detachableProcess.getIdentity());
 
-        // For Windows, we need to wrap the command in another powershelll script because start-process doesn't support script blocks.
+        // For Windows, we need to wrap the command in another Powershell script because start-process doesn't support script blocks.
         if (detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_CMD) || detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_POWSHELL)) {
             String wrapperScriptCommands = getWindowsWrapperCommands(commandScriptPath, processExitStatusFile);
             try {
