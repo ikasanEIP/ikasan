@@ -9,7 +9,6 @@ import java.io.PrintWriter;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 
 /**
  *
@@ -111,9 +110,9 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
      */
     public void removeScriptAndResult(String processIdentity) throws IOException {
         Files.list(Path.of(this.persistenceDir))
-            .filter(p -> p.toString().contains(getScriptFilePath(processIdentity))
-                ||  p.toString().contains(getWrapperScriptFilePath(processIdentity))
-                ||  p.toString().contains(getResultFilePath(processIdentity)))
+            .filter(p -> p.toString().contains(getScriptFile(processIdentity))
+                ||  p.toString().contains(getWrapperScriptFile(processIdentity))
+                ||  p.toString().contains(getResultFile(processIdentity)))
             .forEach((p) -> {
             try {
                 Files.deleteIfExists(p);
@@ -125,8 +124,12 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     }
 
 
-    private String getResultFilePath(String processIdentity) {
+    private String getResultFile(String processIdentity) {
         return processIdentity + RESULTS_FILE_POSTFIX;
+    }
+
+    private String getResultFilePath(String processIdentity) {
+        return persistenceDir + FileSystems.getDefault().getSeparator() + getResultFile(processIdentity);
     }
 
     public String getResultAbsoluteFilePath(String processIdentity) {
@@ -135,16 +138,16 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
         return file.getAbsolutePath();
     }
 
-    public String getScriptFilePath(String processIdentity)  {
+    public String getScriptFile(String processIdentity)  {
         return processIdentity + SCRIPT_FILE_POSTFIX;
     }
 
     @Override
-    public String getScriptFilePath(String processIdentity, String scriptPostfix)  {
-        return persistenceDir + FileSystems.getDefault().getSeparator() + processIdentity + SCRIPT_FILE_POSTFIX + scriptPostfix;
+    public String getScriptFilePath(String processIdentity, String fileExtension)  {
+        return persistenceDir + FileSystems.getDefault().getSeparator() + processIdentity + SCRIPT_FILE_POSTFIX + fileExtension;
     }
 
-    public String getWrapperScriptFilePath(String processIdentity)  {
+    public String getWrapperScriptFile(String processIdentity)  {
         return processIdentity + SCRIPT_FILE_POSTFIX + WRAPPER_FILE_POSTFIX;
     }
 }
