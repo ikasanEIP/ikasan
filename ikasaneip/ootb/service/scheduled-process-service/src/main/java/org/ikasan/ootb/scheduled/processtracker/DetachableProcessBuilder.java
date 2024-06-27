@@ -135,7 +135,11 @@ public class DetachableProcessBuilder {
         List<String> commands = new ArrayList<>();
         if (detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_CMD) || detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_POWSHELL)) {
             commands.addAll(Arrays.asList(CommandProcessor.WINDOWS_POWSHELL.getCommandArgs()));
-            commands.add("Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError \"" + getInitialErrorOutput() + "\" -RedirectStandardOutput \"" + getInitialResultOutput() + "\" -PassThru -ArgumentList \"/c\", " +
+            // Note the quotes around $errorLogPath being dis-similar to getWindowsWrapperCommands() IS deliberate.
+            commands.add(
+                "$errorLogPath = '" + this.getInitialErrorOutput() + "' \r\n" +
+                "$initialResultsPath = '" + this.getInitialResultOutput() + "' \r\n" +
+                "Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError $errorLogPath -RedirectStandardOutput $initialResultsPath -PassThru -ArgumentList \"/c\", " +
                 "\"" + commandLineScriptName + "\"");
         } else {
             commands.addAll(Arrays.asList(detachableProcess.getCommandProcessor().getCommandArgs()));
@@ -155,7 +159,9 @@ public class DetachableProcessBuilder {
      */
     private String getWindowsWrapperCommands(String commandScript, String processExitStatusFile) {
         StringBuilder wrapperCommands = new StringBuilder();
-        wrapperCommands.append("$p=Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError \"" + this.getInitialErrorOutput() + "\" -RedirectStandardOutput \"" + this.getInitialResultOutput() + "\" -PassThru -ArgumentList \"/c\", \"" + commandScript + "\" -Wait \r\n");
+        wrapperCommands.append("$errorLogPath = \"" + this.getInitialErrorOutput() + "\" \r\n");
+        wrapperCommands.append("$initialResultsPath = \"" + this.getInitialResultOutput() + "\" \r\n");
+        wrapperCommands.append("$p=Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError $errorLogPath -RedirectStandardOutput $initialResultsPath -PassThru -ArgumentList \"/c\", \"" + commandScript + "\" -Wait \r\n");
         wrapperCommands.append("$file=\"" + this.getInitialErrorOutput()+"\" \r\n");
         wrapperCommands.append("if ($p.ExitCode -ne 0) { \r\n");
         wrapperCommands.append("    set-content -Encoding \"utf8\" " + processExitStatusFile + " $p.ExitCode \r\n");
@@ -216,7 +222,7 @@ public class DetachableProcessBuilder {
                     detachableProcess.setDetached(true);
                     detachableProcess.setProcessHandle(child);
                 } else {
-                    LOGGER.error("Could not get child process for detachable pprocess " + detachableProcess +
+                    LOGGER.error("Could not get child process for detachable process " + detachableProcess +
                         " fall back to parent process, which may report false positive.");
                 }
             } else {
