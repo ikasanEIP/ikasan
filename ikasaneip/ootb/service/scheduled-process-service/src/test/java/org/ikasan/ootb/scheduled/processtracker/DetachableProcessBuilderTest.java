@@ -134,7 +134,9 @@ public class DetachableProcessBuilderTest {
         assertThat(commands.get(1)).isEqualTo(cp.getCommandArgs()[1]);
 
         assertThat(commands.get(2)).isEqualTo(
-            "Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError \"errorfile\" -RedirectStandardOutput \"resultfile\" -PassThru -ArgumentList \"/c\", \"null\"");
+            "$errorLogPath = 'errorfile' \r\n" +
+            "$initialResultsPath = 'resultfile' \r\n" +
+            "Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError $errorLogPath -RedirectStandardOutput $initialResultsPath -PassThru -ArgumentList \"/c\", \"null\"");
     }
 
     @Test
