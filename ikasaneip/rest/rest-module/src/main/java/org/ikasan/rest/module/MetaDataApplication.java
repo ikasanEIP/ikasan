@@ -33,7 +33,6 @@ public class MetaDataApplication
 {
     private static Logger logger = LoggerFactory.getLogger(MetaDataApplication.class);
 
-
     @Autowired
     private ModuleContainer moduleContainer;
 

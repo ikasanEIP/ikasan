@@ -43,6 +43,7 @@ package org.ikasan.module;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
+import org.springframework.boot.info.BuildProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -250,6 +251,14 @@ public abstract class AbstractModule implements Module
      */
     public String getVersion()
     {
+        if(this.version == null && ApplicationContextProvider.instance().getContext() != null &&
+            ApplicationContextProvider.instance().getContext().containsBean("buildProperties")) {
+            BuildProperties buildProperties = (BuildProperties) ApplicationContextProvider.instance()
+                .getContext().getBean("buildProperties");
+            if (buildProperties != null) {
+                this.version = buildProperties.getVersion();
+            }
+        }
         return this.version;
     }
 
