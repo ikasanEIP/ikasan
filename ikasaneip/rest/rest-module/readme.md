@@ -192,13 +192,13 @@ REST endpoints which allows users to obtain the row count for database tables.
 
 ### GET Table Row Count
 
-| Parameter                            | Value                                                                                                                                    | 
-|--------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------|
-| Request Method                       | GET                                                                                                                                      |
-| Service Context                      | {module-root-context}/rest/persistence/rowCount/{tableName}                                                                              |
-| Requires Path parameter tableName    | The name of the table to the row count for.                                                                                              |
+| Parameter | Value                                                                                                                                    | 
+|--- |------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method | GET                                                                                                                                      |
+| Service Context | {module-root-context}/rest/persistence/rowCount/{tableName}                                                                              |
+| Requires Path parameter tableName | The name of the table to the row count for.                                                                                              |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                            |
-| Returns                              | HTTP 200 status with below payload. A json serialised [TableRowCountDto](src/main/java/org/ikasan/rest/module/dto/TableRowCountDto.java) |
+| Returns | HTTP 200 status with below payload. A json serialised [TableRowCountDto](src/main/java/org/ikasan/rest/module/dto/TableRowCountDto.java) |
 
 <details>
     <summary>Click to view the sample JSON payload provided by the service.</summary>
@@ -296,3 +296,52 @@ REST endpoints which allow for the discovery and management of IN_DOUBT database
 | Requires Path parameter transactionName | The name of the transaction we are rolling back.                          |
 | Requires 'Authorization' HTTP Header    | Basic {TOKEN}                                                             |
 | Returns                                 | HTTP 200 status                                                           |
+
+## Module Version Service
+REST endpoints which allows users to obtain the row count for database tables.
+
+### GET Module Version Details
+
+| Parameter | Value                                                                                                                                        | 
+|--- |----------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method | GET                                                                                                                                          |
+| Service Context | {module-root-context}/rest/module/version/info                                                                                               |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                |
+| Returns | HTTP 200 status with below payload. A json serialised [BuildPropertiesDto](src/main/java/org/ikasan/rest/module/dto/BuildPropertiesDto.java) |
+
+> [!NOTE]
+> The build-info goal must be included in the spring-boot-maven-plugin of the pom.xml of your jar module for this service to work.
+> ````xml
+>   <plugin>
+>        <groupId>org.springframework.boot</groupId>
+>        <artifactId>spring-boot-maven-plugin</artifactId>
+>        <version>${version.org.springboot}</version>
+>        <executions>
+>            <execution>
+>               <goals>
+>                    <goal>repackage</goal>
+>                    <goal>build-info</goal>
+>                </goals>
+>            </execution>
+>        </executions>
+>    </plugin>
+> ````
+
+
+<details>
+    <summary>Click to view the sample JSON payload provided by the service.</summary>
+<p>
+
+````json
+{
+  "group": "com.sample",
+  "artifact": "jms-im",
+  "name": "jms-im Integration Module",
+  "version": "1.0.0-SNAPSHOT",
+  "buildTimestamp": 1724140328341,
+  "ikasanVersion": "3.3.5-SNAPSHOT"
+}
+````
+
+</p>
+</details>

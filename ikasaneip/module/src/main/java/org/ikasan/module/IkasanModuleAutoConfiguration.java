@@ -61,14 +61,10 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
-import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
-import java.util.Map;
 import java.util.Properties;
 
 @Configuration
@@ -81,7 +77,7 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
     @Bean
-    @DependsOn({"liquibase", "housekeepingSchedulerService", "harvestingSchedulerService"})
+    @DependsOn({"liquibase", "housekeepingSchedulerService", "harvestingSchedulerService", "applicationContextProvider"})
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
         @Qualifier("housekeepingSchedulerService") HousekeepingSchedulerService housekeepingSchedulerService,
@@ -101,6 +97,12 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     @DependsOn({"systemEventService", "startupControlDao"})
     public StartupControlServiceImpl startupControlService(SystemEventService systemEventService, StartupControlDao startupControlDao){
         return new StartupControlServiceImpl(systemEventService,startupControlDao);
+    }
+
+    @Bean
+    public ApplicationContextProvider applicationContextProvider(ApplicationContext applicationContext) {
+        ApplicationContextProvider.init(applicationContext);
+        return ApplicationContextProvider.instance();
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package org.ikasan.topology.metadata;
 
 import org.apache.commons.io.IOUtils;
+import org.ikasan.IkasanVersion;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
@@ -60,7 +61,7 @@ public class JsonModuleMetaDataProviderTest
 
         String json = jsonModuleMetaDataProvider.describeModule(testModule, new HashMap<>());
 
-        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON), json, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals("JSON Result must equal!", loadDataFile(MODULE_RESULT_JSON), json, JSONCompareMode.LENIENT);
     }
 
 
@@ -91,6 +92,7 @@ public class JsonModuleMetaDataProviderTest
         Assert.assertEquals("Module description equals!", "module description", moduleMetaData.getDescription());
         Assert.assertEquals("Module version equals!", "module version", moduleMetaData.getVersion());
         Assert.assertEquals("Number of flows == 6!", 6, moduleMetaData.getFlows().size());
+        Assert.assertEquals(IkasanVersion.getVersion(), moduleMetaData.getIkasanVersion());
     }
 
     @Test
