@@ -114,6 +114,20 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void saveGlobalEventJobRecord(GlobalEventJobRecord globalEventJobRecord);
 
     /**
+     * Save a ContextStartJobRecord
+     *
+     * @param contextStartJobRecord
+     */
+    void saveContextStartJobRecord(ContextStartJobRecord contextStartJobRecord);
+
+    /**
+     * Save a ContextTerminalJobRecord
+     *
+     * @param contextTerminalJobRecord
+     */
+    void saveContextTerminalJobRecord(ContextTerminalJobRecord contextTerminalJobRecord);
+
+    /**
      * Save a FileEventDrivenJob
      *
      * @param fileEventDrivenJob
@@ -142,6 +156,20 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void saveGlobalEventJob(GlobalEventJob globalEventJob, String modifiedBy);
 
     /**
+     * Save a ContextStartJob
+     *
+     * @param contextStartJob
+     */
+    void saveContextStartJob(ContextStartJob contextStartJob, String modifiedBy);
+
+    /**
+     * Save a ContextTerminalJob
+     *
+     * @param contextTerminalJob
+     */
+    void saveContextTerminalJob(ContextTerminalJob contextTerminalJob, String modifiedBy);
+
+    /**
      * Save a list of FileEventDrivenJobRecord.
      *
      * @param fileEventDrivenJobRecords
@@ -168,6 +196,20 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param globalEventJobRecords
      */
     public void saveGlobalEventJobRecords(List<GlobalEventJobRecord> globalEventJobRecords);
+
+    /**
+     * Save a list of ContextStartJobRecord.
+     *
+     * @param contextStartJobRecords
+     */
+    public void saveContextStartJobRecords(List<ContextStartJobRecord> contextStartJobRecords);
+
+    /**
+     * Save a list of ContextTerminalJobRecord.
+     *
+     * @param contextTerminalJobRecords
+     */
+    public void saveContextTerminalJobRecord(List<ContextTerminalJobRecord> contextTerminalJobRecords);
 
     /**
      * Save a list of InternalEventDrivenJob.
@@ -200,6 +242,22 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param actor
      */
     public void saveGlobalEventJobs(List<GlobalEventJob> globalEventJobs, String actor);
+
+    /**
+     * Save a list of ContextStartJob.
+     *
+     * @param contextStartJobs
+     * @param actor
+     */
+    public void saveContextStartJobs(List<ContextStartJob> contextStartJobs, String actor);
+
+    /**
+     * Save a list of ContextTerminalJob.
+     *
+     * @param contextTerminalJobs
+     * @param actor
+     */
+    public void saveContextTerminalJobs(List<ContextTerminalJob> contextTerminalJobs, String actor);
 
     /**
      * Set a InternalEventDrivenJobRecord to skip. If targetResidingContextOnly is set
