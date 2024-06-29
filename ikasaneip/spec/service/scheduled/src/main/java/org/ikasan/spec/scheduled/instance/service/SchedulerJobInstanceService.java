@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.instance.service;
 
+import org.ikasan.spec.scheduled.context.model.ContextTemplate;
 import org.ikasan.spec.scheduled.instance.model.*;
 import org.ikasan.spec.scheduled.instance.service.exception.SchedulerJobInstanceInitialisationException;
 import org.ikasan.spec.search.SearchResults;
@@ -89,16 +90,17 @@ public interface SchedulerJobInstanceService {
         , int limit, int offset, String sortField, String sortDirection);
 
 
+
     /**
-     * Initialise scheduler job instances for a given context instances. This method will initialise the
-     * instances and persist them before returning the new instances.
+     * Initialise scheduler job instances for a given context template, context instance, and parameters.
      *
-     * @param contextInstance
-     * @param parameters
-     *
-     * @return
+     * @param contextTemplate The context template to use for initialisation
+     * @param contextInstance The context instance to initialise job instances for
+     * @param parameters The initialisation parameters
+     * @return A list of initialised scheduler job instances
+     * @throws SchedulerJobInstanceInitialisationException If an error occurs during initialisation
      */
-    List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(ContextInstance contextInstance
+    List<SchedulerJobInstance> initialiseSchedulerJobInstancesForContext(ContextTemplate contextTemplate, ContextInstance contextInstance
         , SchedulerJobInstancesInitialisationParameters parameters) throws SchedulerJobInstanceInitialisationException;
 
     /**
