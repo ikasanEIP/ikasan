@@ -1,6 +1,6 @@
 package org.ikasan.spec.scheduled.job.model;
 
-public interface GlobalEventJobRecord {
+public interface ContextTerminalJobRecord {
 
     /**
      * Retrieves the ID of the object.
@@ -66,29 +66,59 @@ public interface GlobalEventJobRecord {
     void setContextName(String contextName);
 
     /**
-     * Retrieves the global event job associated with this GlobalEventJobRecord instance.
+     * Retrieves the ContextTerminalJob object.
      *
-     * @return The global event job as a {@link GlobalEventJob} object.
+     * @return The ContextTerminalJob object.
      */
-    GlobalEventJob getGlobalEventJob();
+    ContextTerminalJob getContextTerminalJob();
 
     /**
-     * Sets the global event job for the GlobalEventJobRecord instance.
+     * Sets the {@link ContextTerminalJob} for the current object.
      *
-     * @param globalEventJob the global event job to be set
+     * @param contextTerminalJob the {@link ContextTerminalJob} to be set
      */
-    void setGlobalEventJob(GlobalEventJob globalEventJob);
+    void setContextTerminalJob(ContextTerminalJob contextTerminalJob);
 
+    /**
+     * Retrieves the current timestamp as a long value.
+     *
+     * @return The current timestamp as a long.
+     */
     long getTimestamp();
 
+    /**
+     * Sets the timestamp value for the object.
+     *
+     * @param timestamp the new timestamp value to set
+     */
     void setTimestamp(long timestamp);
 
+    /**
+     * Retrieves the modified timestamp of the object.
+     *
+     * @return The modified timestamp as a long value.
+     */
     long getModifiedTimestamp();
 
+    /**
+     * Sets the modified timestamp of the object.
+     *
+     * @param timestamp The new modified timestamp value to set.
+     */
     void setModifiedTimestamp(long timestamp);
 
+    /**
+     * Retrieves the name of the user who last modified the object.
+     *
+     * @return The name of the user who last modified the object.
+     */
     String getModifiedBy();
 
+    /**
+     * Sets the name of the user who last modified the object.
+     *
+     * @param modifiedBy the name of the user
+     */
     void setModifiedBy(String modifiedBy);
 
 }

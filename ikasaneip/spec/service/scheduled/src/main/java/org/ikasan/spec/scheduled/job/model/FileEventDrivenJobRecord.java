@@ -2,37 +2,122 @@ package org.ikasan.spec.scheduled.job.model;
 
 public interface FileEventDrivenJobRecord {
 
-    public String getId();
+    /**
+     * Retrieves the ID of the object.
+     *
+     * @return The unique identifier of the object as a String.
+     */
+    String getId();
 
-    public String getAgentName();
+    /**
+     * Retrieves the name of the agent that this job runs on.
+     *
+     * @return The name of the agent.
+     */
+    String getAgentName();
 
-    public void setAgentName(String agentName);
+    /**
+     * Sets the name of the agent that this job runs on.
+     *
+     * @param agentName the name to be set for the agent
+     */
+    void setAgentName(String agentName);
 
-    public String getJobName();
+    /**
+     * Retrieves the name of the job.
+     *
+     * @return The name of the job as a String.
+     */
+    String getJobName();
 
-    public void setJobName(String jobName);
+    /**
+     * Sets the job name for a given task.
+     *
+     * @param jobName the name of the job to be set
+     */
+    void setJobName(String jobName);
 
+    /**
+     * Retrieves the display name of this job.
+     *
+     * @return The display name of the job as a String.
+     */
     String getDisplayName();
 
+    /**
+     * Sets the display name of this job.
+     *
+     * @param displayName the display name to be set for the job
+     */
     void setDisplayName(String displayName);
 
+    /**
+     * Retrieves the name of the parent context that this job belongs to.
+     *
+     * @return The name of the parent context as a String.
+     */
     String getContextName();
 
+    /**
+     * Sets the name of the parent context that this job belongs to.
+     *
+     * @param contextName the name of the parent context to be set
+     */
     void setContextName(String contextName);
 
-    public FileEventDrivenJob getFileEventDrivenJob();
+    /**
+     * Retrieves the FileEventDrivenJob associated with this FileEventDrivenJobRecord.
+     *
+     * @return The FileEventDrivenJob associated with this FileEventDrivenJobRecord.
+     */
+    FileEventDrivenJob getFileEventDrivenJob();
 
-    public void setFileEventDrivenJob(FileEventDrivenJob fileEventDrivenJob);
+    /**
+     * Sets the FileEventDrivenJob for a given FileEventDrivenJobRecord.
+     *
+     * @param fileEventDrivenJob the FileEventDrivenJob to be set
+     */
+    void setFileEventDrivenJob(FileEventDrivenJob fileEventDrivenJob);
 
-    public long getTimestamp();
+    /**
+     * Retrieves the current timestamp as a long value.
+     *
+     * @return The current timestamp as a long.
+     */
+    long getTimestamp();
 
-    public void setTimestamp(long timestamp);
+    /**
+     * Sets the timestamp value for the object.
+     *
+     * @param timestamp the new timestamp value to set
+     */
+    void setTimestamp(long timestamp);
 
+    /**
+     * Retrieves the modified timestamp of the object.
+     *
+     * @return The modified timestamp as a long value.
+     */
     long getModifiedTimestamp();
 
+    /**
+     * Sets the modified timestamp of the object.
+     *
+     * @param timestamp The new modified timestamp value to set.
+     */
     void setModifiedTimestamp(long timestamp);
 
+    /**
+     * Retrieves the name of the user who last modified the object.
+     *
+     * @return The name of the user who last modified the object.
+     */
     String getModifiedBy();
 
+    /**
+     * Sets the name of the user who last modified the object.
+     *
+     * @param modifiedBy the name of the user
+     */
     void setModifiedBy(String modifiedBy);
 }
