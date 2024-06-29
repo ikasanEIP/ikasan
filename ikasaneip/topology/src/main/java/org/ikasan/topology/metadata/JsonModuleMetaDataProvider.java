@@ -2,6 +2,7 @@ package org.ikasan.topology.metadata;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.ikasan.IkasanVersion;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.*;
@@ -48,6 +49,7 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             moduleMetaData.setName(module.getName());
             moduleMetaData.setDescription(module.getDescription());
             moduleMetaData.setVersion(module.getVersion());
+            moduleMetaData.setIkasanVersion(IkasanVersion.getVersion());
             moduleMetaData.setType(module.getType());
             moduleMetaData.setPort(module.getPort());
             moduleMetaData.setProtocol(module.getProtocol());
