@@ -81,7 +81,7 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     @Qualifier("ikasan.xads") DataSource ikasanxads;
 
     @Bean
-    @DependsOn({"liquibase"})
+    @DependsOn({"liquibase", "applicationContextProvider"})
     public ModuleInitialisationServiceImpl moduleLoader(ModuleContainer moduleContainer,
         ModuleActivator moduleActivator,
         HousekeepingSchedulerService housekeepingSchedulerService,
@@ -102,7 +102,11 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
         return new StartupControlServiceImpl(systemEventService,startupControlDao);
     }
 
-
+    @Bean
+    public ApplicationContextProvider applicationContextProvider(ApplicationContext applicationContext) {
+        ApplicationContextProvider.init(applicationContext);
+        return ApplicationContextProvider.instance();
+    }
 
     @Bean
     @ConfigurationProperties (prefix="ikasan.module.activator.startup.type")

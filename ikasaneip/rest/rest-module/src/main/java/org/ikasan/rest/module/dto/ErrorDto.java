@@ -7,8 +7,6 @@ public class ErrorDto implements Serializable
     private String errorCode;
     private String errorMessage;
 
-
-
     public ErrorDto(String errorMessage)
     {
         this.errorMessage = errorMessage;

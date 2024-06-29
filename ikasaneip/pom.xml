@@ -445,6 +445,13 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
+                    <configuration>
+                        <archive>
+                            <manifest>
+                                <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            </manifest>
+                        </archive>
+                    </configuration>
                     <version>2.3.1</version>
                 </plugin>
                 <plugin>
@@ -744,6 +751,7 @@
                 <module>cli</module>
                 <module>sample</module>
                 <module>ootb</module>
+                <module>version</module>
             </modules>
 
         </profile>
@@ -778,6 +786,7 @@
                 <module>replay</module>
                 <module>persistence</module>
                 <module>cli</module>
+                <module>version</module>
             </modules>
         </profile>
 
@@ -911,6 +920,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-big-queue</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-version</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -40,11 +40,10 @@
  */
 package org.ikasan.module;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+
+import java.util.List;
 
 /**
  * A simple representation of a Module
@@ -88,6 +87,13 @@ public class SimpleModule extends AbstractModule implements Module
         super(name, flows, version, url);
     }
 
+    /**
+     * Creates a SimpleModule object with the specified name, version, and URL.
+     *
+     * @param name    The name of the module
+     * @param version The version of the module
+     * @param url     The URL of the module
+     */
     public SimpleModule(String name, String version, String url)
     {
         super(name, version, url);
