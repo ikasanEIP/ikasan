@@ -139,6 +139,10 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
         return new InDoubtTransactionsApplication();
     }
 
+    @Bean ModuleVersionApplication moduleVersionApplication() {
+        return new ModuleVersionApplication();
+    }
+
     @Override
     public void extendMessageConverters(List<HttpMessageConverter<?>> converters){
 

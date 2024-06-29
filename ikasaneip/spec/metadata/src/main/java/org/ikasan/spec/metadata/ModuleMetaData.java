@@ -11,151 +11,165 @@ public interface ModuleMetaData
      *
      * @param moduleType
      */
-    public void setType(ModuleType moduleType);
+    void setType(ModuleType moduleType);
 
     /**
      * Get the module type.
      *
      * @return
      */
-    public ModuleType getType();
+    ModuleType getType();
 
     /**
      * Returns the url of the module.
      *
      * @return
      */
-    public String getUrl();
+    String getUrl();
 
     /**
      * Set the url of the module.
      *
      */
-    public void setUrl(String url);
+    void setUrl(String url);
 
     /**
      * Set the flow name.
      *
      * @param name the flow name
      */
-    public  void setName(String name);
+     void setName(String name);
 
     /**
      * Get the flow name.
      *
      * @return the flow name.
      */
-    public String getName();
+    String getName();
 
     /**
      * Set the module description
      *
      * @param description
      */
-    public void setDescription(String description);
+    void setDescription(String description);
 
     /**
      * Get the module description.
      *
      * @return
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Set the module version
      *
      * @param version
      */
-    public void setVersion(String version);
+    void setVersion(String version);
+
+    /**
+     * Get the module's Ikasan version.
+     *
+     * @return
+     */
+    String getIkasanVersion();
+
+    /**
+     * Set the module's Ikasan version
+     *
+     * @param ikasanVersion
+     */
+    void setIkasanVersion(String ikasanVersion);
 
     /**
      * Get the module version.
      *
      * @return
      */
-    public String getVersion();
+    String getVersion();
 
     /**
      * Set the flow meta data list.
      *
      * @param flows
      */
-    public void setFlows(List<FlowMetaData> flows);
+    void setFlows(List<FlowMetaData> flows);
 
     /**
      * Get the flow meta data list.
      *
      * @return
      */
-    public List<FlowMetaData> getFlows();
+    List<FlowMetaData> getFlows();
 
     /**
      * Get the configured resource id for the module.
      *
      * @return
      */
-    public String getConfiguredResourceId();
+    String getConfiguredResourceId();
 
     /**
      * Set the configured resource id for the module.
      *
      * @param id
      */
-    public void setConfiguredResourceId(String id);
+    void setConfiguredResourceId(String id);
 
     /**
      * Get the host that the module is running on
      *
      * @return
      */
-    public String getHost();
+    String getHost();
 
     /**
      * Set the host that the module is running on.
      *
      * @param host
      */
-    public void setHost(String host);
+    void setHost(String host);
 
     /**
      * Get the port that the module is bound to.
      *
      * @return
      */
-    public Integer getPort();
+    Integer getPort();
 
     /**
      * Set the port that the module is bound to.
      *
      * @param port
      */
-    public void setPort(Integer port);
+    void setPort(Integer port);
 
     /**
      * Get the root context of the module.
      *
      * @return
      */
-    public String getContext();
+    String getContext();
 
     /**
      * Set the root context of the module.
      *
      * @param context
      */
-    public void setContext(String context);
+    void setContext(String context);
 
     /**
      * Get the protocol under which the module is running.
      *
      * @return
      */
-    public String getProtocol();
+    String getProtocol();
 
     /**
      * Set the protocol that the module will run under.
      *
      * @param protocol
      */
-    public void setProtocol(String protocol);
+    void setProtocol(String protocol);
 }
