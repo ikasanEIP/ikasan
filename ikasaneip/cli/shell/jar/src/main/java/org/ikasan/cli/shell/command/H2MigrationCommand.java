@@ -125,10 +125,14 @@ public class H2MigrationCommand
     @Command(description = "Migrate H2 persistence", group = "Ikasan Commands", command = "migrate-h2")
     public String migrateH2(@Option(description = "The version of the H2 database we are migrating from.", longNames = "source-h2-version", defaultValue = "1.4.200")  String sourceH2Version,
                             @Option(description = "The version of the H2 database we are migrating to.", longNames = "target-h2-version",defaultValue = "2.2.224")  String targetH2Version,
-                            @Option(description = "The username of the H2 database to use for the migration.", longNames = "h2-user", defaultValue = "")  String h2User,
-                            @Option(description = "The password of the H2 database to use for the migration.", longNames = "h2-password", defaultValue = "")  String h2Password,
-                            @Option(description = "The path to the database. The general Ikasan convention [<persistence-dir>/<module-name>-db/esb]" +
-                                " will be used by default.", longNames = "h2-database-location",defaultValue = "")  String databaseLocation,
+                            @Option(description = "The username of the H2 database to use for the migration. " +
+                                " The 'datasource.username' property provided in the properties file will be used as the default" +
+                                " unless one is provided on the command line.", longNames = "h2-user", defaultValue = "")  String h2User,
+                            @Option(description = "The password of the H2 database to use for the migration." +
+                                " The 'datasource.password' property provided in the properties file will be used as the default" +
+                                " unless one is provided on the command line.", longNames = "h2-password", defaultValue = "")  String h2Password,
+                            @Option(description = "The path to the database. The provided property 'h2.db.migration.module.persistence.database.path' " +
+                                "will be used by default unless another value is provided on the command line.", longNames = "h2-database-location",defaultValue = "")  String databaseLocation,
                             @Option(description = "Boolean flag to indicate whether the database being migrated is a " +
                                 "core Ikasan ESB database or not.", longNames = "h2-database-is-esb-database",defaultValue = "true") boolean isEsbDatabase) {
         if(!dbMigrationShouldRun) return "H2 DB migration will not run. Property h2.db.migration.should.run is set to false.";
