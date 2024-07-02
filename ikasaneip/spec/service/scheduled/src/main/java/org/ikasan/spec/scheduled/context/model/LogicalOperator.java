@@ -4,11 +4,31 @@ import java.io.Serializable;
 
 public interface LogicalOperator extends Serializable {
 
-    public String getIdentifier();
+    /**
+     * Retrieves the identifier associated with an object.
+     *
+     * @return The identifier of the object.
+     */
+    String getIdentifier();
 
-    public void setIdentifier(String identifier);
+    /**
+     * Sets the identifier for the object.
+     *
+     * @param identifier the identifier to set
+     */
+    void setIdentifier(String identifier);
 
-    public LogicalGrouping getLogicalGrouping();
+    /**
+     * Retrieves the logical grouping associated with this logical operator.
+     *
+     * @return The logical grouping associated with this logical operator.
+     */
+    LogicalGrouping getLogicalGrouping();
 
-    public void setLogicalGrouping(LogicalGrouping logicalGrouping);
+    /**
+     * Sets the logical grouping for the given LogicalGrouping object.
+     *
+     * @param logicalGrouping the logical grouping to be set
+     */
+    void setLogicalGrouping(LogicalGrouping logicalGrouping);
 }
