@@ -5,20 +5,59 @@ import java.util.List;
 
 public interface LogicalGrouping extends Serializable {
 
-    public LogicalGrouping getLogicalGrouping();
+    /**
+     * Retrieves the logical grouping associated with this object.
+     *
+     * @return The logical grouping associated with this object.
+     */
+    LogicalGrouping getLogicalGrouping();
 
-    public void setLogicalGrouping(LogicalGrouping logicalGrouping);
+    /**
+     * Sets the logical grouping for the given LogicalGrouping object.
+     *
+     * @param logicalGrouping the logical grouping to be set
+     */
+    void setLogicalGrouping(LogicalGrouping logicalGrouping);
 
-    public List<And> getAnd();
+    /**
+     * Retrieves the list of And objects associated with this LogicalGrouping.
+     *
+     * @return The list of And objects.
+     */
+    List<And> getAnd();
 
-    public void setAnd(List<And> and);
+    /**
+     * Sets the list of And objects for the LogicalGrouping.
+     *
+     * @param and the list of And objects to be set
+     */
+    void setAnd(List<And> and);
 
-    public List<Or> getOr();
+    /**
+     * Retrieves the list of Or objects associated with this LogicalGrouping.
+     *
+     * @return The list of Or objects associated with this LogicalGrouping.
+     */
+    List<Or> getOr();
 
-    public void setOr(List<Or> or);
+    /**
+     * Sets the list of Or objects for the logical grouping.
+     *
+     * @param or the list of Or objects to be set
+     */
+    void setOr(List<Or> or);
 
-    public List<Not> getNot();
+    /**
+     * Retrieves the list of Not objects associated with this LogicalGrouping.
+     *
+     * @return The list of Not objects.
+     */
+    List<Not> getNot();
 
-    public void setNot(List<Not> not);
-
+    /**
+     * Sets the list of "not" logical operators for this logical grouping.
+     *
+     * @param not the list of "not" logical operators to be set
+     */
+    void setNot(List<Not> not);
 }

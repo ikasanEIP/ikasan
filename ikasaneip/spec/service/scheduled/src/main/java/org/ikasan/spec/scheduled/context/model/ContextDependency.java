@@ -16,8 +16,4 @@ public interface ContextDependency extends Serializable {
     LogicalGrouping getLogicalGrouping();
 
     void setLogicalGrouping(LogicalGrouping logicalGrouping);
-
-//    List<ContextDependency> getContextDependencies();
-//
-//    void setContextDependencies(List<ContextDependency> contextDependencies);
 }
