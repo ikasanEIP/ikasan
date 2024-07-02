@@ -9,13 +9,41 @@ import java.util.List;
 
 public interface ContextBundle {
 
+    /**
+     * Retrieves the ContextTemplate of the initial symbol.
+     *
+     * @return the ContextTemplate of the initial symbol
+     */
     ContextTemplate getContextTemplate();
 
+    /**
+     * Retrieves a list of SchedulerJob instances.
+     * <p>
+     * This method returns a list of SchedulerJob instances, which represent individual scheduled jobs.
+     * </p>
+     *
+     * @return a list of {@link SchedulerJob} instances
+     */
     List<SchedulerJob> getSchedulerJobs();
 
+    /**
+     * Retrieves the list of context profiles.
+     *
+     * @return a list of ContextProfileRecord
+     */
     List<ContextProfileRecord> getContextProfiles();
 
+    /**
+     * Returns a list of EmailNotificationDetails.
+     *
+     * @return a list of EmailNotificationDetails
+     */
     List<EmailNotificationDetails> getEmailNotificationDetails();
 
+    /**
+     * Retrieves the EmailNotificationContext object.
+     *
+     * @return The EmailNotificationContext object.
+     */
     EmailNotificationContext getEmailNotificationContext();
 }
