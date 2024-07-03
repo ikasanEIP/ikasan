@@ -82,7 +82,7 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("demo-sftp");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("${artifactId}");
 
         Flow jmsToSftpFlow = getJmsToSftpFlow(mb,builderFactory.getComponentBuilder());
         Flow sftpToJmsFlow = getSftpConsumerFlow(mb,builderFactory.getComponentBuilder());
@@ -103,7 +103,7 @@ public class ModuleConfig {
             .setConfiguredResourceId("sftpJmsProducer")
             .build();
 
-        FlowBuilder sftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("fileSystemToJMSFlow");
+        FlowBuilder sftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("${sourceFlowName}");
         Flow sftpToJmsFlow = sftpToLogFlowBuilder
             .withDescription("Sftp to Jms")
             .consumer("Sftp Consumer", componentBuilder.sftpConsumer()
@@ -153,7 +153,7 @@ public class ModuleConfig {
             .setConfiguredResourceId("sftpProducerConfiguration")
             .build();
 
-        FlowBuilder jmsToSftpFlowBuilder = moduleBuilder.getFlowBuilder("jmsToFileSystemFlow");
+        FlowBuilder jmsToSftpFlowBuilder = moduleBuilder.getFlowBuilder("${targetFlowName}");
         Flow timeGeneratorToSftpFlow = jmsToSftpFlowBuilder
             .withDescription("Receives Text Jms message and sends it to sftp as file")
             .consumer("Sftp Jms Consumer", sftpJmsConsumer)

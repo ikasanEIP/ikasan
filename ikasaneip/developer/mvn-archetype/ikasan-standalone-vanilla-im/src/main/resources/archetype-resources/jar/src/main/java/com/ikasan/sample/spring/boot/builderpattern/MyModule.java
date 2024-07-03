@@ -62,10 +62,10 @@ public class MyModule
     public Module myModule()
     {
         // get the module builder
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("Vanilla Integration Module")
+        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("${artifactId}")
                 .withDescription("Vanilla Integration Module.");
 
-        Flow flow = moduleBuilder.getFlowBuilder("flow name")
+        Flow flow = moduleBuilder.getFlowBuilder("${sourceFlowName}")
             .withDescription("Vanilla source flow")
             .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
             .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor())

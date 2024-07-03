@@ -41,7 +41,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-filesystem-im-maven-plugin 
-    \-DarchetypeVersion=3.1.0    
+    \-DarchetypeVersion=4.0.0   
     \-DgroupId=com.ikasan     
     \-DartifactId=myIntegrationModule     
     \-Dversion=1.0.0-SNAPSHOT     
