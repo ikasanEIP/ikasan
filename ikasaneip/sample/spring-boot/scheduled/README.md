@@ -1,4 +1,4 @@
-# sample-spring-boot-sftp-jms
+# sample-spring-boot-scheduled
 
 Sample sample-spring-boot-scheduled project provides a self contained example of and Ikasan integration module that leverages
 a scheduled consumer with a tech endpoint implementation. 
@@ -18,8 +18,8 @@ mvn clean install
 
 ## How to startup
 
-If you managed to obtain the jar by building it or by downloading it from mvn repo:
-* https://oss.sonatype.org/content/repositories/snapshots/org/ikasan/sample-spring-boot-scheduled/ 
+If you managed to obtain the jar by building it or by downloading the relevant version from the public mvn repo:
+* https://repo1.maven.org/maven2/org/ikasan/sample-spring-boot-scheduled/
 
 You can start up the sample 
 

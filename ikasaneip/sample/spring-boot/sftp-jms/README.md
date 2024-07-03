@@ -23,8 +23,8 @@ mvn clean install
 
 ## How to startup
 
-If you managed to obtain the jar by building it or by downloading it from mvn repo:
-* https://oss.sonatype.org/content/repositories/snapshots/org/ikasan/sample-spring-boot-sftp-jms/2.0.0-SNAPSHOT/ 
+If you managed to obtain the jar by building it or by downloading the relevant version from the public mvn repo:
+* https://repo1.maven.org/maven2/org/ikasan/sample-spring-boot-sftp-jms/ 
 
 You can start up the sample 
 
