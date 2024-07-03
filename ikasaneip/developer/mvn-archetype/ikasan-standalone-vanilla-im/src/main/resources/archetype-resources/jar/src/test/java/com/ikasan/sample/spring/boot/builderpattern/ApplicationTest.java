@@ -78,7 +78,7 @@ public class ApplicationTest
     @Test
     public void test_createModule_start_and_stop_flow() throws Exception
     {
-        Flow flow = moduleUnderTest.getFlow("flow name");
+        Flow flow = moduleUnderTest.getFlow("${sourceFlowName}");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 

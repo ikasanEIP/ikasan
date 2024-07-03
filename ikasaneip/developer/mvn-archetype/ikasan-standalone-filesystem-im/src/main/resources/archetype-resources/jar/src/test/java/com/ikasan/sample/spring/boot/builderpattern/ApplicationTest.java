@@ -128,7 +128,7 @@ public class ApplicationTest
     @DirtiesContext
     public void sourceFileFlow_flow() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("fileSystemToJMSFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${sourceFlowName}"));
 
         // create file to be consumed
         String content = "Hello World !!";
@@ -168,7 +168,7 @@ public class ApplicationTest
     @DirtiesContext
     public void sourceFileFlow_flow_with_scheduled_persistent_recovery() throws Exception
     {
-        Flow flowOnTest = moduleUnderTest.getFlow("fileSystemToJMSFlow");
+        Flow flowOnTest = moduleUnderTest.getFlow("${sourceFlowName}");
         flowTestRule.withFlow(flowOnTest);
 
         // create file to be consumed
@@ -215,7 +215,7 @@ public class ApplicationTest
     @DirtiesContext
     public void targetFileFlow_test_file_delivery() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("jmsToFileSystemFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${targetFlowName}"));
 
         // update producer with file producer name
         FileProducerConfiguration producerConfiguration =  flowTestRule.getComponentConfig("File Producer",FileProducerConfiguration.class);

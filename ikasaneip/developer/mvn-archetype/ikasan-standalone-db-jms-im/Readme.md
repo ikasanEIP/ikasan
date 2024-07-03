@@ -42,7 +42,7 @@ mvn archetype:generate
 mvn archetype:generate     
     \-DarchetypeGroupId=org.ikasan     
     \-DarchetypeArtifactId=ikasan-standalone-db-jms-im-maven-plugin 
-    \-DarchetypeVersion=3.1.0    
+    \-DarchetypeVersion=4.0.0   
     \-DgroupId=com.sample     
     \-DartifactId=db-jms-im     
     \-Dversion=1.0.0-SNAPSHOT     

@@ -98,7 +98,7 @@ public class JmsToFtpFlowTest
         ftp  = new FtpRule("test","test",null, TestSocketUtils.findAvailableTcpPort());
         ftp.start();
 
-        flowTestRule.withFlow(moduleUnderTest.getFlow("jmsToFileSystemFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${targetFlowName}"));
     }
 
     @After

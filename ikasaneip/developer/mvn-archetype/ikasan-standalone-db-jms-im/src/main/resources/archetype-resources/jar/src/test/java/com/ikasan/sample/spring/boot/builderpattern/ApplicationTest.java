@@ -129,7 +129,7 @@ public class ApplicationTest
     @DirtiesContext
     public void sourceFlow_test_db_to_jms() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("dbToJMSFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${sourceFlowName}"));
 
         // Get MessageListenerVerifier and start the listener
         final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
@@ -147,15 +147,12 @@ public class ApplicationTest
         flowTestRule.sleep(1000L);
         flowTestRule.fireScheduledConsumer();
 
-        // wait for a brief while to let the flow complete
-//        flowTestRule.sleep(1000L);
 
         System.out.println("Asserting flow components!");
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
             .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
                 flowTestRule.assertIsSatisfied()
-            );
-//        flowTestRule.assertIsSatisfied();
+            );;
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
             .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
@@ -170,7 +167,7 @@ public class ApplicationTest
     @DirtiesContext
     public void targetFlow_test_jms_to_db() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("jmsToDbFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${targetFlowName}"));
 
         // update flow consumer  with file producer name
         SpringMessageConsumerConfiguration jmsConfiguration = flowTestRule.getComponentConfig("JMS Consumer",SpringMessageConsumerConfiguration.class);

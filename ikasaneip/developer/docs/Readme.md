@@ -32,7 +32,7 @@ On completion of this document the reader should have installed and configured a
 
 # Pre-Requisites
 
-[Developer Pre-Requisiites](ikasaneip/developer/docs/DeveloperPreRequisites.md)
+[Developer Pre-Requisiites](./DeveloperPreRequisites.md)
 
 
 # Runtime Environment

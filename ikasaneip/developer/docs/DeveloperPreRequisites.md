@@ -59,7 +59,7 @@ IkasanEIP will support any language which compiles to bytecode and runs within t
 For more details on Java see [http://www.oracle.com/technetwork/java](http://www.oracle.com/technetwork/java)
 
 ### Version
-IkasanEIP version 3.1.x requires Java 11.x.
+IkasanEIP version 4.0.x requires Java 17.
 
 
 ### Installation
@@ -97,11 +97,11 @@ This should reflect the Java JDK version you have just installed.
 
 For instance – the line in bold depicts the important information.
 
-Expected JDK 11 version output
+Expected JDK 17 version output
 ```
-openjdk version "11.0.8" 2020-07-14
-OpenJDK Runtime Environment AdoptOpenJDK (build 11.0.8+10)
-OpenJDK 64-Bit Server VM AdoptOpenJDK (build 11.0.8+10, mixed mode)
+openjdk version "17.0.2" 2022-01-18
+OpenJDK Runtime Environment (build 17.0.2+8-86)
+OpenJDK 64-Bit Server VM (build 17.0.2+8-86, mixed mode, sharing)
 ```
 
 ## Maven
@@ -112,7 +112,7 @@ For more details on Maven see [http://maven.apache.org](http://maven.apache.org/
 
 ### Version
 
-IkasanEIP version 3.x.y+ requires at least Maven 3.3.x, but has been validated up to Maven 3.5.3.
+IkasanEIP version 4.x.y+ requires at least Maven 3.3.x, but has been validated up to Maven 3.5.3.
 
 ### Installation
 

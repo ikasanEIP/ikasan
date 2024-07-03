@@ -100,7 +100,7 @@ public class JmsToSftpFlowTest
         sftp = new SftpRule("test", "test", null, TestSocketUtils.findAvailableTcpPort());
         sftp.start();
 
-        flowTestRule.withFlow(moduleUnderTest.getFlow("jmsToFileSystemFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${targetFlowName}"));
     }
 
     @After

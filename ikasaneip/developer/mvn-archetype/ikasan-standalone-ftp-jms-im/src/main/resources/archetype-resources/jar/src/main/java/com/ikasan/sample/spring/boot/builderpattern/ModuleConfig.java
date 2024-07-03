@@ -78,7 +78,7 @@ public class ModuleConfig {
     @Bean
     public Module getModule(){
 
-        ModuleBuilder mb = builderFactory.getModuleBuilder("demo-ftp");
+        ModuleBuilder mb = builderFactory.getModuleBuilder("${artifactId}");
 
         Flow jmsToFtpFlow = getJmsToFtpFlow(mb,builderFactory.getComponentBuilder());
         Flow ftpToJmsFlow = getFtpConsumerFlow(mb,builderFactory.getComponentBuilder());
@@ -99,7 +99,7 @@ public class ModuleConfig {
             .setConfiguredResourceId("ftpJmsProducer")
             .build();
 
-        FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("fileSystemToJMSFlow");
+        FlowBuilder ftpToLogFlowBuilder = moduleBuilder.getFlowBuilder("${sourceFlowName}");
         Flow ftpToJmsFlow = ftpToLogFlowBuilder
             .withDescription("Ftp to Jms")
             .consumer("Ftp Consumer", componentBuilder.ftpConsumer()
@@ -148,7 +148,7 @@ public class ModuleConfig {
             .setConfiguredResourceId("ftpProducerConfiguration")
             .build();
 
-        FlowBuilder jmsToFtpFlowBuilder = moduleBuilder.getFlowBuilder("jmsToFileSystemFlow");
+        FlowBuilder jmsToFtpFlowBuilder = moduleBuilder.getFlowBuilder("${targetFlowName}");
         Flow jmsToftpFlow = jmsToFtpFlowBuilder
             .withDescription("Receives Text Jms message and sends it to FTP as file")
             .consumer("Ftp Jms Consumer", ftpJmsConsumer)

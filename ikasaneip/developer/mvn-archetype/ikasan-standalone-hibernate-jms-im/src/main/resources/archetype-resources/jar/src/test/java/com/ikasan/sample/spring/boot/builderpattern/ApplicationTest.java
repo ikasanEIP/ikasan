@@ -129,7 +129,7 @@ public class ApplicationTest
     @DirtiesContext
     public void sourceFlow_test_db_to_jms() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("dbToJMSFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${sourceFlowName}"));
 
         // Get MessageListenerVerifier and start the listener
         final MessageListenerVerifier messageListenerVerifierTarget = new MessageListenerVerifier(brokerUrl, "jms.topic.test", registry);
@@ -166,7 +166,7 @@ public class ApplicationTest
     @DirtiesContext
     public void targetFlow_test_jms_to_db() throws Exception
     {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("jmsToDbFlow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("${targetFlowName}"));
 
         // update flow consumer  with file producer name
         SpringMessageConsumerConfiguration jmsConfiguration = flowTestRule.getComponentConfig("JMS Consumer",SpringMessageConsumerConfiguration.class);
