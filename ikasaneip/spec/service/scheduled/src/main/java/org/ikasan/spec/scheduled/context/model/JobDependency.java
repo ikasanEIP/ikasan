@@ -5,23 +5,6 @@ import java.io.Serializable;
 public interface JobDependency extends Serializable {
 
     /**
-     * Checks if the current object has a dependency on an event.
-     *
-     * @return {@code true} if the job is dependent on an event, {@code false} otherwise
-     */
-    boolean isEventDependency();
-
-    /**
-     * Sets the event dependency for the JobDependency object.
-     *
-     * The event dependency indicates whether the job has a dependency on an external event.
-     * If set to true, it means the job is dependent on an event, otherwise false.
-     *
-     * @param eventDependency the boolean value indicating the event dependency
-     */
-    void setEventDependency(boolean eventDependency);
-
-    /**
      * Retrieves the job identifier associated with this JobDependency object.
      *
      * @return The job identifier.
