@@ -5,11 +5,13 @@ public interface JobConstants {
     String INTERNAL_EVENT_DRIVEN_JOB = "internalEventDrivenJob";
     String QUARTZ_SCHEDULE_DRIVEN_JOB = "quartzScheduleDrivenJob";
     String GLOBAL_EVENT_JOB = "globalEventJob";
+    String LOCAL_EVENT_JOB = "localEventJob";
 
     String FILE_EVENT_DRIVEN_JOB_INSTANCE = "fileEventDrivenJobInstance";
     String INTERNAL_EVENT_DRIVEN_JOB_INSTANCE = "internalEventDrivenJobInstance";
     String QUARTZ_SCHEDULE_DRIVEN_JOB_INSTANCE = "quartzScheduleDrivenJobInstance";
     String GLOBAL_EVENT_JOB_INSTANCE = "globalEventJobInstance";
+    String LOCAL_EVENT_JOB_INSTANCE = "localEventJobInstance";
 
     String GLOBAL_EVENT = "GLOBAL_EVENT";
 
