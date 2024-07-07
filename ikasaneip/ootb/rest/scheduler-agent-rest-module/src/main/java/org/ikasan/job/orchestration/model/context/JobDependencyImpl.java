@@ -27,14 +27,4 @@ public class JobDependencyImpl implements JobDependency {
     public void setLogicalGrouping(LogicalGrouping logicalGrouping) {
         this.logicalGrouping = logicalGrouping;
     }
-
-    @Override
-    public boolean isEventDependency() {
-        return eventDependency;
-    }
-
-    @Override
-    public void setEventDependency(boolean eventDependency) {
-        this.eventDependency = eventDependency;
-    }
 }
