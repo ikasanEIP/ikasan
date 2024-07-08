@@ -293,7 +293,7 @@
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
         <version.commons-io>2.7</version.commons-io>
-        <version.ikasan.commons-dbcp2>1.0.0-SNAPSHOT</version.ikasan.commons-dbcp2>
+        <version.ikasan.commons-dbcp2>1.0.0</version.ikasan.commons-dbcp2>
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.9</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
