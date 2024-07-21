@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>non-functional</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>4.0.2-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>h2-server-txn-fail-commit-db-resource</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>4.0.2-SNAPSHOT</version>
     <name>H2 Server Stress With TX failing on DB commit Integration Module</name>
     <description>Stress test the H2 server persistence with soak tests.</description>
 
