@@ -11,7 +11,7 @@ Ikasan's data can be considered as follows:
 
 ## General Ikasan Data
 The following data entities are shared between the H2 databases in both the Dashboard and Module domain and serve features in isolation of 
-the domain within which they reside. For the most part that facilitate the security features for the domain in which they reside. 
+the domain within which they reside. For the most part they facilitate the security features for the domain in which they reside. 
 
 | Data Entity          | H2 Module          | H2 Dashboard       | Solr       | Is Transient | Comments                                                                                                                                                                                                                                                                                                        |
 |----------------------|--------------------|--------------------|------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
