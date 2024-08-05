@@ -9,129 +9,104 @@ Ikasan's data requirements can be considered as follows:
 * Aggregated long lived data data captured on the wire, as Ikasan modules perform their role as participants in the broader ESB topology, indexed and available for fast contextual searching.
 
 
-| Data Entity            | H2 Module          | H2 Dashboard       | Solr       | Is Transient | Comments |
-|------------------------|--------------------|--------------------|------------|--------------|----------|
-| AuthenticationMethod   | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   |          |
-| Authorities            |                    |                    |            |              |          |
-| Configuration          |                    |                    |            |              |          |
-| ConfigurationParameter |                    |                    |            |              |          |
-| ConfParamBoolean       |                    |                    |            |              |          |
-| ConfParamInteger       |                    |                    |            |              |          |
-| ConfParamList          |                    |                    |            |              |          |
-| ConfParamListString    |                    |                    |            |              |          |
-| ConfParamLong          |                    |                    |            |              |          |
-| ConfParamMap           |                    |                    |            |              |          |
-| ConfParamMapString     |                    |                    |            |              |          |
-| ConfParamMaskedString  |                    |                    |            |              |          |
-| ConfParamString        |                    |                    |            |              |          |
-| PolicyLink             |                    |                    |            |              |          |
-| PolicyLinkType         |                    |                    |            |              |          |
-| PrincipalRole          |                    |                    |            |              |          |
-| RolePolicy             |                    |                    |            |              |          |
-| SecurityPolicy         |                    |                    |            |              |          |
-| SecurityPrincipal      |                    |                    |            |              |          |
-| SecurityRole           |                    |                    |            |              |          |
-| SystemEvent            |                    |                    |            |              |          |
-| UserPrincipal          |                    |                    |            |              |          |
-| Users                  |                    |                    |            |              |          |
-| UsersAuthorities       |                    |                    |            |              |          |
+| Data Entity          | H2 Module          | H2 Dashboard       | Solr       | Is Transient | Comments                                                                                                                                                                                                                                                                                                        |
+|----------------------|--------------------|--------------------|------------|--------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AuthenticationMethod | :no_entry:         | :white_check_mark: | :no_entry: | :no_entry:   | Used to provide details of any LDAP servers that the Ikasan Dashboard connects to.                                                                                                                                                                                                                              |
+| Authorities          | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the legacy Ikasan security model and is redundant.                                                                                                                                                                                                                                                      |
+| PolicyLink           | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| PolicyLinkType       | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| PrincipalRole        | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| RolePolicy           | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| SecurityPolicy       | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| SecurityPrincipal    | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| SecurityRole         | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| SystemEvent          | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| UserPrincipal        | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| Users                | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the Ikasan security model. When a module is running in standalone mode the module will use its local H2 database to source the security data. When running in enterprise mode the security is performed via rest services exposed by the Ikasan Dashboard against LDAP and the dashboard's H2 database. |
+| UsersAuthorities     | :white_check_mark: | :white_check_mark: | :no_entry: | :no_entry:   | Part of the legacy Ikasan security model and is redundant.                                                                                                                                                                                                                                                      |
 
 ## Ikasan Enterprise Service Bus Data
 
-| Data Entity                    |   |   |   |   |
-|--------------------------------|---|---|---|---|
-| AuthenticationMethod           |   |   |   |   |
-| Authorities                    |   |   |   |   |
-| BusinessStream                 |   |   |   |   |
-| BusinessStreamFlow             |   |   |   |   |
-| Component                      |   |   |   |   |
-| Configuration                  |   |   |   |   |
-| ConfigurationParameter         |   |   |   |   |
-| ConfParamBoolean               |   |   |   |   |
-| ConfParamInteger               |   |   |   |   |
-| ConfParamList                  |   |   |   |   |
-| ConfParamListString            |   |   |   |   |
-| ConfParamLong                  |   |   |   |   |
-| ConfParamMap                   |   |   |   |   |
-| ConfParamMapString             |   |   |   |   |
-| ConfParamMaskedString          |   |   |   |   |
-| ConfParamString                |   |   |   |   |
-| ErrorCategorisation            |   |   |   |   |
-| ErrorCategorisationLink        |   |   |   |   |
-| ErrorOccurrence                |   |   |   |   |
-| ErrorOccurrenceLink            |   |   |   |   |
-| ErrorOccurrenceNote            |   |   |   |   |
-| ExclusionEvent                 |   |   |   |   |
-| ExclusionEventAction           |   |   |   |   |
-| Filter                         |   |   |   |   |
-| FilterComponent                |   |   |   |   |
-| Flow                           |   |   |   |   |
-| FlowEventTrigger               |   |   |   |   |
-| FlowEventTriggerParameters     |   |   |   |   |
-| FlowInvocation                 |   |   |   |   |
-| FTChecksumCommand              |   |   |   |   |
-| FTCleanupChunksCommand         |   |   |   |   |
-| FTDeliverBatchCommand          |   |   |   |   |
-| FTDeliverFileCommand           |   |   |   |   |
-| FTFileChunk                    |   |   |   |   |
-| FTFileChunkHeader              |   |   |   |   |
-| FTFileFilter                   |   |   |   |   |
-| FTRetrieveFileCommand          |   |   |   |   |
-| FTTransactionalResourceCommand |   |   |   |   |
-| FTXid                          |   |   |   |   |
-| IkasanModule                   |   |   |   |   |
-| IkasanWiretap                  |   |   |   |   |
-| Link                           |   |   |   |   |
-| MessageFilter                  |   |   |   |   |
-| MessageHistory                 |   |   |   |   |
-| Metric                         |   |   |   |   |
-| MetricEvent                    |   |   |   |   |
-| Module                         |   |   |   |   |
-| Note                           |   |   |   |   |
-| Notification                   |   |   |   |   |
-| PolicyLink                     |   |   |   |   |
-| PolicyLinkType                 |   |   |   |   |
-| PrincipalRole                  |   |   |   |   |
-| ReplayAudit                    |   |   |   |   |
-| ReplayAuditEvent               |   |   |   |   |
-| ReplayEvent                    |   |   |   |   |
-| RoleFilter                     |   |   |   |   |
-| RoleJobPlan                    |   |   |   |   |
-| RoleModule                     |   |   |   |   |
-| RolePolicy                     |   |   |   |   |
-| SecurityPolicy                 |   |   |   |   |
-| SecurityPrincipal              |   |   |   |   |
-| SecurityRole                   |   |   |   |   |
-| StartupControl                 |   |   |   |   |
-| SystemEvent                    |   |   |   |   |
-| UserBusinessStream             |   |   |   |   |
-| UserPrincipal                  |   |   |   |   |
-| Users                          |   |   |   |   |
-| UsersAuthorities               |   |   |   |   |
+| Data Entity                    | H2 Module          | H2 Dashboard       | Solr               | Is Transient       | Comments                                                                                                                                                                                |
+|--------------------------------|--------------------|--------------------|--------------------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| BusinessStream                 | :no_entry:         | :white_check_mark: |                    | :no_entry:         |                                                                                                                                                                                         |
+| BusinessStreamFlow             | :no_entry:         | :white_check_mark: |                    | :no_entry:         |                                                                                                                                                                                         |
+| Component                      | :no_entry:         | :white_check_mark: |                    | :no_entry:         |                                                                                                                                                                                         |
+| Configuration                  | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfigurationParameter         | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamBoolean               | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamInteger               | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamList                  | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamListString            | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamLong                  | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamMap                   | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamMapString             | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamMaskedString          | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| ConfParamString                | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database but finds it's way into Solr as part of a ConfigurationMetaData document.                                                                          |
+| CustomMetric                   |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| ErrorCategorisation            | :no_entry:         | :white_check_mark: | :no_entry:         | :no_entry:         | Used by the dashboard as part of the business stream notifications.                                                                                                                     |
+| ErrorCategorisationLink        | :no_entry:         | :white_check_mark: | :no_entry:         | :no_entry:         | Used by the dashboard as part of the business stream notifications.                                                                                                                     |
+| ErrorOccurrence                | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| ErrorOccurrenceLink            | :no_entry:         | :no_entry:         | :no_entry:         | :no_entry:         | Redundant                                                                                                                                                                               |
+| ErrorOccurrenceNote            | :no_entry:         | :no_entry:         | :no_entry:         | :no_entry:         | Redundant                                                                                                                                                                               |
+| ExclusionEvent                 | :white_check_mark: | :no_entry:         | :white_check_mark: | :white_check_mark: | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| ExclusionEventAction           | :no_entry:         | :white_check_mark: | :no_entry:         | :no_entry:         |                                                                                                                                                                                         |
+| Filter                         |                    |                    |                    |                    |                                                                                                                                                                                         |
+| FilterComponent                |                    |                    |                    |                    |                                                                                                                                                                                         |
+| Flow                           | :no_entry:         |                    |                    | :no_entry:         |                                                                                                                                                                                         |
+| FlowEventTrigger               |                    |                    |                    | :no_entry:         |                                                                                                                                                                                         |
+| FlowEventTriggerParameters     |                    |                    |                    | :no_entry:         |                                                                                                                                                                                         |
+| FlowInvocation                 |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| FTChecksumCommand              |                    | :no_entry:         |                    | :no_entry:         |                                                                                                                                                                                         |
+| FTCleanupChunksCommand         |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTDeliverBatchCommand          |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTDeliverFileCommand           |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTFileChunk                    |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTFileChunkHeader              |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTFileFilter                   |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTRetrieveFileCommand          |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTTransactionalResourceCommand |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| FTXid                          |                    | :no_entry:         |                    |                    |                                                                                                                                                                                         |
+| IkasanModule                   | :no_entry:         |                    |                    |                    |                                                                                                                                                                                         |
+| IkasanWiretap                  |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| Link                           |                    |                    |                    |                    |                                                                                                                                                                                         |
+| MessageFilter                  |                    |                    |                    |                    |                                                                                                                                                                                         |
+| MessageHistory                 |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| Metric                         |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| MetricEvent                    |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| Module                         |                    |                    |                    |                    |                                                                                                                                                                                         |
+| Note                           | :no_entry:         |                    |                    |                    |                                                                                                                                                                                         |
+| Notification                   | :no_entry:         |                    |                    |                    |                                                                                                                                                                                         |
+| ReplayAudit                    |                    |                    |                    |                    |                                                                                                                                                                                         |
+| ReplayAuditEvent               |                    |                    |                    |                    |                                                                                                                                                                                         |
+| ReplayEvent                    |                    |                    |                    |                    | Authored in the module's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched.                             |
+| RoleModule                     | :no_entry:         |                    |                    |                    |                                                                                                                                                                                         |
+| SystemEvent                    |                    |                    |                    |                    | Authored in the module's H2 database and dashboard's H2 database where the data is transient. The data is harvested and pushed to the Solr index where it can be contextually searched. |
+| UserBusinessStream             | :no_entry:         |                    |                    |                    |                                                                                                                                                                                         |
 
 ## Ikasan Enterprise Scheduler Data
 
 
-| Data Entity                            |   |   |   |   |
-|----------------------------------------|---|---|---|---|
-| ScheduledContext                       |   |   |   |   |
-| ScheduledContextView                   |   |   |   |   |
-| ScheduledProcessEvent                  |   |   |   |   |
-| ScheduledContextInstance               |   |   |   |   |
-| ScheduledJobInstance                   |   |   |   |   |
-| ScheduledContextInstanceAudit          |   |   |   |   |
-| ScheduledContextInstanceAuditAggregate |   |   |   |   |
-| ContextStartJob                        |   |   |   |   |
-| ContextTerminalJob                     |   |   |   |   |
-| FileEventDrivenJob                     |   |   |   |   |
-| GlobalEventDrivenJob                   |   |   |   |   |
-| InternalEventDrivenJob                 |   |   |   |   |
-| QuartzScheduleDrivenJob                |   |   |   |   |
-| SchedulerJob                           |   |   |   |   |
-| JobLockCache                           |   |   |   |   |
-| JobLockCacheAudit                      |   |   |   |   |
-| EmailNotificationContext               |   |   |   |   |
-| EmailNotificationDetails               |   |   |   |   |
-| EmailNotificationSendAudit             |   |   |   |   |
-| ContextProfile                         |   |   |   |   |
-|                                        |   |   |   |   |
+| Data Entity                            | H2 Module  | H2 Dashboard | Solr               | Transient  | Comments |
+|----------------------------------------|------------|--------------|--------------------|------------|----------|
+| ScheduledContext                       | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ScheduledContextView                   | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ScheduledProcessEvent                  | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ScheduledContextInstance               | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ScheduledJobInstance                   | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ScheduledContextInstanceAudit          | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ScheduledContextInstanceAuditAggregate | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ContextStartJob                        | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ContextTerminalJob                     | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| FileEventDrivenJob                     | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| GlobalEventDrivenJob                   | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| InternalEventDrivenJob                 | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| QuartzScheduleDrivenJob                | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| SchedulerJob                           | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| JobLockCache                           | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| JobLockCacheAudit                      | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| EmailNotificationContext               | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| EmailNotificationDetails               | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| EmailNotificationSendAudit             | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+| ContextProfile                         | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
+|                                        | :no_entry: | :no_entry:   | :white_check_mark: | :no_entry: |          |
