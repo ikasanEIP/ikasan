@@ -285,17 +285,90 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      */
     void setAbleToRunConcurrently(boolean ableToRunConcurrently);
 
+
     /**
-     * Used to determine the order this contet has relative to other contexts when treated as a group of contexts
+     * Sets the ordinal value for the Context object.
+     * The ordinal value represents the order in which the Context is visualised.
      *
-     * @param ableToRunConcurrently
+     * @param ordinal the ordinal value to set
      */
     void setOrdinal(int ordinal);
 
+
     /**
-     * Get the ordinal.
+     * Returns the ordinal value of the Context object.
+     * The ordinal value represents the order in which the Context is visualised.
      *
-     * @param ableToRunConcurrently
+     * @return the ordinal value of the Context
      */
     int getOrdinal();
+
+    /**
+     * Sets the vertical spacing between job visualizations in the context.
+     *
+     * @param jobVisualisationVerticalSpacing The vertical spacing between job visualizations.
+     */
+    void setJobVisualisationVerticalSpacing(Integer  jobVisualisationVerticalSpacing);
+
+    /**
+     * Retrieves the vertical spacing for job visualizations.
+     *
+     * @return The vertical spacing for job visualizations.
+     */
+    Integer getJobVisualisationVerticalSpacing();
+
+    /**
+     * Sets the horizontal spacing for job visualisation in the context.
+     *
+     * @param jobVisualisationHorizontalSpacing the horizontal spacing value to set
+     */
+    void setJobVisualisationHorizontalSpacing(Integer jobVisualisationHorizontalSpacing);
+
+    /**
+     * Returns the horizontal spacing value for job visualisation.
+     *
+     * @return the horizontal spacing value
+     */
+    Integer getJobVisualisationHorizontalSpacing();
+
+    /**
+     * Sets the distance between visualisation levels for the context.
+     *
+     * @param contextVisualisationLevelDistance the distance between visualisation levels
+     */
+    void setContextVisualisationLevelDistance(Integer contextVisualisationLevelDistance);
+
+    /**
+     * Retrieves the visualisation level distance for the context.
+     *
+     * @return The visualisation level distance.
+     */
+    Integer getContextVisualisationLevelDistance();
+    /**
+     * Sets the distance between nodes in the visualisation of the context.
+     *
+     * @param contextVisualisationNodeDistance the distance between nodes in the visualisation
+     */
+    void setContextVisualisationNodeDistance(Integer contextVisualisationNodeDistance);
+
+    /**
+     * Retrieves the distance between nodes in the context visualization.
+     * The distance between nodes determines the spacing between nodes in the visualization.
+     * Note that this method does not return any result; it only sets the context visualisation node distance.
+     */
+    Integer getContextVisualisationNodeDistance();
+
+    /**
+     * Sets the font size for visualisation.
+     *
+     * @param fontSize The font size to set for visualisation.
+     */
+    void setVisualisationFontSize(Integer fontSize);
+
+    /**
+     * Retrieves the font size used in the visualization of the context.
+     *
+     * @return The font size used in the visualization.
+     */
+    Integer getVisualisationFontSize();
 }
