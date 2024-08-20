@@ -16,27 +16,27 @@ before_install:
   - export PATH=$M2_HOME/bin:$PATH
 
 install:
-  - mvn --file ikasaneip/pom.xml --settings .settings.xml test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
-#  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
-
-## Build and release to maven central
-#script:
-  ##  mvn clean deploy --settings .maven.xml -DskipTests=true -B -U -Prelease
-#  - if [[ $TRAVIS_BRANCH == "feature/travis-release-IKASAN-1758" ]]; then  mvn --file ikasaneip/pom.xml  clean deploy -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml; fi
+  - mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pall -B -V
 
 deploy:
-  # deploy develop 3.2.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 3.2.x
   # deploy develop 3.3.x to oss
   - provider: script
     skip_cleanup: true
     script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
       branch: 3.3.x
+  # deploy develop 4.0.x to oss
+  - provider: script
+    skip_cleanup: true
+    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
+      branch: 4.0.x
+  # deploy develop 4.1.x to oss
+  - provider: script
+    skip_cleanup: true
+    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
+      branch: 4.1.x
   # Push release to oss
   - provider: script
     skip_cleanup: true
