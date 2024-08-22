@@ -14,6 +14,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.TestSocketUtils;
+import org.h2.tools.Server;
 
 import java.io.IOException;
 import java.nio.file.Paths;
