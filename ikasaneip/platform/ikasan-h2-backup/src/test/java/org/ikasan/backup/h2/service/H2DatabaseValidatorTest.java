@@ -28,19 +28,23 @@ public class H2DatabaseValidatorTest {
 
     private static final String DATABASE_DIRECTORY = Paths.get("./target","database-dir").toString();
     private static final String CORRUPT_DATABASE_DIRECTORY = Paths.get("./target","corrupt-database-dir").toString();
-
+    private Server server;
     int port = TestSocketUtils.findAvailableTcpPort();
 
     @Before
     public void setup() throws IOException, SQLException {
         H2BackupUtils.unzipFile("./src/test/resources/data/esb-backup-20240321-06-11-00.zip", DATABASE_DIRECTORY);
         H2BackupUtils.unzipFile("./src/test/resources/data/corrupt-db.zip", CORRUPT_DATABASE_DIRECTORY);
+
+        server = Server.createTcpServer("-tcpPort", Integer.toString(port), "-tcpAllowOthers", "-ifNotExists");
+        server.start();
     }
 
     @After
     public void teardown() throws IOException {
         H2BackupUtils.cleanDirectory(Paths.get("./target","database-dir").toString());
         H2BackupUtils.cleanDirectory(Paths.get("./target","corrupt-database-dir").toString());
+        server.stop();
     }
 
 
@@ -55,7 +59,7 @@ public class H2DatabaseValidatorTest {
         h2DatabaseBackup.setDbBackupBaseDirectory(DATABASE_DIRECTORY);
 
         H2DatabaseValidator h2BackupService = new H2DatabaseValidator(h2DatabaseBackup);
-        h2BackupService.runDatabaseValidationTest("./src/test/resources/data/corrupt-db.zip", TestSocketUtils.findAvailableTcpPort());
+        h2BackupService.runDatabaseValidationTest("./src/test/resources/data/corrupt-db.zip", port);
     }
 
     @Test
@@ -71,7 +75,7 @@ public class H2DatabaseValidatorTest {
         H2DatabaseValidator h2BackupService = new H2DatabaseValidator(h2DatabaseBackup);
 
         try {
-            h2BackupService.runDatabaseValidationTest("./src/test/resources/data/esb-backup-20240321-06-11-00.zip", TestSocketUtils.findAvailableTcpPort());
+            h2BackupService.runDatabaseValidationTest("./src/test/resources/data/esb-backup-20240321-06-11-00.zip", port);
         }
         catch (Exception e) {
             fail(String.format("No exception should be thrown here! However the following exception occurred [%s]", e.getMessage()));
