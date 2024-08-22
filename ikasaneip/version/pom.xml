@@ -55,7 +55,7 @@
     <artifactId>ikasan-version</artifactId>
     <packaging>jar</packaging>
     <name>Ikasan Version Implementation</name>
-    <description>Ikasan EIP Flow wiretap</description>
+    <description>Ikasan EIP version details</description>
 
     <dependencies>
 

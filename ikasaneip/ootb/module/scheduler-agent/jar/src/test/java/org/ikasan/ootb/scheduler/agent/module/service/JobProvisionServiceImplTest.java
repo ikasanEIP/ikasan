@@ -6,6 +6,7 @@ import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
 import org.ikasan.module.ConfiguredModuleImpl;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
@@ -128,7 +129,6 @@ public class JobProvisionServiceImplTest {
     @Mock
     private ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter;
 
-
     @Mock
     private FlowElement blackoutRouterElement;
 
@@ -146,6 +146,9 @@ public class JobProvisionServiceImplTest {
 
     @Mock
     ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration;
+
+    @Mock
+    AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
     @Mock
     Flow flow1;
@@ -221,9 +224,12 @@ public class JobProvisionServiceImplTest {
         verify(converterConfiguration, times(2)).setJobName(anyString());
         verify(converterConfiguration, times(2)).setChildContextNames(anyList());
 
+        verify(agentInstanceRecoveryManager, times(1)).init();
+
         verifyNoMoreInteractions(fileConsumerConfiguration);
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
+        verifyNoMoreInteractions(agentInstanceRecoveryManager);
     }
 
     @Test
@@ -241,6 +247,9 @@ public class JobProvisionServiceImplTest {
 
         verify(fileConsumerConfiguration).setDynamicFileName(true);
         verify(fileConsumerConfiguration).setSpelExpression("#fileName.replace('contextName', 'thevaluetoreplace')");
+        verify(agentInstanceRecoveryManager, times(1)).init();
+
+        verifyNoMoreInteractions(agentInstanceRecoveryManager);
     }
 
     @Test
@@ -317,7 +326,8 @@ public class JobProvisionServiceImplTest {
             , flow3
             , flowElement
             , configuredResource
-            , configurationManagement);
+            , configurationManagement
+            , agentInstanceRecoveryManager);
 
         Assert.assertEquals(0, configuration.getFlowContextMap().size());
         Assert.assertEquals(0, configuration.getFlowDefinitions().size());
@@ -360,7 +370,8 @@ public class JobProvisionServiceImplTest {
             , flow3
             , flowElement
             , configuredResource
-            , configurationManagement);
+            , configurationManagement
+            , agentInstanceRecoveryManager);
 
         Assert.assertEquals(3, configuration.getFlowContextMap().size());
         Assert.assertEquals(3, configuration.getFlowDefinitions().size());
