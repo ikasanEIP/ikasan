@@ -103,7 +103,7 @@ public class H2BackupServiceImplTest {
         h2DatabaseBackup.setPassword("sa");
         h2DatabaseBackup.setNumOfBackupsToRetain(3);
         h2DatabaseBackup.setDbBackupBaseDirectory(DATABASE_DIRECTORY);
-        h2DatabaseBackup.setTestH2Port(port+1000);
+        h2DatabaseBackup.setTestH2Port(port);
 
         H2BackupServiceImpl h2BackupService = new H2BackupServiceImpl(h2DatabaseBackup
                 , module, false, 5, 5

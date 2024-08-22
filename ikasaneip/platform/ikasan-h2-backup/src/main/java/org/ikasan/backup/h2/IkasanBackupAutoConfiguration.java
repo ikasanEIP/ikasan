@@ -49,6 +49,7 @@ public class IkasanBackupAutoConfiguration {
     @Value("${h2.db.port}")
     private int defaultH2PortNumber;
 
+    @Deprecated
     @Value("${default.h2.port.number.step:1000}")
     private int defaultH2PortNumberStep;
 
@@ -73,6 +74,7 @@ public class IkasanBackupAutoConfiguration {
     @Value("${h2.db.port}")
     private int eaiH2PortNumber;
 
+    @Deprecated
     @Value("${eai.h2.port.number.step:1000}")
     private int eaiH2PortNumberStep;
 
@@ -104,7 +106,7 @@ public class IkasanBackupAutoConfiguration {
         h2DatabaseBackupDetails.setNumOfBackupsToRetain(this.defaultIkasanDatabaseBackupNumToRetain);
         h2DatabaseBackupDetails.setDbBackupBaseDirectory(this.persistenceDir + FileSystems.getDefault().getSeparator() + "ESB");
         h2DatabaseBackupDetails.setDbBackupCronSchedule(this.defaultIkasanDatabaseBackupCronExpression);
-        h2DatabaseBackupDetails.setTestH2Port(this.defaultH2PortNumber + this.defaultH2PortNumberStep);
+        h2DatabaseBackupDetails.setTestH2Port(this.defaultH2PortNumber);
         return h2DatabaseBackupDetails;
     }
 
@@ -202,7 +204,7 @@ public class IkasanBackupAutoConfiguration {
         h2DatabaseBackupDetails.setNumOfBackupsToRetain(this.eaiIkasanDatabaseBackupNumToRetain);
         h2DatabaseBackupDetails.setDbBackupBaseDirectory(this.persistenceDir + FileSystems.getDefault().getSeparator() + "EAI");
         h2DatabaseBackupDetails.setDbBackupCronSchedule(this.eaiIkasanDatabaseBackupCronExpression);
-        h2DatabaseBackupDetails.setTestH2Port(this.eaiH2PortNumber + this.eaiH2PortNumberStep);
+        h2DatabaseBackupDetails.setTestH2Port(this.eaiH2PortNumber);
         return h2DatabaseBackupDetails;
     }
 

@@ -30,8 +30,8 @@ There is also the feature that takes a backup of the database when the module is
 | eai.h2.backup.cron.expression               | The Quartz cron schedule on which the backups are taken for the EAI DB                 | 37 0/5 * * * ? |
 | eai.h2.backup.on.module.shutdown            | Flag to configure if an EAI database backup should be taken when the module shuts down | true           |
 | h2.db.port                                  | The DB port H2 is running on for the module                                            |                |
-| default.h2.port.number.step                 | The amount to increment the port number when testing the default module db             | 1000           |
-| eai.h2.port.number.step                     | The amount to increment the port number when testing the EAI module db                 | 1000           |
+| default.h2.port.number.step (Deprecated)    | The amount to increment the port number when testing the default module db             | 1000           |
+| eai.h2.port.number.step (Deprecated)        | The amount to increment the port number when testing the EAI module db                 | 1000           |
 
 If other H2 databases are used by a module, developers can add a configuration to their module to support H2 database 
 backups using the pattern provided in [IkasanBackupAutoConfiguration.java](./src/main/java/org/ikasan/backup/IkasanBackupAutoConfiguration.java).

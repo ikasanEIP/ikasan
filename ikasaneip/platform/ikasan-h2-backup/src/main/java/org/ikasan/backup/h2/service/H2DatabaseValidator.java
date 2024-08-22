@@ -1,6 +1,5 @@
 package org.ikasan.backup.h2.service;
 
-import org.h2.tools.Server;
 import org.ikasan.backup.h2.exception.H2DatabaseValidationException;
 import org.ikasan.backup.h2.exception.InvalidH2ConnectionUrlException;
 import org.ikasan.backup.h2.model.H2DatabaseBackup;
@@ -47,11 +46,8 @@ public class H2DatabaseValidator {
         String testDbFilePath = this.h2DatabaseBackup.getDbBackupBaseDirectory() + FileSystems.getDefault().getSeparator()
                 + TEST_DIRECTORY;
         String testDbUrl = this.getTestDbUrl(h2DatabaseBackup.getDbUrl(), Integer.toString(portNumber), testDbFilePath);
-        Server server = Server.createTcpServer("-tcpPort", Integer.toString(portNumber), "-tcpAllowOthers");
         this.unzipBackedUpDatabaseFile(backupFileName);
-        server.start();
         this.testDb(testDbUrl, h2DatabaseBackup);
-        server.stop();
         this.cleanTestDirectory();
     }
 
