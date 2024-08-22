@@ -12,6 +12,7 @@ import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfigurat
 import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
@@ -62,6 +63,9 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
     @Autowired
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
+
+    @Autowired
+    private AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
     /**
      * This a map of context name to list of objects
@@ -144,6 +148,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             this.startJobs(jobs);
             logger.info(String.format("Finished provisioning %s jobs. Time taken %s milliseconds."
                 , jobs.size(), System.currentTimeMillis()-now));
+
+            agentInstanceRecoveryManager.init();
         }
         catch (Exception e)
         {
