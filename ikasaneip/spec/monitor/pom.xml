@@ -49,7 +49,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-spec</artifactId>
-        <version>3.3.5</version>
+        <version>3.3.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-spec-monitor</artifactId>

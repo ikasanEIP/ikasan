@@ -5,12 +5,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>non-functional</artifactId>
-        <version>3.3.5</version>
+        <version>3.3.6-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-nft-util</artifactId>
-    <version>3.3.5</version>
+    <version>3.3.6-SNAPSHOT</version>
     <name>Non Functional Utilities</name>
     <description>NFT utilities.</description>
 

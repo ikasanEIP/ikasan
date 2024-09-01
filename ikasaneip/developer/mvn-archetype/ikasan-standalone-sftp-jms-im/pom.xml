@@ -44,7 +44,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-mvn-archetype</artifactId>
-        <version>3.3.5</version>
+        <version>3.3.6-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-standalone-sftp-jms-im-maven-plugin</artifactId>
