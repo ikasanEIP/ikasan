@@ -36,7 +36,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-builder-parent</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.0.2</version>
     </parent>
 
     <artifactId>ikasan-builder-spring</artifactId>
