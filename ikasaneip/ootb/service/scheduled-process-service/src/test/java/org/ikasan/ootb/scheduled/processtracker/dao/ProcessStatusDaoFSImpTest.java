@@ -27,7 +27,7 @@ public class ProcessStatusDaoFSImpTest {
 
     @BeforeEach
     void setUp() {
-        processStatusDao = new ProcessStatusDaoFSImp(tempDir.toString());
+        processStatusDao = new ProcessStatusDaoFSImp(tempDir.toString(), 2, 1l);
     }
 
     @Test
@@ -80,6 +80,17 @@ public class ProcessStatusDaoFSImpTest {
     }
 
     @Test
+    void when_the_result_is_missing_hint_that_retry_and_timeout_need_adjusting() throws IOException {
+        String resultsFile = processStatusDao.getResultAbsoluteFilePath(IDENTITY);
+        removeFile(resultsFile);
+
+        String acutalReturnValue = processStatusDao.getPersistedReturnCode(IDENTITY);
+
+        assertThat(acutalReturnValue).contains("Attempts to read the status from file");
+        assertThat(acutalReturnValue).contains(" failed after 2 retries and an interval of 1 milliseconds, this is a known operating system issue, consider increasing these values");
+    }
+
+    @Test
     void ensure_the_tidy_up_removes_all_files() throws IOException {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         String resultsFilePath = processStatusDao.getResultAbsoluteFilePath(IDENTITY);
@@ -105,6 +116,10 @@ public class ProcessStatusDaoFSImpTest {
         try (PrintWriter out = new PrintWriter(file)) {
             out.println(value);
         }
+    }
+    private void removeFile(String resultsFile) throws FileNotFoundException {
+        File file = new File(resultsFile);
+        file.delete();
     }
 
 }

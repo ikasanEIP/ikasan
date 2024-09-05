@@ -433,7 +433,7 @@ public class JobMonitoringBrokerTest {
     private void invokeJobStarting(EnrichedContextualisedScheduledProcessEvent enrichedContextualisedScheduledProcessEvent) {
         JobStartingBroker jobStartingBroker = new JobStartingBroker(new SchedulerDefaultPersistenceServiceImpl(
             new SchedulerKryoProcessPersistenceImpl(tmpFolder.getRoot().getAbsolutePath()),
-            new ProcessStatusDaoFSImp(tmpFolder.getRoot().getAbsolutePath())));
+            new ProcessStatusDaoFSImp(tmpFolder.getRoot().getAbsolutePath(), 1, 1)));
         jobStartingBroker.setConfiguration(JobStartingBrokerTest.getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
         jobStartingBroker.invoke(enrichedContextualisedScheduledProcessEvent);
