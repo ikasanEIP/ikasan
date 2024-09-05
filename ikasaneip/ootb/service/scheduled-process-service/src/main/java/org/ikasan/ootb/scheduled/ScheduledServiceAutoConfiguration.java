@@ -50,12 +50,18 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
 /**
- * Scheduler service related configuration required by the scheduler ootb module.
+ * Scheduler service related configuration required by the scheduler ootb module.ó
  */
 public class ScheduledServiceAutoConfiguration {
 
     @Value("${scheduled.process.pid.directory:#{'.' + T(java.nio.file.FileSystems).getDefault().getSeparator() + 'pid'}}")
     String defaultPidDirectory;
+
+    @Value("${scheduled.process.getStatus.max.retries:20}")
+    int maxGetStatusRetries;
+
+    @Value("${scheduled.process.getStatus.retry.delay.millis:3000}")
+    long retryInterval;
 
     @Bean
     SchedulerPersistenceService schedulerPersistenceService(SchedulerProcessPersistenceDao schedulerProcessPersistenceDao,
@@ -70,6 +76,7 @@ public class ScheduledServiceAutoConfiguration {
 
     @Bean
     ProcessStatusDao processStatusDao() {
-        return new ProcessStatusDaoFSImp(defaultPidDirectory);
+        return new ProcessStatusDaoFSImp(defaultPidDirectory, maxGetStatusRetries, retryInterval);
     }
+
 }
