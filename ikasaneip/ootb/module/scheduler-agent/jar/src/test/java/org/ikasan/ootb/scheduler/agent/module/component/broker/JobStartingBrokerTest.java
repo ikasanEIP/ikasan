@@ -90,7 +90,7 @@ public class JobStartingBrokerTest {
         jobStartingBroker = new JobStartingBroker(
             new SchedulerDefaultPersistenceServiceImpl(
                 new SchedulerKryoProcessPersistenceImpl(tmpFolder.getRoot().getAbsolutePath()),
-                new ProcessStatusDaoFSImp(tmpFolder.getRoot().getAbsolutePath())));
+                new ProcessStatusDaoFSImp(tmpFolder.getRoot().getAbsolutePath(), 1, 1)));
         jobStartingBroker.setConfiguration(getTestConfiguration());
         jobStartingBroker.setConfiguredResourceId("test");
     }
