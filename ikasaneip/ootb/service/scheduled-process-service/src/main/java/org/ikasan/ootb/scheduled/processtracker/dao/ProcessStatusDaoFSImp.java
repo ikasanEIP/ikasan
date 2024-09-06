@@ -113,7 +113,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
                 Object[] trace = Arrays.stream(e.getStackTrace()).toArray();
                 returnCodeString += ", content was [" + fileContent + "] ,issue [" + e.getMessage() + ", " + e.getClass().getSimpleName()+ ", " + (trace.length > 0 ? trace[0] : "") + "]";
             }
-            LOGGER.warn(returnCodeString);
+            LOGGER.info(returnCodeString);
         }
         return returnCodeString;
     }
