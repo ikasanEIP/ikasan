@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 
 /**
- * Scheduler service related configuration required by the scheduler ootb module.ó
+ * Scheduler service related configuration required by the scheduler ootb module.
  */
 public class ScheduledServiceAutoConfiguration {
 
