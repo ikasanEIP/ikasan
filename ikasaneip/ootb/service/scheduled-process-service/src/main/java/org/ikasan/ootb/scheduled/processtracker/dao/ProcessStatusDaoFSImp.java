@@ -46,7 +46,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
         if(!persistenceDirFile.exists())
         {
             if (!persistenceDirFile.mkdirs())
-                LOGGER.warn("Attempt to create persistence directory " + persistenceDir + " failed when we would not expect it to, this may case further issues");
+                LOGGER.info("Attempt to create persistence directory " + persistenceDir + " failed when we would not expect it to, this may case further issues");
         }
         retryTemplate = RetryTemplate.builder()
             .maxAttempts(maxGetStatusRetries)
@@ -109,11 +109,11 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
             if (e instanceof NoSuchFileException) {
                 returnCodeString += " after " + maxGetStatusRetries + " retries and an interval of " + retryInterval +
                     " milliseconds, this is a known operating system issue, consider increasing these values";
+                LOGGER.info(returnCodeString);
             } else {
-                Object[] trace = Arrays.stream(e.getStackTrace()).toArray();
-                returnCodeString += ", content was [" + fileContent + "] ,issue [" + e.getMessage() + ", " + e.getClass().getSimpleName()+ ", " + (trace.length > 0 ? trace[0] : "") + "]";
+                returnCodeString += ", content was [" + fileContent + "] ,issue [" + e.getMessage() + ", " + e.getClass().getSimpleName()+ "]";
+                LOGGER.error(returnCodeString, e);
             }
-            LOGGER.info(returnCodeString);
         }
         return returnCodeString;
     }
@@ -128,7 +128,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     private String getPersistedReturnCodeData(Path fileResultsPath) throws IOException {
         RetryContext retryContext = RetrySynchronizationManager.getContext();
         if (retryContext.getRetryCount() > 1) {
-            LOGGER.warn("Attempting to get persisted return code from path " +
+            LOGGER.info("Attempting to get persisted return code from path " +
                 fileResultsPath + "Retry Number: " + retryContext.getRetryCount() + ", interval " + retryInterval);
         }
         return Files.readString(fileResultsPath).trim();
