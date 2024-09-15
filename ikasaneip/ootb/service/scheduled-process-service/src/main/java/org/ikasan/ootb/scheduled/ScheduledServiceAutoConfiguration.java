@@ -57,7 +57,7 @@ public class ScheduledServiceAutoConfiguration {
     @Value("${scheduled.process.pid.directory:#{'.' + T(java.nio.file.FileSystems).getDefault().getSeparator() + 'pid'}}")
     String defaultPidDirectory;
 
-    @Value("${scheduled.process.getStatus.max.retries:20}")
+    @Value("${scheduled.process.getStatus.max.retries:60}")
     int maxGetStatusRetries;
 
     @Value("${scheduled.process.getStatus.retry.delay.millis:3000}")
