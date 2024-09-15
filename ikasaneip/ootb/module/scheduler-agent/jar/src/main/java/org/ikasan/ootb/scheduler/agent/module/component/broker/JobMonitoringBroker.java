@@ -53,6 +53,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
@@ -74,8 +75,13 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     public static final int DEFAULT_ERROR_RETURN_CODE = 1;
     private String configuredResourceId;
     private JobMonitoringBrokerConfiguration configuration;
+    private final String flowName;
     private ErrorReportingService errorReportingService;
-    private String flowName;
+
+    // On Windows, the error code is not always reliable, this flag when set will mark
+    // a Job as failed when error code is 0 but there are error in the errorlog
+    private boolean errorLogWithZeroStatusConsideredError = false;
+    private int errorLogPopulatedErrorCode;
 
     public JobMonitoringBroker(String flowName) {
         this.flowName = flowName;
@@ -142,7 +148,6 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                             "If more time is required, please raise this to the administrator to change the timeout setting. Note this process was detached so may not behave normally";
                     }
                 }
-                LOGGER.info("Pre-existing process completed [" + scheduledProcessEvent+ "]");
                 // A detached process might have persisted its return value, look for it and set return code accordingly
                 String statusReturnCode = scheduledProcessEvent.getDetachableProcess().getReturnCode();
                 if (!NumberUtils.isParsable(statusReturnCode)) {
@@ -150,6 +155,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                 }
                 scheduledProcessEvent.setExecutionDetails(executionDetails);
                 scheduledProcessEvent.setReturnCode(NumberUtils.toInt(statusReturnCode, DEFAULT_ERROR_RETURN_CODE));
+                LOGGER.info("Pre-existing process completed [" + scheduledProcessEvent+ "]");
             } else {
                 Process process = scheduledProcessEvent.getDetachableProcess().getProcess();
                 String executionDetails = scheduledProcessEvent.getExecutionDetails() != null ? scheduledProcessEvent.getExecutionDetails() : "";
@@ -177,12 +183,12 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                 LOGGER.info("New process completed [" + scheduledProcessEvent + "]");
             }
             scheduledProcessEvent.setCompletionTime(System.currentTimeMillis());
+
             List<String> acceptableReturnCodes = scheduledProcessEvent.getInternalEventDrivenJob().getSuccessfulReturnCodes();
             if( (acceptableReturnCodes == null || acceptableReturnCodes.isEmpty())) {
                 scheduledProcessEvent.setSuccessful(scheduledProcessEvent.getReturnCode() == 0);
-            }
-            else
-            {
+            } else {
+                // If the return code has been deemed acceptable, return success
                 scheduledProcessEvent.setSuccessful(false);
                 for(String acceptableReturnCode:acceptableReturnCodes) {
                     if(Integer.parseInt(acceptableReturnCode) == scheduledProcessEvent.getReturnCode()) {
@@ -192,6 +198,17 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                 }
             }
 
+            // If the error log has items, its most likely there has been an error, especially on Windows where LASTEXITCODE is not reliable.
+            if (scheduledProcessEvent.getReturnCode() == 0 && errorLogWithZeroStatusConsideredError) {
+                File file = new File(scheduledProcessEvent.getResultError());
+                if (file.exists() && file.isFile() && file.length() > 0) {
+                    scheduledProcessEvent.setSuccessful(false);
+                    scheduledProcessEvent.setReturnCode(errorLogPopulatedErrorCode);
+                    LOGGER.info("Status for context instance id " + scheduledProcessEvent.getContextInstanceId() +
+                        " set to failed because error log is non-zero and errorLogWithZeroStatusConsideredError is set");
+                }
+            }
+            LOGGER.info("Final updates to process details [" + scheduledProcessEvent + "]");
             // Only clean up persistent pid if we were not interrupted by InterruptedException i.e. module shutdown
             this.clearPersistedPid(scheduledProcessEvent);
         }
@@ -314,5 +331,13 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
     @Override
     public void setErrorReportingService(ErrorReportingService errorReportingService) {
         this.errorReportingService = errorReportingService;
+    }
+
+    public void setErrorLogWithZeroStatusConsideredError(boolean errorLogWithZeroStatusConsideredError) {
+        this.errorLogWithZeroStatusConsideredError = errorLogWithZeroStatusConsideredError;
+    }
+
+    public void setErrorLogPopulatedErrorCode(int errorLogPopulatedErrorCode) {
+        this.errorLogPopulatedErrorCode = errorLogPopulatedErrorCode;
     }
 }
