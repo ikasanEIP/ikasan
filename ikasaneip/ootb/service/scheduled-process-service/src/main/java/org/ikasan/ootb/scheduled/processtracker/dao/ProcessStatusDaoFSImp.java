@@ -9,22 +9,17 @@ import org.springframework.retry.support.RetryTemplate;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.util.Arrays;
+import java.nio.file.*;
 
 public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessStatusDaoFSImp.class);
     protected static final String RESULTS_FILE_POSTFIX = "_results";
     protected static final String SCRIPT_FILE_POSTFIX = "_script";
     protected static final String WRAPPER_FILE_POSTFIX = "_wrapper";
-    private String persistenceDir;
-    private int maxGetStatusRetries;
-    private long retryInterval;
-    private File persistenceDirFile;
-    private RetryTemplate retryTemplate;
+    private final String persistenceDir;
+    private final int maxGetStatusRetries;
+    private final long retryInterval;
+    private final RetryTemplate retryTemplate;
 
     /**
      * Constructor
@@ -42,7 +37,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
             throw new IllegalArgumentException("persistence directory cannot be 'null");
         }
 
-        this.persistenceDirFile = new File(persistenceDir);
+        File persistenceDirFile = new File(persistenceDir);
         if(!persistenceDirFile.exists())
         {
             if (!persistenceDirFile.mkdirs())
@@ -52,6 +47,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
             .maxAttempts(maxGetStatusRetries)
             .fixedBackoff(retryInterval)
             .retryOn(NoSuchFileException.class)
+            .retryOn(FileSystemException.class)
             .build();
     }
 
@@ -98,6 +94,8 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
         String returnResultsPath = getResultAbsoluteFilePath(processIdentity);
         String fileContent = null;
         try {
+            // On Windows, the virus checker is not releasing the file for upto 3 mins,
+            // and occasionally seems to delay removing the file lock, hence the retry.
             fileContent = retryTemplate.execute(ctx -> getPersistedReturnCodeData(Path.of(returnResultsPath)));
             // On Windows we have to force utf-8 output, MS inserts a Byte Order Mark for UTF8 files
             fileContent = fileContent.replace("\uFEFF", "");

@@ -38,7 +38,7 @@ public class DetachableProcessBuilder {
     /**
      * The constructor first looks to see if we are in recovery i.e. there is a serialised DetachableProcess
      * If there is a serialised DetachableProcess, it will be used, otherwise a new one is created.
-     * @param schedulerPersistenceService used to serialise and deserialise a DetachableProcess.
+     * @param schedulerPersistenceService used to serialise and deserialize a DetachableProcess.
      * @param processBuilder instance, preferably a new instance.
      * @param commandProcessorArguments to be executed
      * @param identity of this process
@@ -151,8 +151,9 @@ public class DetachableProcessBuilder {
 
     /**
      * For powershell, we need a wrapper around getCommandString() in order to safely store the output/error/exit code.
-     * The exit code capture (below) looks a little clunky, it is a workaround for known Powershell issue
+     * Catpturing LASTEXITCODE on Windows is not reliable, see
      * <a href="https://github.com/PowerShell/PowerShell/issues/20400#issuecomment-1740954070">Powershell exit code</a>
+     * To mitigate, see job.monitoring.broker.errorlog.considered.error
      * @param commandScript to be executed
      * @param processExitStatusFile that will be populated with the exit status
      * @return the commands for the wrapper script, as a string
@@ -161,25 +162,11 @@ public class DetachableProcessBuilder {
         StringBuilder wrapperCommands = new StringBuilder();
         wrapperCommands.append("$errorLogPath = \"" + this.getInitialErrorOutput() + "\" \r\n");
         wrapperCommands.append("$initialResultsPath = \"" + this.getInitialResultOutput() + "\" \r\n");
-        wrapperCommands.append("$p=Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError $errorLogPath -RedirectStandardOutput $initialResultsPath -PassThru -ArgumentList \"/c\", \"" + commandScript + "\" -Wait \r\n");
-        wrapperCommands.append("$file=\"" + this.getInitialErrorOutput()+"\" \r\n");
-        wrapperCommands.append("if ($p.ExitCode -ne 0) { \r\n");
-        wrapperCommands.append("    set-content -Encoding \"utf8\" " + processExitStatusFile + " $p.ExitCode \r\n");
-        wrapperCommands.append("} else { \r\n");
-        wrapperCommands.append("    if (Test-Path $file) { \r\n");
-        wrapperCommands.append("        $fileSize = (Get-Item $file).length  \r\n");
-        wrapperCommands.append("        if ($fileSize -gt 0) {  \r\n");
-        wrapperCommands.append("            set-content -Encoding \"utf8\" " + processExitStatusFile + " '-1' \r\n");
-        wrapperCommands.append("        } else { \r\n");
-        wrapperCommands.append("            set-content -Encoding \"utf8\" " + processExitStatusFile + " '0' \r\n");
-        wrapperCommands.append("        } \r\n");
-        wrapperCommands.append("    } else { \r\n");
-        wrapperCommands.append("        set-content -Encoding \"utf8\" " + processExitStatusFile + " '-2' \r\n");
-        wrapperCommands.append("    } \r\n");
-        wrapperCommands.append("} \r\n");
+        wrapperCommands.append("$process = Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError $errorLogPath -RedirectStandardOutput $initialResultsPath -ArgumentList \"-NoProfile\", \"-File\", " + commandScript + " -PassThru  -Wait \r\n");
+        wrapperCommands.append("set-content -Encoding \"utf8\" " + processExitStatusFile + " $process.ExitCode \r\n");
+        wrapperCommands.append("Write-Host 'basic return status for parent process ' $($process.Id)' set to '$($process.ExitCode) \r\n");
         return wrapperCommands.toString();
     }
-
 
     /**
      * Ideally all dependents would be in the constructor but not all are known at time of construction.
@@ -206,12 +193,15 @@ public class DetachableProcessBuilder {
             // For windows, always the process to track is the first child, not the root process
             if (detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_CMD) ||
                 detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_POWSHELL)) {
+                detachableProcess.setDetached(true);
                 try {
                     // Need to give the command processor enough time to spawn children
                     Thread.sleep(5000); // 5 seconds
                 } catch (InterruptedException e) {
                     LOGGER.warn("Sleep interrupted while waiting for process to start, may result in script not found");
                 }
+
+                // The child could have completed by now, in which case we have to track the parent, return value should still be OK
                 Optional<ProcessHandle> potentialChild = process.children().findFirst();
                 if (potentialChild.isPresent()) {
                     ProcessHandle child = potentialChild.get();
@@ -219,16 +209,18 @@ public class DetachableProcessBuilder {
                     processHandleToPersist = child;
                     // For Windows, we need to track the child, not the root, we can't get the child 'process' so
                     // we use the processHandle, i.e. we use 'detached' mode.
-                    detachableProcess.setDetached(true);
                     detachableProcess.setProcessHandle(child);
+                    LOGGER.info("Windows detachable process tracking child " + detachableProcess);
                 } else {
-                    LOGGER.error("Could not get child process for detachable process " + detachableProcess +
-                        " fall back to parent process, which may report false positive.");
+                    detachableProcess.setProcessHandle(process.toHandle());
+                    LOGGER.info("Could not get child process for detachable process " + detachableProcess +
+                        " fall back to parent process, which will only provide 0 or 1 return codes.");
                 }
             } else {
                 detachableProcess.setDetached(false);
             }
 
+            // Technically on Windows we might be finishhed now, but safer to let JobMonitoringBroker decide.
             detachableProcess.setDetachedAlreadyFinished(false);
             detachableProcess.setProcess(process);
             detachableProcess.setPid(pidToTrack);
