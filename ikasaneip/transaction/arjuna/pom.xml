@@ -45,12 +45,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-transaction</artifactId>
-        <version>4.0.2</version>
+        <version>4.0.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-transaction-arjuna</artifactId>
-    <version>4.0.2</version>
+    <version>4.0.3-SNAPSHOT</version>
     <name>Ikasan Transaction Arjuna</name>
     <description>Ikasan Transaction extensions to Transactions in standalone Container</description>
 
