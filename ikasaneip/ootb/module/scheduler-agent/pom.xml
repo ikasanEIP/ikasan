@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-ootb-module</artifactId>
-        <version>4.0.2-SNAPSHOT</version>
+        <version>4.0.3-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -93,7 +93,7 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-eip-standalone-bom</artifactId>
-                <version>4.0.2-SNAPSHOT</version>
+                <version>4.0.3-SNAPSHOT</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
