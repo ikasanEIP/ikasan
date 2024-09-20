@@ -1018,7 +1018,7 @@
 
             <!-- The SFTP library -->
             <dependency>
-                <groupId>com.jcraft</groupId>
+                <groupId>com.github.mwiede</groupId>
                 <artifactId>jsch</artifactId>
                 <version>${version.com.jcraft.jsch}</version>
             </dependency>
