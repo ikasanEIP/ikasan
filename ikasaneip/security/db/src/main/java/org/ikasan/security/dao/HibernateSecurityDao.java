@@ -507,7 +507,7 @@ public class HibernateSecurityDao implements SecurityDao
 	{
         Query query = this.entityManager.createQuery(SecurityConstants.GET_POLICY_WITH_ROLE_QUERY);
         query.setParameter("name", roleName);
-        return (List<Policy>) query.getResultList();
+        return query.getResultList();
     }
 
 	/* (non-Javadoc)
@@ -566,4 +566,10 @@ public class HibernateSecurityDao implements SecurityDao
 	}
 
 
+    @Override
+    public List<RoleJobPlan> getRoleJobPlansByJobPlanName(String jonPlanName) {
+        Query query = this.entityManager.createQuery(SecurityConstants.GET_ROLE_JOB_PLANS_BY_ROLE_QUERY);
+        query.setParameter("name", jonPlanName);
+        return query.getResultList();
+    }
 }

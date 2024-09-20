@@ -422,4 +422,34 @@ public class SecurityServiceImpl implements SecurityService
     {
         return this.securityDao.getPolicyById(id);
     }
+
+    @Override
+    public void setJobPlanRoles(String jobPlanName, List<String> roleNames) {
+        // Delete the existing role job plan relationships
+        this.securityDao.getRoleJobPlansByJobPlanName(jobPlanName)
+            .forEach(roleJobPlan -> {
+                Role role = this.getRoleById(roleJobPlan.getRole().getId());
+                role.getRoleJobPlans().remove(roleJobPlan);
+                this.saveRole(role);
+                this.securityDao.deleteRoleJobPlan(roleJobPlan);
+            });
+
+        roleNames.forEach(roleName -> {
+            Role role = this.securityDao.getRoleByName(roleName);
+
+            if(role != null) {
+                RoleJobPlan roleJobPlan = new RoleJobPlan();
+                roleJobPlan.setRole(role);
+                roleJobPlan.setJobPlanName(jobPlanName);
+                this.securityDao.saveRoleJobPlan(roleJobPlan);
+
+                role.addRoleJobPlan(roleJobPlan);
+                this.securityDao.saveOrUpdateRole(role);
+            }
+            else {
+                logger.info(String.format("Could not add job plan[%s] to role[%s] as a role with that name does not exist!"
+                    , jobPlanName, roleName));
+            }
+        });
+    }
 }
