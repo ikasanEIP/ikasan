@@ -56,76 +56,76 @@ public interface SecurityDao
      *
      * @param role
      */
-    public void saveOrUpdateRole(Role role);
+    void saveOrUpdateRole(Role role);
 
     /**
      * Delete a given Role
      *
      * @param role
      */
-    public void deleteRole(Role role);
+    void deleteRole(Role role);
 
     /**
      * Save a given Policy
      *
      * @param policy
      */
-    public void saveOrUpdatePolicy(Policy policy);
+    void saveOrUpdatePolicy(Policy policy);
 
     /**
      * Delete a given Policy
      *
      * @param policy
      */
-    public void deletePolicy(Policy policy);
+    void deletePolicy(Policy policy);
     
     /**
      * Save a given PolicyLink
      *
      * @param policyLink
      */
-    public void saveOrUpdatePolicyLink(PolicyLink policyLink);
+    void saveOrUpdatePolicyLink(PolicyLink policyLink);
 
     /**
      * Delete a given PolicyLink
      * @param policyLink
      */
-    public void deletePolicyLink(PolicyLink policyLink);
+    void deletePolicyLink(PolicyLink policyLink);
 
     /**
      * Delete a given RoleModule
      *
      * @param roleModule
      */
-    public void deleteRoleModule(RoleModule roleModule);
+    void deleteRoleModule(RoleModule roleModule);
 
     /**
      * Save a given RoleModule
      *
      * @param roleModule
      */
-    public void saveRoleModule(RoleModule roleModule);
+    void saveRoleModule(RoleModule roleModule);
 
     /**
      * Delete a given RoleJobPlan
      *
      * @param roleJobPlan
      */
-    public void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
+    void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
 
     /**
      * Save a given RoleJobPlan
      *
      * @param roleJobPlan
      */
-    public void saveRoleJobPlan(RoleJobPlan roleJobPlan);
+    void saveRoleJobPlan(RoleJobPlan roleJobPlan);
 
     /**
      * Save a given IkasanPrincipal
      *
      * @param principal
      */
-    public void saveOrUpdatePrincipal(IkasanPrincipal principal);
+    void saveOrUpdatePrincipal(IkasanPrincipal principal);
 
 
     /**
@@ -133,7 +133,7 @@ public interface SecurityDao
      *
      * @param principal
      */
-    public void deletePrincipal(IkasanPrincipal principal);
+    void deletePrincipal(IkasanPrincipal principal);
 
     /**
      * Get an IkasanPrincipal by name.
@@ -141,7 +141,7 @@ public interface SecurityDao
      * @param name
      * @return
      */
-    public IkasanPrincipal getPrincipalByName(String name);
+    IkasanPrincipal getPrincipalByName(String name);
 
     /**
      * Get IkasanPrincipals associated with a list of roles.
@@ -149,52 +149,52 @@ public interface SecurityDao
      * @param names
      * @return
      */
-    public List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names);
+    List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names);
 
     /**
      * Get all Policies
      *
      * @return     
      */
-    public List<Policy> getAllPolicies();
+    List<Policy> getAllPolicies();
 
     /**
      * Get all Roles
      * @return     
      */
-    public List<Role> getAllRoles();
+    List<Role> getAllRoles();
 
     /**
      * Get all IkasanPrincipals
      * @return     
      */
-    public List<IkasanPrincipal> getAllPrincipals();
+    List<IkasanPrincipal> getAllPrincipals();
 
     /**
      * IkasanPrincipalLites
      * @return
      */
-    public List<IkasanPrincipalLite> getAllPrincipalLites();
+    List<IkasanPrincipalLite> getAllPrincipalLites();
 
     /**
      * Get all IkasanPrincipals associated with a given Role
      * @return     
      */
-    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
+    List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
     
     /**
      * Get all Policies associated with a given Role
      *
      * @return    
      */
-    public List<Policy> getAllPoliciesWithRole(String roleName);
+    List<Policy> getAllPoliciesWithRole(String roleName);
 
     /**
      * Get a Policy by its name.
      *
      * @return    
      */
-    public Policy getPolicyByName(String name);
+    Policy getPolicyByName(String name);
 
     /**
      * Get a Role by its name
@@ -202,33 +202,33 @@ public interface SecurityDao
      * @param name
      * @return    
      */
-    public Role getRoleByName(String name);
+    Role getRoleByName(String name);
 
     /**
      * Get a Role by its id
      * @param id
      * @return
      */
-    public Role getRoleById(Long id);
+    Role getRoleById(Long id);
 
     /**
      * Save a given AuthenticationMethod
      * @param authenticationMethod     
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
+    void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
      * Get an AuthenticationMethod by its id
      * @param id
      * @return
      */
-    public AuthenticationMethod getAuthenticationMethod(Long id);
+    AuthenticationMethod getAuthenticationMethod(Long id);
     
     /**
      * Get all AuthenticationMethods
      * @return
      */
-    public List<AuthenticationMethod> getAuthenticationMethods();
+    List<AuthenticationMethod> getAuthenticationMethods();
     
     /**
      * Get IkasanPrincipals whose name is like
@@ -236,20 +236,20 @@ public interface SecurityDao
      * @param name
      * @return
      */
-    public List<IkasanPrincipal> getPrincipalByNameLike(String name);
+    List<IkasanPrincipal> getPrincipalByNameLike(String name);
     
     /**
      * Delete the given AuthenticationMethod
      *
      * @param authenticationMethod
      */
-    public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
+    void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
  
     /**
      * Get all PolicyLinkTypes
      * @return
      */
-    public List<PolicyLinkType> getAllPolicyLinkTypes();
+    List<PolicyLinkType> getAllPolicyLinkTypes();
 
     
     /**
@@ -257,7 +257,7 @@ public interface SecurityDao
      *
      * @param policyLinkType
      */
-    public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType);
+    void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType);
     
     /**
      * Get Policies whose name is like
@@ -265,7 +265,7 @@ public interface SecurityDao
      * @param name
      * @return
      */
-    public List<Policy> getPolicyByNameLike(String name);
+    List<Policy> getPolicyByNameLike(String name);
 
     /**
      * Get Roles whose name is like
@@ -273,14 +273,14 @@ public interface SecurityDao
      * @param name
      * @return
      */
-    public List<Role> getRoleByNameLike(String name);
+    List<Role> getRoleByNameLike(String name);
     
     /**
      * Get the number of AuthenticationMethod
      *
      * @return
      */
-    public long getNumberOfAuthenticationMethods();
+    long getNumberOfAuthenticationMethods();
     
     /**
      * Get the AuthenticationMethod by order
@@ -288,7 +288,7 @@ public interface SecurityDao
      * @param order
      * @return
      */
-    public AuthenticationMethod getAuthenticationMethodByOrder(long order);
+    AuthenticationMethod getAuthenticationMethodByOrder(long order);
     
     /**
      * Get all Users associated with a principal id
@@ -296,7 +296,7 @@ public interface SecurityDao
      * @param principalId
      * @return
      */
-    public List<User> getUsersAssociatedWithPrincipal(long principalId);
+    List<User> getUsersAssociatedWithPrincipal(long principalId);
 
     /**
      * Get a Policy by id
@@ -304,5 +304,13 @@ public interface SecurityDao
      * @param id
      * @return
      */
-    public Policy getPolicyById(Long id);
+    Policy getPolicyById(Long id);
+
+    /**
+     * Get all RoleJobPlans by job plan name.
+     *
+     * @param jonPlanName
+     * @return
+     */
+    List<RoleJobPlan> getRoleJobPlansByJobPlanName(String jonPlanName);
 }

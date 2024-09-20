@@ -52,250 +52,297 @@ import org.ikasan.security.model.*;
 public interface SecurityService
 {
     /**
+     * Retrieves an IkasanPrincipal object based on the provided name.
      *
-     * @param name
-     * @return
+     * @param name The name of the principal.
+     * @return The IkasanPrincipal object associated with the provided name, or null if no principal was found.
      */
-    public IkasanPrincipal findPrincipalByName(String name);
+    IkasanPrincipal findPrincipalByName(String name);
 
     /**
+     * Finds a Role object by its name.
      *
-     * @param name
-     * @return
+     * @param name The name of the Role to search for.
+     * @return The Role object associated with the provided name, or null if no Role was found.
      */
-    public Role findRoleByName(String name);
+    Role findRoleByName(String name);
 
     /**
+     * Finds a policy by its name.
      *
-     * @param name
-     * @return
+     * @param name The name of the policy to find.
+     * @return The policy with the given name, or null if no policy was found.
      */
-    public Policy findPolicyByName(String name);
+    Policy findPolicyByName(String name);
 
     /**
+     * Creates a new {@link IkasanPrincipal} with the given name and type.
      *
-     * @param name
-     * @param type
-     * @return
+     * @param name The name of the new principal.
+     * @param type The type of the new principal.
+     * @return The created {@link IkasanPrincipal}.
      */
-    public IkasanPrincipal createNewPrincipal(String name, String type);
+    IkasanPrincipal createNewPrincipal(String name, String type);
 
     /**
+     * Saves an IkasanPrincipal object to the database.
      *
-     * @param principal
+     * @param principal The IkasanPrincipal object to be saved.
      */
-    public void savePrincipal(IkasanPrincipal principal);
+    void savePrincipal(IkasanPrincipal principal);
 
     /**
+     * Retrieves a list of all IkasanPrincipal objects.
      *
-     * @return
+     * @return A list of IkasanPrincipal objects
      */
-    public List<IkasanPrincipal> getAllPrincipals();
+    List<IkasanPrincipal> getAllPrincipals();
 
     /**
+     * Retrieves a list of all IkasanPrincipalLite objects.
      *
-     * @return
+     * @return A list of all IkasanPrincipalLite objects.
      */
-    public List<IkasanPrincipalLite> getAllPrincipalLites();
+    List<IkasanPrincipalLite> getAllPrincipalLites();
 
     /**
+     * Retrieves a list of IkasanPrincipal objects that have the specified role.
      *
-     * @param roleName
-     * @return
+     * @param roleName The name of the role to filter the principals by.
+     * @return A list of IkasanPrincipal objects that have the specified role.
      */
-    public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
+    List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
 
     /**
+     * Retrieves a list of IkasanPrincipal objects by the provided names.
      *
-     * @param names
-     * @return
+     * @param names The list of names to search for.
+     * @return A list of IkasanPrincipal objects matching the provided names.
      */
-    public List<IkasanPrincipal> getPrincipalsByName(List<String> names);
+    List<IkasanPrincipal> getPrincipalsByName(List<String> names);
 
     /**
+     * Deletes the specified principal from the security service.
      *
-     * @param principal
+     * @param principal The principal to be deleted.
      */
-    public void deletePrincipal(IkasanPrincipal principal);
+    void deletePrincipal(IkasanPrincipal principal);
 
     /**
+     * Creates a new Role with the specified name and description.
      *
-     * @param name
-     * @param description
-     * @return
+     * @param name        The name of the Role.
+     * @param description The description of the Role.
+     * @return The newly created Role object.
      */
-    public Role createNewRole(String name, String description);
+    Role createNewRole(String name, String description);
 
     /**
+     * Saves a Role object to the database.
      *
-     * @param role
+     * @param role The Role object to be saved.
      */
-    public void saveRole(Role role);
+    void saveRole(Role role);
 
     /**
+     * Deletes a Role from the SecurityService.
      *
-     * @param role
+     * @param role The Role object to be deleted.
      */
-    public void deleteRole(Role role);
+    void deleteRole(Role role);
 
     /**
+     * Retrieves a list of all Role objects.
      *
-     * @return
+     * @return A list of all Role objects.
      */
-    public List<Role> getAllRoles();
+    List<Role> getAllRoles();
 
     /**
+     * Creates a new Policy with the given name and description.
      *
-     * @param name
-     * @param description
-     * @return
+     * @param name        The name of the Policy.
+     * @param description The description of the Policy.
+     * @return The newly created Policy.
      */
-    public Policy createNewPolicy(String name, String description);
+    Policy createNewPolicy(String name, String description);
 
     /**
+     * Saves a Policy object to the database.
      *
-     * @param policy
+     * @param policy The Policy object to be saved.
      */
-    public void savePolicy(Policy policy);
+    void savePolicy(Policy policy);
 
     /**
+     * Deletes a Policy object from the SecurityService.
      *
-     * @param policy
+     * @param policy The Policy object to be deleted.
      */
-    public void deletePolicy(Policy policy);
+    void deletePolicy(Policy policy);
 
     /**
+     * Deletes the given RoleModule from the SecurityService.
      *
-     * @param roleModule
+     * @param roleModule The RoleModule to be deleted.
      */
-    public void deleteRoleModule(RoleModule roleModule);
+    void deleteRoleModule(RoleModule roleModule);
 
     /**
+     * Deletes a RoleJobPlan from the SecurityService.
      *
-     * @param roleJobPlan
+     * @param roleJobPlan The RoleJobPlan to be deleted.
      */
-    public void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
+    void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
 
     /**
+     * Retrieves a list of all policies.
      *
-     * @return
+     * @return A list of Policy objects.
      */
-    public List<Policy> getAllPolicies();
+    List<Policy> getAllPolicies();
 
     /**
+     * Saves or updates an AuthenticationMethod object in the system.
      *
-     * @param authenticationMethod
+     * @param authenticationMethod The AuthenticationMethod object to be saved or updated.
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
+    void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
+     * Retrieves a list of AuthenticationMethod objects.
      *
-     * @return
+     * @return A list of AuthenticationMethod objects.
      */
-    public List<AuthenticationMethod> getAuthenticationMethods();
+    List<AuthenticationMethod> getAuthenticationMethods();
 
     /**
+     * Retrieves the AuthenticationMethod object associated with the provided ID.
      *
-     * @param id
-     * @return
+     * @param id The ID of the AuthenticationMethod to retrieve.
+     * @return The AuthenticationMethod object associated with the provided ID, or null if no AuthenticationMethod was found.
      */
-    public AuthenticationMethod getAuthenticationMethod(Long id);
+    AuthenticationMethod getAuthenticationMethod(Long id);
 
     /**
-     * 
-     * @param authenticationMethod
+     * Deletes an AuthenticationMethod from the SecurityService.
+     *
+     * @param authenticationMethod The AuthenticationMethod to be deleted.
      */
-    public void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
+    void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
-     * 
-     * @param name
-     * @return
+     * Retrieves a list of IkasanPrincipal objects whose name matches the specified pattern.
+     *
+     * @param name The pattern to search for in principal names.
+     * @return A list of IkasanPrincipal objects that match the given pattern.
      */
-    public List<IkasanPrincipal> getPrincipalByNameLike(String name);
+    List<IkasanPrincipal> getPrincipalByNameLike(String name);
     
     /**
-     * 
-     * @return
+     * Retrieves a list of all PolicyLinkType objects.
+     *
+     * @return A list of PolicyLinkType objects representing all policy link types.
      */
-    public List<PolicyLinkType> getAllPolicyLinkTypes();
+    List<PolicyLinkType> getAllPolicyLinkTypes();
     
     /**
-     * 
-     * @param name
-     * @return
+     * Retrieves a list of Policy objects whose name contains the specified pattern.
+     *
+     * @param name The pattern to search for in the policy names.
+     * @return A list of Policy objects whose name contains the specified pattern.
      */
-    public List<Policy> getPolicyByNameLike(String name);
+    List<Policy> getPolicyByNameLike(String name);
     
     /**
-     * 
-     * @param policyLink
+     * Saves a PolicyLink object to the database.
+     *
+     * @param policyLink The PolicyLink object to be saved.
      */
-    public void savePolicyLink(PolicyLink policyLink);
+    void savePolicyLink(PolicyLink policyLink);
 
     /**
+     * Saves a RoleModule object to the database.
      *
-     * @param roleModule
+     * @param roleModule The RoleModule object to be saved.
      */
-    public void saveRoleModule(RoleModule roleModule);
+    void saveRoleModule(RoleModule roleModule);
 
     /**
+     * Saves a RoleJobPlan object to the database.
      *
-     * @param roleJobPlan
+     * @param roleJobPlan The RoleJobPlan object to be saved.
      */
-    public void saveRoleJobPlan(RoleJobPlan roleJobPlan);
+    void saveRoleJobPlan(RoleJobPlan roleJobPlan);
     
     /**
-     * 
-     * @param policyLink
+     * Deletes a PolicyLink from the SecurityService.
+     *
+     * @param policyLink The PolicyLink to be deleted.
      */
-    public void deletePolicyLink(PolicyLink policyLink);
+    void deletePolicyLink(PolicyLink policyLink);
     
     /**
-     * 
-     * @return
+     * Retrieves a list of Policy objects that have the specified role.
+     *
+     * @param roleName The name of the role to filter the policies by.
+     * @return A list of Policy objects that have the specified role.
      */
-    public List<Policy> getAllPoliciesWithRole(String roleName);
+    List<Policy> getAllPoliciesWithRole(String roleName);
     
     /**
-     * 
-     * @param name
-     * @return
+     * Retrieves a list of Role objects whose name matches the given pattern.
+     *
+     * @param name The pattern to search for in role names.
+     * @return A list of Role objects that match the given pattern.
      */
-    public List<Role> getRoleByNameLike(String name);
+    List<Role> getRoleByNameLike(String name);
     
     /**
-     * Get the number of AuthenticationMethod records in the database.
-     * @return
+     * Retrieves the number of authentication methods.
+     *
+     * @return The number of authentication methods as a `long` value.
      */
-    public long getNumberOfAuthenticationMethods();
+    long getNumberOfAuthenticationMethods();
     
     /**
-     * 
-     * @param order
-     * @return
+     * Retrieves an AuthenticationMethod object based on the provided order.
+     *
+     * @param order The order of the AuthenticationMethod to retrieve.
+     * @return The AuthenticationMethod object associated with the provided order, or null if no AuthenticationMethod was found.
      */
-    public AuthenticationMethod getAuthenticationMethodByOrder(long order);
+    AuthenticationMethod getAuthenticationMethodByOrder(long order);
     
     /**
-     * 
-     * @param principalId
-     * @return
+     * Retrieves a list of users associated with the given principal ID.
+     *
+     * @param principalId The ID of the principal.
+     * @return A list of users associated with the principal.
      */
-    public List<User> getUsersAssociatedWithPrincipal(long principalId);
+    List<User> getUsersAssociatedWithPrincipal(long principalId);
 
     /**
+     * Retrieves a Role object based on the provided id.
      *
-     * @param id
-     * @return
+     * @param id The id of the role to retrieve.
+     * @return The Role object associated with the provided id, or null if no role was found.
      */
-    public Role getRoleById(Long id);
+    Role getRoleById(Long id);
 
     /**
+     * Retrieves a Policy object based on the provided id.
      *
-     * @param id
-     * @return
+     * @param id The id of the policy to retrieve.
+     * @return The Policy object associated with the provided id, or null if no policy was found.
      */
-    public Policy getPolicyById(Long id);
+    Policy getPolicyById(Long id);
+
+    /**
+     * Sets the roles associated with a job plan.
+     *
+     * @param jobPlanName The name of the job plan.
+     * @param roleNames   The list of role names to be associated with the job plan.
+     */
+    void setJobPlanRoles(String jobPlanName, List<String> roleNames);
 }
 

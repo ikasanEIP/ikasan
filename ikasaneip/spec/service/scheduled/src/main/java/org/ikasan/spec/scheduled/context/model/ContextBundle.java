@@ -17,6 +17,13 @@ public interface ContextBundle {
     ContextTemplate getContextTemplate();
 
     /**
+     * Retrieves the roles associated with the current context bundle.
+     *
+     * @return a list of roles as strings
+     */
+    List<String> getRoles();
+
+    /**
      * Retrieves a list of SchedulerJob instances.
      * <p>
      * This method returns a list of SchedulerJob instances, which represent individual scheduled jobs.

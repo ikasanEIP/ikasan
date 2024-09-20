@@ -837,4 +837,67 @@ public class SecurityServiceTest
         // make sure we have the expected number of policies on the role
         Assert.assertEquals(2, role.getPolicies().size());
     }
+
+    @Test
+    @DirtiesContext
+    public void test_success_add_role_wth_role_job_plan_then_reassign_roles_to_the_job_plan()
+    {
+        IkasanPrincipal principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+
+        Assert.assertNotNull(principal);
+
+        Assert.assertEquals(principal.getRoles().size(), 10);
+
+        Role role = new Role();
+        role.setName("role_new");
+        role.setDescription("description");
+
+        HashSet<Policy> policies = new HashSet<>();
+
+        for(int j=0; j<10; j++)
+        {
+            Policy policy = new Policy();
+            policy.setName("policy" + j);
+            policy.setDescription("description");
+            this.xaSecurityDao.saveOrUpdatePolicy(policy);
+            policies.add(policy);
+        }
+
+
+        role.setPolicies(policies);
+        this.xaSecurityDao.saveOrUpdateRole(role);
+
+        RoleJobPlan roleJobPlan = new RoleJobPlan();
+        roleJobPlan.setJobPlanName("jobPlan");
+        roleJobPlan.setRole(role);
+        this.xaSecurityDao.saveRoleJobPlan(roleJobPlan);
+
+        role.addRoleJobPlan(roleJobPlan);
+        this.xaSecurityDao.saveOrUpdateRole(role);
+
+        principal.getRoles().add(role);
+
+        this.xaSecurityDao.saveOrUpdatePrincipal(principal);
+
+        principal = this.xaSecurityDao.getPrincipalByName("stewmi");
+
+        Assert.assertNotNull(principal);
+
+        Assert.assertEquals(principal.getRoles().size(), 11);
+
+        Role foundRole = principal.getRoles().stream().filter(role1 -> role1.getName().equals("role_new")).findFirst().get();
+
+        RoleJobPlan foundRoleJobPlan = foundRole.getRoleJobPlans().stream().findFirst().get();
+
+        Assert.assertEquals("found role module equals", roleJobPlan.getJobPlanName(), foundRoleJobPlan.getJobPlanName());
+
+        this.xaSecurityService.setJobPlanRoles("jobPlan", List.of("role0", "role3", "role7", "unknown_role"));
+
+        List<RoleJobPlan> roleJobPlans = this.xaSecurityDao.getRoleJobPlansByJobPlanName("jobPlan");
+
+        Assert.assertEquals(3, roleJobPlans.size());
+        Assert.assertEquals("role0", roleJobPlans.get(0).getRole().getName());
+        Assert.assertEquals("role3", roleJobPlans.get(1).getRole().getName());
+        Assert.assertEquals("role7", roleJobPlans.get(2).getRole().getName());
+    }
 }
