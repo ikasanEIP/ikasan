@@ -77,4 +77,9 @@ public interface SecurityConstants
          LEFT JOIN p.roles r \
          where  r.name in (:name)\
         """ ;
+
+    public static final String GET_ROLE_JOB_PLANS_BY_ROLE_QUERY = """
+        select rjp from RoleJobPlan as rjp \
+         where  rjp.jobPlanName = :name\
+        """ ;
 }

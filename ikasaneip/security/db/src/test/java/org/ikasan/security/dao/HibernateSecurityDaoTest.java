@@ -373,7 +373,7 @@ public class HibernateSecurityDaoTest
         role.setName("role_new");
         role.setDescription("description");
 
-        HashSet<Policy> policies = new HashSet<Policy>();
+        HashSet<Policy> policies = new HashSet<>();
 
         for(int j=0; j<10; j++)
         {
@@ -411,6 +411,11 @@ public class HibernateSecurityDaoTest
         RoleJobPlan foundRoleJobPlan = foundRole.getRoleJobPlans().stream().findFirst().get();
 
         Assert.assertEquals("found role module equals", roleJobPlan.getJobPlanName(), foundRoleJobPlan.getJobPlanName());
+
+        List<RoleJobPlan> roleJobPlans = this.xaSecurityDao.getRoleJobPlansByJobPlanName("jobPlan");
+        Assert.assertEquals(1, roleJobPlans.size());
+
+        Assert.assertEquals("found role module equals", roleJobPlans.get(0).getJobPlanName(), foundRoleJobPlan.getJobPlanName());
     }
 
     @Test 
