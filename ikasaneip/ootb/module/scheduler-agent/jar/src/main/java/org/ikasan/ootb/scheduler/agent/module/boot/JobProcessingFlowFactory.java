@@ -42,7 +42,9 @@ package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.Route;
+import org.ikasan.component.endpoint.util.producer.DevNull;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.JobProcessingFlowComponentFactory;
+import org.ikasan.ootb.scheduler.agent.module.component.router.ActiveInstanceRouter;
 import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
@@ -77,15 +79,25 @@ public class JobProcessingFlowFactory
             .broker("Job Monitoring Broker", componentFactory.getJobMonitoringBroker(jobName +" Job Processing Flow"))
             .producer("Status Producer", componentFactory.getStatusProducer());
 
-        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
-            .withDescription(jobName +" Job Processing Flow")
-            .consumer("Job Consumer", componentFactory.bigQueueConsumer(jobName))
-            .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
+        Route inactiveContextIdRoute = builderFactory.getRouteBuilder()
+            .producer("Context Instance Ended Route", new DevNull());
+
+        Route activeContextIdRoute = builderFactory.getRouteBuilder()
             .broker("Job Starting Broker", componentFactory.getJobStartingBroker())
             .multiRecipientRouter("Job MR Router", componentFactory.getJobMRRouter(), componentFactory.getMultiRecipientRouterInvokerConfiguration())
             .when("dashboard", dashboardRoute)
             .when("monitor", monitorRoute)
             .build();
+
+        return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
+            .withDescription(jobName +" Job Processing Flow")
+            .consumer("Job Consumer", componentFactory.bigQueueConsumer(jobName))
+            .converter("JobInitiationEvent to ScheduledStatusEvent", componentFactory.getJobInitiationEventConverter())
+            .singleRecipientRouter("Live instance SR Router", componentFactory.getJobSRRouter())
+            .when(ActiveInstanceRouter.INACTIVE_INSTANCE_ID, inactiveContextIdRoute)
+            .when(ActiveInstanceRouter.ACTIVE_INSTANCE_ID, activeContextIdRoute)
+            .build();
+
     }
 }
 
