@@ -442,9 +442,6 @@ public class SecurityServiceImpl implements SecurityService
                 roleJobPlan.setRole(role);
                 roleJobPlan.setJobPlanName(jobPlanName);
                 this.securityDao.saveRoleJobPlan(roleJobPlan);
-
-                role.addRoleJobPlan(roleJobPlan);
-                this.securityDao.saveOrUpdateRole(role);
             }
             else {
                 logger.info(String.format("Could not add job plan[%s] to role[%s] as a role with that name does not exist!"
