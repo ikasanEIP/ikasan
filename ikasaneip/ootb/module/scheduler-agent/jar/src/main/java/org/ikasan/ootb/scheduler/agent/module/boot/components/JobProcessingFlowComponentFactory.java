@@ -98,12 +98,14 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Job
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobStartingBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobInitiationToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.JobInitiationToContextualisedScheduledProcessEventConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.router.ActiveInstanceRouter;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
+import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.slf4j.Logger;
@@ -251,6 +253,14 @@ public class JobProcessingFlowComponentFactory {
         BigQueueProducer bigQueueProducer = new BigQueueProducer<>(this.outboundQueue);
         bigQueueProducer.setSerialiser(serialiser);
         return bigQueueProducer;
+    }
+
+    /**
+     * Get the single recipient router.
+     * @return the ActiveInstanceRouter
+     */
+    public SingleRecipientRouter getJobSRRouter() {
+        return new ActiveInstanceRouter();
     }
 
     /**
