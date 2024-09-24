@@ -46,9 +46,11 @@ import org.ikasan.bigqueue.IBigQueue;
 import org.apache.commons.lang3.SystemUtils;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
+import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
@@ -123,7 +125,16 @@ public class JobProcessingFlowTest {
     @Before
     public void setup() throws IOException {
         outboundQueue.removeAll();
+
+        ContextInstanceCache.instance().put("contextInstanceId", new ContextInstanceImpl());
     }
+
+    @After
+    public void teardown() {
+        // post-test teardown
+        ContextInstanceCache.instance().removeAll();
+    }
+
 
     @Test
     @DirtiesContext
@@ -131,6 +142,7 @@ public class JobProcessingFlowTest {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
+            .router("Live instance SR Router")
             .broker("Job Starting Broker")
             .multiRecipientRouter("Job MR Router")
             .producer("Status Producer")
@@ -200,10 +212,65 @@ public class JobProcessingFlowTest {
 
     @Test
     @DirtiesContext
+    public void test_job_processing_flow_success_context_not_running() throws IOException {
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
+        flowTestRule.consumer("Job Consumer")
+            .converter("JobInitiationEvent to ScheduledStatusEvent")
+            .router("Live instance SR Router")
+            .producer("Context Instance Ended Route");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
+        bigQueue.removeAll();
+        SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
+        schedulerJobInitiationEvent.setContextName("contextId");
+        schedulerJobInitiationEvent.setContextInstanceId("context instance id not in the cache");
+
+        InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
+        internalEventDrivenJobInstanceDto.setAgentName("agent name");
+
+        if (SystemUtils.OS_NAME.contains("Windows")) {
+            internalEventDrivenJobInstanceDto.setCommandLine("java -version");
+        }
+        else {
+            internalEventDrivenJobInstanceDto.setCommandLine("pwd");
+        }
+        internalEventDrivenJobInstanceDto.setContextName("contextId");
+        internalEventDrivenJobInstanceDto.setIdentifier("identifier");
+        internalEventDrivenJobInstanceDto.setMinExecutionTime(1000L);
+        internalEventDrivenJobInstanceDto.setMaxExecutionTime(10000L);
+        internalEventDrivenJobInstanceDto.setWorkingDirectory(".");
+        schedulerJobInitiationEvent.setInternalEventDrivenJob(internalEventDrivenJobInstanceDto);
+
+        BigQueueMessage<SchedulerJobInitiationEventDto> bigQueueMessage
+            = new BigQueueMessageBuilder<SchedulerJobInitiationEventDto>()
+            .withMessage(schedulerJobInitiationEvent)
+            .withMessageProperties(Map.of("contextName", "contextName", "contextInstanceId", "contextInstanceId"))
+            .build();
+
+        bigQueue.enqueue(objectMapper.writeValueAsBytes(bigQueueMessage));
+
+        flowTestRule.sleep(2000);
+
+        with().pollInterval(1, TimeUnit.SECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        with().pollInterval(1, TimeUnit.SECONDS).and().await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(0, outboundQueue.size()));
+
+        bigQueue.removeAll();
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
     public void test_job_processing_flow_success_dry_run() throws IOException {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
+            .router("Live instance SR Router")
             .broker("Job Starting Broker")
             .multiRecipientRouter("Job MR Router")
             .producer("Status Producer")
@@ -217,6 +284,8 @@ public class JobProcessingFlowTest {
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEvent.setDryRun(true);
         schedulerJobInitiationEvent.setDryRunParameters(new DryRunParametersDto());
+        schedulerJobInitiationEvent.setContextInstanceId("contextInstanceId");
+
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
         internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
@@ -275,6 +344,7 @@ public class JobProcessingFlowTest {
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 1"));
         flowTestRule.consumer("Job Consumer")
             .converter("JobInitiationEvent to ScheduledStatusEvent")
+            .router("Live instance SR Router")
             .broker("Job Starting Broker")
             .multiRecipientRouter("Job MR Router")
             .producer("Status Producer")
@@ -287,6 +357,7 @@ public class JobProcessingFlowTest {
         IBigQueue bigQueue = InboundJobQueueCache.instance().get("scheduler-agent-Scheduler Flow 1-inbound-queue");
         SchedulerJobInitiationEventDto schedulerJobInitiationEvent = new SchedulerJobInitiationEventDto();
         schedulerJobInitiationEvent.setSkipped(true);
+        schedulerJobInitiationEvent.setContextInstanceId("contextInstanceId");
         InternalEventDrivenJobInstanceDto internalEventDrivenJobInstanceDto = new InternalEventDrivenJobInstanceDto();
         internalEventDrivenJobInstanceDto.setAgentName("agent name");
 
@@ -337,10 +408,5 @@ public class JobProcessingFlowTest {
 
 
         flowTestRule.stopFlow();
-    }
-
-    @After
-    public void teardown() {
-        // post-test teardown
     }
 }
