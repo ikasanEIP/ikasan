@@ -56,8 +56,8 @@ import org.slf4j.LoggerFactory;
 public class ActiveInstanceRouter implements SingleRecipientRouter<EnrichedContextualisedScheduledProcessEvent>
 {
     private static final Logger LOGGER = LoggerFactory.getLogger(ActiveInstanceRouter.class);
-    public static String ACTIVE_INSTANCE_ID = "Active Instance ID";
-    public static String INACTIVE_INSTANCE_ID = "Inactive Instance ID";
+    public static String ACTIVE_INSTANCE_ID = "ACTIVE_INSTANCE_ID";
+    public static String INACTIVE_INSTANCE_ID = "INACTIVE_INSTANCE_ID";
 
     public ActiveInstanceRouter() {
     }
