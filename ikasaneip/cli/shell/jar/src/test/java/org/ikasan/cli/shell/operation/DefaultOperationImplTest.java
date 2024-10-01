@@ -51,16 +51,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
- * This test class supports the <code>efaultOperationImpl</code> class.
+ * This test class supports the <code>DefaultOperationImpl</code> class.
  * 
  * @author Ikasan Development Team
  */
@@ -84,13 +82,15 @@ class DefaultOperationImplTest
     /** Mock IkasanProcess */
     final PersistenceService persistenceService = mockery.mock(PersistenceService.class, "mockPersistenceService");
 
+
     @Test
     void successful_start_with_persistence() throws IOException
     {
         List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess0");
 
@@ -126,7 +126,8 @@ class DefaultOperationImplTest
         List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess6");
 
@@ -157,7 +158,8 @@ class DefaultOperationImplTest
         List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
 
@@ -190,10 +192,11 @@ class DefaultOperationImplTest
 
     @Test
     void successful_isRunning_persisted_process_found_correlates_with_running_process() throws IOException, InterruptedException, ExecutionException {
-        List<String> commands = new ArrayList<>();
+        List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
         commands.add("-DcommandSignature=commandSignature");
@@ -220,6 +223,7 @@ class DefaultOperationImplTest
 
 
         Operation operation = new DefaultOperationImpl(persistenceService);
+        Assertions.assertTrue(javaProcess.info().user().isPresent(), "A valid command failed to start");
         List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess"
             , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.get(0).isAlive());
@@ -230,10 +234,11 @@ class DefaultOperationImplTest
 
     @Test
     void successful_isRunning_persisted_process_found_does_not_correlate_with_running_process_bad_process_name() throws IOException, InterruptedException, ExecutionException {
-        List<String> commands = new ArrayList<>();
+        List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=differentProcessName");
         commands.add("-DcommandSignature=commandSignature");
@@ -262,20 +267,20 @@ class DefaultOperationImplTest
 
 
         Operation operation = new DefaultOperationImpl(persistenceService);
+        Assertions.assertTrue(javaProcess.info().user().isPresent(), "A valid command failed to start");
         List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess"
             , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.size() == 0);
         mockery.assertIsSatisfied();
-
-        javaProcess.destroyForcibly();
     }
 
     @Test
     void successful_isRunning_persisted_process_found_does_not_correlate_with_running_process_bad_command_signature() throws IOException, InterruptedException, ExecutionException {
-        List<String> commands = new ArrayList<>();
+        List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
         commands.add("-DcommandSignature=commandSignature");
@@ -304,6 +309,7 @@ class DefaultOperationImplTest
 
 
         Operation operation = new DefaultOperationImpl(persistenceService);
+        Assertions.assertTrue(javaProcess.info().user().isPresent(), "A valid command failed to start");
         List<ProcessHandle> processHandles = operation.getProcessHandles(processType, "sampleProcess"
             , javaProcess.info().user().get());
         Assert.assertTrue(processHandles.size() == 0);
@@ -313,10 +319,11 @@ class DefaultOperationImplTest
     @Test
     void successful_getProcessHandles_no_persistence_without_user_not_found() throws IOException
     {
-        List<String> commands = new ArrayList<>();
+        List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
         commands.add("-DcommandSignature=commandSignature");
@@ -351,7 +358,8 @@ class DefaultOperationImplTest
         List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
         commands.add("-DcommandSignature=commandSignature");
@@ -410,7 +418,8 @@ class DefaultOperationImplTest
         List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
         commands.add("-DcommandSignature=commandSignature");
@@ -471,7 +480,8 @@ class DefaultOperationImplTest
         List<String> commands = new ArrayList<String>();
         commands.add("java");
         commands.add("-classpath");
-        commands.add("cli/shell/target/test-classes");
+        String testClasspath = this.getClass().getClassLoader().getResource("").getPath();
+        commands.add(testClasspath);
         commands.add("org.ikasan.cli.sample.process.SampleProcess");
         commands.add("-Dmodule.name=sampleProcess");
 
