@@ -37,6 +37,12 @@ public enum InstanceStatus {
             return "status.ERROR";
         }
     },
+    ERROR_ACKNOWLEDGED{
+        @Override
+        public String getTranslationLabel() {
+            return "status.ACKNOWLEDGED";
+        }
+    },
     KILLED{
         @Override
         public String getTranslationLabel() {

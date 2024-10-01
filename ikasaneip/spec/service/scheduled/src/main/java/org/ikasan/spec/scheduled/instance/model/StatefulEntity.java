@@ -17,4 +17,13 @@ public interface StatefulEntity extends Serializable {
      * @param status the new status to be set for the instance
      */
     void setStatus(InstanceStatus status);
+
+    /**
+     * Checks whether the error for this StatefulEntity has been acknowledged.
+     *
+     * @return true if the error has been acknowledged, false otherwise
+     */
+    default Boolean isErrorAcknowledged() {
+        return false;
+    }
 }
