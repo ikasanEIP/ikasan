@@ -14,8 +14,8 @@ Ikasan exposes a number of services that allows client to inspect the state of r
 | Request Method                       | GET                                                                                                                                                                |
 | Service Name                         | Context Instance Status                                                                                                                                            |
 | Service Description                  | This service returns a mapped json payload containing the detailed state of a Job Plan or a nested context within it for each running instances.                   |
-| Service Context                      | /rest/context/status/json/{job-plan-name}/{context-name}                                                                                                           |
-| Sample                               | https://localhost:9090/rest/context/status/json/-1793100514/CONTEXT-1799117601                                                                                     |
+| Service Context                      | /rest/contextStatus/json/{job-plan-name}/{context-name}                                                                                                           |
+| Sample                               | https://localhost:9090/rest/contextStatus/json/-1793100514/CONTEXT-1799117601                                                                                     |
 | Requires Path parameter job-plan-name   | The parent job plan name.                                                                                                                                          |
 | Requires Path parameter context-name   | The nested context name. If this is the same as the job-plan-name, then the entire job plan will be return, otherwise the child will be.                           |
 | Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                                                                                      |
@@ -23,7 +23,7 @@ Ikasan exposes a number of services that allows client to inspect the state of r
 
 ### Sample Curl Command
 ``` text
-curl -u <username>:<password> http://localhost:9090/rest/context/status/json/-1793100514/CONTEXT-1799117601
+curl -u <username>:<password> http://localhost:9090/rest/contextStatus/json/-1793100514/CONTEXT-1799117601
 ```
 
 ### Sample Response
@@ -151,8 +151,8 @@ Map<String, ContextInstance> contextInstanceMap = ObjectMapperFactory.newInstanc
 | Request Method                        | GET                                                                                                                                                                          |
 | Service Name                          | Job Instance Status                                                                                                                                                          |
 | Service Description                   | This service returns a mapped json payload containing the detailed state of a job for all running instances.                                                                 |
-| Service Context                       | /rest/context/status/json/{job-plan-name}/{context-name}//{job-name}                                                                                                         |
-| Sample                                | https://localhost:9090/rest/context/status/json/-1793100514/CONTEXT-1799117601                                                                                               |
+| Service Context                       | /rest/contextStatus/json/{job-plan-name}/{context-name}//{job-name}                                                                                                         |
+| Sample                                | https://localhost:9090/rest/contextStatus/json/-1793100514/CONTEXT-1799117601                                                                                               |
 | Requires Path parameter job-plan-name | The parent job plan name.                                                                                                                                                    |
 | Requires Path parameter context-name  | The nested context name. If this is the same as the job-plan-name, then the entire job plan will be return, otherwise the child will be.                                     |
 | Requires Path parameter job-name      | The name of the job whose status will be returned.                                                                                                                           |
@@ -161,7 +161,7 @@ Map<String, ContextInstance> contextInstanceMap = ObjectMapperFactory.newInstanc
 
 ### Sample Curl Command
 ``` text
-curl -u <username>:<password> http://localhost:9090/rest/context/status/json/-1793100514/CONTEXT-1799117601/1799117601_ScheduledJob_13:45:00
+curl -u <username>:<password> http://localhost:9090/rest/contextStatus/json/-1793100514/CONTEXT-1799117601/1799117601_ScheduledJob_13:45:00
 ```
 
 ### Sample Response
@@ -233,15 +233,15 @@ Map<String, SchedulerJobInstance> schedulerJobInstanceMap = ObjectMapperFactory.
 | Request Method                             | GET                                                                                                                                                                                      |
 | Service Name                               | All Job Plan Instance Status                                                                                                                                                             |
 | Service Description                        | A simple response service to bring back a list of all instances, with its overall status and its context instance id value                                                               |
-| Service Context                            | /rest/context/status/json/allInstance <br />/rest/context/status/json/allInstance?includePrepared={boolean}                                                                              |
-| Sample                                     | https://localhost:9090/rest/context/status/json/allInstance?includePrepared=false                                                                                                        |
+| Service Context                            | /rest/contextStatus/json/allInstance <br />/rest/contextStatus/json/allInstance?includePrepared={boolean}                                                                              |
+| Sample                                     | https://localhost:9090/rest/contextStatus/json/allInstance?includePrepared=false                                                                                                        |
 | Optional Request parameter includePrepared | boolean value - set to true to see prepared instance - default to false if not specified                                                                                                 |
 | Requires 'Authorization' HTTP Header       | Basic {TOKEN}                                                                                                                                                                            |
 | Returns                                    | HTTP 200 status and json serialised [ContextMachineStatusWrapper](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/status/model/ContextMachineStatusWrapper.java) |
 
 ### Sample Curl Command
 ``` text
-curl -u <username>:<password> http://localhost:9090/rest/context/status/json/allInstance
+curl -u <username>:<password> http://localhost:9090/rest/contextStatus/json/allInstance
 ```
 
 ### Sample Response
@@ -286,21 +286,21 @@ ContextMachineStatusWrapperImpl status = ObjectMapperFactory.newInstance().readV
 ```
 
 ## Job Status Service
-| Parameter                                 | Value                                                                                                                                                                                                                                                                            | 
-|-------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Request Method                            | GET                                                                                                                                                                                                                                                                              |
-| Service Name                              | Job Status Service                                                                                                                                                                                                                                                               |
-| Service Description                       | Get the job status for all job plans currently running in the scheduler, with an optional setting to target a specific plan or specific status                                                                                                                                   |
-| Service Context                           | /rest/context/status/json/jobStatus <br/>/rest/context/status/json/jobStatus?instanceStatus={instanceStatus} <br />/rest/context/status/json/jobStatus/{job-plan-name} <br /> /rest/context/status/json/jobStatus/{job-plan-name}?instanceStatus=instanceStatus={instanceStatus} |
-| Sample                                    | https://localhost:9090/rest/context/status/json/jobStatus                                                                                                                                                                                                                        |
-| Optional Path parameter job-plan-name     | The parent job plan name.                                                                                                                                                                                                                                                        |
-| Optional Request parameter instanceStatus | Allowed string value from [InstanceStatus](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/instance/model/InstanceStatus.java)                                                                                                                           |
-| Requires 'Authorization' HTTP Header      | Basic {TOKEN}                                                                                                                                                                                                                                                                    |
-| Returns                                   | HTTP 200 status and json serialised [ContextJobInstanceStatusWrapper](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/status/model/ContextJobInstanceStatusWrapper.java)                                                                                 |
+| Parameter                                 | Value                                                                                                                                                                                                                                                                           | 
+|-------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Request Method                            | GET                                                                                                                                                                                                                                                                             |
+| Service Name                              | Job Status Service                                                                                                                                                                                                                                                              |
+| Service Description                       | Get the job status for all job plans currently running in the scheduler, with an optional setting to target a specific plan or specific status                                                                                                                                  |
+| Service Context                           | /rest/contextStatus/json/jobStatus <br/>/rest/contextStatus/json/jobStatus?instanceStatus={instanceStatus} <br />/rest/contextStatus/json/jobStatus/{job-plan-name} <br /> /rest/contextStatus/json/jobStatus/{job-plan-name}?instanceStatus={instanceStatus} |
+| Sample                                    | https://localhost:9090/rest/contextStatus/json/jobStatus                                                                                                                                                                                                                       |
+| Optional Path parameter job-plan-name     | The parent job plan name.                                                                                                                                                                                                                                                       |
+| Optional Request parameter instanceStatus | Allowed string value from [InstanceStatus](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/instance/model/InstanceStatus.java)                                                                                                                          |
+| Requires 'Authorization' HTTP Header      | Basic {TOKEN}                                                                                                                                                                                                                                                                   |
+| Returns                                   | HTTP 200 status and json serialised [ContextJobInstanceStatusWrapper](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/status/model/ContextJobInstanceStatusWrapper.java)                                                                                |
 
 ### Sample Curl Command
 ``` text
-curl -u <username>:<password> http://localhost:9090/rest/context/status/json/jobStatus
+curl -u <username>:<password> http://localhost:9090/rest/contextStatus/json/jobStatus
 ```
 
 ### Sample Response

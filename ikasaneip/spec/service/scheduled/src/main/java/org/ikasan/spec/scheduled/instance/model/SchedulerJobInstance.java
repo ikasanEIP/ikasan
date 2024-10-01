@@ -104,4 +104,18 @@ public interface SchedulerJobInstance extends SchedulerJob, StatefulEntity, Seri
      * @param skip true if the job should be skipped, false otherwise
      */
     void setSkip(boolean skip);
+
+    /**
+     * Sets the error acknowledged flag for the SchedulerJobInstance.
+     *
+     * @param errorAcknowledged true if the error is acknowledged; false otherwise.
+     */
+    void setErrorAcknowledged(Boolean errorAcknowledged);
+
+    /**
+     * Checks whether the error for this SchedulerJobInstance has been acknowledged.
+     *
+     * @return true if the error has been acknowledged, false otherwise
+     */
+    Boolean isErrorAcknowledged();
 }
