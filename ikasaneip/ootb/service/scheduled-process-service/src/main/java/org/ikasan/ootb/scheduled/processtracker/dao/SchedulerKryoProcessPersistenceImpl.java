@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduled.processtracker.dao;
 
 import com.esotericsoftware.kryo.Kryo;
+import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import org.ikasan.cli.shell.operation.dao.KryoProcessPersistenceImpl;
 import org.ikasan.ootb.scheduled.processtracker.model.SchedulerIkasanProcess;
@@ -34,15 +35,31 @@ public class SchedulerKryoProcessPersistenceImpl extends KryoProcessPersistenceI
         Kryo kryo = kryoThreadLocal.get();
         String path = getPidFQN(type, name);
 
-        try (Input input = new Input(new FileInputStream(path)))
+        File file = new File(path);
+        if(!file.exists()) {
+            LOGGER.info("File [" + path + "] not found. Returning null.");
+            return null;
+        }
+        else if(file.isDirectory()) {
+            LOGGER.info("File [" + path + "] is a directory and will be ignored. Returning null.");
+            return null;
+        }
+
+        try (Input input = new Input(new FileInputStream(file)))
         {
             return (SchedulerIkasanProcess)kryo.readClassAndObject(input);
         }
+        catch(KryoException e)
+        {
+            LOGGER.info("A Kryo error has occurred reading file [" + path + "]" +
+                ". It is likely that this process was not a SchedulerIkasanProcess. Moving onto next file.");
+        }
         catch(FileNotFoundException e)
         {
-            LOGGER.debug("File [" + path + "] not found", e);
-            return null;
+            LOGGER.info("File [" + path + "] not found. Will move on and try the next file.");
         }
+
+        return null;
     }
 
     @Override
@@ -52,14 +69,29 @@ public class SchedulerKryoProcessPersistenceImpl extends KryoProcessPersistenceI
         File pidDir = new File(getPidBaseDir());
 
         for(File pidFile: pidDir.listFiles()) {
+
+            if(!pidFile.exists()) {
+                LOGGER.info("File [" + pidFile.getAbsolutePath() + "] not found. Will move on and try the next file.");
+                continue;
+            }
+            else if(pidFile.isDirectory()) {
+                LOGGER.info("File [" + pidFile.getAbsolutePath() + "] is a directory and will be ignored. Will move on and try the next file.");
+                continue;
+            }
+
             try (Input input = new Input(new FileInputStream(pidFile)))
             {
                  SchedulerIkasanProcess process = (SchedulerIkasanProcess)kryo.readClassAndObject(input);
                  if(process.getPid() == pid) return process;
             }
-            catch(Exception e)
+            catch(KryoException e)
             {
-                LOGGER.info("File [" + pidFile.getAbsolutePath() + "] not found", e);
+                LOGGER.info("A Kryo error has occurred reading file [" + pidFile.getAbsolutePath() + "]" +
+                    ". It is likely that this process was not a SchedulerIkasanProcess. Moving onto next file.");
+            }
+            catch(FileNotFoundException e)
+            {
+                LOGGER.info("File [" + pidFile.getAbsolutePath() + "] not found. Will move on and try the next file.");
             }
         }
 
