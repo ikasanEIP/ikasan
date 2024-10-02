@@ -22,7 +22,8 @@ public class SchedulerKryoProcessPersistenceImplTest {
     @Test
     void successful_save_find_delete()
     {
-        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess("type", "name", 12345, "user", "outdir", "errdir", 1L);
+        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess("type", "name", 12345
+            , "user", "outdir", "errdir", 1L);
         schedulerKryoProcessPersistence.save(schedulerIkasanProcess);
 
         SchedulerIkasanProcess schedulerIkasanProcess1 = schedulerKryoProcessPersistence.find("type", "name");
@@ -30,6 +31,21 @@ public class SchedulerKryoProcessPersistenceImplTest {
 
         schedulerKryoProcessPersistence.delete("type", "name");
         schedulerIkasanProcess1 = schedulerKryoProcessPersistence.find("type", "name");
+        assertThat(schedulerIkasanProcess1).isNull();
+    }
+
+    @Test
+    void successful_save_find_by_pid_delete()
+    {
+        SchedulerIkasanProcess schedulerIkasanProcess = new SchedulerIkasanProcess("type", "name", 12345
+            , "user", "outdir", "errdir", 1L);
+        schedulerKryoProcessPersistence.save(schedulerIkasanProcess);
+
+        SchedulerIkasanProcess schedulerIkasanProcess1 = schedulerKryoProcessPersistence.find(12345);
+        assertThat(schedulerIkasanProcess1).isEqualTo(schedulerIkasanProcess);
+
+        schedulerKryoProcessPersistence.delete("type", "name");
+        schedulerIkasanProcess1 = schedulerKryoProcessPersistence.find(12345);
         assertThat(schedulerIkasanProcess1).isNull();
     }
 }
