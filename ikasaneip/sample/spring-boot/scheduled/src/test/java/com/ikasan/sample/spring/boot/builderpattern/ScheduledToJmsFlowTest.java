@@ -38,6 +38,7 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
@@ -66,7 +67,6 @@ import static org.ikasan.spec.flow.Flow.RECOVERING;
 import static org.ikasan.spec.flow.Flow.RUNNING;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**
  * This test Sftp To JMS Flow.
@@ -92,7 +92,7 @@ public class ScheduledToJmsFlowTest
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );
+    public IkasanFlowTestRule flowTestRule;
 
 
     public MessageListenerVerifier messageListenerVerifier;
@@ -111,7 +111,6 @@ public class ScheduledToJmsFlowTest
         messageListenerVerifier.start();
 
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
     }
 
     @After public void teardown()
@@ -128,6 +127,9 @@ public class ScheduledToJmsFlowTest
     @Test
     public void test_consume_success()
     {
+        this.flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
         //Setup component expectations
         FakeDataProvider.add("message 1");
         FakeDataProvider.add("message 2");
@@ -156,6 +158,9 @@ public class ScheduledToJmsFlowTest
     @Test
     public void test_consume_recover() throws Exception
     {
+        this.flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowRecoveryException(true);
 
@@ -188,8 +193,93 @@ public class ScheduledToJmsFlowTest
     }
 
     @Test
+    public void test_consume_goes_into_recovery_then_recovers_to_running_state() throws Exception
+    {
+        this.flowTestRule = new IkasanFlowTestRule(true);
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
+        ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
+        broker.setShouldThrowRecoveryExceptionEveryNInvocations(true);
+        broker.setNumberOfInvocationsBeforeRetry(2);
+
+        ScheduledConsumer consumer = (ScheduledConsumer) this.flowTestRule.getComponent("Scheduled Consumer");
+        consumer.getConfiguration().setCronExpression("0/2 * * * * ? *");
+        consumer.getConfiguration().setPersistentRecovery(true);
+
+        //Setup component expectations
+        FakeDataProvider.add("message 1");
+        FakeDataProvider.add("message 2");
+        FakeDataProvider.add("message 3");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+
+        // make sure the flow goes back into running after recovering
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+    }
+
+    @Test
+    public void test_consume_goes_into_recovery_then_recovers_to_running_state_non_persistent_recovery() throws Exception
+    {
+        this.flowTestRule = new IkasanFlowTestRule(true);
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
+        ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
+        broker.setShouldThrowRecoveryExceptionEveryNInvocations(true);
+        broker.setNumberOfInvocationsBeforeRetry(2);
+
+        ScheduledConsumer consumer = (ScheduledConsumer) this.flowTestRule.getComponent("Scheduled Consumer");
+        consumer.getConfiguration().setCronExpression("0/2 * * * * ? *");
+        consumer.getConfiguration().setPersistentRecovery(false);
+
+        //Setup component expectations
+        FakeDataProvider.add("message 1");
+        FakeDataProvider.add("message 2");
+        FakeDataProvider.add("message 3");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+
+        // make sure the flow goes back into running after recovering
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+    }
+
+    @Test
     public void test_consume_recover_with_recovery_successful() throws Exception
     {
+        this.flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowRecoveryException(true);
 
@@ -230,6 +320,9 @@ public class ScheduledToJmsFlowTest
     @Test
     public void test_consume_stop() throws Exception
     {
+        this.flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowStoppedInErrorException(true);
 
@@ -264,6 +357,9 @@ public class ScheduledToJmsFlowTest
     @Test
     public void test_consume_exclude() throws Exception
     {
+        this.flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
         ExceptionGeneratingBroker broker = (ExceptionGeneratingBroker) this.flowTestRule.getComponent("Exception Generating Broker");
         broker.setShouldThrowExclusionException(true);
 

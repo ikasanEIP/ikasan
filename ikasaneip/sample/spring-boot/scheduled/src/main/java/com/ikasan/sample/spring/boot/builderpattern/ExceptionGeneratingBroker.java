@@ -42,12 +42,18 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.management.ManagedResource;
+import org.ikasan.spec.management.ManagedResourceRecoveryManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by majean on 09/10/2017.
  */
-public class ExceptionGeneratingBroker implements Broker
+public class ExceptionGeneratingBroker implements Broker, ManagedResource
 {
+    private static Logger logger = LoggerFactory.getLogger(ExceptionGeneratingBroker.class);
+
     private boolean shouldThrowExclusionException = false;
 
     private boolean shouldThrowRecoveryException = false;
@@ -56,8 +62,17 @@ public class ExceptionGeneratingBroker implements Broker
 
     private boolean shouldThrowStoppedInErrorException = false;
 
+    private boolean shouldThrowRecoveryExceptionEveryNInvocations;
+
+    private int numberOfInvocationsBeforeRetry;
+
+    private int counter = 0;
+    private int recoveryCount = 0;
+
     @Override public Object invoke(Object o) throws EndpointException
     {
+        counter+=1;
+        logger.info("Invoking ExceptionGeneratingBroker! " + counter);
         if(shouldThrowExclusionException){
             throw  new SampleGeneratedException("This exception is thrown to test exclusion.");
         }
@@ -74,6 +89,14 @@ public class ExceptionGeneratingBroker implements Broker
             // recovery manager has kicked in. Next execution will not throw the exception.
             shouldThrowRecoveryException = false;
             throw  new EndpointException("This exception is thrown to test recovery.");
+        }
+
+        if(shouldThrowRecoveryExceptionEveryNInvocations && counter >= numberOfInvocationsBeforeRetry
+            && recoveryCount < 5 ){
+            recoveryCount++;
+            // Set this to false to allow for the flow to successfully recover after the
+            // recovery manager has kicked in. Next execution will not throw the exception.
+            throw  new EndpointException("This exception is thrown to test recovery every n invocation.");
         }
 
         if(shouldThrowStoppedInErrorException){
@@ -101,10 +124,43 @@ public class ExceptionGeneratingBroker implements Broker
         this.shouldThrowStoppedInErrorException = shouldThrowStoppedInErrorException;
     }
 
+    public void setShouldThrowRecoveryExceptionEveryNInvocations(boolean shouldThrowRecoveryExceptionEveryNInvocations) {
+        this.shouldThrowRecoveryExceptionEveryNInvocations = shouldThrowRecoveryExceptionEveryNInvocations;
+    }
+
+    public void setNumberOfInvocationsBeforeRetry(int numberOfInvocations) {
+        this.numberOfInvocationsBeforeRetry = numberOfInvocations;
+    }
+
     public void reset(){
         shouldThrowExclusionException = false;
         shouldThrowRecoveryException = false;
         shouldThrowScheduledRecoveryException = false;
         shouldThrowStoppedInErrorException = false;
+    }
+
+    @Override
+    public void startManagedResource() {
+
+    }
+
+    @Override
+    public void stopManagedResource() {
+
+    }
+
+    @Override
+    public void setManagedResourceRecoveryManager(ManagedResourceRecoveryManager managedResourceRecoveryManager) {
+
+    }
+
+    @Override
+    public boolean isCriticalOnStartup() {
+        return false;
+    }
+
+    @Override
+    public void setCriticalOnStartup(boolean criticalOnStartup) {
+
     }
 }
