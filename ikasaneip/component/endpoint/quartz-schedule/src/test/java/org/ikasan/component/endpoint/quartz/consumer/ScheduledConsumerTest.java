@@ -828,7 +828,7 @@ public class ScheduledConsumerTest
 
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
-                exactly(1).of(mockManagedResourceRecoveryManager).recover(rt);
+                exactly(1).of(mockManagedResourceRecoveryManager).recover(rt, true);
                 // schedule the job
                 exactly(0).of(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
                 will(returnValue(identifier));
