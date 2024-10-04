@@ -340,6 +340,13 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     @Override
     public void recover(String componentName, Throwable throwable)
     {
+        this.recover(componentName, throwable, false);
+    }
+
+
+    @Override
+    public void recover(String componentName, Throwable throwable, boolean isEventBaseRecovery)
+    {
         ExceptionAction action = resolveAction(componentName, throwable);
         if(action instanceof IgnoreAction)
         {
@@ -347,7 +354,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
 
         this.errorReportingService.notify(componentName, throwable, action.toString());
-        this.recover(action, componentName, throwable, null, false);
+        this.recover(action, componentName, throwable, null, isEventBaseRecovery);
     }
 
     /**

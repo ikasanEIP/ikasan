@@ -85,6 +85,17 @@ public interface RecoveryManager<RESOLVER, CONTEXT, ID>
      * @param throwable
      */
     void recover(String component, Throwable throwable);
+
+
+
+    /**
+     * Perform recovery for a specific component with the given throwable.
+     *
+     * @param component the name of the component to recover
+     * @param throwable the throwable that triggered the recovery
+     * @param isEventBaseRecovery flag indicating whether the recovery is event-based
+     */
+    void recover(String component, Throwable throwable, boolean isEventBaseRecovery);
     
     /**
      * Is the recovery manager currently running a recovery.
