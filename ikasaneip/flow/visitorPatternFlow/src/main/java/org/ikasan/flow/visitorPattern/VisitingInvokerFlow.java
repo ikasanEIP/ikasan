@@ -1145,6 +1145,18 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
                 }
             }
 
+            @Override
+            public void recover(Throwable throwable, boolean isEventBaseRecovery) {
+                try
+                {
+                    recoveryManager.recover(name, throwable, isEventBaseRecovery);
+                }
+                finally
+                {
+                    notifyMonitor();
+                }
+            }
+
             /*
              * (non-Javadoc)
              * @see org.ikasan.spec.management.ManagedResourceRecoveryManager#isRecovering()

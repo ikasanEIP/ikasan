@@ -488,7 +488,7 @@ public class ScheduledConsumer<T>
         catch (Throwable thr)
         {
             thr.printStackTrace();
-            managedResourceRecoveryManager.recover(thr);
+            managedResourceRecoveryManager.recover(thr, true);
         }
     }
 

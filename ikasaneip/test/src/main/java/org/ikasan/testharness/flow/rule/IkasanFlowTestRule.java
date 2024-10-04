@@ -118,6 +118,8 @@ public class IkasanFlowTestRule implements TestRule
      */
     private boolean errorEndState = false;
 
+    private boolean allowScheduledConsumerToRunOnSchedule;
+
     FlowEventListenerSubject testHarnessFlowEventListener;
 
     public IkasanFlowTestRule()
@@ -125,6 +127,12 @@ public class IkasanFlowTestRule implements TestRule
         this.flowExpectations = new OrderedExpectation();
         testHarnessFlowEventListener = new FlowEventListenerSubject(DefaultReplicationFactory.getInstance());
 
+    }
+
+    public IkasanFlowTestRule(boolean allowScheduledConsumerToRunOnSchedule)
+    {
+        this();
+        this.allowScheduledConsumerToRunOnSchedule = allowScheduledConsumerToRunOnSchedule;
     }
 
     /**
@@ -455,7 +463,7 @@ public class IkasanFlowTestRule implements TestRule
         testHarnessFlowEventListener.removeAllObservers();
         testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
         testHarnessFlowEventListener.setIgnoreEventCapture(true);
-        if (this.scheduledConsumerName != null)
+        if (this.scheduledConsumerName != null && !allowScheduledConsumerToRunOnSchedule)
         {
             FlowElement<?> flowElement = flow.getFlowElement(scheduledConsumerName);
             ScheduledConsumerConfiguration configuration = ((ScheduledConsumer) flowElement.getFlowComponent()).getConfiguration();
@@ -476,7 +484,7 @@ public class IkasanFlowTestRule implements TestRule
         testHarnessFlowEventListener.removeAllObservers();
         testHarnessFlowEventListener.addObserver((FlowObserver) flowTestHarness);
         testHarnessFlowEventListener.setIgnoreEventCapture(true);
-        if (this.scheduledConsumerName != null)
+        if (this.scheduledConsumerName != null && !allowScheduledConsumerToRunOnSchedule)
         {
             Object component = getComponent(scheduledConsumerName);
             ScheduledConsumerConfiguration configuration = ((ScheduledConsumer) component).getConfiguration();
