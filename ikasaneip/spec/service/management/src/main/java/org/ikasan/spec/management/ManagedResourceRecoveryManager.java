@@ -49,17 +49,27 @@ public interface ManagedResourceRecoveryManager
 {
     /**
      * Invoke the recovery for the given exception.
+     *
      * @param throwable
      */
-    public void recover(Throwable throwable);
+    void recover(Throwable throwable);
+
+
+    /**
+     * Perform recovery for the given throwable.
+     *
+     * @param throwable the exception to recover from
+     * @param isEventBaseRecovery flag to indicate if the recovery is event-based
+     */
+    void recover(Throwable throwable, boolean isEventBaseRecovery);
 
     /**
      * Is this ManagedResource Recovery Manager currently running a recovery.
      */
-    public boolean isRecovering();
+    boolean isRecovering();
 
     /**
      * Cancel the current running recovery.
      */
-    public void cancel();
+    void cancel();
 }

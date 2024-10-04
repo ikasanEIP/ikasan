@@ -100,7 +100,7 @@ public class SftpToJmsFlowTest {
 
     String objectStoreDir = "./transaction-logs";
 
-    public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
+    public IkasanFlowTestRule flowTestRule;
 
     @Rule
     public FakeSftpServerRule sftp = new FakeSftpServerRule().addUser("test", "test");
@@ -113,7 +113,6 @@ public class SftpToJmsFlowTest {
         sftp.createDirectories("/source");
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "sftp.private.jms.queue", registry);
         messageListenerVerifier.start();
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
     }
 
     @After
@@ -136,6 +135,8 @@ public class SftpToJmsFlowTest {
 
     @Test
     public void test_file_download() throws Exception {
+        flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
 
         // Upload data to fake SFTP
         sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());
@@ -157,6 +158,98 @@ public class SftpToJmsFlowTest {
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+        flowTestRule.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_file_download_with_error_and_successful_recovery() throws Exception {
+        flowTestRule = new IkasanFlowTestRule(true);
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
+
+        sftp.addUser("test", "test");
+        sftp.createDirectories("/source");
+        // Upload data to fake SFTP
+        sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());
+
+        // Update Sftp Consumer config
+        SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer", SftpConsumerConfiguration.class);
+        consumerConfiguration.setSourceDirectory("/source");
+        consumerConfiguration.setCronExpression("0/2 * * * * ? *");
+        consumerConfiguration.setRemotePort(sftp.getPort());
+        consumerConfiguration.setPersistentRecovery(true);
+
+        // Setup component expectations
+        flowTestRule.consumer("Sftp Consumer")
+            .converter("Sftp Payload to Map Converter")
+            .producer("Sftp Jms Producer");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+
+        // remove the underlying files system for the sftp server, causing the flow to go into recover
+        sftp.deleteAllFilesAndDirectories();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+
+        flowTestRule.sleep(5000);
+
+        // reinstate the filesystem for the sftp server
+        sftp.createDirectories("/source");
+
+        // assert the flow is back in running state
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        flowTestRule.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_file_download_with_error_and_successful_recovery_non_persistent_recovery() throws Exception {
+        flowTestRule = new IkasanFlowTestRule(true);
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Sftp To Jms Flow"));
+
+        sftp.addUser("test", "test");
+        sftp.createDirectories("/source");
+        // Upload data to fake SFTP
+        sftp.putFile("/source/testDownload.txt", SAMPLE_MESSAGE, Charset.defaultCharset());
+
+        // Update Sftp Consumer config
+        SftpConsumerConfiguration consumerConfiguration = flowTestRule.getComponentConfig("Sftp Consumer", SftpConsumerConfiguration.class);
+        consumerConfiguration.setSourceDirectory("/source");
+        consumerConfiguration.setCronExpression("0/2 * * * * ? *");
+        consumerConfiguration.setRemotePort(sftp.getPort());
+        consumerConfiguration.setPersistentRecovery(false);
+
+        // Setup component expectations
+        flowTestRule.consumer("Sftp Consumer")
+            .converter("Sftp Payload to Map Converter")
+            .producer("Sftp Jms Producer");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
+
+        // remove the underlying files system for the sftp server, causing the flow to go into recover
+        sftp.deleteAllFilesAndDirectories();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
+
+        flowTestRule.sleep(5000);
+
+        // reinstate the filesystem for the sftp server
+        sftp.createDirectories("/source");
+
+        // assert the flow is back in running state
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
         flowTestRule.assertIsSatisfied();
     }
 }
