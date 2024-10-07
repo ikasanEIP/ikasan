@@ -40,25 +40,13 @@
  */
 package org.ikasan.builder;
 
-import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.builder.component.Builder;
 import org.ikasan.builder.invoker.Configuration;
 import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
-import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
-import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
-import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
-import org.ikasan.exceptionResolver.ExceptionConfig;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
-import org.ikasan.filter.FilterAutoConfiguration;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.*;
-import org.ikasan.hospital.HospitalAutoConfiguration;
-import org.ikasan.module.IkasanModuleAutoConfiguration;
-import org.ikasan.monitor.IkasanMonitorAutoConfiguration;
-import org.ikasan.replay.ReplayAutoConfiguration;
-import org.ikasan.rest.module.IkasanRestAutoConfiguration;
 import org.ikasan.sample.MyConfiguration;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -82,10 +70,6 @@ import org.ikasan.spec.flow.FlowInvocationContextListener;
 import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.ikasan.spec.serialiser.SerialiserFactory;
-import org.ikasan.systemevent.SystemEventAutoConfiguration;
-import org.ikasan.transaction.IkasanTransactionConfiguration;
-import org.ikasan.web.IkasanWebAutoConfiguration;
-import org.ikasan.web.WebSecurityConfig;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
@@ -93,19 +77,13 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.annotation.ImportResource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.util.TestSocketUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This test class supports the <code>FlowBuilder</code> class.
@@ -515,6 +493,8 @@ public class FlowBuilderTest
     {
         setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        Map flowConfigurations = ikasanApplication.getBean("flowConfigurations", Map.class);
+        flowConfigurations.clear();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .isRecording(false)
             .withDescription("flowDescription")
@@ -585,6 +565,8 @@ public class FlowBuilderTest
     public void test_successful_simple_transitions_not_recording_with_concurrentSplitter()
     {
         setupMockExpectations();
+        Map flowConfigurations = ikasanApplication.getBean("flowConfigurations", Map.class);
+        flowConfigurations.clear();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .isRecording(false)
