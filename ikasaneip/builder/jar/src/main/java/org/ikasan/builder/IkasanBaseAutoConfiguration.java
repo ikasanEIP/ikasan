@@ -46,6 +46,7 @@ import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.exceptionResolver.action.IgnoreAction;
 import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
+import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.module.service.FlowStartupTypeConfigurationConverter;
 import org.ikasan.module.service.WiretapTriggerConfigurationConverter;
@@ -57,6 +58,9 @@ import org.ikasan.web.WebSecurityConfig;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.context.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @ImportResource( {
@@ -100,6 +104,13 @@ public class IkasanBaseAutoConfiguration
     public ExceptionConfig exceptionConfig(){
         return new ExceptionConfig();
     }
+
+    @Bean(name = "flowConfigurations")
+    @ConfigurationProperties(prefix = "ikasan.flow.configuration")
+    public Map<String, FlowPersistentConfiguration> flowConfigurations(){
+        return new HashMap<>();
+    }
+
     @Bean
     public ExceptionResolver exceptionResolver(BuilderFactory builderFactory,ExceptionConfig exceptionConfig)
     {

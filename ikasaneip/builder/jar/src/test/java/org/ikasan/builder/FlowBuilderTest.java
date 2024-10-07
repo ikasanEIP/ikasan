@@ -84,6 +84,7 @@ import org.springframework.util.SocketUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This test class supports the <code>FlowBuilder</code> class.
@@ -493,6 +494,9 @@ public class FlowBuilderTest
     {
         setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        // remove all flow configurations to defaults are picked up
+        Map flowConfigurations = ikasanApplication.getBean("flowConfigurations", Map.class);
+        flowConfigurations.clear();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .isRecording(false)
             .withDescription("flowDescription")
@@ -564,6 +568,9 @@ public class FlowBuilderTest
     {
         setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
+        // remove all flow configurations to defaults are picked up
+        Map flowConfigurations = ikasanApplication.getBean("flowConfigurations", Map.class);
+        flowConfigurations.clear();
         Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
             .isRecording(false)
             .withDescription("flowDescription")
