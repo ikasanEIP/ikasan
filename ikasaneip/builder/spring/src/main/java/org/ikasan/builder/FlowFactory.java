@@ -70,6 +70,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Flows.
@@ -148,6 +149,8 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     /** the message history service **/
     MessageHistoryService messageHistoryService;
 
+    /** the flow configuration map to allow for externalised configurations **/
+    Map<String, FlowPersistentConfiguration> flowConfigurations;
 
 	/**
      * Setter for moduleName
@@ -399,6 +402,7 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.ikasanSerialiserFactory = applicationContext.getBean(SerialiserFactory.class);
         this.replayRecordService = applicationContext.getBean(ReplayRecordService.class);
         this.messageHistoryService = applicationContext.getBean(MessageHistoryService.class);
+        this.flowConfigurations = applicationContext.getBean("flowConfigurations", Map.class);
     }
 
     /**

@@ -177,6 +177,11 @@ public class FlowBuilder implements ApplicationContextAware
     @Autowired
     MessageHistoryService messageHistoryService;
 
+    /** the flow configuration map to allow for externalised configurations **/
+    @Autowired
+    Map<String, FlowPersistentConfiguration> flowConfigurations;
+
+
     /** flow monitor */
     FlowMonitor monitor;
 
@@ -965,6 +970,10 @@ public class FlowBuilder implements ApplicationContextAware
         {
             FlowPersistentConfiguration flowPersistentConfiguration = (FlowPersistentConfiguration)resource.getConfiguration();
             flowPersistentConfiguration.setIsRecording(isRecording);
+
+            if(this.flowConfigurations != null && this.flowConfigurations.containsKey(this.flowName)) {
+                resource.setConfiguration(this.flowConfigurations.get(this.flowName));
+            }
         }
 
         // pass handle to the error reporting service if flow needs to be aware of this

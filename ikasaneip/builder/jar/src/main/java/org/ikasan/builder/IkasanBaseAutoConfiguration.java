@@ -51,6 +51,7 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
 import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.filter.FilterAutoConfiguration;
+import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.hospital.HospitalAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.module.service.FlowStartupTypeConfigurationConverter;
@@ -69,6 +70,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @ImportResource( {
@@ -105,6 +109,13 @@ public class IkasanBaseAutoConfiguration
     public ExceptionConfig exceptionConfig(){
         return new ExceptionConfig();
     }
+
+    @Bean(name = "flowConfigurations")
+    @ConfigurationProperties(prefix = "ikasan.flow.configuration")
+    public Map<String, FlowPersistentConfiguration> flowConfigurations(){
+        return new HashMap<>();
+    }
+
     @Bean
     public ExceptionResolver exceptionResolver(BuilderFactory builderFactory, @Qualifier("exceptionConfig") ExceptionConfig exceptionConfig)
     {
