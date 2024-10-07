@@ -44,6 +44,7 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.IkasanApplication;
 import org.ikasan.builder.IkasanApplicationFactory;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
+import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.flow.visitorPattern.invoker.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
@@ -62,6 +63,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.*;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.util.SocketUtils;
 
@@ -78,6 +80,7 @@ import java.util.List;
 		"/exclusion-service-conf.xml",
 		"/datasource-conf.xml"
 })
+@PropertySource("/application.properties")
 public class SampleFlowBuilderTest
 {
     /**
@@ -215,6 +218,9 @@ public class SampleFlowBuilderTest
 		Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
 		Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
 
+        Assert.assertEquals("flow configuration is recording is true", true, ((VisitingInvokerFlow)flow).getConfiguration().getIsRecording());
+        Assert.assertEquals("flow configuration invoke config listeners is true", true, ((VisitingInvokerFlow)flow).getConfiguration().getInvokeContextListeners());
+        Assert.assertEquals("flow configuration recording TTL is 100", 100L, ((VisitingInvokerFlow)flow).getConfiguration().getRecordedEventTimeToLive().longValue());
 		mockery.assertIsSatisfied();
 	}
 

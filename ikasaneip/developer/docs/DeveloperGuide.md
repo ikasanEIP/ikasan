@@ -515,7 +515,7 @@ Lets tell the Recovery Manager to take a different action on this exception.
 
 * Option one set exception resolver on given flow
   
-  As this is a setting on the flow we need to update the code on the flowBuilder to add
+As this is a setting on the flow we need to update the code on the flowBuilder to add
 a different exceptionResolver. In this case when we see a TransformationException we are now going to exclude the event
 that caused the exception. 
   ```java
@@ -552,6 +552,23 @@ that caused the exception.
   
    ```
 
+## Setting Persistent Flow Configurations
+Each flow has a persistent configuration associated with it [FlowPersistentConfiguration](../../flow/visitorPatternFlow/src/main/java/org/ikasan/flow/configuration/FlowPersistentConfiguration.java)
+which exposes 3 configuration values.
+
+| Configuration Name      | Type    | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Default Value |
+|-------------------------|---------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| isRecording             | Boolean | Flag to instruct the flow to record messages it receives.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | false         |
+| recordedEventTimeToLive | int     | The number of days to retain the recorded messages before they are house kept.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | 30            |
+| invokeContextListeners  | Boolean | Flag to indicate whether or not to invoke the associated [FlowInvocationContextListeners](../../spec/flow/src/main/java/org/ikasan/spec/flow/FlowInvocationContextListener.java). There are currently 2 implementations available in Ikasan <br/> - [ComponentTimingLoggingListener](../../flow/visitorPatternFlow/src/main/java/org/ikasan/flow/context/ComponentTimingLoggingListener.java) which provides simple timings of component invocations, written to the log file associated with the module.<br/> -  [MessageHistoryContextListener](../../wiretap/src/main/java/org/ikasan/history/listener/MessageHistoryContextListener.java) provides a richer set of persisten information relating to component and flow invocations, including timings, a snapped event if so configured as well as any [CustomMetrics](../../wiretap/src/main/java/org/ikasan/history/model/CustomMetric.java). | false         |
+
+The properties can be set in the relevant application.properties file associated with the module where 'flowName' is replaced with the relevant flow name. 
+If the flow name contains white space use a backslash to escape the whitespace. For example 'My\ Flow\ Name'. 
+```properties
+ikasan.flow.configuration[flowName].isRecording=true
+ikasan.flow.configuration[flowName].recordedEventTimeToLive=100
+ikasan.flow.configuration[flowName].invokeContextListeners=true
+```
 Build it, run it, and start the flow from the Browser.
 
 Now we see the same error occuring, but the Recovery Manager excludes the event and allows the flow to keep running.
