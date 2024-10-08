@@ -558,7 +558,12 @@ public class LdapServiceImpl implements LdapService
 		public Object mapFromAttributes(Attributes attributes)
 				throws NamingException
 		{
-			return attributes.get(authenticationMethod.getApplicationSecurityGroupAttributeName()).get();
+            if(attributes.get(authenticationMethod.getApplicationSecurityGroupAttributeName()) == null) {
+                return null;
+            }
+            else {
+                return attributes.get(authenticationMethod.getApplicationSecurityGroupAttributeName()).get();
+            }
 		}
 	}
 	
