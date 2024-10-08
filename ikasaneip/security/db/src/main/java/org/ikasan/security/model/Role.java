@@ -67,9 +67,6 @@ public class Role implements Comparable<Role>
     )
     private Set<Policy> policies = new HashSet<>();
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER)
-    private Set<IkasanPrincipal> principals = new HashSet<>();;
-
     @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
     private Set<RoleModule> roleModules = new HashSet<>();
     @OneToMany(mappedBy="role", cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval=true)
@@ -150,14 +147,6 @@ public class Role implements Comparable<Role>
             this.roleJobPlans = new HashSet<>();
             this.roleJobPlans.add(roleJobPlan);
         }
-    }
-
-    public Set<IkasanPrincipal> getPrincipals() {
-        return principals;
-    }
-
-    public void setPrincipals(Set<IkasanPrincipal> principals) {
-        this.principals = principals;
     }
 
     /**
@@ -270,12 +259,6 @@ public class Role implements Comparable<Role>
 
     public void setRoleJobPlans(Set<RoleJobPlan> roleJobPlans) {
         this.roleJobPlans = roleJobPlans;
-    }
-
-    @PreRemove
-    private void removeBookAssociations() {
-        this.principals.forEach(ikasanPrincipal
-            -> ikasanPrincipal.getRoles().remove(this));
     }
 
     @Override

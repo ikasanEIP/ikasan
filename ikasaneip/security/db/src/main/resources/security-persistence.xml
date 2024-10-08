@@ -18,6 +18,8 @@
         <class>org.ikasan.security.model.User</class>
         <class>org.ikasan.security.model.UserLite</class>
         <class>org.ikasan.security.model.UserPrincipal</class>
+        <class>org.ikasan.security.model.PrincipalRole</class>
+        <class>org.ikasan.security.model.RolePolicy</class>
     </persistence-unit>
 
     <persistence-unit name="security-xa" transaction-type="JTA">
@@ -34,6 +36,8 @@
         <class>org.ikasan.security.model.User</class>
         <class>org.ikasan.security.model.UserLite</class>
         <class>org.ikasan.security.model.UserPrincipal</class>
+        <class>org.ikasan.security.model.PrincipalRole</class>
+        <class>org.ikasan.security.model.RolePolicy</class>
     </persistence-unit>
 
 </persistence>

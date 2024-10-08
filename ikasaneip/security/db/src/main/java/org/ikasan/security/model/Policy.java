@@ -65,8 +65,6 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "PolicyLinkId")
     private PolicyLink policyLink;
-    @ManyToMany(mappedBy = "policies", fetch = FetchType.EAGER)
-    private Set<Role> roles;
 
     /**
      * The data time stamp when an instance was first created
@@ -200,25 +198,9 @@ public class Policy implements GrantedAuthority, Comparable<Policy>
         this.policyLink = policyLink;
     }
 
-    /**
-     * @return the roles
-     */
-    public Set<Role> getRoles()
-    {
-        return roles;
-    }
-
-    /**
-     * @param roles the roles to set
-     */
-    public void setRoles(Set<Role> roles)
-    {
-        this.roles = roles;
-    }
-
     /* (non-Javadoc)
-         * @see java.lang.Object#hashCode()
-         */
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode()
     {
