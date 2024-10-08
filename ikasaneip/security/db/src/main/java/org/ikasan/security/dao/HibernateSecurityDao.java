@@ -296,6 +296,8 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void deleteRole(Role role)
     {
+        this.entityManager.createQuery("delete from PrincipalRole where id.roleId = :id")
+            .setParameter("id", role.getId()).executeUpdate();
         this.entityManager.remove(this.entityManager.contains(role) ? role : entityManager.merge(role));
     }
 

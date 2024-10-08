@@ -1,5 +1,5 @@
 /*
- * $Id$
+ * $Id$  
  * $URL$
  * 
  * ====================================================================
@@ -38,47 +38,101 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.security.dao.constants;
+package org.ikasan.security.model;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+import java.io.Serializable;
 
 /**
- * @author CMI2 Development Team
+ * 
+ * @author Ikasan Development Team
  *
  */
-public interface SecurityConstants
+@Embeddable
+public class RolePolicyPk implements Serializable
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_DASHBOARD = "AUTH_METHOD_DASHBOARD";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = Long.valueOf(1);
+	private static final long serialVersionUID = -1724759502309436272L;
+
+    @Column(name = "RoleId", nullable = false)
+    Long roleId;
+    @Column(name = "PolicyId", nullable = false)
+    Long policyId;
 	
-	public static final String PRINCIPAL_ID = "principalId";
+	/**
+	 * @return the roleId
+	 */
+	public Long getRoleId()
+	{
+		return roleId;
+	}
 	
-	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
-            " User as u " +
-            " where  u.id = up.id.userId" +
-            " and up.id.ikasanPrincipalId = :" + PRINCIPAL_ID;
+	/**
+	 * @param userId the roleId to set
+	 */
+	public void setRoleId(Long userId)
+	{
+		this.roleId = userId;
+	}
+	
+	/**
+	 * @return the policyId
+	 */
+	public Long getPolicyId()
+	{
+		return policyId;
+	}
+	
+	/**
+	 * @param policyId the policyId to set
+	 */
+	public void setPolicyId(Long policyId)
+	{
+		this.policyId = policyId;
+	}
 
-    public static final String GET_POLICY_WITH_ROLE_QUERY = """
-        select p from Policy as p, RolePolicy as rp, Role as r \
-        where  r.name = :name and rp.id.roleId = r.id and rp.id.policyId = p.id \
-        """ ;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime
+				* result
+				+ ((policyId == null) ? 0 : policyId
+						.hashCode());
+		result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+		return result;
+	}
 
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = """
-        select p from IkasanPrincipal as p \
-         LEFT JOIN p.roles r \
-         where  r.name = :name\
-        """ ;
-
-    public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = """
-        select distinct(p) from IkasanPrincipal as p \
-         LEFT JOIN p.roles r \
-         where  r.name in (:name)\
-        """ ;
-
-    public static final String GET_ROLE_JOB_PLANS_BY_ROLE_QUERY = """
-        select rjp from RoleJobPlan as rjp \
-         where  rjp.jobPlanName = :name\
-        """ ;
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		RolePolicyPk other = (RolePolicyPk) obj;
+		if (policyId == null)
+		{
+			if (other.policyId != null)
+				return false;
+		} else if (!policyId.equals(other.policyId))
+			return false;
+		if (roleId == null)
+		{
+			if (other.roleId != null)
+				return false;
+		} else if (!roleId.equals(other.roleId))
+			return false;
+		return true;
+	}
 }
