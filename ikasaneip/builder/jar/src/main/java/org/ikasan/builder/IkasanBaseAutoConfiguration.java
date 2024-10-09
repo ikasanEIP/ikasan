@@ -51,6 +51,9 @@ import org.ikasan.exceptionResolver.action.RetryAction;
 import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
 import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.filter.FilterAutoConfiguration;
+import org.ikasan.flow.configuration.FlowComponentInvokerConfiguration;
+import org.ikasan.flow.configuration.FlowComponentInvokerConfigurationConverter;
+import org.ikasan.flow.configuration.FlowComponentInvokerSetupServiceConfiguration;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.hospital.HospitalAutoConfiguration;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
@@ -116,6 +119,12 @@ public class IkasanBaseAutoConfiguration
         return new HashMap<>();
     }
 
+    @Bean(name = "flowComponentInvokerConfigurations")
+    @ConfigurationProperties(prefix = "ikasan.flow.component.invoker.configuration")
+    public FlowComponentInvokerSetupServiceConfiguration componentInvokerConfiguration(){
+        return new FlowComponentInvokerSetupServiceConfiguration();
+    }
+
     @Bean
     public ExceptionResolver exceptionResolver(BuilderFactory builderFactory, @Qualifier("exceptionConfig") ExceptionConfig exceptionConfig)
     {
@@ -157,5 +166,11 @@ public class IkasanBaseAutoConfiguration
     @ConfigurationPropertiesBinding
     public WiretapTriggerConfigurationConverter wiretapTriggerConfigurationConverter(){
         return new WiretapTriggerConfigurationConverter();
+    }
+
+    @Bean
+    @ConfigurationPropertiesBinding
+    public FlowComponentInvokerConfigurationConverter flowComponentInvokerConfigurationConverter(){
+        return new FlowComponentInvokerConfigurationConverter();
     }
 }

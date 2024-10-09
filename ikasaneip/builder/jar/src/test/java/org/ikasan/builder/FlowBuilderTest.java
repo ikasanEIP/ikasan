@@ -199,7 +199,7 @@ public class FlowBuilderTest
                 atLeast(1).of(consumer).isRunning();
                 will(returnValue(true));
 
-                oneOf(exclusionServiceFactory).getExclusionService("moduleName", "flowName");
+                oneOf(exclusionServiceFactory).getExclusionService(with(any(String.class)), with(any(String.class)));
                 will(returnValue(exclusionService));
             }
         });
@@ -639,7 +639,7 @@ public class FlowBuilderTest
     {
         setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flow-name")
                 .withDescription("flowDescription")
                 .withFlowInvocationContextListener(flowInvocationContextListener)
                 .withFlowInvocationContextListener(flowInvocationContextListener)
@@ -652,7 +652,7 @@ public class FlowBuilderTest
                 .broker("broker", broker, Configuration.brokerInvoker().withDynamicConfiguration(true))
                 .producer("producer", producer, Configuration.producerInvoker().withDynamicConfiguration(true)).build();
 
-        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("flow name is incorrect", "flow-name".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
@@ -709,7 +709,7 @@ public class FlowBuilderTest
     {
         setupMockExpectations();
         BuilderFactory builderFactory = ikasanApplication.getBuilderFactory();
-        Flow flow = builderFactory.getFlowBuilder("moduleName", "flowName")
+        Flow flow = builderFactory.getFlowBuilder("moduleName", "flow-name")
             .withDescription("flowDescription")
             .withFlowInvocationContextListener(flowInvocationContextListener)
             .withFlowInvocationContextListener(flowInvocationContextListener)
@@ -722,7 +722,7 @@ public class FlowBuilderTest
             .broker("broker", broker, Configuration.brokerInvoker().withDynamicConfiguration(true))
             .producer("producer", producer, Configuration.producerInvoker().withDynamicConfiguration(true)).build();
 
-        Assert.assertTrue("flow name is incorrect", "flowName".equals(flow.getName()));
+        Assert.assertTrue("flow name is incorrect", "flow-name".equals(flow.getName()));
         Assert.assertTrue("module name is incorrect", "moduleName".equals(flow.getModuleName()));
         List<FlowElement<?>> flowElements = flow.getFlowElements();
         Assert.assertTrue("Should be 6 flow elements", flowElements.size() == 6);
