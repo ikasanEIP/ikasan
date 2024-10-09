@@ -180,7 +180,9 @@ public abstract class AbstractFlowConfiguration
                 this.configure(configuredResource);
 
                 // is this dynamically configured
-                if( ((ConfiguredResource<InvokerConfiguration>)flowElement.getFlowElementInvoker()).getConfiguration().isDynamicConfiguration() )
+                if( flowElement.getFlowComponent() instanceof ConfiguredResource &&
+                    ((ConfiguredResource<InvokerConfiguration>)flowElement.getFlowElementInvoker())
+                        .getConfiguration().isDynamicConfiguration() )
                 {
                     flowElements.add(flowElement);
                 }

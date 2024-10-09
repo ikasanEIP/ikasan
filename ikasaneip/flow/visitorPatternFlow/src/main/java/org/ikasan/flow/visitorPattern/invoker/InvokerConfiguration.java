@@ -41,12 +41,6 @@
 
 package org.ikasan.flow.visitorPattern.invoker;
 
-/**
- * Default FilterConfiguration bean common to all filters.
- *
- * @author Ikasan Development Team
- *
- */
 public class InvokerConfiguration
 {
     /** allow dynamic configuration be turned on or off - default off */
