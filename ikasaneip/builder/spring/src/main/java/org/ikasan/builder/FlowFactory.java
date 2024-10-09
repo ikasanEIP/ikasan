@@ -42,6 +42,7 @@ package org.ikasan.builder;
 
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exclusion.service.ExclusionServiceFactory;
+import org.ikasan.flow.configuration.FlowComponentInvokerSetupServiceConfiguration;
 import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.ResubmissionEventFactoryImpl;
 import org.ikasan.history.listener.MessageHistoryContextListener;
@@ -151,6 +152,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
 
     /** the flow configuration map to allow for externalised configurations **/
     Map<String, FlowPersistentConfiguration> flowConfigurations;
+
+    /** the flow configuration map to allow for externalised configurations **/
+    FlowComponentInvokerSetupServiceConfiguration flowComponentInvokerSetupServiceConfiguration;
 
 	/**
      * Setter for moduleName
@@ -299,9 +303,9 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
     }
 
     /*
-             * (non-Javadoc)
-             * @see org.springframework.beans.factory.FactoryBean#getObject()
-             */
+     * (non-Javadoc)
+     * @see org.springframework.beans.factory.FactoryBean#getObject()
+     */
     @Override
     public Flow getObject()
     {
@@ -322,6 +326,8 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
                 .withMonitor(monitor)
                 .withSerialiserFactory(ikasanSerialiserFactory)
                 .withFlowInvocationContextListeners(flowInvocationContextListeners)
+                .withFlowConfigurations(this.flowConfigurations)
+                .withFlowComponentInvokerConfiguration(this.flowComponentInvokerSetupServiceConfiguration)
                 ._build(consumer);
     }
 
@@ -403,6 +409,8 @@ public class FlowFactory implements FactoryBean<Flow>, ApplicationContextAware
         this.replayRecordService = applicationContext.getBean(ReplayRecordService.class);
         this.messageHistoryService = applicationContext.getBean(MessageHistoryService.class);
         this.flowConfigurations = applicationContext.getBean("flowConfigurations", Map.class);
+        this.flowComponentInvokerSetupServiceConfiguration = applicationContext.getBean("flowComponentInvokerConfigurations"
+            , FlowComponentInvokerSetupServiceConfiguration.class);
     }
 
     /**

@@ -144,6 +144,11 @@
 			</exclusions>
 		</dependency>
 
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+        </dependency>
+
         <!-- trial a cloning library -->
         <dependency>
             <groupId>io.github.kostaskougios</groupId>

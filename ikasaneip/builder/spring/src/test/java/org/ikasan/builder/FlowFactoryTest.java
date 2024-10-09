@@ -101,42 +101,64 @@ public class FlowFactoryTest
         Assert.assertTrue("flow element name should be 'consumer'", "consumer".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Consumer", fe.getFlowComponent() instanceof Consumer);
         Assert.assertTrue("flow element invoker should be an instance of ConsumerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConsumerFlowElementInvoker);
+        Assert.assertTrue("flow element invoker capture metrics should be true", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
+
         Assert.assertTrue("flow element transition should be to coverter", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(1);
         Assert.assertTrue("flow element name should be 'converter'", "converter".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Converter", fe.getFlowComponent() instanceof Converter);
         Assert.assertTrue("flow element invoker should be an instance of ConverterFlowElementInvoker", fe.getFlowElementInvoker() instanceof ConverterFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to translator", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(2);
         Assert.assertTrue("flow element name should be 'translator'", "translator".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Translator", fe.getFlowComponent() instanceof Translator);
         Assert.assertTrue("flow element invoker should be an instance of TranslatorFlowElementInvoker", fe.getFlowElementInvoker() instanceof TranslatorFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to broker", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(3);
         Assert.assertTrue("flow element name should be 'broker'", "broker".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Broker", fe.getFlowComponent() instanceof Broker);
         Assert.assertTrue("flow element invoker should be an instance of BrokerFlowElementInvoker", fe.getFlowElementInvoker() instanceof BrokerFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(4);
         Assert.assertTrue("flow element name should be 'mrRouter'", "mrRouter".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of MultiRecipientRouter", fe.getFlowComponent() instanceof MultiRecipientRouter);
         Assert.assertTrue("flow element invoker should be an instance of MultiRecipientRouterFlowElementInvoker", fe.getFlowElementInvoker() instanceof MultiRecipientRouterFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element should have 3 routable transitions", fe.getTransitions().size() == 3);
 
         fe = flowElements.get(5);
         Assert.assertTrue("flow element name should be 'sequencerA'", "sequencerA".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Sequencer", fe.getFlowComponent() instanceof Sequencer);
         Assert.assertTrue("flow element invoker should be an instance of SequencerFlowElementInvoker", fe.getFlowElementInvoker() instanceof SequencerFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
 
         fe = flowElements.get(6);
         Assert.assertTrue("flow element name should be 'sequencerB'", "sequencerB".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Sequencer", fe.getFlowComponent() instanceof Sequencer);
         Assert.assertTrue("flow element invoker should be an instance of SequencerFlowElementInvoker", fe.getFlowElementInvoker() instanceof SequencerFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element should have 2 sequenced transitions", fe.getTransitions().size() == 1);
 
 
@@ -144,6 +166,9 @@ public class FlowFactoryTest
         Assert.assertTrue("flow element name should be 'srRouter'", "srRouter".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of SingleRecipientRouter", fe.getFlowComponent() instanceof SingleRecipientRouter);
         Assert.assertTrue("flow element invoker should be an instance of SingleRecipientRouterFlowElementInvoker", fe.getFlowElementInvoker() instanceof SingleRecipientRouterFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to '1", fe.getTransitions().size() == 1);
 
 
@@ -151,18 +176,27 @@ public class FlowFactoryTest
         Assert.assertTrue("flow element name should be 'producerA'", "producerA".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertTrue("flow element invoker dynamic configuration should be true", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
 
         fe = flowElements.get(9);
         Assert.assertTrue("flow element name should be 'producerB'", "producerB".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Producer", fe.getFlowComponent() instanceof Producer);
         Assert.assertTrue("flow element invoker should be an instance of ProducerFlowElementInvoker", fe.getFlowElementInvoker() instanceof ProducerFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to 'null", fe.getTransitions().size() == 0);
 
         fe = flowElements.get(10);
         Assert.assertTrue("flow element name should be 'sequencerA'", "sequencerA".equals(fe.getComponentName()));
         Assert.assertTrue("flow element component should be an instance of Sequencer", fe.getFlowComponent() instanceof Sequencer);
         Assert.assertTrue("flow element invoker should be an instance of SequencerFlowElementInvoker", fe.getFlowElementInvoker() instanceof SequencerFlowElementInvoker);
+        Assert.assertFalse("flow element invoker capture metrics should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getCaptureMetrics());
+        Assert.assertFalse("flow element invoker snap event should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).getSnapEvent());
+        Assert.assertFalse("flow element invoker dynamic configuration should be false", ((InvokerConfiguration)fe.getFlowElementInvoker().getConfiguration()).isDynamicConfiguration());
         Assert.assertTrue("flow element transition should be to producer", fe.getTransitions().size() == 1);
     }
 

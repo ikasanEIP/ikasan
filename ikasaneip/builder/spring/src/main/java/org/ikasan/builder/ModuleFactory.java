@@ -42,16 +42,24 @@ package org.ikasan.builder;
 
 import java.util.List;
 
+import org.ikasan.flow.configuration.FlowComponentInvokerConfiguration;
+import org.ikasan.flow.configuration.FlowComponentInvokerSetupServiceConfiguration;
+import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.FactoryBean;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
+
+import javax.annotation.PostConstruct;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Modules.
  * @author Ikasan Development Team
  * 
  */
-public class ModuleFactory implements FactoryBean<Module>
+public class ModuleFactory implements FactoryBean<Module>, ApplicationContextAware
 {
     /** module name */
     String name;
@@ -64,6 +72,9 @@ public class ModuleFactory implements FactoryBean<Module>
 
     /** module's flows */
     List<Flow> flows;
+
+    /** the flow configuration map to allow for externalised configurations **/
+    FlowComponentInvokerSetupServiceConfiguration flowComponentInvokerSetupServiceConfiguration;
 
     /**
      * Setter for name
@@ -101,6 +112,8 @@ public class ModuleFactory implements FactoryBean<Module>
         this.flows = flows;
     }
 
+
+
     /*
      * (non-Javadoc)
      * @see org.springframework.beans.factory.FactoryBean#getObject()
@@ -128,5 +141,41 @@ public class ModuleFactory implements FactoryBean<Module>
     public boolean isSingleton()
     {
         return false;
+    }
+
+    @PostConstruct
+    private void initialFlowComponentInvokerConfigurations() {
+        if(this.flows != null) {
+            flows.forEach(flow -> {
+                flow.getFlowElements().forEach(flowElement -> {
+                    this.applyFlowElementInvokerConfiguration(flow.getName()
+                        , flowElement.getComponentName(), (InvokerConfiguration) flowElement.getFlowElementInvoker().getConfiguration());
+                });
+            });
+        }
+    }
+
+    /**
+     * Apply the configuration from a FlowComponentInvokerConfiguration to an InvokerConfiguration.
+     *
+     * @param flowName the name of the flow
+     * @param flowElementName the name of the flow element
+     * @param invokerConfiguration the InvokerConfiguration to be configured
+     */
+    private void applyFlowElementInvokerConfiguration(String flowName, String flowElementName, InvokerConfiguration invokerConfiguration) {
+        FlowComponentInvokerConfiguration flowComponentInvokerConfiguration
+            = this.flowComponentInvokerSetupServiceConfiguration.getConfiguration(flowName, flowElementName);
+
+        if(flowComponentInvokerConfiguration != null && invokerConfiguration != null) {
+            invokerConfiguration.setSnapEvent(flowComponentInvokerConfiguration.isSnapEvent());
+            invokerConfiguration.setCaptureMetrics(flowComponentInvokerConfiguration.isCaptureMetrics());
+            invokerConfiguration.setDynamicConfiguration(flowComponentInvokerConfiguration.isDynamicConfiguration());
+        }
+    }
+
+    @Override
+    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
+        this.flowComponentInvokerSetupServiceConfiguration = applicationContext.getBean("flowComponentInvokerConfigurations"
+            , FlowComponentInvokerSetupServiceConfiguration.class);
     }
 }
