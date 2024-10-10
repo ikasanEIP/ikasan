@@ -904,8 +904,11 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
+
+                exactly(1).of(consumerConfiguration).getCronExpression();
+                will(returnValue("cronexpression"));
 
                 exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
 
@@ -980,8 +983,11 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
+
+                exactly(1).of(consumerConfiguration).getCronExpression();
+                will(returnValue("cronexpression"));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(true));
