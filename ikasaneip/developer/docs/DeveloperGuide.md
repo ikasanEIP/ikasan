@@ -569,6 +569,27 @@ ikasan.flow.configuration[flowName].isRecording=true
 ikasan.flow.configuration[flowName].recordedEventTimeToLive=100
 ikasan.flow.configuration[flowName].invokeContextListeners=true
 ```
+
+## Setting Flow Component Invoker Configurations
+The invocation of each component within Ikasan as a configuration associated with it  [InvokerConfiguration](../../flow/visitorPatternFlow/src/main/java/org/ikasan/flow/visitorPattern/invoker/InvokerConfiguration.java)
+which exposes 3 configuration values.
+
+| Configuration Name   | Type    | Description                                                                                                                                                                               | Default Value |
+|----------------------|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| snapEvent            | boolean | If this flag is set to true, the event associated with the component invocation will be written to the underlying persistent store, and will subsequently be harvested to Solr.           | false         |
+| captureMetrics       | boolean | If this flag is set to true, Ikasan will capture metrics associated with the component invocation, written to the underlying persisten store, and will subsequently be harvested to Solr. | false         |
+| dynamicConfiguration | boolean | If the component is a ConfiguredResource, then the configuration will be dynmanically backed into the persistent store each time the component is invoked.                                | false         |
+
+The properties can be set in the relevant application.properties file associated with the module as seen below.
+
+Each property value String is in the format `<flow-name>, <component-name>, <snap-event>, <capture-metric>, <dynamic-configuration>`.
+
+```properties
+ikasan.flow.component.invoker.configuration.flowComponentInvokerConfigurations[0]=flowName, consumer, false, true, false
+ikasan.flow.component.invoker.configuration.flowComponentInvokerConfigurations[1]=flowName, producerA ,false, false, true
+```
+
+
 Build it, run it, and start the flow from the Browser.
 
 Now we see the same error occuring, but the Recovery Manager excludes the event and allows the flow to keep running.
