@@ -1,6 +1,6 @@
 package org.ikasan.spec.component.configuration;
 
-public class ComponentConfiguration
+public class ComponentInvokerConfiguration
 {
 	private Boolean captureMetrics = false;
 	private Boolean snapEvent = false;
