@@ -617,6 +617,13 @@ public class ScheduledConsumer<T>
                     .withMisfireHandlingInstructionFireNow())
                 .build();
 
+            if(oldTrigger.getJobDataMap().get(CRON_EXPRESSION) == null) {
+                newTrigger.getJobDataMap().put(CRON_EXPRESSION, this.consumerConfiguration.getCronExpression());
+            }
+            else {
+                newTrigger.getJobDataMap().put(CRON_EXPRESSION, oldTrigger.getJobDataMap().get(CRON_EXPRESSION));
+            }
+
             Date scheduledDate;
             if(this.scheduler.checkExists(oldTrigger.getKey()))
             {
