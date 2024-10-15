@@ -56,8 +56,11 @@ public class WebSecurityConfig {
             .csrf(httpSecurityCsrfConfigurer
                 -> httpSecurityCsrfConfigurer.disable())
             .headers(httpSecurityHeadersConfigurer
-                -> httpSecurityHeadersConfigurer.frameOptions(frameOptionsConfig
-                    -> frameOptionsConfig.sameOrigin()));
+                -> {httpSecurityHeadersConfigurer.frameOptions(frameOptionsConfig
+                    -> frameOptionsConfig.sameOrigin());
+                    httpSecurityHeadersConfigurer.contentSecurityPolicy(contentSecurityPolicy
+                    -> contentSecurityPolicy.policyDirectives("script-src 'self'"));
+            });
 
         return http.build();
     }
