@@ -119,43 +119,6 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleFlowStatesLegacy() throws Exception
-    {
-        Flow flow = new TestFlow("test Flow", "testModule", "stopped");
-        SimpleModule module = new SimpleModule("testModule", null, Arrays.asList(flow));
-        Mockito
-            .when(moduleService.getModule("testModule"))
-            .thenReturn(module);
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/flowStates/testModule")
-            .accept(MediaType.APPLICATION_JSON_VALUE);
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-        Mockito
-            .verify(moduleService).getModule("testModule");
-        Mockito.verifyNoMoreInteractions(moduleService);
-        assertEquals(200, result.getResponse().getStatus());
-        assertEquals("{\"testModule-test Flow\":\"stopped\"}", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    @WithMockUser(authorities = "WebServiceAdmin")
-    public void getModuleFlowStatesLegacyNull() throws Exception
-    {
-        Flow flow = new TestFlow("test Flow", "testModule", "stopped");
-        Mockito
-            .when(moduleService.getModule("testModule"))
-            .thenReturn(null);
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/flowStates/testModule")
-            .accept(MediaType.APPLICATION_JSON_VALUE);
-        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
-        Mockito
-            .verify(moduleService).getModule("testModule");
-        Mockito.verifyNoMoreInteractions(moduleService);
-        assertEquals(200, result.getResponse().getStatus());
-        assertEquals("{}", result.getResponse().getContentAsString());
-    }
-
-    @Test
-    @WithMockUser(authorities = "WebServiceAdmin")
     public void getFlowState() throws Exception
     {
         Flow flow = new TestFlow("test Flow", "testModule", "stopped");
@@ -210,7 +173,7 @@ public class ModuleControlApplicationTest
 
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito
-            .verify(moduleService).startFlow(Mockito.eq("testModule"),Mockito.eq("testFlow"),Mockito.anyString());
+            .verify(moduleService).startFlow(Mockito.eq("testModule"),Mockito.eq("testFlow"),Mockito.eq("user"));
         Mockito.verifyNoMoreInteractions(moduleService);
         assertEquals(200, result.getResponse().getStatus());
 
@@ -354,7 +317,7 @@ public class ModuleControlApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito
             .verify(moduleService).setStartupType(Mockito.eq("testModule"),Mockito.eq("testFlow"),Mockito.eq(
-            StartupType.AUTOMATIC),Mockito.eq("comment"),Mockito.anyString());
+            StartupType.AUTOMATIC),Mockito.eq("comment"),Mockito.eq("user"));
         Mockito
             .verify(moduleService).getModule(Mockito.eq("testModule"));
         Mockito.verifyNoMoreInteractions(moduleService);
@@ -489,13 +452,13 @@ public class ModuleControlApplicationTest
 
     private String createChangeStateDto(String action) throws JsonProcessingException
     {
-        ChangeFlowStateDto changeFlowStateDto = new ChangeFlowStateDto("testModule","testFlow",action);
+        ChangeFlowStateDto changeFlowStateDto = new ChangeFlowStateDto("testModule","testFlow",action, "user");
         return mapper.writeValueAsString(changeFlowStateDto);
     }
 
     private String createChangeFlowStartupModeDto(String action,String comment) throws JsonProcessingException
     {
-        ChangeFlowStartupModeDto dto = new ChangeFlowStartupModeDto("testModule","testFlow",action, comment);
+        ChangeFlowStartupModeDto dto = new ChangeFlowStartupModeDto("testModule","testFlow",action, comment, "user");
         return mapper.writeValueAsString(dto);
     }
 

@@ -8,17 +8,19 @@ public class ChangeFlowStartupModeDto implements Serializable
     private String flowName;
     private String startupType;
     private String comment;
+    private String username;
 
     public ChangeFlowStartupModeDto()
     {
     }
 
-    public ChangeFlowStartupModeDto(String moduleName, String flowName, String startupType, String comment)
+    public ChangeFlowStartupModeDto(String moduleName, String flowName, String startupType, String comment, String username)
     {
         this.moduleName = moduleName;
         this.flowName = flowName;
         this.startupType = startupType;
         this.comment = comment;
+        this.username = username;
     }
 
     public String getModuleName()
@@ -59,5 +61,13 @@ public class ChangeFlowStartupModeDto implements Serializable
     public void setComment(String comment)
     {
         this.comment = comment;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

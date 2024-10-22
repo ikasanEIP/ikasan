@@ -44,6 +44,7 @@ import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.rest.module.dto.TriggerDto;
 import org.ikasan.rest.module.util.DateTimeConverter;
 import org.ikasan.rest.module.util.UserUtil;
+import org.ikasan.security.service.UserService;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -90,39 +91,39 @@ public class WiretapApplication
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-
-    public ResponseEntity createTrigger(@PathVariable("moduleName") String moduleName,
-                                        @PathVariable("flowName") String flowName,
-                                        @PathVariable("flowElementName") String flowElementName,
-                                        @PathVariable("relationship") String relationship,
-                                        @PathVariable("jobType") String jobType, @RequestBody String timeToLive)
-    {
-        HashMap<String, String> params = new HashMap<String, String>();
-
-        if ( timeToLive != null && timeToLive.length() > 0 )
-        {
-            params.put("timeToLive", timeToLive);
-        }
-
-        Trigger trigger = new TriggerImpl(moduleName, flowName, relationship, jobType, flowElementName, params);
-
-        try
-        {
-            this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
-        }
-        catch (Exception e)
-        {
-            return new ResponseEntity("An error has occurred trying to create a new trigger: " + e.getMessage(),
-                HttpStatus.FORBIDDEN
-            );
-        }
-
-        return new ResponseEntity("Trigger successfully created!", HttpStatus.OK);
-    }
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.PUT,
+//                    value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//
+//    public ResponseEntity createTrigger(@PathVariable("moduleName") String moduleName,
+//                                        @PathVariable("flowName") String flowName,
+//                                        @PathVariable("flowElementName") String flowElementName,
+//                                        @PathVariable("relationship") String relationship,
+//                                        @PathVariable("jobType") String jobType, @RequestBody String timeToLive)
+//    {
+//        HashMap<String, String> params = new HashMap<String, String>();
+//
+//        if ( timeToLive != null && timeToLive.length() > 0 )
+//        {
+//            params.put("timeToLive", timeToLive);
+//        }
+//
+//        Trigger trigger = new TriggerImpl(moduleName, flowName, relationship, jobType, flowElementName, params);
+//
+//        try
+//        {
+//            this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
+//        }
+//        catch (Exception e)
+//        {
+//            return new ResponseEntity("An error has occurred trying to create a new trigger: " + e.getMessage(),
+//                HttpStatus.FORBIDDEN
+//            );
+//        }
+//
+//        return new ResponseEntity("Trigger successfully created!", HttpStatus.OK);
+//    }
 
     @RequestMapping(method = RequestMethod.PUT,
                     value = "/trigger")
@@ -162,36 +163,38 @@ public class WiretapApplication
 
     }
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/deleteTrigger")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteTrigger(@RequestBody Long triggerId)
-    {
-        try
-        {
-            this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);
-        }
-        catch (Exception e)
-        {
-
-            return new ResponseEntity("An error has occurred trying to delete a trigger: " + e.getMessage(),
-                HttpStatus.FORBIDDEN
-            );
-
-        }
-
-        return new ResponseEntity("Trigger successfully deleted!", HttpStatus.OK);
-
-    }
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.PUT,
+//                    value = "/deleteTrigger")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity deleteTrigger(@RequestBody Long triggerId)
+//    {
+//        try
+//        {
+//            this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);
+//        }
+//        catch (Exception e)
+//        {
+//
+//            return new ResponseEntity("An error has occurred trying to delete a trigger: " + e.getMessage(),
+//                HttpStatus.FORBIDDEN
+//            );
+//
+//        }
+//
+//        return new ResponseEntity("Trigger successfully deleted!", HttpStatus.OK);
+//
+//    }
 
     @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/trigger/{triggerId}")
+                    value = "/trigger/{triggerId}/{user}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity delete(@PathVariable("triggerId") Long triggerId)
+    public ResponseEntity delete(@PathVariable("triggerId") Long triggerId,
+                                 @PathVariable("user") String user)
     {
         try
         {
+            user = user!=null?user: UserUtil.getUser();
             Trigger trigger = jobAwareFlowEventListener.getTrigger(triggerId);
             this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);
             if(trigger!=null){
@@ -199,7 +202,7 @@ public class WiretapApplication
                     trigger.getModuleName(),
                     "%s-%s:%s".formatted(trigger.getModuleName(), trigger.getFlowName(), trigger.toString()),
                     "Delete Wiretap",
-                    UserUtil.getUser());
+                    user);
             }
             return new ResponseEntity(HttpStatus.OK);
 
