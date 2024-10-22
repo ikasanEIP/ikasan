@@ -83,65 +83,65 @@ public class ReplayApplication
     @Autowired
     private SystemEventService systemEventService;
 
-    /**
-     * REST endpoint to replay given event.
-     *
-     * @param moduleName The name of the module we are replaying to.
-     * @param flowName   The name of the flow we are replaying to.
-     * @param event      The event we are replaying.
-     * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
-     */
-    @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-                    value = "/eventReplay/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity replay(@PathVariable("moduleName") String moduleName,
-                                 @PathVariable("flowName") String flowName, @RequestBody byte[] event)
-    {
-        try
-        {
-            Module<Flow> module = moduleContainer.getModule(moduleName);
-            if ( module == null )
-            {
-                throw new RuntimeException("Could not get module from module container using name:  " + moduleName);
-            }
-            Flow flow = module.getFlow(flowName);
-            if ( flow == null )
-            {
-                throw new RuntimeException("Could not get flow from module container using name:  " + flowName);
-            }
-            if ( flow.getState().equals(STOPPED) || flow.getState().equals(STOPPED_IN_ERROR) )
-            {
-                throw new RuntimeException(
-                    "Events cannot be replayed when the flow that is being replayed to is in a " + flow.getState()
-                        + " state.  Module[" + moduleName + "] Flow[" + flowName + "]");
-            }
-            FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
-            ResubmissionService resubmissionService = flowConfiguration.getResubmissionService();
-            if ( resubmissionService == null )
-            {
-                throw new RuntimeException(
-                    """
-                    The resubmission service on the flow you are resubmitting to is null. This is most liekly due to \
-                    the resubmission service not being set on the flow factory for the flow you are \
-                    resubmitting to.\
-                    """);
-            }
-            Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
-            Object deserialisedEvent = serialiser.deserialise(event);
-            logger.debug("deserialised Event " + deserialisedEvent);
-            resubmissionService.onResubmission(deserialisedEvent);
-        }
-        catch (Exception e)
-        {
-            logger.error("An error has occurred trying to replay an event: ", e);
-            return new ResponseEntity(
-                "An error has occurred on the server when trying to replay the event. " + e.getMessage(),
-                HttpStatus.NOT_FOUND
-            );
-        }
-        return new ResponseEntity("Event replayed!", HttpStatus.OK);
-    }
+//    /**
+//     * REST endpoint to replay given event.
+//     *
+//     * @param moduleName The name of the module we are replaying to.
+//     * @param flowName   The name of the flow we are replaying to.
+//     * @param event      The event we are replaying.
+//     * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
+//     */
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.PUT,
+//                    value = "/eventReplay/{moduleName}/{flowName}")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity replay(@PathVariable("moduleName") String moduleName,
+//                                 @PathVariable("flowName") String flowName, @RequestBody byte[] event)
+//    {
+//        try
+//        {
+//            Module<Flow> module = moduleContainer.getModule(moduleName);
+//            if ( module == null )
+//            {
+//                throw new RuntimeException("Could not get module from module container using name:  " + moduleName);
+//            }
+//            Flow flow = module.getFlow(flowName);
+//            if ( flow == null )
+//            {
+//                throw new RuntimeException("Could not get flow from module container using name:  " + flowName);
+//            }
+//            if ( flow.getState().equals(STOPPED) || flow.getState().equals(STOPPED_IN_ERROR) )
+//            {
+//                throw new RuntimeException(
+//                    "Events cannot be replayed when the flow that is being replayed to is in a " + flow.getState()
+//                        + " state.  Module[" + moduleName + "] Flow[" + flowName + "]");
+//            }
+//            FlowConfiguration flowConfiguration = flow.getFlowConfiguration();
+//            ResubmissionService resubmissionService = flowConfiguration.getResubmissionService();
+//            if ( resubmissionService == null )
+//            {
+//                throw new RuntimeException(
+//                    """
+//                    The resubmission service on the flow you are resubmitting to is null. This is most liekly due to \
+//                    the resubmission service not being set on the flow factory for the flow you are \
+//                    resubmitting to.\
+//                    """);
+//            }
+//            Serialiser serialiser = flow.getSerialiserFactory().getDefaultSerialiser();
+//            Object deserialisedEvent = serialiser.deserialise(event);
+//            logger.debug("deserialised Event " + deserialisedEvent);
+//            resubmissionService.onResubmission(deserialisedEvent);
+//        }
+//        catch (Exception e)
+//        {
+//            logger.error("An error has occurred trying to replay an event: ", e);
+//            return new ResponseEntity(
+//                "An error has occurred on the server when trying to replay the event. " + e.getMessage(),
+//                HttpStatus.NOT_FOUND
+//            );
+//        }
+//        return new ResponseEntity("Event replayed!", HttpStatus.OK);
+//    }
 
     /**
      * REST endpoint to replay given events.

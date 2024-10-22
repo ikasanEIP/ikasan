@@ -42,49 +42,49 @@ public class ModuleControlApplication
     @Autowired
     private DashboardRestService moduleMetadataDashboardRestService;
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/controlFlowState/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity controlFlowState(
-        @PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName,
-        @RequestBody String action)
-    {
-        try
-        {
-            String user = UserUtil.getUser();
-
-            switch (action){
-            case "start":
-                this.moduleService.startFlow(moduleName, flowName, user);break;
-            case "startPause":
-                this.moduleService.startPauseFlow(moduleName, flowName, user);break;
-            case "pause":
-                this.moduleService.pauseFlow(moduleName, flowName, user);break;
-            case "resume":
-                this.moduleService.resumeFlow(moduleName, flowName, user);break;
-            case "stop":
-                this.moduleService.stopFlow(moduleName, flowName, user);break;
-            default:
-                return new ResponseEntity("Unknown flow action [" + action + "].", HttpStatus.FORBIDDEN);
-            }
-
-        }
-        catch (Exception e)
-        {
-            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
-        }
-        return new ResponseEntity("Flow state changed successfully!", HttpStatus.OK);
-    }
-
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.PUT,
+//        value = "/controlFlowState/{moduleName}/{flowName}")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity controlFlowState(
+//        @PathVariable("moduleName") String moduleName,
+//        @PathVariable("flowName") String flowName,
+//        @RequestBody String action)
+//    {
+//        try
+//        {
+//            String user = UserUtil.getUser();
+//
+//            switch (action){
+//            case "start":
+//                this.moduleService.startFlow(moduleName, flowName, user);break;
+//            case "startPause":
+//                this.moduleService.startPauseFlow(moduleName, flowName, user);break;
+//            case "pause":
+//                this.moduleService.pauseFlow(moduleName, flowName, user);break;
+//            case "resume":
+//                this.moduleService.resumeFlow(moduleName, flowName, user);break;
+//            case "stop":
+//                this.moduleService.stopFlow(moduleName, flowName, user);break;
+//            default:
+//                return new ResponseEntity("Unknown flow action [" + action + "].", HttpStatus.FORBIDDEN);
+//            }
+//
+//        }
+//        catch (Exception e)
+//        {
+//            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+//        }
+//        return new ResponseEntity("Flow state changed successfully!", HttpStatus.OK);
+//    }
+//
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity changeFlowState(@RequestBody ChangeFlowStateDto changeFlowStateDto)
     {
         try
         {
-            String user = UserUtil.getUser();
+            String user = changeFlowStateDto.getUsername()!=null?changeFlowStateDto.getUsername(): UserUtil.getUser();
 
             switch (changeFlowStateDto.getAction()){
             case "start":
@@ -109,31 +109,31 @@ public class ModuleControlApplication
         }
         return new ResponseEntity(HttpStatus.OK);
     }
-
-
-    @Deprecated
-    @RequestMapping(method = RequestMethod.PUT,
-        value = "/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public void controlFlowStartupMode(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName, @PathVariable("startupType") String startupType,
-        @RequestBody String startupComment)
-    {
-        String user = UserUtil.getUser();
-        if ("manual".equalsIgnoreCase(startupType)
-            || "automatic".equalsIgnoreCase(startupType)
-            || "disabled".equalsIgnoreCase(startupType))
-        {
-            //crude check to ensure comment is supplied when disabling
-            if (startupType.equalsIgnoreCase("disabled") && (startupComment == null || ""
-                .equals(startupComment.trim())))
-            {
-                throw new IllegalArgumentException("Comment must be provided when disabling Flow startup");
-            }
-            moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
-            moduleMetadataDashboardRestService.publish(this.moduleService.getModule(moduleName));
-        }
-    }
+//
+//
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.PUT,
+//        value = "/controlFlowStartupMode/{moduleName}/{flowName}/{startupType}")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public void controlFlowStartupMode(@PathVariable("moduleName") String moduleName,
+//        @PathVariable("flowName") String flowName, @PathVariable("startupType") String startupType,
+//        @RequestBody String startupComment)
+//    {
+//        String user = UserUtil.getUser();
+//        if ("manual".equalsIgnoreCase(startupType)
+//            || "automatic".equalsIgnoreCase(startupType)
+//            || "disabled".equalsIgnoreCase(startupType))
+//        {
+//            //crude check to ensure comment is supplied when disabling
+//            if (startupType.equalsIgnoreCase("disabled") && (startupComment == null || ""
+//                .equals(startupComment.trim())))
+//            {
+//                throw new IllegalArgumentException("Comment must be provided when disabling Flow startup");
+//            }
+//            moduleService.setStartupType(moduleName, flowName, StartupType.valueOf(startupType), startupComment, user);
+//            moduleMetadataDashboardRestService.publish(this.moduleService.getModule(moduleName));
+//        }
+//    }
 
     @RequestMapping(method = RequestMethod.PUT,
         value = "/startupMode")
@@ -141,7 +141,7 @@ public class ModuleControlApplication
     public ResponseEntity changeFlowStartupMode(
         @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
     {
-        String user = UserUtil.getUser();
+        String user = changeFlowStartupModeDto.getUsername()!=null?changeFlowStartupModeDto.getUsername(): UserUtil.getUser();
 
         String startupType = changeFlowStartupModeDto.getStartupType();
         String moduleName = changeFlowStartupModeDto.getModuleName();
@@ -174,7 +174,7 @@ public class ModuleControlApplication
     public ResponseEntity changeAllFlowStartupMode(
         @RequestBody ChangeFlowStartupModeDto changeFlowStartupModeDto)
     {
-        String user = UserUtil.getUser();
+        String user = changeFlowStartupModeDto.getUsername()!=null?changeFlowStartupModeDto.getUsername(): UserUtil.getUser();
 
         String startupType = changeFlowStartupModeDto.getStartupType();
         String moduleName = changeFlowStartupModeDto.getModuleName();
@@ -219,17 +219,17 @@ public class ModuleControlApplication
         return new ResponseEntity(new FlowStartupTypeDto(moduleName, flowName, startupControl.getStartupType().name(), startupControl.getComment()), HttpStatus.OK);
     }
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/flowState/{moduleName}/{flowName}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public String getFlowState(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName)
-    {
-        Module<Flow> module = moduleService.getModule(moduleName);
-        Flow flow = module.getFlow(flowName);
-        return flow.getState();
-    }
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.GET,
+//        value = "/flowState/{moduleName}/{flowName}")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public String getFlowState(@PathVariable("moduleName") String moduleName,
+//        @PathVariable("flowName") String flowName)
+//    {
+//        Module<Flow> module = moduleService.getModule(moduleName);
+//        Flow flow = module.getFlow(flowName);
+//        return flow.getState();
+//    }
 
     @RequestMapping(method = RequestMethod.GET,
         value = "/{moduleName}/{flowName}",
@@ -249,23 +249,23 @@ public class ModuleControlApplication
         }
     }
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-        value = "/flowStates/{moduleName}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public Map<String, String> getFlowStates(@PathVariable("moduleName") String moduleName)
-    {
-        HashMap<String, String> results = new HashMap<String, String>();
-        Module<Flow> module = moduleService.getModule(moduleName);
-        if(module != null && module.getFlows() != null) {
-            List<Flow> flows = module.getFlows();
-            for (Flow flow : flows) {
-                results.put(module.getName() + "-" + flow.getName()
-                    , flow.getState());
-            }
-        }
-        return results;
-    }
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.GET,
+//        value = "/flowStates/{moduleName}")
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public Map<String, String> getFlowStates(@PathVariable("moduleName") String moduleName)
+//    {
+//        HashMap<String, String> results = new HashMap<String, String>();
+//        Module<Flow> module = moduleService.getModule(moduleName);
+//        if(module != null && module.getFlows() != null) {
+//            List<Flow> flows = module.getFlows();
+//            for (Flow flow : flows) {
+//                results.put(module.getName() + "-" + flow.getName()
+//                    , flow.getState());
+//            }
+//        }
+//        return results;
+//    }
 
     @RequestMapping(method = RequestMethod.GET,
         value = "/{moduleName}")
@@ -300,14 +300,13 @@ public class ModuleControlApplication
     }
 
     @RequestMapping(method = RequestMethod.PUT,
-        value = "/controlContextListenersState/{moduleName}/{flowName}")
+        value = "/controlContextListenersState/{moduleName}/{flowName}/{user}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity controlContextListenersState(@PathVariable("moduleName") String moduleName,
-        @PathVariable("flowName") String flowName, @RequestBody String action)
+        @PathVariable("flowName") String flowName, @PathVariable("user") String user, @RequestBody String action)
     {
         try
         {
-            String user = UserUtil.getUser();
             if (action.equalsIgnoreCase("start"))
             {
                 this.moduleService.startContextListeners(moduleName, flowName, user);
@@ -347,7 +346,8 @@ public class ModuleControlApplication
             }
             else
             {
-                return new ResponseEntity("Unknown module activation action [" + moduleActivationDto.getAction() + "].", HttpStatus.FORBIDDEN);
+                return new ResponseEntity("Unknown module activation action ["
+                    + moduleActivationDto.getAction() + "].", HttpStatus.FORBIDDEN);
             }
         }
         catch (Exception e)

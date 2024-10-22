@@ -61,112 +61,112 @@ public class ConfigurationApplication
         this.mapper.registerModule(m);
     }
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
-                    produces = { "application/json" })
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createConfiguration(@PathVariable("moduleName") String moduleName,
-                                              @PathVariable("flowName") String flowName,
-                                              @PathVariable("componentName") String componentName)
-    {
-        Module<Flow> module = moduleService.getModule(moduleName);
-        Flow flow = module.getFlow(flowName);
-        FlowElement<?> flowElement = flow.getFlowElement(componentName);
-        Configuration configuration = null;
-        if ( flowElement.getFlowComponent() instanceof ConfiguredResource )
-        {
-            ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowComponent();
-            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if ( configuration == null )
-            {
-                configuration = this.configurationManagement.createConfiguration(configuredResource);
-                this.configurationManagement.saveConfiguration(configuration);
-            }
-            else
-            {
-                return new ResponseEntity("This configuration already exists!", HttpStatus.UNAUTHORIZED);
-            }
-        }
-        else
-        {
-            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity(configuration, HttpStatus.OK);
-    }
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.GET,
+//                    value = "/createConfiguration/{moduleName}/{flowName}/{componentName}",
+//                    produces = { "application/json" })
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity createConfiguration(@PathVariable("moduleName") String moduleName,
+//                                              @PathVariable("flowName") String flowName,
+//                                              @PathVariable("componentName") String componentName)
+//    {
+//        Module<Flow> module = moduleService.getModule(moduleName);
+//        Flow flow = module.getFlow(flowName);
+//        FlowElement<?> flowElement = flow.getFlowElement(componentName);
+//        Configuration configuration = null;
+//        if ( flowElement.getFlowComponent() instanceof ConfiguredResource )
+//        {
+//            ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowComponent();
+//            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+//            if ( configuration == null )
+//            {
+//                configuration = this.configurationManagement.createConfiguration(configuredResource);
+//                this.configurationManagement.saveConfiguration(configuration);
+//            }
+//            else
+//            {
+//                return new ResponseEntity("This configuration already exists!", HttpStatus.UNAUTHORIZED);
+//            }
+//        }
+//        else
+//        {
+//            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
+//        }
+//        return new ResponseEntity(configuration, HttpStatus.OK);
+//    }
 
-    /**
-     * TODO: work out how to get annotation security working.
-     *
-     * @param moduleName
-     * @param flowName
-     * @return
-     */
-    @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
-                    produces = { "application/json" })
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createFlowElementConfiguration(@PathVariable("moduleName") String moduleName,
-                                                         @PathVariable("flowName") String flowName,
-                                                         @PathVariable("componentName") String componentName)
-    {
-        Module<Flow> module = moduleService.getModule(moduleName);
-        Flow flow = module.getFlow(flowName);
-        FlowElement<?> flowElement = flow.getFlowElement(componentName);
-        Configuration configuration = null;
-        if ( flowElement instanceof ConfiguredResource configuredResource )
-        {
-            String configurationId = moduleName + flowName + componentName + "_element";
-            configuredResource.setConfiguredResourceId(configurationId);
-            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if ( configuration == null )
-            {
-                configuration = this.configurationManagement.createConfiguration(configuredResource);
-                this.configurationManagement.saveConfiguration(configuration);
-            }
-            else
-            {
-                return new ResponseEntity("This flow element configuration already exists!", HttpStatus.UNAUTHORIZED);
-            }
-        }
-        else
-        {
-            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity(configuration, HttpStatus.OK);
-    }
-
-    @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/createConfiguration/{moduleName}/{flowName}",
-                    produces = { "application/json" })
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createFlowConfiguration(@PathVariable("moduleName") String moduleName,
-                                                  @PathVariable("flowName") String flowName)
-    {
-        Module<Flow> module = moduleService.getModule(moduleName);
-        Flow flow = module.getFlow(flowName);
-        Configuration configuration = null;
-        if ( flow instanceof ConfiguredResource configuredResource )
-        {
-            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if ( configuration == null )
-            {
-                configuration = this.configurationManagement.createConfiguration(configuredResource);
-                this.configurationManagement.saveConfiguration(configuration);
-            }
-            else
-            {
-                return new ResponseEntity("This flow element configuration already exists!", HttpStatus.UNAUTHORIZED);
-            }
-        }
-        else
-        {
-            return new ResponseEntity("This flow is not configurable!", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity(configuration, HttpStatus.OK);
-    }
+//    /**
+//     * TODO: work out how to get annotation security working.
+//     *
+//     * @param moduleName
+//     * @param flowName
+//     * @return
+//     */
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.GET,
+//                    value = "/createFlowElementConfiguration/{moduleName}/{flowName}/{componentName}",
+//                    produces = { "application/json" })
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity createFlowElementConfiguration(@PathVariable("moduleName") String moduleName,
+//                                                         @PathVariable("flowName") String flowName,
+//                                                         @PathVariable("componentName") String componentName)
+//    {
+//        Module<Flow> module = moduleService.getModule(moduleName);
+//        Flow flow = module.getFlow(flowName);
+//        FlowElement<?> flowElement = flow.getFlowElement(componentName);
+//        Configuration configuration = null;
+//        if ( flowElement instanceof ConfiguredResource configuredResource )
+//        {
+//            String configurationId = moduleName + flowName + componentName + "_element";
+//            configuredResource.setConfiguredResourceId(configurationId);
+//            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+//            if ( configuration == null )
+//            {
+//                configuration = this.configurationManagement.createConfiguration(configuredResource);
+//                this.configurationManagement.saveConfiguration(configuration);
+//            }
+//            else
+//            {
+//                return new ResponseEntity("This flow element configuration already exists!", HttpStatus.UNAUTHORIZED);
+//            }
+//        }
+//        else
+//        {
+//            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
+//        }
+//        return new ResponseEntity(configuration, HttpStatus.OK);
+//    }
+//
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.GET,
+//                    value = "/createConfiguration/{moduleName}/{flowName}",
+//                    produces = { "application/json" })
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity createFlowConfiguration(@PathVariable("moduleName") String moduleName,
+//                                                  @PathVariable("flowName") String flowName)
+//    {
+//        Module<Flow> module = moduleService.getModule(moduleName);
+//        Flow flow = module.getFlow(flowName);
+//        Configuration configuration = null;
+//        if ( flow instanceof ConfiguredResource configuredResource )
+//        {
+//            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+//            if ( configuration == null )
+//            {
+//                configuration = this.configurationManagement.createConfiguration(configuredResource);
+//                this.configurationManagement.saveConfiguration(configuration);
+//            }
+//            else
+//            {
+//                return new ResponseEntity("This flow element configuration already exists!", HttpStatus.UNAUTHORIZED);
+//            }
+//        }
+//        else
+//        {
+//            return new ResponseEntity("This flow is not configurable!", HttpStatus.UNAUTHORIZED);
+//        }
+//        return new ResponseEntity(configuration, HttpStatus.OK);
+//    }
 
     @RequestMapping(method = RequestMethod.GET,
                     value = "/flows")
@@ -205,38 +205,38 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
-    @Deprecated
-    @RequestMapping(method = RequestMethod.GET,
-                    value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
-                    produces = { "application/json" })
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity createInvokerConfiguration(@PathVariable("moduleName") String moduleName,
-                                                     @PathVariable("flowName") String flowName,
-                                                     @PathVariable("componentName") String componentName)
-    {
-        Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
-        FlowElement<?> flowElement = flow.getFlowElement(componentName);
-        Configuration configuration = null;
-        if ( flowElement.getFlowElementInvoker() instanceof ConfiguredResource )
-        {
-            ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowElementInvoker();
-            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
-            if ( configuration == null )
-            {
-                configuration = this.configurationManagement.createConfiguration(configuredResource);
-                this.configurationManagement.saveConfiguration(configuration);
-            }
-            else
-            {
-                return new ResponseEntity("This configuration already  exists!", HttpStatus.UNAUTHORIZED);
-            }
-        }
-        else
-        {
-            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity("Configuration created!", HttpStatus.OK);
-    }
+//    @Deprecated
+//    @RequestMapping(method = RequestMethod.GET,
+//                    value = "/createInvokerConfiguration/{moduleName}/{flowName}/{componentName}",
+//                    produces = { "application/json" })
+//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+//    public ResponseEntity createInvokerConfiguration(@PathVariable("moduleName") String moduleName,
+//                                                     @PathVariable("flowName") String flowName,
+//                                                     @PathVariable("componentName") String componentName)
+//    {
+//        Flow flow = (Flow) moduleService.getModule(moduleName).getFlow(flowName);
+//        FlowElement<?> flowElement = flow.getFlowElement(componentName);
+//        Configuration configuration = null;
+//        if ( flowElement.getFlowElementInvoker() instanceof ConfiguredResource )
+//        {
+//            ConfiguredResource configuredResource = (ConfiguredResource) flowElement.getFlowElementInvoker();
+//            configuration = this.configurationManagement.getConfiguration(configuredResource.getConfiguredResourceId());
+//            if ( configuration == null )
+//            {
+//                configuration = this.configurationManagement.createConfiguration(configuredResource);
+//                this.configurationManagement.saveConfiguration(configuration);
+//            }
+//            else
+//            {
+//                return new ResponseEntity("This configuration already  exists!", HttpStatus.UNAUTHORIZED);
+//            }
+//        }
+//        else
+//        {
+//            return new ResponseEntity("This component is not configurable!", HttpStatus.UNAUTHORIZED);
+//        }
+//        return new ResponseEntity("Configuration created!", HttpStatus.OK);
+//    }
 
     @RequestMapping(method = RequestMethod.GET,
                     value = "/invokers",
