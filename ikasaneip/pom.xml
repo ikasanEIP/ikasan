@@ -309,7 +309,7 @@
         <version.org.liquibase>4.25.1</version.org.liquibase>
         <version.org.yaml.snakeyaml>2.2</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
-        <version.org.eclipse.jetty>11.0.18</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>11.0.24</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-10</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.12.10</version.org.mongodb.mongo-java-driver>
         <version.org.mongodb4.mongo-java-driver>4.4.1</version.org.mongodb4.mongo-java-driver>
