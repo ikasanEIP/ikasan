@@ -71,6 +71,4 @@ public interface ConfigurationMetaData<CONFIGURATION_PARAMS>
      * @return
      */
     public String getImplementingClass();
-
-
 }

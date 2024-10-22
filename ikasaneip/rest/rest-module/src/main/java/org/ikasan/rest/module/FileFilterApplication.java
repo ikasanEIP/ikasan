@@ -113,8 +113,7 @@ public class FileFilterApplication
             String fileFilterJson = mapper.writeValueAsString(fileFilter);
 
             this.systemEventService.logSystemEvent(fileFilter.getClientId() +"_"+ fileFilter.getCriteria(),
-                "File Filter created [%s]".formatted(fileFilterJson), UserUtil.getUser()
-                                                  );
+                "File Filter created [%s]".formatted(fileFilterJson), UserUtil.getUser());
         }
         catch (JsonProcessingException e)
         {

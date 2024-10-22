@@ -33,9 +33,10 @@ public interface ModuleControlService<M, F, C>
      * @param moduleName
      * @param flowName
      * @param action
+     * @param username
      * @return
      */
-    public boolean changeFlowState(String contextUrl, String moduleName, String flowName, String action);
+    public boolean changeFlowState(String contextUrl, String moduleName, String flowName, String action, String username);
 
     /**
      * Set the flow startup type. Supports types 'manual', 'automatic', 'disabled'.
@@ -49,10 +50,11 @@ public interface ModuleControlService<M, F, C>
      * @param flowName
      * @param startupType
      * @param comment
+     * * @param username
      * @return
      */
     public boolean changeFlowStartupType(String contextUrl, String moduleName, String flowName, String startupType,
-                                         String comment);
+                                         String comment, String username);
 
     /**
      * Get the startup type of the flow.
@@ -71,9 +73,10 @@ public interface ModuleControlService<M, F, C>
      * @param contextUrl - url of service to call
      * @param moduleName - the name of the module
      * @param action - 'activate' or 'deactivate'
+     * @param username of user performing the action
      * @return true if successful otherwise false
      */
-    public boolean changeModuleActivationState(String contextUrl, String moduleName, String action);
+    public boolean changeModuleActivationState(String contextUrl, String moduleName, String action, String username);
 
 
     /**

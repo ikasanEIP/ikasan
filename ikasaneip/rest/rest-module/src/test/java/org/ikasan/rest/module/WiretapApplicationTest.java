@@ -143,7 +143,7 @@ public class WiretapApplicationTest
         Mockito.when(jobAwareFlowEventListener.getTrigger(1202l))
                .thenReturn(new TriggerImpl("testModule","testFlow","after","test"));
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/wiretap/trigger/1202")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/wiretap/trigger/1202/user")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE)
                                                               .contentType(MediaType.APPLICATION_JSON_VALUE);
 
@@ -158,7 +158,7 @@ public class WiretapApplicationTest
             Mockito.eq("testModule"),
             Mockito.startsWith("testModule-testFlow:org.ikasan.trigger.model.TriggerImpl[id=null,moduleName=testModule,flowName=testFlow,flowElementName=null,params={},jobName=test,relationship=AFTER]"),
             Mockito.eq("Delete Wiretap"),
-            Mockito.anyString());
+            Mockito.eq("user"));
 
         Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener, systemEventService );
 
@@ -173,7 +173,7 @@ public class WiretapApplicationTest
         Mockito.doThrow(new RuntimeException("issue persisting rigger"))
                .when(jobAwareFlowEventListener).deleteDynamicTrigger(1202l);
 
-        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/wiretap/trigger/1202")
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/wiretap/trigger/1202/user")
                                                               .accept(MediaType.APPLICATION_JSON_VALUE)
                                                               .contentType(MediaType.APPLICATION_JSON_VALUE);
 
