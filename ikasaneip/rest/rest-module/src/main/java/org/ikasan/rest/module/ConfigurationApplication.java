@@ -21,6 +21,7 @@ import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -321,7 +322,8 @@ public class ConfigurationApplication
 
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity putConfiguration(@RequestBody ConfigurationMetaData configurationMetaData)
+    public ResponseEntity putConfiguration(@RequestBody ConfigurationMetaData configurationMetaData,
+                                           @RequestHeader HttpHeaders headers)
     {
         Configuration configuration = convert(configurationMetaData);
 
@@ -333,11 +335,11 @@ public class ConfigurationApplication
                 oldConfigJson = mapper.writeValueAsString(oldConfig);
             }
             String newConfigJson = mapper.writeValueAsString(configuration);
-
+            String username = headers.getFirst("username");
             this.systemEventService.logSystemEvent(
                 configuration.getConfigurationId(),
                 "Configuration Updated OldConfig [%s] NewConfig [%s]".formatted(oldConfigJson, newConfigJson),
-                UserUtil.getUser());
+                username != null ? username : UserUtil.getUser());
         }
         catch (JsonProcessingException e)
         {
@@ -413,7 +415,8 @@ public class ConfigurationApplication
     @RequestMapping(method = RequestMethod.DELETE,
                     value = "/{configurationId}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteConfiguration(@PathVariable("configurationId") String configurationId)
+    public ResponseEntity deleteConfiguration(@PathVariable("configurationId") String configurationId,
+                                              @RequestHeader HttpHeaders headers)
     {
         Configuration configuration = this.configurationManagement.getConfiguration(configurationId);
         if ( configuration != null )
@@ -422,11 +425,11 @@ public class ConfigurationApplication
             try
             {
                 String deletedConfigJson = mapper.writeValueAsString(configuration);
-
+                String username = headers.getFirst("username");
                 this.systemEventService.logSystemEvent(
                     configuration.getConfigurationId(),
                     "Configuration Deleted OldConfig [%s]".formatted(deletedConfigJson),
-                    UserUtil.getUser());
+                    username);
             }
             catch (JsonProcessingException e)
             {
@@ -438,7 +441,6 @@ public class ConfigurationApplication
         {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-
     }
 
 }

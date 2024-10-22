@@ -84,17 +84,21 @@ public interface ConfigurationService
      *
      * @param contextUrl
      * @param configuration
+     * @param username
+     *
      * @return
      */
-    public boolean storeConfiguration(String contextUrl, ConfigurationMetaData configuration);
+    public boolean storeConfiguration(String contextUrl, ConfigurationMetaData configuration, String username);
 
     /**
      * Delete a configuration from a module.
      *
      * @param contextUrl
      * @param configurationId
+     * @param username
+     *
      * @return
      */
-    public boolean delete(String contextUrl, String configurationId);
+    public boolean delete(String contextUrl, String configurationId, String username);
 
 }
