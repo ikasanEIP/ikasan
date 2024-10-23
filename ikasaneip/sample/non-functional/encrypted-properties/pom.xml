@@ -6,12 +6,12 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>non-functional</artifactId>
-        <version>4.0.3</version>
+        <version>4.0.4-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
     <artifactId>encrypted-properties</artifactId>
-    <version>4.0.3</version>
+    <version>4.0.4-SNAPSHOT</version>
     <name>Encrypted Properties Integration Module</name>
     <description>Bootstrap a modules whose properties have been encrypted.</description>
 
