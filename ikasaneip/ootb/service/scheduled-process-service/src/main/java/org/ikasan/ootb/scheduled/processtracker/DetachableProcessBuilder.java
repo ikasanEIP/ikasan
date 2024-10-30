@@ -143,7 +143,7 @@ public class DetachableProcessBuilder {
                 "\"" + commandLineScriptName + "\"");
         } else {
             commands.addAll(Arrays.asList(detachableProcess.getCommandProcessor().getCommandArgs()));
-            commands.add("chmod +x " + commandLineScriptName + "\n " + commandLineScriptName+ "\n RET=$?\n echo $RET > " + processExitStatusFile + "\n exit $RET");
+            commands.add("sleep 1 \nchmod +x " + commandLineScriptName + "\nsleep 1 \n" + commandLineScriptName+ "\nRET=$?\necho $RET > " + processExitStatusFile + "\nexit $RET");
         }
         LOGGER.info("About to execute command files [" + commandLineScriptName + "] return value going to [" + processExitStatusFile + "] with command string [" + commands + "]");
         return commands;

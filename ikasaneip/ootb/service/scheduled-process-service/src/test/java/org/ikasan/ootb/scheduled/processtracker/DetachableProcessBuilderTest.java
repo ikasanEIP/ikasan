@@ -161,11 +161,13 @@ public class DetachableProcessBuilderTest {
         assertThat(commands.get(1)).isEqualTo(cp.getCommandArgs()[1]);
 
         assertThat(commands.get(2)).isEqualTo(
+            "sleep 1 \n" +
             "chmod +x XX\n" +
-            " XX\n" +
-            " RET=$?\n" +
-            " echo $RET > OutputFileName\n" +
-            " exit $RET");
+            "sleep 1 \n" +
+            "XX\n" +
+            "RET=$?\n" +
+            "echo $RET > OutputFileName\n" +
+            "exit $RET");
     }
 
     @Test
