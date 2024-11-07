@@ -127,6 +127,15 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      */
     void saveContextTerminalJobRecord(ContextTerminalJobRecord contextTerminalJobRecord);
 
+
+    /**
+     * Saves the internal event-driven job template record with the provided modifications.
+     *
+     * @param internalEventDrivenJobRecord The internal event-driven job record to be saved
+     * @param modifiedBy The user who modified the record
+     */
+    void saveInternalEventDrivenJobTemplateRecord(InternalEventDrivenJobRecord internalEventDrivenJobRecord, String modifiedBy);
+
     /**
      * Save a FileEventDrivenJob
      *
@@ -169,12 +178,36 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      */
     void saveContextTerminalJob(ContextTerminalJob contextTerminalJob, String modifiedBy);
 
+
+    /**
+     * Saves the internal event-driven job template with the specified modifications made by the given user.
+     *
+     * @param internalEventDrivenJob The internal event-driven job template to be saved.
+     * @param modifiedBy The user who has modified the internal event-driven job template.
+     */
+    void saveInternalEventDrivenJobTemplate(InternalEventDrivenJob internalEventDrivenJob, String modifiedBy);
+
     /**
      * Save a list of FileEventDrivenJobRecord.
      *
      * @param fileEventDrivenJobRecords
      */
     public void saveFileEventDrivenJobRecords(List<FileEventDrivenJobRecord> fileEventDrivenJobRecords);
+
+    /**
+     * Saves the provided list of InternalEventDrivenJob templates in the database, associating them with the specified actor.
+     *
+     * @param quartzScheduleDrivenJobs A List of InternalEventDrivenJob objects representing the job templates to be saved.
+     * @param actor The name of the actor associated with the job templates.
+     */
+    public void saveInternalEventDrivenJobTemplates(List<InternalEventDrivenJob> quartzScheduleDrivenJobs, String actor);
+
+    /**
+     * Save a list of InternalEventDrivenJobTemplateRecord
+     *
+     * @param internalEventDrivenJobRecord
+     */
+    public void saveInternalEventDrivenJobTemplateRecords(List<InternalEventDrivenJobRecord> internalEventDrivenJobRecord);
 
     /**
      * Save a list of InternalEventDrivenJobRecord

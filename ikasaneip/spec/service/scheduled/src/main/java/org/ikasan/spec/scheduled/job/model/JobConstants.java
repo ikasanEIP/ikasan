@@ -3,6 +3,7 @@ package org.ikasan.spec.scheduled.job.model;
 public interface JobConstants {
     String FILE_EVENT_DRIVEN_JOB = "fileEventDrivenJob";
     String INTERNAL_EVENT_DRIVEN_JOB = "internalEventDrivenJob";
+    String INTERNAL_EVENT_DRIVEN_JOB_TEMPLATE = "internalEventDrivenJobTemplate";
     String QUARTZ_SCHEDULE_DRIVEN_JOB = "quartzScheduleDrivenJob";
     String GLOBAL_EVENT_JOB = "globalEventJob";
     String CONTEXT_START_JOB = "CONTEXT_START_JOB";

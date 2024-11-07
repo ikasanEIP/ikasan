@@ -164,4 +164,48 @@ public interface SchedulerJob extends Serializable {
      * @return
      */
     int getOrdinal();
+
+
+    /**
+     * Set whether this job is a template job or not.
+     *
+     * @param isTemplateJob true if this job is a template job, false otherwise
+     */
+    void setTemplateJob(Boolean isTemplateJob);
+
+
+    /**
+     * Check if this job is a template job.
+     *
+     * @return true if this job is a template job, false otherwise
+     */
+    Boolean isTemplateJob();
+
+    /**
+     * Set whether the job is template-based or not.
+     *
+     * @param isTemplateBased true if the job is template-based, false otherwise
+     */
+    void setTemplateBased(Boolean isTemplateBased);
+
+    /**
+     * Check if the job is template-based.
+     *
+     * @return true if the job is template-based, false if it is not
+     */
+    Boolean isTemplateBased();
+
+    /**
+     * Set the template name for this job.
+     *
+     * @param templateName the name of the template to set
+     */
+    void setTemplateName(String templateName);
+
+    /**
+     * Get the template name associated with this job.
+     *
+     * @return the template name
+     */
+    String getTemplateName();
 }
