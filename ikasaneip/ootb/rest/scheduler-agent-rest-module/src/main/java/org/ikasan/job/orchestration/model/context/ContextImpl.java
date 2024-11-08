@@ -32,6 +32,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected Integer contextVisualisationLevelDistance;
     protected Integer contextVisualisationNodeDistance;
     protected Integer visualisationFontSize;
+    protected Boolean renderLogicalBoundaries;
 
     @Override
     public String getName() {
@@ -246,6 +247,16 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public void setVisualisationFontSize(Integer visualisationFontSize) {
         this.visualisationFontSize = visualisationFontSize;
+    }
+
+    @Override
+    public Boolean isRenderLogicalBoundaries() {
+        return renderLogicalBoundaries;
+    }
+
+    @Override
+    public void setRenderLogicalBoundaries(Boolean renderLogicalBoundaries) {
+        this.renderLogicalBoundaries = renderLogicalBoundaries;
     }
 
     @Override

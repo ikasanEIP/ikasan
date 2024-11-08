@@ -47,6 +47,9 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     private String errorAcknowledgmentTicketId;
     private String errorAcknowledgeUser;
     private long errorAcknowledgeTimestamp;
+    protected Boolean templateJob;
+    protected Boolean templateBased;
+    protected String templateName;
 
     @Override
     public List<String> getSuccessfulReturnCodes() {
@@ -396,6 +399,36 @@ public class InternalEventDrivenJobInstanceImpl implements InternalEventDrivenJo
     @Override
     public void setErrorAcknowledgeTimestamp(long errorAcknowledgeTimestamp) {
         this.errorAcknowledgeTimestamp = errorAcknowledgeTimestamp;
+    }
+
+    @Override
+    public Boolean isTemplateJob() {
+        return templateJob;
+    }
+
+    @Override
+    public void setTemplateJob(Boolean templateJob) {
+        this.templateJob = templateJob;
+    }
+
+    @Override
+    public Boolean isTemplateBased() {
+        return templateBased;
+    }
+
+    @Override
+    public void setTemplateBased(Boolean templateBased) {
+        this.templateBased = templateBased;
+    }
+
+    @Override
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    @Override
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 
     @Override

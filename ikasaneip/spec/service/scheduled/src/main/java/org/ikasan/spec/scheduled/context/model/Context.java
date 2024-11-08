@@ -371,4 +371,20 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @return The font size used in the visualization.
      */
     Integer getVisualisationFontSize();
+
+
+    /**
+     * Check if logical boundaries should be rendered.
+     *
+     * @return true if logical boundaries should be rendered, false otherwise
+     */
+    Boolean isRenderLogicalBoundaries();
+
+
+    /**
+     * Set whether logical boundaries should be rendered within the context visualization.
+     *
+     * @param renderLogicalBoundaries true if logical boundaries should be rendered, false otherwise
+     */
+    void setRenderLogicalBoundaries(Boolean renderLogicalBoundaries);
 }
