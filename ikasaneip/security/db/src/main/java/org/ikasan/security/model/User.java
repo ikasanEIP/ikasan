@@ -44,6 +44,8 @@ import java.security.Principal;
 import java.util.*;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.ikasan.security.util.AuthoritiesHelper;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -96,6 +98,7 @@ public class User implements UserDetails, Principal
 
     /** All <code>IkasanPrincipals</code> held by the owner for the system */
     @ManyToMany(cascade = { CascadeType.MERGE }, fetch = FetchType.EAGER)
+    @Fetch(FetchMode.JOIN)
     @JoinTable(
         name = "UserPrincipal",
         joinColumns = { @JoinColumn(name = "UserId") },

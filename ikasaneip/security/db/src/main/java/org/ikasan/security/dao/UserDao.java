@@ -43,29 +43,101 @@ package org.ikasan.security.dao;
 import java.util.List;
 
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserFilter;
 import org.ikasan.security.model.UserLite;
 
 /**
- * Data Access interface for <code>User</code> instances
- * 
- * @author Ikasan Development Team
- *
+ * Interface for interacting with user data in the system.
  */
 public interface UserDao
 {
+
+    /**
+     * Retrieves a list of UserLite objects with a specified role, user filter, limit, and offset.
+     *
+     * @param roleName The role name to filter the users by
+     * @param userFilter The additional filter criteria to apply when retrieving users
+     * @param limit The maximum number of users to retrieve
+     * @param offset The offset from where to start retrieving users
+     * @return List of UserLite objects based on the provided role, filter, limit, and offset
+     */
+    List<UserLite> getUsersWithRole(String roleName, UserFilter userFilter, int limit, int offset);
+
+
+    /**
+     * Retrieves the count of users with a specific role and additional filter criteria.
+     *
+     * @param roleName The role name to filter the users by
+     * @param userFilter The additional filter criteria to apply when retrieving users
+     * @return The count of users with the specified role and matching the filter criteria
+     */
+    int getUsersWithRoleCount(String roleName, UserFilter userFilter);
+
+    /**
+     * Retrieves a list of UserLite objects that do not have the specified role, based on the provided role name,
+     * user filter, limit, and offset.
+     *
+     * @param roleName   The role name to filter the users by
+     * @param userFilter The additional filter criteria to apply when retrieving users
+     * @param limit      The maximum number of users to retrieve
+     * @param offset     The offset from where to start retrieving users
+     * @return List of UserLite objects that do not have the specified role, based on the provided criteria
+     */
+    List<UserLite> getUsersWithoutRole(String roleName, UserFilter userFilter, int limit, int offset);
+
+
+    /**
+     * Retrieves the count of users who do not have the specified role and match the given filter criteria.
+     *
+     * @param roleName    The role name to exclude from counting the users
+     * @param userFilter  The additional filter criteria to apply when counting users
+     * @return The count of users without the specified role and matching the filter criteria
+     */
+    int getUsersWithoutRoleCount(String roleName, UserFilter userFilter);
+
+    /**
+     * Retrieves the count of users based on the specified user filter.
+     *
+     * @param userFilter The filter criteria to apply when counting users
+     * @return The count of users matching the filter criteria
+     */
+    int getUserCount(UserFilter userFilter);
+
     /**
      * Retrieves all <code>User</code>s known to the system
      * 
      * @return List of all <code>Users</code>
      */
-    public List<User> getUsers();
+    List<User> getUsers();
+
+
+
+    /**
+     * Retrieves a list of users based on the provided filter, limit, and offset.
+     *
+     * @param userFilter The filter criteria to apply when retrieving users
+     * @param limit The maximum number of users to retrieve
+     * @param offset The offset from where to start retrieving users
+     * @return List of users based on the filter, limit, and offset provided
+     */
+    List<User> getUsers(UserFilter userFilter, int limit, int offset);
 
     /**
      * Retrieves all <code>UserLite</code>s known to the system
      *
      * @return List of all <code>UserLites</code>
      */
-    public List<UserLite> getUserLites();
+    List<UserLite> getUserLites();
+
+
+    /**
+     * Retrieves a list of UserLite objects with a specified limit and offset.
+     *
+     * @param limit the maximum number of UserLite objects to retrieve
+     * @param offset the offset from where to start retrieving UserLite objects
+     * @return a list of UserLite objects based on the limit and offset provided
+     */
+    List<UserLite> getUserLites(int limit, int offset);
 
     /**
      * Retrieves a specific <code>User</code> by name
@@ -73,7 +145,7 @@ public interface UserDao
      * @param username
      * @return specified <code>User</code> or null if does not exist
      */
-    public User getUser(String username);
+    User getUser(String username);
 
     /**
      * Retrieves a List of <code>User</code> whose username like username%
@@ -81,7 +153,7 @@ public interface UserDao
      * @param username
      * @return specified <code>User</code> or null if does not exist
      */
-    public List<User> getUserByUsernameLike(String username);
+    List<User> getUserByUsernameLike(String username);
     
     /**
      * Retrieves a List of <code>User</code> whose firstname like firstname%
@@ -89,7 +161,7 @@ public interface UserDao
      * @param firstname
      * @return specified <code>User</code> or null if does not exist
      */
-    public List<User> getUserByFirstnameLike(String firstname);
+    List<User> getUserByFirstnameLike(String firstname);
     
     /**
      * Retrieves a List of <code>User</code> whose surname like surname%
@@ -97,21 +169,19 @@ public interface UserDao
      * @param surname
      * @return specified <code>User</code> or null if does not exist
      */
-    public List<User> getUserBySurnameLike(String surname);
+    List<User> getUserBySurnameLike(String surname);
 
     /**
      * Saves a <code>User</code> to persistent storage
      * 
      * @param user
      */
-    public void save(User user);
+    void save(User user);
 
     /**
      * Deletes a <code>User</code> from persistent storage
      * 
      * @param user
      */
-    public void delete(User user);
-
-   
+    void delete(User user);
 }

@@ -42,6 +42,7 @@ package org.ikasan.security.service;
 
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserFilter;
 import org.ikasan.security.model.UserLite;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -58,18 +59,89 @@ import java.util.List;
 public interface UserService extends UserDetailsManager
 {
     /**
+     * Retrieves a list of UserLite objects with a specified role, user filter, limit, and offset.
+     *
+     * @param roleName The role name to filter the users by
+     * @param userFilter The additional filter criteria to apply when retrieving users
+     * @param limit The maximum number of users to retrieve
+     * @param offset The offset from where to start retrieving users
+     * @return List of UserLite objects based on the provided role, filter, limit, and offset
+     */
+    List<UserLite> getUsersWithRole(String roleName, UserFilter userFilter, int limit, int offset);
+
+
+    /**
+     * Retrieves the count of users with a specific role and additional filter criteria.
+     *
+     * @param roleName The role name to filter the users by
+     * @param userFilter The additional filter criteria to apply when retrieving users
+     * @return The count of users with the specified role and matching the filter criteria
+     */
+    int getUsersWithRoleCount(String roleName, UserFilter userFilter);
+
+    /**
+     * Retrieves a list of UserLite objects that do not have the specified role, based on the provided role name,
+     * user filter, limit, and offset.
+     *
+     * @param roleName   The role name to filter the users by
+     * @param userFilter The additional filter criteria to apply when retrieving users
+     * @param limit      The maximum number of users to retrieve
+     * @param offset     The offset from where to start retrieving users
+     * @return List of UserLite objects that do not have the specified role, based on the provided criteria
+     */
+    List<UserLite> getUsersWithoutRole(String roleName, UserFilter userFilter, int limit, int offset);
+
+
+    /**
+     * Retrieves the count of users who do not have the specified role and match the given filter criteria.
+     *
+     * @param roleName    The role name to exclude from counting the users
+     * @param userFilter  The additional filter criteria to apply when counting users
+     * @return The count of users without the specified role and matching the filter criteria
+     */
+    int getUsersWithoutRoleCount(String roleName, UserFilter userFilter);
+
+    /**
+     * Returns the total number of users in the system.
+     *
+     * @return the number of users in the system
+     */
+    int getUserCount(UserFilter userFilter);
+
+    /**
      * Gets all Users in the system
      * 
      * @return all Users
      */
     public List<User> getUsers();
 
+
     /**
-     * Gets all UserLites in the system
+     * Retrieves a list of users based on the provided filter, limit, and offset.
      *
-     * @return all Users
+     * @param userFilter the filter to apply on users
+     * @param limit the maximum number of users to retrieve
+     * @param offset the offset from where to start retrieving users
+     * @return a list of users based on the filter, limit, and offset provided
      */
-    public List<UserLite> getUserLites();
+    List<User> getUsers(UserFilter userFilter, int limit, int offset);
+
+    /**
+     * Retrieves all <code>UserLite</code>s known to the system
+     *
+     * @return List of all <code>UserLites</code>
+     */
+    List<UserLite> getUserLites();
+
+
+    /**
+     * Retrieves a list of UserLite objects with a specified limit and offset.
+     *
+     * @param limit the maximum number of UserLite objects to retrieve
+     * @param offset the offset from where to start retrieving UserLite objects
+     * @return a list of UserLite objects based on the limit and offset provided
+     */
+    List<UserLite> getUserLites(int limit, int offset);
 
     /**
      * Gets all Authorities in the system

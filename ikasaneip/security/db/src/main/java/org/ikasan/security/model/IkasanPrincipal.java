@@ -75,9 +75,6 @@ package org.ikasan.security.model;
     )
     private Set<Role> roles;
 
-    @ManyToMany(mappedBy = "principals", fetch = FetchType.EAGER)
-    private Set<User> users;
-
     /** The date time stamp when an instance was first created */
     @Column(name = "CreatedDateTime", nullable = false)
     private Date createdDateTime;
@@ -248,14 +245,6 @@ package org.ikasan.security.model;
 		}
 	}
 
-    public Set<User> getUsers() {
-        return users;
-    }
-
-    public void setUsers(Set<User> users) {
-        this.users = users;
-    }
-
     @Override public boolean equals(Object o)
     {
         if (this == o)
@@ -280,7 +269,6 @@ package org.ikasan.security.model;
             .add("applicationSecurityBaseDn='" + applicationSecurityBaseDn + "'")
             .add("description='" + description + "'")
             .add("roles=" + roles)
-            .add("users=" + users)
             .add("createdDateTime=" + createdDateTime)
             .add("updatedDateTime=" + updatedDateTime)
             .toString();

@@ -45,7 +45,6 @@ import org.hibernate.PropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.*;
 import org.junit.Assert;
@@ -172,7 +171,6 @@ public class SecurityServiceTest
         principal.setName("anotherPrincipal7");
         principal.setType("type");
         principal.setDescription("description");
-        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -581,7 +579,7 @@ public class SecurityServiceTest
     {
     	List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipalsWithRole("role0");
     	
-    	Assert.assertTrue(principals.size() == 8);
+    	Assert.assertTrue(principals.size() == 7);
     }
     
     @Test
@@ -670,7 +668,7 @@ public class SecurityServiceTest
     	names.add("role2");
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalsByName(names);
 
-    	Assert.assertTrue(principals.size() == 8);
+    	Assert.assertTrue(principals.size() == 7);
     }
     
     @Test
@@ -899,5 +897,477 @@ public class SecurityServiceTest
         Assert.assertEquals("role0", roleJobPlans.get(0).getRole().getName());
         Assert.assertEquals("role3", roleJobPlans.get(1).getRole().getName());
         Assert.assertEquals("role7", roleJobPlans.get(2).getRole().getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principal_count_with_filter()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        int count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 1);
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 1);
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        filter.setSortOrder("DESCENDING");
+        count = this.xaSecurityService.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principal_lites_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipalLite> principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test offset
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 2);
+        Assert.assertTrue(principals.size() == 6);
+
+        // test limit
+        principals = this.xaSecurityService.getPrincipalLites(filter, 2, 0);
+        Assert.assertTrue(principals.size() == 2);
+
+        // test limit and offset
+        principals = this.xaSecurityService.getPrincipalLites(filter, 2, 2);
+        Assert.assertTrue(principals.size() == 2);
+        Assert.assertEquals("anotherPrincipal2", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(1).getName());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(6).getName());
+        Assert.assertEquals("stewmi", principals.get(7).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(7).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test offset
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 2);
+        Assert.assertTrue(principals.size() == 6);
+
+        // test limit
+        principals = this.xaSecurityService.getPrincipals(filter, 2, 0);
+        Assert.assertTrue(principals.size() == 2);
+
+        // test limit and offset
+        principals = this.xaSecurityService.getPrincipals(filter, 2, 2);
+        Assert.assertTrue(principals.size() == 2);
+        Assert.assertEquals("anotherPrincipal2", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(1).getName());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(6).getName());
+        Assert.assertEquals("stewmi", principals.get(7).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(7).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_with_role_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipalLite> principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+
+        // test offset
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 2);
+        Assert.assertEquals(5, principals.size());
+
+        // test limit
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 2, 0);
+        Assert.assertEquals(2, principals.size());
+
+        // test limit and offset
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 2, 2);
+        Assert.assertEquals(2, principals.size());
+        Assert.assertEquals("anotherPrincipal2", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(1).getName());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("stewmi", principals.get(6).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityService.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+        Assert.assertEquals("anotherPrincipal1", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_with_role_count_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        int principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityService.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_without_role_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipalLite> principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test offset
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 2);
+        Assert.assertEquals(0, principals.size());
+
+        // test limit
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 2, 0);
+        Assert.assertEquals(1, principals.size());
+        Assert.assertEquals("anotherPrincipal7", principals.get(0).getName());
+
+        // test limit and offset
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 2, 2);
+        Assert.assertEquals(0, principals.size());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(0, principals.size());
+
+        filter.setNameFilter("other");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("other");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+        Assert.assertEquals("anotherPrincipal7", principals.get(0).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityService.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+        Assert.assertEquals("anotherPrincipal7", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_without_role_count_with_filter_limit_and_offset() {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        int principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(0, principals);
+
+        filter.setNameFilter("other");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("other");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
     }
 }

@@ -46,141 +46,218 @@ import org.ikasan.security.model.*;
 
 
 /**
- * @author CMI2 Development Team
- *
+ * Interface for interacting with the security related data in the system.
  */
 public interface SecurityDao
 {
     /**
-     * Save a give Role
+     * Saves or updates the provided Role in the database.
      *
-     * @param role
+     * @param role the Role object to be saved or updated
      */
     void saveOrUpdateRole(Role role);
 
     /**
-     * Delete a given Role
+     * Delete the specified Role from the system.
      *
-     * @param role
+     * @param role the Role to be deleted from the system
      */
     void deleteRole(Role role);
 
     /**
-     * Save a given Policy
+     * Save or update a Policy in the database.
      *
-     * @param policy
+     * @param policy the Policy object to be saved or updated
      */
     void saveOrUpdatePolicy(Policy policy);
 
     /**
-     * Delete a given Policy
+     * Deletes the provided Policy from the system.
      *
-     * @param policy
+     * @param policy the Policy to be deleted
      */
     void deletePolicy(Policy policy);
     
     /**
-     * Save a given PolicyLink
+     * Saves or updates the given PolicyLink.
      *
-     * @param policyLink
+     * @param policyLink the PolicyLink to be saved or updated
      */
     void saveOrUpdatePolicyLink(PolicyLink policyLink);
 
     /**
-     * Delete a given PolicyLink
-     * @param policyLink
+     * Delete the provided PolicyLink.
+     *
+     * @param policyLink the PolicyLink to be deleted
      */
     void deletePolicyLink(PolicyLink policyLink);
 
     /**
-     * Delete a given RoleModule
+     * Deletes the given RoleModule from the system.
      *
-     * @param roleModule
+     * @param roleModule the RoleModule to be deleted
      */
     void deleteRoleModule(RoleModule roleModule);
 
     /**
-     * Save a given RoleModule
+     * Saves a RoleModule entity in the database.
      *
-     * @param roleModule
+     * @param roleModule the RoleModule entity to be saved
      */
     void saveRoleModule(RoleModule roleModule);
 
     /**
-     * Delete a given RoleJobPlan
+     * Deletes the specified RoleJobPlan from the database.
      *
-     * @param roleJobPlan
+     * @param roleJobPlan the RoleJobPlan object to be deleted
      */
     void deleteRoleJobPlan(RoleJobPlan roleJobPlan);
 
     /**
-     * Save a given RoleJobPlan
+     * Saves a RoleJobPlan entity to the database.
      *
-     * @param roleJobPlan
+     * @param roleJobPlan the RoleJobPlan entity to save
      */
     void saveRoleJobPlan(RoleJobPlan roleJobPlan);
 
     /**
-     * Save a given IkasanPrincipal
+     * Save or update the given IkasanPrincipal.
      *
-     * @param principal
+     * @param principal the IkasanPrincipal to be saved or updated
      */
     void saveOrUpdatePrincipal(IkasanPrincipal principal);
 
 
     /**
-     * Delete a given IkasanPrincipal
+     * Deletes the given IkasanPrincipal from the system.
      *
-     * @param principal
+     * @param principal the IkasanPrincipal to be deleted
      */
     void deletePrincipal(IkasanPrincipal principal);
 
     /**
-     * Get an IkasanPrincipal by name.
+     * Retrieves an IkasanPrincipal by name.
      *
-     * @param name
-     * @return
+     * @param name the name of the IkasanPrincipal
+     * @return the IkasanPrincipal object with the provided name
      */
     IkasanPrincipal getPrincipalByName(String name);
 
     /**
-     * Get IkasanPrincipals associated with a list of roles.
+     * Retrieve a list of IkasanPrincipals based on the provided role names.
      *
-     * @param names
-     * @return
+     * @param names a list of role names to retrieve the IkasanPrincipals for
+     * @return a list of IkasanPrincipals based on the provided role names
      */
     List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names);
 
     /**
-     * Get all Policies
+     * Retrieves the count of IkasanPrincipals based on the provided IkasanPrincipalFilter.
      *
-     * @return     
+     * @param filter the filter to apply for counting the IkasanPrincipals
+     * @return the count of IkasanPrincipals based on the provided filter
+     */
+    int getPrincipalCount(IkasanPrincipalFilter filter);
+
+
+    /**
+     * Retrieves the count of IkasanPrincipals that have a specific role and match the provided filter.
+     *
+     * @param roleName the name of the role to count the IkasanPrincipals for
+     * @param filter the filter to apply for counting the IkasanPrincipals
+     * @return the count of IkasanPrincipals with the specified role and filter
+     */
+    int getPrincipalsWithRoleCount(String roleName, IkasanPrincipalFilter filter);
+
+
+    /**
+     * Retrieves the count of IkasanPrincipals that do not have a specific role and match the provided filter.
+     *
+     * @param roleName the name of the role to exclude from the count
+     * @param filter the filter to apply for counting the IkasanPrincipals
+     * @return the count of IkasanPrincipals without the specified role and based on the provided filter
+     */
+    int getPrincipalsWithoutRoleCount(String roleName, IkasanPrincipalFilter filter);
+
+    /**
+     * Retrieves all policies from the system.
+     *
+     * @return a list of Policy objects representing all policies in the system
      */
     List<Policy> getAllPolicies();
 
     /**
-     * Get all Roles
-     * @return     
+     * Retrieves a list of all roles.
+     *
+     * @return a List of Role objects representing all roles
      */
     List<Role> getAllRoles();
 
     /**
-     * Get all IkasanPrincipals
-     * @return     
+     * Retrieve all IkasanPrincipal objects.
+     *
+     * @return a list of IkasanPrincipal objects
      */
     List<IkasanPrincipal> getAllPrincipals();
 
     /**
-     * IkasanPrincipalLites
-     * @return
+     * Retrieve a list of IkasanPrincipals based on the provided filter, limit, and offset.
+     *
+     * @param filter the filter to apply for retrieving the IkasanPrincipals
+     * @param limit the maximum number of IkasanPrincipals to retrieve
+     * @param offset the position in the result set from where to start retrieving IkasanPrincipals
+     * @return a list of IkasanPrincipals based on the provided filter, limit, and offset
+     */
+    List<IkasanPrincipal> getPrincipals(IkasanPrincipalFilter filter, int limit, int offset);
+
+
+    /**
+     * Retrieve all IkasanPrincipalLite objects.
+     *
+     * @return a list of IkasanPrincipalLite objects
      */
     List<IkasanPrincipalLite> getAllPrincipalLites();
 
     /**
+     * Retrieves a list of IkasanPrincipalLite objects based on the provided filter, limit, and offset.
+     *
+     * @param filter the filter to apply for retrieving the IkasanPrincipalLite objects
+     * @param limit the maximum number of IkasanPrincipalLite objects to retrieve
+     * @param offset the position in the result set from where to start retrieving IkasanPrincipalLite objects
+     * @return a list of IkasanPrincipalLite objects based on the provided filter, limit, and offset
+     */
+    List<IkasanPrincipalLite> getPrincipalLites(IkasanPrincipalFilter filter, int limit, int offset);
+
+    /**
      * Get all IkasanPrincipals associated with a given Role
+     *
      * @return     
      */
     List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
+
+
+    /**
+     * Retrieves a list of IkasanPrincipalLite objects associated with a specified role,
+     * applying the provided filter and pagination parameters.
+     *
+     * @param roleName the name of the role to retrieve IkasanPrincipals for
+     * @param filter   the filter to apply for retrieving the IkasanPrincipals
+     * @param limit    the maximum number of IkasanPrincipalLite objects to retrieve
+     * @param offset   the position in the result set from where to start retrieving objects
+     * @return a list of IkasanPrincipalLite objects based on the provided role, filter, limit, and offset
+     */
+    List<IkasanPrincipalLite> getAllPrincipalsWithRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset);
+
+    /**
+     * Retrieves a list of IkasanPrincipalLite objects that do not have the specified role.
+     *
+     * @param roleName the name of the role to exclude from the search
+     * @param filter optional filter to apply to the search
+     * @param limit maximum number of results to return
+     * @param offset index from which to start the results
+     * @return a list of IkasanPrincipalLite objects without the specified role
+     */
+    List<IkasanPrincipalLite> getAllPrincipalsWithoutRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset);
     
     /**
      * Get all Policies associated with a given Role

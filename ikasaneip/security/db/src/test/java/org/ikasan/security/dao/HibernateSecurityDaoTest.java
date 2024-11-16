@@ -45,7 +45,6 @@ import org.hibernate.PropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.AuthenticationServiceException;
@@ -56,16 +55,12 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 
 /**
@@ -175,7 +170,6 @@ public class HibernateSecurityDaoTest
         principal.setName("anotherPrincipal7");
         principal.setType("type");
         principal.setDescription("description");
-        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
         
@@ -498,6 +492,487 @@ public class HibernateSecurityDaoTest
 
     @Test
     @DirtiesContext
+    public void test_get_all_principal_lites()
+    {
+        List<IkasanPrincipalLite> principals = this.xaSecurityDao.getAllPrincipalLites();
+
+        Assert.assertTrue(principals.size() == 8);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principal_count_with_filter()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        int count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 1);
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 1);
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        filter.setSortOrder("DESCENDING");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principal_lites_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipalLite> principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test offset
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 2);
+        Assert.assertTrue(principals.size() == 6);
+
+        // test limit
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 2, 0);
+        Assert.assertTrue(principals.size() == 2);
+
+        // test limit and offset
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 2, 2);
+        Assert.assertTrue(principals.size() == 2);
+        Assert.assertEquals("anotherPrincipal2", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(1).getName());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(6).getName());
+        Assert.assertEquals("stewmi", principals.get(7).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(7).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipal> principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test offset
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 2);
+        Assert.assertTrue(principals.size() == 6);
+
+        // test limit
+        principals = this.xaSecurityDao.getPrincipals(filter, 2, 0);
+        Assert.assertTrue(principals.size() == 2);
+
+        // test limit and offset
+        principals = this.xaSecurityDao.getPrincipals(filter, 2, 2);
+        Assert.assertTrue(principals.size() == 2);
+        Assert.assertEquals("anotherPrincipal2", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(1).getName());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(6).getName());
+        Assert.assertEquals("stewmi", principals.get(7).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getPrincipals(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(7).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_with_role_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipalLite> principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+
+        // test offset
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 2);
+        Assert.assertEquals(5, principals.size());
+
+        // test limit
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 2, 0);
+        Assert.assertEquals(2, principals.size());
+
+        // test limit and offset
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 2, 2);
+        Assert.assertEquals(2, principals.size());
+        Assert.assertEquals("anotherPrincipal2", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(1).getName());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("stewmi", principals.get(6).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getAllPrincipalsWithRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(7, principals.size());
+        Assert.assertEquals("anotherPrincipal1", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_with_role_count_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        int principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("ewm");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getPrincipalsWithRoleCount
+            ("role1", filter);
+        Assert.assertEquals(7, principals);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_without_role_with_filter_limit_and_offset()
+    {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        List<IkasanPrincipalLite> principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test offset
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 2);
+        Assert.assertEquals(0, principals.size());
+
+        // test limit
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 2, 0);
+        Assert.assertEquals(1, principals.size());
+        Assert.assertEquals("anotherPrincipal7", principals.get(0).getName());
+
+        // test limit and offset
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 2, 2);
+        Assert.assertEquals(0, principals.size());
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(0, principals.size());
+
+        filter.setNameFilter("other");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("other");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+        Assert.assertEquals("anotherPrincipal7", principals.get(0).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getAllPrincipalsWithoutRole
+            ("role1", filter, 100, 0);
+        Assert.assertEquals(1, principals.size());
+        Assert.assertEquals("anotherPrincipal7", principals.get(0).getName());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_principals_without_role_count_with_filter_limit_and_offset() {
+        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+
+        int principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test name filter
+        filter.setNameFilter("ewm");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(0, principals);
+
+        filter.setNameFilter("other");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test type filter
+        filter = new IkasanPrincipalFilter();
+        filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test description filter
+        filter = new IkasanPrincipalFilter();
+        filter.setDescriptionFilter("desc");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // test aggregate filter
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("other");
+        filter.setTypeFilter("type");
+        filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getPrincipalsWithoutRoleCount
+            ("role1", filter);
+        Assert.assertEquals(1, principals);
+    }
+
+    @Test
+    @DirtiesContext
     public void test_delete_principal()
     {
         List<IkasanPrincipal> principals = this.xaSecurityDao.getAllPrincipals();
@@ -740,7 +1215,7 @@ public class HibernateSecurityDaoTest
     {
     	List<IkasanPrincipal> principals = this.xaSecurityDao.getAllPrincipalsWithRole("role0");
     	
-    	Assert.assertTrue(principals.size() == 8);
+    	Assert.assertTrue(principals.size() == 7);
     }
     
     @Test
@@ -761,7 +1236,7 @@ public class HibernateSecurityDaoTest
     	names.add("role1");
     	List<IkasanPrincipal> principals = this.xaSecurityDao.getPrincipalsByRoleNames(names);
 
-    	Assert.assertTrue(principals.size() == 8);
+    	Assert.assertTrue(principals.size() == 7);
     }
     
     @Test

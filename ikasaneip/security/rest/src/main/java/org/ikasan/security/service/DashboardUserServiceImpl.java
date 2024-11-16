@@ -41,8 +41,11 @@
 package org.ikasan.security.service;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import org.ikasan.security.model.Policy;
 import org.ikasan.security.model.User;
+import org.ikasan.security.model.UserFilter;
 import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.dto.JwtRequest;
 import org.ikasan.security.service.dto.JwtResponse;
@@ -60,6 +63,7 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of the <code>UserService</code> utilising Dashboard
@@ -78,6 +82,9 @@ public class DashboardUserServiceImpl implements UserService
 
     protected static final String DASHBOARD_EXTRACT_ENABLED_PROPERTY = "ikasan.dashboard.extract.enabled";
 
+    protected static final String DASHBOARD_AUTHENTICATION_USER_CREDENTIAL_CACHE_TIMEOUT_SECONDS
+        = "ikasan.dashboard.authentication.user.credential.cache.timeout.seconds";
+
     Logger logger = LoggerFactory.getLogger(DashboardUserServiceImpl.class);
 
     private RestTemplate restTemplate;
@@ -92,6 +99,10 @@ public class DashboardUserServiceImpl implements UserService
 
     private boolean isEnabled;
 
+    private int userCredentialCacheTimeoutSeconds = 300;
+
+    private Cache<String, JwtRequest> userCredentialCache;
+
     /**
      * Constructor
      *
@@ -100,7 +111,7 @@ public class DashboardUserServiceImpl implements UserService
     public DashboardUserServiceImpl(Environment environment)
     {
         super();
-        restTemplate = new RestTemplate();
+        this.restTemplate = new RestTemplate();
         MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
         jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
@@ -110,6 +121,14 @@ public class DashboardUserServiceImpl implements UserService
             this.baseUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY);
             this.authenticateUrl = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + "/authenticate";
             this.moduleName = environment.getProperty(MODULE_NAME_PROPERTY);
+
+            if(environment.containsProperty(DASHBOARD_AUTHENTICATION_USER_CREDENTIAL_CACHE_TIMEOUT_SECONDS)) {
+                this.userCredentialCacheTimeoutSeconds = environment.getProperty(DASHBOARD_AUTHENTICATION_USER_CREDENTIAL_CACHE_TIMEOUT_SECONDS, Integer.class);
+            }
+
+            this.userCredentialCache = CacheBuilder.newBuilder()
+                .expireAfterAccess(userCredentialCacheTimeoutSeconds,TimeUnit.SECONDS)
+                .build();
         }
     }
 
@@ -120,7 +139,7 @@ public class DashboardUserServiceImpl implements UserService
      */
     public List<User> getUsers()
     {
-        HttpHeaders headers = createHttpHeaders();
+        HttpHeaders headers = createHttpHeaders(true);
         HttpEntity entity = new HttpEntity(headers);
         try
         {
@@ -221,6 +240,41 @@ public class DashboardUserServiceImpl implements UserService
         throw new UnsupportedOperationException("Not Supported operation.");
     }
 
+    @Override
+    public List<UserLite> getUsersWithRole(String roleName, UserFilter userFilter, int limit, int offset) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
+    @Override
+    public int getUsersWithRoleCount(String roleName, UserFilter userFilter) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
+    @Override
+    public List<UserLite> getUsersWithoutRole(String roleName, UserFilter userFilter, int limit, int offset) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
+    @Override
+    public int getUsersWithoutRoleCount(String roleName, UserFilter userFilter) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
+    @Override
+    public int getUserCount(UserFilter userFilter) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
+    @Override
+    public List<User> getUsers(UserFilter userFilter, int limit, int offset) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
+    @Override
+    public List<UserLite> getUserLites(int limit, int offset) {
+        throw new UnsupportedOperationException("Not Supported operation.");
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -228,7 +282,7 @@ public class DashboardUserServiceImpl implements UserService
      */
     public User loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException
     {
-        HttpHeaders headers = createHttpHeaders();
+        HttpHeaders headers = createHttpHeaders(true);
         HttpEntity entity = new HttpEntity(headers);
         Map<String, String> params = new HashMap<String, String>();
         params.put("username", username);
@@ -338,7 +392,16 @@ public class DashboardUserServiceImpl implements UserService
 
     public boolean authenticate(String username, String password)
     {
-        HttpEntity<JwtRequest> entity = new HttpEntity(new JwtRequest(username, password), createHttpHeaders());
+        JwtRequest jwtRequest = new JwtRequest(username, password);
+
+        if(this.token != null) {
+            JwtRequest cachedJwtRequest = this.userCredentialCache.getIfPresent(this.token);
+            if (cachedJwtRequest != null && cachedJwtRequest.equals(jwtRequest)) {
+                return true;
+            }
+        }
+
+        HttpEntity<JwtRequest> entity = new HttpEntity(new JwtRequest(username, password), createHttpHeaders(false));
         try
         {
             if (username != null && password != null)
@@ -348,6 +411,7 @@ public class DashboardUserServiceImpl implements UserService
 
                 if(response.getStatusCode().is2xxSuccessful()) {
                     this.token = response.getBody().getToken();
+                    this.userCredentialCache.put(this.token, jwtRequest);
                     return true;
                 }
                 else {
@@ -364,13 +428,13 @@ public class DashboardUserServiceImpl implements UserService
         }
     }
 
-    private HttpHeaders createHttpHeaders()
+    private HttpHeaders createHttpHeaders(boolean includeToken)
     {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         headers.add(HttpHeaders.USER_AGENT, moduleName);
-        if (token != null)
+        if (token != null && includeToken)
         {
             headers.add("Authorization", "Bearer " + token);
         }

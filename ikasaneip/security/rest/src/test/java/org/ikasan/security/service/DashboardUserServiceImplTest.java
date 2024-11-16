@@ -48,6 +48,12 @@ public class DashboardUserServiceImplTest
        Mockito.when(environment.getProperty(DashboardUserServiceImpl.MODULE_NAME_PROPERTY))
                .thenReturn("testModule");
 
+        Mockito.when(environment.containsProperty(DashboardUserServiceImpl.DASHBOARD_AUTHENTICATION_USER_CREDENTIAL_CACHE_TIMEOUT_SECONDS))
+            .thenReturn(true);
+
+        Mockito.when(environment.getProperty(DashboardUserServiceImpl.DASHBOARD_AUTHENTICATION_USER_CREDENTIAL_CACHE_TIMEOUT_SECONDS, Integer.class))
+            .thenReturn(5);
+
         uut = new DashboardUserServiceImpl(environment);
 
     }
@@ -64,6 +70,47 @@ public class DashboardUserServiceImplTest
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
         assertEquals(true, uut.authenticate("admin", "admin"));
+    }
+
+    @Test
+    public void authenticate_successful_cached_user()
+    {
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+        assertEquals(true, uut.authenticate("admin", "admin"));
+        assertEquals(true, uut.authenticate("admin", "admin"));
+
+        // Because the user has been cached, the service will only be hit once!
+        verify(1, postRequestedFor(urlEqualTo("/authenticate")));
+    }
+
+    @Test
+    public void authenticate_successful_cached_user_expires() throws InterruptedException {
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+        assertEquals(true, uut.authenticate("admin", "admin"));
+        assertEquals(true, uut.authenticate("admin", "admin"));
+
+        // Sleep to allow the user cache expire.
+        Thread.sleep(7000);
+
+        assertEquals(true, uut.authenticate("admin", "admin"));
+        assertEquals(true, uut.authenticate("admin", "admin"));
+
+        // Because the user has been cached, the service will only be hit once either side of the cache expiry!
+        verify(2, postRequestedFor(urlEqualTo("/authenticate")));
     }
 
     @Test

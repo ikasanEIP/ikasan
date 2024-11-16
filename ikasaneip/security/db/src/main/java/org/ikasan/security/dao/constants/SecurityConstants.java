@@ -67,13 +67,85 @@ public interface SecurityConstants
 
     public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = """
         select p from IkasanPrincipal as p \
-         LEFT JOIN p.roles r \
+         LEFT JOIN FETCH p.roles r \
          where  r.name = :name\
         """ ;
 
+    public static final String GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY = """
+        select p from IkasanPrincipalLite as p, Role r, PrincipalRole pr \
+        where
+            p.id = pr.id.ikasanPrincipalId
+        and
+            r.id = pr.id.roleId
+        and           
+            r.name = :name
+        """;
+
+    public static final String GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY = """
+        select p.id from IkasanPrincipalLite as p, Role r, PrincipalRole pr \
+        where
+            p.id = pr.id.ikasanPrincipalId
+        and
+            r.id = pr.id.roleId
+        and           
+            r.name = :name
+        """;
+
+    public static final String GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY_COUNT = """
+        select count(distinct p) from IkasanPrincipalLite as p, Role r, PrincipalRole pr \
+        where
+            p.id = pr.id.ikasanPrincipalId
+        and
+            r.id = pr.id.roleId
+        and           
+            r.name = :name
+        """;
+
+    public static final String GET_USERS_WITH_ROLE_QUERY = """
+        select u from UserLite u, IkasanPrincipal as p, UserPrincipal up, Role r, PrincipalRole pr \
+        where  
+            u.id = up.id.userId
+        and
+            p.id = up.id.ikasanPrincipalId
+        and
+            p.id = pr.id.ikasanPrincipalId
+        and
+            r.id = pr.id.roleId
+        and           
+            r.name = :name
+        """;
+
+    public static final String GET_USER_IDS_WITH_ROLE_QUERY = """
+        select u.id from UserLite u, IkasanPrincipal as p, UserPrincipal up, Role r, PrincipalRole pr \
+        where  
+            u.id = up.id.userId
+        and
+            p.id = up.id.ikasanPrincipalId
+        and
+            p.id = pr.id.ikasanPrincipalId
+        and
+            r.id = pr.id.roleId
+        and           
+            r.name = :name
+        """;
+
+    public static final String GET_USERS_WITH_ROLE_COUNT_QUERY = """
+        select count(distinct u) from UserLite u, IkasanPrincipal as p, UserPrincipal up, Role r, PrincipalRole pr \
+        where  
+            u.id = up.id.userId
+        and
+            p.id = up.id.ikasanPrincipalId
+        and
+            p.id = pr.id.ikasanPrincipalId
+        and
+            r.id = pr.id.roleId
+        and           
+            r.name = :name
+        """;
+
     public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = """
         select distinct(p) from IkasanPrincipal as p \
-         LEFT JOIN p.roles r \
+         LEFT JOIN FETCH p.roles r \
          where  r.name in (:name)\
         """ ;
 

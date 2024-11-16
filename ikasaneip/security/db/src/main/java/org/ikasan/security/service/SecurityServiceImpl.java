@@ -40,11 +40,12 @@
  */
 package org.ikasan.security.service;
 
-import java.util.List;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
 
 
 /**
@@ -227,6 +228,41 @@ public class SecurityServiceImpl implements SecurityService
     public List<IkasanPrincipalLite> getAllPrincipalLites()
     {
         return this.securityDao.getAllPrincipalLites();
+    }
+
+    @Override
+    public int getPrincipalCount(IkasanPrincipalFilter filter) {
+        return this.securityDao.getPrincipalCount(filter);
+    }
+
+    @Override
+    public int getPrincipalsWithRoleCount(String roleName, IkasanPrincipalFilter filter) {
+        return this.securityDao.getPrincipalsWithRoleCount(roleName, filter);
+    }
+
+    @Override
+    public List<IkasanPrincipalLite> getAllPrincipalsWithoutRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset) {
+        return this.securityDao.getAllPrincipalsWithoutRole(roleName, filter, limit, offset);
+    }
+
+    @Override
+    public int getPrincipalsWithoutRoleCount(String roleName, IkasanPrincipalFilter filter) {
+        return this.securityDao.getPrincipalsWithoutRoleCount(roleName, filter);
+    }
+
+    @Override
+    public List<IkasanPrincipal> getPrincipals(IkasanPrincipalFilter filter, int limit, int offset) {
+        return this.securityDao.getPrincipals(filter, limit, offset);
+    }
+
+    @Override
+    public List<IkasanPrincipalLite> getPrincipalLites(IkasanPrincipalFilter filter, int limit, int offset) {
+        return this.securityDao.getPrincipalLites(filter, limit, offset);
+    }
+
+    @Override
+    public List<IkasanPrincipalLite> getAllPrincipalsWithRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset) {
+        return this.securityDao.getAllPrincipalsWithRole(roleName, filter, limit, offset);
     }
 
     /* (non-Javadoc)

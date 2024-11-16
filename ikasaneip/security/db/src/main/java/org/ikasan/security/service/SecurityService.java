@@ -106,12 +106,80 @@ public interface SecurityService
     List<IkasanPrincipalLite> getAllPrincipalLites();
 
     /**
+     * Retrieves the count of IkasanPrincipals based on the provided IkasanPrincipalFilter.
+     *
+     * @param filter the filter to apply for counting the IkasanPrincipals
+     * @return the count of IkasanPrincipals based on the provided filter
+     */
+    int getPrincipalCount(IkasanPrincipalFilter filter);
+
+    /**
+     * Retrieves the count of IkasanPrincipals that have a specific role and match the provided filter.
+     *
+     * @param roleName the name of the role to count the IkasanPrincipals for
+     * @param filter the filter to apply for counting the IkasanPrincipals
+     * @return the count of IkasanPrincipals with the specified role and filter
+     */
+    int getPrincipalsWithRoleCount(String roleName, IkasanPrincipalFilter filter);
+
+    /**
+     * Retrieves a list of IkasanPrincipalLite objects that do not have the specified role.
+     *
+     * @param roleName the name of the role to exclude from the search
+     * @param filter optional filter to apply to the search
+     * @param limit maximum number of results to return
+     * @param offset index from which to start the results
+     * @return a list of IkasanPrincipalLite objects without the specified role
+     */
+    List<IkasanPrincipalLite> getAllPrincipalsWithoutRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset);
+
+    /**
+     * Retrieves the count of IkasanPrincipals that do not have a specific role and match the provided filter.
+     *
+     * @param roleName the name of the role to exclude from the count
+     * @param filter the filter to apply for counting the IkasanPrincipals
+     * @return the count of IkasanPrincipals without the specified role and based on the provided filter
+     */
+    int getPrincipalsWithoutRoleCount(String roleName, IkasanPrincipalFilter filter);
+
+    /**
+     * Retrieve a list of IkasanPrincipals based on the provided filter, limit, and offset.
+     *
+     * @param filter the filter to apply for retrieving the IkasanPrincipals
+     * @param limit the maximum number of IkasanPrincipals to retrieve
+     * @param offset the position in the result set from where to start retrieving IkasanPrincipals
+     * @return a list of IkasanPrincipals based on the provided filter, limit, and offset
+     */
+    List<IkasanPrincipal> getPrincipals(IkasanPrincipalFilter filter, int limit, int offset);
+
+    /**
+     * Retrieves a list of IkasanPrincipalLite objects based on the provided filter, limit, and offset.
+     *
+     * @param filter the filter to apply for retrieving the IkasanPrincipalLite objects
+     * @param limit the maximum number of IkasanPrincipalLite objects to retrieve
+     * @param offset the position in the result set from where to start retrieving IkasanPrincipalLite objects
+     * @return a list of IkasanPrincipalLite objects based on the provided filter, limit, and offset
+     */
+    List<IkasanPrincipalLite> getPrincipalLites(IkasanPrincipalFilter filter, int limit, int offset);
+
+    /**
      * Retrieves a list of IkasanPrincipal objects that have the specified role.
      *
      * @param roleName The name of the role to filter the principals by.
      * @return A list of IkasanPrincipal objects that have the specified role.
      */
     List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName);
+
+    /**
+     * Retrieves a list of IkasanPrincipals that have the specified role.
+     *
+     * @param roleName the role name to filter by
+     * @param filter optional IkasanPrincipalFilter to apply additional filtering
+     * @param limit maximum number of results to return
+     * @param offset starting index for the query results
+     * @return list of IkasanPrincipalLite instances with the specified role
+     */
+    List<IkasanPrincipalLite> getAllPrincipalsWithRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset);
 
     /**
      * Retrieves a list of IkasanPrincipal objects by the provided names.

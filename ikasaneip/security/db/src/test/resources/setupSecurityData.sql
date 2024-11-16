@@ -1,6 +1,24 @@
 /* Users */
 INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
-    VALUES (10001, 'username', 'firstname', 'surname', 'newPassword', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+    VALUES (10001, 'username', 'firstname', 'surname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10002, 'username1', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10003, 'username2', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10004, 'username3', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10005, 'username4', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10006, 'username5', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10007, 'username6', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10008, 'username7', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10009, 'username8', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
+INSERT INTO Users (ID, Username, Firstname, Surname, Department, Email, NewPassword, Enabled, PreviousAccess, RequiresPasswordChange)
+    VALUES (10010, 'username9', 'anotherfirstname', 'anothersurname', 'department', 'firstname@lastname.com', 'password', true, '1595355876119', true);
 
 /* SecurityPrincipal */
 INSERT INTO SecurityPrincipal (ID, Name, PrincipalType, Description, CreatedDateTime, UpdatedDateTime)

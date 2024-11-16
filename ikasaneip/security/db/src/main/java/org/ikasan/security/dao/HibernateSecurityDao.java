@@ -46,10 +46,10 @@ import jakarta.persistence.Query;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.List;
@@ -209,7 +209,74 @@ public class HibernateSecurityDao implements SecurityDao
         return query.getResultList();
     }
 
-	/*
+    @Override
+    public List<IkasanPrincipal> getPrincipals(IkasanPrincipalFilter filter, int limit, int offset) {
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<IkasanPrincipal> criteriaQuery = builder.createQuery(IkasanPrincipal.class);
+
+        Root<IkasanPrincipal> root = criteriaQuery.from(IkasanPrincipal.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(this.getPrincipalFilterPredicate(builder, filter, root));
+
+        if(filter.getSortOrder() != null && filter.getSortColumn() != null) {
+            if (filter.getSortOrder().equals("ASCENDING")) {
+                criteriaQuery.orderBy(builder.asc(root.get(filter.getSortColumn())));
+            }
+            else if (filter.getSortOrder().equals("DESCENDING")) {
+                criteriaQuery.orderBy(builder.desc(root.get(filter.getSortColumn())));
+            }
+        }
+
+        return this.entityManager.createQuery(criteriaQuery)
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .getResultList();
+    }
+
+    @Override
+    public List<IkasanPrincipalLite> getPrincipalLites(IkasanPrincipalFilter filter, int limit, int offset) {
+        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
+
+        CriteriaQuery<IkasanPrincipalLite> criteriaQuery = builder.createQuery(IkasanPrincipalLite.class);
+
+        Root<IkasanPrincipalLite> root = criteriaQuery.from(IkasanPrincipalLite.class);
+
+        criteriaQuery.select(root);
+        criteriaQuery.where(this.getPrincipalFilterPredicate(builder, filter, root));
+
+        if(filter.getSortOrder() != null && filter.getSortColumn() != null) {
+            if (filter.getSortOrder().equals("ASCENDING")) {
+                criteriaQuery.orderBy(builder.asc(root.get(filter.getSortColumn())));
+            }
+            else if (filter.getSortOrder().equals("DESCENDING")) {
+                criteriaQuery.orderBy(builder.desc(root.get(filter.getSortColumn())));
+            }
+        }
+
+        return this.entityManager.createQuery(criteriaQuery)
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .getResultList();
+    }
+
+    @Override
+    public int getPrincipalCount(IkasanPrincipalFilter filter) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> criteriaQuery = builder.createQuery(Long.class);
+        Root<IkasanPrincipal> userRoot = criteriaQuery.from(IkasanPrincipal.class);
+
+        Predicate predicate = this.getPrincipalFilterPredicate(builder, filter, userRoot);
+        criteriaQuery.where(predicate);
+        // select query
+        criteriaQuery.select(builder.count(userRoot));
+
+        // execute and get the result
+        return entityManager.createQuery(criteriaQuery).getSingleResult().intValue();
+    }
+
+    /*
      * (non-Javadoc)
      * @see org.ikasan.security.dao.SecurityDao#getPolicyByName(java.lang.String)
      */
@@ -399,7 +466,85 @@ public class HibernateSecurityDao implements SecurityDao
         return query.getResultList();
     }
 
-	/* (non-Javadoc)
+    @Override
+    public List<IkasanPrincipalLite> getAllPrincipalsWithRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset) {
+        StringBuffer queryBuffer = this.createPrincipalByRoleFilterPredicateString(
+                SecurityConstants.GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY, filter);
+
+        if(filter.getSortOrder() != null && filter.getSortColumn() != null) {
+            if (filter.getSortOrder().equals("ASCENDING")) {
+                queryBuffer.append(" order by p.").append(filter.getSortColumn()).append(" ASC");
+            }
+            else if (filter.getSortOrder().equals("DESCENDING")) {
+                queryBuffer.append(" order by p.").append(filter.getSortColumn()).append(" DESC");
+            }
+        }
+
+        Query query = this.entityManager.createQuery(queryBuffer.toString());
+        query.setParameter("name", roleName);
+        return query
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .getResultList();
+    }
+
+    @Override
+    public List<IkasanPrincipalLite> getAllPrincipalsWithoutRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset) {
+        StringBuffer queryBuffer = new StringBuffer("select principal from IkasanPrincipalLite principal where  principal.id NOT IN (");
+        queryBuffer.append(SecurityConstants.GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY);
+        if(filter.getTypeFilter() != null && !filter.getTypeFilter().isEmpty()) {
+            queryBuffer.append(" AND p.type LIKE '%").append(filter.getTypeFilter()).append("%'");
+        }
+        queryBuffer.append(")");
+
+        queryBuffer.append(this.createPrincipalByRoleFilterPredicateString("principal",
+            "", filter));
+
+        if(filter.getSortOrder() != null && filter.getSortColumn() != null) {
+            if (filter.getSortOrder().equals("ASCENDING")) {
+                queryBuffer.append(" order by principal.").append(filter.getSortColumn()).append(" ASC");
+            }
+            else if (filter.getSortOrder().equals("DESCENDING")) {
+                queryBuffer.append(" order by principal.").append(filter.getSortColumn()).append(" DESC");
+            }
+        }
+
+        Query query = this.entityManager.createQuery(queryBuffer.toString());
+        query.setParameter("name", roleName);
+        return query
+            .setFirstResult(offset)
+            .setMaxResults(limit)
+            .getResultList();
+    }
+
+    @Override
+    public int getPrincipalsWithRoleCount(String roleName, IkasanPrincipalFilter filter) {
+        StringBuffer queryBuffer = this.createPrincipalByRoleFilterPredicateString(
+            SecurityConstants.GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY_COUNT, filter);
+
+        Query query = this.entityManager.createQuery(queryBuffer.toString());
+        query.setParameter("name", roleName);
+        return ((Long)query.getSingleResult()).intValue();
+    }
+
+    @Override
+    public int getPrincipalsWithoutRoleCount(String roleName, IkasanPrincipalFilter filter) {
+        StringBuffer queryBuffer = new StringBuffer("select count(principal) from IkasanPrincipalLite principal where  principal.id NOT IN (");
+        queryBuffer.append(SecurityConstants.GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY);
+        if(filter.getTypeFilter() != null && !filter.getTypeFilter().isEmpty()) {
+            queryBuffer.append(" AND p.type LIKE '%").append(filter.getTypeFilter()).append("%'");
+        }
+        queryBuffer.append(")");
+
+        queryBuffer.append(this.createPrincipalByRoleFilterPredicateString("principal",
+            "", filter));
+
+        Query query = this.entityManager.createQuery(queryBuffer.toString());
+        query.setParameter("name", roleName);
+        return ((Long)query.getSingleResult()).intValue();
+    }
+
+    /* (non-Javadoc)
 	 * @see org.ikasan.security.dao.SecurityDao#getPrincipalsByName(java.util.List)
 	 */
 	@SuppressWarnings("unchecked")
@@ -573,5 +718,67 @@ public class HibernateSecurityDao implements SecurityDao
         Query query = this.entityManager.createQuery(SecurityConstants.GET_ROLE_JOB_PLANS_BY_ROLE_QUERY);
         query.setParameter("name", jonPlanName);
         return query.getResultList();
+    }
+
+    /**
+     * Generates a Predicate for filtering IkasanPrincipals based on the given criteria.
+     *
+     * @param builder the CriteriaBuilder used to construct the query predicates
+     * @param filter the IkasanPrincipalFilter containing the criteria to filter by
+     * @param principalRoot the Root entity representing the IkasanPrincipals
+     * @return the Predicate representing the filter based on the given criteria
+     */
+    private Predicate getPrincipalFilterPredicate(CriteriaBuilder builder
+        , IkasanPrincipalFilter filter, Root principalRoot) {
+        Predicate predicate = builder.conjunction();
+        if (filter.getNameFilter() != null) {
+            predicate = builder.and(predicate, builder.like(principalRoot.get("name")
+                , "%" + filter.getNameFilter() + "%"));
+        }
+        if (filter.getTypeFilter() != null) {
+            predicate = builder.and(predicate, builder.like(principalRoot.get("type")
+                , "%" + filter.getTypeFilter() + "%"));
+        }
+        if (filter.getDescriptionFilter() != null) {
+            predicate = builder.and(predicate, builder.like(principalRoot.get("description")
+                , "%" + filter.getDescriptionFilter() + "%"));
+        }
+
+        return predicate;
+    }
+
+    /**
+     * Creates a query string for filtering principals based on the provided IkasanPrincipalFilter.
+     *
+     * @param queryBase the base query string to be extended
+     * @param filter the IkasanPrincipalFilter containing the filter parameters
+     * @return a StringBuffer representing the extended query string for filtering principals
+     */
+    private StringBuffer createPrincipalByRoleFilterPredicateString(String queryBase, IkasanPrincipalFilter filter) {
+        return this.createPrincipalByRoleFilterPredicateString("p", queryBase, filter);
+    }
+
+    /**
+     * Constructs a SQL query string for filtering Principals based on the provided criteria.
+     *
+     * @param principalName the name of the Principal table in the database
+     * @param queryBase the base query string to which the filter conditions will be appended
+     * @param filter the IkasanPrincipalFilter object containing the filtering criteria
+     * @return a StringBuffer containing the complete SQL query string with the applied filters
+     */
+    private StringBuffer createPrincipalByRoleFilterPredicateString(String principalName, String queryBase
+        , IkasanPrincipalFilter filter) {
+        StringBuffer queryBuffer = new StringBuffer(queryBase);
+        if(filter.getNameFilter() != null && !filter.getNameFilter().isEmpty()) {
+            queryBuffer.append(String.format(" AND %s.name LIKE ", principalName)).append("'%").append(filter.getNameFilter()).append("%'");
+        }
+        if(filter.getTypeFilter() != null && !filter.getTypeFilter().isEmpty()) {
+            queryBuffer.append(String.format(" AND %s.type LIKE ", principalName)).append("'%").append(filter.getTypeFilter()).append("%'");
+        }
+        if(filter.getDescriptionFilter() != null && !filter.getDescriptionFilter().isEmpty()) {
+            queryBuffer.append(String.format(" AND %s.description LIKE ", principalName)).append("'%").append(filter.getDescriptionFilter()).append("%'");
+        }
+
+        return queryBuffer;
     }
 }

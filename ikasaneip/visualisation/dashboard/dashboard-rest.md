@@ -71,6 +71,20 @@ Authentication and Authorization Service.
 
 </details>
 
+
+
+## User Service
+Fetch a user based on the provided username request parameter. Please note that this service caches the 
+the user for a period of time following and the cache time out can be configured by providing the 
+'user.service.user.cache.timeout.minutes' property in the relevant dashboard configuration file.
+
+| Parameter         | Value                                                                           | 
+|-------------------|---------------------------------------------------------------------------------|
+| Request Method    | GET                                                                             |
+| Service Context   | {dashboard-root-context}/rest/user                                              |
+| Request Parameter | username                                                                        |
+| Response Payload  | A json src/main/java/org/ikasan/rest/dashboard/model/user/UserDto.java |
+
 ## Error Harvesting Service
 Aggregation service for errors produced by the Ikasan Hospital service.
 

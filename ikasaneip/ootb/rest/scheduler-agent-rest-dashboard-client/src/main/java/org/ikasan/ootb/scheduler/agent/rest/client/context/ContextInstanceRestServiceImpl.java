@@ -54,53 +54,6 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
         this.mapper = ObjectMapperFactory.newInstance();
     }
 
-    // @Mick I don't think we need these just yet, remove ?
-//    @Override
-//    public Map<String, ContextInstance> getAll() {
-//        if (this.token == null) {
-//            authenticate(moduleName);
-//        }
-//        HttpHeaders headers = super.createHttpHeaders(moduleName);
-//        HttpEntity entity = new HttpEntity(headers);
-//        try {
-//            ResponseEntity<String> response = restTemplate.exchange(url + "/getAll", HttpMethod.GET, entity, String.class);
-//
-//            return this.mapper.readValue(response.getBody(), new TypeReference<>() {
-//            });
-//        } catch (RestClientException | JsonProcessingException e) {
-//            String message = "Issue getting all ccorrelationId for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
-//            logger.error(message);
-//            throw new EndpointException(e);
-//        }
-//    }
-//
-//    @Override
-//    public Map<String, ContextInstance> getByContextInstanceId(String correlationId) {
-//        if (this.token == null) {
-//            authenticate(moduleName);
-//        }
-//        HttpHeaders headers = super.createHttpHeaders(moduleName);
-//        HttpEntity entity = new HttpEntity(headers);
-//        try {
-//            String urlTemplate = UriComponentsBuilder.fromHttpUrl(url + "/getByContextInstanceId")
-//                .queryParam("correlationId", "{correlationId}")
-//                .encode()
-//                .toUriString();
-//            Map<String, String> parameters = new HashMap<>() {{
-//                put("correlationId", correlationId);
-//            }};
-//
-//            ResponseEntity<String> response = restTemplate.exchange(urlTemplate, HttpMethod.GET, entity, String.class, parameters);
-//
-//            return this.mapper.readValue(response.getBody(), new TypeReference<>() {
-//            });
-//
-//        } catch (RestClientException | JsonProcessingException e) {
-//            String message = "Issue getting correlationId for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
-//            logger.error(message);
-//            throw new EndpointException(e);
-//        }
-//    }
     @Override
     public Map<String, ContextInstance> getAllInstancesDashboardThinksAgentShouldHandle(String agentName) {
         if (this.token == null) {

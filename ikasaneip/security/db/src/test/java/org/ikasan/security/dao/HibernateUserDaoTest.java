@@ -42,11 +42,7 @@ package org.ikasan.security.dao;
 
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.JobPlanGrantedAuthority;
-import org.ikasan.security.model.ModuleGrantedAuthority;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,8 +90,399 @@ public class HibernateUserDaoTest
 		
 		Assert.assertNull(user);
 	}
-	
-	/**
+
+    @Test
+    @DirtiesContext
+    public void testGetUsersWithRole()
+    {
+        List<UserLite> users = this.xaUserDao.getUsersWithRole("admin", new UserFilter(), 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        users = this.xaUserDao.getUsersWithRole("admin", new UserFilter(), 0, 0);
+        Assert.assertEquals(0, users.size());
+
+        users = this.xaUserDao.getUsersWithRole("admin", new UserFilter(), 100, 1);
+        Assert.assertEquals(0, users.size());
+
+        UserFilter userFilter = new UserFilter();
+        userFilter.setUsernameFilter("name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        userFilter.setUsernameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setDepartmentFilter("dep");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        userFilter.setDepartmentFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setNameFilter("fir");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        userFilter.setNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setLastNameFilter("sur");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        userFilter.setLastNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(1, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetUsersWithoutRole()
+    {
+        List<UserLite> users = this.xaUserDao.getUsersWithoutRole("admin", new UserFilter(), 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", new UserFilter(), 0, 0);
+        Assert.assertEquals(0, users.size());
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", new UserFilter(), 100, 3);
+        Assert.assertEquals(6, users.size());
+
+        UserFilter userFilter = new UserFilter();
+        userFilter.setUsernameFilter("name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        userFilter.setUsernameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setDepartmentFilter("dep");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        userFilter.setDepartmentFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setNameFilter("fir");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        userFilter.setNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setLastNameFilter("sur");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        userFilter.setLastNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setSortOrder("ASCENDING");
+        userFilter.setSortColumn("username");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+        Assert.assertEquals("username1", users.get(0).getUsername());
+        Assert.assertEquals("username2", users.get(1).getUsername());
+        Assert.assertEquals("username3", users.get(2).getUsername());
+        Assert.assertEquals("username4", users.get(3).getUsername());
+        Assert.assertEquals("username5", users.get(4).getUsername());
+        Assert.assertEquals("username6", users.get(5).getUsername());
+        Assert.assertEquals("username7", users.get(6).getUsername());
+        Assert.assertEquals("username8", users.get(7).getUsername());
+        Assert.assertEquals("username9", users.get(8).getUsername());
+
+        userFilter.setSortOrder("DESCENDING");
+
+        users = this.xaUserDao.getUsersWithoutRole("admin", userFilter, 100, 0);
+        Assert.assertEquals(9, users.size());
+
+        Assert.assertEquals("username1", users.get(8).getUsername());
+        Assert.assertEquals("username2", users.get(7).getUsername());
+        Assert.assertEquals("username3", users.get(6).getUsername());
+        Assert.assertEquals("username4", users.get(5).getUsername());
+        Assert.assertEquals("username5", users.get(4).getUsername());
+        Assert.assertEquals("username6", users.get(3).getUsername());
+        Assert.assertEquals("username7", users.get(2).getUsername());
+        Assert.assertEquals("username8", users.get(1).getUsername());
+        Assert.assertEquals("username9", users.get(0).getUsername());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetUsersWithoutRoleCount()
+    {
+        int users = this.xaUserDao.getUsersWithoutRoleCount("admin", new UserFilter());
+        Assert.assertEquals(9, users);
+
+        UserFilter userFilter = new UserFilter();
+        userFilter.setUsernameFilter("name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setUsernameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setDepartmentFilter("dep");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setDepartmentFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setNameFilter("fir");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setLastNameFilter("sur");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setLastNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setSortOrder("ASCENDING");
+        userFilter.setSortColumn("username");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+
+        userFilter.setSortOrder("DESCENDING");
+
+        users = this.xaUserDao.getUsersWithoutRoleCount("admin", userFilter);
+        Assert.assertEquals(9, users);
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetUsersWithRoleCount()
+    {
+        int users = this.xaUserDao.getUsersWithRoleCount("admin", new UserFilter());
+        Assert.assertEquals(1, users);
+
+        UserFilter userFilter = new UserFilter();
+        userFilter.setUsernameFilter("name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(1, users);
+
+        userFilter.setUsernameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setDepartmentFilter("dep");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(1, users);
+
+        userFilter.setDepartmentFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setNameFilter("fir");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(1, users);
+
+        userFilter.setNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setLastNameFilter("sur");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(1, users);
+
+        userFilter.setLastNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(1, users);
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(1, users);
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsersWithRoleCount("admin", userFilter);
+        Assert.assertEquals(0, users);
+    }
+
+
+    /**
 	 * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
 	 */
 	@Test
@@ -103,7 +490,6 @@ public class HibernateUserDaoTest
 	public void testGetUserByFirstNameLike()
 	{
 		List<User> users = this.xaUserDao.getUserByFirstnameLike("first");
-		
 		Assert.assertNotNull(users.size() == 1);
 	}
 	
@@ -115,7 +501,6 @@ public class HibernateUserDaoTest
 	public void testGetUserBySurnameLike()
 	{
 		List<User> users = this.xaUserDao.getUserBySurnameLike("sur");
-		
 		Assert.assertNotNull(users.size() == 1);
 	}
 	
@@ -140,8 +525,161 @@ public class HibernateUserDaoTest
 	{
 		List<User> users = this.xaUserDao.getUsers();
 		
-		Assert.assertTrue(users.size() == 1);
+		Assert.assertTrue(users.size() == 10);
 	}
+
+    @Test
+    @DirtiesContext
+    public void testGetUsersLimitOffset()
+    {
+        UserFilter userFilter = new UserFilter();
+
+        List<User> users = this.xaUserDao.getUsers(userFilter, 1, 0);
+
+        Assert.assertTrue(users.size() == 1);
+
+        users = this.xaUserDao.getUsers(userFilter, 1, 100);
+
+        Assert.assertTrue(users.size() == 0);
+
+        users = this.xaUserDao.getUsers(userFilter, 3, 5);
+
+        Assert.assertTrue(users.size() == 3);
+
+        users = this.xaUserDao.getUsers(userFilter,3, 9);
+
+        Assert.assertTrue(users.size() == 1);
+
+        userFilter.setUsernameFilter("name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter.setUsernameFilter("bad-name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setDepartmentFilter("dep");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter.setDepartmentFilter("bad-name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setNameFilter("fir");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter.setNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setLastNameFilter("sur");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter.setLastNameFilter("bad-name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter.setEmailFilter("bad-name");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(0, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setUsernameFilter("name");
+        userFilter.setNameFilter("fir");
+        userFilter.setLastNameFilter("sur");
+        userFilter.setDepartmentFilter("dep");
+        userFilter.setEmailFilter("@lastname");
+        userFilter.setSortOrder("ASCENDING");
+        userFilter.setSortColumn("username");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+        Assert.assertEquals("username1", users.get(1).getUsername());
+        Assert.assertEquals("username2", users.get(2).getUsername());
+        Assert.assertEquals("username3", users.get(3).getUsername());
+        Assert.assertEquals("username4", users.get(4).getUsername());
+        Assert.assertEquals("username5", users.get(5).getUsername());
+        Assert.assertEquals("username6", users.get(6).getUsername());
+        Assert.assertEquals("username7", users.get(7).getUsername());
+        Assert.assertEquals("username8", users.get(8).getUsername());
+        Assert.assertEquals("username9", users.get(9).getUsername());
+
+        userFilter.setSortOrder("DESCENDING");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        Assert.assertEquals("username", users.get(9).getUsername());
+        Assert.assertEquals("username1", users.get(8).getUsername());
+        Assert.assertEquals("username2", users.get(7).getUsername());
+        Assert.assertEquals("username3", users.get(6).getUsername());
+        Assert.assertEquals("username4", users.get(5).getUsername());
+        Assert.assertEquals("username5", users.get(4).getUsername());
+        Assert.assertEquals("username6", users.get(3).getUsername());
+        Assert.assertEquals("username7", users.get(2).getUsername());
+        Assert.assertEquals("username8", users.get(1).getUsername());
+        Assert.assertEquals("username9", users.get(0).getUsername());
+    }
+
+    @Test
+    @DirtiesContext
+    public void testGetUserLitesLimitOffset()
+    {
+        List<UserLite> users = this.xaUserDao.getUserLites(1, 0);
+
+        Assert.assertTrue(users.size() == 1);
+
+        users = this.xaUserDao.getUserLites(1, 100);
+
+        Assert.assertTrue(users.size() == 0);
+
+        users = this.xaUserDao.getUserLites(3, 5);
+
+        Assert.assertTrue(users.size() == 3);
+
+        users = this.xaUserDao.getUserLites(3, 9);
+
+        Assert.assertTrue(users.size() == 1);
+    }
 
     /**
      * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
@@ -152,7 +690,7 @@ public class HibernateUserDaoTest
     {
         List<User> users = this.xaUserDao.getUsers();
 
-        Assert.assertTrue(users.size() == 1);
+        Assert.assertTrue(users.size() == 10);
         Assert.assertTrue(users.get(0).getAuthorities().size() == 4);
 
         users.get(0).getAuthorities().forEach(grantedAuthority -> {
@@ -182,7 +720,7 @@ public class HibernateUserDaoTest
 		
 		List<User> users = this.xaUserDao.getUsers();
 		
-		Assert.assertTrue(users.size() == 0);
+		Assert.assertTrue(users.size() == 9);
 	}
 
     @Test
@@ -191,7 +729,7 @@ public class HibernateUserDaoTest
     {
         List<User> users = this.xaUserDao.getUsers();
 
-        Assert.assertEquals(1, users.size());
+        Assert.assertEquals(10, users.size());
 
         User user = users.get(0);
 

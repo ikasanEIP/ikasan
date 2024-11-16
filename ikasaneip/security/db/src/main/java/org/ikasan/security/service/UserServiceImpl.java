@@ -98,6 +98,31 @@ public class UserServiceImpl implements UserService
         this.preventLocalAuthentication = preventLocalAuthentication;
     }
 
+    @Override
+    public List<UserLite> getUsersWithRole(String roleName, UserFilter userFilter, int limit, int offset) {
+        return this.userDao.getUsersWithRole(roleName, userFilter, limit, offset);
+    }
+
+    @Override
+    public int getUsersWithRoleCount(String roleName, UserFilter userFilter) {
+        return this.userDao.getUsersWithRoleCount(roleName, userFilter);
+    }
+
+    @Override
+    public List<UserLite> getUsersWithoutRole(String roleName, UserFilter userFilter, int limit, int offset) {
+        return this.userDao.getUsersWithoutRole(roleName, userFilter, limit, offset);
+    }
+
+    @Override
+    public int getUsersWithoutRoleCount(String roleName, UserFilter userFilter) {
+        return this.userDao.getUsersWithoutRoleCount(roleName, userFilter);
+    }
+
+    @Override
+    public int getUserCount(UserFilter userFilter) {
+        return this.userDao.getUserCount(userFilter);
+    }
+
     /*
      * (non-Javadoc)
      *
@@ -116,6 +141,16 @@ public class UserServiceImpl implements UserService
     public List<UserLite> getUserLites()
     {
         return userDao.getUserLites();
+    }
+
+    @Override
+    public List<User> getUsers(UserFilter userFilter, int limit, int offset) {
+        return this.userDao.getUsers(userFilter, limit, offset);
+    }
+
+    @Override
+    public List<UserLite> getUserLites(int limit, int offset) {
+        return this.userDao.getUserLites(limit, offset);
     }
 
     /*
