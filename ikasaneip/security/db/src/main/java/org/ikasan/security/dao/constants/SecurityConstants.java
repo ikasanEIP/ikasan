@@ -111,6 +111,8 @@ public interface SecurityConstants
             p.id = pr.id.ikasanPrincipalId
         and
             r.id = pr.id.roleId
+        and
+            p.type = 'user'
         and           
             r.name = :name
         """;
@@ -125,6 +127,8 @@ public interface SecurityConstants
             p.id = pr.id.ikasanPrincipalId
         and
             r.id = pr.id.roleId
+        and
+            p.type = 'user'
         and           
             r.name = :name
         """;
@@ -139,6 +143,8 @@ public interface SecurityConstants
             p.id = pr.id.ikasanPrincipalId
         and
             r.id = pr.id.roleId
+        and
+            p.type = 'user'
         and           
             r.name = :name
         """;
