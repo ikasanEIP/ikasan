@@ -40,8 +40,8 @@
  */
 package org.ikasan.exceptionResolver;
 
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import org.ikasan.exceptionResolver.action.ExceptionAction;
 import org.ikasan.exceptionResolver.action.StopAction;
@@ -52,7 +52,7 @@ import org.ikasan.exceptionResolver.action.StopAction;
  * Exception Actions
  * 
  * Includes ability so set rules that are either specific to named components,
- * on non specific
+ * on non-specific
  * 
  * @author Ikasan Development Team
  * 
@@ -65,7 +65,7 @@ public class MatchingExceptionResolver implements ExceptionResolver
     private static final ExceptionAction defaultAction = StopAction.instance();
 
     /**
-     * Non component specific exception groupings
+     * Non-component specific exception groupings
      */
     private List<ExceptionGroup> exceptionGroupings;
 
@@ -109,30 +109,61 @@ public class MatchingExceptionResolver implements ExceptionResolver
         if (componentExceptionGroupings != null)
         {
             List<ExceptionGroup> thisComponentsGroupings = componentExceptionGroupings.get(componentName);
-            if (thisComponentsGroupings != null)
-            {
-                for (ExceptionGroup exceptionGroup : thisComponentsGroupings)
-                {
-                    if (exceptionGroup.includes(throwable))
-                    {
-                        return exceptionGroup.getAction();
-                    }
-                }
-            }
+            Optional<ExceptionAction> result = determineExceptionAction(throwable, thisComponentsGroupings);
+            if (result.isPresent())
+                return result.get();
         }
-        // otherwise try for a general match
-        if (exceptionGroupings != null)
+
+        // otherwise try for a general match, otherwise return the default
+        Optional<ExceptionAction> result = determineExceptionAction(throwable, exceptionGroupings);
+        return result.orElse(defaultAction);
+    }
+
+    private Optional<ExceptionAction> determineExceptionAction(Throwable throwable, List<ExceptionGroup> thisComponentsGroupings) {
+        Optional<ExceptionAction> result = Optional.empty();
+
+        if (thisComponentsGroupings != null)
         {
-            for (ExceptionGroup exceptionGroup : exceptionGroupings)
-            {
-                if (exceptionGroup.includes(throwable))
-                {
-                    return exceptionGroup.getAction();
-                }
+            List<ExceptionGroup> matchedExceptionGroups = thisComponentsGroupings
+                .stream()
+                .filter(exceptionGroup -> exceptionGroup.includes(throwable))
+                .toList();
+
+            // if only than one exception group is found, need to determine the most appropriate match.
+            if (matchedExceptionGroups.size() == 1) {
+                ExceptionAction action = matchedExceptionGroups.stream()
+                    .findFirst()
+                    .get()
+                    .getAction();
+
+                result = Optional.of(action);
+
+            } else if (matchedExceptionGroups.size() > 1) {
+
+                // Determine the closest match, if same then take the first in the list.
+                ExceptionAction action = findMostSpecificExceptionMatch(matchedExceptionGroups, throwable.getClass()).getAction();
+                result = Optional.of(action);
             }
         }
-        // otherwise return the default
-        return defaultAction;
+        return result;
+    }
+
+    public static ExceptionGroup findMostSpecificExceptionMatch(List<ExceptionGroup> exceptionGroups, Class<?> throwable) {
+
+        return exceptionGroups.stream()
+            .filter(c -> c.getDefinedException().isAssignableFrom(throwable))
+            .max(MatchingExceptionResolver::rankClassHierarchy)
+            .get();
+    }
+
+    private static int rankClassHierarchy(ExceptionGroup group1, ExceptionGroup group2) {
+        if (group1.getDefinedException().isAssignableFrom(group2.getDefinedException())) {
+            return -1;
+        } else if (group2.getDefinedException().isAssignableFrom(group1.getDefinedException())) {
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -147,4 +178,5 @@ public class MatchingExceptionResolver implements ExceptionResolver
         sb.append("]");
         return sb.toString();
     }
+
 }

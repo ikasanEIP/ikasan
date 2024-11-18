@@ -77,10 +77,8 @@ import org.quartz.SchedulerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.nio.channels.ConnectionPendingException;
+import java.util.*;
 
 /**
  * Integration testing for Recovery Manager implementation.
@@ -200,7 +198,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         // create an exception resolver
         ExceptionAction stopAction = StopAction.instance();
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
-        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, stopAction);
+        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, Exception.class, stopAction);
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
@@ -254,7 +252,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         // create an exception resolver
         ExceptionAction excludeEventAction = ExcludeEventAction.instance();
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
-        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, excludeEventAction);
+        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, Exception.class, excludeEventAction);
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
@@ -314,7 +312,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         // create an exception resolver
         ExceptionAction retryAction = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
-        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, retryAction);
+        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, Exception.class, retryAction);
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
@@ -413,7 +411,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         // create an exception resolver
         ExceptionAction retryAction = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfException = new org.hamcrest.core.IsInstanceOf(Exception.class);
-        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, retryAction);
+        MatcherBasedExceptionGroup matcher = new MatcherBasedExceptionGroup(instanceOfException, Exception.class, retryAction);
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcher);
         ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
@@ -491,11 +489,11 @@ public class ScheduledRecoveryManagerIntegrationTest
         // create an exception resolver
         ExceptionAction retryActionA = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfIllegalArgumentException = new org.hamcrest.core.IsInstanceOf(IllegalArgumentException.class);
-        MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfIllegalArgumentException, retryActionA);
+        MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfIllegalArgumentException, IllegalArgumentException.class, retryActionA);
 
         ExceptionAction retryActionB = new RetryAction((long)1000, 2);
         IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
-        MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, retryActionB);
+        MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, NullPointerException.class, retryActionB);
         
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcherA);
@@ -601,9 +599,9 @@ public class ScheduledRecoveryManagerIntegrationTest
     }
 
     /**
-     * Test recovery manager with resolver for a retry action
+     * Test recovery manager with resolve for a retry action
      * followed by a stop action.
-     * @throws SchedulerException 
+     * @throws SchedulerException
      */
     @Test
     public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction() throws SchedulerException
@@ -614,12 +612,12 @@ public class ScheduledRecoveryManagerIntegrationTest
         // create an exception resolver
         ExceptionAction retryAction = new RetryAction((long)2000, 2);
         IsInstanceOf instanceOfIllegalArgumentException = new org.hamcrest.core.IsInstanceOf(IllegalArgumentException.class);
-        MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfIllegalArgumentException, retryAction);
+        MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfIllegalArgumentException, IllegalArgumentException.class, retryAction);
 
         ExceptionAction stopAction = StopAction.instance();
         IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
-        MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, stopAction);
-        
+        MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, NullPointerException.class, stopAction);
+
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcherA);
         matchers.add(matcherB);
@@ -656,13 +654,94 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         // wait for scheduler callback to restart the consumer
         while(!consumer.isRunning()){pause(100);}
-        
+
         //
         // second retry action
         try
         {
             Assert.assertTrue(consumer.isRunning());
             recoveryManager.recover(componentName, new NullPointerException());
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Stop", e.getMessage());
+            Assert.assertFalse("Consumer should not be running", consumer.isRunning());
+            Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
+            Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNull("job should not be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+    }
+
+
+    /**
+     * Test recovery manager with resolve for a retry action
+     * followed by a stop action.
+     * @throws SchedulerException
+     */
+    @Test
+    public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction_with_more_specific_instance_matches() throws SchedulerException
+    {
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+
+        //
+        // create an exception resolver
+        ExceptionAction retryAction = new RetryAction((long)2000, 2);
+        IsInstanceOf instanceOfRuntimeException = new org.hamcrest.core.IsInstanceOf(RuntimeException.class);
+        MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfRuntimeException, RuntimeException.class, retryAction);
+
+        ExceptionAction stopAction = StopAction.instance();
+        IsInstanceOf instanceOfIllegalStateException = new org.hamcrest.core.IsInstanceOf(IllegalStateException.class);
+        MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfIllegalStateException, IllegalStateException.class, stopAction);
+
+        IsInstanceOf instanceOfConnectionPendingException = new org.hamcrest.core.IsInstanceOf(ConnectionPendingException.class);
+        MatcherBasedExceptionGroup matcherC = new MatcherBasedExceptionGroup(instanceOfConnectionPendingException, ConnectionPendingException.class, retryAction);
+
+        List<ExceptionGroup> matchers = new ArrayList<>();
+        matchers.add(matcherA);
+        matchers.add(matcherB);
+        matchers.add(matcherC);
+        ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
+
+        //
+        // create the RM and set the resolver
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
+
+        recoveryManager.setResolver(resolver);
+
+        //
+        // start the consumer and pass exception to recoveryManager
+        consumer.start();
+        Assert.assertTrue(consumer.isRunning());
+
+        //
+        // first retry action
+        try
+        {
+            recoveryManager.recover(componentName, new ConnectionPendingException());
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Retry (delay=2000, maxRetries=2)", e.getMessage());
+            Assert.assertFalse("consumer should not be running", consumer.isRunning());
+            Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
+            Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNotNull("job should still be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+
+        // wait for scheduler callback to restart the consumer
+        while(!consumer.isRunning()){pause(100);}
+
+        //
+        // second retry action
+        try
+        {
+            Assert.assertTrue(consumer.isRunning());
+            recoveryManager.recover(componentName, new FormatterClosedException());
         }
         catch (Exception e)
         {

@@ -57,8 +57,15 @@ public interface ExceptionGroup
     public boolean includes(Throwable throwable);
 
     /**
-     * Accessor for bound IkasanExceptionAction
+     * Accessor for defined exception matching class
      * 
+     * @return bound IkasanExceptionAction
+     */
+    public <T> Class<T> getDefinedException();
+
+    /**
+     * Accessor for bound IkasanExceptionAction
+     *
      * @return bound IkasanExceptionAction
      */
     public <T> T getAction();

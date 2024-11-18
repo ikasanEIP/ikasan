@@ -12,6 +12,8 @@ public class ExceptionConfig
 
     private List<Class> ignoredClasses;
 
+    private List<Class> stopClasses;
+
     public List<RetryConfig> getRetryConfigs()
     {
         return retryConfigs;
@@ -50,5 +52,15 @@ public class ExceptionConfig
     public void setIgnoredClasses(List<Class> ignoredClasses)
     {
         this.ignoredClasses = ignoredClasses;
+    }
+
+    public List<Class> getStopClasses()
+    {
+        return stopClasses;
+    }
+
+    public void setStopClasses(List<Class> stopClasses)
+    {
+        this.stopClasses = stopClasses;
     }
 }

@@ -60,6 +60,11 @@ public class MatcherBasedExceptionGroup implements ExceptionGroup
     private Matcher<?> matcher;
 
     /**
+     * Defined exception class
+     */
+    private Class definedException;
+
+    /**
      * Bound action
      */
     private ExceptionAction action;
@@ -70,16 +75,28 @@ public class MatcherBasedExceptionGroup implements ExceptionGroup
      * @param matcher
      * @param action
      */
-    public MatcherBasedExceptionGroup(Matcher<?> matcher, ExceptionAction action)
+    public MatcherBasedExceptionGroup(Matcher<?> matcher, Class definedException, ExceptionAction action)
     {
         super();
         this.matcher = matcher;
+        this.definedException = definedException;
         this.action = action;
     }
 
     /*
      * (non-Javadoc)
-     * 
+     *
+     * @see org.ikasan.framework.exception.matching.ExceptionGroup#getDefinedException()
+     */
+    public Class getDefinedException()
+    {
+        return definedException;
+    }
+
+
+    /*
+     * (non-Javadoc)
+     *
      * @see org.ikasan.framework.exception.matching.ExceptionGroup#getAction()
      */
     public ExceptionAction getAction()
@@ -103,6 +120,8 @@ public class MatcherBasedExceptionGroup implements ExceptionGroup
     {
         StringBuffer sb = new StringBuffer(getClass().getName() + "[");
         sb.append("action = [" + action + "]");
+        sb.append(", ");
+        sb.append("definedException = [" + definedException + "]");
         sb.append(", ");
         sb.append("matcher = [" + matcher + "]");
         sb.append("]");

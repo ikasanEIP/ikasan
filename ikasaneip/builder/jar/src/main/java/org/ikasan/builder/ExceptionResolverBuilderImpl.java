@@ -87,14 +87,14 @@ public class ExceptionResolverBuilderImpl implements ExceptionResolverBuilder
 	@Override
 	public ExceptionResolverBuilder addExceptionToAction(Class exceptionClass, ExceptionAction exceptionAction)
 	{
-		this.matcherBasedExceptionGroups.add( new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionAction) );
+		this.matcherBasedExceptionGroups.add( new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionClass, exceptionAction) );
 		return this;
 	}
 
 	@Override
 	public ExceptionResolverBuilder addExceptionToAction(String componentName, Class exceptionClass, ExceptionAction exceptionAction)
 	{
-		MatcherBasedExceptionGroup matcherBasedExceptionGroup = new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionAction);
+		MatcherBasedExceptionGroup matcherBasedExceptionGroup = new MatcherBasedExceptionGroup( new IsInstanceOf(exceptionClass), exceptionClass, exceptionAction);
 
 		List matcherBasedExceptionGroups = getComponentExceptionGroups(componentName);
 		if(matcherBasedExceptionGroups == null)

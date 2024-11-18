@@ -170,7 +170,7 @@ At the end of the day Ikasan projects are just Java projects based on Maven
 build and dependency management. So if you are familiar with Java and Maven then 
 the Ikasan projects will look familiar.
 
-Lets look in the IDE at what has been created. At the root we can see there is a bin directory; a distribution directory; a jar direcotry; 
+Lets look in the IDE at what has been created. At the root we can see there is a bin directory; a distribution directory; a jar directory; 
 and lastly a pom.xml which is the parent pom of the project.
 
 Lets look at these in turn.
@@ -549,7 +549,9 @@ that caused the exception.
   #ikasan.exceptions.scheduled-retry-configs.[0].className=org.ikasan.spec.component.transformation.TransformationException
   #ikasan.exceptions.scheduled-retry-configs.[0].cronExpression=0 0/1 * * * ?
   #ikasan.exceptions.scheduled-retry-configs.[0].maxRetries=10
-  
+ 
+  # In order to configure a Stop Action Class
+  # ikasan.exceptions.stopClasses[0]=org.ikasan.spec.component.transformation.TransformationException
    ```
 
 ## Setting Persistent Flow Configurations

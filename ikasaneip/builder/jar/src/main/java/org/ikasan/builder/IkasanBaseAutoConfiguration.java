@@ -45,10 +45,7 @@ import org.ikasan.configurationService.ConfigurationServiceAutoConfiguration;
 import org.ikasan.error.reporting.ErrorReportingAutoConfiguration;
 import org.ikasan.exceptionResolver.ExceptionConfig;
 import org.ikasan.exceptionResolver.ExceptionResolver;
-import org.ikasan.exceptionResolver.action.ExcludeEventAction;
-import org.ikasan.exceptionResolver.action.IgnoreAction;
-import org.ikasan.exceptionResolver.action.RetryAction;
-import org.ikasan.exceptionResolver.action.ScheduledRetryAction;
+import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.filter.FilterAutoConfiguration;
 import org.ikasan.flow.configuration.FlowComponentInvokerConfiguration;
@@ -132,26 +129,32 @@ public class IkasanBaseAutoConfiguration
 
         if( exceptionConfig.getExcludedClasses() !=null)
         {
-            exceptionConfig.getExcludedClasses().stream().forEach(
+            exceptionConfig.getExcludedClasses().forEach(
                 exclusion -> builder.addExceptionToAction(exclusion, ExcludeEventAction.instance()));
         }
 
         if( exceptionConfig.getIgnoredClasses() !=null)
         {
-            exceptionConfig.getIgnoredClasses().stream().forEach(ignore -> builder.addExceptionToAction(ignore, IgnoreAction.instance()));
+            exceptionConfig.getIgnoredClasses().forEach(ignore -> builder.addExceptionToAction(ignore, IgnoreAction.instance()));
         }
 
         if( exceptionConfig.getRetryConfigs() !=null)
         {
-            exceptionConfig.getRetryConfigs().stream().forEach(r -> builder
+            exceptionConfig.getRetryConfigs().forEach(r -> builder
                 .addExceptionToAction(r.getClassName(), new RetryAction(r.getDelayInMillis(), r.getMaxRetries())));
         }
 
         if( exceptionConfig.getScheduledRetryConfigs() !=null)
         {
-            exceptionConfig.getScheduledRetryConfigs().stream().forEach(r -> builder.addExceptionToAction(r.getClassName(),
+            exceptionConfig.getScheduledRetryConfigs().forEach(r -> builder.addExceptionToAction(r.getClassName(),
                 new ScheduledRetryAction(r.getCronExpression(), r.getMaxRetries())));
         }
+
+        if( exceptionConfig.getStopClasses() !=null)
+        {
+            exceptionConfig.getStopClasses().forEach(stop -> builder.addExceptionToAction(stop, StopAction.instance()));
+        }
+
         return builder.build();
     }
 
