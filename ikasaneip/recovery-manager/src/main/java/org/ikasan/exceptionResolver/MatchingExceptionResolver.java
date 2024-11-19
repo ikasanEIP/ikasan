@@ -119,49 +119,47 @@ public class MatchingExceptionResolver implements ExceptionResolver
         return result.orElse(defaultAction);
     }
 
-    private Optional<ExceptionAction> determineExceptionAction(Throwable throwable, List<ExceptionGroup> thisComponentsGroupings) {
+    private Optional<ExceptionAction> determineExceptionAction(Throwable throwable, List<ExceptionGroup> thisComponentsGroupings)
+    {
         Optional<ExceptionAction> result = Optional.empty();
 
         if (thisComponentsGroupings != null)
         {
-            List<ExceptionGroup> matchedExceptionGroups = thisComponentsGroupings
+            List<ExceptionGroup> acceptedExceptionGroups = thisComponentsGroupings
                 .stream()
                 .filter(exceptionGroup -> exceptionGroup.includes(throwable))
                 .toList();
 
-            // if only than one exception group is found, need to determine the most appropriate match.
-            if (matchedExceptionGroups.size() == 1) {
-                ExceptionAction action = matchedExceptionGroups.stream()
-                    .findFirst()
-                    .get()
-                    .getAction();
-
-                result = Optional.of(action);
-
-            } else if (matchedExceptionGroups.size() > 1) {
-
-                // Determine the closest match, if same then take the first in the list.
-                ExceptionAction action = findMostSpecificExceptionMatch(matchedExceptionGroups, throwable.getClass()).getAction();
+            // if one or more exception group is found, need to determine the most appropriate match.
+            if (!acceptedExceptionGroups.isEmpty())
+            {
+                // Determine the closest match, if duplicate class definitions will take first in the incoming list.
+                ExceptionAction action = findMostSpecificExceptionMatch(acceptedExceptionGroups).getAction();
                 result = Optional.of(action);
             }
         }
         return result;
     }
 
-    public static ExceptionGroup findMostSpecificExceptionMatch(List<ExceptionGroup> exceptionGroups, Class<?> throwable) {
-
+    public static ExceptionGroup findMostSpecificExceptionMatch(List<ExceptionGroup> exceptionGroups)
+    {
         return exceptionGroups.stream()
-            .filter(c -> c.getDefinedException().isAssignableFrom(throwable))
-            .max(MatchingExceptionResolver::rankClassHierarchy)
+            .sorted(MatchingExceptionResolver::rankClassHierarchy)
+            .findFirst()
             .get();
     }
 
     private static int rankClassHierarchy(ExceptionGroup group1, ExceptionGroup group2) {
-        if (group1.getDefinedException().isAssignableFrom(group2.getDefinedException())) {
-            return -1;
-        } else if (group2.getDefinedException().isAssignableFrom(group1.getDefinedException())) {
+        if (group1.getDefinedException().isAssignableFrom(group2.getDefinedException()))
+        {
             return 1;
-        } else {
+        }
+        else if (group2.getDefinedException().isAssignableFrom(group1.getDefinedException()))
+        {
+            return -1;
+        }
+        else
+        {
             return 0;
         }
     }

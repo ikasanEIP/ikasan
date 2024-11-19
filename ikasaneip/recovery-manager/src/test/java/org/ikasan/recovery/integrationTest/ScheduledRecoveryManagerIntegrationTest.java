@@ -681,6 +681,95 @@ public class ScheduledRecoveryManagerIntegrationTest
      * @throws SchedulerException
      */
     @Test
+    public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction_same_class_different_definition() throws SchedulerException
+    {
+        mockery.checking(new Expectations()
+                         {
+                             {
+                                 atLeast(1).of(flowInvocationContext).getLastComponentName();
+                                 will(returnValue(componentName));
+                                 atLeast(1).of(flowInvocationContext).setFinalAction(FinalAction.ROLLBACK);
+
+                                 atLeast(1).of(flowInvocationContext).setErrorUri(null);
+                             }
+                         }
+
+        );
+
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+
+        //
+        // create an exception resolver
+        ExceptionAction retryAction = new RetryAction((long)2000, 1);
+        IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
+        MatcherBasedExceptionGroup matcherA = new MatcherBasedExceptionGroup(instanceOfNullPointerException, NullPointerException.class, retryAction);
+
+        ExceptionAction stopAction = StopAction.instance();
+        MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, NullPointerException.class, stopAction);
+
+        List<ExceptionGroup> matchers = new ArrayList<>();
+        matchers.add(matcherA);
+        matchers.add(matcherB);
+        ExceptionResolver resolver = new MatchingExceptionResolver(matchers);
+
+        //
+        // create the RM and set the resolver
+        RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(resolver);
+
+        //
+        // start the consumer and pass exception to recoveryManager
+        consumer.start();
+        Assert.assertTrue("consumer should be running", consumer.isRunning());
+
+        //
+        // first retry action
+        try
+        {
+            recoveryManager.recover(flowInvocationContext, new NullPointerException(), "", "");
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Retry (delay=2000, maxRetries=1)", e.getMessage());
+            Assert.assertFalse("consumer should not be running", consumer.isRunning());
+            Assert.assertTrue("recovery manager should be recovering", recoveryManager.isRecovering());
+            Assert.assertFalse("recovery manager should not be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNotNull("job should still be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+
+        // wait for scheduler callback to restart the consumer
+        while(!consumer.isRunning()){pause(100);}
+
+        //
+        // second retry action
+        try
+        {
+            Assert.assertTrue(consumer.isRunning());
+            recoveryManager.recover(flowInvocationContext, new NullPointerException(), "", "");
+        }
+        catch (Exception e)
+        {
+            Assert.assertTrue(e instanceof RuntimeException);
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+            Assert.assertFalse("Consumer should not be running", consumer.isRunning());
+            Assert.assertFalse("recovery manager should not be recovering", recoveryManager.isRecovering());
+            Assert.assertTrue("recovery manager should be unrecoverable", recoveryManager.isUnrecoverable());
+            Assert.assertNull("job should not be registered with scheduler",
+                this.scheduler.getJobDetail(jobKey));
+        }
+
+    }
+
+
+    /**
+     * Test recovery manager with resolve for a retry action
+     * followed by a stop action.
+     * @throws SchedulerException
+     */
+    @Test
     public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction_with_more_specific_instance_matches() throws SchedulerException
     {
         JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
