@@ -555,6 +555,11 @@ public class HibernateUserDaoTest
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
         Assert.assertEquals(10, users.size());
 
+        userFilter.setUsernameFilter("NAme");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
         userFilter.setUsernameFilter("bad-name");
 
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
@@ -562,6 +567,12 @@ public class HibernateUserDaoTest
 
         userFilter = new UserFilter();
         userFilter.setDepartmentFilter("dep");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setDepartmentFilter("DEP");
 
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
         Assert.assertEquals(10, users.size());
@@ -577,6 +588,12 @@ public class HibernateUserDaoTest
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
         Assert.assertEquals(10, users.size());
 
+        userFilter = new UserFilter();
+        userFilter.setNameFilter("FIR");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
         userFilter.setNameFilter("bad-name");
 
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
@@ -584,6 +601,12 @@ public class HibernateUserDaoTest
 
         userFilter = new UserFilter();
         userFilter.setLastNameFilter("sur");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        userFilter = new UserFilter();
+        userFilter.setLastNameFilter("SUR");
 
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
         Assert.assertEquals(10, users.size());
@@ -599,6 +622,12 @@ public class HibernateUserDaoTest
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
         Assert.assertEquals(10, users.size());
 
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@LASTNAME");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
         userFilter.setEmailFilter("bad-name");
 
         users = this.xaUserDao.getUsers(userFilter, 100, 0);
@@ -627,6 +656,44 @@ public class HibernateUserDaoTest
         userFilter.setLastNameFilter("sur");
         userFilter.setDepartmentFilter("dep");
         userFilter.setEmailFilter("@lastname");
+        userFilter.setSortOrder("ASCENDING");
+        userFilter.setSortColumn("username");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+        Assert.assertEquals("username", users.get(0).getUsername());
+        Assert.assertEquals("username1", users.get(1).getUsername());
+        Assert.assertEquals("username2", users.get(2).getUsername());
+        Assert.assertEquals("username3", users.get(3).getUsername());
+        Assert.assertEquals("username4", users.get(4).getUsername());
+        Assert.assertEquals("username5", users.get(5).getUsername());
+        Assert.assertEquals("username6", users.get(6).getUsername());
+        Assert.assertEquals("username7", users.get(7).getUsername());
+        Assert.assertEquals("username8", users.get(8).getUsername());
+        Assert.assertEquals("username9", users.get(9).getUsername());
+
+        userFilter.setSortOrder("DESCENDING");
+
+        users = this.xaUserDao.getUsers(userFilter, 100, 0);
+        Assert.assertEquals(10, users.size());
+
+        Assert.assertEquals("username", users.get(9).getUsername());
+        Assert.assertEquals("username1", users.get(8).getUsername());
+        Assert.assertEquals("username2", users.get(7).getUsername());
+        Assert.assertEquals("username3", users.get(6).getUsername());
+        Assert.assertEquals("username4", users.get(5).getUsername());
+        Assert.assertEquals("username5", users.get(4).getUsername());
+        Assert.assertEquals("username6", users.get(3).getUsername());
+        Assert.assertEquals("username7", users.get(2).getUsername());
+        Assert.assertEquals("username8", users.get(1).getUsername());
+        Assert.assertEquals("username9", users.get(0).getUsername());
+
+        userFilter = new UserFilter();
+        userFilter.setEmailFilter("@LAST");
+        userFilter.setUsernameFilter("NAME");
+        userFilter.setNameFilter("FIR");
+        userFilter.setLastNameFilter("Sur");
+        userFilter.setDepartmentFilter("DEP");
         userFilter.setSortOrder("ASCENDING");
         userFilter.setSortColumn("username");
 

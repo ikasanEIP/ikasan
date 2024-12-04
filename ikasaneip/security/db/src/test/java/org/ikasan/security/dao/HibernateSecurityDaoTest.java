@@ -513,9 +513,17 @@ public class HibernateSecurityDaoTest
         count = this.xaSecurityDao.getPrincipalCount(filter);
         Assert.assertEquals(count, 1);
 
+        filter.setNameFilter("EWM");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 1);
+
         // test type filter
         filter = new IkasanPrincipalFilter();
         filter.setTypeFilter("type");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
+        filter.setTypeFilter("TYPE");
         count = this.xaSecurityDao.getPrincipalCount(filter);
         Assert.assertEquals(count, 8);
 
@@ -525,11 +533,21 @@ public class HibernateSecurityDaoTest
         count = this.xaSecurityDao.getPrincipalCount(filter);
         Assert.assertEquals(count, 8);
 
+        filter.setDescriptionFilter("DESC");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 8);
+
         // test aggregate filter
         filter = new IkasanPrincipalFilter();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
+        count = this.xaSecurityDao.getPrincipalCount(filter);
+        Assert.assertEquals(count, 1);
+
+        filter.setNameFilter("Ewm");
+        filter.setTypeFilter("Type");
+        filter.setDescriptionFilter("Ript");
         count = this.xaSecurityDao.getPrincipalCount(filter);
         Assert.assertEquals(count, 1);
 
@@ -574,9 +592,18 @@ public class HibernateSecurityDaoTest
         Assert.assertTrue(principals.size() == 1);
         Assert.assertEquals("stewmi", principals.get(0).getName());
 
+        filter.setNameFilter("EWM");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
         // test type filter
         filter = new IkasanPrincipalFilter();
         filter.setTypeFilter("type");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
+        filter.setTypeFilter("TYpe");
         principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
 
@@ -586,11 +613,50 @@ public class HibernateSecurityDaoTest
         principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
 
+        filter.setDescriptionFilter("DESC");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+
         // test aggregate filter
         filter = new IkasanPrincipalFilter();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 1);
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        // set sorting
+        filter = new IkasanPrincipalFilter();
+        filter.setSortColumn("name");
+        filter.setSortOrder("ASCENDING");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(0).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(1).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(6).getName());
+        Assert.assertEquals("stewmi", principals.get(7).getName());
+
+        filter.setSortOrder("DESCENDING");
+        principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
+        Assert.assertTrue(principals.size() == 8);
+        Assert.assertEquals("anotherPrincipal1", principals.get(7).getName());
+        Assert.assertEquals("anotherPrincipal2", principals.get(6).getName());
+        Assert.assertEquals("anotherPrincipal3", principals.get(5).getName());
+        Assert.assertEquals("anotherPrincipal4", principals.get(4).getName());
+        Assert.assertEquals("anotherPrincipal5", principals.get(3).getName());
+        Assert.assertEquals("anotherPrincipal6", principals.get(2).getName());
+        Assert.assertEquals("anotherPrincipal7", principals.get(1).getName());
+        Assert.assertEquals("stewmi", principals.get(0).getName());
+
+        filter = new IkasanPrincipalFilter();
+        filter.setNameFilter("EWM");
+        filter.setTypeFilter("TYp");
+        filter.setDescriptionFilter("RIPT");
         principals = this.xaSecurityDao.getPrincipalLites(filter, 100, 0);
         Assert.assertTrue(principals.size() == 1);
         Assert.assertEquals("stewmi", principals.get(0).getName());

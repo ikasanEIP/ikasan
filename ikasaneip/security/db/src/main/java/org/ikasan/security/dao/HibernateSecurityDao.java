@@ -732,16 +732,16 @@ public class HibernateSecurityDao implements SecurityDao
         , IkasanPrincipalFilter filter, Root principalRoot) {
         Predicate predicate = builder.conjunction();
         if (filter.getNameFilter() != null) {
-            predicate = builder.and(predicate, builder.like(principalRoot.get("name")
-                , "%" + filter.getNameFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(principalRoot.get("name"))
+                , "%" + filter.getNameFilter().toLowerCase() + "%"));
         }
         if (filter.getTypeFilter() != null) {
-            predicate = builder.and(predicate, builder.like(principalRoot.get("type")
-                , "%" + filter.getTypeFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(principalRoot.get("type"))
+                , "%" + filter.getTypeFilter().toLowerCase() + "%"));
         }
         if (filter.getDescriptionFilter() != null) {
-            predicate = builder.and(predicate, builder.like(principalRoot.get("description")
-                , "%" + filter.getDescriptionFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(principalRoot.get("description"))
+                , "%" + filter.getDescriptionFilter().toLowerCase() + "%"));
         }
 
         return predicate;
@@ -770,13 +770,13 @@ public class HibernateSecurityDao implements SecurityDao
         , IkasanPrincipalFilter filter) {
         StringBuffer queryBuffer = new StringBuffer(queryBase);
         if(filter.getNameFilter() != null && !filter.getNameFilter().isEmpty()) {
-            queryBuffer.append(String.format(" AND %s.name LIKE ", principalName)).append("'%").append(filter.getNameFilter()).append("%'");
+            queryBuffer.append(String.format(" AND lower(%s.name) LIKE ", principalName)).append("'%").append(filter.getNameFilter().toLowerCase()).append("%'");
         }
         if(filter.getTypeFilter() != null && !filter.getTypeFilter().isEmpty()) {
-            queryBuffer.append(String.format(" AND %s.type LIKE ", principalName)).append("'%").append(filter.getTypeFilter()).append("%'");
+            queryBuffer.append(String.format(" AND lower(%s.type) LIKE ", principalName)).append("'%").append(filter.getTypeFilter().toLowerCase()).append("%'");
         }
         if(filter.getDescriptionFilter() != null && !filter.getDescriptionFilter().isEmpty()) {
-            queryBuffer.append(String.format(" AND %s.description LIKE ", principalName)).append("'%").append(filter.getDescriptionFilter()).append("%'");
+            queryBuffer.append(String.format(" AND lower(%s.description) LIKE ", principalName)).append("'%").append(filter.getDescriptionFilter().toLowerCase()).append("%'");
         }
 
         return queryBuffer;

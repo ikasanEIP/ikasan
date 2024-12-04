@@ -287,24 +287,24 @@ public class HibernateUserDao implements UserDao
         , UserFilter userFilter, Root userRoot) {
         Predicate predicate = builder.conjunction();
         if (userFilter.getNameFilter() != null && !userFilter.getNameFilter().isEmpty()) {
-            predicate = builder.and(predicate, builder.like(userRoot.get("firstName")
-                , "%" + userFilter.getNameFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(userRoot.get("firstName"))
+                , "%" + userFilter.getNameFilter().toLowerCase() + "%"));
         }
         if (userFilter.getLastNameFilter() != null && !userFilter.getLastNameFilter().isEmpty()) {
-            predicate = builder.and(predicate, builder.like(userRoot.get("surname")
-                , "%" + userFilter.getLastNameFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(userRoot.get("surname"))
+                , "%" + userFilter.getLastNameFilter().toLowerCase() + "%"));
         }
         if (userFilter.getUsernameFilter() != null && !userFilter.getUsernameFilter().isEmpty()) {
-            predicate = builder.and(predicate, builder.like(userRoot.get("username")
-                , "%" + userFilter.getUsernameFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(userRoot.get("username"))
+                , "%" + userFilter.getUsernameFilter().toLowerCase() + "%"));
         }
         if (userFilter.getEmailFilter() != null && !userFilter.getEmailFilter().isEmpty()) {
-            predicate = builder.and(predicate, builder.like(userRoot.get("email")
-                , "%" + userFilter.getEmailFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(userRoot.get("email"))
+                , "%" + userFilter.getEmailFilter().toLowerCase() + "%"));
         }
         if (userFilter.getDepartmentFilter() != null && !userFilter.getDepartmentFilter().isEmpty()) {
-            predicate = builder.and(predicate, builder.like(userRoot.get("department")
-                , "%" + userFilter.getDepartmentFilter() + "%"));
+            predicate = builder.and(predicate, builder.like(builder.lower(userRoot.get("department"))
+                , "%" + userFilter.getDepartmentFilter().toLowerCase() + "%"));
         }
         return predicate;
     }
@@ -333,19 +333,19 @@ public class HibernateUserDao implements UserDao
         , UserFilter userFilter) {
         StringBuffer queryBuffer = new StringBuffer(queryBase);
         if (userFilter.getNameFilter() != null && !userFilter.getNameFilter().isEmpty()) {
-            queryBuffer.append("AND ").append(userReference).append(".firstName LIKE '%").append(userFilter.getNameFilter()).append("%'");
+            queryBuffer.append("AND lower(").append(userReference).append(".firstName) LIKE '%").append(userFilter.getNameFilter().toLowerCase()).append("%'");
         }
         if (userFilter.getLastNameFilter() != null && !userFilter.getLastNameFilter().isEmpty()) {
-            queryBuffer.append("AND ").append(userReference).append(".surname LIKE '%").append(userFilter.getLastNameFilter()).append("%'");
+            queryBuffer.append("AND lower(").append(userReference).append(".surname) LIKE '%").append(userFilter.getLastNameFilter().toLowerCase()).append("%'");
         }
         if (userFilter.getUsernameFilter() != null && !userFilter.getUsernameFilter().isEmpty()) {
-            queryBuffer.append("AND ").append(userReference).append(".username LIKE '%").append(userFilter.getUsernameFilter()).append("%'");
+            queryBuffer.append("AND lower(").append(userReference).append(".username) LIKE '%").append(userFilter.getUsernameFilter().toLowerCase()).append("%'");
         }
         if (userFilter.getEmailFilter() != null && !userFilter.getEmailFilter().isEmpty()) {
-            queryBuffer.append("AND ").append(userReference).append(".email LIKE '%").append(userFilter.getEmailFilter()).append("%'");
+            queryBuffer.append("AND lower(").append(userReference).append(".email) LIKE '%").append(userFilter.getEmailFilter().toLowerCase()).append("%'");
         }
         if (userFilter.getDepartmentFilter() != null && !userFilter.getDepartmentFilter().isEmpty()) {
-            queryBuffer.append("AND ").append(userReference).append(".department LIKE '%").append(userFilter.getDepartmentFilter()).append("%'");
+            queryBuffer.append("AND lower(").append(userReference).append(".department) LIKE '%").append(userFilter.getDepartmentFilter().toLowerCase()).append("%'");
         }
 
         return queryBuffer;
