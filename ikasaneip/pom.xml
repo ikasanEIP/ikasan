@@ -311,9 +311,10 @@
         <version.org.subethamail>1.2</version.org.subethamail>
         <version.org.eclipse.jetty>11.0.24</version.org.eclipse.jetty>
         <version.net.sf.saxon>9.6.0-10</version.net.sf.saxon>
-        <version.org.mongodb.mongo-java-driver>3.12.10</version.org.mongodb.mongo-java-driver>
-        <version.org.mongodb4.mongo-java-driver>4.4.1</version.org.mongodb4.mongo-java-driver>
-        <version.de.flapdoodle.embed>1.47.3</version.de.flapdoodle.embed>
+        <version.org.mongodb.mongo-java-driver>3.12.14</version.org.mongodb.mongo-java-driver>
+        <version.org.mongodb4.mongo-java-driver>4.11.5</version.org.mongodb4.mongo-java-driver>
+        <version.de.flapdoodle.embed.mongo>4.18.1</version.de.flapdoodle.embed.mongo>
+        <version.de.flapdoodle.embed.process>4.15.1</version.de.flapdoodle.embed.process>
         <version.org.aspectj>1.9.21</version.org.aspectj>
         <version.org.aspectjrt>1.9.21</version.org.aspectjrt>
         <version.jakarta.servlet>6.1.0-M1</version.jakarta.servlet>
@@ -2452,9 +2453,14 @@
 
             <dependency>
                 <groupId>de.flapdoodle.embed</groupId>
+                <artifactId>de.flapdoodle.embed.process</artifactId>
+                <version>${version.de.flapdoodle.embed.process}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>de.flapdoodle.embed</groupId>
                 <artifactId>de.flapdoodle.embed.mongo</artifactId>
-                <version>${version.de.flapdoodle.embed}</version>
-                <scope>test</scope>
+                <version>${version.de.flapdoodle.embed.mongo}</version>
             </dependency>
 
             <dependency>
