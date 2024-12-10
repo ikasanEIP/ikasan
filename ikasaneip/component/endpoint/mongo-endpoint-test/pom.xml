@@ -75,13 +75,6 @@
             <artifactId>de.flapdoodle.embed.process</artifactId>
         </dependency>
 
-<!--        &lt;!&ndash; https://mvnrepository.com/artifact/de.flapdoodle.reverse/de.flapdoodle.reverse &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>de.flapdoodle.reverse</groupId>-->
-<!--            <artifactId>de.flapdoodle.reverse</artifactId>-->
-<!--            <version>1.8.1</version>-->
-<!--        </dependency>-->
-
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
