@@ -252,7 +252,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
-        <version.logback.core>1.4.14</version.logback.core>
+        <version.logback.core>1.5.13</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>6.4.1.Final</version.org.hibernate>
