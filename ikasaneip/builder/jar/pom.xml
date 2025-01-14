@@ -45,7 +45,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-builder-parent</artifactId>
-        <version>4.0.4-SNAPSHOT</version>
+        <version>4.0.5-SNAPSHOT</version>
     </parent>
 
     <artifactId>ikasan-builder</artifactId>
@@ -431,6 +431,12 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.httpcomponents.client5</groupId>
+            <artifactId>httpclient5</artifactId>
             <scope>test</scope>
         </dependency>
 
