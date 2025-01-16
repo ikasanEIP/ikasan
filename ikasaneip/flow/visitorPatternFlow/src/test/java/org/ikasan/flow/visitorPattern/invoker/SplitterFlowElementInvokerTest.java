@@ -79,8 +79,12 @@ public class SplitterFlowElementInvokerTest
     private FlowElementInvoker flowElementInvoker = mockery.mock(FlowElementInvoker.class, "flowElementInvoker");
     private Splitter splitter = mockery.mock(Splitter.class, "splitter");
     private Object payload = mockery.mock(Object.class, "payload");
+    private FlowInvocationContextListener flowInvocationContextListener
+        = mockery.mock(FlowInvocationContextListener.class, "flowInvocationContextListener");
 
     private List<FlowEventListener> flowEventListeners = new ArrayList<FlowEventListener>();
+    private List<FlowInvocationContextListener> flowInvocationContextListeners
+        = List.of(flowInvocationContextListener);
 
     // this is to test the InvocationAware aspect
     interface SplitterInvocationAware extends Splitter, InvocationAware {}
@@ -125,14 +129,18 @@ public class SplitterFlowElementInvokerTest
                 exactly(1).of(eventFactory).newEvent(payload, payload, timestamp, payload);
                 will(returnValue(flowEvent));
 
-                exactly(1).of(flowElement).getFlowElementInvoker();
+                exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(false);
                 exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
@@ -165,14 +173,18 @@ public class SplitterFlowElementInvokerTest
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(flowElement));
 
-                exactly(1).of(flowElement).getFlowElementInvoker();
+                exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(false);
                 exactly(1).of(flowElementInvoker).invoke(null, "moduleName", "flowName", flowInvocationContext, realFlowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(flowEventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(null, "moduleName", "flowName", flowInvocationContext, realFlowEvent, flowElement);
 
@@ -206,14 +218,18 @@ public class SplitterFlowElementInvokerTest
                 exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
                 will(returnValue(flowElement));
 
-                exactly(1).of(flowElement).getFlowElementInvoker();
+                exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(false);
                 exactly(1).of(flowElementInvoker).invoke(null, "moduleName", "flowName", flowInvocationContext, realFlowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(flowEventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(null, "moduleName", "flowName", flowInvocationContext, realFlowEvent, flowElement);
 
@@ -256,13 +272,74 @@ public class SplitterFlowElementInvokerTest
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(3).of(flowElement).getFlowElementInvoker();
+                exactly(9).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                exactly(3).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(3).of(flowElementInvoker).setInvokeContextListeners(false);
                 exactly(3).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));            }
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_splitter_flowElementInvoker_split_to_individualFlowEvents_snap_events()
+    {
+        final List payloads = new ArrayList();
+        payloads.add(flowEvent);
+        payloads.add(flowEvent);
+        payloads.add(flowEvent);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(splitter));
+                exactly(1).of(flowEvent).getPayload();
+                will(returnValue(payload));
+                exactly(1).of(splitter).split(flowEvent);
+                will(throwException(new ClassCastException()));
+                exactly(1).of(splitter).split(payload);
+                will(returnValue(payloads));
+
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(9).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(3).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(3).of(flowElementInvoker).setInvokeContextListeners(true);
+                exactly(3).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
+                exactly(4).of(flowInvocationContextListener).snapEvent(with(any(FlowElement.class)), with(any(FlowEvent.class)));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(true);
+        ((InvokerConfiguration)flowElementInvoker.getConfiguration()).setCaptureMetrics(true);
+        ((InvokerConfiguration)flowElementInvoker.getConfiguration()).setSnapEvent(true);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
@@ -327,17 +404,104 @@ public class SplitterFlowElementInvokerTest
                 will(returnValue(flowEvent));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getFlowElementInvoker();
+                exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(false);
                 exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         SplitterInvokerConfiguration configuration = new SplitterInvokerConfiguration();
         configuration.setSplitEventToListOfEvents();
         ((Configured)flowElementInvoker).setConfiguration(configuration);
+
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_splitter_flowElementInvoker_split_to_listOfEvents_snap_events()
+    {
+        final List payloads = new ArrayList();
+        payloads.add(flowEvent);
+        payloads.add(payload);
+        payloads.add(flowEvent);
+
+        final List flowEvents = new ArrayList();
+        flowEvents.add(flowEvent);
+        flowEvents.add(flowEvent);
+        flowEvents.add(flowEvent);
+
+        long timestamp = System.currentTimeMillis();
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // first call
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).getTimestamp();
+                will(returnValue(timestamp));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(splitter));
+                exactly(1).of(splitter).split(flowEvent);
+                will(returnValue(payloads));
+
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+
+                // first payload is already a flowEvent so nothing to create
+
+                // second payload needs a flowEvent created
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+                exactly(1).of(flowEvent).getRelatedIdentifier();
+                will(returnValue("relatedIdentifier"));
+                exactly(1).of(flowEvent).getTimestamp();
+                will(returnValue(timestamp));
+                exactly(1).of(eventFactory).newEvent("identifier", "relatedIdentifier", timestamp, payload);
+                will(returnValue(flowEvent));
+
+                // third payload is already a flowEvent so nothing to create
+
+                // create new flowEvent for publication downstream
+                exactly(1).of(eventFactory).newEvent("identifier", "relatedIdentifier", timestamp, flowEvents);
+                will(returnValue(flowEvent));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(3).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(true);
+                exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
+                exactly(2).of(flowInvocationContextListener).snapEvent(with(any(FlowElement.class)), with(any(FlowEvent.class)));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        SplitterInvokerConfiguration configuration = new SplitterInvokerConfiguration();
+        configuration.setSplitEventToListOfEvents();
+        ((Configured)flowElementInvoker).setConfiguration(configuration);
+
+        flowElementInvoker.setInvokeContextListeners(true);
+        ((InvokerConfiguration)flowElementInvoker.getConfiguration()).setCaptureMetrics(true);
+        ((InvokerConfiguration)flowElementInvoker.getConfiguration()).setSnapEvent(true);
 
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
@@ -387,17 +551,89 @@ public class SplitterFlowElementInvokerTest
                 will(returnValue(flowEvent));
 
                 exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
-                exactly(1).of(flowElement).getFlowElementInvoker();
+                exactly(3).of(flowElement).getFlowElementInvoker();
                 will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(false);
                 exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
                 will(returnValue(null));
             }
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         SplitterInvokerConfiguration configuration = new SplitterInvokerConfiguration();
         configuration.setSplitEventToListOfPayloads();
         ((Configured)flowElementInvoker).setConfiguration(configuration);
+
+        flowEventListeners.add(flowEventListener);
+        flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void test_splitter_flowElementInvoker_split_to_listOfPayloads_snap_events()
+    {
+        final List payloads = new ArrayList();
+        payloads.add(flowEvent);
+        payloads.add(payload);
+        payloads.add(flowEvent);
+
+        long timestamp = System.currentTimeMillis();
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // first call
+                exactly(2).of(flowEvent).getIdentifier();
+                will(returnValue(payload));
+                exactly(2).of(flowEvent).getRelatedIdentifier();
+                will(returnValue(payload));
+                exactly(1).of(flowEvent).getTimestamp();
+                will(returnValue(timestamp));
+                exactly(1).of(flowInvocationContext).addElementInvocation(with(any(FlowElementInvocation.class)));
+                exactly(1).of(flowInvocationContext).setLastComponentName(null);
+                exactly(1).of(flowEventListener).beforeFlowElement("moduleName", "flowName", flowElement, flowEvent);
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(splitter));
+                exactly(1).of(splitter).split(flowEvent);
+                will(returnValue(payloads));
+
+                exactly(1).of(flowElement).getTransition(FlowElement.DEFAULT_TRANSITION_NAME);
+                will(returnValue(flowElement));
+
+                // create new flowEvent for publication downstream
+                exactly(1).of(flowEvent).getIdentifier();
+                will(returnValue("identifier"));
+                exactly(1).of(flowEvent).getRelatedIdentifier();
+                will(returnValue("relatedIdentifier"));
+                exactly(1).of(eventFactory).newEvent("identifier", "relatedIdentifier", timestamp, payloads);
+                will(returnValue(flowEvent));
+
+                exactly(1).of(flowEventListener).afterFlowElement("moduleName", "flowName", flowElement, flowEvent);
+                exactly(3).of(flowElement).getFlowElementInvoker();
+                will(returnValue(flowElementInvoker));
+                exactly(1).of(flowElementInvoker).setFlowInvocationContextListeners(flowInvocationContextListeners);
+                exactly(1).of(flowElementInvoker).setInvokeContextListeners(true);
+                exactly(1).of(flowElementInvoker).invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
+                will(returnValue(null));
+                exactly(2).of(flowInvocationContextListener).snapEvent(with(any(FlowElement.class)), with(any(FlowEvent.class)));
+            }
+        });
+
+        FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        SplitterInvokerConfiguration configuration = new SplitterInvokerConfiguration();
+        configuration.setSplitEventToListOfPayloads();
+        ((Configured)flowElementInvoker).setConfiguration(configuration);
+
+        flowElementInvoker.setInvokeContextListeners(true);
+        ((InvokerConfiguration)flowElementInvoker.getConfiguration()).setCaptureMetrics(true);
+        ((InvokerConfiguration)flowElementInvoker.getConfiguration()).setSnapEvent(true);
 
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
@@ -441,6 +677,8 @@ public class SplitterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
@@ -482,6 +720,8 @@ public class SplitterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
@@ -522,6 +762,8 @@ public class SplitterFlowElementInvokerTest
         });
 
         FlowElementInvoker flowElementInvoker = new SplitterFlowElementInvoker(eventFactory);
+        flowElementInvoker.setFlowInvocationContextListeners(this.flowInvocationContextListeners);
+        flowElementInvoker.setInvokeContextListeners(false);
         flowEventListeners.add(flowEventListener);
         flowElementInvoker.invoke(flowEventListeners, "moduleName", "flowName", flowInvocationContext, flowEvent, flowElement);
 
