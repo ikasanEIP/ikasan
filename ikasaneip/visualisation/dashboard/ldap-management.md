@@ -38,11 +38,20 @@ New configurations can be added by pressing the 'Add Directory' button.
 ![LDAP Management](../../developer/docs/quickstart-images/ldap-directory-management.png)
 
 ### Configuring an LDAP Directory
+There are 2 general properties available for LDAP timeouts which can be set in the associated `application.properties`.
 
-When editing or creating a new configuration, the user will be presented with the following screen. All feilds are mandatory, however the majority of fields on the configuration screen can use the provided default values.
+| Configuration Property                         | Description                                                                        | Default |
+|------------------------------------------------|------------------------------------------------------------------------------------|---------|
+| com.sun.jndi.ldap.connect.timeout.milliseconds | Attempts to connect to an LDAP repository will timeout once this value is exceeded | 60000   |
+| com.sun.jndi.ldap.read.timeout.milliseconds    | Attempts to read from an LDAP repository will timeout once this value is exceeded  | 60000   |
+
+
+When editing or creating a new configuration, the user will be presented with the following screen. All fields are mandatory, 
+however the majority of fields on the configuration screen can use the provided default values.
 ![LDAP Configuration Management](../../developer/docs/quickstart-images/manage-ldap-configuration.png)
 
-It is possible to schedule the synchronisation of LDAP repositories to run automatically as seen below. The cron expression must be a valid [quartz](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) expression.
+It is possible to schedule the synchronisation of LDAP repositories to run automatically as seen below. The cron expression 
+must be a valid [quartz](http://www.quartz-scheduler.org/documentation/quartz-2.3.0/tutorials/crontrigger.html) expression.
 ![LDAP Configuration Management](../../developer/docs/quickstart-images/schedule-ldap.png) 
 
 
