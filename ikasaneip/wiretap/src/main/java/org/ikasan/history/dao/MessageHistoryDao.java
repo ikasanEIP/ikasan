@@ -143,7 +143,7 @@ public interface MessageHistoryDao
      *
      * @param events
      */
-    public void deleteHarvestableRecords(List<FlowInvocationMetric> events);
+    public void deleteHarvestedRecords(List<FlowInvocationMetric> events);
 
     /**
      * Method to state that there are harvestable records available.

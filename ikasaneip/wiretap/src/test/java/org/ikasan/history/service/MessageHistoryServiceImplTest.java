@@ -81,10 +81,8 @@ public class MessageHistoryServiceImplTest
     };
 
     MessageHistoryDao mockMessageHistoryDao = mockery.mock(MessageHistoryDao.class);
-    WiretapEventFactory wiretapEventFactory = mockery.mock(WiretapEventFactory.class);
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
     HistoryEventFactory historyEventFactory = mockery.mock(HistoryEventFactory.class);
-    ComponentInvocationMetric messageHistoryEvent = mockery.mock(ComponentInvocationMetric.class);
     WiretapSerialiser wiretapSerialiser = mockery.mock(WiretapSerialiser.class);
     FlowInvocationMetric flowInvocationMetric = mockery.mock(FlowInvocationMetric.class);
 
@@ -206,7 +204,7 @@ public class MessageHistoryServiceImplTest
             for(int j=0; j<5; j++)
             {
                 ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
-                        "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
+                        "lifeId" + i + j, "relatedLifeId" + i + j, "lifeId" + i + j, "relatedLifeId" + i,
                         System.currentTimeMillis() - 500L, System.currentTimeMillis());
 
                 Set<CustomMetric> metrics = new HashSet<CustomMetric>();
@@ -219,7 +217,7 @@ public class MessageHistoryServiceImplTest
                 event1.setMetrics(metrics);
 
                 MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
-                        "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+                        "lifeId" + i + j, "relatedLifeId" + i + j, System.currentTimeMillis(), "payload", 30L);
 
                 messageHistoryDao.save(wiretapEvent);
 
@@ -235,8 +233,6 @@ public class MessageHistoryServiceImplTest
             messageHistoryDao.save(flowInvocationMetric);
         }
 
-        System.out.println("Started deleting message history records: " + System.currentTimeMillis());
-
         Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
 
         this.messageHistoryService.setTransactionBatchSize(1050);
@@ -248,11 +244,9 @@ public class MessageHistoryServiceImplTest
 
         this.messageHistoryService.housekeep();
 
-        System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
-
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-
-        System.out.println("Delete completed records: " + results.getResultSize());
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0
+            , 10000, null, true, Collections.singleton("moduleName"), null
+            , null, null, null, null, null);
 
         Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
     }
@@ -268,7 +262,7 @@ public class MessageHistoryServiceImplTest
             for(int j=0; j<5; j++)
             {
                 ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
-                        "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
+                        "lifeId" + i + j, "relatedLifeId" + i + j, "lifeId" + i + j, "relatedLifeId" + i,
                         System.currentTimeMillis() - 500L, System.currentTimeMillis());
 
                 Set<CustomMetric> metrics = new HashSet<CustomMetric>();
@@ -281,7 +275,7 @@ public class MessageHistoryServiceImplTest
                 event1.setMetrics(metrics);
 
                 MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
-                        "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+                        "lifeId" + i + j, "relatedLifeId" + i + j, System.currentTimeMillis(), "payload", 30L);
 
                 messageHistoryDao.save(wiretapEvent);
 
@@ -297,7 +291,6 @@ public class MessageHistoryServiceImplTest
             messageHistoryDao.save(flowInvocationMetric);
         }
 
-        System.out.println("Started deleting message history records: " + System.currentTimeMillis());
 
         messageHistoryDao.setBatchHousekeepDelete(false);
 
@@ -312,11 +305,10 @@ public class MessageHistoryServiceImplTest
 
         this.messageHistoryService.housekeep();
 
-        System.out.println("Completed deleting message history records: " + System.currentTimeMillis());
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000
+            , null, true, Collections.singleton("moduleName"), null, null
+            , null, null, null, null);
 
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-
-        System.out.println("Delete completed records: " + results.getResultSize());
 
         Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
     }

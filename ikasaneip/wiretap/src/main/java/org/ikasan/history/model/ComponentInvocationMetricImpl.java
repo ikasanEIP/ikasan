@@ -42,6 +42,7 @@ package org.ikasan.history.model;
 
 import jakarta.persistence.*;
 import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.history.FlowInvocationMetric;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -219,13 +220,13 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
         this.wiretapFlowEvent = wiretapFlowEvent;
     }
 
-    public FlowInvocationMetricImpl getFlowInvocation()
+    public FlowInvocationMetric getFlowInvocation()
     {
         return flowInvocation;
     }
 
-    public void setFlowInvocation(FlowInvocationMetricImpl flowInvocation)
+    public void setFlowInvocation(FlowInvocationMetric flowInvocation)
     {
-        this.flowInvocation = flowInvocation;
+        this.flowInvocation = (FlowInvocationMetricImpl) flowInvocation;
     }
 }

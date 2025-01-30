@@ -106,6 +106,11 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
     public void save(FlowInvocationMetric flowInvocationMetric) {
         entityManager.persist(entityManager.contains(flowInvocationMetric)
             ? flowInvocationMetric : entityManager.merge(flowInvocationMetric));
+
+        flowInvocationMetric.getFlowInvocationEvents().forEach(event -> {
+            ((ComponentInvocationMetric)event).setFlowInvocation(flowInvocationMetric);
+            this.save((ComponentInvocationMetric)event);
+        });
     }
     
 	@Override
@@ -124,8 +129,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
         CriteriaQuery<ComponentInvocationMetric> criteriaQuery = builder.createQuery(ComponentInvocationMetric.class);
         Root<ComponentInvocationMetricImpl> root = criteriaQuery.from(ComponentInvocationMetricImpl.class);
-        List<Predicate> predicates = getCriteria(builder, root, pageNo, pageSize, orderBy,
-            orderAscending, moduleNames, flowName, componentName, eventId, relatedEventId, fromDate, toDate);
+        List<Predicate> predicates = getCriteria(builder, root, componentName, eventId, relatedEventId, fromDate, toDate);
 
         criteriaQuery.select(root)
             .where(predicates.toArray(new Predicate[predicates.size()]));
@@ -145,23 +149,19 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         query.setFirstResult(firstResult);
         List<ComponentInvocationMetric> results = query.getResultList();
 
-        Long rowCount = rowCount(pageNo, pageSize, orderBy, orderAscending, moduleNames, flowName
-            , componentName, eventId, relatedEventId, fromDate, toDate);
+        Long rowCount = rowCount(componentName, eventId, relatedEventId, fromDate, toDate);
 
         return new ArrayListPagedSearchResult(results, firstResult, rowCount);
     }
 
-    private Long rowCount(final int pageNo, final int pageSize, final String orderBy,
-                          final boolean orderAscending, final Set<String> moduleNames,
-                          final String flowName, final String componentName,
+    private Long rowCount(final String componentName,
                           final String eventId, final String relatedEventId,
                           final Date fromDate, final Date toDate) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
         Root<ComponentInvocationMetricImpl> root = metaDataCriteriaQuery.from(ComponentInvocationMetricImpl.class);
-        List<Predicate> predicates = getCriteria(builder, root, pageNo, pageSize, orderBy,
-            orderAscending, moduleNames, flowName, componentName, eventId, relatedEventId, fromDate, toDate);
+        List<Predicate> predicates = getCriteria(builder, root, componentName, eventId, relatedEventId, fromDate, toDate);
 
         metaDataCriteriaQuery.select(builder.count(root))
         .where(predicates.toArray(new Predicate[predicates.size()]));
@@ -181,12 +181,8 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
      * @param root
      * @return
      */
-    private List<Predicate> getCriteria(CriteriaBuilder builder, Root<ComponentInvocationMetricImpl> root,
-                                        final int pageNo, final int pageSize, final String orderBy,
-                                        final boolean orderAscending, final Set<String> moduleNames,
-                                        final String flowName, final String componentName,
-                                        final String eventId, final String relatedEventId,
-                                        final Date fromDate, final Date toDate) {
+    private List<Predicate> getCriteria(CriteriaBuilder builder, Root<ComponentInvocationMetricImpl> root, final String componentName,
+                                        final String eventId, final String relatedEventId, final Date fromDate, final Date toDate) {
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -225,8 +221,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
         CriteriaQuery<ComponentInvocationMetric> criteriaQuery = builder.createQuery(ComponentInvocationMetric.class);
         Root<ComponentInvocationMetricImpl> root = criteriaQuery.from(ComponentInvocationMetricImpl.class);
-        List<Predicate> predicates = getCriteria(builder,root, pageNo, pageSize, orderBy,
-            orderAscending, null, null, null, eventId,
+        List<Predicate> predicates = getCriteria(builder,root, null, eventId,
             relatedEventId, null, null);
 
         criteriaQuery.select(root)
@@ -250,8 +245,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         query.setFirstResult(firstResult);
         List<ComponentInvocationMetric> results = query.getResultList();
 
-        Long rowCount = rowCount(pageNo, pageSize, orderBy,
-            orderAscending, null, null, null, eventId,
+        Long rowCount = rowCount( null, eventId,
             relatedEventId, null, null);
 
         return new ArrayListPagedSearchResult(results, firstResult, rowCount);
@@ -294,7 +288,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
             List<FlowInvocationMetric> events = this.getHarvestedRecords(this.housekeepingBatchSize);
 
-            this.deleteHarvestableRecords(events);
+            this.deleteHarvestedRecords(events);
         }
     }
 
@@ -361,7 +355,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
     public List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<FlowInvocationMetric> criteriaQuery = builder.createQuery(FlowInvocationMetric.class);
+        CriteriaQuery<FlowInvocationMetricImpl> criteriaQuery = builder.createQuery(FlowInvocationMetricImpl.class);
         Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
 
         if(harvested) {
@@ -381,7 +375,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
             }
         }
 
-        TypedQuery<FlowInvocationMetric> query = entityManager.createQuery(criteriaQuery);
+        Query query = entityManager.createQuery(criteriaQuery);
         query.setMaxResults(housekeepingBatchSize);
         List<FlowInvocationMetric> flowInvocationMetrics = query.getResultList();
 
@@ -390,11 +384,11 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         Set<ComponentInvocationMetric> messageHistoryEvents = new HashSet<ComponentInvocationMetric>();
         Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
 
-        for(FlowInvocationMetric<ComponentInvocationMetric> flowInvocationMetric : flowInvocationMetrics) {
+        for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics) {
             messageHistoryEvents.addAll(flowInvocationMetric.getFlowInvocationEvents());
         }
 
-        List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<ComponentInvocationMetric>(messageHistoryEvents), 200);
+        List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<>(messageHistoryEvents), 200);
 
         for(List<ComponentInvocationMetric> list: smallerLists) {
             for (ComponentInvocationMetric event: list) {
@@ -443,7 +437,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
     }
 
     @Override
-    public void deleteHarvestableRecords(List<FlowInvocationMetric> flowInvocationMetrics) {
+    public void deleteHarvestedRecords(List<FlowInvocationMetric> flowInvocationMetrics) {
         for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics) {
             Set<ComponentInvocationMetric> events = flowInvocationMetric.getFlowInvocationEvents();
 
