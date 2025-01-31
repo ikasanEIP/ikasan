@@ -215,6 +215,14 @@ public class HibernateMessageHistoryDaoTest
         messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
         messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        messageHistoryDao.deleteHarvestedRecords(events);
 
         PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao
             .findMessageHistoryEvents(0, 20000, null, true

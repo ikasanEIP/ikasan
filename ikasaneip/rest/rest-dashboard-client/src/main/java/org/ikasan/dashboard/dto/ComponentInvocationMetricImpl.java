@@ -41,6 +41,7 @@
 package org.ikasan.dashboard.dto;
 
 import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.history.FlowInvocationMetric;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -58,6 +59,8 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     private long startTimeMillis, endTimeMillis, id;
 
     private Set<CustomMetric> metrics;
+
+    private FlowInvocationMetric flowInvocationMetric;
 
     private MetricEventImpl wiretapFlowEvent;
 
@@ -181,5 +184,15 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     public void setWiretapFlowEvent(MetricEventImpl wiretapFlowEvent)
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
+    }
+
+    @Override
+    public FlowInvocationMetric getFlowInvocation() {
+        return flowInvocationMetric;
+    }
+
+    @Override
+    public void setFlowInvocation(FlowInvocationMetric flowInvocationMetric) {
+        this.flowInvocationMetric = flowInvocationMetric;
     }
 }
