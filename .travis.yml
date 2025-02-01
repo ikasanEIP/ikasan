@@ -37,7 +37,7 @@ deploy:
     skip_cleanup: true
     script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
-      branch: IKASAN-2546-component-invocation-metrics-not-saving
+      branch: 4.1.x
   # Push release to oss
   - provider: script
     skip_cleanup: true
