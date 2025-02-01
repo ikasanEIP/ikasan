@@ -81,10 +81,8 @@ public class MessageHistoryServiceImplTest
     };
 
     MessageHistoryDao mockMessageHistoryDao = mockery.mock(MessageHistoryDao.class);
-    WiretapEventFactory wiretapEventFactory = mockery.mock(WiretapEventFactory.class);
     FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class);
     HistoryEventFactory historyEventFactory = mockery.mock(HistoryEventFactory.class);
-    ComponentInvocationMetric messageHistoryEvent = mockery.mock(ComponentInvocationMetric.class);
     WiretapSerialiser wiretapSerialiser = mockery.mock(WiretapSerialiser.class);
     FlowInvocationMetric flowInvocationMetric = mockery.mock(FlowInvocationMetric.class);
 
@@ -197,9 +195,39 @@ public class MessageHistoryServiceImplTest
 
     @Test
     @DirtiesContext
-    public void test_harvest()
+    public void test_harvest_and_housekeep()
     {
         this.populateTestRecords(100, 0, false);
+        Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
+
+        this.messageHistoryService.setTransactionBatchSize(1050);
+        this.messageHistoryService.setHousekeepingBatchSize(500);
+
+        List events = this.messageHistoryService.harvest(100);
+
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 100);
+
+        this.messageHistoryService.updateAsHarvested(events);
+
+        events = this.messageHistoryService.harvest(100);
+
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 0);
+
+        this.messageHistoryService.housekeep();
+
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0
+            , 10000, null, true, Collections.singleton("moduleName"), null
+            , null, null, null, null, null);
+
+        Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_harvest_and_house_keep_batch_delete_false()
+    {
+        this.populateTestRecords(100, 0, false);
+        messageHistoryDao.setBatchHousekeepDelete(false);
 
         Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
 
@@ -210,33 +238,18 @@ public class MessageHistoryServiceImplTest
 
         Assert.assertEquals("Harvestable events should equal!", events.size(), 100);
 
-        this.messageHistoryService.housekeep();
+        this.messageHistoryService.updateAsHarvested(events);
 
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+        events = this.messageHistoryService.harvest(100);
 
-        Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
-    }
-
-    @Test
-    @DirtiesContext
-    public void test_harvest_batch_delete_false()
-    {
-        this.populateTestRecords(100, 0, false);
-
-        messageHistoryDao.setBatchHousekeepDelete(false);
-
-        Assert.assertEquals("Harvestable records exist!", true, this.messageHistoryService.harvestableRecordsExist());
-
-        this.messageHistoryService.setTransactionBatchSize(10500);
-        this.messageHistoryService.setHousekeepingBatchSize(50);
-
-        List events = this.messageHistoryService.harvest(100);
-
-        Assert.assertEquals("Harvestable events should equal!", events.size(), 100);
+        Assert.assertEquals("Harvestable events should equal!", events.size(), 0);
 
         this.messageHistoryService.housekeep();
 
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10000
+            , null, true, Collections.singleton("moduleName"), null, null
+            , null, null, null, null);
+
 
         Assert.assertEquals("After housekeeping events should equal!", results.getPagedResults().size(), 0);
     }
