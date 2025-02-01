@@ -157,17 +157,7 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     @Override
     public List<FlowInvocationMetric> harvest(int transactionBatchSize)
     {
-        List<FlowInvocationMetric> events = this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
-
-        for(FlowInvocationMetric event: events)
-        {
-            event.setHarvested(true);
-            event.setHarvestedDateTime(System.currentTimeMillis());
-
-            this.messageHistoryDao.save(event);
-        }
-
-        return events;
+        return this.messageHistoryDao.getHarvestableRecords(transactionBatchSize);
     }
 
     @Override
