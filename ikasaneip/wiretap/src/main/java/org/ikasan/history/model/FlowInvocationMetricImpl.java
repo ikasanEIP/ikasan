@@ -1,5 +1,6 @@
 package org.ikasan.history.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.ikasan.spec.history.FlowInvocationMetric;
 
@@ -26,7 +27,7 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     private long invocationEndTime;
     @Column(name="FinalAction", nullable = false)
     private String finalAction;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name="FlowInvocationMetricId")
     private Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls;
     @Column(name="Harvested", nullable = false)
@@ -160,11 +161,13 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
         this.expiry = expiry;
     }
 
+    @JsonIgnore
     public Set<ComponentInvocationMetricImpl> getComponentInvocationMetricImpls()
     {
         return componentInvocationMetricImpls;
     }
 
+    @JsonIgnore
     public void setComponentInvocationMetricImpls(Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls)
     {
         this.componentInvocationMetricImpls = componentInvocationMetricImpls;
