@@ -26,7 +26,8 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     private long invocationEndTime;
     @Column(name="FinalAction", nullable = false)
     private String finalAction;
-    @OneToMany(mappedBy="flowInvocation", fetch = FetchType.EAGER)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinColumn(name="FlowInvocationMetricId")
     private Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls;
     @Column(name="Harvested", nullable = false)
     private Boolean harvested = false;
@@ -137,7 +138,6 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
     public void setFlowInvocationEvents(Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls)
     {
         this.componentInvocationMetricImpls = componentInvocationMetricImpls;
-        this.componentInvocationMetricImpls.forEach(componentInvocationMetric -> componentInvocationMetric.setFlowInvocation(this));
     }
 
     public Boolean getHarvested()

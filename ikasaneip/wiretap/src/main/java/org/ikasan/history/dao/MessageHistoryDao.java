@@ -60,20 +60,20 @@ public interface MessageHistoryDao
      * Save a MessageHistoryEvent
      * @param messageHistoryEvent the event
      */
-    public void save(ComponentInvocationMetric messageHistoryEvent);
+    void save(ComponentInvocationMetric messageHistoryEvent);
 
     /**
      * Save a MetricEvent
      * @param metricEvent the event
      */
-    public void save(MetricEvent metricEvent);
+    void save(MetricEvent metricEvent);
 
     /**
      * Save a FlowInvocation
      *
      * @param flowInvocationMetric
      */
-    public void save(FlowInvocationMetric flowInvocationMetric);
+    void save(FlowInvocationMetric flowInvocationMetric);
 
 
     /**
@@ -91,7 +91,7 @@ public interface MessageHistoryDao
      * @param toDate the to datetime
      * @return a paged result set of MessageHistoryEvent
      */
-    public PagedSearchResult<ComponentInvocationMetric> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+    PagedSearchResult<ComponentInvocationMetric> findMessageHistoryEvents(int pageNo, int pageSize, String orderBy, boolean orderAscending,
                                                                                  Set<String> moduleNames, String flowName, String componentName,
                                                                                  String eventId, String relatedEventId, Date fromDate, Date toDate);
 
@@ -107,19 +107,19 @@ public interface MessageHistoryDao
      * @param relatedEventId an optional relatedEventId to retrieve events that had the main eventId mutated
      * @return a paged result set of MessageHistoryEvent
      */
-    public PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
+    PagedSearchResult<ComponentInvocationMetric> getMessageHistoryEvent(int pageNo, int pageSize, String orderBy, boolean orderAscending,
                                                                                String eventId, String relatedEventId);
 
     /**
      * Delete all expired MessageHistoryEvents
      */
-    public void deleteAllExpired();
+    void deleteAllExpired();
 
     /**
      * Method to state that there are housekeepable records available.
      * @return true if so, false otherwise
      */
-    public boolean housekeepablesExist();
+    boolean housekeepablesExist();
 
 
     /**
@@ -128,7 +128,7 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<FlowInvocationMetric> getHarvestableRecords(int transactionBatchSize);
+    List<FlowInvocationMetric> getHarvestableRecords(int transactionBatchSize);
 
     /**
      * Get the events that are already harvested.
@@ -136,63 +136,62 @@ public interface MessageHistoryDao
      * @param transactionBatchSize
      * @return
      */
-    public List<FlowInvocationMetric> getHarvestedRecords(final int transactionBatchSize);
+    List<FlowInvocationMetric> getHarvestedRecords(final int transactionBatchSize);
 
     /**
      * Delete the events in the list.
      *
      * @param events
      */
-    public void deleteHarvestableRecords(List<FlowInvocationMetric> events);
+    void deleteHarvestedRecords(List<FlowInvocationMetric> events);
 
     /**
      * Method to state that there are harvestable records available.
      * @return true if so, false otherwise
      */
-    public boolean harvestableRecordsExist();
+    boolean harvestableRecordsExist();
 
     /**
      * @return the housekeepingBatchSize
      */
-    public Integer getHousekeepingBatchSize();
+    Integer getHousekeepingBatchSize();
 
     /**
      * @param housekeepingBatchSize the housekeepingBatchSize to set
      */
-    public void setHousekeepingBatchSize(Integer housekeepingBatchSize);
+    void setHousekeepingBatchSize(Integer housekeepingBatchSize);
 
     /**
      * @return the housekeepingBatchSize
      */
-    public Integer getTransactionBatchSize();
+    Integer getTransactionBatchSize();
 
     /**
      * @param transactionBatchSize the housekeepingBatchSize to set
      */
-    public void setTransactionBatchSize(Integer transactionBatchSize);
+    void setTransactionBatchSize(Integer transactionBatchSize);
 
     /**
      * @return the batchHousekeepDelete
      */
-    public boolean isBatchHousekeepDelete();
+    boolean isBatchHousekeepDelete();
 
     /**
      * @param batchHousekeepDelete the batchHousekeepDelete to set
      */
-    public void setBatchHousekeepDelete(boolean batchHousekeepDelete);
+    void setBatchHousekeepDelete(boolean batchHousekeepDelete);
 
     /**
      * Update entity as harvested.
      *
      * @param events
      */
-    public void updateAsHarvested(List<FlowInvocationMetric> events);
+    void updateAsHarvested(List<FlowInvocationMetric> events);
 
     /**
      * Set flag to determine if harvest query should be ordered.
      *
      * @param isHarvestQueryOrdered
      */
-    public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered);
-
+    void setHarvestQueryOrdered(boolean isHarvestQueryOrdered);
 }
