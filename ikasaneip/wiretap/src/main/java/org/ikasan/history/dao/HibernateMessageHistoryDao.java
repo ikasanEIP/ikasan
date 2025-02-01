@@ -515,54 +515,54 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
      *
      * @return true if the batch housekeeping delete flag is enabled, false otherwise
      */
-        public boolean isBatchHousekeepDelete() {
+    public boolean isBatchHousekeepDelete() {
             return batchHousekeepDelete;
         }
 
-        /**
-         * Set whether to perform batch housekeeping deletion.
-         *
-         * @param batchHousekeepDelete true to enable batch housekeeping deletion, false otherwise
-         */
-        public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
-            this.batchHousekeepDelete = batchHousekeepDelete;
-        }
+    /**
+     * Set whether to perform batch housekeeping deletion.
+     *
+     * @param batchHousekeepDelete true to enable batch housekeeping deletion, false otherwise
+     */
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
+        this.batchHousekeepDelete = batchHousekeepDelete;
+    }
 
-        /**
-         * Retrieves the housekeeping batch size value.
-         *
-         * @return the housekeeping batch size
-         */
-        public Integer getHousekeepingBatchSize() {
-            return housekeepingBatchSize;
-        }
+    /**
+     * Retrieves the housekeeping batch size value.
+     *
+     * @return the housekeeping batch size
+     */
+    public Integer getHousekeepingBatchSize() {
+        return housekeepingBatchSize;
+    }
 
-        /**
-         * Set the size of batch for the housekeeping operation.
-         *
-         * @param housekeepingBatchSize The size of the batch for housekeeping
-         */
-        public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
-            this.housekeepingBatchSize = housekeepingBatchSize;
-        }
+    /**
+     * Set the size of batch for the housekeeping operation.
+     *
+     * @param housekeepingBatchSize The size of the batch for housekeeping
+     */
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
+        this.housekeepingBatchSize = housekeepingBatchSize;
+    }
 
-        /**
-         * Get the transaction batch size.
-         *
-         * @return The transaction batch size
-         */
-        public Integer getTransactionBatchSize() {
-            return transactionBatchSize;
-        }
+    /**
+     * Get the transaction batch size.
+     *
+     * @return The transaction batch size
+     */
+    public Integer getTransactionBatchSize() {
+        return transactionBatchSize;
+    }
 
-        /**
-         * Sets the size of the batch for transaction processing.
-         *
-         * @param transactionBatchSize the size of the batch for transaction processing
-         */
-        public void setTransactionBatchSize(Integer transactionBatchSize) {
-            this.transactionBatchSize = transactionBatchSize;
-        }
+    /**
+     * Sets the size of the batch for transaction processing.
+     *
+     * @param transactionBatchSize the size of the batch for transaction processing
+     */
+    public void setTransactionBatchSize(Integer transactionBatchSize) {
+        this.transactionBatchSize = transactionBatchSize;
+    }
 
     @Override
     public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {

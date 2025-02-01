@@ -1,6 +1,5 @@
 package org.ikasan.history.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.ikasan.spec.history.FlowInvocationMetric;
 
