@@ -74,10 +74,6 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     @Column(name = "EndTime", nullable = true)
     private long endTimeMillis;
 
-    @ManyToOne
-    @JoinColumn(name="FlowInvocationMetricId", nullable=true, updatable = false)
-    private FlowInvocationMetricImpl flowInvocation;
-
     @OneToMany(mappedBy="componentInvocationMetricImpl", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CustomMetric> metrics;
 
@@ -218,15 +214,5 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     public void setWiretapFlowEvent(MetricEvent wiretapFlowEvent)
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
-    }
-
-    public FlowInvocationMetric getFlowInvocation()
-    {
-        return flowInvocation;
-    }
-
-    public void setFlowInvocation(FlowInvocationMetric flowInvocation)
-    {
-        this.flowInvocation = (FlowInvocationMetricImpl) flowInvocation;
     }
 }

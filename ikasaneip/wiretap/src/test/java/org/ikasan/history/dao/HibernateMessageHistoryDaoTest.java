@@ -111,7 +111,7 @@ public class HibernateMessageHistoryDaoTest
 
     @Test
     @DirtiesContext
-    public void test_housekeepablesExist()
+    public void test_housekeepables_exist()
     {
         this.populateTestRecords(5, 0, true);
         Assert.assertTrue(messageHistoryDao.housekeepablesExist());
@@ -119,7 +119,7 @@ public class HibernateMessageHistoryDaoTest
 
     @Test
     @DirtiesContext
-    public void test_deleteAllExpired()
+    public void test_delete_all_expired()
     {
         messageHistoryDao.deleteAllExpired();
         Assert.assertFalse(messageHistoryDao.housekeepablesExist());
@@ -155,6 +155,7 @@ public class HibernateMessageHistoryDaoTest
     {
         PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", "relatedLifeId1");
         Assert.assertTrue(results.getPagedResults().size() == 1);
+
     }
     
     @Test
@@ -250,6 +251,28 @@ public class HibernateMessageHistoryDaoTest
                 , null, null, null);
 
         Assert.assertEquals(5, results.getPagedResults().size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_harvestable_records()
+    {
+        List<FlowInvocationMetric> results = this.messageHistoryDao.getHarvestableRecords(100);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(5, results.get(0).getFlowInvocationEvents().size());
+        Assert.assertTrue(results.get(0) instanceof FlowInvocationMetric);
+
+        results.get(0).getFlowInvocationEvents().forEach(c -> {
+                ComponentInvocationMetric componentInvocationMetric = (ComponentInvocationMetric)c;
+                Assert.assertEquals("componentName", componentInvocationMetric.getComponentName());
+                Assert.assertTrue(componentInvocationMetric.getBeforeEventIdentifier().toString().startsWith("lifeId"));
+                Assert.assertTrue(componentInvocationMetric.getAfterEventIdentifier().toString().startsWith("lifeId"));
+                Assert.assertTrue(componentInvocationMetric.getBeforeRelatedEventIdentifier().toString().startsWith("relatedLifeId"));
+                Assert.assertTrue(componentInvocationMetric.getAfterRelatedEventIdentifier().toString().startsWith("relatedLifeId"));
+                Assert.assertEquals(6, componentInvocationMetric.getMetrics().size());
+                Assert.assertNotNull(componentInvocationMetric.getWiretapFlowEvent());
+            });
     }
 
     @After

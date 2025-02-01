@@ -185,14 +185,4 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
     }
-
-    @Override
-    public FlowInvocationMetric getFlowInvocation() {
-        return flowInvocationMetric;
-    }
-
-    @Override
-    public void setFlowInvocation(FlowInvocationMetric flowInvocationMetric) {
-        this.flowInvocationMetric = flowInvocationMetric;
-    }
 }

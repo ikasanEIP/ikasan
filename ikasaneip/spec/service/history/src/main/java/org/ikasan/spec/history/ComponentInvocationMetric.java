@@ -126,20 +126,4 @@ public interface ComponentInvocationMetric<ID, METRIC, EVENT> {
      * @param wiretapFlowEvent the wiretap flow event to set
      */
     public void setWiretapFlowEvent(EVENT wiretapFlowEvent);
-
-    /**
-     * Get the Flow Invocation details.
-     *
-     * @return FlowInvocationMetric instance containing information about module name, flow name, invocation start time,
-     *         invocation end time, final action, invocation events, harvested flag, harvested date time, metric expiry,
-     *         and error URI.
-     */
-    public FlowInvocationMetric getFlowInvocation();
-
-    /**
-     * Set the FlowInvocationMetric for this ComponentInvocationMetric.
-     *
-     * @param flowInvocation the FlowInvocationMetric to set
-     */
-    public void setFlowInvocation(FlowInvocationMetric flowInvocation);
 }

@@ -107,10 +107,10 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         entityManager.persist(entityManager.contains(flowInvocationMetric)
             ? flowInvocationMetric : entityManager.merge(flowInvocationMetric));
 
-        flowInvocationMetric.getFlowInvocationEvents().forEach(event -> {
-            ((ComponentInvocationMetric)event).setFlowInvocation(flowInvocationMetric);
-            this.save((ComponentInvocationMetric)event);
-        });
+//        flowInvocationMetric.getFlowInvocationEvents().forEach(event -> {
+////            ((ComponentInvocationMetricImpl)event).setFlowInvocation(flowInvocationMetric);
+//            this.save((ComponentInvocationMetric)event);
+//        });
     }
     
 	@Override
@@ -154,6 +154,16 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         return new ArrayListPagedSearchResult(results, firstResult, rowCount);
     }
 
+    /**
+     * Get the count of rows based on criteria
+     *
+     * @param componentName The name of the component
+     * @param eventId The event ID
+     * @param relatedEventId The related event ID
+     * @param fromDate The start date
+     * @param toDate The end date
+     * @return The count of rows that meet the criteria
+     */
     private Long rowCount(final String componentName,
                           final String eventId, final String relatedEventId,
                           final Date fromDate, final Date toDate) {
@@ -348,12 +358,20 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         return this.getHarvestableRecords(housekeepingBatchSize, false);
     }
 
+    @Override
     public List<FlowInvocationMetric> getHarvestedRecords(final int housekeepingBatchSize) {
         return this.getHarvestableRecords(housekeepingBatchSize, true);
     }
 
 
-    public List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested) {
+    /**
+     * Retrieves harvestable records based on the provided housekeeping batch size and harvesting status.
+     *
+     * @param housekeepingBatchSize The number of records to retrieve in each batch
+     * @param harvested True to retrieve harvested records, false to retrieve non-harvested records
+     * @return List of FlowInvocationMetric containing the harvestable records
+     */
+    private List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<FlowInvocationMetricImpl> criteriaQuery = builder.createQuery(FlowInvocationMetricImpl.class);
         Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
@@ -418,6 +436,12 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         return flowInvocationMetrics;
     }
 
+    /**
+     * Retrieves a map of MetricEvent objects based on a list of event IDs.
+     *
+     * @param eventIds List of event IDs to retrieve MetricEvent objects for
+     * @return Map of MetricEvent objects with keys generated from eventId, moduleName, flowName, and componentName
+     */
     protected Map<String, MetricEvent> getWiretapFlowEvents(final List<String> eventIds) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<MetricEvent> criteriaQuery = builder.createQuery(MetricEvent.class);
@@ -492,46 +516,58 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
     }
 
 	/**
-	 * @return the batchHousekeepDelete
-	 */
-	public boolean isBatchHousekeepDelete() {
-		return batchHousekeepDelete;
-	}
+     * Check if the batch housekeeping delete flag is enabled.
+     *
+     * @return true if the batch housekeeping delete flag is enabled, false otherwise
+     */
+        public boolean isBatchHousekeepDelete() {
+            return batchHousekeepDelete;
+        }
 
-	/**
-	 * @param batchHousekeepDelete the batchHousekeepDelete to set
-	 */
-	public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
-		this.batchHousekeepDelete = batchHousekeepDelete;
-	}
+        /**
+         * Set whether to perform batch housekeeping deletion.
+         *
+         * @param batchHousekeepDelete true to enable batch housekeeping deletion, false otherwise
+         */
+        public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
+            this.batchHousekeepDelete = batchHousekeepDelete;
+        }
 
-	/**
-	 * @return the housekeepingBatchSize
-	 */
-	public Integer getHousekeepingBatchSize() {
-		return housekeepingBatchSize;
-	}
+        /**
+         * Retrieves the housekeeping batch size value.
+         *
+         * @return the housekeeping batch size
+         */
+        public Integer getHousekeepingBatchSize() {
+            return housekeepingBatchSize;
+        }
 
-	/**
-	 * @param housekeepingBatchSize the housekeepingBatchSize to set
-	 */
-	public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
-		this.housekeepingBatchSize = housekeepingBatchSize;
-	}
+        /**
+         * Set the size of batch for the housekeeping operation.
+         *
+         * @param housekeepingBatchSize The size of the batch for housekeeping
+         */
+        public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
+            this.housekeepingBatchSize = housekeepingBatchSize;
+        }
 
-	/**
-	 * @return the housekeepingBatchSize
-	 */
-	public Integer getTransactionBatchSize() {
-		return transactionBatchSize;
-	}
+        /**
+         * Get the transaction batch size.
+         *
+         * @return The transaction batch size
+         */
+        public Integer getTransactionBatchSize() {
+            return transactionBatchSize;
+        }
 
-	/**
-	 * @param transactionBatchSize the housekeepingBatchSize to set
-	 */
-	public void setTransactionBatchSize(Integer transactionBatchSize) {
-		this.transactionBatchSize = transactionBatchSize;
-	}
+        /**
+         * Sets the size of the batch for transaction processing.
+         *
+         * @param transactionBatchSize the size of the batch for transaction processing
+         */
+        public void setTransactionBatchSize(Integer transactionBatchSize) {
+            this.transactionBatchSize = transactionBatchSize;
+        }
 
     @Override
     public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {
