@@ -124,8 +124,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
         CriteriaQuery<ComponentInvocationMetric> criteriaQuery = builder.createQuery(ComponentInvocationMetric.class);
         Root<ComponentInvocationMetricImpl> root = criteriaQuery.from(ComponentInvocationMetricImpl.class);
-        List<Predicate> predicates = getCriteria(builder, root, pageNo, pageSize, orderBy,
-            orderAscending, moduleNames, flowName, componentName, eventId, relatedEventId, fromDate, toDate);
+        List<Predicate> predicates = getCriteria(builder, root, componentName, eventId, relatedEventId, fromDate, toDate);
 
         criteriaQuery.select(root)
             .where(predicates.toArray(new Predicate[predicates.size()]));
@@ -145,23 +144,29 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         query.setFirstResult(firstResult);
         List<ComponentInvocationMetric> results = query.getResultList();
 
-        Long rowCount = rowCount(pageNo, pageSize, orderBy, orderAscending, moduleNames, flowName
-            , componentName, eventId, relatedEventId, fromDate, toDate);
+        Long rowCount = rowCount(componentName, eventId, relatedEventId, fromDate, toDate);
 
         return new ArrayListPagedSearchResult(results, firstResult, rowCount);
     }
 
-    private Long rowCount(final int pageNo, final int pageSize, final String orderBy,
-                          final boolean orderAscending, final Set<String> moduleNames,
-                          final String flowName, final String componentName,
+    /**
+     * Get the count of rows based on criteria
+     *
+     * @param componentName The name of the component
+     * @param eventId The event ID
+     * @param relatedEventId The related event ID
+     * @param fromDate The start date
+     * @param toDate The end date
+     * @return The count of rows that meet the criteria
+     */
+    private Long rowCount(final String componentName,
                           final String eventId, final String relatedEventId,
                           final Date fromDate, final Date toDate) {
 
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> metaDataCriteriaQuery = builder.createQuery(Long.class);
         Root<ComponentInvocationMetricImpl> root = metaDataCriteriaQuery.from(ComponentInvocationMetricImpl.class);
-        List<Predicate> predicates = getCriteria(builder, root, pageNo, pageSize, orderBy,
-            orderAscending, moduleNames, flowName, componentName, eventId, relatedEventId, fromDate, toDate);
+        List<Predicate> predicates = getCriteria(builder, root, componentName, eventId, relatedEventId, fromDate, toDate);
 
         metaDataCriteriaQuery.select(builder.count(root))
         .where(predicates.toArray(new Predicate[predicates.size()]));
@@ -181,12 +186,8 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
      * @param root
      * @return
      */
-    private List<Predicate> getCriteria(CriteriaBuilder builder, Root<ComponentInvocationMetricImpl> root,
-                                        final int pageNo, final int pageSize, final String orderBy,
-                                        final boolean orderAscending, final Set<String> moduleNames,
-                                        final String flowName, final String componentName,
-                                        final String eventId, final String relatedEventId,
-                                        final Date fromDate, final Date toDate) {
+    private List<Predicate> getCriteria(CriteriaBuilder builder, Root<ComponentInvocationMetricImpl> root, final String componentName,
+                                        final String eventId, final String relatedEventId, final Date fromDate, final Date toDate) {
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -225,8 +226,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
         CriteriaQuery<ComponentInvocationMetric> criteriaQuery = builder.createQuery(ComponentInvocationMetric.class);
         Root<ComponentInvocationMetricImpl> root = criteriaQuery.from(ComponentInvocationMetricImpl.class);
-        List<Predicate> predicates = getCriteria(builder,root, pageNo, pageSize, orderBy,
-            orderAscending, null, null, null, eventId,
+        List<Predicate> predicates = getCriteria(builder,root, null, eventId,
             relatedEventId, null, null);
 
         criteriaQuery.select(root)
@@ -250,8 +250,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         query.setFirstResult(firstResult);
         List<ComponentInvocationMetric> results = query.getResultList();
 
-        Long rowCount = rowCount(pageNo, pageSize, orderBy,
-            orderAscending, null, null, null, eventId,
+        Long rowCount = rowCount( null, eventId,
             relatedEventId, null, null);
 
         return new ArrayListPagedSearchResult(results, firstResult, rowCount);
@@ -294,7 +293,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
             List<FlowInvocationMetric> events = this.getHarvestedRecords(this.housekeepingBatchSize);
 
-            this.deleteHarvestableRecords(events);
+            this.deleteHarvestedRecords(events);
         }
     }
 
@@ -354,14 +353,22 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         return this.getHarvestableRecords(housekeepingBatchSize, false);
     }
 
+    @Override
     public List<FlowInvocationMetric> getHarvestedRecords(final int housekeepingBatchSize) {
         return this.getHarvestableRecords(housekeepingBatchSize, true);
     }
 
 
-    public List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested) {
+    /**
+     * Retrieves harvestable records based on the provided housekeeping batch size and harvesting status.
+     *
+     * @param housekeepingBatchSize The number of records to retrieve in each batch
+     * @param harvested True to retrieve harvested records, false to retrieve non-harvested records
+     * @return List of FlowInvocationMetric containing the harvestable records
+     */
+    private List<FlowInvocationMetric> getHarvestableRecords(final int housekeepingBatchSize, final Boolean harvested) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<FlowInvocationMetric> criteriaQuery = builder.createQuery(FlowInvocationMetric.class);
+        CriteriaQuery<FlowInvocationMetricImpl> criteriaQuery = builder.createQuery(FlowInvocationMetricImpl.class);
         Root<FlowInvocationMetricImpl> root = criteriaQuery.from(FlowInvocationMetricImpl.class);
 
         if(harvested) {
@@ -381,7 +388,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
             }
         }
 
-        TypedQuery<FlowInvocationMetric> query = entityManager.createQuery(criteriaQuery);
+        Query query = entityManager.createQuery(criteriaQuery);
         query.setMaxResults(housekeepingBatchSize);
         List<FlowInvocationMetric> flowInvocationMetrics = query.getResultList();
 
@@ -390,11 +397,11 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         Set<ComponentInvocationMetric> messageHistoryEvents = new HashSet<ComponentInvocationMetric>();
         Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
 
-        for(FlowInvocationMetric<ComponentInvocationMetric> flowInvocationMetric : flowInvocationMetrics) {
+        for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics) {
             messageHistoryEvents.addAll(flowInvocationMetric.getFlowInvocationEvents());
         }
 
-        List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<ComponentInvocationMetric>(messageHistoryEvents), 200);
+        List<List<ComponentInvocationMetric>> smallerLists = Lists.partition(new ArrayList<>(messageHistoryEvents), 200);
 
         for(List<ComponentInvocationMetric> list: smallerLists) {
             for (ComponentInvocationMetric event: list) {
@@ -424,6 +431,12 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         return flowInvocationMetrics;
     }
 
+    /**
+     * Retrieves a map of MetricEvent objects based on a list of event IDs.
+     *
+     * @param eventIds List of event IDs to retrieve MetricEvent objects for
+     * @return Map of MetricEvent objects with keys generated from eventId, moduleName, flowName, and componentName
+     */
     protected Map<String, MetricEvent> getWiretapFlowEvents(final List<String> eventIds) {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<MetricEvent> criteriaQuery = builder.createQuery(MetricEvent.class);
@@ -443,7 +456,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
     }
 
     @Override
-    public void deleteHarvestableRecords(List<FlowInvocationMetric> flowInvocationMetrics) {
+    public void deleteHarvestedRecords(List<FlowInvocationMetric> flowInvocationMetrics) {
         for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics) {
             Set<ComponentInvocationMetric> events = flowInvocationMetric.getFlowInvocationEvents();
 
@@ -469,7 +482,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
     @Override
     public void updateAsHarvested(List<FlowInvocationMetric> events) {
-            List<Long> flowInvocationMetricIds = new ArrayList<Long>();
+            List<Long> flowInvocationMetricIds = new ArrayList<>();
 
             for(FlowInvocationMetric event: events) {
                 flowInvocationMetricIds.add(((FlowInvocationMetricImpl)event).getId());
@@ -498,46 +511,58 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
     }
 
 	/**
-	 * @return the batchHousekeepDelete
-	 */
-	public boolean isBatchHousekeepDelete() {
-		return batchHousekeepDelete;
-	}
+     * Check if the batch housekeeping delete flag is enabled.
+     *
+     * @return true if the batch housekeeping delete flag is enabled, false otherwise
+     */
+    public boolean isBatchHousekeepDelete() {
+            return batchHousekeepDelete;
+        }
 
-	/**
-	 * @param batchHousekeepDelete the batchHousekeepDelete to set
-	 */
-	public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
-		this.batchHousekeepDelete = batchHousekeepDelete;
-	}
+    /**
+     * Set whether to perform batch housekeeping deletion.
+     *
+     * @param batchHousekeepDelete true to enable batch housekeeping deletion, false otherwise
+     */
+    public void setBatchHousekeepDelete(boolean batchHousekeepDelete) {
+        this.batchHousekeepDelete = batchHousekeepDelete;
+    }
 
-	/**
-	 * @return the housekeepingBatchSize
-	 */
-	public Integer getHousekeepingBatchSize() {
-		return housekeepingBatchSize;
-	}
+    /**
+     * Retrieves the housekeeping batch size value.
+     *
+     * @return the housekeeping batch size
+     */
+    public Integer getHousekeepingBatchSize() {
+        return housekeepingBatchSize;
+    }
 
-	/**
-	 * @param housekeepingBatchSize the housekeepingBatchSize to set
-	 */
-	public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
-		this.housekeepingBatchSize = housekeepingBatchSize;
-	}
+    /**
+     * Set the size of batch for the housekeeping operation.
+     *
+     * @param housekeepingBatchSize The size of the batch for housekeeping
+     */
+    public void setHousekeepingBatchSize(Integer housekeepingBatchSize) {
+        this.housekeepingBatchSize = housekeepingBatchSize;
+    }
 
-	/**
-	 * @return the housekeepingBatchSize
-	 */
-	public Integer getTransactionBatchSize() {
-		return transactionBatchSize;
-	}
+    /**
+     * Get the transaction batch size.
+     *
+     * @return The transaction batch size
+     */
+    public Integer getTransactionBatchSize() {
+        return transactionBatchSize;
+    }
 
-	/**
-	 * @param transactionBatchSize the housekeepingBatchSize to set
-	 */
-	public void setTransactionBatchSize(Integer transactionBatchSize) {
-		this.transactionBatchSize = transactionBatchSize;
-	}
+    /**
+     * Sets the size of the batch for transaction processing.
+     *
+     * @param transactionBatchSize the size of the batch for transaction processing
+     */
+    public void setTransactionBatchSize(Integer transactionBatchSize) {
+        this.transactionBatchSize = transactionBatchSize;
+    }
 
     @Override
     public void setHarvestQueryOrdered(boolean isHarvestQueryOrdered) {

@@ -42,6 +42,7 @@ package org.ikasan.history.model;
 
 import jakarta.persistence.*;
 import org.ikasan.spec.history.ComponentInvocationMetric;
+import org.ikasan.spec.history.FlowInvocationMetric;
 
 import java.io.Serializable;
 import java.util.Set;
@@ -72,10 +73,6 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     private long startTimeMillis;
     @Column(name = "EndTime", nullable = true)
     private long endTimeMillis;
-
-    @ManyToOne
-    @JoinColumn(name="FlowInvocationMetricId", nullable=true, updatable = false)
-    private FlowInvocationMetricImpl flowInvocation;
 
     @OneToMany(mappedBy="componentInvocationMetricImpl", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CustomMetric> metrics;
@@ -217,15 +214,5 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     public void setWiretapFlowEvent(MetricEvent wiretapFlowEvent)
     {
         this.wiretapFlowEvent = wiretapFlowEvent;
-    }
-
-    public FlowInvocationMetricImpl getFlowInvocation()
-    {
-        return flowInvocation;
-    }
-
-    public void setFlowInvocation(FlowInvocationMetricImpl flowInvocation)
-    {
-        this.flowInvocation = flowInvocation;
     }
 }

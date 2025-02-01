@@ -77,7 +77,7 @@ public class HibernateMessageHistoryDaoTest
     @Before
     public void setup()
     {
-        Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
+        Set<ComponentInvocationMetricImpl> events = new HashSet<>();
 
         for(int j=0; j<5; j++)
         {
@@ -100,31 +100,26 @@ public class HibernateMessageHistoryDaoTest
                     "lifeId" + j, "relatedLifeId" + j, System.currentTimeMillis(), "payload", 30L);
 
             messageHistoryDao.save(wiretapEvent);
-            messageHistoryDao.save(event1);
             events.add(event1);
         }
 
         FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
                 System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
-        flowInvocationMetric.setHarvested(true);
-        flowInvocationMetric.setHarvestedDateTime(10000L);
-
-
         messageHistoryDao.save(flowInvocationMetric);
-
     }
 
     @Test
     @DirtiesContext
-    public void test_housekeepablesExist()
+    public void test_housekeepables_exist()
     {
+        this.populateTestRecords(5, 0, true);
         Assert.assertTrue(messageHistoryDao.housekeepablesExist());
     }
 
     @Test
     @DirtiesContext
-    public void test_deleteAllExpired()
+    public void test_delete_all_expired()
     {
         messageHistoryDao.deleteAllExpired();
         Assert.assertFalse(messageHistoryDao.housekeepablesExist());
@@ -160,51 +155,14 @@ public class HibernateMessageHistoryDaoTest
     {
         PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.getMessageHistoryEvent(0, 10, null, true, "lifeId1", "relatedLifeId1");
         Assert.assertTrue(results.getPagedResults().size() == 1);
+
     }
     
     @Test
     @DirtiesContext
-    public void bulkDeleteTest()
+    public void test_bulk_delete()
     {
-        List<FlowInvocationMetric> flowInvocationMetrics = new ArrayList<>();
-    	for(int i=0; i<1000; i++)
-    	{
-            Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
-
-    	    for(int j=0; j<5; j++)
-            {
-                ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
-                        "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
-                        System.currentTimeMillis() - 500L, System.currentTimeMillis());
-
-                Set<CustomMetric> metrics = new HashSet<CustomMetric>();
-                CustomMetric cm = new CustomMetric("name", "value");
-                cm.setComponentInvocationMetricImpl(event1);
-
-
-                metrics.add(cm);
-
-                event1.setMetrics(metrics);
-
-                MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
-                        "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
-
-                messageHistoryDao.save(wiretapEvent);
-
-                events.add(event1);
-            }
-
-            FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
-                    System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
-
-            flowInvocationMetric.setHarvested(false);
-
-            this.messageHistoryDao.save(flowInvocationMetric);
-
-            flowInvocationMetrics.add(flowInvocationMetric);
-    	}
-
-    	this.messageHistoryDao.updateAsHarvested(flowInvocationMetrics);
+        this.populateTestRecords(1000, 0, true);
 
         List<FlowInvocationMetric> events =  messageHistoryDao.getHarvestedRecords(50);
 
@@ -218,78 +176,122 @@ public class HibernateMessageHistoryDaoTest
             }
         }
 
-
-    	PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents
-            (0, 10, null, true, Collections.singleton("moduleName"), null
-                , null, null, null, null, null);
-
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
 
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
         events =  messageHistoryDao.getHarvestedRecords(50);
-        messageHistoryDao.deleteHarvestableRecords(events);
+        messageHistoryDao.deleteHarvestedRecords(events);
 
-    	results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao
+            .findMessageHistoryEvents(0, 20000, null, true
+                , Collections.singleton("moduleName"), null, null, null
+                , null, null, null);
 
         Assert.assertEquals(5, results.getPagedResults().size());
     }
 
     @Test
     @DirtiesContext
-    public void bulkDelete2Test()
+    public void test_bulk_delete_large_transaction_batch_size()
     {
-        for(int i=0; i<1000; i++)
+        this.populateTestRecords(1000, 1000, true);
+
+        messageHistoryDao.setHousekeepingBatchSize(500);
+        messageHistoryDao.setTransactionBatchSize(10000);
+        messageHistoryDao.setBatchHousekeepDelete(true);
+
+        messageHistoryDao.deleteAllExpired();
+
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao
+            .findMessageHistoryEvents(0, 10, null, true
+                , Collections.singleton("moduleName"), null, null, null
+                , null, null, null);
+
+        Assert.assertEquals(5, results.getPagedResults().size());
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_get_harvestable_records()
+    {
+        List<FlowInvocationMetric> results = this.messageHistoryDao.getHarvestableRecords(100);
+
+        Assert.assertEquals(1, results.size());
+        Assert.assertEquals(5, results.get(0).getFlowInvocationEvents().size());
+        Assert.assertTrue(results.get(0) instanceof FlowInvocationMetric);
+
+        results.get(0).getFlowInvocationEvents().forEach(c -> {
+                ComponentInvocationMetric componentInvocationMetric = (ComponentInvocationMetric)c;
+                Assert.assertEquals("componentName", componentInvocationMetric.getComponentName());
+                Assert.assertTrue(componentInvocationMetric.getBeforeEventIdentifier().toString().startsWith("lifeId"));
+                Assert.assertTrue(componentInvocationMetric.getAfterEventIdentifier().toString().startsWith("lifeId"));
+                Assert.assertTrue(componentInvocationMetric.getBeforeRelatedEventIdentifier().toString().startsWith("relatedLifeId"));
+                Assert.assertTrue(componentInvocationMetric.getAfterRelatedEventIdentifier().toString().startsWith("relatedLifeId"));
+                Assert.assertEquals(6, componentInvocationMetric.getMetrics().size());
+                Assert.assertNotNull(componentInvocationMetric.getWiretapFlowEvent());
+            });
+    }
+
+    @After
+    public void tear_down()
+    {
+        messageHistoryDao.deleteAllExpired();
+    }
+
+    private void populateTestRecords(int numRecords, int offset, boolean harvested) {
+        List<FlowInvocationMetric> flowInvocationMetrics = new ArrayList<>();
+        for(int i=offset; i<numRecords+offset; i++)
         {
             Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
 
             for(int j=0; j<5; j++)
             {
                 ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
-                        "lifeId" + i, "relatedLifeId" + i, "lifeId" + i, "relatedLifeId" + i,
-                        System.currentTimeMillis() - 500L, System.currentTimeMillis());
+                    "lifeId" + i + j, "relatedLifeId" + i + j, "lifeId" + i, "relatedLifeId" + i,
+                    System.currentTimeMillis() - 500L, System.currentTimeMillis());
 
                 Set<CustomMetric> metrics = new HashSet<CustomMetric>();
                 CustomMetric cm = new CustomMetric("name", "value");
@@ -301,7 +303,7 @@ public class HibernateMessageHistoryDaoTest
                 event1.setMetrics(metrics);
 
                 MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
-                        "lifeId" + i, "relatedLifeId" + i, System.currentTimeMillis(), "payload", 30L);
+                    "lifeId" + i + j, "relatedLifeId" + i + j, System.currentTimeMillis(), "payload", 30L);
 
                 messageHistoryDao.save(wiretapEvent);
 
@@ -309,31 +311,19 @@ public class HibernateMessageHistoryDaoTest
             }
 
             FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
-                    System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
 
-            flowInvocationMetric.setHarvested(true);
-            flowInvocationMetric.setHarvestedDateTime(1000L);
+            if(harvested) {
+                flowInvocationMetric.setHarvested(true);
+                flowInvocationMetric.setHarvestedDateTime(System.currentTimeMillis());
+            }
+            else {
+                flowInvocationMetric.setHarvested(false);
+            }
 
+            this.messageHistoryDao.save(flowInvocationMetric);
 
-            messageHistoryDao.save(flowInvocationMetric);
+            flowInvocationMetrics.add(flowInvocationMetric);
         }
-
-        messageHistoryDao.setHousekeepingBatchSize(500);
-        messageHistoryDao.setTransactionBatchSize(10500);
-        messageHistoryDao.setBatchHousekeepDelete(true);
-
-        messageHistoryDao.deleteAllExpired();
-
-        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao.findMessageHistoryEvents(0, 10, null, true, Collections.singleton("moduleName"), null, null, null, null, null, null);
-
-        Assert.assertEquals(5, results.getPagedResults().size());
     }
-
-    @After
-    public void tear_down()
-    {
-        messageHistoryDao.deleteAllExpired();
-        
-    }
-
 }
