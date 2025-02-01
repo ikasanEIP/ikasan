@@ -106,11 +106,6 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
     public void save(FlowInvocationMetric flowInvocationMetric) {
         entityManager.persist(entityManager.contains(flowInvocationMetric)
             ? flowInvocationMetric : entityManager.merge(flowInvocationMetric));
-
-//        flowInvocationMetric.getFlowInvocationEvents().forEach(event -> {
-////            ((ComponentInvocationMetricImpl)event).setFlowInvocation(flowInvocationMetric);
-//            this.save((ComponentInvocationMetric)event);
-//        });
     }
     
 	@Override
@@ -487,7 +482,7 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
     @Override
     public void updateAsHarvested(List<FlowInvocationMetric> events) {
-            List<Long> flowInvocationMetricIds = new ArrayList<Long>();
+            List<Long> flowInvocationMetricIds = new ArrayList<>();
 
             for(FlowInvocationMetric event: events) {
                 flowInvocationMetricIds.add(((FlowInvocationMetricImpl)event).getId());
