@@ -161,13 +161,11 @@ public class FlowInvocationMetricImpl implements FlowInvocationMetric<ComponentI
         this.expiry = expiry;
     }
 
-    @JsonIgnore
     public Set<ComponentInvocationMetricImpl> getComponentInvocationMetricImpls()
     {
         return componentInvocationMetricImpls;
     }
 
-    @JsonIgnore
     public void setComponentInvocationMetricImpls(Set<ComponentInvocationMetricImpl> componentInvocationMetricImpls)
     {
         this.componentInvocationMetricImpls = componentInvocationMetricImpls;
