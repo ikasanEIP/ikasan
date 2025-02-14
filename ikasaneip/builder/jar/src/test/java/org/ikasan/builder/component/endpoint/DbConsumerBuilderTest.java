@@ -60,6 +60,8 @@ import org.junit.rules.ExpectedException;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertTrue;
 
@@ -120,6 +122,7 @@ public class DbConsumerBuilderTest
 
         Consumer consumer = dbConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
                 .setScheduledJobName("testJob")
@@ -144,6 +147,8 @@ public class DbConsumerBuilderTest
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
 
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
+        assertTrue(scheduledConsumer.getConfiguration().getCronExpressions().equals(List.of("123456", "987654")));
+
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
         assertTrue(scheduledConsumer.isCriticalOnStartup());
 
@@ -191,6 +196,7 @@ public class DbConsumerBuilderTest
 
         Consumer consumer = dbConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
                 .setScheduledJobName("testJob")
@@ -214,6 +220,7 @@ public class DbConsumerBuilderTest
 
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
+        assertTrue(scheduledConsumer.getConfiguration().getCronExpressions().equals(List.of("123456", "987654")));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
         assertTrue(scheduledConsumer.isCriticalOnStartup());
 

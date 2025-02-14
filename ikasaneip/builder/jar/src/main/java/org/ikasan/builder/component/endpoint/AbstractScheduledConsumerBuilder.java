@@ -47,6 +47,7 @@ import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -69,6 +70,8 @@ public interface AbstractScheduledConsumerBuilder<BUILDER> extends Builder<Consu
     BUILDER setEventFactory(EventFactory eventFactory);
 
     BUILDER setCronExpression(String cronExpression);
+
+    BUILDER setCronExpressions(List<String> cronExpressions);
 
     BUILDER setEager(boolean eager);
 

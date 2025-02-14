@@ -62,6 +62,8 @@ import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -129,6 +131,7 @@ public class FtpConsumerBuilderTest
 
         Consumer scheduledConsumer = ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -142,6 +145,7 @@ public class FtpConsumerBuilderTest
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
         assertTrue("eager should be 'true'", configuration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
@@ -179,6 +183,7 @@ public class FtpConsumerBuilderTest
 
         Consumer scheduledConsumer = ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setSourceDirectory("test/dir")
                 .setFilenamePattern("*.txt")
                 .setFilterDuplicates(true)
@@ -227,6 +232,7 @@ public class FtpConsumerBuilderTest
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
         assertEquals("sourceDirectory should be 'test/dir'","test/dir", configuration.getSourceDirectory());
         assertEquals("filenamePattern should be '*.txt'","*.txt", configuration.getFilenamePattern());
         assertTrue("filterDuplicates should be 'true'", configuration.getFilterDuplicates());
@@ -297,6 +303,7 @@ public class FtpConsumerBuilderTest
 
         Consumer scheduledConsumer = ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setSourceDirectory("test/dir")
                 .setRemoteHost("testsftphost")
                 .setRemotePort(22)
@@ -311,6 +318,7 @@ public class FtpConsumerBuilderTest
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
         assertEquals("sourceDirectory should be 'test/dir'","test/dir", configuration.getSourceDirectory());
         assertEquals("remoteHost should be 'testsftphost'","testsftphost", configuration.getRemoteHost());
         assertEquals("remotePort should be '22'",22, configuration.getRemotePort().intValue());
@@ -346,6 +354,7 @@ public class FtpConsumerBuilderTest
 
         Consumer scheduledConsumer = ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setMessageProvider(messageProvider)
                 .setScheduledJobGroupName("testGroup")
@@ -356,6 +365,7 @@ public class FtpConsumerBuilderTest
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
 
         mockery.assertIsSatisfied();
     }
@@ -389,6 +399,7 @@ public class FtpConsumerBuilderTest
 
         Consumer scheduledConsumer = ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("testGroup")
                 .setScheduledJobName("testjob")
@@ -399,6 +410,7 @@ public class FtpConsumerBuilderTest
 
         FtpConsumerConfiguration configuration = ((ConfiguredResource<FtpConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
 
         mockery.assertIsSatisfied();
     }
@@ -427,6 +439,7 @@ public class FtpConsumerBuilderTest
 
         ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("testGroup")
                 .setScheduledJobName(null)
@@ -460,6 +473,7 @@ public class FtpConsumerBuilderTest
 
         ftpConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName(null)
                 .setScheduledJobName("testJob")

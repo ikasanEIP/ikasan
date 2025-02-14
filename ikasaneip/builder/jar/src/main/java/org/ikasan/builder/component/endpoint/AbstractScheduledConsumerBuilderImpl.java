@@ -55,6 +55,7 @@ import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -109,6 +110,9 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
 
     /** allow cron expression override */
     String cronExpression;
+
+    /** allow cron expressions override */
+    List<String> cronExpressions;
 
     /** allow eager override */
     Boolean eager;
@@ -227,6 +231,18 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
     public BUILDER setCronExpression(String cronExpression)
     {
         this.cronExpression = cronExpression;
+        return (BUILDER)this;
+    }
+
+    /**
+     * Scheduled consumer cron expressions
+     * @param cronExpressions
+     * @return
+     */
+    @Override
+    public BUILDER setCronExpressions(List<String> cronExpressions)
+    {
+        this.cronExpressions = cronExpressions;
         return (BUILDER)this;
     }
 
@@ -408,6 +424,11 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
         if(cronExpression != null)
         {
             scheduledConsumer.getConfiguration().setCronExpression(cronExpression);
+        }
+
+        if(cronExpressions != null && !cronExpressions.isEmpty())
+        {
+            scheduledConsumer.getConfiguration().setCronExpressions(cronExpressions);
         }
 
         if(maxEagerCallbacks != null)

@@ -122,6 +122,7 @@ public class FileConsumerBuilderTest {
         filenames.add("filename");
         Consumer scheduledFileConsumer = fileConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -146,6 +147,7 @@ public class FileConsumerBuilderTest {
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
         assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
@@ -192,6 +194,7 @@ public class FileConsumerBuilderTest {
         filenames.add("filename");
         Consumer scheduledFileConsumer = fileConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -216,6 +219,7 @@ public class FileConsumerBuilderTest {
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
         assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), fileConsumerConfiguration.getCronExpressions());
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
@@ -265,6 +269,7 @@ public class FileConsumerBuilderTest {
         filenames.add("filename");
         Consumer scheduledFileConsumer = fileConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -287,6 +292,7 @@ public class FileConsumerBuilderTest {
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
         assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), fileConsumerConfiguration.getCronExpressions());
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
@@ -334,6 +340,7 @@ public class FileConsumerBuilderTest {
         filenames.add("filename");
         Consumer scheduledFileConsumer = fileConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -357,6 +364,7 @@ public class FileConsumerBuilderTest {
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
         assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), fileConsumerConfiguration.getCronExpressions());
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
@@ -403,6 +411,7 @@ public class FileConsumerBuilderTest {
         filenames.add("filename");
         Consumer scheduledFileConsumer = fileConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -426,6 +435,7 @@ public class FileConsumerBuilderTest {
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
         assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), fileConsumerConfiguration.getCronExpressions());
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");
@@ -472,6 +482,7 @@ public class FileConsumerBuilderTest {
         filenames.add("filename");
         Consumer scheduledFileConsumer = fileConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -495,6 +506,7 @@ public class FileConsumerBuilderTest {
         FileConsumerConfiguration fileConsumerConfiguration = ((ConfiguredResource<FileConsumerConfiguration>) scheduledFileConsumer).getConfiguration();
 
         assertEquals("cronExpression should be '121212'","121212", fileConsumerConfiguration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), fileConsumerConfiguration.getCronExpressions());
         assertTrue("eager should be 'true'", fileConsumerConfiguration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", fileConsumerConfiguration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", fileConsumerConfiguration.getTimezone() == "UTC");

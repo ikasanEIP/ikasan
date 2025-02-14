@@ -61,6 +61,8 @@ import org.junit.rules.ExpectedException;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -124,6 +126,7 @@ public class ScheduledConsumerBuilderTest {
 
         Consumer scheduledConsumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setEager(true)
                 .setIgnoreMisfire(true)
                 .setTimezone("UTC")
@@ -136,6 +139,7 @@ public class ScheduledConsumerBuilderTest {
 
         ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
         assertTrue("eager should be 'true'", configuration.isEager() == true);
         assertTrue("ignoreMisfire should be 'true'", configuration.isIgnoreMisfire() == true);
         assertTrue("Timezone should be 'true'", configuration.getTimezone() == "UTC");
@@ -168,6 +172,7 @@ public class ScheduledConsumerBuilderTest {
 
         Consumer scheduledConsumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobName("defaultScheduledJobName")
                 .setScheduledJobGroupName("defaultScheduledJobGroupName")
@@ -177,6 +182,7 @@ public class ScheduledConsumerBuilderTest {
 
         ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
 
         mockery.assertIsSatisfied();
     }
@@ -209,6 +215,7 @@ public class ScheduledConsumerBuilderTest {
 
         Consumer scheduledConsumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("testGroup")
                 .setScheduledJobName("testjob")
@@ -218,6 +225,7 @@ public class ScheduledConsumerBuilderTest {
 
         ScheduledConsumerConfiguration configuration = ((ConfiguredResource<ScheduledConsumerConfiguration>) scheduledConsumer).getConfiguration();
         assertEquals("cronExpression should be '121212'","121212", configuration.getCronExpression());
+        assertEquals("cronExpressions should be '123456' and '987654'",List.of("123456", "987654"), configuration.getCronExpressions());
 
         mockery.assertIsSatisfied();
 
@@ -248,6 +256,7 @@ public class ScheduledConsumerBuilderTest {
 
         scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("testGroup")
                 .setScheduledJobName(null)
@@ -281,6 +290,7 @@ public class ScheduledConsumerBuilderTest {
 
         scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName(null)
                 .setScheduledJobName("testJob")
@@ -314,6 +324,7 @@ public class ScheduledConsumerBuilderTest {
 
         Consumer consumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
                 .setScheduledJobName("testJob")
@@ -332,6 +343,7 @@ public class ScheduledConsumerBuilderTest {
 
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
+        assertTrue(scheduledConsumer.getConfiguration().getCronExpressions().equals(List.of("123456", "987654")));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
         assertTrue(scheduledConsumer.isCriticalOnStartup());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
@@ -371,6 +383,7 @@ public class ScheduledConsumerBuilderTest {
 
         Consumer consumer = scheduledConsumerBuilder
                 .setCronExpression("121212")
+                .setCronExpressions(List.of("123456", "987654"))
                 .setConfiguredResourceId("testConfigId")
                 .setScheduledJobGroupName("jobGroupName")
                 .setScheduledJobName("testJob")
@@ -390,6 +403,7 @@ public class ScheduledConsumerBuilderTest {
         ScheduledConsumer scheduledConsumer = (ScheduledConsumer)consumer;
 
         assertTrue(scheduledConsumer.getConfiguration().getCronExpression().equals("121212"));
+        assertTrue(scheduledConsumer.getConfiguration().getCronExpressions().equals(List.of("123456", "987654")));
         assertTrue(scheduledConsumer.getConfiguredResourceId().equals("configuredResourceId"));
         assertTrue(scheduledConsumer.isCriticalOnStartup());
         assertTrue(scheduledConsumer.getConfiguration().isEager());
