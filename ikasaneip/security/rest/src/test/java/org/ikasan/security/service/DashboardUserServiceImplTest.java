@@ -2,8 +2,11 @@ package org.ikasan.security.service;
 
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
+import com.google.common.cache.Cache;
 import org.apache.commons.io.FileUtils;
 import org.ikasan.security.model.User;
+import org.ikasan.security.service.dto.JwtRequest;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -13,6 +16,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,8 +107,15 @@ public class DashboardUserServiceImplTest
         assertEquals(true, uut.authenticate("admin", "admin"));
         assertEquals(true, uut.authenticate("admin", "admin"));
 
+        // We are testing to make sure that the token expires after it is first added to the cache,
+        // rather than when it is last accessed.
+        Thread.sleep(2000);
+
+        assertEquals(true, uut.authenticate("admin", "admin"));
+        assertEquals(true, uut.authenticate("admin", "admin"));
+
         // Sleep to allow the user cache expire.
-        Thread.sleep(7000);
+        Thread.sleep(5000);
 
         assertEquals(true, uut.authenticate("admin", "admin"));
         assertEquals(true, uut.authenticate("admin", "admin"));
@@ -170,6 +181,8 @@ public class DashboardUserServiceImplTest
         thrown.expect(UsernameNotFoundException.class);
         thrown.expectMessage("Unknown username : admin");
 
+        ReflectionTestUtils.setField(uut, "token", "token");
+
         stubFor(get(urlEqualTo("/rest/user?username=admin"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -178,6 +191,36 @@ public class DashboardUserServiceImplTest
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
         uut.loadUserByUsername("admin");
+
+        Assert.assertNotNull(ReflectionTestUtils.getField(uut, "token"));
+    }
+
+    @Test
+    public void loadUserByUsernameReturns401() throws IOException
+    {
+        thrown.expect(UsernameNotFoundException.class);
+        thrown.expectMessage("Unknown username : admin");
+
+        // Put a token in the cache so we can make sure it is purged.
+        Cache<String, JwtRequest> userCredentialCache
+            = (Cache<String, JwtRequest>) ReflectionTestUtils.getField(uut, "userCredentialCache");
+        userCredentialCache.put("token", new JwtRequest("user", "pass"));
+        Assert.assertNotNull(userCredentialCache.getIfPresent("token"));
+
+        ReflectionTestUtils.setField(uut, "token", "token");
+
+        stubFor(get(urlEqualTo("/rest/user?username=admin"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse().withBody("{}")
+                .withStatus(401)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+        uut.loadUserByUsername("admin");
+
+        Assert.assertNull(ReflectionTestUtils.getField(uut, "token"));
+        // Confirm that the cache has been purged of the token.
+        Assert.assertNull(userCredentialCache.getIfPresent("token"));
     }
 
     @Test
@@ -185,6 +228,8 @@ public class DashboardUserServiceImplTest
     {
         thrown.expect(UsernameNotFoundException.class);
         thrown.expectMessage("Unknown username : admin");
+
+        ReflectionTestUtils.setField(uut, "token", "token");
 
         stubFor(get(urlEqualTo("/rest/user?username=admin"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
@@ -194,6 +239,8 @@ public class DashboardUserServiceImplTest
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
         uut.loadUserByUsername("admin");
+
+        Assert.assertNotNull(ReflectionTestUtils.getField(uut, "token"));
     }
 
     private String readFile(String filePath) throws IOException
