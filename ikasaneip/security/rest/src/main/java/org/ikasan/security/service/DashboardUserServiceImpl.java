@@ -127,7 +127,7 @@ public class DashboardUserServiceImpl implements UserService
             }
 
             this.userCredentialCache = CacheBuilder.newBuilder()
-                .expireAfterAccess(userCredentialCacheTimeoutSeconds,TimeUnit.SECONDS)
+                .expireAfterWrite(userCredentialCacheTimeoutSeconds,TimeUnit.SECONDS)
                 .build();
         }
     }
@@ -303,6 +303,14 @@ public class DashboardUserServiceImpl implements UserService
         }
         catch (HttpClientErrorException e)
         {
+            // If we are unauthorised set the token to null as this is likely to have
+            // happened due to the token having expired. A new token will be acquired
+            // on the next attempt to authenticate.
+            if(e.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(401))) {
+                this.userCredentialCache.invalidate(this.token);
+                this.token = null;
+            }
+
             throw new UsernameNotFoundException("Unknown username : " + username);
         }
         catch (RestClientException e)
