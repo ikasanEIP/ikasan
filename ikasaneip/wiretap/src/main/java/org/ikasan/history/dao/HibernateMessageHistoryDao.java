@@ -49,6 +49,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import org.hibernate.ObjectDeletedException;
 import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.FlowInvocationMetricImpl;
@@ -392,10 +393,10 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         query.setMaxResults(housekeepingBatchSize);
         List<FlowInvocationMetric> flowInvocationMetrics = query.getResultList();
 
-        ArrayList<String> eventIds = new ArrayList<String>();
+        ArrayList<String> eventIds = new ArrayList<>();
 
         Set<ComponentInvocationMetric> messageHistoryEvents = new HashSet<ComponentInvocationMetric>();
-        Map<String, MetricEvent> eventsMap = new HashMap<String, MetricEvent>();
+        Map<String, MetricEvent> eventsMap = new HashMap<>();
 
         for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics) {
             messageHistoryEvents.addAll(flowInvocationMetric.getFlowInvocationEvents());
@@ -462,8 +463,13 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
             for (ComponentInvocationMetric event : events) {
                 if (event.getWiretapFlowEvent() != null) {
-                    entityManager.remove(entityManager.contains(event.getWiretapFlowEvent())
-                        ? event.getWiretapFlowEvent() : entityManager.merge(event.getWiretapFlowEvent()));
+                    try {
+                        entityManager.remove(entityManager.contains(event.getWiretapFlowEvent())
+                            ? event.getWiretapFlowEvent() : entityManager.merge(event.getWiretapFlowEvent()));
+                    }
+                    catch (ObjectDeletedException e) {
+                        logger.info(String.format("Metric Event [%s] has already been deleted.", event.getWiretapFlowEvent()));
+                    }
                 }
 
                 for (CustomMetric metric : (Set<CustomMetric>) event.getMetrics()) {

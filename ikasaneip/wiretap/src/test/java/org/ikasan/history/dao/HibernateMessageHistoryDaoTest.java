@@ -235,6 +235,110 @@ public class HibernateMessageHistoryDaoTest
 
     @Test
     @DirtiesContext
+    public void test_bulk_delete_with_duplicate_metrics_events()
+    {
+        MetricEvent wiretapEvent = new MetricEvent("moduleName", "flowName", "componentName",
+            "lifeId", "relatedLifeId", System.currentTimeMillis(), "payload", 30L);
+
+        messageHistoryDao.save(wiretapEvent);
+
+        this.populateTestRecordsWithDuplicateMetricsEvent(1000, 0, true);
+
+        List<FlowInvocationMetric> events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+
+        Assert.assertTrue(events.size() == 50);
+
+        for(FlowInvocationMetric<ComponentInvocationMetric> event: events)
+        {
+            for(ComponentInvocationMetric messageHistoryEvent: event.getFlowInvocationEvents())
+            {
+                Assert.assertTrue(messageHistoryEvent.getWiretapFlowEvent() != null);
+            }
+        }
+
+        messageHistoryDao.deleteHarvestedRecords(events);
+
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+        events =  messageHistoryDao.getHarvestedRecords(50);
+        this.setMetricEventOnComponentInvocation(events, wiretapEvent);
+        messageHistoryDao.deleteHarvestedRecords(events);
+
+        PagedSearchResult<ComponentInvocationMetric> results = messageHistoryDao
+            .findMessageHistoryEvents(0, 20000, null, true
+                , Collections.singleton("moduleName"), null, null, null
+                , null, null, null);
+
+        Assert.assertEquals(5, results.getPagedResults().size());
+    }
+
+    @Test
+    @DirtiesContext
     public void test_bulk_delete_large_transaction_batch_size()
     {
         this.populateTestRecords(1000, 1000, true);
@@ -306,6 +410,56 @@ public class HibernateMessageHistoryDaoTest
                     "lifeId" + i + j, "relatedLifeId" + i + j, System.currentTimeMillis(), "payload", 30L);
 
                 messageHistoryDao.save(wiretapEvent);
+
+                events.add(event1);
+            }
+
+            FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl("moduleName", "flowName",
+                System.currentTimeMillis()-500L, System.currentTimeMillis(), "ACTION", events, 0l, null);
+
+            if(harvested) {
+                flowInvocationMetric.setHarvested(true);
+                flowInvocationMetric.setHarvestedDateTime(System.currentTimeMillis());
+            }
+            else {
+                flowInvocationMetric.setHarvested(false);
+            }
+
+            this.messageHistoryDao.save(flowInvocationMetric);
+
+            flowInvocationMetrics.add(flowInvocationMetric);
+        }
+    }
+
+    private void setMetricEventOnComponentInvocation(List<FlowInvocationMetric> events, MetricEvent metricEvent) {
+        for(FlowInvocationMetric<ComponentInvocationMetric> event: events) {
+            for(ComponentInvocationMetric messageHistoryEvent: event.getFlowInvocationEvents()) {
+                messageHistoryEvent.setWiretapFlowEvent(metricEvent);
+            }
+        }
+    }
+
+    private void populateTestRecordsWithDuplicateMetricsEvent(int numRecords, int offset, boolean harvested) {
+        List<FlowInvocationMetric> flowInvocationMetrics = new ArrayList<>();
+
+        for(int i=offset; i<numRecords+offset; i++)
+        {
+            Set<ComponentInvocationMetricImpl> events = new HashSet<ComponentInvocationMetricImpl>();
+
+            for(int j=0; j<5; j++)
+            {
+                ComponentInvocationMetricImpl event1 = new ComponentInvocationMetricImpl("componentName",
+                    "lifeId", "relatedLifeId", "lifeId", "relatedLifeId",
+                    System.currentTimeMillis() - 500L, System.currentTimeMillis());
+
+                Set<CustomMetric> metrics = new HashSet<CustomMetric>();
+                CustomMetric cm = new CustomMetric("name", "value");
+                cm.setComponentInvocationMetricImpl(event1);
+
+
+                metrics.add(cm);
+
+                event1.setMetrics(metrics);
 
                 events.add(event1);
             }
