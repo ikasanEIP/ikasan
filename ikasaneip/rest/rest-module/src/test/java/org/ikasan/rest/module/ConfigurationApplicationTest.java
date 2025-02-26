@@ -242,7 +242,8 @@ public class ConfigurationApplicationTest
         Mockito.when(configurationManagement.getConfiguration("testConfigId")).thenReturn(configuration);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.delete("/rest/configuration/testConfigId")
-                                                                    .contentType(MediaType.APPLICATION_JSON_VALUE))
+                                                                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                                                                    .header("username", "username"))
                                      .andReturn();
 
         int status = mvcResult.getResponse().getStatus();
