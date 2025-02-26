@@ -368,6 +368,7 @@
         <version.jakarta.resource-api>2.0.0</version.jakarta.resource-api>
         <version.jakarta.transaction-api>2.0.1</version.jakarta.transaction-api>
         <version.jboss-transaction-spi>8.0.0.Final</version.jboss-transaction-spi>
+        <version.commons-text>1.13.0</version.commons-text>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
@@ -1562,6 +1563,12 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${version.commons-io}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${version.commons-text}</version>
             </dependency>
 
             <dependency>
