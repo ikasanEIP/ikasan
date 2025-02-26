@@ -289,7 +289,7 @@ public class ConfigurationApplication
                 this.systemEventService.logSystemEvent(
                     configuration.getConfigurationId(),
                     "Configuration Deleted OldConfig [%s]".formatted(deletedConfigJson),
-                    username);
+                    username != null ? username : UserUtil.getUser());
             }
             catch (JsonProcessingException e)
             {
