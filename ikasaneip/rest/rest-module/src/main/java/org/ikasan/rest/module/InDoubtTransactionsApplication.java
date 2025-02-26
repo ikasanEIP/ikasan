@@ -138,8 +138,6 @@ public class InDoubtTransactionsApplication
         return new ResponseEntity("All in doubt transactions have been successfully rolled back!", HttpStatus.OK);
     }
 
-
-
     private InDoubtTransactionDto convert(InDoubtTransaction inDoubtTransaction) {
         InDoubtTransactionDto inDoubtTransactionDto = new InDoubtTransactionDto();
         inDoubtTransactionDto.setTransactionName(inDoubtTransaction.getTransactionName());
