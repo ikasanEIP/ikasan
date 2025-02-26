@@ -1,4 +1,5 @@
 package org.ikasan.rest.module;
+import org.apache.commons.text.StringEscapeUtils;
 
 import org.ikasan.rest.module.dto.*;
 import org.ikasan.rest.module.util.UserUtil;
@@ -256,7 +257,7 @@ public class ModuleControlApplication
             else
             {
                 return new ResponseEntity("Unknown module activation action ["
-                    + moduleActivationDto.getAction() + "].", HttpStatus.FORBIDDEN);
+                    + StringEscapeUtils.escapeHtml4(moduleActivationDto.getAction()) + "].", HttpStatus.FORBIDDEN);
             }
         }
         catch (Exception e)
