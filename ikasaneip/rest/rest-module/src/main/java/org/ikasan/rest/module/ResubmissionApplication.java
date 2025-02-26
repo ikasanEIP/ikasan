@@ -71,70 +71,6 @@ public class ResubmissionApplication
     @Autowired
     private SystemEventService systemEventService;
 
-//    /**
-//     * REST endpoint to resubmit excluded event.
-//     *
-//     * @param moduleName The name of the module we are re-submitting to.
-//     * @param flowName   The name of the flow we are re-submitting to.
-//     * @param errorUri   The error uri of the event being resubmitted.
-//     * @param event      The event we are resubmitting.
-//     * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
-//     */
-//    @Deprecated
-//    @RequestMapping(method = RequestMethod.PUT,
-//                    value = "/resubmit/{moduleName}/{flowName}/{errorUri}")
-//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-//    public ResponseEntity resubmit(@PathVariable("moduleName") String moduleName,
-//                                   @PathVariable("flowName") String flowName, @PathVariable("errorUri") String errorUri,
-//                                   @RequestBody byte[] event)
-//    {
-//        try
-//        {
-//            logger.debug("Re-submitting event " + errorUri);
-//            this.hospitalService.resubmit(moduleName, flowName, errorUri, event, getPrincipal());
-//        }
-//        catch (Exception e)
-//        {
-//            logger.error("An error has occurred on the server when trying to resubmit the event. ", e);
-//            return new ResponseEntity(
-//                "An error has occurred on the server when trying to resubmit the event. " + e.getMessage(),
-//                HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity("Event resubmitted!", HttpStatus.OK);
-//    }
-
-//    /**
-//     * REST endpoint to ignore excluded event.
-//     *
-//     * @param moduleName The name of the module we are ignoring to.
-//     * @param flowName   The name of the flow we are ignoring to.
-//     * @param errorUri   The error uri of the event being ignored.
-//     * @param event      The event we are resubmitting.
-//     * @return ResponseEntity with HTTP status 200 if successful or 404 if request failed
-//     */
-//    @Deprecated
-//    @RequestMapping(method = RequestMethod.PUT,
-//                    value = "/ignore/{moduleName}/{flowName}/{errorUri}")
-//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-//    public ResponseEntity ignore(@PathVariable("moduleName") String moduleName,
-//                                 @PathVariable("flowName") String flowName, @PathVariable("errorUri") String errorUri,
-//                                 @RequestBody byte[] event)
-//    {
-//        try
-//        {
-//            logger.debug("Ignoring event " + errorUri);
-//            this.hospitalService.ignore(moduleName, flowName, errorUri, event, getPrincipal());
-//        }
-//        catch (Exception e)
-//        {
-//            logger.error("An error has occurred on the server when trying to ignore the event. ", e);
-//            return new ResponseEntity(
-//                "An error has occurred on the server when trying to ignore the event. " + e.getMessage(),
-//                HttpStatus.NOT_FOUND);
-//        }
-//        return new ResponseEntity("Event resubmitted!", HttpStatus.OK);
-//    }
-
     /**
      * REST endpoint to re-submit or ignore excluded event.
      *
@@ -188,17 +124,4 @@ public class ResubmissionApplication
                 HttpStatus.NOT_FOUND);
         }
     }
-
-
-    private Principal getPrincipal()
-    {
-        // String user = "unknown";
-        org.springframework.security.core.context.SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null)
-        {
-            return (Principal) context.getAuthentication().getPrincipal();
-        }
-        return null;
-    }
-
 }
