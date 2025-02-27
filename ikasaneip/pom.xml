@@ -295,7 +295,7 @@
         <version.commons-io>2.7</version.commons-io>
         <version.ikasan.commons-dbcp2>1.0.0</version.ikasan.commons-dbcp2>
         <version.commons-lang>2.6</version.commons-lang>
-        <version.commons-lang3>3.9</version.commons-lang3>
+        <version.commons-lang3>3.17.0</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
         <version.commons-beanutils>1.9.4</version.commons-beanutils>
         <version.commons-text>1.8</version.commons-text>
