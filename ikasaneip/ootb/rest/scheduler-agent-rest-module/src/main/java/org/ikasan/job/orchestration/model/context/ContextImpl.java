@@ -20,6 +20,7 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     protected List<ContextDependency> contextDependencies;
     protected List<CONTEXT_PARAM> contextParameters;
     protected String timeWindowStart;
+    protected boolean customWeekDayOfMonth = false;
     protected long ttl;
     protected String environmentGroup;
     private boolean isQuartzScheduleDrivenJobsDisabledForContext = false;
@@ -129,6 +130,16 @@ public class ContextImpl<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
     @Override
     public void setTimeWindowStart(String timeWindowStart) {
         this.timeWindowStart = timeWindowStart;
+    }
+
+    @Override
+    public boolean isCustomWeekDayOfMonth() {
+        return customWeekDayOfMonth;
+    }
+
+    @Override
+    public void setCustomWeekDayOfMonth(boolean customWeekDayOfMonth) {
+        this.customWeekDayOfMonth = customWeekDayOfMonth;
     }
 
     @Override

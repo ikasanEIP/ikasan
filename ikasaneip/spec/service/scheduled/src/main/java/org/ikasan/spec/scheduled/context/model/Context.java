@@ -174,6 +174,22 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      */
     void setTimeWindowStart(String timeWindowStart);
 
+
+    /**
+     * Checks if the custom week day of the month is met.
+     *
+     * @return true if the custom week day of the month is met, false otherwise
+     */
+    boolean isCustomWeekDayOfMonth();
+
+
+    /**
+     * Sets whether to use a custom week day of the month.
+     *
+     * @param customWeekDayOfMonth true if custom week day of the month should be used, false otherwise
+     */
+    void setCustomWeekDayOfMonth(boolean customWeekDayOfMonth);
+
     /**
      * Get the ttl of the context in milliseconds since epoch.
      *
