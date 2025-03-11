@@ -4,6 +4,9 @@ import org.ikasan.spec.scheduled.instance.model.ContextParameterInstance;
 
 import java.util.List;
 
+/**
+ * This interface represents a service for registering, scheduling, and managing context instances.
+ */
 public interface ContextInstanceRegistrationService {
 
     /**
@@ -13,37 +16,45 @@ public interface ContextInstanceRegistrationService {
      */
     void prepareFutureContextInstance(String contextName);
 
-    /**
-     * Method to re-schedule a context. This will remove any scheduled triggers
-     * associated with the context and reschedule based on the new start time, timezone
-     * or blackout windows.
-     *
-     * @param contextName
-     */
-    void reSchedule(String contextName);
+
 
     /**
-     * Method to register a context by name.
+     * Reschedule a context using the provided context name and scheduler service.
      *
-     * @param contextName
+     * @param contextName The name of the context to reschedule.
+     * @param contextInstanceSchedulerService The service responsible for managing context instance scheduling.
      */
-    void register(String contextName);
+    void reSchedule(String contextName, ContextInstanceSchedulerService contextInstanceSchedulerService);
+
 
     /**
-     * Method to register a context by name.
+     * Registers a context with the specified name and context instance scheduler service.
      *
-     * @param contextName
-     * @param contextParameterInstances
-     * @return
+     * @param contextName The name of the context to register.
+     * @param contextInstanceSchedulerService The service used for managing context instance scheduling.
      */
-    String register(String contextName, List<ContextParameterInstance> contextParameterInstances);
+    void register(String contextName, ContextInstanceSchedulerService contextInstanceSchedulerService);
+
 
     /**
-     * Method to deregister all context instance of the named context.
+     * Registers a context with the given parameters.
      *
-     * @param contextName
+     * @param contextName The name of the context to register.
+     * @param contextParameterInstances The list of context parameter instances associated with the context.
+     * @param contextInstanceSchedulerService The service used for managing context instance scheduling.
+     * @return A string representing the registration status.
      */
-    void deRegisterByName(String contextName);
+    String register(String contextName, List<ContextParameterInstance> contextParameterInstances
+        , ContextInstanceSchedulerService contextInstanceSchedulerService);
+
+
+    /**
+     * Deregisters a context by its name. This method removes the context from the scheduler service.
+     *
+     * @param contextName The name of the context to deregister.
+     * @param contextInstanceSchedulerService The service used for managing context instance scheduling.
+     */
+    void deRegisterByName(String contextName, ContextInstanceSchedulerService contextInstanceSchedulerService);
 
     /**
      * Deregister a specific context instance.
