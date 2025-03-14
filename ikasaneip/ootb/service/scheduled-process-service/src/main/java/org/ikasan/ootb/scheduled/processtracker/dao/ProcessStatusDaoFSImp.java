@@ -7,6 +7,7 @@ import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.retry.support.RetryTemplate;
 
 import java.io.File;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.FileSystems;
@@ -14,6 +15,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     private static final Logger LOGGER = LoggerFactory.getLogger(ProcessStatusDaoFSImp.class);
@@ -141,18 +143,22 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
      * @throws IOException if there were issues removing the file
      */
     public void removeScriptAndResult(String processIdentity) throws IOException {
-        Files.list(Path.of(this.persistenceDir))
-            .filter(p -> p.toString().contains(getScriptFile(processIdentity))
+        try (Stream<Path> files = Files.list(Path.of(this.persistenceDir))) {
+            files.filter(p -> p.toString().contains(getScriptFile(processIdentity))
                 ||  p.toString().contains(getWrapperScriptFile(processIdentity))
                 ||  p.toString().contains(getResultFile(processIdentity)))
-            .forEach((p) -> {
-            try {
-                Files.deleteIfExists(p);
-                LOGGER.info(String.format("Successfully deleted process file[%s].", p));
-            } catch (Exception e) {
-                LOGGER.info(String.format("Failed to delete file[%s]. Error message[%s].", p, e.getMessage()));
-            }
-        });
+                .forEach((p) -> {
+                    try {
+                        Files.deleteIfExists(p);
+                        LOGGER.info(String.format("Successfully deleted process file[%s].", p));
+                    } catch (Exception e) {
+                        LOGGER.info(String.format("Failed to delete file[%s]. Error message[%s].", p, e.getMessage()));
+                    }
+                });
+        }
+        catch (IOException e) {
+            throw e;
+        }
     }
 
 
