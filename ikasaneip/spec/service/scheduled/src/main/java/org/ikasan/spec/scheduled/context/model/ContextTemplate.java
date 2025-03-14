@@ -12,6 +12,36 @@ import java.util.stream.Collectors;
 public interface ContextTemplate extends Context<ContextTemplate, ContextParameter, SchedulerJob, JobLock>, Serializable {
 
     /**
+     * Set whether to delay agent synchronisation until the next instance.
+     *
+     * @param delayAgentSynchronisationUntilNextInstance true to delay agent synchronisation until the next instance, false otherwise
+     */
+    void setDelayAgentSynchronisationUntilNextInstance(boolean delayAgentSynchronisationUntilNextInstance);
+
+    /**
+     * Checks whether the agent synchronization should be delayed until the next instance.
+     *
+     * @return true if agent synchronization should be delayed until the next instance, false otherwise
+     */
+    boolean isDelayAgentSynchronisationUntilNextInstance();
+
+    /**
+     * Set whether agent synchronization is required or not for the current context template.
+     *
+     * @param requiresAgentSynchronisation true if agent synchronization is required, false otherwise
+     */
+    void setRequiresAgentSynchronisation(boolean requiresAgentSynchronisation);
+
+
+    /**
+     * Indicates whether the agent synchronization is required or not.
+     * This method is used to check if agent synchronization is needed for the current context template.
+     *
+     * @return true if agent synchronization is required, false otherwise
+     */
+    boolean isRequiresAgentSynchronisation();
+
+    /**
      * Set context template to disabled.
      *
      * @param disabled
