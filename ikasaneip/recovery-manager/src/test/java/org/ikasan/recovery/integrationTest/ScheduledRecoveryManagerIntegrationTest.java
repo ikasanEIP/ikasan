@@ -164,7 +164,6 @@ public class ScheduledRecoveryManagerIntegrationTest
      * specified.
      */
     @Test
-    @Ignore
     public void test_recoveryManager_default_stop_when_no_resolver()
     {
         RecoveryManager recoveryManager = recoveryManagerFactory.getRecoveryManager(flowName, moduleName);
@@ -196,7 +195,6 @@ public class ScheduledRecoveryManagerIntegrationTest
      * Test recovery manager with resolver for stop action.
      */
     @Test
-    @Ignore
     public void test_recoveryManager_resolver_to_stopAction()
     {
         //
@@ -311,7 +309,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
                         );
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -410,7 +408,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     public void test_recoveryManager_resolver_to_retryAction_when_exception_thrown_from_tech_endpoint() throws SchedulerException
     {
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -488,7 +486,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
                         );
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+ Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -606,12 +604,12 @@ public class ScheduledRecoveryManagerIntegrationTest
     /**
      * Test recovery manager with resolver for a retry action
      * followed by a stop action.
-     * @throws SchedulerException 
+     * @throws SchedulerException
      */
     @Test
     public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction() throws SchedulerException
     {
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -622,7 +620,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         ExceptionAction stopAction = StopAction.instance();
         IsInstanceOf instanceOfNullPointerException = new org.hamcrest.core.IsInstanceOf(NullPointerException.class);
         MatcherBasedExceptionGroup matcherB = new MatcherBasedExceptionGroup(instanceOfNullPointerException, stopAction);
-        
+
         List<ExceptionGroup> matchers = new ArrayList<>();
         matchers.add(matcherA);
         matchers.add(matcherB);
@@ -659,7 +657,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         // wait for scheduler callback to restart the consumer
         while(!consumer.isRunning()){pause(100);}
-        
+
         //
         // second retry action
         try
@@ -830,17 +828,17 @@ public class ScheduledRecoveryManagerIntegrationTest
     {
         if(recoveryManager instanceof IsConsumerAware)
         {
-            ((IsConsumerAware)recoveryManager).setConsumer(consumer);
+            ((IsConsumerAware) recoveryManager).setConsumer(consumer);
         }
 
         if(recoveryManager instanceof IsExclusionServiceAware)
         {
-            ((IsExclusionServiceAware)recoveryManager).setExclusionService(exclusionService);
+            ((IsExclusionServiceAware) recoveryManager).setExclusionService(exclusionService);
         }
 
         if(recoveryManager instanceof IsErrorReportingServiceAware)
         {
-            ((IsErrorReportingServiceAware)recoveryManager).setErrorReportingService(errorReportingService);
+            ((IsErrorReportingServiceAware) recoveryManager).setErrorReportingService(errorReportingService);
         }
     }
 

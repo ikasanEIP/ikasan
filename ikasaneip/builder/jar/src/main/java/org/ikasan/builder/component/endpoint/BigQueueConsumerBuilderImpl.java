@@ -17,19 +17,19 @@ import org.ikasan.spec.serialiser.Serialiser;
 import javax.transaction.TransactionManager;
 
 public class BigQueueConsumerBuilderImpl implements BigQueueConsumerBuilder {
-    private AopProxyProvider aopProxyProvider;
+    protected AopProxyProvider aopProxyProvider;
 
-    private TransactionManager transactionManager;
-    private IBigQueue inboundQueue;
-    private boolean putErrorsToBackOfQueue;
-    private Serialiser serialiser = new BigQueueMessageJsonSerialiser();
-    private ManagedRelatedEventIdentifierService managedEventIdentifierService;
-    private EventListener<?> eventListener;
-    private EventFactory eventFactory;
+    protected TransactionManager transactionManager;
+    protected IBigQueue inboundQueue;
+    protected boolean putErrorsToBackOfQueue;
+    protected Serialiser serialiser = new BigQueueMessageJsonSerialiser();
+    protected ManagedRelatedEventIdentifierService managedEventIdentifierService;
+    protected EventListener<?> eventListener;
+    protected EventFactory eventFactory;
 
-    private ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService;
-    private ResubmissionEventFactory resubmissionEventFactory;
-    private String configurationId;
+    protected ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService;
+    protected ResubmissionEventFactory resubmissionEventFactory;
+    protected String configurationId;
 
     public BigQueueConsumerBuilderImpl(AopProxyProvider aopProxyProvider, TransactionManager transactionManager) {
         this.aopProxyProvider = aopProxyProvider;

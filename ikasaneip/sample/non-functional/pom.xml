@@ -60,6 +60,7 @@
         <module>h2-server-txn-fail-commit-amq-resource</module>
         <module>component-performance</module>
         <module>encrypted-properties</module>
+        <module>nft-recovery-manager</module>
     </modules>
 
 </project>
