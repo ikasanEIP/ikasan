@@ -38,63 +38,31 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.testharness.flow;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jms.config.JmsListenerEndpointRegistry;
+import org.springframework.jms.core.JmsTemplate;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.Collections.unmodifiableList;
-
-/**
- * Implementation of the FlowTestHarness as a FlowObserver.
- *
- * @author Ikasan Development Team
- */
-public class FlowTestHarnessImpl implements FlowObserver, FlowTestHarness
+@Configuration
+public class ModuleTestConfig
 {
-    /**
-     * actual captured flow behaviour, synchronized to ensure state is published when read
-     */
-    private List<Capture<?>> captures = Collections.synchronizedList(new ArrayList<>());
+    @Value("${jms.provider.url}")
+    private String brokerUrl;
 
-    /**
-     * Index for modifying the captures Collection
-     */
-    private final AtomicInteger capturesIndex = new AtomicInteger(0);
-
-    /**
-     * expectations of the flow behaviour
-     */
-    private FlowExpectation flowExpectation;
-
-    /**
-     * Constructor
-     *
-     * @param flowExpectation
-     */
-    public FlowTestHarnessImpl(FlowExpectation flowExpectation)
+    @Bean
+    JmsTemplate jmsTemplate()
     {
-        this.flowExpectation = flowExpectation;
+        JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));
+        return jmsTemplate;
     }
 
-    /**
-     * Notification of a behavior in the flow
-     *
-     * @param actual
-     */
-    @SuppressWarnings("unchecked")
-    public synchronized <T> void notify(T actual)
-    {
-        int index = capturesIndex.getAndIncrement();
-        this.captures.add(index, new Capture(index + 1, actual));
+    @Bean
+    public JmsListenerEndpointRegistry jmsListenerEndpointRegistry() {
+        return new JmsListenerEndpointRegistry();
     }
 
-    public void assertIsSatisfied()
-    {
-        flowExpectation.allSatisfied(unmodifiableList(captures));
-    }
 }
