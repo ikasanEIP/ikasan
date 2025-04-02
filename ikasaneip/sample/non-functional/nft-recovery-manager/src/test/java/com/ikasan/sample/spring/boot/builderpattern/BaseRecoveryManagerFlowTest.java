@@ -31,9 +31,7 @@ public abstract class BaseRecoveryManagerFlowTest {
 
     @Resource
     protected ErrorReportingService errorReportingService;
-
     protected IkasanFlowTestRule flowTestRule;
-
     @Resource
     protected ExclusionManagementService exclusionManagementService;
 
@@ -64,22 +62,21 @@ public abstract class BaseRecoveryManagerFlowTest {
         return jobKeys.size();
     }
 
+    /**
+     * This method clears all data from the database tables that may have been added between tests.
+     * It uses the DatabaseHelper class to interact with the database and perform the data clearing operation.
+     * Any SQLException that occurs during the database clearing process will be propagated up.
+     * It is protected to allow subclasses to access and utilize this method as needed.
+     */
     protected void clearDatabase() throws SQLException {
         new DatabaseHelper(ikasanxads).clearDatabase();
     }
 
-    protected void resetExceptionGeneratingBroker() {
-        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule
-            .getComponent("Exception Generating Broker");
-        exceptionGeneratingBroker.reset();
-    }
-
-    public void resetDelayGeneratingBroker(){
-        DelayGenerationBroker delayGenerationBroker = (DelayGenerationBroker) flowTestRule
-            .getComponent("Delay Generating Broker");
-        delayGenerationBroker.reset();
-    }
-
+    /**
+     * Asserts that the number of errors retrieved from the errorReportingService matches the expected number
+     *
+     * @param expectedNumberOfErrors the expected number of errors to assert against
+     */
     protected void assertErrorsWithWait(int expectedNumberOfErrors) {
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> {
@@ -88,6 +85,12 @@ public abstract class BaseRecoveryManagerFlowTest {
             });
     }
 
+    /**
+     * Asserts that the number of error reporting events found by the errorReportingService
+     * is greater than the expected number of errors after waiting for a specific duration.
+     *
+     * @param expectedNumberOfErrors the expected number of errors that the method should find
+     */
     protected void assertErrorsGreaterThanWithWait(int expectedNumberOfErrors) {
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertTrue(this.errorReportingService.find(null, null, null
@@ -95,6 +98,11 @@ public abstract class BaseRecoveryManagerFlowTest {
     }
 
 
+    /**
+     * Asserts that the number of exclusions found matches the expected number within a specified time frame.
+     *
+     * @param expectedNumberOfExclusions the expected number of exclusions to be found
+     */
     protected void assertExclusionsWithWait(int expectedNumberOfExclusions) {
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> {

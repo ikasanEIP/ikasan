@@ -130,7 +130,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     private JobKey recoveryJobKey;
     private boolean isConsumerMultiThreaded = false;
     private boolean isEventBaseRecovery = false;
-    private boolean recoveryCancelled = false;
 
     /**
      * Constructor
@@ -410,7 +409,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     private synchronized void startRecovery(RetryAction retryAction)
         throws SchedulerException
     {
-        this.recoveryCancelled = false;
         logger.info(String.format("Recovery manager starting to recover flow[%s]. The Quartz Scheduler is " +
             "currently managing the following recovery jobs[%s]", this.flowName, this.getCurrentScheduledRecoveryJobs()));
 
@@ -440,7 +438,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      */
     private synchronized void startRecovery(ScheduledRetryAction scheduledRetryAction) throws SchedulerException
     {
-        this.recoveryCancelled = false;
         logger.info(String.format("Recovery manager starting to recover flow[%s]. The Quartz Scheduler is " +
             "currently managing the following recovery jobs[%s]", this.flowName, this.getCurrentScheduledRecoveryJobs()));
 
@@ -553,7 +550,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
      */
     private void cancelRecovery(ID id)
     {
-        this.recoveryCancelled = true;
         this.recoveryAttempts = 0;
         try
         {
@@ -586,7 +582,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     public void initialise()
     {
         this.isUnrecoverable = false;
-        this.recoveryCancelled = false;
         this.recoveryAttempts = 0;
         this.previousComponentName = null;
         this.previousExceptionAction = null;
@@ -698,11 +693,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     @SuppressWarnings("unchecked")
     public void execute(JobExecutionContext context) throws JobExecutionException
     {
-        if(recoveryCancelled) {
-            logger.info(String.format("Recovery has been cancelled for flow [%s]!. Will not process this recovery as " +
-                "this job was not cancelled in time."));
-            return;
-        }
         try
         {
             startManagedResources();
