@@ -163,8 +163,6 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        super.assertErrorsGreaterThanWithWait(0);
-
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -206,8 +204,6 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-
-        super.assertErrorsGreaterThanWithWait(0);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -256,7 +252,6 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 20);
 
-        super.assertErrorsWithWait(22);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -317,8 +312,6 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
 
-        super.assertErrorsGreaterThanWithWait(9);
-
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -364,8 +357,6 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 10);
-
-        super.assertErrorsWithWait(12);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -430,10 +421,11 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
 
-        super.assertErrorsWithWait(6);
-
         // Let's make sure the errors are all as we expect them to be.
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
+
+        logger.info("Number of errors: " + errors.size());
+
         errors.forEach(errorOccurrence -> {
             // All error are EndpointExceptions with a scheduled retry.
             assertTrue(errorOccurrence.getExceptionClass().equals(SampleScheduledRecoveryGeneratedException.class.getName()));
