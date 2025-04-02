@@ -1,0 +1,56 @@
+package com.ikasan.sample.spring.boot.builderpattern;
+
+import jakarta.transaction.TransactionManager;
+import org.ikasan.builder.AopProxyProvider;
+import org.ikasan.builder.component.endpoint.BigQueueConsumerBuilderImpl;
+import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
+import org.ikasan.component.endpoint.bigqueue.consumer.InboundQueueMessageRunner;
+import org.ikasan.component.endpoint.bigqueue.consumer.configuration.BigQueueConsumerConfiguration;
+import org.ikasan.spec.component.endpoint.EndpointListener;
+import org.ikasan.spec.event.MessageListener;
+
+public class ExtendedBigQueueConsumerBuilder extends BigQueueConsumerBuilderImpl {
+    public ExtendedBigQueueConsumerBuilder(AopProxyProvider aopProxyProvider, TransactionManager transactionManager) {
+        super(aopProxyProvider, transactionManager);
+    }
+
+    @Override
+    public BigQueueConsumer build() {
+        InboundQueueMessageRunner inboundQueueMessageRunner = new InboundQueueMessageRunner(inboundQueue, serialiser);
+        ExtendedBigQueueConsumer consumer = new ExtendedBigQueueConsumer(inboundQueue
+            , inboundQueueMessageRunner, this.transactionManager);
+        BigQueueConsumerConfiguration configuration = new BigQueueConsumerConfiguration();
+        configuration.setPutErrorsToBackOfQueue(this.putErrorsToBackOfQueue);
+        consumer.setConfiguration(configuration);
+        consumer.setConfiguredResourceId(this.configurationId);
+
+        consumer.setSerialiser(serialiser);
+        consumer.setManagedIdentifierService(this.managedEventIdentifierService);
+
+        MessageListener messageListener = this.aopProxyProvider.applyPointcut("extendedBigQueueConsumer", consumer);
+        inboundQueueMessageRunner.setMessageListener(messageListener);
+
+        if(messageListener instanceof EndpointListener listener)
+        {
+            inboundQueueMessageRunner.setEndpointListener( listener );
+        }
+
+        if(this.eventListener != null) {
+            consumer.setListener(eventListener);
+        }
+
+        if(this.eventFactory != null) {
+            consumer.setEventFactory(this.eventFactory);
+        }
+
+        if(this.managedEventIdentifierService != null) {
+            consumer.setManagedIdentifierService(this.managedEventIdentifierService);
+        }
+
+        if(this.resubmissionEventFactory != null) {
+            consumer.setResubmissionEventFactory(this.resubmissionEventFactory);
+        }
+
+        return consumer;
+    }
+}

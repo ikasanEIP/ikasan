@@ -38,63 +38,38 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.testharness.flow;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.Collections.unmodifiableList;
+import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.EndpointException;
 
 /**
- * Implementation of the FlowTestHarness as a FlowObserver.
- *
- * @author Ikasan Development Team
+ * Created by majean on 09/10/2017.
  */
-public class FlowTestHarnessImpl implements FlowObserver, FlowTestHarness
+public class DelayGenerationBroker implements Broker
 {
-    /**
-     * actual captured flow behaviour, synchronized to ensure state is published when read
-     */
-    private List<Capture<?>> captures = Collections.synchronizedList(new ArrayList<>());
 
-    /**
-     * Index for modifying the captures Collection
-     */
-    private final AtomicInteger capturesIndex = new AtomicInteger(0);
+    private long brokerDelay = 0l;
 
-    /**
-     * expectations of the flow behaviour
-     */
-    private FlowExpectation flowExpectation;
-
-    /**
-     * Constructor
-     *
-     * @param flowExpectation
-     */
-    public FlowTestHarnessImpl(FlowExpectation flowExpectation)
+    @Override public Object invoke(Object o) throws EndpointException
     {
-        this.flowExpectation = flowExpectation;
+        try
+        {
+            Thread.sleep(brokerDelay);
+        }
+        catch (InterruptedException e)
+        {
+            throw new EndpointException(e);
+        }
+        return o;
     }
 
-    /**
-     * Notification of a behavior in the flow
-     *
-     * @param actual
-     */
-    @SuppressWarnings("unchecked")
-    public synchronized <T> void notify(T actual)
+    public void setBrokerDelay(long brokerDelay)
     {
-        int index = capturesIndex.getAndIncrement();
-        this.captures.add(index, new Capture(index + 1, actual));
+        this.brokerDelay = brokerDelay;
     }
 
-    public void assertIsSatisfied()
-    {
-        flowExpectation.allSatisfied(unmodifiableList(captures));
+    public void reset(){
+        this.brokerDelay = 0l;
     }
 }
