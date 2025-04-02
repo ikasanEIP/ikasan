@@ -45,8 +45,10 @@ import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.IsConsumerAware;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
+import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.flow.FinalAction;
@@ -63,9 +65,14 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.*;
 import org.quartz.impl.StdSchedulerFactory;
+import org.quartz.impl.matchers.GroupMatcher;
+import org.quartz.impl.triggers.CronTriggerImpl;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 /**
  * This test class supports the <code>ScheduledRecoveryManager</code> class.
@@ -109,6 +116,9 @@ public class ScheduledRecoveryManagerTest
     
     /** Mock retryAction */
     private final RetryAction retryAction = mockery.mock(RetryAction.class, "Retry");
+
+    /** Mock retryAction */
+    private final ScheduledRetryAction scheduledRetryAction = mockery.mock(ScheduledRetryAction.class, "scheduledRetryAction");
     
     /** Mock excludeEventAction */
     private final ExcludeEventAction excludeEventAction = mockery.mock(ExcludeEventAction.class, "ExcludeEvent");
@@ -133,6 +143,9 @@ public class ScheduledRecoveryManagerTest
 
     /** Mock flowInvocationContext*/
     private final FlowInvocationContext flowInvocationContext = mockery.mock(FlowInvocationContext.class, "flowInvocationContext");
+
+    /** Mock jobExecutionContext*/
+    private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class, "jobExecutionContext");
 
     /**
      * Test failed constructor due to null scheduler.
@@ -476,12 +489,11 @@ public class ScheduledRecoveryManagerTest
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                
-//                // so start the scheduler
-//                exactly(1).of(scheduler).start();
+
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
 
                 // create the recovery job and associated trigger
-//                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
 
@@ -489,10 +501,11 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(2));
                 exactly(1).of(retryAction).getDelay();
                 will(returnValue(2000L));
-//                exactly(1).of(trigger).setStartTime(with(any(Date.class)));
                 
                 // schedule the recovery job with its trigger
                 exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
 
                 // now we are in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -514,6 +527,84 @@ public class ScheduledRecoveryManagerTest
 
         Assert.assertTrue(recoveryManager.isRecovering());
         
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager) recoveryManager).getRetryAttempts() == 1);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful retry action on recovery.
+     * @throws SchedulerException if the scheduler fails
+     */
+    @Test
+    public void test_successful_recover_to_scheduledRetryAction_with_no_previousAction_noManagedResources() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+
+        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(scheduledRetryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, scheduledRetryAction.toString());
+                will(returnValue("errorUri"));
+
+                // firstly stop the consumer
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                // for this test we are not already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(false));
+
+                // create the recovery job and associated trigger
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                exactly(2).of(scheduledRetryAction).getCronExpression();
+                will(returnValue("0/30 * * * * ? *"));
+
+                exactly(2).of(scheduledRetryAction).getMaxRetries();
+                will(returnValue(2));
+
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
+                // schedule the recovery job with its trigger
+                exactly(1).of(scheduler).scheduleJob(with(any(JobDetail.class)), with(any(CronTriggerImpl.class)));
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                // now we are in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+            }
+        });
+
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("scheduledRetryAction", e.getMessage());
+        }
+
+        Assert.assertTrue(recoveryManager.isRecovering());
+
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager) recoveryManager).getRetryAttempts() == 1);
 
@@ -558,13 +649,13 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
 
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
-//                // so start the scheduler
-//                exactly(1).of(scheduler).start();
 
                 // create the recovery job and associated trigger
-//                exactly(1).of(scheduledJobFactory).createJobDetail((Job)recoveryManager, "recoveryJob_flowName", "moduleName");
                 exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
 
@@ -572,10 +663,11 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(2));
                 exactly(1).of(retryAction).getDelay();
                 will(returnValue(2000L));
-//                exactly(1).of(trigger).setStartTime(with(any(Date.class)));
                 
                 // schedule the recovery job with its trigger
                 exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
 
                 // now we are in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -598,6 +690,92 @@ public class ScheduledRecoveryManagerTest
 
         Assert.assertTrue(recoveryManager.isRecovering());
         
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful retry action on recovery.
+     * @throws SchedulerException if the scheduler fails
+     */
+    @Test
+    public void test_successful_recover_to_scheduledRetryAction_with_no_previousAction_withManagedResources() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+
+        final RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(scheduledRetryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, scheduledRetryAction.toString());
+                will(returnValue("errorUri"));
+
+                // firstly stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // stop managed resources
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+                exactly(1).of(managedResource).stopManagedResource();
+
+                // for this test we are not already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(false));
+
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
+                // create the recovery job and associated trigger
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(2).of(scheduledRetryAction).getCronExpression();
+                will(returnValue("0/30 * * * * ? *"));
+
+                exactly(2).of(scheduledRetryAction).getMaxRetries();
+                will(returnValue(2));
+
+                // schedule the recovery job with its trigger
+                exactly(1).of(scheduler).scheduleJob(with(any(JobDetail.class)), with(any(CronTriggerImpl.class)));
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                // now we are in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+            }
+        });
+
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("scheduledRetryAction", e.getMessage());
+        }
+
+        Assert.assertTrue(recoveryManager.isRecovering());
+
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
 
@@ -641,13 +819,13 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
                 
-                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                exactly(3).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 // create the recovery job and associated trigger
                 exactly(3).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
-                exactly(2).of(retryAction).getDelay();
+                exactly(3).of(retryAction).getDelay();
                 will(returnValue(delay));
                 
                 // schedule the recovery job with its trigger
@@ -698,17 +876,23 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(true));
                 
                 // is recovery job already scheduled
-                exactly(2).of(jobDetail).getKey();
+                exactly(3).of(jobDetail).getKey();
                 will(returnValue(jobKey));
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(false));
+                exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
 
                 // check we have not exceeded retry limits
                 exactly(1).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
-                
+
+                exactly(1).of(scheduler).getTriggersOfJob(with(any(JobKey.class)));
+                will(returnValue(List.of()));
+
+                exactly(3).of(scheduler).checkExists(jobKey);
+                will(returnValue(false));
+
                 // cancelAll the recovery
-                exactly(1).of(scheduler).checkExists(jobKey);
+                exactly(3).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
                 exactly(1).of(scheduler).deleteJob(jobKey);
             }
@@ -802,13 +986,13 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
 
-                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                exactly(3).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
                 will(returnValue(jobDetail));
                 
                 // create the recovery job and associated trigger
                 exactly(3).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
-                exactly(2).of(retryAction).getDelay();
+                exactly(3).of(retryAction).getDelay();
                 will(returnValue(delay));
                 
                 // schedule the recovery job with its trigger
@@ -867,17 +1051,23 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(true));
                 
                 // is recovery job already scheduled
-                exactly(2).of(jobDetail).getKey();
+                exactly(3).of(jobDetail).getKey();
                 will(returnValue(jobKey));
-                exactly(1).of(scheduler).checkExists(jobKey);
-                will(returnValue(false));
+                exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
 
                 // check we have not exceeded retry limits
                 exactly(1).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
+
+                exactly(1).of(scheduler).getTriggersOfJob(with(any(JobKey.class)));
+                will(returnValue(List.of()));
+
+                exactly(3).of(scheduler).checkExists(jobKey);
+                will(returnValue(false));
                 
                 // cancelAll the recovery
-                exactly(1).of(scheduler).checkExists(jobKey);
+                exactly(3).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
                 exactly(1).of(scheduler).deleteJob(jobKey);
             }
@@ -921,6 +1111,177 @@ public class ScheduledRecoveryManagerTest
             Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
         }
         
+        Assert.assertTrue(recoveryManager.isUnrecoverable());
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test successful three consecutive retry actions with the last one
+     * exceeding the maximum attempts limit.
+     * @throws SchedulerException if the scheduler fails
+     */
+    @Test
+    public void test_successful_recover_to_three_scheduledRetryActions_until_exceeds_max_attempts_withManagedResources() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+        final int maxRetries = 2;
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                //
+                // first time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(scheduledRetryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, scheduledRetryAction.toString());
+                will(returnValue("errorUri"));
+
+                // firstly stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // stop managed resources
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+                exactly(1).of(managedResource).stopManagedResource();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                // create the recovery job and associated trigger
+                exactly(3).of(scheduledRetryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+
+                // schedule the recovery job with its trigger
+                exactly(1).of(scheduler).scheduleJob(with(any(JobDetail.class)), with(any(CronTriggerImpl.class)));
+
+                //
+                // second time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(scheduledRetryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, scheduledRetryAction.toString());
+                will(returnValue("errorUri"));
+
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // stop managed resources
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+                exactly(1).of(managedResource).stopManagedResource();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(2).of(scheduledRetryAction).getCronExpression();
+                will(returnValue("0/30 * * * * ? *"));
+
+                // check we have not exceeded retry limits
+                exactly(2).of(scheduledRetryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+
+                //
+                // third time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(scheduledRetryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, scheduledRetryAction.toString());
+                will(returnValue("errorUri"));
+
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // stop managed resources
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+                exactly(1).of(managedResource).stopManagedResource();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
+                // is recovery job already scheduled
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                // check we have not exceeded retry limits
+                exactly(1).of(scheduledRetryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(false));
+            }
+        });
+
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("scheduledRetryAction", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("scheduledRetryAction", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+        }
+
         Assert.assertTrue(recoveryManager.isUnrecoverable());
 
         // test aspects we cannot access through the interface
@@ -976,6 +1337,990 @@ public class ScheduledRecoveryManagerTest
     }
 
     /**
+     * This method tests the successful recovery process by retrying actions until the maximum retry attempts are exceeded.
+     * The recovery job is already scheduled in the future, so it will not reschedule a future job.
+     * @throws SchedulerException if an error occurs with the scheduler
+     */
+    @Test
+    public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_recovery_job_already_scheduled_in_future_so_will_not_reschedule_future_job() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+        final long delay = 2000;
+        final int maxRetries = 2;
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName" + 0, "moduleName");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                //
+                // first time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
+                // firstly stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(3).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                // create the recovery job and associated trigger
+                exactly(3).of(retryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+                exactly(3).of(retryAction).getDelay();
+                will(returnValue(delay));
+
+                // schedule the recovery job with its trigger
+                exactly(2).of(scheduler).scheduleJob(jobDetail, trigger);
+
+                //
+                // second time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                // check we have not exceeded retry limits
+                exactly(5).of(retryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+
+
+
+                //
+                // third time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                // is recovery job already scheduled
+                exactly(3).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+                exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                exactly(1).of(scheduler).getTriggersOfJob(with(any(JobKey.class)));
+                will(returnValue(List.of(trigger)));
+
+                exactly(3).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
+                exactly(3).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).deleteJob(jobKey);
+            }
+        });
+
+        RecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Retry", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Retry", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+        }
+
+        Assert.assertTrue(recoveryManager.isUnrecoverable());
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_recover_to_three_retryActions_until_exceeds_max_attempts_recovery_job_already_scheduled_in_past_so_will_reschedule_future_job() throws SchedulerException
+    {
+        final Exception exception = new Exception();
+        final long delay = 2000;
+        final int maxRetries = 2;
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName" + 0, "moduleName");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                //
+                // first time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
+                // firstly stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(2).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                // create the recovery job and associated trigger
+                exactly(3).of(retryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+                exactly(2).of(retryAction).getDelay();
+                will(returnValue(delay));
+
+                // schedule the recovery job with its trigger
+                exactly(2).of(scheduler).scheduleJob(jobDetail, trigger);
+
+                //
+                // second time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                // check we have not exceeded retry limits
+                exactly(3).of(retryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+
+
+
+                //
+                // third time retry action is invoked
+                //
+
+                // resolve the component name and exception to an action
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                // report error
+                exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
+                will(returnValue("errorUri"));
+
+                // stop the consumer
+                exactly(1).of(consumer).stop();
+
+                // for this test we are already in a recovery
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                // is recovery job already scheduled
+                exactly(2).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+                exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                // check we have not exceeded retry limits
+                exactly(2).of(retryAction).getMaxRetries();
+                will(returnValue(maxRetries));
+
+                // There is a job for the job key registered with the scheduler but in the past.
+                exactly(1).of(scheduler).getTriggersOfJob(with(any(JobKey.class)));
+                will(returnValue(List.of(trigger)));
+
+                exactly(4).of(scheduler).checkExists(jobKey);
+                will(returnValue(false));
+
+                // cancelAll the recovery
+                exactly(2).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
+                exactly(1).of(scheduler).deleteJob(jobKey);
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Retry", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Retry", e.getMessage());
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 2);
+
+        try
+        {
+            recoveryManager.recover("componentName", exception);
+        }
+        catch(RuntimeException e)
+        {
+            Assert.assertEquals("Exhausted maximum retries.", e.getMessage());
+        }
+
+        Assert.assertTrue(recoveryManager.isUnrecoverable());
+
+        // test aspects we cannot access through the interface
+        Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
+
+        mockery.assertIsSatisfied();
+    }
+
+
+    /**
+     * Test that a quartz job fired with managed components allows the consumer to start successfully.
+     *
+     * @throws SchedulerException if there is an issue with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_successfully_starts() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+
+                exactly(2).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).deleteJob(jobKey);
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+
+        recoveryManager.execute(this.jobExecutionContext);
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_successfully_starts_multi_threaded_consumer() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
+
+                exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                exactly(1).of(scheduler).deleteJob(jobKey);
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "isConsumerMultiThreaded", true);
+
+        recoveryManager.execute(this.jobExecutionContext);
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test method for verifying the behavior of a Quartz job recovery process with managed components
+     * where the consumer throws an exception during startup.
+     *
+     * @throws SchedulerException if an issue occurs with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_managed_resource_throws_exception_on_startup_managed_resource_critical_on_startup() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+        RuntimeException exception =  new RuntimeException("error!");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(3).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+                will(throwException(exception));
+
+                exactly(1).of(managedResource).isCriticalOnStartup();
+                will(returnValue(true));
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(stopAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
+
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(1).of(managedResource).stopManagedResource();
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test method for verifying the behavior of a Quartz job recovery process with managed components
+     * where the consumer throws an exception during startup.
+     *
+     * @throws SchedulerException if an issue occurs with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_managed_resource_throws_exception_on_startup_managed_resource_critical_on_startup_multi_threaded_consumer() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+        RuntimeException exception =  new RuntimeException("error!");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(3).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+                will(throwException(exception));
+
+                exactly(1).of(managedResource).isCriticalOnStartup();
+                will(returnValue(true));
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(stopAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
+
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(1).of(managedResource).stopManagedResource();
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+        ReflectionTestUtils.setField(recoveryManager, "isConsumerMultiThreaded", true);
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test method for verifying the behavior of a Quartz job recovery process with managed components
+     * where the consumer throws an exception during startup. The managed resource is not critical on startup.
+     *
+     * @throws SchedulerException if there is an issue with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_managed_resource_throws_exception_on_startup_managed_resource_NOT_critical_on_startup() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+        RuntimeException exception =  new RuntimeException("error!");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+                will(throwException(exception));
+
+                exactly(1).of(managedResource).isCriticalOnStartup();
+                will(returnValue(false));
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+
+                exactly(2).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).deleteJob(jobKey);
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test method for verifying the behavior of a Quartz job recovery process with managed components
+     * where the consumer throws an exception during startup. The managed resource is not critical on startup.
+     *
+     * @throws SchedulerException if there is an issue with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_managed_resource_throws_exception_on_startup_managed_resource_NOT_critical_on_startup_multi_threaded_consumer() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+        RuntimeException exception =  new RuntimeException("error!");
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(2).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+                will(throwException(exception));
+
+                exactly(1).of(managedResource).isCriticalOnStartup();
+                will(returnValue(false));
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+
+                exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                exactly(1).of(scheduler).checkExists(jobKey);
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).deleteJob(jobKey);
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+        ReflectionTestUtils.setField(recoveryManager, "isConsumerMultiThreaded", true);
+
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+
+    /**
+     * This method tests the successful recovery process by simulating a Quartz job firing with managed components.
+     * It verifies that the consumer throws a retry exception upon startup.
+     *
+     * @throws SchedulerException if there is an issue with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_throws_retry_exception_on_startup() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        EndpointException exception = new EndpointException("error!");
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+                will(throwException(exception));
+
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, "Retry");
+
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).stopManagedResource();
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(retryAction).getDelay();
+                will(returnValue(10000L));
+
+                exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
+
+                exactly(1).of(retryAction).getMaxRetries();
+                will(returnValue(-1));
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(1,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Test the successful recovery of a Quartz job fired with managed components where the consumer throws a retry exception on startup in a multi-threaded consumer.
+     * The test sets up expectations using a mocking framework for certain interactions with managed resources, consumers, exception handling, error reporting, and scheduler.
+     * It then creates a StubbedScheduledRecoveryManager instance with the specified scheduler, flow name, and module name.
+     * The test executes the recovery process by invoking the execute method on the recovery manager and expects a ForceTransactionRollbackException to be thrown.
+     * Finally, it asserts on the number of retry attempts made and ensures that all expectations set up in the mocking framework are satisfied.
+     * @throws SchedulerException if an error occurs while interacting with the scheduler
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_throws_retry_exception_on_startup_multi_threaded_consumer() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        EndpointException exception = new EndpointException("error!");
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+                will(throwException(exception));
+
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(retryAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, "Retry");
+
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).stopManagedResource();
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+
+                exactly(1).of(scheduler).checkExists(with(any(JobKey.class)));
+                will(returnValue(false));
+
+                exactly(1).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
+                will(returnValue(Set.of(jobKey)));
+
+                exactly(1).of(scheduledJobFactory).createJobDetail(with(any(Job.class)), with(any(Class.class)), with(any(String.class)), with(any(String.class)));
+                will(returnValue(jobDetail));
+
+                exactly(1).of(jobDetail).getKey();
+                will(returnValue(jobKey));
+
+                exactly(1).of(retryAction).getDelay();
+                will(returnValue(10000L));
+
+                exactly(1).of(scheduler).scheduleJob(jobDetail, trigger);
+
+                exactly(1).of(retryAction).getMaxRetries();
+                will(returnValue(-1));
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+        ReflectionTestUtils.setField(recoveryManager, "isConsumerMultiThreaded", true);
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(1,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+
+    /**
+     * Test method for simulating a Quartz job firing with managed components where the consumer throws an exception causing the flow to stop.
+     * Verifies the handling of the exception by the recovery manager, error reporting, and stopping of the flow.
+     *
+     * @throws SchedulerException if there is an issue with the scheduler setup
+     */
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_throws_exception_causing_flow_to_stop() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        RuntimeException exception = new RuntimeException("error!");
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+                will(throwException(exception));
+
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(stopAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
+
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).stopManagedResource();
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_recovery_quartz_job_fired_with_managed_components_consumer_throws_exception_causing_flow_to_stop_with_multi_threaded_consumer() throws SchedulerException
+    {
+        final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
+        final List managedResources = new ArrayList();
+        managedResources.add(flowElement);
+
+        RuntimeException exception = new RuntimeException("error!");
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).startManagedResource();
+
+                exactly(1).of(flowElement).getComponentName();
+                will(returnValue("componentName"));
+
+                exactly(1).of(consumer).start();
+                will(throwException(exception));
+
+                exactly(1).of(exceptionResolver).resolve("componentName", exception);
+                will(returnValue(stopAction));
+
+                exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
+
+                exactly(1).of(consumer).stop();
+
+                exactly(1).of(flowElement).getFlowComponent();
+                will(returnValue(managedResource));
+
+                exactly(1).of(managedResource).stopManagedResource();
+
+                exactly(1).of(scheduler).isStarted();
+                will(returnValue(true));
+            }
+        });
+
+        ScheduledRecoveryManager recoveryManager = new StubbedScheduledRecoveryManager(scheduler, "flowName", "moduleName");
+        setIsAware(recoveryManager);
+        recoveryManager.setResolver(exceptionResolver);
+        recoveryManager.setManagedResources(managedResources);
+
+        // We need to use reflection to set a job key on the recovery manager.
+        ReflectionTestUtils.setField(recoveryManager, "recoveryJobKey", jobKey);
+        ReflectionTestUtils.setField(recoveryManager, "previousComponentName", "componentName");
+        ReflectionTestUtils.setField(recoveryManager, "isConsumerMultiThreaded", true);
+
+        try {
+            recoveryManager.execute(this.jobExecutionContext);
+        }
+        catch (Exception e) {
+            Assert.assertTrue(e instanceof ForceTransactionRollbackException);
+        }
+
+        // test aspects we cannot access through the interface
+        Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
      * Call isAware setters on the RM to populate as required.
      *
      * @param recoveryManager
@@ -1013,7 +2358,7 @@ public class ScheduledRecoveryManagerTest
         }
         
         @Override
-        protected Trigger newRecoveryTrigger(long delay)
+        protected Trigger newRecoveryTrigger(long delay, String triggerName)
         {
             return trigger;
         }
