@@ -159,8 +159,9 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
 
-        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
-            .until(() ->((boolean) ReflectionTestUtils.getField(recoveryManager, "recoveryCancelled")));
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 19);
 
         super.assertErrorsWithWait(22);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
@@ -263,6 +264,9 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
 
         super.assertExclusionsWithWait(0);
 
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertTrue(messageListenerVerifier.getCaptureResults().size() > 5));
+
         // there should be no more recovery jobs after we go into stopped in error
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
@@ -330,6 +334,9 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
 
         super.assertExclusionsWithWait(0);
 
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertTrue(messageListenerVerifier.getCaptureResults().size() > 5));
+
         // there should be no more recovery jobs after we go into stopped in error
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
@@ -396,6 +403,9 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
         });
 
         super.assertExclusionsWithWait(0);
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertTrue(messageListenerVerifier.getCaptureResults().size() > 0));
 
         // there should be no more recovery jobs after we go into stopped in error
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))

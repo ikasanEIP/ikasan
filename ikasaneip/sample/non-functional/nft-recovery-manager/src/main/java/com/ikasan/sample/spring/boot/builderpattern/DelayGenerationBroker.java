@@ -48,7 +48,6 @@ import org.ikasan.spec.component.endpoint.EndpointException;
  */
 public class DelayGenerationBroker implements Broker
 {
-
     private long brokerDelay = 0l;
 
     @Override public Object invoke(Object o) throws EndpointException

@@ -112,7 +112,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         browseMessagesOnQueueVerifier.stop();
         removeAllMessages();
         clearDatabase();
-        resetDelayGeneratingBroker();
         flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError", "running"});
         ExceptionToggle.reset();
     }
@@ -124,6 +123,16 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         new ActiveMqHelper().shutdownBroker();
     }
 
+    /**
+     * Test method for verifying that the flow stops in error state.
+     * The method sets a flag to indicate that an error should be thrown when the flow runs. It then retrieves necessary components
+     * for testing from the flow and scheduler.
+     * It sends staggered messages, starts the flow, waits for it to transition to a 'stoppedInError' state,
+     * asserts any errors that occurred during the flow execution, and checks for any exclusions.
+     * Finally, it asserts that there are no further recovery jobs scheduled after the flow encounters an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_stopped_in_error() throws InterruptedException {
         ExceptionToggle.setShouldThrowStoppedInErrorException(true);
@@ -158,6 +167,15 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
     }
 
+    /**
+     * Test method for verifying the flow excluding events.
+     * The method sets a flag to indicate that an exclusion exception should be thrown when the flow runs.
+     * It retrieves necessary components for testing from the flow and scheduler.
+     * Sends staggered messages, starts the flow, and asserts any errors that occurred during the flow execution.
+     * It checks for exclusions to ensure specific conditions are met, and verifies no further recovery jobs scheduled after encountering an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_exclude_events() throws InterruptedException {
         ExceptionToggle.setShouldThrowExclusionException(true);
@@ -195,6 +213,15 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
     }
 
+    /**
+     * Test the flow behavior in recovery and retries until it stops in an error state.
+     * This method sets a flag to indicate that a retry exception should be thrown when the flow runs.
+     * It retrieves necessary components for testing from the flow and scheduler, sends staggered messages,
+     * starts the flow, waits for it to transition to a 'stoppedInError' state, asserts any errors that occurred during the flow execution,
+     * and checks for any exclusions. Finally, it asserts that there are no further recovery jobs scheduled after the flow encounters an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_in_recovery_and_expires_retries_until_stopped_in_error() throws InterruptedException {
         ExceptionToggle.setThrowRetryException(true);
@@ -209,13 +236,9 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         flowTestRule.startFlow();
 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
-            .until(() -> ((boolean) ReflectionTestUtils.getField(recoveryManager, "recoveryCancelled"))
-                    &&
-                    // As we cannot guarantee timing in different threads it is in fact possible for there to be a maximum
-                    // of 10 (2 for each thread) recovery jobs. Either none, one or the next one scheduled.
-                    this.getNumberOfCurrentScheduledRecoveryJobs(scheduler) == 0
-            );
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 10);
 
+        super.assertErrorsGreaterThanWithWait(10);
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
@@ -223,11 +246,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         logger.info("Number of errors: " + errors.size());
 
         errors.forEach(errorOccurrence -> {
-            if(!errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName())
-                && !errorOccurrence.getExceptionClass().equals(EndpointException.class.getName())) {
-                logger.info("Exception class! = " + errorOccurrence.getExceptionClass());
-                logger.info("Exception detail! = " + errorOccurrence.getErrorDetail());
-            }
             // For the most part we have EndpointExceptions except for a RuntimeException when the retries are exhausted.
             assertTrue(errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName()) ||
                 errorOccurrence.getExceptionClass().equals(EndpointException.class.getName()));
@@ -245,6 +263,15 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
     }
 
+    /**
+     * Test the flow behavior in recovery and recovers after encountering exceptions.
+     * This method simulates flow recovery by setting a flag to throw retry exceptions when the flow runs.
+     * It retrieves necessary components for testing from the flow and scheduler, sends staggered messages,
+     * starts the flow, waits for it to transition through different states, and asserts the flow state changes.
+     * It also validates error occurrences, checks for exclusions, and ensures no further recovery jobs are scheduled after an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_in_recovery_and_recovers() throws InterruptedException {
         ExceptionToggle.setThrowRetryException(true);
@@ -257,7 +284,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-
 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 10);
@@ -278,11 +304,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         logger.info("Number of errors: " + errors.size());
 
         errors.forEach(errorOccurrence -> {
-            if(!errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName())
-                && !errorOccurrence.getExceptionClass().equals(EndpointException.class.getName())) {
-                logger.info("Exception class! = " + errorOccurrence.getExceptionClass());
-                logger.info("Exception detail! = " + errorOccurrence.getErrorDetail());
-            }
             // For the most part we have EndpointExceptions except for a RuntimeException when the retries are exhausted.
             assertTrue(errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName()) ||
                 errorOccurrence.getExceptionClass().equals(EndpointException.class.getName()));
@@ -308,6 +329,15 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
     }
 
+    /**
+     * Test the flow behavior in recovery with a recovery exception thrown every third invocation and recovers.
+     * The method configures the test by setting the necessary flags and components to simulate the flow recovery scenario.
+     * Staggered messages are sent, the flow is started, and the test awaits the transition of the flow to a specific state.
+     * It asserts error occurrences, validates error types and actions, checks for exclusions, and verifies successful recovery.
+     * Finally, the method ensures no further recovery jobs are scheduled after the flow encounters an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_in_recovery_with_recovery_exception_thrown_every_third_invocation_and_recovers() throws InterruptedException {
         ExceptionToggle.setShouldThrowRecoveryExceptionEveryNInvocations(true);
@@ -339,11 +369,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         logger.info("Number of errors: " + errors.size());
 
         errors.forEach(errorOccurrence -> {
-            if(!errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName())
-                && !errorOccurrence.getExceptionClass().equals(EndpointException.class.getName())) {
-                logger.info("Exception class! = " + errorOccurrence.getExceptionClass());
-                logger.info("Exception detail! = " + errorOccurrence.getErrorDetail());
-            }
             // For the most part we have EndpointExceptions except for a RuntimeException when the retries are exhausted.
             assertTrue(errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName()) ||
                 errorOccurrence.getExceptionClass().equals(EndpointException.class.getName()));
@@ -368,6 +393,16 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
     }
 
+    /**
+     * Test method for verifying the flow behavior in scheduled recovery and retries until it stops in an error state.
+     * The method sets a flag to indicate that an exception should be thrown during scheduled recovery.
+     * It retrieves necessary components for testing from the flow and scheduler.
+     * Staggered messages are sent, the flow is started, and then it waits for the flow to transition to a 'stoppedInError' state.
+     * The method asserts any errors that occurred during the flow execution and checks for exclusions.
+     * Additionally, it ensures that there are no further recovery jobs scheduled after encountering an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_in_scheduled_recovery_and_expires_retries_until_stopped_in_error() throws InterruptedException {
         ExceptionToggle.setShouldThrowScheduledRecoveryException(true);
@@ -381,13 +416,10 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
-            .until(() -> ((boolean) ReflectionTestUtils.getField(recoveryManager, "recoveryCancelled"))
-                &&
-                // As we cannot guarantee timing in different threads it is in fact possible for there to be a maximum
-                // of 10 (2 for each thread) recovery jobs. Either none, one or the next one scheduled.
-                this.getNumberOfCurrentScheduledRecoveryJobs(scheduler) == 0
-            );
+        with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 5);
+
+        super.assertErrorsGreaterThanWithWait(5);
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
@@ -395,13 +427,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         logger.info("Number of errors: " + errors.size());
 
         errors.forEach(errorOccurrence -> {
-            // For the most part we have SampleScheduledRecoveryGeneratedException except for a RuntimeException when the retries are exhausted.
-            if(!errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName())
-                && !errorOccurrence.getExceptionClass().equals(SampleScheduledRecoveryGeneratedException.class.getName())) {
-                logger.info("Exception comparision class! = " + SampleScheduledRecoveryGeneratedException.class.getName());
-                logger.info("Exception class! = " + errorOccurrence.getExceptionClass());
-                logger.info("Exception detail! = " + errorOccurrence.getErrorDetail());
-            }
             assertTrue(errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName()) ||
                 errorOccurrence.getExceptionClass().equals(SampleScheduledRecoveryGeneratedException.class.getName()));
             assertTrue(errorOccurrence.getAction().equals("Stop") ||
@@ -421,6 +446,16 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
     }
 
+    /**
+     * Test the flow behavior in scheduled recovery and recovers after encountering exceptions.
+     * This method simulates flow recovery by setting a flag to throw retry exceptions when the flow runs.
+     * It retrieves necessary components for testing from the flow and scheduler, sends staggered messages,
+     * starts the flow, waits for it to transition through different states, and asserts the flow state changes.
+     * It also validates error occurrences, checks for exclusions, and ensures no further recovery jobs
+     * are scheduled after an error state.
+     *
+     * @throws InterruptedException if the test is interrupted during execution
+     */
     @Test
     public void test_flow_in_scheduled_recovery_and_recovers() throws InterruptedException {
         ExceptionToggle.setShouldThrowScheduledRecoveryException(true);
@@ -454,12 +489,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
         errors.forEach(errorOccurrence -> {
             // For the most part we have SampleScheduledRecoveryGeneratedException except for a RuntimeException when the retries are exhausted.
-            if(!errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName())
-                && !errorOccurrence.getExceptionClass().equals(SampleScheduledRecoveryGeneratedException.class.getName())) {
-                logger.info("Exception comparision class! = " + SampleScheduledRecoveryGeneratedException.class.getName());
-                logger.info("Exception class! = " + errorOccurrence.getExceptionClass());
-                logger.info("Exception detail! = " + errorOccurrence.getErrorDetail());
-            }
             assertTrue(errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName()) ||
                 errorOccurrence.getExceptionClass().equals(SampleScheduledRecoveryGeneratedException.class.getName()));
             assertTrue(errorOccurrence.getAction().equals("Stop") ||
@@ -502,11 +531,5 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
      */
     private void removeAllMessages() throws Exception {
         new ActiveMqHelper().removeAllMessages();
-    }
-
-    public void resetDelayGeneratingBroker(){
-        DelayGenerationBroker delayGenerationBroker = (DelayGenerationBroker) flowTestRule
-            .getComponent("Delay Generating Broker");
-        delayGenerationBroker.reset();
     }
 }
