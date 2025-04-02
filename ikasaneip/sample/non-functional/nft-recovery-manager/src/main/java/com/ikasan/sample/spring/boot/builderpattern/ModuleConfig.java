@@ -92,6 +92,13 @@ public class ModuleConfig
     @Resource
     private JtaTransactionManager transactionManager;
 
+    /**
+     * Creates a Consumer for fetching messages from a specified IBigQueue using the provided ExtendedBigQueueConsumerBuilder.
+     *
+     * @param inboundQueue the IBigQueue from which to consume messages
+     * @param extendedBigQueueConsumerBuilder the ExtendedBigQueueConsumerBuilder to configure the Consumer
+     * @return a Consumer for fetching messages from the IBigQueue
+     */
     public Consumer bigQueueConsumer(IBigQueue inboundQueue, ExtendedBigQueueConsumerBuilder extendedBigQueueConsumerBuilder)  {
         return extendedBigQueueConsumerBuilder
             .setInboundQueue(inboundQueue)
@@ -100,6 +107,12 @@ public class ModuleConfig
             .build();
     }
 
+    /**
+     * Creates a Producer instance for distributing messages to an endpoint using the provided IBigQueue as the outbound queue.
+     *
+     * @param outboundQueue the outbound queue to publish messages to
+     * @return Producer instance for distributing messages to an endpoint
+     */
     public Producer bigQueueProducer(IBigQueue outboundQueue) {
         return builderFactory.getComponentBuilder().bigQueueProducer()
             .setOutboundQueue(outboundQueue)
@@ -107,29 +120,34 @@ public class ModuleConfig
             .build();
     }
 
+
+    /**
+     * Returns a new instance of ExtendedBigQueueConsumerBuilder configured with the AopProxyProvider and
+     * TransactionManager obtained from the application context.
+     *
+     * @return a new ExtendedBigQueueConsumerBuilder instance
+     */
     @Bean
     public ExtendedBigQueueConsumerBuilder extendedBigQueueConsumerBuilder() {
         return new ExtendedBigQueueConsumerBuilder(this.applicationContext.getBean(AopProxyProvider.class),
             this.applicationContext.getBean(JtaTransactionManager.class).getTransactionManager());
     }
 
+    /**
+     * Retrieves a Module based on the provided ExtendedBigQueueConsumerBuilder.
+     *
+     * @param extendedBigQueueConsumerBuilder the ExtendedBigQueueConsumerBuilder used to build the Module
+     * @return the retrieved Module
+     * @throws IOException if an I/O error occurs
+     * @throws SystemException if a system exception occurs
+     * @throws RollbackException if a rollback exception occurs
+     */
     @Bean
     public Module getModule(ExtendedBigQueueConsumerBuilder extendedBigQueueConsumerBuilder) throws IOException, SystemException, RollbackException {
-
         ModuleBuilder mb = builderFactory.getModuleBuilder("nft-recovery-manager");
 
-        FlowBuilder fb = mb.getFlowBuilder("BigQueue Sample Flow");
-
-        Flow flow = fb
-                .withDescription("Flow demonstrates usage of BigQueue Consumer and BigQueue Producer")
-                .consumer("BigQueue Consumer", this.bigQueueConsumer(this.inboundQueue, extendedBigQueueConsumerBuilder))
-                .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
-                .broker( "Delay Generating Broker", new DelayGenerationBroker())
-                .producer("BigQueue Producer", this.bigQueueProducer(this.outboundQueue))
-                .build();
-
         Module module = mb.withDescription("Sample Module")
-            .addFlow(flow)
+            .addFlow(this.bigQueueFlow(mb, extendedBigQueueConsumerBuilder))
             .addFlow(this.jmsFlow(mb))
             .addFlow(this.multiThreadedJmsFlow(mb))
             .addFlow(this.getScheduledToJmsFlow(mb, builderFactory.getComponentBuilder()))
@@ -137,7 +155,32 @@ public class ModuleConfig
         return module;
     }
 
-    public Flow jmsFlow(ModuleBuilder mb) {
+    /**
+     * Constructs a Flow representing a business path using a BigQueue Consumer and Producer.
+     *
+     * @param mb the ModuleBuilder used to build the Flow
+     * @param extendedBigQueueConsumerBuilder the ExtendedBigQueueConsumerBuilder instance for configuration
+     * @return the constructed Flow object
+     */
+    private Flow bigQueueFlow(ModuleBuilder mb, ExtendedBigQueueConsumerBuilder extendedBigQueueConsumerBuilder) {
+        FlowBuilder fb = mb.getFlowBuilder("BigQueue Sample Flow");
+
+        return fb
+            .withDescription("Flow demonstrates usage of BigQueue Consumer and BigQueue Producer")
+            .consumer("BigQueue Consumer", this.bigQueueConsumer(this.inboundQueue, extendedBigQueueConsumerBuilder))
+            .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
+            .broker( "Delay Generating Broker", new DelayGenerationBroker())
+            .producer("BigQueue Producer", this.bigQueueProducer(this.outboundQueue))
+            .build();
+    }
+
+    /**
+     * Constructs and returns a Flow instance representing a JMS sample flow.
+     *
+     * @param mb the ModuleBuilder instance to use for constructing the flow
+     * @return a Flow instance representing the JMS sample flow
+     */
+    private Flow jmsFlow(ModuleBuilder mb) {
         FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
 
         ActiveMQXAConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
@@ -167,7 +210,13 @@ public class ModuleConfig
             .build();
     }
 
-    public Flow multiThreadedJmsFlow(ModuleBuilder mb) {
+    /**
+     * Creates a multi-threaded JMS flow with a JMS consumer and producer.
+     *
+     * @param mb the ModuleBuilder to use for building the flow
+     * @return a Flow representing the multi-threaded JMS flow
+     */
+    private Flow multiThreadedJmsFlow(ModuleBuilder mb) {
         FlowBuilder fb = mb.getFlowBuilder("Multi Threaded Jms Sample Flow");
 
         ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
@@ -227,7 +276,14 @@ public class ModuleConfig
             .build();
     }
 
-    public Flow getScheduledToJmsFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
+    /**
+     * Retrieves a Flow representing a business path from a scheduling component to a JMS producer.
+     *
+     * @param moduleBuilder The ModuleBuilder used to build the Flow.
+     * @param componentBuilder The ComponentBuilder used to build the JMS producer.
+     * @return The constructed Flow representing the path from scheduling to JMS.
+     */
+    private Flow getScheduledToJmsFlow(ModuleBuilder moduleBuilder, ComponentBuilder componentBuilder)
     {
         ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
 
