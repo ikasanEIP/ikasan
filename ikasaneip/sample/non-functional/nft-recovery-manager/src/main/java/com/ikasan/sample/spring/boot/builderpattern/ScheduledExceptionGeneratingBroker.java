@@ -54,10 +54,10 @@ public class ScheduledExceptionGeneratingBroker implements Broker, ManagedResour
 {
     private static Logger logger = LoggerFactory.getLogger(ScheduledExceptionGeneratingBroker.class);
 
-    @Override public Object invoke(Object o) throws EndpointException
+    @Override
+    public Object invoke(Object o) throws EndpointException
     {
         ExceptionToggle.incrementCounter();
-//        logger.info("Invoking broker " + ExceptionToggle.getCounter() " " + ExceptionToggle.isShouldThrowRecoveryExceptionEveryNInvocations() "");
         if(ExceptionToggle.isShouldThrowExclusionException()){
             throw  new SampleGeneratedException("This exception is thrown to test exclusion.");
         }

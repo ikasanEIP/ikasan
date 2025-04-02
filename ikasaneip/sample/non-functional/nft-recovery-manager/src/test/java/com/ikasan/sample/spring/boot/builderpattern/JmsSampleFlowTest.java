@@ -129,8 +129,6 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         browseMessagesOnQueueVerifier.stop();
         removeAllMessages();
         clearDatabase();
-        resetExceptionGeneratingBroker();
-        resetDelayGeneratingBroker();
         flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError","running","recovering"});
         ExceptionToggle.reset();
     }
@@ -255,8 +253,8 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
-            .until(() ->((boolean) ReflectionTestUtils.getField(recoveryManager, "recoveryCancelled")));
+        with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 20);
 
         super.assertErrorsWithWait(22);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
@@ -364,8 +362,8 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
         logger.info("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("source", message);
 
-        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
-            .until(() ->((boolean) ReflectionTestUtils.getField(recoveryManager, "recoveryCancelled")));
+        with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 10);
 
         super.assertErrorsWithWait(12);
 

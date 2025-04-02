@@ -10,6 +10,12 @@ import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.event.MessageListener;
 
 public class ExtendedBigQueueConsumerBuilder extends BigQueueConsumerBuilderImpl {
+    /**
+     * Construct an ExtendedBigQueueConsumerBuilder with the provided AopProxyProvider and TransactionManager.
+     *
+     * @param aopProxyProvider the AOP Proxy Provider for applying pointcuts
+     * @param transactionManager the Transaction Manager for managing transactions
+     */
     public ExtendedBigQueueConsumerBuilder(AopProxyProvider aopProxyProvider, TransactionManager transactionManager) {
         super(aopProxyProvider, transactionManager);
     }
