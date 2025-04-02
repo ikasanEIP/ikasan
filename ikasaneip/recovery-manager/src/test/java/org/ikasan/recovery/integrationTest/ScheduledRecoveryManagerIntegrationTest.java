@@ -306,7 +306,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
                         );
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -405,7 +405,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     public void test_recoveryManager_resolver_to_retryAction_when_exception_thrown_from_tech_endpoint() throws SchedulerException
     {
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -483,7 +483,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
                         );
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+ Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -606,7 +606,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction() throws SchedulerException
     {
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -696,7 +696,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         );
 
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver
@@ -772,7 +772,7 @@ public class ScheduledRecoveryManagerIntegrationTest
     @Test
     public void test_recoveryManager_resolver_to_retryAction_followed_by_stopAction_with_more_specific_instance_matches() throws SchedulerException
     {
-        JobKey jobKey = new JobKey("recoveryJob_"+flowName+Thread.currentThread().getId(), moduleName);
+        JobKey jobKey = new JobKey("recoveryJob_"+flowName, moduleName);
 
         //
         // create an exception resolver

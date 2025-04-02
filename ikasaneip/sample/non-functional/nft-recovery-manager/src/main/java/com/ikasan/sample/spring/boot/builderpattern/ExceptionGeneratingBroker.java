@@ -38,63 +38,46 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.testharness.flow;
+package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.Collections.unmodifiableList;
+import org.ikasan.spec.component.endpoint.Broker;
+import org.ikasan.spec.component.endpoint.EndpointException;
 
 /**
- * Implementation of the FlowTestHarness as a FlowObserver.
- *
- * @author Ikasan Development Team
+ * Created by majean on 09/10/2017.
  */
-public class FlowTestHarnessImpl implements FlowObserver, FlowTestHarness
+public class ExceptionGeneratingBroker implements Broker
 {
-    /**
-     * actual captured flow behaviour, synchronized to ensure state is published when read
-     */
-    private List<Capture<?>> captures = Collections.synchronizedList(new ArrayList<>());
-
-    /**
-     * Index for modifying the captures Collection
-     */
-    private final AtomicInteger capturesIndex = new AtomicInteger(0);
-
-    /**
-     * expectations of the flow behaviour
-     */
-    private FlowExpectation flowExpectation;
-
-    /**
-     * Constructor
-     *
-     * @param flowExpectation
-     */
-    public FlowTestHarnessImpl(FlowExpectation flowExpectation)
+    @Override public Object invoke(Object o) throws EndpointException
     {
-        this.flowExpectation = flowExpectation;
+        if(ExceptionToggle.isShouldThrowExclusionException()){
+            throw new SampleGeneratedException("This exception is thrown to test exclusion.");
+        }
+
+        if(ExceptionToggle.isShouldThrowScheduledRecoveryException()){
+            throw new SampleScheduledRecoveryGeneratedException("This exception is thrown to test recovery.");
+        }
+
+        if(ExceptionToggle.isThrowRetryException()){
+            throw new EndpointException("This exception is thrown to test recovery.");
+        }
+
+        if(ExceptionToggle.isShouldThrowStoppedInErrorException()){
+            throw new RuntimeException("This exception is thrown to test stoppedInError.");
+        }
+        return o;
     }
 
-    /**
-     * Notification of a behavior in the flow
-     *
-     * @param actual
-     */
-    @SuppressWarnings("unchecked")
-    public synchronized <T> void notify(T actual)
+    public void setShouldThrowRecoveryException(boolean shouldThrowRecoveryException)
     {
-        int index = capturesIndex.getAndIncrement();
-        this.captures.add(index, new Capture(index + 1, actual));
+//        this.shouldThrowRecoveryException = shouldThrowRecoveryException;
     }
 
-    public void assertIsSatisfied()
+    public void setShouldThrowScheduledRecoveryException(boolean shouldThrowScheduledRecoveryException)
     {
-        flowExpectation.allSatisfied(unmodifiableList(captures));
+//        this.shouldThrowScheduledRecoveryException = shouldThrowScheduledRecoveryException;
+    }
+
+    public void reset(){
     }
 }

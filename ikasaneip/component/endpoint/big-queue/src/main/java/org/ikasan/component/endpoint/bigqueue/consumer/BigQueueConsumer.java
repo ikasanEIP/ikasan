@@ -5,6 +5,7 @@ import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.configuration.BigQueueConsumerConfiguration;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
@@ -91,6 +92,7 @@ public class BigQueueConsumer<T>
         if(this.transactionManager == null) {
             throw new IllegalArgumentException("transactionManager cannot bee null!");
         }
+        this.bigQueueListenerExecutor = Executors.newSingleThreadExecutor();
     }
 
     /**
@@ -167,7 +169,7 @@ public class BigQueueConsumer<T>
         logger.info("Started BigQueueConsumer - " + this.configurationId);
     }
 
-    private void addInboundListener() {
+    private synchronized void addInboundListener() {
         logger.debug("Adding inbound message listener - bigQueueListenerExecutor: " + bigQueueListenerExecutor);
         if(this.bigQueueListenerExecutor != null) {
             this.listenableFuture = this.inboundQueue.peekAsync();
@@ -184,7 +186,7 @@ public class BigQueueConsumer<T>
     }
 
     @Override
-    public void stop() {
+    public synchronized void stop() {
         logger.info("Stopping BigQueueConsumer - " + this.configurationId);
         this.isRunning = false;
         if(this.listenableFuture != null) {
@@ -224,7 +226,7 @@ public class BigQueueConsumer<T>
             invoke(flowEvent);
         }
         catch (RollbackException | SystemException e) {
-            logger.debug("An exception has occurred attemping to process event!", e);
+            logger.debug("An exception has occurred attempting to process event!", e);
             this.onException(e);
         }
     }
@@ -236,7 +238,12 @@ public class BigQueueConsumer<T>
             logger.info("Ignoring rethrown ForceTransactionRollbackException");
         }
         else if(this.eventListener != null) {
-            this.eventListener.invoke(throwable);
+            try {
+                this.eventListener.invoke(throwable);
+            }
+            catch (ForceTransactionRollbackException e) {
+                this.stop();
+            }
         }
         else {
             logger.error(throwable.getMessage(), throwable);
