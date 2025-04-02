@@ -38,63 +38,22 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.testharness.flow;
-
-import org.ikasan.testharness.flow.expectation.service.FlowExpectation;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static java.util.Collections.unmodifiableList;
+package com.ikasan.sample.spring.boot.builderpattern;
 
 /**
- * Implementation of the FlowTestHarness as a FlowObserver.
+ * Sample exception.
  *
  * @author Ikasan Development Team
  */
-public class FlowTestHarnessImpl implements FlowObserver, FlowTestHarness
+public class SampleGeneratedException extends RuntimeException
 {
-    /**
-     * actual captured flow behaviour, synchronized to ensure state is published when read
-     */
-    private List<Capture<?>> captures = Collections.synchronizedList(new ArrayList<>());
-
-    /**
-     * Index for modifying the captures Collection
-     */
-    private final AtomicInteger capturesIndex = new AtomicInteger(0);
-
-    /**
-     * expectations of the flow behaviour
-     */
-    private FlowExpectation flowExpectation;
-
-    /**
-     * Constructor
-     *
-     * @param flowExpectation
-     */
-    public FlowTestHarnessImpl(FlowExpectation flowExpectation)
-    {
-        this.flowExpectation = flowExpectation;
+    public SampleGeneratedException(Throwable e){
+        super(e);
     }
 
-    /**
-     * Notification of a behavior in the flow
-     *
-     * @param actual
-     */
-    @SuppressWarnings("unchecked")
-    public synchronized <T> void notify(T actual)
-    {
-        int index = capturesIndex.getAndIncrement();
-        this.captures.add(index, new Capture(index + 1, actual));
+    public SampleGeneratedException(String m){
+        super(m);
     }
 
-    public void assertIsSatisfied()
-    {
-        flowExpectation.allSatisfied(unmodifiableList(captures));
-    }
+
 }
