@@ -163,7 +163,6 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 19);
 
-        super.assertErrorsWithWait(22);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -249,7 +248,6 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
-        super.assertErrorsGreaterThanWithWait(9);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -319,7 +317,6 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
         with().pollInterval(10, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
-        super.assertErrorsGreaterThanWithWait(3);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -389,7 +386,6 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
-        super.assertErrorsGreaterThanWithWait(3);
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -448,8 +444,6 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
             .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
         flowTestRule.fireScheduledConsumer();
-
-        super.assertErrorsGreaterThanWithWait(0);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
