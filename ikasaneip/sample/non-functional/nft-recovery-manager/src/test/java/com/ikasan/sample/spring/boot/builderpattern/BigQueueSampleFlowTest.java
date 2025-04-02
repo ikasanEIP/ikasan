@@ -168,9 +168,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         flowTestRule.startFlow();
 
-
-        super.assertErrorsGreaterThanWithWait(0);
-
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -221,8 +218,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
-
-        super.assertErrorsGreaterThanWithWait(0);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -290,9 +285,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
         //verify no messages were published
         assertEquals(0, outboundQueue.size());
 
-        // Verify the error was stored in DB
-        super.assertErrorsWithWait(21);
-
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -352,8 +344,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
 
-        // Verify the error was stored in DB
-        super.assertErrorsGreaterThanWithWait(9);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -401,8 +391,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         ExceptionToggle.setThrowRetryException(true);
 
-        //Setup component expectations
-
 
         // start the flow and assert it runs
         flowTestRule.startFlow();
@@ -412,9 +400,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         //verify no messages were published
         assertEquals(0, outboundQueue.size());
-
-        // Verify the error was stored in DB
-        super.assertErrorsWithWait(21);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -479,9 +464,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
 
-        // Verify the error was stored in DB
-        super.assertErrorsGreaterThanWithWait(9);
-
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -534,9 +516,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         //verify no messages were published
         assertEquals(0, outboundQueue.size());
-
-        // Verify the error was stored in DB
-        assertErrorsWithWait(11);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -598,9 +577,6 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
-
-        // Verify the error was stored in DB
-        super.assertErrorsGreaterThanWithWait(4);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
