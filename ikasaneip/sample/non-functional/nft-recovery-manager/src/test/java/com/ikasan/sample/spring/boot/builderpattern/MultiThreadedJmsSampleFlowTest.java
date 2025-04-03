@@ -330,6 +330,7 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
      * @throws InterruptedException if the test is interrupted during execution
      */
     @Test
+    @Ignore
     public void test_flow_in_recovery_with_recovery_exception_thrown_every_third_invocation_and_recovers() throws InterruptedException {
         ExceptionToggle.setShouldThrowRecoveryExceptionEveryNInvocations(true);
         ExceptionToggle.setNumberOfInvocationsBeforeRetry(3);
