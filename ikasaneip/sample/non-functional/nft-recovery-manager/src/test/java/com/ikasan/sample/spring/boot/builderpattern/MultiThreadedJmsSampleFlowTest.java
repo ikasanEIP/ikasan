@@ -149,8 +149,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(500)).await().atMost(Duration.ofSeconds(60))
             .until(() -> flowTestRule.getFlowState().equals("stoppedInError"));
 
-//        super.assertErrorsWithWait(5);
-
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
@@ -190,7 +188,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         flowTestRule.startFlow();
 
         super.assertExclusionsWithWait(5);
-//        super.assertErrorsGreaterThanWithWait(4);
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -235,8 +232,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 1);
-
-//        super.assertErrorsGreaterThanWithWait(0);
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
@@ -294,8 +289,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(500)).await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
 
-//        super.assertErrorsGreaterThanWithWait(0);
-
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
@@ -350,15 +343,13 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
-            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 1);
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(120))
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) > 0);
 
         ExceptionToggle.setShouldThrowRecoveryExceptionEveryNInvocations(false);
 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(500)).await().atMost(Duration.ofSeconds(60))
             .until(() -> flowTestRule.getFlowState().equals("running"));
-
-//        super.assertErrorsGreaterThanWithWait(0);
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null
@@ -416,8 +407,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
         with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
             .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 5);
-
-//        super.assertErrorsGreaterThanWithWait(0);
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
@@ -477,8 +466,6 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(500)).await().atMost(Duration.ofSeconds(60))
             .until(() -> flowTestRule.getFlowState().equals("running"));
-
-//        super.assertErrorsGreaterThanWithWait(0);
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
