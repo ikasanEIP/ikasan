@@ -1,6 +1,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import jakarta.transaction.TransactionManager;
+import javax.transaction.TransactionManager;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
 import org.ikasan.component.endpoint.bigqueue.consumer.InboundQueueMessageRunner;
