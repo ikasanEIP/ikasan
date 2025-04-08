@@ -40,10 +40,10 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import jakarta.jms.ConnectionFactory;
-import jakarta.jms.JMSException;
-import jakarta.transaction.RollbackException;
-import jakarta.transaction.SystemException;
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.apache.activemq.command.ActiveMQTextMessage;
 import org.ikasan.bigqueue.IBigQueue;

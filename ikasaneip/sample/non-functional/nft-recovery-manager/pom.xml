@@ -5,12 +5,12 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>nft-recovery-manager</artifactId>
-    <version>4.1.0-SNAPSHOT</version>
+    <version>3.3.8-SNAPSHOT</version>
 
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>non-functional</artifactId>
-        <version>4.1.0-SNAPSHOT</version>
+        <version>3.3.8-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -76,17 +76,17 @@
             <scope>test</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.glassfish.jaxb</groupId>-->
+<!--            <artifactId>jaxb-runtime</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.slf4j</groupId>-->
+<!--            <artifactId>jul-to-slf4j</artifactId>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
 
     </dependencies>
 

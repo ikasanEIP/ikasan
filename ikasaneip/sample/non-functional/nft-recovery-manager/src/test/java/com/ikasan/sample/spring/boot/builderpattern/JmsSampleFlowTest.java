@@ -39,21 +39,12 @@
 
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import com.mchange.util.AssertException;
-import jakarta.jms.JMSException;
-import jakarta.jms.TextMessage;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.Module;
-import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
@@ -63,24 +54,17 @@ import org.junit.runner.RunWith;
 import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jms.core.JmsTemplate;
-import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.sql.SQLException;
+import javax.jms.JMSException;
 import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;

@@ -1,6 +1,6 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import jakarta.transaction.TransactionManager;
+import javax.transaction.TransactionManager;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.endpoint.BigQueueConsumerBuilderImpl;
 import org.ikasan.component.endpoint.bigqueue.consumer.BigQueueConsumer;
@@ -36,9 +36,9 @@ public class ExtendedBigQueueConsumerBuilder extends BigQueueConsumerBuilderImpl
         MessageListener messageListener = this.aopProxyProvider.applyPointcut("extendedBigQueueConsumer", consumer);
         inboundQueueMessageRunner.setMessageListener(messageListener);
 
-        if(messageListener instanceof EndpointListener listener)
+        if(messageListener instanceof EndpointListener)
         {
-            inboundQueueMessageRunner.setEndpointListener( listener );
+            inboundQueueMessageRunner.setEndpointListener((EndpointListener) messageListener);
         }
 
         if(this.eventListener != null) {

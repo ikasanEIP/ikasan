@@ -39,7 +39,7 @@
 
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import jakarta.jms.JMSException;
+import javax.jms.JMSException;
 import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.spec.component.endpoint.EndpointException;
