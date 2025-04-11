@@ -149,9 +149,9 @@ public class KafkaConsumerTest {
         producer.send(new ProducerRecord<>("test-topic", 2, "my-test-value2"));
         producer.flush();
 
-        BrokerTopicMetrics metrics = this.embeddedKafka.getKafkaServer(0).brokerTopicStats().allTopicsStats();
-
-        Long count = metrics.messagesInRate().count();
+//        BrokerTopicMetrics metrics = this.embeddedKafka.getKafkaServer(0).brokerTopicStats().allTopicsStats();
+//
+//        Long count = metrics.messagesInRate().count();
 
         kafkaConsumer.start();
 
