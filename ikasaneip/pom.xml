@@ -374,7 +374,7 @@
         <version.org.apache.httpcomponents>5.4.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
-        <version.org.junit.jupiter>5.7.2</version.org.junit.jupiter>
+        <version.org.junit.jupiter>5.12.1</version.org.junit.jupiter>
         <version.jacoco>0.8.7</version.jacoco>
         <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
