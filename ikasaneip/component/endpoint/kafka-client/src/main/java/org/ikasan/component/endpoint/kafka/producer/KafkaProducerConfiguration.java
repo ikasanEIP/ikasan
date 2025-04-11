@@ -42,9 +42,7 @@ package org.ikasan.component.endpoint.kafka.producer;
 
 import org.ikasan.spec.configuration.Masked;
 
-import javax.jms.Session;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Implementation of a producer configuration for a Kafka producer.

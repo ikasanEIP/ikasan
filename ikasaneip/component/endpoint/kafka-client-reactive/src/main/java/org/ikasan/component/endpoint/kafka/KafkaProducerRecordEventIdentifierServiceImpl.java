@@ -40,7 +40,6 @@
  */
 package org.ikasan.component.endpoint.kafka;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;

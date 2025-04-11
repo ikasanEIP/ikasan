@@ -41,19 +41,11 @@
 package org.ikasan.component.endpoint.kafka;
 
 import org.ikasan.spec.event.ManagedEventIdentifierException;
-import org.ikasan.spec.event.ManagedEventIdentifierService;
-import org.ikasan.spec.event.ManagedRelatedEventIdentifierService;
-import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
-
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageNotWriteableException;
 
 /**
  * Test class for JmsEventIdentifierServiceImpl.
@@ -69,13 +61,13 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
         setThreadingPolicy(new Synchroniser());
     }};
 
-    private final Message message = mockery.mock(Message.class);
+//    private final Message message = mockery.mock(Message.class);
 
     // unit under test
     private KafkaConsumerRecordEventIdentifierServiceImpl jmsEventIdentifierService = new KafkaConsumerRecordEventIdentifierServiceImpl();
 
     @Test
-    public void test_getEventIdentifier_id_present() throws JMSException
+    public void test_getEventIdentifier_id_present()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -88,7 +80,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_getEventIdentifier_id_not_present() throws JMSException
+    public void test_getEventIdentifier_id_not_present()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -103,7 +95,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test(expected = ManagedEventIdentifierException.class)
-    public void test_getEventIdentifier_jms_exception() throws JMSException
+    public void test_getEventIdentifier_jms_exception()
     {
 //        try
 //        {
@@ -123,7 +115,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_setEventIdentifier_id_present() throws JMSException
+    public void test_setEventIdentifier_id_present()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -134,7 +126,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_setEventIdentifier_message_not_writeable() throws JMSException
+    public void test_setEventIdentifier_message_not_writeable()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -146,7 +138,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test(expected = ManagedEventIdentifierException.class)
-    public void test_setEventIdentifier_jms_exception() throws JMSException
+    public void test_setEventIdentifier_jms_exception()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -166,7 +158,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
 
 
     @Test
-    public void test_getRelatedEventIdentifier_id_present() throws JMSException
+    public void test_getRelatedEventIdentifier_id_present()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -181,7 +173,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_getRelatedEventIdentifier_id_not_present() throws JMSException
+    public void test_getRelatedEventIdentifier_id_not_present()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -195,7 +187,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
 
 
     @Test
-    public void test_setRelatedEventIdentifier_id_present() throws JMSException
+    public void test_setRelatedEventIdentifier_id_present()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -206,14 +198,14 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test
-    public void test_setRelatedEventIdentifier_id_null() throws JMSException
+    public void test_setRelatedEventIdentifier_id_null()
     {
 //        jmsEventIdentifierService.setRelatedEventIdentifier(null, message);
 //        mockery.assertIsSatisfied();
     }
 
     @Test
-    public void test_setRelatedEventIdentifier_message_not_writeable() throws JMSException
+    public void test_setRelatedEventIdentifier_message_not_writeable()
     {
 //        mockery.checking(new Expectations()
 //        {{
@@ -225,7 +217,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
     }
 
     @Test(expected = ManagedEventIdentifierException.class)
-    public void test_setRelatedEventIdentifier_jms_exception() throws JMSException
+    public void test_setRelatedEventIdentifier_jms_exception()
     {
 //        mockery.checking(new Expectations()
 //        {{
