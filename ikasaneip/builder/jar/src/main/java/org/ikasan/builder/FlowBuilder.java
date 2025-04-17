@@ -995,6 +995,11 @@ public class FlowBuilder implements ApplicationContextAware
         flow.setFlowListener(flowEventListener);
         flow.setTriggerService(triggerService);
 
+        if(recoveryManager instanceof IsFlowAware aware)
+        {
+            aware.setFlow(flow);
+        }
+
         if(flow instanceof ConfiguredResource resource)
         {
             FlowPersistentConfiguration flowPersistentConfiguration = (FlowPersistentConfiguration)resource.getConfiguration();

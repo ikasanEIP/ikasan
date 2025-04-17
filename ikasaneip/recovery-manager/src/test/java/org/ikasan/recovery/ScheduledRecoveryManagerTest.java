@@ -44,6 +44,7 @@ import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.IsConsumerAware;
+import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -51,10 +52,7 @@ import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
-import org.ikasan.spec.flow.FinalAction;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowEvent;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.jmock.Expectations;
@@ -95,6 +93,8 @@ public class ScheduledRecoveryManagerTest
     
     /** Mock consumer flowElement */
     private final Consumer consumer = mockery.mock(Consumer.class, "mockConsumer");
+
+    private final Broker broker = mockery.mock(Broker.class, "mockBroker");
 
     /** Mock exception resolver */
     private final ExceptionResolver exceptionResolver = mockery.mock(ExceptionResolver.class, "mockExceptionResolver");
@@ -146,6 +146,9 @@ public class ScheduledRecoveryManagerTest
 
     /** Mock jobExecutionContext*/
     private final JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class, "jobExecutionContext");
+
+    /** Represents a flow object that has been mocked for testing purposes. */
+    private final Flow flow = mockery.mock(Flow.class, "flow");
 
     /**
      * Test failed constructor due to null scheduler.
@@ -199,7 +202,17 @@ public class ScheduledRecoveryManagerTest
     public void test_isConsumerAware()
     {
         ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
-        Assert.assertTrue( scheduledRecoveryManager instanceof IsConsumerAware);
+        Assert.assertFalse( scheduledRecoveryManager instanceof IsConsumerAware);
+    }
+
+    /**
+     * Test is flow aware.
+     */
+    @Test
+    public void test_isFlowAware()
+    {
+        ScheduledRecoveryManager scheduledRecoveryManager = new ScheduledRecoveryManager(scheduler, scheduledJobFactory, "flowName", "moduleName");
+        Assert.assertTrue( scheduledRecoveryManager instanceof IsFlowAware);
     }
 
     /**
@@ -240,6 +253,13 @@ public class ScheduledRecoveryManagerTest
     @Test
     public void test_cancel_no_jobs() throws SchedulerException
     {
+        mockery.checking(new Expectations() {
+             {
+                 exactly(1).of(flow).isMultiThreadedCapable();
+                 will(returnValue(false));
+             }
+         });
+
         System.setProperty("org.quartz.scheduler.skipUpdateCheck", "true");
         Scheduler scheduler = StdSchedulerFactory.getDefaultScheduler();
         scheduler.start();
@@ -262,6 +282,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
@@ -272,7 +295,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
             }
         });
 
@@ -288,6 +311,8 @@ public class ScheduledRecoveryManagerTest
         {
             Assert.assertEquals("Stop", e.getMessage());
         }
+
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
 
@@ -307,6 +332,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 exactly(1).of(flowInvocationContext).getLastComponentName();
                 will(returnValue("componentName"));
 
@@ -339,7 +367,9 @@ public class ScheduledRecoveryManagerTest
         {
             Assert.assertEquals("ExcludeEvent", e.getMessage());
         }
+
         // test aspects we cannot access through the interface
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
 
         mockery.assertIsSatisfied();
@@ -360,6 +390,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
@@ -370,12 +403,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                exactly(1).of(consumer).stop();
-                
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
             }
         });
 
@@ -393,6 +421,7 @@ public class ScheduledRecoveryManagerTest
             Assert.assertEquals("Stop", e.getMessage());
         }
         // test aspects we cannot access through the interface
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
 
         mockery.assertIsSatisfied();
@@ -410,6 +439,9 @@ public class ScheduledRecoveryManagerTest
         // expectations
         mockery.checking(new Expectations() {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
@@ -422,6 +454,7 @@ public class ScheduledRecoveryManagerTest
         
         recoveryManager.recover("componentName", exception);
 
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
         mockery.assertIsSatisfied();
     }
 
@@ -440,6 +473,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(ignoreAction));
@@ -453,6 +489,7 @@ public class ScheduledRecoveryManagerTest
 
         recoveryManager.recover("componentName", exception);
 
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
         mockery.assertIsSatisfied();
     }
 
@@ -472,6 +509,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
@@ -480,8 +520,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
 
-                // firstly stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
@@ -526,7 +565,8 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isRecovering());
-        
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
+
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager) recoveryManager).getRetryAttempts() == 1);
 
@@ -549,6 +589,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(scheduledRetryAction));
@@ -557,8 +600,8 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, scheduledRetryAction.toString());
                 will(returnValue("errorUri"));
 
-                // firstly stop the consumer
-                exactly(1).of(consumer).stop();
+                // call recovery stop on flow
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
@@ -604,6 +647,7 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isRecovering());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager) recoveryManager).getRetryAttempts() == 1);
@@ -629,6 +673,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(retryAction));
@@ -638,12 +685,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -689,6 +731,7 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isRecovering());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
         
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
@@ -714,6 +757,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(scheduledRetryAction));
@@ -723,12 +769,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -775,6 +816,7 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isRecovering());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 1);
@@ -794,12 +836,13 @@ public class ScheduledRecoveryManagerTest
         final long delay = 2000;
         final int maxRetries = 2;
         final JobKey jobKey = new JobKey("recoveryJob_flowName" + 0, "moduleName");
-        final JobKey consumerJobKey = new JobKey("consumerRecoveryJob_flowName" + 0, "moduleName");
 
         // expectations
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
                 //
                 // first time retry action is invoked
                 // 
@@ -813,7 +856,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -844,7 +887,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -869,7 +912,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -936,6 +979,7 @@ public class ScheduledRecoveryManagerTest
         }
         
         Assert.assertTrue(recoveryManager.isUnrecoverable());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -962,6 +1006,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 //
                 // first time retry action is invoked
                 // 
@@ -975,12 +1022,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1011,12 +1053,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1039,12 +1076,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1112,6 +1144,7 @@ public class ScheduledRecoveryManagerTest
         }
         
         Assert.assertTrue(recoveryManager.isUnrecoverable());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -1137,6 +1170,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 //
                 // first time retry action is invoked
                 //
@@ -1150,12 +1186,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1184,12 +1215,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1215,12 +1241,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
-
-                // stop managed resources
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1283,6 +1304,7 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isUnrecoverable());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -1304,6 +1326,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 // resolve the component name and exception to an action
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(unsupportedExceptionAction));
@@ -1314,7 +1339,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
             }
         });
 
@@ -1330,6 +1355,8 @@ public class ScheduledRecoveryManagerTest
         {
             Assert.assertEquals("UnsupportedExceptionAction", e.getMessage());
         }
+
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -1354,6 +1381,9 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
+
                 //
                 // first time retry action is invoked
                 //
@@ -1366,8 +1396,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
 
-                // firstly stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1397,8 +1426,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
 
-                // stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1407,8 +1435,6 @@ public class ScheduledRecoveryManagerTest
                 // check we have not exceeded retry limits
                 exactly(5).of(retryAction).getMaxRetries();
                 will(returnValue(maxRetries));
-
-
 
                 //
                 // third time retry action is invoked
@@ -1423,7 +1449,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1486,6 +1512,7 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isUnrecoverable());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -1506,6 +1533,8 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
                 //
                 // first time retry action is invoked
                 //
@@ -1519,7 +1548,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1550,7 +1579,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1575,7 +1604,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1643,6 +1672,7 @@ public class ScheduledRecoveryManagerTest
         }
 
         Assert.assertTrue(recoveryManager.isUnrecoverable());
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertTrue(((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts() == 0);
@@ -1667,15 +1697,10 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
 
-                exactly(1).of(managedResource).startManagedResource();
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                exactly(1).of(flow).recoveryStart();
 
                 exactly(2).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
@@ -1694,6 +1719,8 @@ public class ScheduledRecoveryManagerTest
 
         recoveryManager.execute(this.jobExecutionContext);
 
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
+
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
@@ -1711,15 +1738,10 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
 
-                exactly(1).of(managedResource).startManagedResource();
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                exactly(1).of(flow).recoveryStart();
 
                 exactly(1).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
@@ -1741,6 +1763,8 @@ public class ScheduledRecoveryManagerTest
         ReflectionTestUtils.setField(recoveryManager, "isConsumerMultiThreaded", true);
 
         recoveryManager.execute(this.jobExecutionContext);
+
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
@@ -1766,29 +1790,21 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(3).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
 
-                exactly(1).of(managedResource).startManagedResource();
+                exactly(1).of(flow).recoveryStart();
                 will(throwException(exception));
-
-                exactly(1).of(managedResource).isCriticalOnStartup();
-                will(returnValue(true));
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
-
-                exactly(1).of(managedResource).stopManagedResource();
             }
         });
 
@@ -1808,6 +1824,7 @@ public class ScheduledRecoveryManagerTest
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
 
+        Assert.assertTrue(recoveryManager.isFlowStartBasedRecovery());
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
@@ -1832,29 +1849,22 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(3).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).startManagedResource();
-                will(throwException(exception));
-
-                exactly(1).of(managedResource).isCriticalOnStartup();
+                exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(true));
 
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
+                // call recovery start on flow
+                exactly(1).of(flow).recoveryStart();
+                will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
                 will(returnValue(stopAction));
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(consumer).stop();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
-
-                exactly(1).of(managedResource).stopManagedResource();
             }
         });
 
@@ -1874,6 +1884,8 @@ public class ScheduledRecoveryManagerTest
         catch (Exception e) {
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
+
+        Assert.assertTrue(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
@@ -1899,19 +1911,12 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(2).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).startManagedResource();
-                will(throwException(exception));
-
-                exactly(1).of(managedResource).isCriticalOnStartup();
+                exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                // exceptions will be behind recoveryStart method call and will not bubble up
+                // if managed component not critical.
+                exactly(1).of(flow).recoveryStart();
 
                 exactly(2).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
@@ -1935,6 +1940,8 @@ public class ScheduledRecoveryManagerTest
         catch (Exception e) {
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
+
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
@@ -1960,19 +1967,11 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(2).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).startManagedResource();
-                will(throwException(exception));
-
-                exactly(1).of(managedResource).isCriticalOnStartup();
+                exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                // no exception thrown on start because it is hidden behind interface
+                // and will only bubble up if critical
+                exactly(1).of(flow).recoveryStart();
 
                 exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
                 will(returnValue(Set.of(jobKey)));
@@ -2001,6 +2000,8 @@ public class ScheduledRecoveryManagerTest
         catch (Exception e) {
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
+
+        Assert.assertFalse(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
@@ -2027,15 +2028,10 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(true));
 
-                exactly(1).of(managedResource).startManagedResource();
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                exactly(1).of(flow).recoveryStart();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2043,12 +2039,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Retry");
 
-                exactly(1).of(consumer).stop();
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2090,6 +2081,8 @@ public class ScheduledRecoveryManagerTest
         catch (Exception e) {
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
+
+        Assert.assertTrue(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertEquals(1,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
@@ -2117,15 +2110,10 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
 
-                exactly(1).of(managedResource).startManagedResource();
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                exactly(1).of(flow).recoveryStart();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2133,12 +2121,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Retry");
 
-                exactly(1).of(consumer).stop();
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2182,6 +2165,8 @@ public class ScheduledRecoveryManagerTest
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
 
+        Assert.assertTrue(recoveryManager.isFlowStartBasedRecovery());
+
         // test aspects we cannot access through the interface
         Assert.assertEquals(1,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
@@ -2207,15 +2192,10 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
 
-                exactly(1).of(managedResource).startManagedResource();
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                exactly(1).of(flow).recoveryStart();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2223,12 +2203,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(consumer).stop();
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2251,6 +2226,8 @@ public class ScheduledRecoveryManagerTest
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
 
+        Assert.assertTrue(recoveryManager.isFlowStartBasedRecovery());
+
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
 
@@ -2269,15 +2246,10 @@ public class ScheduledRecoveryManagerTest
         mockery.checking(new Expectations()
         {
             {
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
+                exactly(1).of(flow).isMultiThreadedCapable();
+                will(returnValue(false));
 
-                exactly(1).of(managedResource).startManagedResource();
-
-                exactly(1).of(flowElement).getComponentName();
-                will(returnValue("componentName"));
-
-                exactly(1).of(consumer).start();
+                exactly(1).of(flow).recoveryStart();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2285,12 +2257,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(consumer).stop();
-
-                exactly(1).of(flowElement).getFlowComponent();
-                will(returnValue(managedResource));
-
-                exactly(1).of(managedResource).stopManagedResource();
+                exactly(1).of(flow).recoveryStop();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2313,6 +2280,8 @@ public class ScheduledRecoveryManagerTest
         catch (Exception e) {
             Assert.assertTrue(e instanceof ForceTransactionRollbackException);
         }
+
+        Assert.assertTrue(recoveryManager.isFlowStartBasedRecovery());
 
         // test aspects we cannot access through the interface
         Assert.assertEquals(0,((StubbedScheduledRecoveryManager)recoveryManager).getRetryAttempts());
@@ -2340,6 +2309,11 @@ public class ScheduledRecoveryManagerTest
         if(recoveryManager instanceof IsErrorReportingServiceAware aware)
         {
             aware.setErrorReportingService(errorReportingService);
+        }
+
+        if(recoveryManager instanceof IsFlowAware aware)
+        {
+            aware.setFlow(flow);
         }
     }
 

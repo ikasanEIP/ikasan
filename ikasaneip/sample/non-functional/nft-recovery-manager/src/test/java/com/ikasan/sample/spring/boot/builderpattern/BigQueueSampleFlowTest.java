@@ -46,47 +46,35 @@ import org.ikasan.flow.visitorPattern.VisitingInvokerFlow;
 import org.ikasan.recovery.ScheduledRecoveryManager;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.hospital.service.HospitalService;
 import org.ikasan.spec.module.Module;
-import org.ikasan.testharness.flow.database.DatabaseHelper;
+import org.ikasan.spec.monitor.Monitor;
+import org.ikasan.spec.monitor.Notifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.imposters.ByteBuddyClassImposteriser;
+import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.quartz.JobKey;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.io.IOException;
-import java.sql.SQLException;
 import java.time.Duration;
 import java.util.List;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
-import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
-import static org.ikasan.recovery.ScheduledRecoveryManager.RECOVERY_JOB_NAME;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -99,6 +87,20 @@ import static org.junit.Assert.assertTrue;
 @SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
+
+    private Synchroniser synchroniser = new Synchroniser();
+
+    /**
+     * Mockery for mocking concrete classes
+     */
+    private Mockery mockery = new Mockery()
+    {
+        {
+            setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
+            setThreadingPolicy(synchroniser);
+        }
+    };
+
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     private Logger logger = LoggerFactory.getLogger(BigQueueSampleFlowTest.class);
@@ -114,6 +116,8 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
 
     @Resource
     private IBigQueue inboundQueue;
+
+    private final Notifier notifier = mockery.mock(Notifier.class, "mockNotifier");
 
     @Before
     public void setup() {
@@ -302,6 +306,68 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
         // Asset no more recovery jobs scheduled
         with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
             .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
+    }
+
+    /**
+     * Test the recovery flow behavior when an exception is thrown in the start method of the flow.
+     * The test verifies that the flow goes into recovery mode and properly notifies the necessary components.
+     *
+     * @throws Exception if an error occurs during the test
+     */
+    @Test
+    public void test_flow_in_recovery_due_to_exception_in_start_method_recovers_and_notifies() throws Exception {
+        mockery.checking(new Expectations() {
+            {
+                exactly(6).of(notifier).isNotifyStateChangesOnly();
+                will(returnValue(true));
+                exactly(1).of(notifier).invoke(with("Undefined Environment"), with("nft-recovery-manager")
+                    , with("BigQueue Sample Flow"), with("recovering"));
+                exactly(1).of(notifier).invoke(with("Undefined Environment"), with("nft-recovery-manager")
+                    , with("BigQueue Sample Flow"), with("running"));
+            }
+        });
+
+        VisitingInvokerFlow flow = (VisitingInvokerFlow)moduleUnderTest.getFlow("BigQueue Sample Flow");
+        ScheduledRecoveryManager recoveryManager = (ScheduledRecoveryManager) ReflectionTestUtils.getField(flow, "recoveryManager");
+        Scheduler scheduler = (Scheduler) ReflectionTestUtils.getField(recoveryManager, "scheduler");
+        Monitor monitor = (Monitor) ReflectionTestUtils.getField(flow, "monitor");
+        monitor.setNotifiers(List.of(notifier));
+
+        ExceptionToggle.setThrowStartRetryException(true);
+
+        // start the flow and assert it runs
+        try {
+            flowTestRule.startFlow();
+        }
+        catch (Exception e) {
+            // we ignore this endpoint exception because we want this flow to go into recovery.
+        }
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
+            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 1);
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> assertEquals("recovering", flowTestRule.getFlowState()));
+
+        ExceptionToggle.setThrowStartRetryException(false);
+
+        //verify no messages were published
+        assertEquals(0, outboundQueue.size());
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> assertEquals("running", flowTestRule.getFlowState()));
+
+        super.assertExclusionsWithWait(0);
+
+        // Asset no more recovery jobs scheduled
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> assertEquals(0, this.getNumberOfCurrentScheduledRecoveryJobs(scheduler)));
+
+        // we remove the notifier as we end up with some thread synchronisation issues
+        // with JMock when asserting the expectations.
+        monitor.setNotifiers(List.of());
+
+        mockery.assertIsSatisfied();
     }
 
     @Test
