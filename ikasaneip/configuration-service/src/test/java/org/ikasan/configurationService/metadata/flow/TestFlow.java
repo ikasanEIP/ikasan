@@ -120,6 +120,16 @@ public class TestFlow implements Flow, ConfiguredResource<FlowConfiguration>
     }
 
     @Override
+    public void recoveryStart() {
+
+    }
+
+    @Override
+    public void recoveryStop() {
+
+    }
+
+    @Override
     public void pause()
     {
         throw new UnsupportedOperationException();
@@ -195,5 +205,10 @@ public class TestFlow implements Flow, ConfiguredResource<FlowConfiguration>
     public void setConfiguration(FlowConfiguration configuration)
     {
         this.flowConfiguration = configuration;
+    }
+
+    @Override
+    public boolean isMultiThreadedCapable() {
+        return false;
     }
 }

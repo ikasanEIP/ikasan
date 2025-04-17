@@ -1194,7 +1194,7 @@ public class VisitingInvokerFlowTest
         Mockito.verify(recoveryManager, Mockito.times(3)).isRecovering();
         Mockito.verify(recoveryManager, Mockito.times(2)).isUnrecoverable();
         Mockito.verify(recoveryManager).initialise();
-        Mockito.verify(recoveryManager).recover(Mockito.any(), Mockito.any());
+        Mockito.verify(recoveryManager).recoverOnStart(Mockito.any(), Mockito.any());
         Mockito.verifyNoMoreInteractions(recoveryManager);
 
         Mockito.verify(consumer, Mockito.times(2)).isRunning();
@@ -1246,7 +1246,7 @@ public class VisitingInvokerFlowTest
         Mockito.verify(recoveryManager, Mockito.times(3)).isRecovering();
         Mockito.verify(recoveryManager, Mockito.times(3)).isUnrecoverable();
         Mockito.verify(recoveryManager).initialise();
-        Mockito.verify(recoveryManager).recover(Mockito.any(), Mockito.any());
+        Mockito.verify(recoveryManager).recoverOnStart(Mockito.any(), Mockito.any());
         Mockito.verifyNoMoreInteractions(recoveryManager);
 
         Mockito.verify(consumer, Mockito.times(3)).isRunning();

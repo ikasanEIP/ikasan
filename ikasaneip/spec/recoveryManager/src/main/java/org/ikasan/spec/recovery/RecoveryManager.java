@@ -69,6 +69,14 @@ public interface RecoveryManager<RESOLVER, CONTEXT, ID>
     RESOLVER getResolver();
 
     /**
+     * Perform recovery when the attempt to start a flow fails.
+     *
+     * @param componentName the name of the component to recover
+     * @param throwable the throwable that triggered the recovery
+     */
+    void recoverOnStart(String componentName, Throwable throwable);
+
+    /**
      * Start or continue a recovery based on the passed CONTEXT
      * @param context
      * @param throwable
@@ -85,7 +93,6 @@ public interface RecoveryManager<RESOLVER, CONTEXT, ID>
      * @param throwable
      */
     void recover(String component, Throwable throwable);
-
 
 
     /**
@@ -125,4 +132,11 @@ public interface RecoveryManager<RESOLVER, CONTEXT, ID>
      * held states resulting from previous executions.
      */
     void initialise();
+
+    /**
+     * Checks if the recovery is based on the start of the recovery process.
+     *
+     * @return true if the recovery is start-based, false otherwise
+     */
+    boolean isFlowStartBasedRecovery();
 }

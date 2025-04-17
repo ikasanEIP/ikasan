@@ -201,7 +201,7 @@ public class SftpToJmsFlowTest {
             sftp.createDirectories("/source");
 
             // assert the flow is back in running state
-            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            with().pollInterval(10, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
             flowTestRule.assertIsSatisfied();
@@ -248,7 +248,7 @@ public class SftpToJmsFlowTest {
             sftp.createDirectories("/source");
 
             // assert the flow is back in running state
-            with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            with().pollInterval(10, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
             flowTestRule.assertIsSatisfied();
