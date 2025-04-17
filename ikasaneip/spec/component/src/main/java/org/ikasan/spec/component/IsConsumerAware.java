@@ -43,6 +43,7 @@ package org.ikasan.spec.component;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 
+
 /**
  * Consumer aware contract.
  * 
@@ -54,5 +55,5 @@ public interface IsConsumerAware
      * Setter for consumer on consumer aware implementations of this interface.
      * @param consumer
      */
-    public void setConsumer(Consumer consumer);
+    void setConsumer(Consumer consumer);
 }

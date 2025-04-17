@@ -44,6 +44,7 @@ import org.ikasan.flow.configuration.FlowPersistentConfiguration;
 import org.ikasan.flow.event.FlowEventFactory;
 import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
@@ -570,10 +571,46 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
         }
         catch(RuntimeException e)
         {
-            this.recoveryManager.recover(consumerFlowElement.getComponentName(), e);
+            this.recoveryManager.recoverOnStart(consumerFlowElement.getComponentName(), e);
         }
     }
-    
+
+    @Override
+    public void recoveryStart() {
+        try {
+            FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
+            Consumer<EventListener<FlowEvent<?, ?>>, EventFactory> consumer = consumerFlowElement.getFlowComponent();
+
+            this.startManagedResources();
+            consumer.start();
+
+            // If the original recovery was as a result of an exception that occurred due to starting the flow
+            // and we are able to successfully restart the flow (by starting the manages resources and consumer above),
+            // we need to go ahead and tell the recovery manager to cancel the recovery. This allows for the monitor to
+            // report the correct status of the flow to any registered notifiers.
+            if(this.recoveryManager.isFlowStartBasedRecovery()) {
+                this.recoveryManager.cancelAll();
+            }
+        }
+        finally {
+            this.notifyMonitor();
+        }
+    }
+
+    @Override
+    public void recoveryStop() {
+        try {
+            FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
+            Consumer<EventListener<FlowEvent<?, ?>>, EventFactory> consumer = consumerFlowElement.getFlowComponent();
+
+            consumer.stop();
+            this.stopManagedResources();
+        }
+        finally {
+            this.notifyMonitor();
+        }
+    }
+
     /**
      * Stop all managed resources from left to right.
      */
@@ -1076,6 +1113,20 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     public void setErrorReportingService(ErrorReportingService errorReportingService)
     {
         this.errorReportingService = errorReportingService;
+    }
+
+    @Override
+    public boolean isMultiThreadedCapable() {
+        FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
+
+        Consumer<EventListener<FlowEvent<?,?>>,EventFactory> consumer = consumerFlowElement.getFlowComponent();
+
+        if (consumer instanceof MultiThreadedCapable)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     /**
