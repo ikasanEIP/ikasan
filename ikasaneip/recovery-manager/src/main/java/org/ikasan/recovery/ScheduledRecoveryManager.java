@@ -705,7 +705,6 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         }
         catch(Throwable throwable)
         {
-            this.isFlowStartBasedRecovery = true;
             // this situation only occurs on failure of a retry of a
             // critical managed resource or a consumer
             // so we should be good using the previousComponentName which
