@@ -166,6 +166,11 @@ public interface Flow
     void start();
 
     /**
+     * Invoke all operations necessary for a flow to start from a recovery.
+     */
+    void recoveryStart();
+
+    /**
      * Invoke all start operations for the flow that are required prior to an event invocation, but immediately pause the consumer.
      * For instance, this could include setting any flow component configurations,
      * or starting any flow managed resources.
@@ -177,6 +182,11 @@ public interface Flow
      * For instance, this could include stopping any flow managed resources.
      */
     void stop();
+
+    /**
+     * Invoke all operations necessary for a flow to stop from a recovery.
+     */
+    void recoveryStop();
 
     /**
      * Invoke stop on the consumer component only. All other components will remain
@@ -232,4 +242,12 @@ public interface Flow
      * @return true if the listeners are active/running, false if they are stopped/disabled
      */
     boolean areContextListenersRunning();
+
+
+    /**
+     * Indicates whether the object is capable of handling operations in a multi-threaded environment.
+     *
+     * @return true if the object is multi-threaded capable, false otherwise
+     */
+    boolean isMultiThreadedCapable();
 }

@@ -43,18 +43,13 @@ package org.ikasan.recovery;
 import org.ikasan.exceptionResolver.ExceptionResolver;
 import org.ikasan.exceptionResolver.action.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
-import org.ikasan.spec.component.IsConsumerAware;
-import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.error.reporting.IsErrorReportingServiceAware;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
 import org.ikasan.spec.event.ForceTransactionRollbackForEventExclusionException;
 import org.ikasan.spec.exclusion.ExclusionService;
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
-import org.ikasan.spec.flow.FinalAction;
-import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.flow.FlowInvocationContext;
+import org.ikasan.spec.flow.*;
 import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.recovery.RecoveryManager;
 import org.quartz.*;
@@ -62,7 +57,10 @@ import org.quartz.impl.matchers.GroupMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -77,7 +75,7 @@ import static org.quartz.TriggerKey.triggerKey;
  */
 @DisallowConcurrentExecution
 public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionResolver, FlowInvocationContext, ID>, Job,
-        IsExclusionServiceAware, IsErrorReportingServiceAware, IsConsumerAware
+        IsExclusionServiceAware, IsErrorReportingServiceAware, IsFlowAware
 {
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(ScheduledRecoveryManager.class);
@@ -88,8 +86,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     /** recovery job trigger name */
     private static final String RECOVERY_JOB_TRIGGER_NAME = "recoveryJobTrigger_";
 
-    /** consumer to stop and start for recovery */
-    private Consumer<?,?> consumer;
+    /** flow to stop and start for recovery */
+    private Flow flow;
 
     /** scheduler */
     private Scheduler scheduler;
@@ -130,6 +128,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     private JobKey recoveryJobKey;
     private boolean isConsumerMultiThreaded = false;
     private boolean isEventBaseRecovery = false;
+    private boolean isFlowStartBasedRecovery = false;
 
     /**
      * Constructor
@@ -191,7 +190,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     {
         try
         {
-            return this.scheduler.isStarted() && recoveryAttempts > 0;
+            return this.scheduler.isStarted() && this.recoveryAttempts > 0;
         }
         catch(SchedulerException e)
         {
@@ -216,9 +215,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             {
                 cancelAll();
             }
-            
-            this.consumer.stop();
-            stopManagedResources();
+
+            this.flow.recoveryStop();
 
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
@@ -230,9 +228,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         else if(action instanceof RetryAction)
         {
             RetryAction retryAction = (RetryAction)action;
-
-            this.consumer.stop();
-            stopManagedResources();
+            this.flow.recoveryStop();
 
             try
             {
@@ -271,8 +267,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         {
             ScheduledRetryAction scheduledRetryAction = (ScheduledRetryAction)action;
 
-            this.consumer.stop();
-            stopManagedResources();
+            this.flow.recoveryStop();
 
             try
             {
@@ -313,8 +308,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
                 cancelAll();
             }
 
-            this.consumer.stop();
-            stopManagedResources();
+            this.flow.recoveryStop();
 
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "] due to Unsupported action [" + action + "]");
@@ -334,6 +328,14 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         this.recover(componentName, throwable, false);
     }
 
+    @Override
+    public void recoverOnStart(String componentName, Throwable throwable)
+    {
+        // We set the flag that states that the recovery is as a result
+        // of a exception that occurred attempting to start the flow.
+        this.isFlowStartBasedRecovery = true;
+        this.recover(componentName, throwable, false);
+    }
 
     @Override
     public void recover(String componentName, Throwable throwable, boolean isEventBaseRecovery)
@@ -553,6 +555,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     private void cancelRecovery(ID id)
     {
         this.recoveryAttempts = 0;
+        this.isFlowStartBasedRecovery = false;
         try
         {
             cancelScheduledJob();
@@ -697,8 +700,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     {
         try
         {
-            startManagedResources();
-            this.consumer.start();
+            this.flow.recoveryStart();
             if(!isEventBaseRecovery)
             {
                 cancelAll();
@@ -710,57 +712,8 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             // critical managed resource or a consumer
             // so we should be good using the previousComponentName which
             // will be equal to the consumer name
-            this.recover(this.previousComponentName, throwable);
+            this.recoverOnStart(this.previousComponentName, throwable);
         }
-    }
-
-    protected void stopManagedResources()
-    {
-        if(this.managedResources != null)
-        {
-            for(FlowElement<ManagedResource> flowElement:this.managedResources)
-            {
-                flowElement.getFlowComponent().stopManagedResource();
-            }
-        }
-    }
-
-    /**
-     * Start the components marked as including Managed Resources.
-     * These component are started from right to left in the flow.
-     */
-    protected void startManagedResources()
-    {
-    	if(this.managedResources != null)
-    	{
-            List<FlowElement<ManagedResource>> flowElements = this.managedResources;
-            for(int index=flowElements.size()-1; index >= 0; index--)
-            {
-                FlowElement<ManagedResource> flowElement = flowElements.get(index);
-                try
-                {
-                    flowElement.getFlowComponent().startManagedResource();
-                    logger.info("Started managed component [" 
-                        + flowElement.getComponentName() + "]");
-                }
-                catch(RuntimeException e)
-                {
-                    if(flowElement.getFlowComponent().isCriticalOnStartup())
-                    {
-                        // log issues as these may get resolved by the recovery manager 
-                        logger.warn("Failed to start critical component [" 
-                                + flowElement.getComponentName() + "] " + e.getMessage(), e);
-                        throw e;
-                    }
-                    else
-                    {
-                        // just log any issues as these may get resolved by the recovery manager 
-                        logger.warn("Failed to start managed component [" 
-                                + flowElement.getComponentName() + "] " + e.getMessage(), e);
-                    }
-                }
-            }
-    	}
     }
 
     /* (non-Javadoc)
@@ -785,13 +738,9 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     }
 
     @Override
-    public void setConsumer(Consumer consumer)
-    {
-        this.consumer = consumer;
-        if (consumer instanceof MultiThreadedCapable)
-        {
-            isConsumerMultiThreaded = true;
-        }
+    public void setFlow(Flow flow) {
+        this.flow = flow;
+        this.isConsumerMultiThreaded = this.flow.isMultiThreadedCapable();
     }
 
     /**
@@ -821,5 +770,10 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
             .filter(key -> key.getName().startsWith(RECOVERY_JOB_NAME + this.flowName))
             .map(key -> key.getName())
             .collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public boolean isFlowStartBasedRecovery() {
+        return this.isFlowStartBasedRecovery;
     }
 }

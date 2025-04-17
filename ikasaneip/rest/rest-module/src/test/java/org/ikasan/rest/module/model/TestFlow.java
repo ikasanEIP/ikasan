@@ -207,4 +207,19 @@ public class TestFlow implements Flow, ConfiguredResource
     {
 
     }
+
+    @Override
+    public boolean isMultiThreadedCapable() {
+        return false;
+    }
+
+    @Override
+    public void recoveryStart() {
+
+    }
+
+    @Override
+    public void recoveryStop() {
+
+    }
 }
