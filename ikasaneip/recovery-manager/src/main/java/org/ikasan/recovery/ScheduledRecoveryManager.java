@@ -216,7 +216,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
                 cancelAll();
             }
 
-            this.flow.recoveryStop();
+            this.flow.stopFlowDueToRecoveryAttemptFailing();
 
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "]");
@@ -227,7 +227,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         // simple delay retry action
         else if(action instanceof RetryAction retryAction)
         {
-            this.flow.recoveryStop();
+            this.flow.stopFlowDueToRecoveryAttemptFailing();
 
             try
             {
@@ -264,7 +264,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
         // cron expression based delay retry action
         else if(action instanceof ScheduledRetryAction scheduledRetryAction)
         {
-            this.flow.recoveryStop();
+            this.flow.stopFlowDueToRecoveryAttemptFailing();
 
             try
             {
@@ -305,7 +305,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
                 cancelAll();
             }
 
-            this.flow.recoveryStop();
+            this.flow.stopFlowDueToRecoveryAttemptFailing();
 
             this.isUnrecoverable = true;
             logger.info("Stopped flow [" + flowName +  "] module [" + moduleName + "] due to Unsupported action [" + action + "]");
@@ -697,7 +697,7 @@ public class ScheduledRecoveryManager<ID> implements RecoveryManager<ExceptionRe
     {
         try
         {
-            this.flow.recoveryStart();
+            this.flow.startFlowDueToRecoveryAttempt();
             if(!isEventBaseRecovery)
             {
                 cancelAll();

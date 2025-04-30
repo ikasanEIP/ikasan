@@ -59,6 +59,9 @@ import javax.annotation.Resource;
 @Configuration
 public class FileEventSchedulerJobFlowFactory
 {
+    @Value( "${some.random.value}" )
+    private String randomValue;
+
     @Value( "${module.name}" )
     private String moduleName;
 

@@ -68,7 +68,6 @@ import org.quartz.impl.triggers.CronTriggerImpl;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -295,7 +294,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
             }
         });
 
@@ -403,7 +402,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
             }
         });
 
@@ -520,7 +519,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
@@ -601,7 +600,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // call recovery stop on flow
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(jobDetail).getKey();
                 will(returnValue(jobKey));
@@ -685,7 +684,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -769,7 +768,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are not already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -856,7 +855,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -887,7 +886,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -912,7 +911,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1022,7 +1021,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1053,7 +1052,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1076,7 +1075,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1186,7 +1185,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1215,7 +1214,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1241,7 +1240,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1339,7 +1338,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(false));
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
             }
         });
 
@@ -1396,7 +1395,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1426,7 +1425,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(errorReportingService).notify("componentName", exception, retryAction.toString());
                 will(returnValue("errorUri"));
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1449,7 +1448,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1548,7 +1547,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // firstly stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1579,7 +1578,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1604,7 +1603,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue("errorUri"));
 
                 // stop the consumer
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 // for this test we are already in a recovery
                 exactly(1).of(scheduler).isStarted();
@@ -1700,7 +1699,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
 
                 exactly(2).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
@@ -1741,7 +1740,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
 
                 exactly(1).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
@@ -1793,7 +1792,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -1801,7 +1800,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -1853,7 +1852,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(true));
 
                 // call recovery start on flow
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -1861,7 +1860,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -1916,7 +1915,7 @@ public class ScheduledRecoveryManagerTest
 
                 // exceptions will be behind recoveryStart method call and will not bubble up
                 // if managed component not critical.
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
 
                 exactly(2).of(scheduler).checkExists(jobKey);
                 will(returnValue(true));
@@ -1971,7 +1970,7 @@ public class ScheduledRecoveryManagerTest
                 will(returnValue(false));
                 // no exception thrown on start because it is hidden behind interface
                 // and will only bubble up if critical
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
 
                 exactly(2).of(scheduler).getJobKeys(with(any(GroupMatcher.class)));
                 will(returnValue(Set.of(jobKey)));
@@ -2031,7 +2030,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(true));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2039,7 +2038,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Retry");
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2113,7 +2112,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2121,7 +2120,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Retry");
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2195,7 +2194,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2203,7 +2202,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
@@ -2249,7 +2248,7 @@ public class ScheduledRecoveryManagerTest
                 exactly(1).of(flow).isMultiThreadedCapable();
                 will(returnValue(false));
 
-                exactly(1).of(flow).recoveryStart();
+                exactly(1).of(flow).startFlowDueToRecoveryAttempt();
                 will(throwException(exception));
 
                 exactly(1).of(exceptionResolver).resolve("componentName", exception);
@@ -2257,7 +2256,7 @@ public class ScheduledRecoveryManagerTest
 
                 exactly(1).of(errorReportingService).notify("componentName", exception, "Stop");
 
-                exactly(1).of(flow).recoveryStop();
+                exactly(1).of(flow).stopFlowDueToRecoveryAttemptFailing();
 
                 exactly(1).of(scheduler).isStarted();
                 will(returnValue(true));
