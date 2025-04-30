@@ -180,7 +180,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         setIsAware(recoveryManager);
 
         // start the consumer and pass exception to recoveryManager
-        flow.recoveryStart();
+        flow.startFlowDueToRecoveryAttempt();
         Assert.assertTrue("consumer should be running", consumer.isRunning());
         
         try
@@ -232,7 +232,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // start the consumer and pass exception to recoveryManager
-        flow.recoveryStart();
+        flow.startFlowDueToRecoveryAttempt();
         Assert.assertTrue("consumer should be running", consumer.isRunning());
         
         try
@@ -286,7 +286,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // start the consumer and pass exception to recoveryManager
-        flow.recoveryStart();
+        flow.startFlowDueToRecoveryAttempt();
         Assert.assertTrue("consumer should be running", consumer.isRunning());
 
         try
@@ -346,7 +346,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // start the consumer and pass exception to recoveryManager
-        flow.recoveryStart();
+        flow.startFlowDueToRecoveryAttempt();
         Assert.assertTrue("consumer should be running", consumer.isRunning());
 
         //
@@ -661,7 +661,7 @@ public class ScheduledRecoveryManagerIntegrationTest
 
         //
         // start the consumer and pass exception to recoveryManager
-        flow.recoveryStart();
+        flow.startFlowDueToRecoveryAttempt();
         Assert.assertTrue(consumer.isRunning());
 
         //
@@ -1168,7 +1168,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
-        public void recoveryStart() {
+        public void startFlowDueToRecoveryAttempt() {
             this.consumer.start();
         }
 
@@ -1183,7 +1183,7 @@ public class ScheduledRecoveryManagerIntegrationTest
         }
 
         @Override
-        public void recoveryStop() {
+        public void stopFlowDueToRecoveryAttemptFailing() {
             this.consumer.stop();
         }
 

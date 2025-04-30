@@ -214,12 +214,12 @@ public class TestFlow implements Flow, ConfiguredResource
     }
 
     @Override
-    public void recoveryStart() {
+    public void startFlowDueToRecoveryAttempt() {
 
     }
 
     @Override
-    public void recoveryStop() {
+    public void stopFlowDueToRecoveryAttemptFailing() {
 
     }
 }
