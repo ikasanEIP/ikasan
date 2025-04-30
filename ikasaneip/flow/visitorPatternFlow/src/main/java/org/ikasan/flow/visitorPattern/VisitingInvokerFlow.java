@@ -576,7 +576,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     }
 
     @Override
-    public void recoveryStart() {
+    public void startFlowDueToRecoveryAttempt() {
         try {
             FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
             Consumer<EventListener<FlowEvent<?, ?>>, EventFactory> consumer = consumerFlowElement.getFlowComponent();
@@ -598,7 +598,7 @@ public class VisitingInvokerFlow<ID> implements Flow, EventListener<FlowEvent<?,
     }
 
     @Override
-    public void recoveryStop() {
+    public void stopFlowDueToRecoveryAttemptFailing() {
         try {
             FlowElement<Consumer> consumerFlowElement = this.flowConfiguration.getConsumerFlowElement();
             Consumer<EventListener<FlowEvent<?, ?>>, EventFactory> consumer = consumerFlowElement.getFlowComponent();

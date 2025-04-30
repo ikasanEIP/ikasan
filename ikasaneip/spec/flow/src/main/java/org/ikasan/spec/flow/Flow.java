@@ -166,9 +166,9 @@ public interface Flow
     void start();
 
     /**
-     * Invoke all operations necessary for a flow to start from a recovery.
+     * Starts the flow due to a recovery attempt.
      */
-    void recoveryStart();
+    void startFlowDueToRecoveryAttempt();
 
     /**
      * Invoke all start operations for the flow that are required prior to an event invocation, but immediately pause the consumer.
@@ -184,9 +184,10 @@ public interface Flow
     void stop();
 
     /**
-     * Invoke all operations necessary for a flow to stop from a recovery.
+     * Stops the flow due to a failed recovery attempt. This method is called when the system
+     * encounters an error during the recovery process and needs to halt the flow's operation.
      */
-    void recoveryStop();
+    void stopFlowDueToRecoveryAttemptFailing();
 
     /**
      * Invoke stop on the consumer component only. All other components will remain
@@ -245,9 +246,9 @@ public interface Flow
 
 
     /**
-     * Indicates whether the object is capable of handling operations in a multi-threaded environment.
+     * Indicates whether the flow is capable of handling operations in a multi-threaded environment.
      *
-     * @return true if the object is multi-threaded capable, false otherwise
+     * @return true if the flow is multi-threaded capable, false otherwise
      */
     boolean isMultiThreadedCapable();
 }
