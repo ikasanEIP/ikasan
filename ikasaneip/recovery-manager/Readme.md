@@ -3,8 +3,8 @@
 # Recovery Manager
 The [Ikasan Scheduled Recovery Manager](./src/main/java/org/ikasan/recovery/ScheduledRecoveryManager.java) is an implementation of
 [RecoveryManager](../spec/recoveryManager/src/main/java/org/ikasan/spec/recovery/RecoveryManager.java) and its role within Ikasan
-is to manage and resolve exception scenarios that occur when a Flow is processing an event. Depending on how Ikasan is configured,
-exceptions of can be configured to cause the recovery manager to behave in the desired manner. 
+is to manage and resolve exception scenarios that occur when a Flow is processing an event. Exceptions within Ikasan can be configured 
+to cause the recovery manager to behave in the desired manner. 
 
 For example:
 
