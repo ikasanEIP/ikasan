@@ -174,6 +174,22 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      */
     void setTimeWindowStart(String timeWindowStart);
 
+
+    /**
+     * Checks if the custom week day of the month is met.
+     *
+     * @return true if the custom week day of the month is met, false otherwise
+     */
+    boolean isCustomWeekDayOfMonth();
+
+
+    /**
+     * Sets whether to use a custom week day of the month.
+     *
+     * @param customWeekDayOfMonth true if custom week day of the month should be used, false otherwise
+     */
+    void setCustomWeekDayOfMonth(boolean customWeekDayOfMonth);
+
     /**
      * Get the ttl of the context in milliseconds since epoch.
      *
@@ -371,4 +387,67 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @return The font size used in the visualization.
      */
     Integer getVisualisationFontSize();
+
+
+    /**
+     * Check if logical boundaries should be rendered.
+     *
+     * @return true if logical boundaries should be rendered, false otherwise
+     */
+    Boolean isRenderLogicalBoundaries();
+
+
+    /**
+     * Set whether logical boundaries should be rendered within the context visualization.
+     *
+     * @param renderLogicalBoundaries true if logical boundaries should be rendered, false otherwise
+     */
+    void setRenderLogicalBoundaries(Boolean renderLogicalBoundaries);
+
+
+    /**
+     * Check if auto layout is used for visualizations within the context.
+     *
+     * @return true if auto layout is used, false otherwise
+     */
+    Boolean isUseAutoLayout();
+
+
+
+    /**
+     * Set whether auto layout should be used for visualizations.
+     *
+     * @param useAutoLayout true if auto layout should be used, false otherwise
+     */
+    void setUseAutoLayout(Boolean useAutoLayout);
+
+    /**
+     * Retrieves the user-generated layout for the context visualization.
+     *
+     * @return The user-generated layout as a String.
+     */
+    String getUserGeneratedLayout();
+
+    /**
+     * Sets the user-generated layout for the context visualization.
+     *
+     * @param userGeneratedLayout The layout string provided by the user to customize the context visualization layout.
+     */
+    void setUserGeneratedLayout(String userGeneratedLayout);
+
+
+    /**
+     * Check if the job plan should end upon completion.
+     *
+     * @return true if the job plan should end upon completion, false otherwise
+     */
+    boolean isEndJobPlanUponCompletion();
+
+
+    /**
+     * Sets the flag to indicate whether to end the job plan upon completion.
+     *
+     * @param endJobPlanUponCompletion A boolean value to determine if the job plan should end upon completion
+     */
+    void setEndJobPlanUponCompletion(boolean endJobPlanUponCompletion);
 }
