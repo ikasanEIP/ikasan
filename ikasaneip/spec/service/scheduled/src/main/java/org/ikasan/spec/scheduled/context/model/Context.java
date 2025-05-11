@@ -434,4 +434,20 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      * @param userGeneratedLayout The layout string provided by the user to customize the context visualization layout.
      */
     void setUserGeneratedLayout(String userGeneratedLayout);
+
+
+    /**
+     * Check if the job plan should end upon completion.
+     *
+     * @return true if the job plan should end upon completion, false otherwise
+     */
+    boolean isEndJobPlanUponCompletion();
+
+
+    /**
+     * Sets the flag to indicate whether to end the job plan upon completion.
+     *
+     * @param endJobPlanUponCompletion A boolean value to determine if the job plan should end upon completion
+     */
+    void setEndJobPlanUponCompletion(boolean endJobPlanUponCompletion);
 }
