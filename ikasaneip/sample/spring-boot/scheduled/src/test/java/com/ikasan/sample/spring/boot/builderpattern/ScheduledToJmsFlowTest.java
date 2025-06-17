@@ -156,6 +156,40 @@ public class ScheduledToJmsFlowTest
     }
 
     @Test
+    public void test_consume_fire_twice_success()
+    {
+        this.flowTestRule = new IkasanFlowTestRule();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduled To Jms Flow"));
+
+        //Setup component expectations
+        FakeDataProvider.add("message 1");
+        FakeDataProvider.add("message 2");
+        FakeDataProvider.add("message 3");
+
+        flowTestRule.consumer("Scheduled Consumer")
+            .broker("Exception Generating Broker")
+            .producer("Scheduled Jms Producer")
+            .consumer("Scheduled Consumer")
+            .broker("Exception Generating Broker")
+            .producer("Scheduled Jms Producer");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
+
+        flowTestRule.fireScheduledConsumer();
+        flowTestRule.fireScheduledConsumer();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(2, messageListenerVerifier.getCaptureResults().size() ));
+        flowTestRule.assertIsSatisfied();
+
+        Assert.assertEquals(1, FakeDataProvider.size());
+        Assert.assertEquals("message 3", FakeDataProvider.get(0));
+    }
+
+    @Test
     public void test_consume_recover() throws Exception
     {
         this.flowTestRule = new IkasanFlowTestRule();
