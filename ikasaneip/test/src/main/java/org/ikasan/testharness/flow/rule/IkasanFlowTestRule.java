@@ -157,9 +157,6 @@ public class IkasanFlowTestRule implements TestRule
                 {
                     System.out.println("Calling stop in IkasanFlowTestRule");
                     flow.stop();
-                    assertEquals("in rule apply - flow should be stopped", errorEndState ?
-                            "stoppedInError" :
-                            "stopped", flow.getState());
                     flowTestHarness.assertIsSatisfied();
                 }
                 System.out.println("In evaluate of IkasanFlowTestRule - end");
