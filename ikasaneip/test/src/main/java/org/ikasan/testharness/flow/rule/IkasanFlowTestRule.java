@@ -404,7 +404,8 @@ public class IkasanFlowTestRule implements TestRule
         try
         {
             JobDetail jobDetail = ((ScheduledComponent<JobDetail>)consumer).getJobDetail();
-            String jobNameIteration = jobDetail.getKey().getName() + "_" + consumer.getConfiguration().getConsolidatedCronExpressions().get(0).hashCode();
+            String jobNameIteration = jobDetail.getKey().getName() + "_"
+                + consumer.getConfiguration().getConsolidatedCronExpressions().get(0).hashCode() + System.currentTimeMillis();
 
             Trigger trigger = newTrigger().withIdentity(jobNameIteration, jobDetail.getKey().getGroup()).forJob(jobDetail).build();
             trigger.getJobDataMap().put(ScheduledConsumer.CRON_EXPRESSION, consumer.getConfiguration().getConsolidatedCronExpressions().get(0));
