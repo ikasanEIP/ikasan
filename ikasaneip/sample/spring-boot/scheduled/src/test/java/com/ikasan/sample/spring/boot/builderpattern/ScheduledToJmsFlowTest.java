@@ -177,10 +177,15 @@ public class ScheduledToJmsFlowTest
             .untilAsserted(() -> assertEquals("running",flowTestRule.getFlowState()));
 
         flowTestRule.fireScheduledConsumer();
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() ->  assertEquals(1, messageListenerVerifier.getCaptureResults().size() ));
+
         flowTestRule.fireScheduledConsumer();
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() ->  assertEquals(2, messageListenerVerifier.getCaptureResults().size() ));
+
         flowTestRule.assertIsSatisfied();
 
         Assert.assertEquals(1, FakeDataProvider.size());
