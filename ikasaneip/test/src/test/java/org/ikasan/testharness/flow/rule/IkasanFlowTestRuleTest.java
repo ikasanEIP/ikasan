@@ -92,8 +92,6 @@ public class IkasanFlowTestRuleTest
             oneOf(flow).getState();
             will(returnValue("running"));
             oneOf(flow).stop();
-            oneOf(flow).getState();
-            will(returnValue("stopped"));
             oneOf(flowSubject).removeAllObservers();
             oneOf(flowSubject).addObserver(with(any(FlowTestHarnessImpl.class)));
             oneOf(flowSubject).setIgnoreEventCapture(true);
@@ -114,8 +112,6 @@ public class IkasanFlowTestRuleTest
             oneOf(flow).getState();
             will(returnValue("running"));
             oneOf(flow).stop();
-            oneOf(flow).getState();
-            will(returnValue("stoppedInError"));
             oneOf(flowSubject).removeAllObservers();
             oneOf(flowSubject).addObserver(with(any(FlowTestHarnessImpl.class)));
             oneOf(flowSubject).setIgnoreEventCapture(true);
