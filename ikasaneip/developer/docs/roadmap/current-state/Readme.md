@@ -30,10 +30,10 @@ ikasan.dashboard.extract.enabled=false
 3. If the authentication is successful, a call to the dashboard's underlying H2 database retrieves the policies for which the user is authorised.
 4. A JSON Web Token (JWT) is returned to the module / agent providing access to the authorisations for the authenticated user.
 
-> [!RISKS]  
-> Relies on a highly available LDAP server.
-> If the Ikasan Dashboard is not available, the module/agent cannot authenticate and the associated console cannot be accessed and entities cannot be harvested to the document store via the Ikasan Dashboard.
-> If the H2 database associated with the Ikasan Dashboard is corrupted or unavailable, the authentication and authorisation will fail.
+> [!WARNING]  
+> - Relies on a highly available LDAP server.
+> - If the Ikasan Dashboard is not available, the module/agent cannot authenticate and the associated console cannot be accessed and entities cannot be harvested to the document store via the Ikasan Dashboard.
+> - If the H2 database associated with the Ikasan Dashboard is corrupted or unavailable, the authentication and authorisation will fail.
 
 ### Dashboard and Local Authentication and Authorisation
 ![module authentication](./images/ikasan-typology-Agent%20_%20Module%20Local%20Authentication.drawio.png)
@@ -42,9 +42,9 @@ ikasan.dashboard.extract.enabled=false
 3. If the authentication is successful, a call to the dashboard's underlying H2 database retrieves the policies for which the user is authorised.
 4. A JSON Web Token (JWT) is returned to the module / agent providing access to the authorisations for the authenticated user.
 
-> [!RISKS]
-> If the Ikasan Dashboard is not available, the module/agent cannot authenticate and the associated console cannot be accessed and entities cannot be harvested to the document store via the Ikasan Dashboard.
-> If the H2 database associated with the Ikasan Dashboard is corrupted or unavailable, the authentication and authorisation will fail.
+> [!WARNING]
+> - If the Ikasan Dashboard is not available, the module/agent cannot authenticate and the associated console cannot be accessed and entities cannot be harvested to the document store via the Ikasan Dashboard.
+> - If the H2 database associated with the Ikasan Dashboard is corrupted or unavailable, the authentication and authorisation will fail.
 
 
 ### Module/Agent Local Authentication and Authorisation
@@ -52,5 +52,5 @@ ikasan.dashboard.extract.enabled=false
 1. Module or agent initiates delegates to the local H2 database, and the user account is authenticated against the password stored in the H2 database.
 2. If the authentication is successful, the module/agent policies are retrieved from the local H2 database and the user given access to the module/agent console with access to features for which they are authorised.
 
-> [!RISKS]  
-> If the H2 database associated with the module/agent is corrupted or unavailable, the authentication and authorisation will fail. Moreover, the module/agent will simply not start.
+> [!WARNING]  
+> - If the H2 database associated with the module/agent is corrupted or unavailable, the authentication and authorisation will fail. Moreover, the module/agent will simply not start.
