@@ -37,7 +37,7 @@ ikasan.dashboard.extract.enabled=false
 
 ### Dashboard and Local Authentication and Authorisation
 ![module authentication](./images/ikasan-typology-Agent%20_%20Module%20Local%20Authentication.drawio.png)
-1. Module or agent initiates a call to the authentication service exposed in the Ikasan Dashboard.
+1. Module or agent initiates a call to the authentication service exposed in the Ikasan Dashboard - see [Dashboard REST Services](../../../../visualisation/dashboard/dashboard-rest.md).
 2. Using the credential provided in the authentication request, the user account is authenticated against the password stored in the H2 database.
 3. If the authentication is successful, a call to the dashboard's underlying H2 database retrieves the policies for which the user is authorised.
 4. A JSON Web Token (JWT) is returned to the module / agent providing access to the authorisations for the authenticated user.
@@ -72,13 +72,16 @@ ikasan.dashboard.extract.password=pa55w0rd
 ````
 
 ![module metadata ingestion](./images/ikasan-typology-Module%20Metadata%20Ingestion.drawio.png)
-1. The module/agent is activated and the module metadata JSON document and configuration metadata JSON documents are resolved.
-2. The module metadata is published to the Ikasan Dashboard.
+1. The module/agent is activated and the module metadata JSON document and configuration metadata JSON documents are resolved. The module/agent activation is generally associated with a module restart, however in the case of an agent this can also happen when job plans are deployed or synchronised with the agent.
+2. The module metadata is published to the Ikasan Dashboard via the [Dashboard REST Services](../../../../visualisation/dashboard/dashboard-rest.md).
 3. The configuration metadata collection is published to the Ikasan Dashboard.
 4. The metadata documents are published to the SOLR document index.
 
 > [!NOTE]
-> - TBD
+> - The resolution of the module metadata is not dependant upon the availability of the module/agents underlying H2 database, however the resolution of the configuration meta data is.
+> - If the H2 database associated with the module/agent is corrupted or unavailable, the module/agent will simply not start.
+> - The the Ikasan Dashboard is unavailable, the module and configuration metadata cannot be published. The module/agent will still restart, however the dashboard will not receive any notification of module shape changes, or the deployment of a new module until the module/agent next goes through its restart lifecycle when the Ikasan Dashboard is active.
+> - If the SOLR document index is unavailable the publication of the module and configuration metadata will fail, however the module/agent will still restart as per the previous statement. The Ikasan Dasboard will generally be adversely affected if the document index is unavailable.
 
 ## Entity Harvesting and Ingestion
 All Ikasan Integration Modules and Scheduler Agents capture various entity data as part of their normal operation (wiretap events, system events, 
@@ -88,7 +91,7 @@ a SOLR document index via [Dashboard REST Services](../../../../visualisation/da
 ![entity ingestion](./images/ikasan-typology-Entity%20Ingestion.drawio.png)
 1. An Ikasan module/agent captures an entity in its local H2 database.
 2. For each entity, a periodic harvesting job reads n entity records.
-3. The harvesting writes the entity records to an exposed REST service on the Ikasan Dashboard.
+3. The harvesting writes the entity records to an exposed REST service on the Ikasan Dashboard - see [Dashboard REST Services](../../../../visualisation/dashboard/dashboard-rest.md).
 4. The entities are published to the SOLR document index.
 5. The entity records are marked as successfully harvested and updated in the module/agent local H2 database. 
 
