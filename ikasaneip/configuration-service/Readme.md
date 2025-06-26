@@ -3,7 +3,6 @@
 # Configuration Service
 The Ikasan Configuration Service is responsible for converting POJO injected on Components, Invokers or Flows (known as ConfiguredResources) into Configuration objects persisted in a Ikasan DB.
 
-
 The aim of the Ikasan Metadata element of the configuration service is to provide the ability for Configured Resources of Ikasan runtime to be describe in chosen metadata format.
 The metadata package provide helper implementations to:
 - serialise from Configuration Resources to meta data format
@@ -13,7 +12,7 @@ The metadata package provide helper implementations to:
   - Invokers
   - Flows 
 
-A contract has been defined in order to support both the serialisation and de-serialisation of a configured resources 
+A contract has been defined in order to support both the serialisation and de-serialisation of a configured resource 
 called [ConfigurationMetaDataProvider](../spec/metadata/src/main/java/org/ikasan/spec/metadata/ConfigurationMetaDataProvider.java).
 
 ````java
@@ -100,7 +99,7 @@ The JSON below is an example of the meta data for a configuration resource:
 }
 ````
  
-A contract has been defined in order to support extraction of a configured resources from Ikasan runtime and to convert them meta data format,
+A contract has been defined in order to support extraction of a configured resources from Ikasan runtime and to convert the meta data format,
 called [ConfigurationMetaDataExtractor](../spec/metadata/src/main/java/org/ikasan/spec/metadata/ConfigurationMetaDataExtractor.java).
 
 
