@@ -1,5 +1,29 @@
 ![Problem Domain](../../quickstart-images/Ikasan-title-transparent.png)
 # Ikasan Current State
+## Introduction
+The purpose of this document is to provide a view on the current state of the Ikasan Enterprise Integration and Scheduler
+Platform, with a focus on the moving parts within the distributed architecture, that allow for a coherent enterprise offering.
+It will assist in the identification of areas within the architecture that represent possible weaknesses and will assist with the 
+definition of a roadmap to address improvements and identify new features as Ikasan moves into the next phase of its evolution.
+
+The Ikasan Enterprise Integration and Scheduler Platform is a mature and robust platform serving the operational requirements of one of the
+worlds largest financial groups and has a proven track record of being highly reliable and robust, as well as being flexible and
+allowing business agility through ease of development. It's microservice distributed architecture reduces the ripple effect of change,
+thus reducing operational risks associated with and otherwise onerous nature of large monolithic systems, or highly coupled systems.
+
+## Typical Ikasan Enterprise Service Bus and Scheduler Platform Deployment
+The logical diagram outlines a conceptual view of a typical enterprise deployment of the Ikasan Enterprise Service Bus and 
+Scheduler Platform.
+Typically is it recommended that the following is adhered to.
+- Dedicated replicated disk mount / PV underpinning the SOLR document store.
+- Dedicated replicated disk mount / PV underpinning all instances of the H2 database.
+- Dedicated replicated disk mount / PV underpinning all binaries associated with the components that comprise the Ikasan Enterprise Service Bus and Scheduler Platform.
+
+All components within the architecture are able to resolve their state from the relevant associated persistent stores and
+file system based artefacts, and by being able to swing the above mounts between physical tin, VMs or containers, we are able 
+to achieve a high level of redundancy and the opportunity to provide solutions to disaster recovery scenarios.
+
+![enterprise deployment](./images/ikasan-typology-typical-enterprise-deployment-typology.drawio.png)
 
 ## Module/Agent Authentication and Authorisation
 Module/Agent authentication and authorisation can be configured to delegate to the Ikasan Dashboard, or delegate to the local
@@ -132,7 +156,7 @@ cache is populated by both the modules/agents pushing the states to the dashboar
 > - If any of the registered modules/agents are unavailable, the FlowSateCache will continue to query other module/agents states, and will report any that are unavailable as 'UNKNOWN'.
 
 ## Hospital Service Lifecycle
-One of the entities that are harvested to the Ikasan Dashboard are exclusion events. Exclusion events are created when an event is received by and
+One of the entities that are harvested to the Ikasan Dashboard are exclusion events. Exclusion events are created when an event is received by an
 Ikasan ESB flow, and the error associated with the event is deemed to be a business exception, that with the appropriate intervention, can be resubmitted
 into the flow and subsequently processed successfully.
 
