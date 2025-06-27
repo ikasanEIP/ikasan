@@ -130,3 +130,21 @@ cache is populated by both the modules/agents pushing the states to the dashboar
 > - If the H2 database associated with the dashboard is corrupted or unavailable, the dashboard will not start.
 > - If the SOLR document index is unavailable, the registered module metadata collection cannot be acquired. Moreover, the dashboard will not start.
 > - If any of the registered modules/agents are unavailable, the FlowSateCache will continue to query other module/agents states, and will report any that are unavailable as 'UNKNOWN'.
+
+## Hospital Service Lifecycle
+One of the entities that are harvested to the Ikasan Dashboard are exclusion events. Exclusion events are created when an event is received by and
+Ikasan ESB flow, and the error associated with the event is deemed to be a business exception, that with the appropriate intervention, can be resubmitted
+into the flow and subsequently processed successfully.
+
+![hospital service lifecycle](./images/ikasan-typology-Hospital%20Service.drawio.png)
+1. User searches for an exclusion event using the Ikasan Dashboard search. The user resubmits or instructs the system to ignore the event.
+2. The exclusion action is sent to the relevant module/agent via the [Module REST Services](../../../../rest/rest-module/readme.md).
+3. The relevant exclusion event is retrieved from the underlying module/agent H2 database.
+4. The exclusion event is injected into the flow from which is was excluded.
+5. The success/fail of the resubmitted exclusion event is communicated back to the Ikasan Dashboard.
+6. The SOLR document index is updated with the result of the exclusion action.
+
+> [!NOTE]
+> - If the SOLR index is unavailable the user will not be able to search for exclusion event, and the general behaviour of the Ikasan Dashboard will be affected.
+> - If the module/agent is unavailable, it will not be possible to perform that action against the excluded event.
+> - If the module/agent H2 database is unavailable or corrupt, it will not be possible to perform that action against the excluded event.
