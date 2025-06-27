@@ -80,7 +80,7 @@ ikasan.dashboard.extract.password=pa55w0rd
 > [!NOTE]
 > - The resolution of the module metadata is not dependant upon the availability of the module/agents underlying H2 database, however the resolution of the configuration meta data is.
 > - If the H2 database associated with the module/agent is corrupted or unavailable, the module/agent will simply not start.
-> - The the Ikasan Dashboard is unavailable, the module and configuration metadata cannot be published. The module/agent will still restart, however the dashboard will not receive any notification of module shape changes, or the deployment of a new module until the module/agent next goes through its restart lifecycle when the Ikasan Dashboard is active.
+> - If the Ikasan Dashboard is unavailable, the module and configuration metadata cannot be published. The module/agent will still restart, however the dashboard will not receive any notification of module shape changes, or the deployment of a new module until the module/agent next goes through its restart lifecycle when the Ikasan Dashboard is active.
 > - If the SOLR document index is unavailable the publication of the module and configuration metadata will fail, however the module/agent will still restart as per the previous statement. The Ikasan Dasboard will generally be adversely affected if the document index is unavailable.
 
 ## Entity Harvesting and Ingestion
@@ -100,4 +100,33 @@ a SOLR document index via [Dashboard REST Services](../../../../visualisation/da
 > - If the Ikasan Dashboard is unavailable, entity harvesting will fail until the dashboard is available again. The harvesting is configured to retry. As such the module/agent is engineered to cope with the dashboard being unavailable.
 > - If the SOLR document index is unavailable entity harvesting will fail. The Ikasan Dasboard will generally be adversely affected if the document index is unavailable. 
 
+## Flow States Ikasan Dashboard
+The Ikasan Dashboard maintains a singleton in memory cache containing the flow state for all flows associated with modules/agents that have registered themselves with the dashboard. This
+cache is populated by both the modules/agents pushing the states to the dashboard, and the dashboard requesting the states from the modules/agents as follows:
+- When a module/agent is restarted, the activation process pushes all flow states to the Ikasan Dashboard via the [Dashboard REST Services](../../../../visualisation/dashboard/dashboard-rest.md).
+- When a flow state changes in a module/agent, the flow state is pushed to the dashboard via the Ikasan notification mechanism delegating to the [Dashboard REST Services](../../../../visualisation/dashboard/dashboard-rest.md).
+- When the Ikasan Dashboard is restarted it requests the flows states from all modules/agents that have been registered with it via the [Module REST Services](../../../../rest/rest-module/readme.md).
 
+### Flow States Module/Agent Activation
+
+![flow states module activation](./images/ikasan-typology-Flow%20State%20Module%20_%20Agent%20Restart.drawio.png)
+1. Agent/module start. 
+2. As part of the activation phase the [DashboardFlowNotifier](../../../../monitor/src/main/java/org/ikasan/monitor/notifier/DashboardFlowNotifier.java) notifies the Ikasan Dashboard of the flow states via the [Dashboard REST Services](../../../../visualisation/dashboard/dashboard-rest.md). 
+3. The FlowStateCache is updated, and the flow state update is broadcast to all relevant widgets associated with all active dashboard sessions.
+
+> [!NOTE]
+> - If the H2 database associated with the module/agent is corrupted or unavailable, the module/agent will not start.
+> - If the Ikasan Dashboard is unavailable, the flow states will not be written to the dashboard. The module/agent will still start and be operational without the dashboard being present.
+
+### Flow States Ikasan Dashboard Restart
+
+![flow states module activation](./images/ikasan-typology-Flow%20States%20Dashboard%20Restart.drawio.png)
+1. The Ikasan Dashboard is started.
+2. The Ikasan Dashboard queries the SOLR document indexes for all the registered module metadata.
+3. The FlowStateCache makes asynchronous calls to each of the registered modules/agents, requesting their flow states.
+4. When the flow states are returned, the FlowStateCache is updated, and the flow state update is broadcast to all relevant widgets associated with all active dashboard sessions.
+
+> [!NOTE]
+> - If the H2 database associated with the dashboard is corrupted or unavailable, the dashboard will not start.
+> - If the SOLR document index is unavailable, the registered module metadata collection cannot be acquired. Moreover, the dashboard will not start.
+> - If any of the registered modules/agents are unavailable, the FlowSateCache will continue to query other module/agents states, and will report any that are unavailable as 'UNKNOWN'.
