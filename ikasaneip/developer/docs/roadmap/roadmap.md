@@ -80,7 +80,7 @@ graph TD
     C --> D[IDE: Visual Designer];
     D -- "Edit/Design" --> C;
     C --> E[JSON-to-Java Compiler];
-    E --> F[Working Ikasan Module (Java Code)];
+    E --> F[Working Ikasan Module - Java Code];
     F --> G[Java-to-JSON Decompiler];
     G --> C;
     D -- "Visualize/Import" --> C;
