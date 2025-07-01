@@ -202,9 +202,15 @@ This theme focuses on enhancing Ikasan's capabilities for high availability (HA)
             S1 --- S2
             S2 --- S3
         end
-        IkasanDashboard --> S1
-        IkasanDashboard --> S2
-        IkasanDashboard --> S3
+        subgraph Ikasan Dashboard
+            ID1[Ikasan Dashboard 1] --> S1
+            ID2[Ikasan Dashboard 2] --> S2
+            ID3[Ikasan Dashboard 3] --> S3
+        end
+        LB[Sticky Session Load Balancer]
+        LB --> ID1
+        LB --> ID2
+        LB --> ID3
     ```
 *   **Goal: Decoupled Dashboard Services**
     *   **Action:** Refactor the `ikasan-dashboard` REST services into separate, standalone, stateless runtimes.
