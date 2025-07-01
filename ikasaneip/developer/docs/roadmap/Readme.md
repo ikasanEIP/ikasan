@@ -203,15 +203,12 @@ This theme focuses on enhancing Ikasan's capabilities for high availability (HA)
             S2 --- S3
         end
         subgraph Ikasan Dashboard
-            ID1[Ikasan Dashboard 1] --> S1
-            ID1 --> S2
-            ID1 --> S3
-            ID2[Ikasan Dashboard 2] --> S1
-            ID2 --> S2
-            ID2 --> S3
-            ID3[Ikasan Dashboard 3] --> S1
-            ID3 --> S2
-            ID3 --> S3
+            SC1[Solr Cloud Client] --> S1
+            SC1 --> S2
+            SC1 --> S3 
+            ID1[Ikasan Dashboard 1] --> SC1
+            ID2[Ikasan Dashboard 2] --> SC1
+            ID3[Ikasan Dashboard 3] --> SC1
         end
         LB[Sticky Session Load Balancer]
         LB --> ID1
