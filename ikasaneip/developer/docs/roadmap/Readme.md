@@ -215,6 +215,30 @@ This theme focuses on enhancing Ikasan's capabilities for high availability (HA)
         LB --> ID2
         LB --> ID3
     ```
+    ```mermaid
+    graph TD
+        subgraph SolrCloud
+            Z1[ZooKeeper 1] --- S1(Solr Node 1)
+            Z2[ZooKeeper 2] --- S2(Solr Node 2)
+            Z3[ZooKeeper 3] --- S3(Solr Node 3)
+            S1 --- S2
+            S2 --- S3
+        end
+        subgraph Ikasan Dashboard
+            DS[Distributed Session Cache] --> ID1
+            DS --> ID2
+            DS --> ID3 
+            SC1[Solr Cloud Client] --> S1
+            SC1 --> S2
+            SC1 --> S3 
+            ID1[Ikasan Dashboard 1] --> SC1
+            ID2[Ikasan Dashboard 2] --> SC1
+            ID3[Ikasan Dashboard 3] --> SC1
+        end
+        LB[Load Balancer] --> DS
+        
+    ```    
+
 *   **Goal: Decoupled Dashboard Services**
     *   **Action:** Refactor the `ikasan-dashboard` REST services into separate, standalone, stateless runtimes.
     *   **Why:** Improves scalability, resilience, and independent deployability of dashboard functionalities, allowing for better resource utilization and easier maintenance in HA setups.
