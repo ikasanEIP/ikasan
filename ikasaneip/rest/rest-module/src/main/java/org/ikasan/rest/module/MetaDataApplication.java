@@ -3,6 +3,7 @@ package org.ikasan.rest.module;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.FlowMetaDataProvider;
+import org.ikasan.spec.metadata.ModuleManifestMetaDataProvider;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
@@ -43,8 +44,10 @@ public class MetaDataApplication
     private ModuleMetaDataProvider<String> moduleMetaDataProvider;
 
     @Autowired
-    private ModuleService moduleService;
+    private ModuleManifestMetaDataProvider<String> moduleManifestMetaDataProvider;
 
+    @Autowired
+    private ModuleService moduleService;
 
     /**
      * Retrieves metadata for a specified flow.
@@ -94,5 +97,25 @@ public class MetaDataApplication
         });
 
         return new ResponseEntity(this.moduleMetaDataProvider.describeModule(module, stringStartupControlMap), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/moduleManifest/{moduleName}",
+        produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getModuleManifestMetadata(@PathVariable("moduleName") String moduleName) {
+
+        Module<Flow> module = moduleContainer.getModule(moduleName);
+
+        Map<String,StartupControl> stringStartupControlMap = new HashMap<>();
+
+        module.getFlows().forEach(flow -> {
+            StartupControl startupControl = moduleService.getStartupControl(moduleName, flow.getName());
+            if(startupControl != null) {
+                stringStartupControlMap.put(flow.getName(), startupControl);
+            }
+        });
+
+        return new ResponseEntity(this.moduleManifestMetaDataProvider.describeModuleManifest(module, stringStartupControlMap), HttpStatus.OK);
     }
 }

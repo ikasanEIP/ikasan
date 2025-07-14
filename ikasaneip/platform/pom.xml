@@ -60,6 +60,7 @@
         <module>ikasan-h2-standalone-persistence</module>
         <module>ikasan-migration</module>
         <module>ikasan-h2-backup</module>
+        <module>ikasan-module-builder</module>
     </modules>
 
 </project>
