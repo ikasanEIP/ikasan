@@ -3,6 +3,7 @@ package org.ikasan.rest.module;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.FlowMetaData;
 import org.ikasan.spec.metadata.FlowMetaDataProvider;
+import org.ikasan.spec.metadata.ModuleManifestMetaDataProvider;
 import org.ikasan.spec.metadata.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
@@ -43,13 +44,18 @@ public class MetaDataApplication
     private ModuleMetaDataProvider<String> moduleMetaDataProvider;
 
     @Autowired
+    private ModuleManifestMetaDataProvider<String> moduleManifestMetaDataProvider;
+
+    @Autowired
     private ModuleService moduleService;
 
+
     /**
+     * Retrieves metadata for a specific flow.
      *
-     * @param moduleName
-     * @param flowName
-     * @return
+     * @param moduleName the name of the module containing the flow
+     * @param flowName the name of the flow to retrieve metadata for
+     * @return ResponseEntity containing the metadata of the specified flow
      */
     @RequestMapping(method = RequestMethod.GET,
             value = "/flow/{moduleName}/{flowName}",
@@ -67,10 +73,13 @@ public class MetaDataApplication
         return new ResponseEntity(this.flowMetaDataProvider.describeFlow(flow, startupControl), HttpStatus.OK);
     }
 
+
+
     /**
+     * Retrieves the metadata of a module based on the provided module name.
      *
-     * @param moduleName
-     * @return
+     * @param moduleName the name of the module for which metadata is to be retrieved
+     * @return ResponseEntity containing the metadata of the specified module
      */
     @RequestMapping(method = RequestMethod.GET,
         value = "/module/{moduleName}",
@@ -90,5 +99,25 @@ public class MetaDataApplication
         });
 
         return new ResponseEntity(this.moduleMetaDataProvider.describeModule(module, stringStartupControlMap), HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/moduleManifest/{moduleName}",
+        produces = {"application/json"})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getModuleManifestMetadata(@PathVariable("moduleName") String moduleName) {
+
+        Module<Flow> module = moduleContainer.getModule(moduleName);
+
+        Map<String,StartupControl> stringStartupControlMap = new HashMap<>();
+
+        module.getFlows().forEach(flow -> {
+            StartupControl startupControl = moduleService.getStartupControl(moduleName, flow.getName());
+            if(startupControl != null) {
+                stringStartupControlMap.put(flow.getName(), startupControl);
+            }
+        });
+
+        return new ResponseEntity(this.moduleManifestMetaDataProvider.describeModuleManifest(module, stringStartupControlMap), HttpStatus.OK);
     }
 }

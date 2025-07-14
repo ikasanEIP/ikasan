@@ -445,6 +445,7 @@ public class BigQueueSampleFlowTest {
 
         //verify no messages were published
         assertEquals(0, outboundQueue.size());
+        assertEquals(1, inboundQueue.size());
 
         // Verify the error was stored in DB
         assertErrorsWithWait(1);

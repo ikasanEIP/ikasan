@@ -1,7 +1,7 @@
 package org.ikasan.cli.shell.operation.h2.migration;
 
 import org.ikasan.cli.shell.operation.ExecutableOperation;
-import org.ikasan.h2.migration.H2DbExtractPostProcessor;
+import org.ikasan.module.migration.H2DbExtractPostProcessor;
 import org.springframework.util.ResourceUtils;
 
 public class H2DatabaseMigrationSourcePostProcessOperation implements ExecutableOperation {

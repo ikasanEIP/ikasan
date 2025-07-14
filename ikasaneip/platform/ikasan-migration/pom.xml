@@ -16,5 +16,6 @@
 
     <modules>
         <module>ikasan-h2-migration</module>
+        <module>ikasan-module-migration</module>
     </modules>
 </project>
