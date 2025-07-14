@@ -253,7 +253,8 @@ public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
         flowElementMetaData.setDescription(flowElement.getDescription());
         flowElementMetaData.setComponentType(componentType);
 
-        if ( AopUtils.isJdkDynamicProxy(flowElement.getFlowComponent()) )
+        if ( AopUtils.isJdkDynamicProxy(flowElement.getFlowComponent()) || AopUtils.isAopProxy(flowElement.getFlowComponent())
+            || AopUtils.isCglibProxy(flowElement.getFlowComponent()))
         {
             flowElementMetaData
                 .setImplementingClass(AopProxyUtils.ultimateTargetClass(flowElement.getFlowComponent()).getName());

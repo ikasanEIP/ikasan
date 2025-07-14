@@ -768,6 +768,7 @@
                 <module>hospital</module>
                 <module>webconsole</module>
                 <module>topology</module>
+                <module>manifest</module>
                 <module>developer</module>
                 <module>transaction</module>
                 <module>replay</module>
@@ -1021,6 +1022,12 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-topology</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-manifest</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
