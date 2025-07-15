@@ -13,7 +13,7 @@ before_install:
   - echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
   - echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
   - echo RELOADAGENT | gpg-connect-agent
-  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
+  - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import --no-tty --batch --yes
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
   - export M2_HOME=$HOME/apache-maven-3.8.6
   - if [ ! -d $M2_HOME/bin ]; then curl https://archive.apache.org/dist/maven/maven-3/3.8.6/binaries/apache-maven-3.8.6-bin.tar.gz | tar zxf - -C $HOME; fi
