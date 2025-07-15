@@ -88,9 +88,6 @@ import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessagePayloadToStringSerialiser;
 import org.ikasan.component.router.multirecipient.RecipientListRouter;
 import org.ikasan.flow.visitorPattern.invoker.MultiRecipientRouterInvokerConfiguration;
-import org.ikasan.ootb.scheduled.processtracker.dao.ProcessStatusDaoFSImp;
-import org.ikasan.ootb.scheduled.processtracker.dao.SchedulerKryoProcessPersistenceImpl;
-import org.ikasan.ootb.scheduled.processtracker.service.SchedulerDefaultPersistenceServiceImpl;
 import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobMonitoringBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.JobStartingBroker;
@@ -107,7 +104,6 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -115,7 +111,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.nio.file.FileSystems;
 import java.util.Arrays;
 import java.util.List;
 
