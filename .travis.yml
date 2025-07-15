@@ -9,6 +9,7 @@ cache:
 
 ## export GPG details
 before_install:
+  - export GPG_TTY=$(tty)
   - echo $GPG_SECRET_KEYS | base64 --decode | $GPG_EXECUTABLE --import
   - echo $GPG_OWNERTRUST | base64 --decode | $GPG_EXECUTABLE --import-ownertrust
   - export M2_HOME=$HOME/apache-maven-3.8.6
