@@ -4,6 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
 import org.ikasan.spec.module.ModuleService;
@@ -15,8 +16,10 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import java.time.Duration;
 import java.util.Map;
 
+import static org.awaitility.Awaitility.with;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -39,6 +42,8 @@ public class AgentRecoveryRunnableTest {
 
     @Test
     public void should_successfully_recover_instances() {
+        Boolean hasRecovered = Boolean.FALSE;
+
         AgentRecoveryRunnable runner = new AgentRecoveryRunnable(
             contextInstanceRestService, contextInstanceIdentifierProvisionService, 1, AGENT, moduleService);
 
@@ -58,13 +63,16 @@ public class AgentRecoveryRunnableTest {
 
         when(contextInstanceRestService.getAllInstancesDashboardThinksAgentShouldHandle(AGENT)).thenReturn(liveContextInstances);
         runner.run();
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(500)).await().atMost(Duration.ofSeconds(30))
+            .until(() -> ContextInstanceCache.instance().isInitialisationComplete());
     }
 
     @Test(expected = EndpointException.class)
-    @Ignore // takes at least 1 minute to run
     public void should_throw_exception_if_times_out_recovering() {
-        AgentRecoveryRunnable runner = new AgentRecoveryRunnable(
-            contextInstanceRestService, contextInstanceIdentifierProvisionService, 1, AGENT, moduleService);
+        Boolean hasRecovered = Boolean.FALSE;
+        AgentRecoveryRunnable runner = new AgentRecoveryRunnable(contextInstanceRestService, contextInstanceIdentifierProvisionService
+            , 1, AGENT, moduleService);
 
         String contextName = RandomStringUtils.randomAlphabetic(12);
         ContextInstance instance1 = new ContextInstanceImpl();
@@ -82,5 +90,8 @@ public class AgentRecoveryRunnableTest {
         when(contextInstanceRestService.getAllInstancesDashboardThinksAgentShouldHandle(AGENT)).thenThrow(new EndpointException("excepted exception"));
 
         runner.run();
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(500)).await().atMost(Duration.ofSeconds(60))
+            .until(() -> ContextInstanceCache.instance().isInitialisationComplete());
     }
 }

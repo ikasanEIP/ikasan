@@ -50,6 +50,7 @@ import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InboundJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
@@ -67,10 +68,12 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -84,6 +87,7 @@ import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
@@ -108,6 +112,9 @@ public class JobProcessingFlowTest {
     @Resource
     private IBigQueue outboundQueue;
 
+    @MockitoBean
+    AgentInstanceRecoveryManager agentInstanceRecoveryManager;
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
@@ -129,6 +136,7 @@ public class JobProcessingFlowTest {
     public void setup() throws IOException {
         outboundQueue.removeAll();
 
+        ContextInstanceCache.instance().setInitialisationComplete(true);
         ContextInstanceCache.instance().put("contextInstanceId", new ContextInstanceImpl());
     }
 
