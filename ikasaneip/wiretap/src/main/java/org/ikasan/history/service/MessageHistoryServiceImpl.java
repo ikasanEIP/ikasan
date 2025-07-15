@@ -217,4 +217,8 @@ public class MessageHistoryServiceImpl implements MessageHistoryService<FlowInvo
     {
         this.messageHistoryDao.updateAsHarvested(events);
     }
+
+    public void setMessageHistoryDaysToLive(Integer messageHistoryDaysToLive) {
+        this.messageHistoryDaysToLive = messageHistoryDaysToLive;
+    }
 }
