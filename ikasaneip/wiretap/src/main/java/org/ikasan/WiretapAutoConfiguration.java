@@ -23,13 +23,11 @@ import org.ikasan.wiretap.serialiser.WiretapSerialiserService;
 import org.ikasan.wiretap.service.WiretapServiceImpl;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
-import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 
 import javax.sql.DataSource;
 import java.util.HashMap;
@@ -44,6 +42,9 @@ public class WiretapAutoConfiguration {
 
     @Value("${wiretapHousekeepingJob-deleteOnceHarvested:false}")
     private boolean deleteOnceHarvested;
+
+    @Value("${message.history.events.ttl.days:7}")
+    private int messageHistoryEventsTtlDays;
 
     @Bean
     @DependsOn({"liquibase","moduleMetadataDashboardRestService"})
@@ -69,6 +70,7 @@ public class WiretapAutoConfiguration {
         , PlatformConfigurationService platformConfigurationService) {
         MessageHistoryServiceImpl messageHistoryService = new MessageHistoryServiceImpl(messageHistoryDao, wiretapSerialiser);
         messageHistoryService.setPlatformConfigurationService(platformConfigurationService);
+        messageHistoryService.setMessageHistoryDaysToLive(this.messageHistoryEventsTtlDays);
 
         return messageHistoryService;
     }
