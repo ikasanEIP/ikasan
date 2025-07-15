@@ -297,7 +297,7 @@
         <version.commons-lang>2.6</version.commons-lang>
         <version.commons-lang3>3.17.0</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
-        <version.commons-beanutils>1.9.4</version.commons-beanutils>
+        <version.commons-beanutils>1.11.0</version.commons-beanutils>
         <version.commons-text>1.8</version.commons-text>
         <version.javassist>3.18.1-GA</version.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
