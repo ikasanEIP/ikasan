@@ -64,8 +64,7 @@ messageHistoryHousekeepingJob-houseKeepingBatchSize=2500
 messageHistoryHousekeepingJob-transactionBatchSize defaults=200
 messageHistoryHousekeepingJob-cronExpression=0 0/1 * * * ?
 messageHistoryHousekeepingJob-enabled=true
-
-
 ```
+Note the time to live of the message history records can be set using property `message.history.events.ttl.days`. The default value is 7 days.
 
 <br/>
