@@ -47,6 +47,7 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileCo
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer.configuration.HousekeepLogFilesProcessConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
@@ -63,6 +64,7 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
@@ -92,6 +94,8 @@ public class ApplicationTest {
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
+    @MockitoBean
+    AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
     @BeforeClass
     public static void setupObjectMapper() {

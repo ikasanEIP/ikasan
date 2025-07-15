@@ -40,6 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.router;
 
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.routing.RouterException;
@@ -59,12 +60,19 @@ public class ActiveInstanceRouter implements SingleRecipientRouter<EnrichedConte
     public static String ACTIVE_INSTANCE_ID = "ACTIVE_INSTANCE_ID";
     public static String INACTIVE_INSTANCE_ID = "INACTIVE_INSTANCE_ID";
 
+    private AgentInstanceRecoveryManager agentInstanceRecoveryManager;
+
     public ActiveInstanceRouter() {
     }
 
     @Override
     public String route(EnrichedContextualisedScheduledProcessEvent messageToRoute) throws RouterException
     {
+        if(!ContextInstanceCache.instance().isInitialisationComplete()) {
+            throw new AgentRecoveryNotCompleteException("Agent instance recovery not complete" +
+                ". Cannot process message until agent has resolved all running context instances from the Ikasan Scheduler Dashboard.");
+        }
+
         if (ContextInstanceCache.existsInCache(messageToRoute.getContextInstanceId())) {
             return ACTIVE_INSTANCE_ID;
         } else {
