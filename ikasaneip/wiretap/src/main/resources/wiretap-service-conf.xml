@@ -73,6 +73,7 @@
                 </constructor-arg>
             </bean>
         </constructor-arg>
+        <property name="messageHistoryDaysToLive" value="${message.history.events.ttl.days:7}"/>
         <property name="platformConfigurationService" ref="platformConfigurationService"/>
     </bean>
 	

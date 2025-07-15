@@ -99,6 +99,7 @@ public class MessageHistoryServiceImplTest
     {
         messageHistoryService = new MessageHistoryServiceImpl(messageHistoryDao, wiretapSerialiser);
         mockMessageHistoryService.setHistoryEventFactory(historyEventFactory);
+        mockMessageHistoryService.setMessageHistoryDaysToLive(3);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -121,7 +122,7 @@ public class MessageHistoryServiceImplTest
     public void test_save()
     {
         mockery.checking(new Expectations(){{
-            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext, 7);
+            oneOf(historyEventFactory).newEvent("moduleName", "flowName", flowInvocationContext, 3);
             will(returnValue(flowInvocationMetric));
             oneOf(mockMessageHistoryDao).save(flowInvocationMetric);
         }});
