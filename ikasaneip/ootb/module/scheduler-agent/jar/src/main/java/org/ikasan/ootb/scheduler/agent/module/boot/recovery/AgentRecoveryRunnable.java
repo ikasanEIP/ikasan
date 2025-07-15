@@ -2,6 +2,7 @@ package org.ikasan.ootb.scheduler.agent.module.boot.recovery;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
@@ -26,6 +27,15 @@ public class AgentRecoveryRunnable implements Runnable {
     private final String moduleName;
     private final ModuleService moduleService;
 
+    /**
+     * Constructor for AgentRecoveryRunnable class.
+     *
+     * @param contextInstanceRestService The service providing information about context instances from the dashboard.
+     * @param contextInstanceIdentifierProvisionService The service for provision, removal, and management of context instance identifiers.
+     * @param minutesToKeepRetrying The number of minutes to keep retrying agent recovery.
+     * @param moduleName The name of the module to which the agent belongs.
+     * @param moduleService The service for interacting with modules and flows.
+     */
     public AgentRecoveryRunnable(ContextInstanceRestService contextInstanceRestService,
                                  ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService,
                                  long minutesToKeepRetrying, String moduleName, ModuleService moduleService) {
@@ -69,7 +79,8 @@ public class AgentRecoveryRunnable implements Runnable {
                 runtimeException = null;
                 try {
                     // Reset instances to reflect what the dashboard thinks should be running
-                    Map<String, ContextInstance> contextInstancesThatShouldBeLive = contextInstanceRestService.getAllInstancesDashboardThinksAgentShouldHandle(moduleName);
+                    Map<String, ContextInstance> contextInstancesThatShouldBeLive = contextInstanceRestService
+                        .getAllInstancesDashboardThinksAgentShouldHandle(moduleName);
                     contextInstanceIdentifierProvisionService.reset(contextInstancesThatShouldBeLive);
                     LOG.info("Successfully recovered correlationId at start up for contexts: " + contextNames);
                     break;
@@ -91,6 +102,8 @@ public class AgentRecoveryRunnable implements Runnable {
         else {
             LOG.warn("Could not find module for: " + moduleName);
         }
+
+        ContextInstanceCache.instance().setInitialisationComplete(true);
     }
 
     private void sleep(long sleepTime) {

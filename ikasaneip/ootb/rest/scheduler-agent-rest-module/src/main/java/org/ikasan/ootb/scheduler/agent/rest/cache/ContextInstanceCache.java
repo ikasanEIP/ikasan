@@ -23,6 +23,8 @@ public class ContextInstanceCache {
     // correlationId -> ContextInstances
     private final ConcurrentHashMap<String, ContextInstance> contextInstanceMap;
 
+    private boolean initialisationComplete = false;
+
     private ContextInstanceCache() {
         this.contextInstanceMap = new ConcurrentHashMap<>();
     }
@@ -98,5 +100,17 @@ public class ContextInstanceCache {
 
     public static Set<String> getCorrelationIds() {
         return ContextInstanceCache.instance().contextInstanceMap.keySet();
+    }
+
+    public boolean isInitialisationComplete() {
+        return initialisationComplete;
+    }
+
+    public void setInitialisationComplete(boolean initialisationComplete) {
+        this.initialisationComplete = initialisationComplete;
+    }
+
+    public ConcurrentHashMap<String, ContextInstance> getContextInstanceMap() {
+        return contextInstanceMap;
     }
 }
