@@ -1,0 +1,298 @@
+{
+  "moduleMetaData": {
+    "name": "my-first-agent-module",
+    "description": "This is my first attempt to build Ikasan using an agent",
+    "version": "1.0.0-SNAPSHOT",
+    "type": "SCHEDULER_AGENT",
+    "url": "http://localhost:8080",
+    "flows": [
+      {
+        "name": "JMS to Database Flow",
+        "consumer": {
+          "componentName": "JMS Consumer",
+          "componentType": "consumer",
+          "implementingClass": "org.ikasan.component.jms.JmsConsumer",
+          "configurable": true,
+          "configurationId": "jms-consumer-config"
+        },
+        "flowElements": [
+          {
+            "componentName": "Database Producer",
+            "componentType": "producer",
+            "implementingClass": "org.ikasan.agent.sample.DbProducer",
+            "configurable": true,
+            "configurationId": "db-producer-config"
+          }
+        ],
+        "transitions": [
+          {
+            "from": "JMS Consumer",
+            "to": "Database Producer",
+            "name": "default"
+          }
+        ]
+      },
+      {
+        "name": "DB to JMS Flow",
+        "consumer": {
+          "componentName": "Database Consumer",
+          "componentType": "consumer",
+          "implementingClass": "org.ikasan.agent.demo.DBConsumer",
+          "configurable": true,
+          "configurationId": "db-consumer-config"
+        },
+        "flowElements": [
+          {
+            "componentName": "JMS Producer",
+            "componentType": "producer",
+            "implementingClass": "org.ikasan.component.jms.JmsProducer",
+            "configurable": true,
+            "configurationId": "jms-producer-config-db-flow"
+          }
+        ],
+        "transitions": [
+          {
+            "from": "Database Consumer",
+            "to": "JMS Producer",
+            "name": "default"
+          }
+        ]
+      }
+    ]
+  },
+  "configurationMetaData": [
+    {
+      "configurationId": "jms-consumer-config",
+      "description": "Configuration for the JMS Consumer",
+      "implementingClass": "org.ikasan.component.jms.JmsConsumerConfiguration",
+      "parameters": [
+        {
+          "name": "connectionFactoryName",
+          "value": "${jms.consumer.connectionFactoryName}",
+          "description": "The name of the JMS ConnectionFactory bean to use.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "destinationName",
+          "value": "${inbound.queue}",
+          "description": "The name of the JMS queue to consume from.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "autoContentConversion",
+          "value": "${jms.consumer.autoContentConversion}",
+          "description": "Whether to automatically convert message content.",
+          "implementingClass": "java.lang.Boolean"
+        },
+        {
+          "name": "acknowledgeMode",
+          "value": "${jms.consumer.acknowledgeMode}",
+          "description": "The JMS acknowledgement mode (e.g., AUTO_ACKNOWLEDGE, CLIENT_ACKNOWLEDGE).",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "sessionTransacted",
+          "value": "${jms.consumer.sessionTransacted}",
+          "description": "Whether the JMS session is transacted.",
+          "implementingClass": "java.lang.Boolean"
+        },
+        {
+          "name": "pubSubDomain",
+          "value": "${jms.consumer.pubSubDomain}",
+          "description": "Whether the destination is a topic (true) or a queue (false).",
+          "implementingClass": "java.lang.Boolean"
+        },
+        {
+          "name": "durableSubscriptionName",
+          "value": "${jms.consumer.durableSubscriptionName}",
+          "description": "The name of the durable subscription (for topics).",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "messageSelector",
+          "value": "${jms.consumer.messageSelector}",
+          "description": "The JMS message selector.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "concurrentConsumers",
+          "value": "${jms.consumer.concurrentConsumers}",
+          "description": "The number of concurrent consumers.",
+          "implementingClass": "java.lang.Integer"
+        },
+        {
+          "name": "maxConcurrentConsumers",
+          "value": "${jms.consumer.maxConcurrentConsumers}",
+          "description": "The maximum number of concurrent consumers.",
+          "implementingClass": "java.lang.Integer"
+        },
+        {
+          "name": "receiveTimeout",
+          "value": "${jms.consumer.receiveTimeout}",
+          "description": "The timeout for receiving messages in milliseconds.",
+          "implementingClass": "java.lang.Long"
+        },
+        {
+          "name": "idleTaskExecutionLimit",
+          "value": "${jms.consumer.idleTaskExecutionLimit}",
+          "description": "The maximum number of idle executions of the receive task.",
+          "implementingClass": "java.lang.Integer"
+        },
+        {
+          "name": "idleConsumerLimit",
+          "value": "${jms.consumer.idleConsumerLimit}",
+          "description": "The maximum number of idle consumers.",
+          "implementingClass": "java.lang.Integer"
+        }
+      ]
+    },
+    {
+      "configurationId": "db-producer-config",
+      "description": "Configuration for the Database Producer",
+      "implementingClass": "org.ikasan.agent.sample.DbProducerConfiguration",
+      "parameters": [
+        {
+          "name": "dataSourceName",
+          "value": "${db.datasource.name}",
+          "description": "The name of the DataSource bean to use for database operations.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "sqlStatement",
+          "value": "${db.producer.sql}",
+          "description": "The SQL statement to execute for each message.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "batchSize",
+          "value": "${db.producer.batchSize}",
+          "description": "The number of records to process in a single batch.",
+          "implementingClass": "java.lang.Integer"
+        }
+      ]
+    },
+    {
+      "configurationId": "db-consumer-config",
+      "description": "Configuration for the Database Consumer",
+      "implementingClass": "org.ikasan.agent.demo.DBConsumerConfiguration",
+      "parameters": [
+        {
+          "name": "dataSourceName",
+          "value": "${db.consumer.datasource.name}",
+          "description": "The name of the DataSource bean to use for database polling.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "sqlQuery",
+          "value": "${db.consumer.sql.query}",
+          "description": "The SQL query to execute to retrieve data.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "pollingFrequency",
+          "value": "${db.consumer.polling.frequency}",
+          "description": "The frequency (in milliseconds) at which the database is polled.",
+          "implementingClass": "java.lang.Long"
+        },
+        {
+          "name": "maxRows",
+          "value": "${db.consumer.max.rows}",
+          "description": "The maximum number of rows to retrieve per poll.",
+          "implementingClass": "java.lang.Integer"
+        }
+      ]
+    },
+    {
+      "configurationId": "jms-producer-config-db-flow",
+      "description": "Configuration for the JMS Producer in DB to JMS Flow",
+      "implementingClass": "org.ikasan.component.jms.JmsProducerConfiguration",
+      "parameters": [
+        {
+          "name": "connectionFactoryName",
+          "value": "${jms.producer.connectionFactoryName}",
+          "description": "The name of the JMS ConnectionFactory bean to use.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "destinationName",
+          "value": "${jms.producer.destinationName}",
+          "description": "The name of the JMS queue or topic to publish to.",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "timeToLive",
+          "value": "${jms.producer.timeToLive}",
+          "description": "The time to live for messages in milliseconds.",
+          "implementingClass": "java.lang.Long"
+        },
+        {
+          "name": "deliveryMode",
+          "value": "${jms.producer.deliveryMode}",
+          "description": "The JMS delivery mode (PERSISTENT or NON_PERSISTENT).",
+          "implementingClass": "java.lang.String"
+        },
+        {
+          "name": "priority",
+          "value": "${jms.producer.priority}",
+          "description": "The JMS message priority (0-9).",
+          "implementingClass": "java.lang.Integer"
+        },
+        {
+          "name": "explicitQosEnabled",
+          "value": "${jms.producer.explicitQosEnabled}",
+          "description": "Whether explicit Quality of Service (QoS) is enabled.",
+          "implementingClass": "java.lang.Boolean"
+        },
+        {
+          "name": "pubSubDomain",
+          "value": "${jms.producer.pubSubDomain}",
+          "description": "Whether the destination is a topic (true) or a queue (false).",
+          "implementingClass": "java.lang.Boolean"
+        },
+        {
+          "name": "sessionTransacted",
+          "value": "${jms.producer.sessionTransacted}",
+          "description": "Whether the JMS session is transacted.",
+          "implementingClass": "java.lang.Boolean"
+        },
+        {
+          "name": "sessionAcknowledgeMode",
+          "value": "${jms.producer.sessionAcknowledgeMode}",
+          "description": "The JMS acknowledgement mode for the session.",
+          "implementingClass": "java.lang.String"
+        }
+      ]
+    }
+  ],
+  "dependencyManagement": {
+    "repositories": [
+      {
+        "id": "ikasaneip-snapshots",
+        "url": "http://oss.sonatype.org/content/repositories/snapshots/"
+      },
+      {
+        "id": "ikasaneip-releases",
+        "url": "http://oss.sonatype.org/content/repositories/releases/"
+      },
+      {
+        "id": "central",
+        "url": "https://repo1.maven.org/maven2"
+      },
+      {
+        "id": "ikasaneip-releases",
+        "url": "https://maven.repository.redhat.com/earlyaccess/all"
+      },
+      {
+        "id": "local-repository",
+        "url": "file:///Users/mick/.m2/repository/"
+      }
+    ],
+    "dependencies": [
+      {
+        "group": "org.ikasan",
+        "artefact": "ikasan-configuration-service",
+        "version": "4.1.0"
+      }
+    ]
+  }
+}
