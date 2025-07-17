@@ -257,7 +257,7 @@
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>6.4.1.Final</version.org.hibernate>
         <version.org.hibernate-validator>8.0.1.Final</version.org.hibernate-validator>
-        <version.org.springframework>6.2.6</version.org.springframework>
+        <version.org.springframework>6.2.8</version.org.springframework>
         <version.org.springframework.security>6.2.8</version.org.springframework.security>
         <version.org.springframework.ldap>3.2.8</version.org.springframework.ldap>
         <version.org.springframework.webflow>3.0.0</version.org.springframework.webflow>
@@ -295,9 +295,9 @@
         <version.commons-io>2.7</version.commons-io>
         <version.ikasan.commons-dbcp2>1.0.0</version.ikasan.commons-dbcp2>
         <version.commons-lang>2.6</version.commons-lang>
-        <version.commons-lang3>3.17.0</version.commons-lang3>
+        <version.commons-lang3>3.18.0</version.commons-lang3>
         <version.commons-logging>1.2</version.commons-logging>
-        <version.commons-beanutils>1.9.4</version.commons-beanutils>
+        <version.commons-beanutils>1.11.0</version.commons-beanutils>
         <version.commons-text>1.8</version.commons-text>
         <version.javassist>3.18.1-GA</version.javassist>
         <version.org.apache.directory.server>2.0.0-M18</version.org.apache.directory.server>
@@ -339,7 +339,7 @@
         <version.com.fasterxml.jackson.core.databind>2.16.0</version.com.fasterxml.jackson.core.databind>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>33.0.0-jre</version.com.google.guava>
-        <version.tomcat>10.1.41</version.tomcat>
+        <version.tomcat>10.1.43</version.tomcat>
         <version.wiremock>3.0.3</version.wiremock>
         <version.org.apache.httpcomponents>5.4.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
