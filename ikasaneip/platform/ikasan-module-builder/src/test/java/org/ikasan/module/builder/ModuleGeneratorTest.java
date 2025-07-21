@@ -12,6 +12,6 @@ public class ModuleGeneratorTest extends AbstractTest {
         String moduleMetaData = this.loadDataFile("/data/moduleMetaData.json");
 
         ModuleGenerator moduleGenerator = new ModuleGenerator();
-        moduleGenerator.generate(moduleMetaData);
+        moduleGenerator.generate(moduleMetaData, "com.ikasan.sample.spring.boot");
     }
 }

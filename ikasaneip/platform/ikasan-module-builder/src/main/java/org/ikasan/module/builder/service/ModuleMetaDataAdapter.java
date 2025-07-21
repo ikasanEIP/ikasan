@@ -29,7 +29,7 @@ public class ModuleMetaDataAdapter {
      * @param moduleManifestMetaData The metadata of the module to adapt.
      * @return The adapted ModuleModel containing the name and flows from the input metadata.
      */
-    public ModuleModel adapt(ModuleManifestMetaData moduleManifestMetaData)
+    public ModuleModel adapt(ModuleManifestMetaData moduleManifestMetaData, String moduleBasePackage)
     {
         Map<String, ConfigurationMetaData> configurationMetaDataMap = new HashMap<>();
 
@@ -38,26 +38,28 @@ public class ModuleMetaDataAdapter {
                 collect(Collectors.toMap(metaData -> metaData.getConfigurationId(), metaData -> metaData));
         }
 
-        ModuleModel model = new ModuleModel(moduleManifestMetaData.getModuleMetaData().getName());
+        ModuleModel model = new ModuleModel(moduleManifestMetaData.getModuleMetaData().getName(), moduleBasePackage);
         for(FlowMetaData flowMetaData: moduleManifestMetaData.getModuleMetaData().getFlows())
         {
-            model.addFlow(this.manageFlow(flowMetaData, configurationMetaDataMap));
+            model.addFlow(this.manageFlow(flowMetaData, configurationMetaDataMap, moduleBasePackage));
         }
 
         return model;
     }
 
+
     /**
-     * Manages a flow based on the provided flow metadata and configuration metadata map.
+     * Manages the flow based on the provided metadata and configuration.
      *
      * @param flowMetaData The metadata of the flow being managed.
-     * @param configurationMetaDataMap Map of configuration metadata keyed by name.
-     * @return The managed FlowModel consisting of the flow name and the consumer component.
+     * @param configurationMetaDataMap Map containing configuration metadata.
+     * @param moduleBasePackage The base package of the module.
+     * @return The FlowModel representing the managed flow.
      */
-    public FlowModel manageFlow(FlowMetaData flowMetaData, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
+    public FlowModel manageFlow(FlowMetaData flowMetaData, Map<String, ConfigurationMetaData> configurationMetaDataMap,
+                                String moduleBasePackage) {
         Map<String, FlowElementMetaData> flowElements = flowMetaData.getFlowElements().stream().collect(
             Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData, (key1, key2) -> key1));
-
 
         List<Transition> uniqueTransitions = distinctList(flowMetaData.getTransitions(), Transition::getFrom, Transition::getTo);
         this.buildFromTransitionLabelMap(flowMetaData.getTransitions());
@@ -66,7 +68,7 @@ public class ModuleMetaDataAdapter {
         ConsumerComponent consumer = (ConsumerComponent) manageFlowElement(flowMetaData.getConsumer(), uniqueTransitions
             , flowElements, configurationMetaDataMap);
 
-        return new FlowModel(flowMetaData.getName(), consumer);
+        return new FlowModel(flowMetaData.getName(), moduleBasePackage, consumer);
     }
 
     /**
