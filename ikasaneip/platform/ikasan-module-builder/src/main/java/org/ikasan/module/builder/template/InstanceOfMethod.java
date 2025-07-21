@@ -9,6 +9,14 @@ import java.util.List;
 
 public class InstanceOfMethod implements TemplateMethodModelEx {
 
+    /**
+     * Executes the method to determine if the given object is an instance of the specified class.
+     *
+     * @param arguments A list containing two elements: the object to check and the fully qualified class name as a string.
+     * @return Returns true if the object is an instance of the specified class; false otherwise.
+     * @throws TemplateModelException if the number of arguments is not equal to 2, if the class specified by the name is
+     * not found, or if an error occurs during class loading.
+     */
     @Override
     public Object exec(List arguments) throws TemplateModelException {
         if (arguments.size() != 2) {
