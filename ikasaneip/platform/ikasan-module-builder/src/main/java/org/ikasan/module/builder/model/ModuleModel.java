@@ -5,10 +5,12 @@ import java.util.Map;
 
 public class ModuleModel {
     String name;
+    String moduleBasePackage;
     Map<String, FlowModel> flowModelMap;
 
-    public ModuleModel(String name) {
+    public ModuleModel(String name, String moduleBasePackage) {
         this.name = name;
+        this.moduleBasePackage = moduleBasePackage;
         this.flowModelMap = new HashMap<>();
     }
 
@@ -18,6 +20,10 @@ public class ModuleModel {
 
     public String getName() {
         return name;
+    }
+
+    public String getModuleBasePackage() {
+        return moduleBasePackage;
     }
 
     public Map<String, FlowModel> getFlowModelMap() {
