@@ -1,7 +1,7 @@
-package org.ikasan.module.generated;
+package com.ikasan.sample.spring.boot.component;
 
-import org.ikasan.spec.component.consumer.Consumer;
-import org.ikasan.spec.component.producer.Producer;
+import org.ikasan.spec.component.endpoint.Consumer;
+import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.routing.MultiRecipientRouter;
@@ -9,6 +9,7 @@ import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.sequencing.Sequencer;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Translator;
+import org.ikasan.spec.component.endpoint.Broker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -16,59 +17,65 @@ import org.springframework.context.annotation.Configuration;
 public class ComponentFactory {
 
 <#list flows as flow>
-    <#list flow.components as component>
-    <#if component.type == "consumer">
+    <#list flow.flowElements as component>
+    <#if component.componentType == "org.ikasan.spec.component.endpoint.Consumer">
     @Bean
-    public Consumer get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Consumer get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "producer">
+    <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Producer">
     @Bean
-    public Producer get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Producer get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "filter">
+    <#elseif component.componentType == "org.ikasan.spec.component.filter.Filter">
     @Bean
-    public Filter get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Filter get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "converter">
+    <#elseif component.componentType == "org.ikasan.spec.component.transformation.Converter">
     @Bean
-    public Converter get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Converter get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "multiRecipientRouter">
+    <#elseif component.componentType == "org.ikasan.spec.component.routing.MultiRecipientRouter">
     @Bean
-    public MultiRecipientRouter get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public MultiRecipientRouter get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "singleRecipientRouter">
+    <#elseif component.componentType == "org.ikasan.spec.component.routing.SingleRecipientRouter">
     @Bean
-    public SingleRecipientRouter get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public SingleRecipientRouter get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "sequencer">
+    <#elseif component.componentType == "org.ikasan.spec.component.sequencing.Sequencer">
     @Bean
-    public Sequencer get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Sequencer get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "splitter">
+    <#elseif component.componentType == "org.ikasan.spec.component.splitting.Splitter">
     @Bean
-    public Splitter get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Splitter get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
-    <#elseif component.type == "translator">
+    <#elseif component.componentType == "org.ikasan.spec.component.transformation.Translator">
     @Bean
-    public Translator get${component.name?replace(" ", "")}() {
-        return new ${component.className}();
+    public Translator get${component.componentName?replace(" ", "")}() {
+        return null;
+    }
+
+    <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Broker">
+    @Bean
+    public Broker get${component.componentName?replace(" ", "")}() {
+        return null;
     }
 
     </#if>

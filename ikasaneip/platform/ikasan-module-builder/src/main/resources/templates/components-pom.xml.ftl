@@ -11,9 +11,7 @@
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>${moduleMetaData.name}</artifactId>
-    <version>${moduleMetaData.version}</version>
-
+    <artifactId>${moduleMetaData.name}-components</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -75,23 +73,5 @@
 <#--        </dependency>-->
 
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>repackage</goal>
-                            <goal>build-info</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
 
 </project>

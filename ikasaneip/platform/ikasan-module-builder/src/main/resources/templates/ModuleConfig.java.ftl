@@ -3,11 +3,12 @@ package ${moduleBasePackage};
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.spec.module.Module;
+import org.ikasan.spec.flow.Flow;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import javax.annotation.Value;
+import org.springframework.beans.factory.annotation.Value;
 
 @Configuration
 public class ModuleConfig
@@ -16,9 +17,10 @@ public class ModuleConfig
     private String moduleName;
     @Resource
     private BuilderFactory builderFactory;
+<#list flowModelMap?values as flow>
     @Resource
-    private ComponentFactory componentFactory;
-
+    private Flow ${flow.name?replace(" ", "")?uncap_first};
+</#list>
     @Bean
     public Module getModule()
     {
@@ -26,7 +28,7 @@ public class ModuleConfig
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder(moduleName);
         Module module = moduleBuilder.withDescription("todo")
 <#list flowModelMap?values as flow>
-            .addFlow(${flow.name})
+            .addFlow(${flow.name?replace(" ", "")?uncap_first})
 </#list>
             .build();
 
