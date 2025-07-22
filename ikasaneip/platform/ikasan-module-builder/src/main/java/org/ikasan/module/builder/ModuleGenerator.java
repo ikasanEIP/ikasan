@@ -37,22 +37,14 @@ public class ModuleGenerator {
         this.moduleGeneratorFileManager = new ModuleGeneratorFileManager(rootDir);
 
         // Generate pom.xml
-        Template pomTemplate = cfg.getTemplate("scaffolding-pom.xml.ftl");
-        try (Writer fileWriter = new FileWriter(new File(rootDir, "pom.xml"))) {
-            pomTemplate.process(root, fileWriter);
-        }
-        try (Writer fileWriter = new FileWriter(new File(moduleGeneratorFileManager.getScaffoldingDir()
-            , "pom.xml"))) {
-            pomTemplate.process(root, fileWriter);
-        }
-        try (Writer fileWriter = new FileWriter(new File(this.moduleGeneratorFileManager.getComponentsDir()
-            , "pom.xml"))) {
-            pomTemplate.process(root, fileWriter);
-        }
-        try (Writer fileWriter = new FileWriter(new File(this.moduleGeneratorFileManager.getDistributionBase()
-            , "pom.xml"))) {
-            pomTemplate.process(root, fileWriter);
-        }
+        this.managePomCreation(cfg, rootDir, "parent-pom.xml.ftl", root);
+        this.managePomCreation(cfg, moduleGeneratorFileManager.getScaffoldingDir()
+            , "scaffolding-pom.xml.ftl", root);
+        this.managePomCreation(cfg, moduleGeneratorFileManager.getComponentsDir()
+            , "components-pom.xml.ftl", root);
+        this.managePomCreation(cfg, moduleGeneratorFileManager.getDistributionBase()
+            , "distribution-pom.xml.ftl", root);
+
 
         // Generate ModuleConfig.java
         File moduleConfigPackage = new File(this.moduleGeneratorFileManager.getScaffoldingJavaSrcMainBase()
@@ -61,6 +53,11 @@ public class ModuleGenerator {
 
         ModuleMetaDataAdapter adapter = new ModuleMetaDataAdapter();
         ModuleModel model = adapter.adapt(root, migrationProjectBasePackage);
+
+        Template applicationTemplate = cfg.getTemplate("Application.java.ftl");
+        try (Writer fileWriter = new FileWriter(new File(moduleConfigPackage, "Application.java"))) {
+            applicationTemplate.process(model, fileWriter);
+        }
 
         Template moduleConfigTemplate = cfg.getTemplate("ModuleConfig.java.ftl");
         try (Writer fileWriter = new FileWriter(new File(moduleConfigPackage, "ModuleConfig.java"))) {
@@ -82,10 +79,24 @@ public class ModuleGenerator {
             }
         });
 
+        File componentConfigPackage = new File(this.moduleGeneratorFileManager.getScaffoldingJavaSrcMainBase()
+            , migrationProjectBasePackage.replaceAll("\\.", "/")+"/component");
+        componentConfigPackage.mkdirs();
 
+        Template componentConfigurationConfigTemplate = cfg.getTemplate("ComponentFactory.java.ftl");
+        try (Writer fileWriter = new FileWriter(new File(componentConfigPackage, "ComponentFactory.java"))) {
+            componentConfigurationConfigTemplate.process(moduleMetaData, fileWriter);
+        }
         System.out.println("Successfully generated Ikasan module: " + moduleMetaData.getName());
     }
 
+    private void managePomCreation(Configuration cfg, File outputDir , String pomTemplateName, Object data)
+        throws IOException, TemplateException {
+        Template pomTemplate = cfg.getTemplate(pomTemplateName);
+        try (Writer fileWriter = new FileWriter(new File(outputDir, "pom.xml"))) {
+            pomTemplate.process(data, fileWriter);
+        }
+    }
     public static String capitalizeFirst(String str) {
         if (str == null || str.isEmpty()) {
             return str; // Handle null or empty strings
