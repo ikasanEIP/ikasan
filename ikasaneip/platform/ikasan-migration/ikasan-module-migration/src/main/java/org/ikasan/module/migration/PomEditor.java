@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class PomEditor {
 
@@ -24,7 +25,8 @@ public class PomEditor {
      * @throws IOException If an I/O exception occurs during file operations.
      * @throws XmlPullParserException If an error occurs in parsing XML.
      */
-    public static void addDependency(File pomFile, String groupId, String artifactId, String version) throws IOException, XmlPullParserException {
+    public static void addDependency(File pomFile, String groupId, String artifactId, String version)
+        throws IOException, XmlPullParserException {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = reader.read(new FileReader(pomFile));
 
@@ -45,6 +47,26 @@ public class PomEditor {
             d.getGroupId().equals(groupId) &&
             d.getVersion().equals(version)).findFirst().isPresent()) {
             model.addDependency(dependency);
+        }
+
+        MavenXpp3Writer writer = new MavenXpp3Writer();
+        writer.write(new FileWriter(pomFile), model);
+    }
+
+    public static void removeDependency(File pomFile, String groupId, String artifactId)
+        throws IOException, XmlPullParserException {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = reader.read(new FileReader(pomFile));
+
+        AtomicReference<Dependency> dependencyToRemove = new AtomicReference<>();
+        model.getDependencies().forEach(dependency -> {
+            if(dependency.getGroupId().equals(groupId) && dependency.getArtifactId().equals(artifactId)) {
+               dependencyToRemove.set(dependency);
+            }
+        });
+
+        if(dependencyToRemove.get() != null) {
+            model.removeDependency(dependencyToRemove.get());
         }
 
         MavenXpp3Writer writer = new MavenXpp3Writer();
