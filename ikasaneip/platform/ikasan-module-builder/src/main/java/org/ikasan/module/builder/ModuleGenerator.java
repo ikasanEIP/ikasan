@@ -6,8 +6,11 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
 import org.ikasan.manifest.ModuleManifestMetaDataHelper;
 import org.ikasan.module.builder.model.ModuleModel;
+import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
 import org.ikasan.module.builder.service.ModuleMetaDataAdapter;
-import org.ikasan.module.builder.utils.ModuleGeneratorFileManager;
+import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
+import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
+import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingClass;
 import org.ikasan.spec.metadata.*;
 
 import java.io.File;
@@ -17,13 +20,13 @@ import java.io.Writer;
 
 public class ModuleGenerator {
 
-    private ModuleGeneratorFileManager moduleGeneratorFileManager;
+    private ModuleFileManager moduleFileManager;
+    private LocalBeanMigrationManager localBeanMigrationManager;
 
-    public void generate(String jsonFile, String migrationProjectBasePackage) throws IOException, TemplateException {
-        ModuleManifestMetaData root = ModuleManifestMetaDataHelper.deserialiseModuleManifest(jsonFile);
-
+    public void generate(ModuleManifestMetaData root, String migrationProjectBasePackage,
+                         ModuleFileManager moduleFileManager) throws IOException, TemplateException {
         Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
-        cfg.setDirectoryForTemplateLoading(new File("src/main/resources/templates"));
+        cfg.setClassForTemplateLoading(this.getClass(), "/templates");
         cfg.setDefaultEncoding("UTF-8");
         cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         cfg.setLogTemplateExceptions(false);
@@ -34,20 +37,22 @@ public class ModuleGenerator {
         File rootDir = new File(moduleMetaData.getName());
         rootDir.mkdirs();
 
-        this.moduleGeneratorFileManager = new ModuleGeneratorFileManager(rootDir);
+        this.moduleFileManager = moduleFileManager;
 
         // Generate pom.xml
         this.managePomCreation(cfg, rootDir, "parent-pom.xml.ftl", root);
-        this.managePomCreation(cfg, moduleGeneratorFileManager.getScaffoldingDir()
+        this.managePomCreation(cfg, moduleFileManager.getScaffoldingDir()
             , "scaffolding-pom.xml.ftl", root);
-        this.managePomCreation(cfg, moduleGeneratorFileManager.getComponentsDir()
+        this.managePomCreation(cfg, moduleFileManager.getComponentsDir()
             , "components-pom.xml.ftl", root);
-        this.managePomCreation(cfg, moduleGeneratorFileManager.getDistributionBase()
+        this.managePomCreation(cfg, moduleFileManager.getDistributionBase()
             , "distribution-pom.xml.ftl", root);
 
+        this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot",
+            new File("/Users/mick/workspace/archetype/jms-demo"), moduleFileManager);
 
         // Generate ModuleConfig.java
-        File moduleConfigPackage = new File(this.moduleGeneratorFileManager.getScaffoldingJavaSrcMainBase()
+        File moduleConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
             , migrationProjectBasePackage.replaceAll("\\.", "/"));
         moduleConfigPackage.mkdirs();
 
@@ -66,7 +71,7 @@ public class ModuleGenerator {
 
         Template flowConfigTemplate = cfg.getTemplate("FlowConfig.java.ftl");
 
-        File flowConfigPackage = new File(this.moduleGeneratorFileManager.getScaffoldingJavaSrcMainBase()
+        File flowConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
             , migrationProjectBasePackage.replaceAll("\\.", "/")+"/flow");
         flowConfigPackage.mkdirs();
 
@@ -79,7 +84,7 @@ public class ModuleGenerator {
             }
         });
 
-        File componentConfigPackage = new File(this.moduleGeneratorFileManager.getScaffoldingJavaSrcMainBase()
+        File componentConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
             , migrationProjectBasePackage.replaceAll("\\.", "/")+"/component");
         componentConfigPackage.mkdirs();
 
@@ -87,6 +92,15 @@ public class ModuleGenerator {
         try (Writer fileWriter = new FileWriter(new File(componentConfigPackage, "ComponentFactory.java"))) {
             componentConfigurationConfigTemplate.process(moduleMetaData, fileWriter);
         }
+
+        Template distributionConfigTemplate = cfg.getTemplate("distribution.xml.ftl");
+        try (Writer fileWriter = new FileWriter(new File(this.moduleFileManager.getDistributionBase()
+            , "distribution.xml"))) {
+            distributionConfigTemplate.process(root, fileWriter);
+        }
+
+        this.localBeanMigrationManager.migrateSpringBeans(root);
+
         System.out.println("Successfully generated Ikasan module: " + moduleMetaData.getName());
     }
 

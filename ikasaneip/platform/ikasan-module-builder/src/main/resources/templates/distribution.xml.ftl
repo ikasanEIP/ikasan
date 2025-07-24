@@ -9,7 +9,7 @@
             <directory>../bin</directory>
             <filtered>true</filtered>
             <fileMode>755</fileMode>
-            <outputDirectory>jms-demo-1.0.0-SNAPSHOT</outputDirectory>
+            <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>../jar/src/main/resources</directory>
@@ -18,7 +18,7 @@
                 <include>application.properties</include>
                 <include>logback-spring.xml</include>
             </includes>
-            <outputDirectory>jms-demo-1.0.0-SNAPSHOT/config</outputDirectory>
+            <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}/config</outputDirectory>
         </fileSet>
     </fileSets>
 
@@ -30,7 +30,7 @@
             <useProjectArtifact>false</useProjectArtifact>
             <!-- Now, select which projects to include in this module-set. -->
             <includes>
-                <include>com.demo:jms-demo</include>
+                <include>org.ikasan:jms-demo</include>
                 <include>com.h2database:h2:jar:2.2.224</include>
             </includes>
             <outputDirectory>jms-demo-1.0.0-SNAPSHOT/lib</outputDirectory>
@@ -40,10 +40,10 @@
             <useProjectArtifact>false</useProjectArtifact>
             <!-- contains lib\hell,jar and ikasan.sh -->
             <includes>
-                <include>org.ikasan:ikasan-shell-distribution:zip:${version.ikasan}</include>
+                <include>org.ikasan:ikasan-shell-distribution:zip:${moduleMetaData.ikasanVersion}</include>
             </includes>
             <unpack>true</unpack>
-            <outputDirectory>jms-demo-1.0.0-SNAPSHOT/</outputDirectory>
+            <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}/</outputDirectory>
         </dependencySet>
     </dependencySets>
 </assembly>

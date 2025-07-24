@@ -1,13 +1,23 @@
-package org.ikasan.module.migration;
+package org.ikasan.module.migration.util.maven;
 
 import org.apache.maven.shared.invoker.*;
+import org.ikasan.module.migration.util.maven.handler.MissingClassInvocationOutputHandler;
+import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingClass;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 public class MavenProjectBuilder {
+    public static final String COMPILATION_FAILURE = "Compilation failure";
+    public static final String CANNOT_FIND_SYMBOL = "cannot find symbol";
+    public static final String SYMBOL = "symbol:";
+    public static final String LOCATION = "location:";
+    public static final String ERROR = "[ERROR]";
 
     private final Invoker invoker;
+    private MissingClassInvocationOutputHandler missingClassInvocationOutputHandler;
 
     /**
      * Constructs a new instance of MavenProjectBuilder with the specified Maven home directory.
@@ -34,6 +44,9 @@ public class MavenProjectBuilder {
         request.setGoals(Collections.singletonList(mavenCommand));
 
         try {
+            this.missingClassInvocationOutputHandler
+                = new MissingClassInvocationOutputHandler();
+            request = request.setOutputHandler(missingClassInvocationOutputHandler);
             InvocationResult result = invoker.execute(request);
             return result.getExitCode() == 0;
         } catch (MavenInvocationException e) {
@@ -41,5 +54,9 @@ public class MavenProjectBuilder {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<CompilationFailureMissingClass> getMissingClassList() {
+        return this.missingClassInvocationOutputHandler.getMissingClassList();
     }
 }

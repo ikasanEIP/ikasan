@@ -10,8 +10,8 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>scaffolding</module>
         <module>components</module>
+        <module>scaffolding</module>
         <module>distribution</module>
     </modules>
 

@@ -1,4 +1,4 @@
-package org.ikasan.module.builder.utils;
+package org.ikasan.module.migration.util.maven;
 
 public class ModuleGeneratorConstants {
     public static final String SCAFFOLDING_BASE = "scaffolding";
