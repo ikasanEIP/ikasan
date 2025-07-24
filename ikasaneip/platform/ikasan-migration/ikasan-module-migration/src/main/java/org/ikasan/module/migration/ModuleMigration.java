@@ -108,8 +108,16 @@ public class ModuleMigration {
         testClassEditor.addAutowiredApplicationContext(flowTest);
         testClassEditor.addJsonConfigurationMetaDataExtractor(flowTest);
         testClassEditor.addJsonModuleMetaDataProvider(flowTest);
+//        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
+//            , "org.ikasan","ikasan-manifest", "4.1.1-SNAPSHOT");
+        PomEditor.removeDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
+            "org.ikasan", "ikasan-manifest");
         PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
-            , "org.ikasan","ikasan-manifest", "4.1.1-SNAPSHOT");
+            , "org.ikasan","ikasan-manifest", "3.3.9-SNAPSHOT");
+        PomEditor.removeDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
+            "org.ikasan", "ikasan-spec-metadata");
+        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
+            , "org.ikasan","ikasan-spec-metadata", "3.3.9-SNAPSHOT");
     }
 
     /**
