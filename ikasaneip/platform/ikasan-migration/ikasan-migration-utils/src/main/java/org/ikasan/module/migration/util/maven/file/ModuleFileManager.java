@@ -1,8 +1,11 @@
-package org.ikasan.module.builder.utils;
+package org.ikasan.module.migration.util.maven.file;
+
+import org.ikasan.module.migration.util.maven.ModuleGeneratorConstants;
 
 import java.io.File;
 
-public class ModuleGeneratorFileManager {
+public class ModuleFileManager {
+    private File projectRootDirectory;
     private File scaffoldingDir;
     private File componentsDir;
     private File distributionBase;
@@ -17,11 +20,12 @@ public class ModuleGeneratorFileManager {
     private File binBase;
 
     /**
-     * Constructs a ModuleGeneratorFileManager instance with the specified root directory.
+     * Constructs a ModuleFileManager instance with the specified root directory.
      *
      * @param rootDir the root directory where the module generator files will be generated
      */
-    public ModuleGeneratorFileManager(File rootDir) {
+    public ModuleFileManager(File rootDir) {
+        this.projectRootDirectory = rootDir;
         this.scaffoldingDir = this.createChildDirectory(rootDir, ModuleGeneratorConstants.SCAFFOLDING_BASE);
         this.componentsDir = this.createChildDirectory(rootDir, ModuleGeneratorConstants.COMPONENTS_BASE);
         this.distributionBase = this.createChildDirectory(rootDir, ModuleGeneratorConstants.DISTRIBUTION_BASE);
@@ -48,6 +52,15 @@ public class ModuleGeneratorFileManager {
         childDirectory.mkdirs();
 
         return childDirectory;
+    }
+
+    /**
+     * Retrieves the project root directory.
+     *
+     * @return File object representing the project root directory.
+     */
+    public File getProjectRootDirectory() {
+        return projectRootDirectory;
     }
 
     /**

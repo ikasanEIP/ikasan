@@ -1,16 +1,12 @@
 package org.ikasan.module.migration;
 
+import freemarker.template.TemplateException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FlowTestInspectorTest {
 
@@ -18,7 +14,7 @@ class FlowTestInspectorTest {
     Path tempDir;
 
     @Test
-    public void test_against_real_project() throws IOException, XmlPullParserException {
+    public void test_against_real_project() throws IOException, XmlPullParserException, TemplateException {
 //        FlowTestInspector inspector = new FlowTestInspector();
 //        List<File> flowTests = inspector.findFlowTests(new File("/Users/mick/workspace/archetype/jms-demo"));
 //        assertEquals(1, flowTests.size());

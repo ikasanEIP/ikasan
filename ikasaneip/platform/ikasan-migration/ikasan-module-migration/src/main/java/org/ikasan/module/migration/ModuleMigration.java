@@ -1,7 +1,12 @@
 package org.ikasan.module.migration;
 
+import freemarker.template.TemplateException;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.ikasan.manifest.ModuleManifestMetaDataHelper;
+import org.ikasan.module.builder.ModuleGenerator;
+import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
+import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
+import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
 import org.ikasan.spec.metadata.ModuleManifestMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,26 +23,46 @@ public class ModuleMigration {
     private String migrationWorkingDirectory;
     private String testClassName;
 
+    private ModuleFileManager moduleFileManager;
+    private ModuleBuildMigrationHelper moduleBuildMigrationHelper;
+    private LocalBeanMigrationManager localBeanMigrationManager;
+
+    /**
+     * Constructs a new ModuleMigration object with the specified parameters.
+     *
+     * @param migrationProjectBaseDirectory The base directory of the migration project.
+     * @param migrationProjectBasePackageName The base package name of the migration project.
+     * @param migrationWorkingDirectory The working directory for the migration process.
+     * @param testClassName The name of the test class to be used for migration.
+     */
     public ModuleMigration(String migrationProjectBaseDirectory, String migrationProjectBasePackageName
         , String migrationWorkingDirectory, String testClassName) {
         this.migrationProjectBaseDirectory = migrationProjectBaseDirectory;
         this.migrationProjectBasePackageName = migrationProjectBasePackageName;
         this.migrationWorkingDirectory = migrationWorkingDirectory;
         this.testClassName = testClassName;
+
+        // todo fix dir
+        File rootDir = new File("jms-demo");
+        rootDir.mkdirs();
+
+        this.moduleFileManager = new ModuleFileManager(rootDir);
+        this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot",
+            new File(migrationProjectBaseDirectory), this.moduleFileManager);
+        this.moduleBuildMigrationHelper = new ModuleBuildMigrationHelper(localBeanMigrationManager,
+            moduleFileManager);
     }
 
     /**
-     * This method is responsible for executing the migration process. It performs the following steps:
-     * 1. Retrieves the Flow Test file.
-     * 2. Modifies the Flow Test class in order to extract module metadata.
-     * 3. Runs the Flow Test class to extract module metadata.
-     * 4. Loads the module manifest metadata.
-     * 5. Logs the serialized module manifest metadata.
+     * Method to migrate a module by performing a series of steps including modifying the Flow Test class,
+     * running the Flow Test to extract module metadata, loading module manifest metadata,
+     * generating a migrated module based on the metadata, and building the migrated module.
      *
      * @throws IOException if an I/O exception occurs during file operations.
      * @throws XmlPullParserException if an error occurs in parsing XML.
+     * @throws TemplateException if an error occurs during template processing.
      */
-    public void migrate() throws IOException, XmlPullParserException {
+    public void migrate() throws IOException, XmlPullParserException, TemplateException {
         File flowTest = this.getFlowTestFile();
         if(flowTest == null) {
             logger.info(String.format("Could not locate the test class[%s], in an directories under[%s]. Exiting!"
@@ -50,6 +75,9 @@ public class ModuleMigration {
 
         ModuleManifestMetaData moduleManifestMetaData = this.loadModuleManifestMetaData();
         logger.info(ModuleManifestMetaDataHelper.serialiseModuleManifest(moduleManifestMetaData));
+
+        this.generateMigratedModule(moduleManifestMetaData);
+        this.buildMigratedModule();
     }
 
     /**
@@ -94,7 +122,8 @@ public class ModuleMigration {
     }
 
     /**
-     * Loads the module manifest metadata by deserializing the content of the moduleMetaData.json file located in the migrationWorkingDirectory.
+     * Loads the module manifest metadata by deserializing the content of the moduleMetaData.json file located in the
+     * migrationWorkingDirectory.
      *
      * @return The deserialized ModuleManifestMetaData object representing the top-level manifest for an Ikasan module,
      *         or null if an error occurs during deserialization.
@@ -105,5 +134,29 @@ public class ModuleMigration {
             (new File(this.migrationWorkingDirectory + "/moduleMetaData.json").toPath());
 
         return ModuleManifestMetaDataHelper.deserialiseModuleManifest(new String(moduleManifestMetaDataContents));
+    }
+
+    /**
+     * Generates a migrated module based on the provided ModuleManifestMetaData.
+     *
+     * @param moduleManifestMetaData The metadata of the module manifest to generate the migrated module.
+     * @throws TemplateException if an error occurs during template processing.
+     * @throws IOException if an I/O exception occurs during file operations.
+     */
+    private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+        ModuleGenerator moduleGenerator = new ModuleGenerator();
+        moduleGenerator.generate(moduleManifestMetaData
+            , "com.ikasan.sample.spring.boot", this.moduleFileManager);
+    }
+
+    /**
+     * This method is responsible for building a migrated module by invoking the runBuild method of the moduleBuildMigrationHelper.
+     * It ensures that the module is built successfully by continuously attempting to clean and install the project until it passes.
+     * If any missing dependencies are encountered during the build process, they are copied by the localBeanMigrationManager.
+     *
+     * @throws IOException if an I/O exception occurs during file operations
+     */
+    private void buildMigratedModule() throws IOException {
+        this.moduleBuildMigrationHelper.runBuild();
     }
 }

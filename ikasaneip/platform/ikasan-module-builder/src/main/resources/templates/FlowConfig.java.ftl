@@ -77,6 +77,9 @@ import ${moduleBasePackage}.component.ComponentFactory;
 
 </#macro>
 
+<#--
+    todo
+-->
 <#macro addSingleTransitionComponentToBuilder component primaryRoute>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
     <#if instanceOf(component, "org.ikasan.module.builder.model.ConsumerComponent")>
@@ -116,6 +119,9 @@ import ${moduleBasePackage}.component.ComponentFactory;
     </#if>
 </#macro>
 
+<#--
+    todo
+-->
 <#macro addMultiTransitionComponentToBuilder component>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
     <#if instanceOf(component, "org.ikasan.module.builder.model.MultiRecipientRouterComponent")>
@@ -148,7 +154,7 @@ public class ${name?replace(" ", "")?cap_first}Config
 
     * @return the flow bean.
     */
-    @Bean
+    @Bean(name = "${name?replace(" ", "")?uncap_first}")
     public Flow ${name?replace(" ", "")?cap_first}()
     {
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder(moduleName);

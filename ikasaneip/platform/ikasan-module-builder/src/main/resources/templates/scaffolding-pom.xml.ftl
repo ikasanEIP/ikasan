@@ -46,15 +46,23 @@
             <scope>test</scope>
         </dependency>
 
-<#--        <dependency>-->
-<#--            <groupId>org.apache.activemq</groupId>-->
-<#--            <artifactId>activemq-client</artifactId>-->
-<#--        </dependency>-->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>${moduleMetaData.name}-components</artifactId>
+            <version>${moduleMetaData.version}</version>
+        </dependency>
 
-<#--        <dependency>-->
-<#--            <groupId>org.apache.activemq</groupId>-->
-<#--            <artifactId>activemq-broker</artifactId>-->
-<#--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${"$"}{version.activemq}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>${"$"}{version.activemq}</version>
+        </dependency>
 
 <#--        <dependency>-->
 <#--            <groupId>org.awaitility</groupId>-->
