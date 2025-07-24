@@ -84,6 +84,7 @@ import java.util.Map;
         "classpath:hospital-conf.xml",
         "classpath:exclusion-service-conf.xml",
         "classpath:topology-conf.xml",
+        "classpath:manifest-conf.xml",
         "classpath:datasource-conf.xml",
         "classpath:security-service-boot-conf.xml",
         "classpath:springapp-servlet-boot.xml",
