@@ -21,12 +21,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.demo</groupId>
-            <artifactId>${moduleMetaData.name}-scaffolding</artifactId>
+            <groupId>org.ikasan</groupId>
+            <artifactId>${moduleMetaData.name}</artifactId>
             <version>${moduleMetaData.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.demo</groupId>
+            <groupId>org.ikasan</groupId>
             <artifactId>${moduleMetaData.name}-components</artifactId>
             <version>${moduleMetaData.version}</version>
         </dependency>

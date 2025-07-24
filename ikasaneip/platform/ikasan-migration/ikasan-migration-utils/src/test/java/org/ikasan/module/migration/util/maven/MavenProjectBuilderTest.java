@@ -1,4 +1,4 @@
-package org.ikasan.module.migration;
+package org.ikasan.module.migration.util.maven;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
