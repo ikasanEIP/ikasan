@@ -4,13 +4,10 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import org.ikasan.manifest.ModuleManifestMetaDataHelper;
+import org.ikasan.module.builder.model.FlowModel;
 import org.ikasan.module.builder.model.ModuleModel;
-import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
 import org.ikasan.module.builder.service.ModuleMetaDataAdapter;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
-import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
-import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingClass;
 import org.ikasan.spec.metadata.*;
 
 import java.io.File;
@@ -21,35 +18,24 @@ import java.io.Writer;
 public class ModuleGenerator {
 
     private ModuleFileManager moduleFileManager;
-    private LocalBeanMigrationManager localBeanMigrationManager;
+    private Configuration freeMarkerConfiguration;
 
-    public void generate(ModuleManifestMetaData root, String migrationProjectBasePackage,
-                         ModuleFileManager moduleFileManager) throws IOException, TemplateException {
-        Configuration cfg = new Configuration(Configuration.VERSION_2_3_32);
-        cfg.setClassForTemplateLoading(this.getClass(), "/templates");
-        cfg.setDefaultEncoding("UTF-8");
-        cfg.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
-        cfg.setLogTemplateExceptions(false);
-        cfg.setWrapUncheckedExceptions(true);
+    public ModuleGenerator(ModuleFileManager moduleFileManager) {
+        this.moduleFileManager = moduleFileManager;
 
+        this.freeMarkerConfiguration = new Configuration(Configuration.VERSION_2_3_32);
+        this.freeMarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+        this.freeMarkerConfiguration.setDefaultEncoding("UTF-8");
+        this.freeMarkerConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
+        this.freeMarkerConfiguration.setLogTemplateExceptions(false);
+        this.freeMarkerConfiguration.setWrapUncheckedExceptions(true);
+    }
+
+    public void generate(ModuleManifestMetaData root, String migrationProjectBasePackage) throws IOException, TemplateException {
         ModuleMetaData moduleMetaData = root.getModuleMetaData();
 
         File rootDir = new File(moduleMetaData.getName());
         rootDir.mkdirs();
-
-        this.moduleFileManager = moduleFileManager;
-
-        // Generate pom.xml
-        this.managePomCreation(cfg, rootDir, "parent-pom.xml.ftl", root);
-        this.managePomCreation(cfg, moduleFileManager.getScaffoldingDir()
-            , "scaffolding-pom.xml.ftl", root);
-        this.managePomCreation(cfg, moduleFileManager.getComponentsDir()
-            , "components-pom.xml.ftl", root);
-        this.managePomCreation(cfg, moduleFileManager.getDistributionBase()
-            , "distribution-pom.xml.ftl", root);
-
-        this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot",
-            new File("/Users/mick/workspace/archetype/jms-demo"), moduleFileManager);
 
         // Generate ModuleConfig.java
         File moduleConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
@@ -59,58 +45,105 @@ public class ModuleGenerator {
         ModuleMetaDataAdapter adapter = new ModuleMetaDataAdapter();
         ModuleModel model = adapter.adapt(root, migrationProjectBasePackage);
 
-        Template applicationTemplate = cfg.getTemplate("Application.java.ftl");
-        try (Writer fileWriter = new FileWriter(new File(moduleConfigPackage, "Application.java"))) {
-            applicationTemplate.process(model, fileWriter);
-        }
+        this.executionFreeMarkerTemplate(moduleConfigPackage, "Application.java.ftl"
+            , model, "Application.java");
 
-        Template moduleConfigTemplate = cfg.getTemplate("ModuleConfig.java.ftl");
-        try (Writer fileWriter = new FileWriter(new File(moduleConfigPackage, "ModuleConfig.java"))) {
-            moduleConfigTemplate.process(model, fileWriter);
-        }
-
-        Template flowConfigTemplate = cfg.getTemplate("FlowConfig.java.ftl");
+        this.executionFreeMarkerTemplate(moduleConfigPackage, "ModuleConfig.java.ftl"
+            , model, "ModuleConfig.java");
 
         File flowConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
             , migrationProjectBasePackage.replaceAll("\\.", "/")+"/flow");
         flowConfigPackage.mkdirs();
 
-        model.getFlowModelMap().values().forEach(flowModel -> {
-            try (Writer fileWriter = new FileWriter(new File(flowConfigPackage
-                , capitalizeFirst(flowModel.getName().replaceAll(" ", ""))+"Config.java"))) {
-                flowConfigTemplate.process(flowModel, fileWriter);
-            } catch (IOException | TemplateException e) {
-                throw new RuntimeException(e);
-            }
+        for (FlowModel flowModel : model.getFlowModelMap().values()) {
+            this.executionFreeMarkerTemplate(flowConfigPackage, "FlowConfig.java.ftl"
+                , flowModel, capitalizeFirst(flowModel.getName().replaceAll(" ", "")) + "Config.java");
+        }
+
+        moduleMetaData.getFlows().forEach(flowMetaData -> {
+            flowMetaData.getFlowElements().forEach(flowElementMetaData -> {
+                if(flowElementMetaData.getImplementingClass().startsWith("com.ikasan.sample.spring.boot")) {
+                    System.out.println("I am a local component");
+                }
+            });
         });
 
         File componentConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
             , migrationProjectBasePackage.replaceAll("\\.", "/")+"/component");
         componentConfigPackage.mkdirs();
 
-        Template componentConfigurationConfigTemplate = cfg.getTemplate("ComponentFactory.java.ftl");
-        try (Writer fileWriter = new FileWriter(new File(componentConfigPackage, "ComponentFactory.java"))) {
-            componentConfigurationConfigTemplate.process(moduleMetaData, fileWriter);
-        }
+        this.executionFreeMarkerTemplate(componentConfigPackage, "ComponentFactory.java.ftl"
+            , moduleMetaData, "ComponentFactory.java");
 
-        Template distributionConfigTemplate = cfg.getTemplate("distribution.xml.ftl");
-        try (Writer fileWriter = new FileWriter(new File(this.moduleFileManager.getDistributionBase()
-            , "distribution.xml"))) {
-            distributionConfigTemplate.process(root, fileWriter);
-        }
+        this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution.xml.ftl"
+            , root, "distribution.xml");
 
-        this.localBeanMigrationManager.migrateSpringBeans(root);
+        this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution.xml.ftl"
+            , root, "distribution.xml");
 
+        this.generateAllModulePoms(rootDir, root);
         System.out.println("Successfully generated Ikasan module: " + moduleMetaData.getName());
     }
 
-    private void managePomCreation(Configuration cfg, File outputDir , String pomTemplateName, Object data)
+    /**
+     * Generates POM files for all modules of a migrated module based on the provided module root directory and metadata.
+     *
+     * @param migrationRootDirectory The root directory of the module migration.
+     * @param moduleManifestMetaData Metadata about the module manifest.
+     * @throws TemplateException If an error occurs during template processing.
+     * @throws IOException If an I/O error occurs.
+     */
+    private void generateAllModulePoms(File migrationRootDirectory
+        , ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+        // Create the migrated module's parent POM.
+        this.managePomCreation(migrationRootDirectory
+            , "parent-pom.xml.ftl", moduleManifestMetaData);
+        // Create the migrated module's scaffolding module POM.
+        this.managePomCreation(moduleFileManager.getScaffoldingDir()
+            , "scaffolding-pom.xml.ftl", moduleManifestMetaData);
+        // Create the migrated module's components module POM.
+        this.managePomCreation(moduleFileManager.getComponentsDir()
+            , "components-pom.xml.ftl", moduleManifestMetaData);
+        // Create the migrated module's distribution module POM.
+        this.managePomCreation(moduleFileManager.getDistributionBase()
+            , "distribution-pom.xml.ftl", moduleManifestMetaData);
+    }
+
+    /**
+     * Manages the creation of a POM file using the provided FreeMarker configuration,
+     * output directory, POM template name, and data object.
+     *
+     * @param outputDir The output directory where the POM file will be created.
+     * @param pomTemplateName The name of the POM template to be used for generation.
+     * @param data The data object to be processed with the POM template.
+     * @throws IOException If an I/O error occurs during the file writing.
+     * @throws TemplateException If an error occurs during template processing.
+     */
+    private void managePomCreation(File outputDir , String pomTemplateName, Object data)
         throws IOException, TemplateException {
-        Template pomTemplate = cfg.getTemplate(pomTemplateName);
-        try (Writer fileWriter = new FileWriter(new File(outputDir, "pom.xml"))) {
+        this.executionFreeMarkerTemplate(outputDir, pomTemplateName, data, "pom.xml");
+    }
+
+    /**
+     * Executes the FreeMarker template processing for generating a file based on the provided template,
+     * data, output directory, and output file name.
+     *
+     * @param outputDir The output directory where the file will be created.
+     * @param pomTemplateName The name of the FreeMarker template for processing.
+     * @param data The data object to be used in processing the FreeMarker template.
+     * @param outputFileName The name of the output file to be generated.
+     * @throws IOException If an I/O error occurs during file writing.
+     * @throws TemplateException If an error occurs during FreeMarker template processing.
+     */
+    private void executionFreeMarkerTemplate(File outputDir , String pomTemplateName
+        , Object data, String outputFileName)
+        throws IOException, TemplateException {
+        Template pomTemplate = this.freeMarkerConfiguration.getTemplate(pomTemplateName);
+        try (Writer fileWriter = new FileWriter(new File(outputDir, outputFileName))) {
             pomTemplate.process(data, fileWriter);
         }
     }
+
     public static String capitalizeFirst(String str) {
         if (str == null || str.isEmpty()) {
             return str; // Handle null or empty strings

@@ -40,7 +40,7 @@
             <useProjectArtifact>false</useProjectArtifact>
             <!-- contains lib\hell,jar and ikasan.sh -->
             <includes>
-                <include>org.ikasan:ikasan-shell-distribution:zip:${moduleMetaData.ikasanVersion}</include>
+                <include>org.ikasan:ikasan-shell-distribution:zip:${"$"}{version.ikasan}</include>
             </includes>
             <unpack>true</unpack>
             <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}/</outputDirectory>
