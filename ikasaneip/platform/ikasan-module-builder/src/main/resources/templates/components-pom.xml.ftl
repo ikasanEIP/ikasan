@@ -22,25 +22,25 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-standalone</artifactId>
-            <version>${moduleMetaData.ikasanVersion}</version>
+            <version>${"$"}{version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring-arjuna</artifactId>
-            <version>${moduleMetaData.ikasanVersion}</version>
+            <version>${"$"}{version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>${moduleMetaData.ikasanVersion}</version>
+            <version>${"$"}{version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test</artifactId>
-            <version>${moduleMetaData.ikasanVersion}</version>
+            <version>${"$"}{version.ikasan}</version>
             <scope>test</scope>
         </dependency>
 
