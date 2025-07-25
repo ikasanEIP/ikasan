@@ -386,7 +386,7 @@
         <version.commons-io>2.14.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
-        <version.maven-invoker>3.1.0</version.maven-invoker>
+        <version.maven-invoker>3.2.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
         <version.big.queue>1.0.0</version.big.queue>
         <version.expiring.map>0.5.10</version.expiring.map>

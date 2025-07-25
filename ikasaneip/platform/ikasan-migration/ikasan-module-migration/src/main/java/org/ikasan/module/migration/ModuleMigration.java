@@ -77,6 +77,7 @@ public class ModuleMigration {
         logger.info(ModuleManifestMetaDataHelper.serialiseModuleManifest(moduleManifestMetaData));
 
         this.generateMigratedModule(moduleManifestMetaData);
+        this.localBeanMigrationManager.migrateSpringBeans(moduleManifestMetaData);
         this.buildMigratedModule();
     }
 
@@ -152,9 +153,9 @@ public class ModuleMigration {
      * @throws IOException if an I/O exception occurs during file operations.
      */
     private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
-        ModuleGenerator moduleGenerator = new ModuleGenerator();
+        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager);
         moduleGenerator.generate(moduleManifestMetaData
-            , "com.ikasan.sample.spring.boot", this.moduleFileManager);
+            , "com.ikasan.sample.spring.boot");
     }
 
     /**

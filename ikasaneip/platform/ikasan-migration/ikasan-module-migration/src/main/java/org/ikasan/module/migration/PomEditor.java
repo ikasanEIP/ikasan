@@ -43,6 +43,12 @@ public class PomEditor {
         exclusion.setArtifactId("ikasan-topology");
         dependency.addExclusion(exclusion);
 
+        // We want to exclude the new exclusion form all existing dependencies
+        Exclusion newDependencyExclusion = new Exclusion();
+        newDependencyExclusion.setGroupId(groupId);
+        newDependencyExclusion.setArtifactId(artifactId);
+        model.getDependencies().forEach(d -> d.addExclusion(newDependencyExclusion));
+
         if(!model.getDependencies().stream().filter(d -> d.getArtifactId().equals(artifactId) &&
             d.getGroupId().equals(groupId) &&
             d.getVersion().equals(version)).findFirst().isPresent()) {

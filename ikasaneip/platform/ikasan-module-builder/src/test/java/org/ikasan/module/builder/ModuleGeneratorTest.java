@@ -15,12 +15,12 @@ public class ModuleGeneratorTest extends AbstractTest {
     public void test_module_generation() throws IOException, TemplateException {
         String moduleMetaData = this.loadDataFile("/data/moduleMetaData.json");
         ModuleManifestMetaData root = ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
-        ModuleGenerator moduleGenerator = new ModuleGenerator();
         File rootDir = new File(root.getModuleMetaData().getName());
         rootDir.mkdirs();
 
         ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
+        ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager);
         moduleGenerator.generate(root
-            , "com.ikasan.sample.spring.boot", moduleFileManager);
+            , "com.ikasan.sample.spring.boot");
     }
 }
