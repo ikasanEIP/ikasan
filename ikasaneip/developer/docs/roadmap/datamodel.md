@@ -15,145 +15,128 @@ This document provides a detailed description of the JSON data model for `Module
 
 ### Data Model Class Diagram
 
-```plantuml
-@startuml
+````mermaid
+classDiagram
+    class ModuleManifestMetaData {
+        +ModuleMetaData moduleMetaData
+        +List~ConfigurationMetaData~ configurationMetaData
+        +DependencyManagementMetaData dependencyManagement
+        +List~ParameterizedType~ parameterizedTypes
+        +List~ConstructorMetaData~ constructorMetaData
+        +List~BeanDefinitionMetaData~ beanDefinitionMetaData
+    }
+    class ModuleMetaData {
+        +String name
+        +String version
+        +String description
+        +String type
+        +String url
+        +String ikasanVersion
+        +List~FlowMetaData~ flows
+        +String configuredResourceId
+        +String host
+        +Integer port
+        +String context
+        +String protocol
+    }
+    class FlowMetaData {
+        +String name
+        +FlowElementMetaData consumer
+        +List~Transition~ transitions
+        +List~FlowElementMetaData~ flowElements
+        +String configurationId
+        +String flowStartupType
+        +String flowStartupComment
+    }
+    class FlowElementMetaData {
+        +String componentName
+        +String description
+        +String componentType
+        +String implementingClass
+        +boolean configurable
+        +String configurationId
+        +String invokerConfigurationId
+        +List~DecoratorMetaData~ decorators
+    }
+    class DecoratorMetaData {
+        +String name
+        +String type
+        +boolean configurable
+        +String configurationId
+    }
+    class Transition {
+        +String from
+        +String to
+        +String name
+    }
+    class ConfigurationMetaData {
+        +String configurationId
+        +List~ConfigurationParameterMetaData~ parameters
+        +String description
+        +String implementingClass
+    }
+    class ConfigurationParameterMetaData {
+        +Long id
+        +String name
+        +Object value
+        +String description
+        +String implementingClass
+    }
+    class DependencyManagementMetaData {
+        +List~RepositoryMetaData~ repositories
+        +List~DependencyMetaData~ dependencies
+    }
+    class RepositoryMetaData {
+        +String id
+        +String url
+    }
+    class DependencyMetaData {
+        +String group
+        +String artefact
+        +String version
+    }
+    class ParameterizedType {
+        +String implementingClassName
+        +List~TypeParameter~ typeParameters
+    }
+    class ConstructorMetaData {
+        +String componentName
+        +String className
+        +List~TypeParameter~ constructorArguments
+    }
+    class TypeParameter {
+        +String name
+        +String type
+    }
+    class BeanDefinitionMetaData {
+        +String beanName
+        +String type
+        +String beanClass
+        +String beanResource
+    }
 
-class ModuleManifestMetaData {
-  +moduleMetaData: ModuleMetaData
-  +configurationMetaData: List<ConfigurationMetaData>
-  +dependencyManagement: DependencyManagementMetaData
-  +parameterizedTypes: List<ParameterizedType>
-  +constructorMetaData: List<ConstructorMetaData>
-  +beanDefinitionMetaData: List<BeanDefinitionMetaData>
-}
+    ModuleManifestMetaData "1" *-- "1" ModuleMetaData
+    ModuleManifestMetaData "1" *-- "0..*" ConfigurationMetaData
+    ModuleManifestMetaData "1" *-- "1" DependencyManagementMetaData
+    ModuleManifestMetaData "1" *-- "0..*" ParameterizedType
+    ModuleManifestMetaData "1" *-- "0..*" ConstructorMetaData
+    ModuleManifestMetaData "1" *-- "0..*" BeanDefinitionMetaData
 
-class ModuleMetaData {
-  +name: String
-  +version: String
-  +description: String
-  +type: String
-  +url: String
-  +ikasanVersion: String
-  +flows: List<FlowMetaData>
-  +configuredResourceId: String
-  +host: String
-  +port: Integer
-  +context: String
-  +protocol: String
-}
+    ModuleMetaData "1" *-- "0..*" FlowMetaData
 
-class FlowMetaData {
-  +name: String
-  +consumer: FlowElementMetaData
-  +transitions: List<Transition>
-  +flowElements: List<FlowElementMetaData>
-  +configurationId: String
-  +flowStartupType: String
-  +flowStartupComment: String
-}
+    FlowMetaData "1" *-- "1" FlowElementMetaData : consumer
+    FlowMetaData "1" *-- "0..*" Transition
+    FlowMetaData "1" *-- "0..*" FlowElementMetaData
 
-class FlowElementMetaData {
-  +componentName: String
-  +description: String
-  +componentType: String
-  +implementingClass: String
-  +configurable: boolean
-  +configurationId: String
-  +invokerConfigurationId: String
-  +decorators: List<DecoratorMetaData>
-}
+    FlowElementMetaData "1" *-- "0..*" DecoratorMetaData
 
-class DecoratorMetaData {
-  +name: String
-  +type: String
-  +configurable: boolean
-  +configurationId: String
-}
+    ConfigurationMetaData "1" *-- "0..*" ConfigurationParameterMetaData
 
-class Transition {
-  +from: String
-  +to: String
-  +name: String
-}
+    DependencyManagementMetaData "1" *-- "0..*" RepositoryMetaData
+    DependencyManagementMetaData "1" *-- "0..*" DependencyMetaData
 
-class ConfigurationMetaData {
-  +configurationId: String
-  +parameters: List<ConfigurationParameterMetaData>
-  +description: String
-  +implementingClass: String
-}
-
-class ConfigurationParameterMetaData {
-  +id: Long
-  +name: String
-  +value: Any
-  +description: String
-  +implementingClass: String
-}
-
-class DependencyManagementMetaData {
-  +repositories: List<RepositoryMetaData>
-  +dependencies: List<DependencyMetaData>
-}
-
-class RepositoryMetaData {
-  +id: String
-  +url: String
-}
-
-class DependencyMetaData {
-  +group: String
-  +artefact: String
-  +version: String
-}
-
-class ParameterizedType {
-  +implementingClassName: String
-  +typeParameters: List<TypeParameter>
-}
-
-class ConstructorMetaData {
-  +componentName: String
-  +className: String
-  +constructorArguments: List<TypeParameter>
-}
-
-class TypeParameter {
-  +name: String
-  +type: String
-}
-
-class BeanDefinitionMetaData {
-  +beanName: String
-  +type: String
-  +beanClass: String
-  +beanResource: String
-}
-
-ModuleManifestMetaData *-- "1" ModuleMetaData
-ModuleManifestMetaData *-- "0..*" ConfigurationMetaData
-ModuleManifestMetaData *-- "1" DependencyManagementMetaData
-ModuleManifestMetaData *-- "0..*" ParameterizedType
-ModuleManifestMetaData *-- "0..*" ConstructorMetaData
-ModuleManifestMetaData *-- "0..*" BeanDefinitionMetaData
-
-ModuleMetaData *-- "0..*" FlowMetaData
-
-FlowMetaData *-- "1" FlowElementMetaData : consumer
-FlowMetaData *-- "0..*" Transition
-FlowMetaData *-- "0..*" FlowElementMetaData
-
-FlowElementMetaData *-- "0..*" DecoratorMetaData
-
-ConfigurationMetaData *-- "0..*" ConfigurationParameterMetaData
-
-DependencyManagementMetaData *-- "0..*" RepositoryMetaData
-DependencyManagementMetaData *-- "0..*" DependencyMetaData
-
-ParameterizedType *-- "0..*" TypeParameter
-ConstructorMetaData *-- "0..*" TypeParameter
-
-@enduml
+    ParameterizedType "1" *-- "0..*" TypeParameter
+    ConstructorMetaData "1" *-- "0..*" TypeParameter
 ```
 
 ### JSON Structure
