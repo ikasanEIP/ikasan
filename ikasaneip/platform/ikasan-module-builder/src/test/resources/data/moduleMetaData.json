@@ -22,12 +22,16 @@
         "configurable" : true
       },
       "transitions" : [ {
-        "from" : "Exception Generating Broker",
+        "from" : "My Very Special Translator",
         "to" : "JMS Producer",
         "name" : "default"
       }, {
         "from" : "JMS Consumer",
         "to" : "Exception Generating Broker",
+        "name" : "default"
+      } , {
+        "to" : "My Very Special Translator",
+        "from" : "Exception Generating Broker",
         "name" : "default"
       } ],
       "flowElements" : [ {
@@ -45,6 +49,15 @@
         "componentType" : "org.ikasan.spec.component.endpoint.Broker",
         "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
         "configurationId" : null,
+        "invokerConfigurationId" : "jms-demo_JMS FLow_Exception Generating Broker_1165847135_I",
+        "decorators" : null,
+        "configurable" : false
+      }, {
+        "componentName" : "My Very Special Translator",
+        "description" : null,
+        "componentType" : "org.ikasan.spec.component.transformation.Translator",
+        "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.translator.MyCustomTranslator",
+        "configurationId" : "myTranslator",
         "invokerConfigurationId" : "jms-demo_JMS FLow_Exception Generating Broker_1165847135_I",
         "decorators" : null,
         "configurable" : false
@@ -110,7 +123,7 @@
         "componentName" : "My Recipient Flow JMS Producer 1",
         "description" : null,
         "componentType" : "org.ikasan.spec.component.endpoint.Producer",
-        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+        "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.producer.CustomJMSProducer",
         "configurationId" : "myRecipientFlowProducer1",
         "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Producer 1_1165847135_I",
         "decorators" : null,
@@ -199,6 +212,119 @@
     "configurationId" : "jmsConsumer",
     "description" : null,
     "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration",
+    "parameters" : [ {
+      "id" : null,
+      "name" : "autoContentConversion",
+      "value" : true,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    }, {
+      "id" : null,
+      "name" : "autoSplitBatch",
+      "value" : true,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    }, {
+      "id" : null,
+      "name" : "batchMode",
+      "value" : false,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    }, {
+      "id" : null,
+      "name" : "batchSize",
+      "value" : 0,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    }, {
+      "id" : null,
+      "name" : "cacheLevel",
+      "value" : 1,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    }, {
+      "id" : null,
+      "name" : "concurrentConsumers",
+      "value" : 1,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    }, {
+      "id" : null,
+      "name" : "connectionFactoryJndiProperties",
+      "value" : { },
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    }, {
+      "id" : null,
+      "name" : "connectionFactoryName",
+      "value" : null,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    }, {
+      "id" : null,
+      "name" : "connectionFactoryPassword",
+      "value" : null,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
+    }, {
+      "id" : null,
+      "name" : "connectionFactoryUsername",
+      "value" : null,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    }, {
+      "id" : null,
+      "name" : "destinationJndiName",
+      "value" : "source",
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    }, {
+      "id" : null,
+      "name" : "destinationJndiProperties",
+      "value" : { },
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+    }, {
+      "id" : null,
+      "name" : "durable",
+      "value" : false,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    }, {
+      "id" : null,
+      "name" : "durableSubscriptionName",
+      "value" : null,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+    }, {
+      "id" : null,
+      "name" : "maxConcurrentConsumers",
+      "value" : 1,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    }, {
+      "id" : null,
+      "name" : "pubSubDomain",
+      "value" : false,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    }, {
+      "id" : null,
+      "name" : "sessionAcknowledgeMode",
+      "value" : null,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+    }, {
+      "id" : null,
+      "name" : "sessionTransacted",
+      "value" : false,
+      "description" : null,
+      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+    } ]
+  },{
+    "configurationId" : "myTranslator",
+    "description" : null,
+    "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.translator.configuration.MyCustomTranslatorConfiguration",
     "parameters" : [ {
       "id" : null,
       "name" : "autoContentConversion",
@@ -720,7 +846,7 @@
   }, {
     "configurationId" : "myRecipientFlowProducer1",
     "description" : null,
-    "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
+    "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.producer.configuration.CustomJMSProducerConfiguration",
     "parameters" : [ {
       "id" : null,
       "name" : "connectionFactoryJndiProperties",

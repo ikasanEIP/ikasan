@@ -15,11 +15,10 @@ public class LocalBeanMigrationManager {
     private File migrationProjectBaseDirectory;
     private ModuleFileManager moduleFileManager;
 
-    public LocalBeanMigrationManager(String projectBaseNamespace, File migrationProjectBaseDirectory
-        , ModuleFileManager moduleFileManager) {
+    public LocalBeanMigrationManager(String projectBaseNamespace, ModuleFileManager moduleFileManager) {
         this.projectBaseNamespace = projectBaseNamespace;
-        this.migrationProjectBaseDirectory = migrationProjectBaseDirectory;
         this.moduleFileManager = moduleFileManager;
+        this.migrationProjectBaseDirectory = moduleFileManager.getProjectRootDirectory();
     }
 
     /**
@@ -66,19 +65,13 @@ public class LocalBeanMigrationManager {
     public void copyMissingDependency(String missingDependency) throws IOException {
         List<Path> files = this.findFile(this.migrationProjectBaseDirectory.toPath(), missingDependency+".java");
 
-        System.out.println(files);
         for (Path file : files) {
             String filePath = file.toAbsolutePath().toString().replace(this.migrationProjectBaseDirectory.getAbsolutePath()
                 +"/jar/src/main/java/", "");
             Path targetFile = Paths.get(moduleFileManager.getComponentsJavaSrcMainBase().getAbsolutePath()
                 , filePath);
-            try {
-                Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
-                System.out.println("File copied successfully to: " + targetFile.toAbsolutePath());
-            } catch (IOException e) {
-                System.err.println("Error copying file: " + e.getMessage());
-                e.printStackTrace();
-            }
+
+            Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
         }
     }
 

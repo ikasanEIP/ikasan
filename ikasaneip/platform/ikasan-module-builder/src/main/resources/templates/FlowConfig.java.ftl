@@ -19,10 +19,10 @@ import ${moduleBasePackage}.component.ComponentFactory;
 -->
 <#macro navigateTransitions component>
         <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
-        <#if instanceOf(component, "org.ikasan.module.builder.model.SingleTransition")>
+        <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleTransition")>
             <@addSingleTransitionComponentToBuilder component "true"/>
         </#if>
-        <#if instanceOf(component, "org.ikasan.module.builder.model.MultiTransition")>
+        <#if instanceOf(component, "org.ikasan.module.builder.model.module.MultiTransition")>
             <@addMultiTransitionComponentToBuilder component/>
         </#if>
 </#macro>
@@ -32,12 +32,12 @@ import ${moduleBasePackage}.component.ComponentFactory;
 -->
 <#macro addRouteMethods component>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.SingleTransition")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleTransition")>
         <#if component.transition??>
             <@addRouteMethods component.transition />
         </#if>
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.MultiTransition")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.MultiTransition")>
         <#if component.transitions??>
             <#list component.transitions as key, value >
                 <@routeMethod component.name key value />
@@ -45,7 +45,7 @@ import ${moduleBasePackage}.component.ComponentFactory;
             </#list>
         </#if>
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.SingleTransition")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleTransition")>
         <#if component.transitions??>
             <#list component.transitions as key, value >
                 <@routeMethod component.name key value />
@@ -67,10 +67,10 @@ import ${moduleBasePackage}.component.ComponentFactory;
     */
     private Route route${routerName?replace(" ", "")?cap_first}${key?replace(" ", "")?cap_first}(RouteBuilder routeBuilder) {
         return routeBuilder
-        <#if instanceOf(component, "org.ikasan.module.builder.model.SingleTransition")>
+        <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleTransition")>
             <@addSingleTransitionComponentToBuilder component "false"/>
         </#if>
-        <#if instanceOf(component, "org.ikasan.module.builder.model.MultiTransition")>
+        <#if instanceOf(component, "org.ikasan.module.builder.model.module.MultiTransition")>
             <@addMultiTransitionComponentToBuilder component/>
         </#if>
     }
@@ -82,38 +82,38 @@ import ${moduleBasePackage}.component.ComponentFactory;
 -->
 <#macro addSingleTransitionComponentToBuilder component primaryRoute>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.ConsumerComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.ConsumerComponent")>
         .consumer("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.ProducerComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.ProducerComponent")>
         .producer("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())<#if primaryRoute == "false">;</#if>
         <#if primaryRoute == "true">
         .build();
         </#if>
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.BrokerComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.BrokerComponent")>
         .broker("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.ConverterComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.ConverterComponent")>
         .converter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.SequencerComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.SequencerComponent")>
         .sequencer("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.SplitterComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.SplitterComponent")>
         .splitter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.TranslatorComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.TranslatorComponent")>
         .translator("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.FilterComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.FilterComponent")>
         .filter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
     </#if>
     <#if component.transition??>
-        <#if instanceOf(component.transition, "org.ikasan.module.builder.model.SingleTransition")>
+        <#if instanceOf(component.transition, "org.ikasan.module.builder.model.module.SingleTransition")>
             <@addSingleTransitionComponentToBuilder component.transition primaryRoute/>
         </#if>
-        <#if instanceOf(component.transition, "org.ikasan.module.builder.model.MultiTransition")>
+        <#if instanceOf(component.transition, "org.ikasan.module.builder.model.module.MultiTransition")>
             <@addMultiTransitionComponentToBuilder component.transition/>
         </#if>
     </#if>
@@ -124,14 +124,14 @@ import ${moduleBasePackage}.component.ComponentFactory;
 -->
 <#macro addMultiTransitionComponentToBuilder component>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.MultiRecipientRouterComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.MultiRecipientRouterComponent")>
         .multiRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
         <#list component.transitions as key, value >
             .when("${key}", route${component.name?replace(" ", "")?cap_first}${key?replace(" ", "")?cap_first}(builderFactory.getRouteBuilder()))
         </#list>
         .build();
     </#if>
-    <#if instanceOf(component, "org.ikasan.module.builder.model.SingleRecipientRouterComponent")>
+    <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleRecipientRouterComponent")>
         .singleRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
         <#list component.transitions as key, value >
             .when("${key}", route${component.name?replace(" ", "")?cap_first}${key?replace(" ", "")?cap_first}(builderFactory.getRouteBuilder()))

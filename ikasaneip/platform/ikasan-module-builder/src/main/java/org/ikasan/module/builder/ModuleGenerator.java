@@ -4,24 +4,39 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
-import org.ikasan.module.builder.model.FlowModel;
-import org.ikasan.module.builder.model.ModuleModel;
-import org.ikasan.module.builder.service.ModuleMetaDataAdapter;
+import org.ikasan.module.builder.model.autoconfiguration.ComponentAutoConfiguration;
+import org.ikasan.module.builder.model.component.Component;
+import org.ikasan.module.builder.model.configuration.ComponentConfiguration;
+import org.ikasan.module.builder.model.module.FlowModel;
+import org.ikasan.module.builder.model.module.ModuleModel;
+import org.ikasan.module.builder.service.ModuleManifestMetaDataComponentModelAdapter;
+import org.ikasan.module.builder.service.ModuleManifestMetaDataConfigurationModelAdapter;
+import org.ikasan.module.builder.service.ModuleManifestMetaDataModuleModelAdapter;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
+import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
 import org.ikasan.spec.metadata.*;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
+import java.util.List;
 
 public class ModuleGenerator {
 
     private ModuleFileManager moduleFileManager;
     private Configuration freeMarkerConfiguration;
+    private ModuleManifestMetaDataModuleModelAdapter moduleManifestMetaDataModuleModelAdapter;
+    private LocalBeanMigrationManager localBeanMigrationManager;
+    private String migrationProjectBasePackage;
 
-    public ModuleGenerator(ModuleFileManager moduleFileManager) {
+    public ModuleGenerator(ModuleFileManager moduleFileManager, String migrationProjectBasePackage) {
         this.moduleFileManager = moduleFileManager;
+
+        this.localBeanMigrationManager = new LocalBeanMigrationManager(migrationProjectBasePackage
+            , this.moduleFileManager);
+
+        this.migrationProjectBasePackage = migrationProjectBasePackage;
 
         this.freeMarkerConfiguration = new Configuration(Configuration.VERSION_2_3_32);
         this.freeMarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
@@ -29,30 +44,74 @@ public class ModuleGenerator {
         this.freeMarkerConfiguration.setTemplateExceptionHandler(TemplateExceptionHandler.RETHROW_HANDLER);
         this.freeMarkerConfiguration.setLogTemplateExceptions(false);
         this.freeMarkerConfiguration.setWrapUncheckedExceptions(true);
+
+        this.moduleManifestMetaDataModuleModelAdapter = new ModuleManifestMetaDataModuleModelAdapter();
     }
 
-    public void generate(ModuleManifestMetaData root, String migrationProjectBasePackage) throws IOException, TemplateException {
+    public void generate(ModuleManifestMetaData root) throws IOException, TemplateException {
         ModuleMetaData moduleMetaData = root.getModuleMetaData();
 
         File rootDir = new File(moduleMetaData.getName());
         rootDir.mkdirs();
 
+        ModuleModel model = this.moduleManifestMetaDataModuleModelAdapter.adapt(root, migrationProjectBasePackage);
+
         // Generate ModuleConfig.java
-        File moduleConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
+        File moduleBootBasePackage = this.generateBaseBootDirectoryArtefacts(model, root, migrationProjectBasePackage);
+
+        File flowConfigPackage =  this.generateFlowConfigurationArtefacts(model, moduleBootBasePackage);
+
+        File componentArtefactsPackage = this.generateComponentArtefacts(root, moduleBootBasePackage);
+
+        this.generateDistributionArtefacts(root);
+
+        this.generateAllModulePoms(rootDir, root);
+
+        this.generateComponentAutoConfiguration(root);
+
+        System.out.println("Successfully generated Ikasan module: " + moduleMetaData.getName());
+    }
+
+    /**
+     * Generates base boot directory artefacts for a module based on the provided module model, module manifest metadata
+     * , and migration project base package.
+     *
+     * @param model The module model containing information about the module.
+     * @param root The module manifest metadata representing the top-level manifest for the module.
+     * @param migrationProjectBasePackage The base package for the migration project.
+     * @return The File object representing the base boot package directory where artefacts are generated.
+     * @throws TemplateException If an error occurs during template processing.
+     * @throws IOException If an I/O error occurs.
+     */
+    private File generateBaseBootDirectoryArtefacts(ModuleModel model
+        , ModuleManifestMetaData root, String migrationProjectBasePackage)
+        throws TemplateException, IOException {
+        // Generate ModuleConfig.java
+        File moduleBootBasePackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
             , migrationProjectBasePackage.replaceAll("\\.", "/"));
-        moduleConfigPackage.mkdirs();
+        moduleBootBasePackage.mkdirs();
 
-        ModuleMetaDataAdapter adapter = new ModuleMetaDataAdapter();
-        ModuleModel model = adapter.adapt(root, migrationProjectBasePackage);
-
-        this.executionFreeMarkerTemplate(moduleConfigPackage, "Application.java.ftl"
+        this.executionFreeMarkerTemplate(moduleBootBasePackage, "Application.java.ftl"
             , model, "Application.java");
 
-        this.executionFreeMarkerTemplate(moduleConfigPackage, "ModuleConfig.java.ftl"
+        this.executionFreeMarkerTemplate(moduleBootBasePackage, "ModuleConfig.java.ftl"
             , model, "ModuleConfig.java");
 
-        File flowConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
-            , migrationProjectBasePackage.replaceAll("\\.", "/")+"/flow");
+        return moduleBootBasePackage;
+    }
+
+    /**
+     * Generates flow configuration artefacts for a given module model.
+     *
+     * @param model The ModuleModel containing information about the module and flow models.
+     * @param moduleBootBasePackage The base package directory for the module boot.
+     * @return The File object representing the flow configuration package directory where artefacts are generated.
+     * @throws TemplateException If an error occurs during template processing.
+     * @throws IOException If an I/O error occurs.
+     */
+    private File generateFlowConfigurationArtefacts(ModuleModel model, File moduleBootBasePackage)
+        throws TemplateException, IOException {
+        File flowConfigPackage = new File(moduleBootBasePackage, "/flow");
         flowConfigPackage.mkdirs();
 
         for (FlowModel flowModel : model.getFlowModelMap().values()) {
@@ -60,29 +119,110 @@ public class ModuleGenerator {
                 , flowModel, capitalizeFirst(flowModel.getName().replaceAll(" ", "")) + "Config.java");
         }
 
-        moduleMetaData.getFlows().forEach(flowMetaData -> {
-            flowMetaData.getFlowElements().forEach(flowElementMetaData -> {
-                if(flowElementMetaData.getImplementingClass().startsWith("com.ikasan.sample.spring.boot")) {
-                    System.out.println("I am a local component");
-                }
-            });
-        });
+        return flowConfigPackage;
+    }
 
-        File componentConfigPackage = new File(this.moduleFileManager.getScaffoldingJavaSrcMainBase()
-            , migrationProjectBasePackage.replaceAll("\\.", "/")+"/component");
+    /**
+     * Generates component artefacts for a given module based on the provided module metadata
+     * and module boot base package directory.
+     *
+     * @param moduleManifestMetaData The metadata of the module containing information about the component.
+     * @param moduleBootBasePackage The base package directory for the module boot.
+     * @return The File object representing the component configuration package directory where artefacts are generated.
+     * @*/
+    private File generateComponentArtefacts(ModuleManifestMetaData moduleManifestMetaData, File moduleBootBasePackage)
+        throws TemplateException, IOException {
+        File componentConfigPackage = new File(moduleBootBasePackage, "/component");
         componentConfigPackage.mkdirs();
 
         this.executionFreeMarkerTemplate(componentConfigPackage, "ComponentFactory.java.ftl"
-            , moduleMetaData, "ComponentFactory.java");
+            , moduleManifestMetaData.getModuleMetaData(), "ComponentFactory.java");
 
+        this.generateComponents(moduleManifestMetaData);
+        this.generateConfigurations(moduleManifestMetaData);
+
+        return componentConfigPackage;
+    }
+
+    private void generateComponents(ModuleManifestMetaData moduleManifestMetaData) throws IOException, TemplateException {
+        ModuleManifestMetaDataComponentModelAdapter adapter = new ModuleManifestMetaDataComponentModelAdapter();
+        List<Component> components = adapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage);
+        for (Component component : components) {
+            File componentPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
+                    , component.getClassPackage().replaceAll("\\.", "/"));
+            componentPackageDirectory.mkdirs();
+
+            if(component.getComponentType().equals("org.ikasan.spec.component.endpoint.Broker")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomBroker.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+            else if(component.getComponentType().equals("org.ikasan.spec.component.transformation.Converter")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomConverter.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+            else if(component.getComponentType().equals("org.ikasan.spec.component.transformation.Translator")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomTranslator.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+            else if(component.getComponentType().equals("org.ikasan.spec.component.filter.Filter")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomFilter.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+            else if(component.getComponentType().equals("org.ikasan.spec.component.routing.SingleRecipientRouter")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomSingleRecipientRouter.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+            else if(component.getComponentType().equals("org.ikasan.spec.component.routing.MultiRecipientRouter")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomMultiRecipientRouter.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+            else if(component.getComponentType().equals("org.ikasan.spec.component.endpoint.Producer")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomProducer.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
+        }
+    }
+
+    private void generateConfigurations(ModuleManifestMetaData moduleManifestMetaData) throws IOException, TemplateException {
+        ModuleManifestMetaDataConfigurationModelAdapter adapter = new ModuleManifestMetaDataConfigurationModelAdapter();
+        List<ComponentConfiguration> componentConfigurations = adapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage);
+        for (ComponentConfiguration componentConfiguration : componentConfigurations) {
+            File componentConfigurationPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
+                , componentConfiguration.getPackageName().replaceAll("\\.", "/"));
+            componentConfigurationPackageDirectory.mkdirs();
+
+            this.executionFreeMarkerTemplate(componentConfigurationPackageDirectory, "ComponentConfiguration.java.ftl"
+                , componentConfiguration, componentConfiguration.getClassName()+".java");
+        }
+    }
+
+    public void generateComponentAutoConfiguration(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+        ModuleManifestMetaDataConfigurationModelAdapter configurationModelAdapter = new ModuleManifestMetaDataConfigurationModelAdapter();
+        List<ComponentConfiguration> componentConfigurations = configurationModelAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage);
+        ModuleManifestMetaDataComponentModelAdapter componentModelAdapter = new ModuleManifestMetaDataComponentModelAdapter();
+        List<Component> components = componentModelAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage);
+
+        ComponentAutoConfiguration componentAutoConfiguration = new ComponentAutoConfiguration
+            (this.migrationProjectBasePackage, components, componentConfigurations);
+        File componentAutoConfigPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
+            , componentAutoConfiguration.getPackageName().replaceAll("\\.", "/"));
+
+        this.executionFreeMarkerTemplate(componentAutoConfigPackageDirectory, "ComponentsAutoConfiguration.java.ftl"
+            , componentAutoConfiguration, "ComponentsAutoConfiguration.java");
+
+    }
+
+    /**
+     * Generates distribution artefacts based on the provided module manifest metadata.
+     *
+     * @param moduleManifestMetaData The metadata representing the module manifest for the distribution.
+     * @throws TemplateException If an error occurs during template processing.
+     * @throws IOException If an I/O error occurs.
+     */
+    private void generateDistributionArtefacts(ModuleManifestMetaData moduleManifestMetaData)
+        throws TemplateException, IOException {
         this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution.xml.ftl"
-            , root, "distribution.xml");
-
-        this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution.xml.ftl"
-            , root, "distribution.xml");
-
-        this.generateAllModulePoms(rootDir, root);
-        System.out.println("Successfully generated Ikasan module: " + moduleMetaData.getName());
+            , moduleManifestMetaData, "distribution.xml");
     }
 
     /**

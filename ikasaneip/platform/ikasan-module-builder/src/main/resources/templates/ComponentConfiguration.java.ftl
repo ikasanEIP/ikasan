@@ -1,17 +1,31 @@
 package ${packageName};
 
-public class ${className} {
-<#list configuration as key, value>
-    private ${value.type} ${key};
+<#list configurationParameters as configurationParameter>
+    import ${configurationParameter.fullyQualifiedType};
 </#list>
 
-<#list configuration as key, value>
-    public ${value.type} get${key?cap_first}() {
-        return ${key};
+public class ${className} {
+<#list configurationParameters as configurationParameter>
+    private ${configurationParameter.type} ${configurationParameter.name};
+</#list>
+
+<#list configurationParameters as configurationParameter>
+    /**
+    * Set the ${configurationParameter.name} configuration value.
+    *
+    * @param ${configurationParameter.name} the configuration value to set.
+    */
+    public ${configurationParameter.type} get${configurationParameter.name?cap_first}() {
+        return ${configurationParameter.name};
     }
 
-    public void set${key?cap_first}(${value.type} ${key}) {
-        this.${key} = ${key};
+    /**
+    * Get the ${configurationParameter.name} configuration value.
+    *
+    * @return ${configurationParameter.name} configuration value.
+    */
+    public void set${configurationParameter.name?cap_first}(${configurationParameter.type} ${configurationParameter.name}) {
+        this.${configurationParameter.name} = ${configurationParameter.name};
     }
 </#list>
 }

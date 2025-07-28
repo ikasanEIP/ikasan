@@ -47,8 +47,8 @@ public class ModuleMigration {
         rootDir.mkdirs();
 
         this.moduleFileManager = new ModuleFileManager(rootDir);
-        this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot",
-            new File(migrationProjectBaseDirectory), this.moduleFileManager);
+        this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot"
+            , this.moduleFileManager);
         this.moduleBuildMigrationHelper = new ModuleBuildMigrationHelper(localBeanMigrationManager,
             moduleFileManager);
     }
@@ -153,9 +153,8 @@ public class ModuleMigration {
      * @throws IOException if an I/O exception occurs during file operations.
      */
     private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
-        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager);
-        moduleGenerator.generate(moduleManifestMetaData
-            , "com.ikasan.sample.spring.boot");
+        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager, "com.ikasan.sample.spring.boot");
+        moduleGenerator.generate(moduleManifestMetaData);
     }
 
     /**

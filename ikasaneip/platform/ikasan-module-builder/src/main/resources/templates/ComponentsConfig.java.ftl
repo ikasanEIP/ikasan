@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Configuration
-public class ComponentFactory {
+public class ComponentsConfig {
 
 <#compress>
 <#list flows as flow>
@@ -41,7 +41,7 @@ public class ComponentFactory {
         <#elseif component.componentType == "org.ikasan.spec.component.splitting.Splitter">
             private Splitter ${component.componentName?replace(" ", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.transformation.Translator">
-            private Translator ${component.componentName?replace(" ", "")?uncap_first};
+            private Translator ${component.componentName?replace(" ", "")};
         <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Broker">
             private Broker ${component.componentName?replace(" ", "")?uncap_first};
         </#if>

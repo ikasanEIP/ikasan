@@ -1,4 +1,4 @@
-package org.ikasan.module.builder.model;
+package org.ikasan.module.builder.model.module;
 
 public class SingleRecipientRouterComponent extends AbstractMultiTransition {
     public static final String TYPE = "org.ikasan.spec.component.router.SingleRecipientRouterComponent";
