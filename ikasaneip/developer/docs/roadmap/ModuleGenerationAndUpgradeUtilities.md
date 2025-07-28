@@ -1,6 +1,6 @@
 ![Problem Domain](../quickstart-images/Ikasan-title-transparent.png)
 
-# Theme 3: Module Upgrade Utilities
+# Theme 2: Module Generation and Migration Upgrade Utilities (Accelerator)
 
 This theme focuses on the necessity to automate and streamline the Ikasan Enterprise Service Bus module upgrade process.
 - Cost of ownership of the Ikasan Enterprise Service Bus platform is reduced, thus making adoption more compelling.

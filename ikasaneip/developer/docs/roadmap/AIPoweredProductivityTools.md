@@ -1,6 +1,6 @@
 ![Problem Domain](../quickstart-images/Ikasan-title-transparent.png)
 
-# Theme 3: AI-Powered Productivity Tools (The Accelerator)
+# Theme 6: AI-Powered Productivity Tools (Accelerator)
 
 This theme focuses on using AI to automate the most time-consuming parts of Ikasan development. These tools will build on the foundation provided by the JSON schema.
 
@@ -9,7 +9,7 @@ This theme focuses on using AI to automate the most time-consuming parts of Ikas
         *   Create a new service that integrates with a large language model (LLM).
         *   This service will take a high-level, natural-language prompt as input.
         *   **Example Prompt:** *"Create a module that consumes messages from a JMS queue named `INBOUND.Q`, filters out any message that doesn't have a `REGION` header equal to `EU`, and then publishes the result to an SFTP server at `sftp.example.com`."*
-        *   The service's output will be a valid `ikasan-module.json` file that conforms to the standard schema.
+        *   The service's output will be a valid `ikasan-module.json` file that conforms to the [Ikasan module datamodel](IkasanDataModel.md).
     *   **Action: Integrate AI into the IDE**
         *   The IDE extension will provide a command to "Create Ikasan Module from description...".
         *   This command will invoke the AI service, generate the JSON, and then use the JSON-to-Java "compiler" to scaffold the complete, working module in the user's workspace.
