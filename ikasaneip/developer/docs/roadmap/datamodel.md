@@ -137,7 +137,7 @@ classDiagram
 
     ParameterizedType "1" *-- "0..*" TypeParameter
     ConstructorMetaData "1" *-- "0..*" TypeParameter
-```
+````
 
 ### JSON Structure
 
