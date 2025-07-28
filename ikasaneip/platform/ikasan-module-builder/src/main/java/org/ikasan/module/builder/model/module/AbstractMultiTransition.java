@@ -1,4 +1,4 @@
-package org.ikasan.module.builder.model;
+package org.ikasan.module.builder.model.module;
 
 import java.util.HashMap;
 import java.util.Map;
