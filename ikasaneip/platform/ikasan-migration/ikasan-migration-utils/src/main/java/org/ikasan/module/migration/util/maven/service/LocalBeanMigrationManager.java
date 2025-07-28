@@ -15,10 +15,11 @@ public class LocalBeanMigrationManager {
     private File migrationProjectBaseDirectory;
     private ModuleFileManager moduleFileManager;
 
-    public LocalBeanMigrationManager(String projectBaseNamespace, ModuleFileManager moduleFileManager) {
+    public LocalBeanMigrationManager(String projectBaseNamespace, ModuleFileManager moduleFileManager
+        , String migrationProjectBaseDirectory) {
         this.projectBaseNamespace = projectBaseNamespace;
         this.moduleFileManager = moduleFileManager;
-        this.migrationProjectBaseDirectory = moduleFileManager.getProjectRootDirectory();
+        this.migrationProjectBaseDirectory = new File(migrationProjectBaseDirectory);
     }
 
     /**

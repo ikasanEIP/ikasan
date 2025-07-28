@@ -48,7 +48,7 @@ public class ModuleMigration {
 
         this.moduleFileManager = new ModuleFileManager(rootDir);
         this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot"
-            , this.moduleFileManager);
+            , this.moduleFileManager, this.migrationProjectBaseDirectory);
         this.moduleBuildMigrationHelper = new ModuleBuildMigrationHelper(localBeanMigrationManager,
             moduleFileManager);
     }
