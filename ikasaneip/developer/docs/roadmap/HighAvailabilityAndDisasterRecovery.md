@@ -1,6 +1,6 @@
 ![Problem Domain](../quickstart-images/Ikasan-title-transparent.png)
 
-## Theme 5: High Availability and Disaster Recovery
+## Theme 5: High Availability and Disaster Recovery (Reliability and Resiliency)
 
 This theme focuses on enhancing Ikasan's capabilities for high availability (HA) and disaster recovery (DR) to ensure continuous operation and data integrity in critical environments.
 

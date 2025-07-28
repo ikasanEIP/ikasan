@@ -1,7 +1,6 @@
 ![Problem Domain](../quickstart-images/Ikasan-title-transparent.png)
 
-
-# Theme 4: Configuration Management
+# Theme 4: Configuration Management (Data Management)
 
 This theme focuses on enhancing the management of Ikasan configurations, particularly by leveraging version control systems.
 

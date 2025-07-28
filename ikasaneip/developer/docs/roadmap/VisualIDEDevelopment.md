@@ -1,6 +1,6 @@
 ![Problem Domain](../quickstart-images/Ikasan-title-transparent.png)
 
-# Theme 2: The Ikasan IDE (Visual Development)
+# Theme 3: The Ikasan IDE (Accelerator)
 
 This theme covers the creation of an IDE extension (e.g., for VS Code or IntelliJ) that provides a rich, visual environment for developing Ikasan modules.
 
