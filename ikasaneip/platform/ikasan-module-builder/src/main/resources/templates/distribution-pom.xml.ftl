@@ -54,7 +54,6 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
-
                             <filters>
                             </filters>
                             <descriptors>

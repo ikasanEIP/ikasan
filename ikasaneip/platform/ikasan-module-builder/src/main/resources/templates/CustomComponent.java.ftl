@@ -2,9 +2,8 @@ package ${packageName};
 
 import ${interfaceType};
 <#if isConfigured>
-import org.ikasan.spec.component.ConfiguredResource;
-import org.ikasan.spec.configuration.Configuration;
-import ${configurationPackageName}.${configurationClassName};
+    import org.ikasan.spec.configuration.ConfiguredResource;
+    import ${configurationMetaData.configurationPackageName}.${configurationMetaData.configurationClassName};
 </#if>
 
 public class ${simpleClassName} implements ${interfaceType} <#if isConfigured> , ConfiguredResource<${configurationClassName}> </#if> {

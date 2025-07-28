@@ -18,6 +18,11 @@ public class ModuleBuildMigrationHelper {
 
     public void runBuild() throws IOException {
         MavenProjectBuilder builder = new MavenProjectBuilder(System.getenv("M2_HOME"));
+
+        // Format the java code using spotless
+        builder.build(this.moduleFileManager.getProjectRootDirectory()
+            , "spotless:apply");
+
         boolean buildPass = false;
         while(!buildPass) {
             if (!builder.build(this.moduleFileManager.getProjectRootDirectory()
