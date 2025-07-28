@@ -1,1345 +1,1759 @@
 ![Problem Domain](../quickstart-images/Ikasan-title-transparent.png)
 
-### Theme 1: The Ikasan Module JSON Data Model (The Foundation)
+# Theme 1: The Ikasan Module JSON Data Model (The Foundation)
 
 The foundation for our developer tooling and AI-driven features is a standardized JSON representation of an Ikasan module. Crucially, this JSON data model is **directly derived from and maps to existing Ikasan core classes**, ensuring consistency and leveraging the established domain model.
 
 *   **Goal: Leverage Existing Ikasan Metadata Classes**
-    *   **Action:** The JSON data model will directly reflect the structure of the following core Ikasan classes:
-        *   `org.ikasan.spec.metadata.ModuleMetaData` (implemented by `org.ikasan.topology.metadata.model.ModuleMetaDataImpl`)
-        *   `org.ikasan.spec.metadata.FlowMetaData` (implemented by `org.ikasan.topology.metadata.model.FlowMetaDataImpl`)
-        *   `org.ikasan.spec.metadata.FlowElementMetaData` (implemented by `org.ikasan.topology.metadata.model.FlowElementMetaDataImpl`)
-        *   `org.ikasan.spec.metadata.Transition` (implemented by `org.ikasan.topology.metadata.model.TransitionImpl`)
-        *   `org.ikasan.spec.metadata.ConfigurationMetaData` (implemented by `org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl`)
-        *   `org.ikasan.spec.metadata.ConfigurationParameterMetaData` (implemented by `org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl`)
+    *   **Action:** The JSON data model will directly reflect the structure of Ikasan classes.
     *   **Action:** The JSON structure, as detailed below, will serve as the canonical representation for module definitions.
     *   **Action:** Ensure that any tooling (IDE, AI generator) directly works with this established data model for both input and output, minimizing transformation overhead and maintaining fidelity with the Ikasan core.
 
-#### `moduleMetaData`
+## ModuleManifestMetaDataImpl JSON Data Model
 
-This object defines the structure of the module, its flows, and its components.
+This document provides a detailed description of the JSON data model for `ModuleManifestMetaDataImpl.java`, which represents the metadata of an Ikasan module. This metadata is essential for understanding the module's structure, configurations, and dependencies.
+
+### Data Model Class Diagram
+
+````mermaid
+classDiagram
+    class ModuleManifestMetaData {
+        +ModuleMetaData moduleMetaData
+        +List~ConfigurationMetaData~ configurationMetaData
+        +DependencyManagementMetaData dependencyManagement
+        +List~ParameterizedType~ parameterizedTypes
+        +List~ConstructorMetaData~ constructorMetaData
+        +List~BeanDefinitionMetaData~ beanDefinitionMetaData
+    }
+    class ModuleMetaData {
+        +String name
+        +String version
+        +String description
+        +String type
+        +String url
+        +String ikasanVersion
+        +List~FlowMetaData~ flows
+        +String configuredResourceId
+        +String host
+        +Integer port
+        +String context
+        +String protocol
+    }
+    class FlowMetaData {
+        +String name
+        +FlowElementMetaData consumer
+        +List~Transition~ transitions
+        +List~FlowElementMetaData~ flowElements
+        +String configurationId
+        +String flowStartupType
+        +String flowStartupComment
+    }
+    class FlowElementMetaData {
+        +String componentName
+        +String description
+        +String componentType
+        +String implementingClass
+        +boolean configurable
+        +String configurationId
+        +String invokerConfigurationId
+        +List~DecoratorMetaData~ decorators
+    }
+    class DecoratorMetaData {
+        +String name
+        +String type
+        +boolean configurable
+        +String configurationId
+    }
+    class Transition {
+        +String from
+        +String to
+        +String name
+    }
+    class ConfigurationMetaData {
+        +String configurationId
+        +List~ConfigurationParameterMetaData~ parameters
+        +String description
+        +String implementingClass
+    }
+    class ConfigurationParameterMetaData {
+        +Long id
+        +String name
+        +Object value
+        +String description
+        +String implementingClass
+    }
+    class DependencyManagementMetaData {
+        +List~RepositoryMetaData~ repositories
+        +List~DependencyMetaData~ dependencies
+    }
+    class RepositoryMetaData {
+        +String id
+        +String url
+    }
+    class DependencyMetaData {
+        +String group
+        +String artefact
+        +String version
+    }
+    class ParameterizedType {
+        +String implementingClassName
+        +List~TypeParameter~ typeParameters
+    }
+    class ConstructorMetaData {
+        +String componentName
+        +String className
+        +List~TypeParameter~ constructorArguments
+    }
+    class TypeParameter {
+        +String name
+        +String type
+    }
+    class BeanDefinitionMetaData {
+        +String beanName
+        +String type
+        +String beanClass
+        +String beanResource
+    }
+
+    ModuleManifestMetaData "1" *-- "1" ModuleMetaData
+    ModuleManifestMetaData "1" *-- "0..*" ConfigurationMetaData
+    ModuleManifestMetaData "1" *-- "1" DependencyManagementMetaData
+    ModuleManifestMetaData "1" *-- "0..*" ParameterizedType
+    ModuleManifestMetaData "1" *-- "0..*" ConstructorMetaData
+    ModuleManifestMetaData "1" *-- "0..*" BeanDefinitionMetaData
+
+    ModuleMetaData "1" *-- "0..*" FlowMetaData
+
+    FlowMetaData "1" *-- "1" FlowElementMetaData : consumer
+    FlowMetaData "1" *-- "0..*" Transition
+    FlowMetaData "1" *-- "0..*" FlowElementMetaData
+
+    FlowElementMetaData "1" *-- "0..*" DecoratorMetaData
+
+    ConfigurationMetaData "1" *-- "0..*" ConfigurationParameterMetaData
+
+    DependencyManagementMetaData "1" *-- "0..*" RepositoryMetaData
+    DependencyManagementMetaData "1" *-- "0..*" DependencyMetaData
+
+    ParameterizedType "1" *-- "0..*" TypeParameter
+    ConstructorMetaData "1" *-- "0..*" TypeParameter
+````
+
+### JSON Structure
+
+The JSON object consists of the following top-level properties:
+
+-   `moduleMetaData`: General information about the module.
+-   `configurationMetaData`: A list of metadata for the module's configurations.
+-   `dependencyManagement`: Information about the module's dependencies.
+-   `parameterizedTypes`: A list of parameterized types used in the module.
+-   `constructorMetaData`: A list of metadata for the module's constructors.
+-   `beanDefinitionMetaData`: A list of metadata for the bean definitions within the module.
+
+### Detailed Field Descriptions
+
+#### ModuleMetaData
+
+This object contains fundamental information about the module.
+
+| Field                | Type       | Description                                                                 |
+| -------------------- | ---------- | --------------------------------------------------------------------------- |
+| `name`               | `String`   | The name of the module.                                                     |
+| `version`            | `String`   | The version of the module.                                                  |
+| `description`        | `String`   | A brief description of the module's purpose.                                |
+| `type`               | `String`   | The type of the module (e.g., `Integration Module`).                        |
+| `url`                | `String`   | The URL of the module.                                                      |
+| `ikasanVersion`      | `String`   | The version of the Ikasan platform the module is built for.                 |
+| `flows`              | `Array`    | A list of flow metadata objects within the module.                          |
+| `configuredResourceId` | `String`   | The ID for the module's configuration.                                      |
+| `host`               | `String`   | The host where the module is running.                                       |
+| `port`               | `Integer`  | The port the module is running on.                                          |
+| `context`            | `String`   | The context path for the module.                                            |
+| `protocol`           | `String`   | The protocol used by the module (e.g., `http`).                             |
+
+##### FlowMetaData
+
+| Field                | Type      | Description                                                                 |
+| -------------------- | --------- | --------------------------------------------------------------------------- |
+| `name`               | `String`  | The name of the flow.                                                       |
+| `consumer`           | `Object`  | The flow's consumer metadata.                                               |
+| `transitions`        | `Array`   | A list of transitions between flow elements.                                |
+| `flowElements`       | `Array`   | A list of all elements within the flow.                                     |
+| `configurationId`    | `String`  | The ID for the flow's configuration.                                        |
+| `flowStartupType`    | `String`  | The startup type for the flow.                                              |
+| `flowStartupComment` | `String`  | A comment about the flow's startup.                                         |
+
+##### Consumer
+
+| Field                 | Type      | Description                                                                 |
+| --------------------- | --------- | --------------------------------------------------------------------------- |
+| `componentName`       | `String`  | The name of the consumer component.                                         |
+| `description`         | `String`  | A description of the consumer.                                              |
+| `componentType`       | `String`  | The type of the consumer component.                                         |
+| `implementingClass`   | `String`  | The fully qualified class name of the consumer's implementation.            |
+| `configurable`        | `Boolean` | Whether the consumer is configurable.                                       |
+| `configurationId`     | `String`  | The ID for the consumer's configuration.                                    |
+| `invokerConfigurationId` | `String`  | The ID for the consumer's invoker configuration.                            |
+| `decorators`          | `Array`   | A list of decorators applied to the consumer.                               |
+
+##### Decorators
+
+| Field             | Type      | Description                                                                 |
+| ----------------- | --------- | --------------------------------------------------------------------------- |
+| `name`            | `String`  | The name of the decorator.                                                  |
+| `type`            | `String`  | The type of the decorator.                                                  |
+| `configurable`    | `Boolean` | Whether the decorator is configurable.                                      |
+| `configurationId` | `String`  | The ID for the decorator's configuration.                                   |
+
+##### Transitions
+
+| Field | Type     | Description                               |
+| ----- | -------- | ----------------------------------------- |
+| `from`  | `String` | The name of the source flow element.      |
+| `to`    | `String` | The name of the target flow element.      |
+| `name`  | `String` | The name of the transition.               |
+
+##### FlowElementMetaData
+
+| Field                 | Type      | Description                                                                 |
+| --------------------- | --------- | --------------------------------------------------------------------------- |
+| `componentName`       | `String`  | The name of the flow element.                                               |
+| `description`         | `String`  | A description of the flow element.                                          |
+| `componentType`       | `String`  | The type of the flow element.                                               |
+| `implementingClass`   | `String`  | The fully qualified class name of the flow element's implementation.        |
+| `configurable`        | `Boolean` | Whether the flow element is configurable.                                   |
+| `configurationId`     | `String`  | The ID for the flow element's configuration.                                |
+| `invokerConfigurationId` | `String`  | The ID for the flow element's invoker configuration.                        |
+| `decorators`          | `Array`   | A list of decorators applied to the flow element.                           |
+
+##### ConfigurationMetaData
+
+An array of objects, each describing a specific configuration within the module.
+
+| Field               | Type      | Description                                                                 |
+| ------------------- | --------- | --------------------------------------------------------------------------- |
+| `configurationId`   | `String`  | A unique identifier for the configuration.                                  |
+| `parameters`        | `Object`  | A map of configuration parameters.                                          |
+| `description`       | `String`  | A description of the configuration's purpose.                               |
+| `implementingClass` | `String`  | The fully qualified class name of the configuration's implementation.       |
+
+##### ConfigurationParameters
+
+| Field             | Type      | Description                                                                 |
+| ----------------- | --------- | --------------------------------------------------------------------------- |
+| `id`              | `Long`    | The ID of the configuration parameter.                                      |
+| `name`            | `String`  | The name of the configuration parameter.                                    |
+| `value`           | `Any`     | The value of the configuration parameter.                                   |
+| `description`     | `String`  | A description of the configuration parameter.                               |
+| `implementingClass` | `String`  | The fully qualified class name of the configuration parameter's implementation. |
+
+##### DependencyManagement
+
+This object details the module's dependencies.
+
+| Field          | Type    | Description                                      |
+| -------------- | ------- | ------------------------------------------------ |
+| `repositories` | `Array` | A list of Maven repositories used by the module. |
+| `dependencies` | `Array` | A list of the module's dependencies.            |
+
+##### Repositories
+
+| Field | Type     | Description                               |
+| ----- | -------- | ----------------------------------------- |
+| `id`    | `String` | The ID of the repository.                 |
+| `url`   | `String` | The URL of the repository.                |
+
+#### Dependencies
+
+| Field      | Type     | Description                               |
+| ---------- | -------- | ----------------------------------------- |
+| `group`    | `String` | The group ID of the dependency.           |
+| `artefact` | `String` | The artifact ID of the dependency.        |
+| `version`  | `String` | The version of the dependency.            |
+
+### ParameterizedTypes
+
+An array of objects, each representing a parameterized type used in the module.
+
+| Field                 | Type     | Description                                                              |
+| --------------------- | -------- | ------------------------------------------------------------------------ |
+| `implementingClassName` | `String` | The fully qualified class name of the parameterized type.                |
+| `typeParameters`      | `Array`  | A list of the type parameters.                                           |
+
+#### TypeParameter
+
+| Field | Type     | Description                               |
+| ----- | -------- | ----------------------------------------- |
+| `name`  | `String` | The name of the type parameter.           |
+| `type`  | `String` | The type of the type parameter.           |
+
+##### ConstructorMetaData
+
+An array of objects, each describing a constructor within the module.
+
+| Field                | Type     | Description                                                              |
+| -------------------- | -------- | ------------------------------------------------------------------------ |
+| `componentName`      | `String` | The name of the component.                                               |
+| `className`          | `String` | The fully qualified class name of the component.                         |
+| `constructorArguments` | `Array`  | A list of the constructor's arguments.                                   |
+
+##### ConstructorArguments 
+
+| Field | Type     | Description                               |
+| ----- | -------- | ----------------------------------------- |
+| `name`  | `String` | The name of the constructor argument.     |
+| `type`  | `String` | The type of the constructor argument.     |
+
+##### BeanDefinitionMetaData
+
+An array of objects, each providing metadata for a bean definition within the module.
+
+| Field          | Type     | Description                                                              |
+| -------------- | -------- | ------------------------------------------------------------------------ |
+| `beanName`     | `String` | The name of the bean.                                                    |
+| `type`         | `String` | The scope of the bean (e.g., `singleton`).                               |
+| `beanClass`    | `String` | The fully qualified class name of the bean.                              |
+| `beanResource` | `String` | The resource where the bean is defined (e.g., a classpath XML file).     |
+
+## Example
 
 ```json
 {
-  "moduleMetaData": {
-    "name": "module-name",
-    "description": "A description of the module.",
-    "version": "1.0.0",
-    "type": "SCHEDULER_AGENT",
-    "url": "http://localhost:8080",
-    "flows": [
-      // Array of FlowMetaData objects
-    ]
-  },
-  "configurationMetaData": [
-    // Array of ConfigurationMetaData objects
-  ]
-}
-```
-
-#### `FlowMetaData`
-
-This object defines a single flow within the module.
-
-```json
-{
-  "name": "flow-name",
-  "consumer": { /* FlowElementMetaData object */ },
-  "flowElements": [
-    // Array of FlowElementMetaData objects
-  ],
-  "transitions": [
-    // Array of Transition objects
-  ],
-  "configurationId": "flow-configuration-id"
-}
-```
-
-#### `FlowElementMetaData`
-
-This object represents a single component within a flow.
-
-```json
-{
-  "componentName": "component-name",
-  "componentType": "consumer", // e.g., consumer, producer, splitter, router
-  "implementingClass": "org.ikasan.component.jms.JmsConsumer",
-  "isConfigurable": true,
-  "configurationId": "component-configuration-id",
-  "invokerConfigurationId": "invoker-configuration-id",
-  "decorators": []
-}
-```
-
-#### `Transition`
-
-This object defines a directed link between two components.
-
-```json
-{
-  "from": "component-name-1",
-  "to": "component-name-2",
-  "name": "transition-name" // e.g., "when 'true'"
-}
-```
-
-#### `ConfigurationMetaData`
-
-This object defines the configuration for a single component.
-
-```json
-{
-  "configurationId": "component-configuration-id",
-  "description": "Configuration for the JMS consumer.",
-  "implementingClass": "org.ikasan.component.jms.JmsConsumerConfiguration",
-  "parameters": [
-    // Array of ConfigurationParameterMetaData objects
-  ]
-}
-```
-
-#### `ConfigurationParameterMetaData`
-
-This object defines a single configuration parameter.
-
-```json
-{
-  "name": "destinationName",
-  "value": "in.queue",
-  "description": "The name of the JMS queue to consume from.",
-  "implementingClass": "java.lang.String"
-}
-```
-
-### Full Working Example: `hello-ikasan-jms`
-
-This example demonstrates a complete JSON representation for a module named `hello-ikasan-jms`. The module contains a single flow, "Hello World Flow," that consumes a message from a JMS queue, logs it, and then publishes it to a JMS topic.
-
-```json
-{
-    "moduleMetaData": {
-        "url": "http://localhost:7080/jms-demo",
-        "host": "localhost",
-        "port": 7080,
-        "context": "/jms-demo",
-        "protocol": "http",
-        "name": "jms-demo",
-        "description": "Sample Module",
-        "version": "1.0.0-SNAPSHOT",
-        "ikasanVersion": "4.1.1-SNAPSHOT",
-        "flows": [
+    "moduleMetaData" : {
+        "url" : "http://localhost:0/jms-demo",
+        "host" : "localhost",
+        "port" : 0,
+        "context" : "/jms-demo",
+        "protocol" : "http",
+        "name" : "jms-demo",
+        "description" : "Sample Module",
+        "version" : "1.0.0-SNAPSHOT",
+        "ikasanVersion" : "4.1.1-SNAPSHOT",
+        "flows" : [ {
+            "name" : "JMS FLow",
+            "consumer" : {
+                "componentName" : "JMS Consumer",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+                "configurationId" : "jmsConsumer",
+                "invokerConfigurationId" : "jms-demo_JMS FLow_JMS Consumer_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            },
+            "transitions" : [ {
+                "from" : "My Very Special Translator",
+                "to" : "JMS Producer",
+                "name" : "default"
+            }, {
+                "from" : "JMS Consumer",
+                "to" : "Exception Generating Broker",
+                "name" : "default"
+            } , {
+                "to" : "My Very Special Translator",
+                "from" : "Exception Generating Broker",
+                "name" : "default"
+            } ],
+            "flowElements" : [ {
+                "componentName" : "JMS Producer",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+                "configurationId" : "jmsProducer",
+                "invokerConfigurationId" : "jms-demo_JMS FLow_JMS Producer_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "Exception Generating Broker",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Broker",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
+                "configurationId" : null,
+                "invokerConfigurationId" : "jms-demo_JMS FLow_Exception Generating Broker_1165847135_I",
+                "decorators" : null,
+                "configurable" : false
+            }, {
+                "componentName" : "My Very Special Translator",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.transformation.Translator",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.translator.MyCustomTranslator",
+                "configurationId" : "myTranslator",
+                "invokerConfigurationId" : "jms-demo_JMS FLow_Exception Generating Broker_1165847135_I",
+                "decorators" : null,
+                "configurable" : false
+            }, {
+                "componentName" : "JMS Consumer",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+                "configurationId" : "jmsConsumer",
+                "invokerConfigurationId" : "jms-demo_JMS FLow_JMS Consumer_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            } ],
+            "configurationId" : "jms-demo-JMS FLow",
+            "flowStartupType" : "MANUAL",
+            "flowStartupComment" : null
+        }, {
+            "name" : "Recipient List FLow",
+            "consumer" : {
+                "componentName" : "My Recipient Flow JMS Consumer",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+                "configurationId" : "myRecipientFlowConsumer",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Consumer_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            },
+            "transitions" : [ {
+                "from" : "My Recipient Flow Filter",
+                "to" : "My Recipient Flow JMS Producer 1",
+                "name" : "default"
+            }, {
+                "from" : "My Recipient Flow Router",
+                "to" : "My Recipient Flow Filter",
+                "name" : "1"
+            }, {
+                "from" : "MySingleRecipientRouter",
+                "to" : "My Recipient Flow JMS Producer 4",
+                "name" : "true"
+            }, {
+                "from" : "MySingleRecipientRouter",
+                "to" : "My Recipient Flow JMS Producer 5",
+                "name" : "false"
+            }, {
+                "from" : "My Recipient Flow Router",
+                "to" : "MySingleRecipientRouter",
+                "name" : "2"
+            }, {
+                "from" : "My Recipient Flow Router",
+                "to" : "My Recipient Flow JMS Producer 3",
+                "name" : "3"
+            }, {
+                "from" : "My Recipient Flow Converter",
+                "to" : "My Recipient Flow Router",
+                "name" : "default"
+            }, {
+                "from" : "My Recipient Flow JMS Consumer",
+                "to" : "My Recipient Flow Converter",
+                "name" : "default"
+            } ],
+            "flowElements" : [ {
+                "componentName" : "My Recipient Flow JMS Producer 1",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.producer.CustomJMSProducer",
+                "configurationId" : "myRecipientFlowProducer1",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Producer 1_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "My Recipient Flow Filter",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.filter.Filter",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.filter.MyFilter",
+                "configurationId" : null,
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow Filter_1096089527_I",
+                "decorators" : null,
+                "configurable" : false
+            }, {
+                "componentName" : "My Recipient Flow JMS Producer 4",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+                "configurationId" : "myRecipientFlowProducer4",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Producer 4_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "My Recipient Flow JMS Producer 5",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+                "configurationId" : "myRecipientFlowProducer5",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Producer 5_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "MySingleRecipientRouter",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.routing.SingleRecipientRouter",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MySingleRecipientRouter",
+                "configurationId" : "mySingleRecipientRouter_configuration_id",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_MySingleRecipientRouter_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "My Recipient Flow JMS Producer 3",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Producer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+                "configurationId" : "myRecipientFlowProducer3",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Producer 3_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "My Recipient Flow Router",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MyMultiRecipientRouter",
+                "configurationId" : null,
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow Router_-255997752_I",
+                "decorators" : null,
+                "configurable" : false
+            }, {
+                "componentName" : "My Recipient Flow Converter",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.transformation.Converter",
+                "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.converter.MyRecipientFlowConverter",
+                "configurationId" : "MyRecipientFlowConverter_configuration_id",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow Converter_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            }, {
+                "componentName" : "My Recipient Flow JMS Consumer",
+                "description" : null,
+                "componentType" : "org.ikasan.spec.component.endpoint.Consumer",
+                "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+                "configurationId" : "myRecipientFlowConsumer",
+                "invokerConfigurationId" : "jms-demo_Recipient List FLow_My Recipient Flow JMS Consumer_1165847135_I",
+                "decorators" : null,
+                "configurable" : true
+            } ],
+            "configurationId" : "jms-demo-Recipient List FLow",
+            "flowStartupType" : "MANUAL",
+            "flowStartupComment" : null
+        } ],
+        "configuredResourceId" : null,
+        "type" : "INTEGRATION_MODULE"
+    },
+    "configurationMetaData" : [ {
+        "configurationId" : "jmsConsumer",
+        "description" : null,
+        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "autoContentConversion",
+            "value" : true,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "autoSplitBatch",
+            "value" : true,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "batchMode",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "batchSize",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "cacheLevel",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "concurrentConsumers",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "source",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "durable",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "durableSubscriptionName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "maxConcurrentConsumers",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        } ]
+    },{
+        "configurationId" : "myTranslator",
+        "description" : null,
+        "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.translator.configuration.MyCustomTranslatorConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "autoContentConversion",
+            "value" : true,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "autoSplitBatch",
+            "value" : true,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "batchMode",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "batchSize",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "cacheLevel",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "concurrentConsumers",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "source",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "durable",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "durableSubscriptionName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "maxConcurrentConsumers",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        } ]
+    }, {
+        "configurationId" : "jmsProducer",
+        "description" : null,
+        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryPersistent",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "target",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "explicitQosEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageIdEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageTimestampEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "priority",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubNoLocal",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "receiveTimeout",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeModeName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "timeToLive",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        } ]
+    }, {
+        "configurationId" : "myRecipientFlowConsumer",
+        "description" : null,
+        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "autoContentConversion",
+            "value" : true,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "autoSplitBatch",
+            "value" : true,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "batchMode",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "batchSize",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "cacheLevel",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "concurrentConsumers",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "myRecipientFlowConsumerSource",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "durable",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "durableSubscriptionName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "maxConcurrentConsumers",
+            "value" : 1,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        } ]
+    }, {
+        "configurationId" : "MyRecipientFlowConverter_configuration_id",
+        "description" : null,
+        "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.converter.configuration.MyRecipientFlowConverterConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "intValue",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "longValue",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "stringValue",
+            "value" : "my string value",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "values",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterListImpl"
+        } ]
+    }, {
+        "configurationId" : "mySingleRecipientRouter_configuration_id",
+        "description" : null,
+        "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.router.configuration.MySingleRecipientRouterConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "intValue",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "longValue",
+            "value" : 0,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "stringValue",
+            "value" : "my string value",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "values",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterListImpl"
+        } ]
+    }, {
+        "configurationId" : "myRecipientFlowProducer3",
+        "description" : null,
+        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryPersistent",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "myRecipientFlowProducer1Target",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "explicitQosEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageIdEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageTimestampEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "priority",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubNoLocal",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "receiveTimeout",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeModeName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "timeToLive",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        } ]
+    }, {
+        "configurationId" : "myRecipientFlowProducer1",
+        "description" : null,
+        "implementingClass" : "com.ikasan.sample.spring.boot.builderpattern.components.producer.configuration.CustomJMSProducerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryPersistent",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "myRecipientFlowProducer1Target",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "explicitQosEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageIdEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageTimestampEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "priority",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubNoLocal",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "receiveTimeout",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeModeName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "timeToLive",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        } ]
+    }, {
+        "configurationId" : "myRecipientFlowProducer4",
+        "description" : null,
+        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryPersistent",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "myRecipientFlowProducer1Target",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "explicitQosEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageIdEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageTimestampEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "priority",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubNoLocal",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "receiveTimeout",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeModeName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "timeToLive",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        } ]
+    }, {
+        "configurationId" : "myRecipientFlowProducer5",
+        "description" : null,
+        "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
+        "parameters" : [ {
+            "id" : null,
+            "name" : "connectionFactoryJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryPassword",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "connectionFactoryUsername",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "deliveryPersistent",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiName",
+            "value" : "myRecipientFlowProducer1Target",
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "destinationJndiProperties",
+            "value" : { },
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
+        }, {
+            "id" : null,
+            "name" : "explicitQosEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageIdEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "messageTimestampEnabled",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "priority",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubDomain",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "pubSubNoLocal",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "receiveTimeout",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeMode",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionAcknowledgeModeName",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
+        }, {
+            "id" : null,
+            "name" : "sessionTransacted",
+            "value" : false,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
+        }, {
+            "id" : null,
+            "name" : "timeToLive",
+            "value" : null,
+            "description" : null,
+            "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
+        } ]
+    } ],
+    "dependencyManagement": {
+        "repositories": [
             {
-                "name": "JMS FLow",
-                "consumer": {
-                    "componentName": "JMS Consumer",
-                    "componentType": "org.ikasan.spec.component.endpoint.Consumer",
-                    "implementingClass": "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
-                    "configurationId": "jmsConsumer",
-                    "invokerConfigurationId": "jms-demo_JMS FLow_JMS Consumer_1165847135_I",
-                    "configurable": true
-                },
-                "transitions": [
-                    {
-                        "from": "Exception Generating Broker",
-                        "to": "JMS Producer",
-                        "name": "default"
-                    },
-                    {
-                        "from": "JMS Consumer",
-                        "to": "Exception Generating Broker",
-                        "name": "default"
-                    }
-                ],
-                "flowElements": [
-                    {
-                        "componentName": "JMS Producer",
-                        "componentType": "org.ikasan.spec.component.endpoint.Producer",
-                        "implementingClass": "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
-                        "configurationId": "jmsProducer",
-                        "invokerConfigurationId": "jms-demo_JMS FLow_JMS Producer_1165847135_I",
-                        "configurable": true
-                    },
-                    {
-                        "componentName": "Exception Generating Broker",
-                        "componentType": "org.ikasan.spec.component.endpoint.Broker",
-                        "implementingClass": "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
-                        "invokerConfigurationId": "jms-demo_JMS FLow_Exception Generating Broker_1165847135_I",
-                        "configurable": false
-                    },
-                    {
-                        "componentName": "JMS Consumer",
-                        "componentType": "org.ikasan.spec.component.endpoint.Consumer",
-                        "implementingClass": "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
-                        "configurationId": "jmsConsumer",
-                        "invokerConfigurationId": "jms-demo_JMS FLow_JMS Consumer_1165847135_I",
-                        "configurable": true
-                    }
-                ],
-                "configurationId": "jms-demo-JMS FLow",
-                "flowStartupType": "MANUAL"
+                "id": "central",
+                "url": "https://repo.maven.apache.org/maven2"
             }
         ],
-        "type": "INTEGRATION_MODULE"
-    },
-    "configurationMetaData": [
-        {
-            "configurationId": "jmsConsumer",
-            "implementingClass": "org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration",
-            "parameters": [
-                {
-                    "name": "autoContentConversion",
-                    "value": true,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "autoSplitBatch",
-                    "value": true,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "batchMode",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "batchSize",
-                    "value": 0,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "cacheLevel",
-                    "value": 1,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "concurrentConsumers",
-                    "value": 1,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "connectionFactoryJndiProperties",
-                    "value": {},
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
-                },
-                {
-                    "name": "connectionFactoryName",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "connectionFactoryPassword",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMaskedStringImpl"
-                },
-                {
-                    "name": "connectionFactoryUsername",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "destinationJndiName",
-                    "value": "source",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "destinationJndiProperties",
-                    "value": {},
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
-                },
-                {
-                    "name": "durable",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "durableSubscriptionName",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "maxConcurrentConsumers",
-                    "value": 1,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "pubSubDomain",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "sessionAcknowledgeMode",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "sessionTransacted",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                }
-            ]
-        },
-        {
-            "configurationId": "jmsProducer",
-            "implementingClass": "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",
-            "parameters": [
-                {
-                    "name": "connectionFactoryJndiProperties",
-                    "value": {},
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
-                },
-                {
-                    "name": "connectionFactoryName",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "connectionFactoryPassword",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "connectionFactoryUsername",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "deliveryMode",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "deliveryPersistent",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "destinationJndiName",
-                    "value": "target",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "destinationJndiProperties",
-                    "value": {},
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterMapImpl"
-                },
-                {
-                    "name": "explicitQosEnabled",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "messageIdEnabled",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "messageTimestampEnabled",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "priority",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "pubSubDomain",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "pubSubNoLocal",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "receiveTimeout",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
-                },
-                {
-                    "name": "sessionAcknowledgeMode",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterIntegerImpl"
-                },
-                {
-                    "name": "sessionAcknowledgeModeName",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-                },
-                {
-                    "name": "sessionTransacted",
-                    "value": false,
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
-                },
-                {
-                    "name": "timeToLive",
-                    "implementingClass": "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
-                }
-            ]
-        }
-    ],
-    "dependencyManagement": {
         "dependencies": [
             {
-                "group": "org.ikasan",
-                "artefact": "ikasan-eip-standalone",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spring-resource",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-uber-spec",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-component",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-event",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-flow",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-replay",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-module",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-recovery-manager",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-exclusion",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-monitor",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-deployment",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-configuration",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-management",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-wiretap",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-search",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-serialiser",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-error-reporting",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-resubmission",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-hospital",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-housekeeping",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-history",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-scheduled",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-big-queue",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-system-event",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-search",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-management",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-housekeeping",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-system-event",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-module",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "com.google.guava",
-                "artefact": "guava",
-                "version": "33.0.0-jre"
-            },
-            {
-                "group": "com.google.guava",
-                "artefact": "failureaccess",
-                "version": "1.0.2"
-            },
-            {
-                "group": "com.google.guava",
-                "artefact": "listenablefuture",
-                "version": "9999.0-empty-to-avoid-conflict-with-guava"
-            },
-            {
-                "group": "com.google.errorprone",
-                "artefact": "error_prone_annotations",
-                "version": "2.23.0"
-            },
-            {
-                "group": "com.google.j2objc",
-                "artefact": "j2objc-annotations",
-                "version": "2.8"
-            },
-            {
-                "group": "jakarta.xml.bind",
-                "artefact": "jakarta.xml.bind-api",
-                "version": "4.0.1"
-            },
-            {
-                "group": "jakarta.activation",
-                "artefact": "jakarta.activation-api",
-                "version": "2.1.2"
-            },
-            {
-                "group": "org.jmock",
-                "artefact": "jmock-imposters",
-                "version": "2.12.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-module",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-dashboard-client",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-monitor",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-scheduler",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.quartz-scheduler",
-                "artefact": "quartz",
-                "version": "2.3.2"
-            },
-            {
-                "group": "com.zaxxer",
-                "artefact": "HikariCP-java7",
-                "version": "2.4.13"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-recovery-manager",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-exclusion-service",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-exclusion",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-configuration",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-serialiser",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-persistence",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "javax.annotation",
-                "artefact": "javax.annotation-api",
-                "version": "1.3.1"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-serialiser",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "com.esotericsoftware",
-                "artefact": "kryo",
-                "version": "4.0.2"
-            },
-            {
-                "group": "com.esotericsoftware",
-                "artefact": "reflectasm",
-                "version": "1.11.3"
-            },
-            {
-                "group": "com.esotericsoftware",
-                "artefact": "minlog",
-                "version": "1.3.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-topology",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-metadata",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-version",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-transaction-arjuna",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.jboss",
-                "artefact": "jboss-transaction-spi",
-                "version": "8.0.0.Final"
-            },
-            {
-                "group": "org.jboss.narayana.arjunacore",
-                "artefact": "txoj",
-                "version": "7.0.0.Final"
-            },
-            {
-                "group": "org.jboss.windup.decompiler",
-                "artefact": "decompiler-fernflower",
-                "version": "6.3.9.Final"
-            },
-            {
-                "group": "org.jboss.windup.decompiler.fernflower",
-                "artefact": "windup-fernflower",
-                "version": "1.0.0.20171018"
-            },
-            {
-                "group": "org.jboss.windup.decompiler",
-                "artefact": "decompiler-api",
-                "version": "6.3.9.Final"
-            },
-            {
-                "group": "org.jboss.windup.utils",
-                "artefact": "windup-utils",
-                "version": "6.3.9.Final"
-            },
-            {
-                "group": "javax.xml.bind",
-                "artefact": "jaxb-api",
-                "version": "2.3.1"
-            },
-            {
-                "group": "javax.activation",
-                "artefact": "javax.activation-api",
-                "version": "1.2.0"
-            },
-            {
-                "group": "org.kamranzafar",
-                "artefact": "jtar",
-                "version": "2.3"
-            },
-            {
-                "group": "commons-codec",
-                "artefact": "commons-codec",
-                "version": "1.13"
-            },
-            {
-                "group": "com.fasterxml.jackson.core",
-                "artefact": "jackson-core",
-                "version": "2.16.0"
-            },
-            {
-                "group": "commons-io",
-                "artefact": "commons-io",
-                "version": "2.14.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-error-reporting-service",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-error-reporting",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-hospital",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-flow-visitorPattern",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-resubmission",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-replay",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "io.github.kostaskougios",
-                "artefact": "cloning",
-                "version": "1.10.3"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-filter",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-component",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-component-multiRecipient-router",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-component-splitter",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-configuration-service",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.jasypt",
-                "artefact": "jasypt",
-                "version": "1.9.3"
-            },
-            {
-                "group": "org.jasypt",
-                "artefact": "jasypt-hibernate5",
-                "version": "1.9.3"
-            },
-            {
-                "group": "org.apache.commons",
-                "artefact": "commons-lang3",
-                "version": "3.17.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-wiretap",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-wiretap",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-history",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-security-db",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.springframework.data",
-                "artefact": "spring-data-jpa",
-                "version": "3.4.1"
-            },
-            {
-                "group": "org.springframework.data",
-                "artefact": "spring-data-commons",
-                "version": "3.4.1"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-security-rest",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-replay",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.apache.httpcomponents.client5",
-                "artefact": "httpclient5",
-                "version": "5.4.3"
-            },
-            {
-                "group": "org.apache.httpcomponents.core5",
-                "artefact": "httpcore5",
-                "version": "5.3.4"
-            },
-            {
-                "group": "org.apache.httpcomponents.core5",
-                "artefact": "httpcore5-h2",
-                "version": "5.3.4"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-rest-module",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.springdoc",
-                "artefact": "springdoc-openapi-starter-webmvc-ui",
-                "version": "2.2.0"
-            },
-            {
-                "group": "org.springdoc",
-                "artefact": "springdoc-openapi-starter-webmvc-api",
-                "version": "2.2.0"
-            },
-            {
-                "group": "org.springdoc",
-                "artefact": "springdoc-openapi-starter-common",
-                "version": "2.2.0"
-            },
-            {
-                "group": "io.swagger.core.v3",
-                "artefact": "swagger-core",
-                "version": "2.2.15"
-            },
-            {
-                "group": "io.swagger.core.v3",
-                "artefact": "swagger-annotations",
-                "version": "2.2.15"
-            },
-            {
-                "group": "io.swagger.core.v3",
-                "artefact": "swagger-models",
-                "version": "2.2.15"
-            },
-            {
-                "group": "com.fasterxml.jackson.dataformat",
-                "artefact": "jackson-dataformat-yaml",
-                "version": "2.15.1"
-            },
-            {
-                "group": "org.webjars",
-                "artefact": "swagger-ui",
-                "version": "5.2.0"
-            },
-            {
-                "group": "org.apache.commons",
-                "artefact": "commons-text",
-                "version": "1.13.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-hospital",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-builder",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-housekeeping-module",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-housekeeping",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-harvesting",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-rest-dashboard-client",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-metrics",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-h2-backup",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-setup",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "com.opencsv",
-                "artefact": "opencsv",
-                "version": "5.8"
-            },
-            {
-                "group": "org.apache.commons",
-                "artefact": "commons-collections4",
-                "version": "4.4"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-builder-spring",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-monitor",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "joda-time",
-                "artefact": "joda-time",
-                "version": "2.10.5"
-            },
-            {
-                "group": "javax.mail",
-                "artefact": "mail",
-                "version": "1.4.3"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-persistence",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-quartz-endpoint",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-utility-endpoint",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-webconsole-jar",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-webconsole-boot-war",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "jakarta.servlet.jsp.jstl",
-                "artefact": "jakarta.servlet.jsp.jstl-api",
-                "version": "3.0.0"
-            },
-            {
-                "group": "jakarta.el",
-                "artefact": "jakarta.el-api",
-                "version": "6.0.0-M1"
-            },
-            {
-                "group": "org.glassfish.web",
-                "artefact": "jakarta.servlet.jsp.jstl",
-                "version": "3.0.0"
-            },
-            {
-                "group": "jakarta.servlet",
-                "artefact": "jakarta.servlet-api",
-                "version": "6.1.0-M1"
-            },
-            {
-                "group": "org.yaml",
-                "artefact": "snakeyaml",
-                "version": "2.2"
-            },
-            {
-                "group": "com.fasterxml.jackson.datatype",
-                "artefact": "jackson-datatype-jsr310",
-                "version": "2.18.3"
-            },
-            {
-                "group": "org.hdrhistogram",
-                "artefact": "HdrHistogram",
-                "version": "2.2.2"
-            },
-            {
-                "group": "org.latencyutils",
-                "artefact": "LatencyUtils",
-                "version": "2.0.3"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "commons-dbcp2",
-                "version": "1.0.0"
-            },
-            {
-                "group": "org.apache.commons",
-                "artefact": "commons-pool2",
-                "version": "2.12.0"
-            },
-            {
-                "group": "jakarta.enterprise",
-                "artefact": "jakarta.enterprise.cdi-api",
-                "version": "4.1.0-M1"
-            },
-            {
-                "group": "jakarta.enterprise",
-                "artefact": "jakarta.enterprise.lang-model",
-                "version": "4.1.0-M1"
-            },
-            {
-                "group": "jakarta.interceptor",
-                "artefact": "jakarta.interceptor-api",
-                "version": "2.2.0-M1"
-            },
-            {
-                "group": "jakarta.persistence",
-                "artefact": "jakarta.persistence-api",
-                "version": "3.1.0"
-            },
-            {
-                "group": "org.jboss.logging",
-                "artefact": "jboss-logging",
-                "version": "3.3.2.Final"
-            },
-            {
-                "group": "io.smallrye",
-                "artefact": "jandex",
-                "version": "3.1.2"
-            },
-            {
-                "group": "com.fasterxml",
-                "artefact": "classmate",
-                "version": "1.5.1"
-            },
-            {
-                "group": "org.glassfish.jaxb",
-                "artefact": "jaxb-runtime",
-                "version": "4.0.4"
-            },
-            {
-                "group": "org.glassfish.jaxb",
-                "artefact": "jaxb-core",
-                "version": "4.0.4"
-            },
-            {
-                "group": "org.eclipse.angus",
-                "artefact": "angus-activation",
-                "version": "2.0.1"
-            },
-            {
-                "group": "org.glassfish.jaxb",
-                "artefact": "txw2",
-                "version": "4.0.4"
-            },
-            {
-                "group": "com.sun.istack",
-                "artefact": "istack-commons-runtime",
-                "version": "4.1.2"
-            },
-            {
-                "group": "jakarta.inject",
-                "artefact": "jakarta.inject-api",
-                "version": "2.0.1"
-            },
-            {
-                "group": "org.antlr",
-                "artefact": "antlr4-runtime",
-                "version": "4.13.0"
-            },
-            {
-                "group": "org.hibernate.validator",
-                "artefact": "hibernate-validator",
-                "version": "8.0.1.Final"
-            },
-            {
-                "group": "jakarta.validation",
-                "artefact": "jakarta.validation-api",
-                "version": "3.1.0-M1"
-            },
-            {
-                "group": "net.bytebuddy",
-                "artefact": "byte-buddy",
-                "version": "1.12.19"
-            },
-            {
-                "group": "org.javassist",
-                "artefact": "javassist",
-                "version": "3.18.1-GA"
-            },
-            {
-                "group": "org.apache.logging.log4j",
-                "artefact": "log4j-to-slf4j",
-                "version": "2.24.3"
-            },
-            {
-                "group": "org.apache.logging.log4j",
-                "artefact": "log4j-api",
-                "version": "2.24.3"
-            },
-            {
-                "group": "org.slf4j",
-                "artefact": "jul-to-slf4j",
-                "version": "2.0.12"
-            },
-            {
-                "group": "com.github.ulisesbocchio",
-                "artefact": "jasypt-spring-boot-starter",
-                "version": "3.0.3"
-            },
-            {
-                "group": "com.github.ulisesbocchio",
-                "artefact": "jasypt-spring-boot",
-                "version": "3.0.3"
-            },
-            {
-                "group": "org.slf4j",
-                "artefact": "slf4j-api",
-                "version": "2.0.12"
-            },
-            {
-                "group": "ch.qos.logback",
-                "artefact": "logback-core",
-                "version": "1.5.16"
-            },
-            {
-                "group": "ch.qos.logback",
-                "artefact": "logback-classic",
-                "version": "1.5.16"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-jms-spring-arjuna",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "me.snowdrop",
-                "artefact": "narayana-spring-boot-starter",
-                "version": "3.0.0.redhat-00042"
-            },
-            {
-                "group": "me.snowdrop",
-                "artefact": "narayana-spring-boot-core",
-                "version": "3.0.0.redhat-00042"
-            },
-            {
-                "group": "org.jboss.narayana.jts",
-                "artefact": "narayana-jts-integration",
-                "version": "6.0.1.Final-redhat-00002"
-            },
-            {
-                "group": "org.messaginghub",
-                "artefact": "pooled-jms",
-                "version": "3.1.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-jms-spring",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-jms-client",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "jakarta.jms",
-                "artefact": "jakarta.jms-api",
-                "version": "3.1.0"
-            },
-            {
-                "group": "org.jboss.narayana.jta",
-                "artefact": "jta",
-                "version": "7.0.0.Final"
-            },
-            {
-                "group": "org.jboss.narayana",
-                "artefact": "common",
-                "version": "7.0.0.Final"
-            },
-            {
-                "group": "org.jboss.narayana.arjunacore",
-                "artefact": "arjuna",
-                "version": "7.0.0.Final"
-            },
-            {
-                "group": "org.jboss.narayana.jta",
-                "artefact": "jms",
-                "version": "7.0.0.Final"
-            },
-            {
-                "group": "jakarta.transaction",
-                "artefact": "jakarta.transaction-api",
-                "version": "2.0.0"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-h2-standalone-persistence",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-standalone-persistence",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-flow",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.ikasan",
-                "artefact": "ikasan-spec-event",
-                "version": "4.1.1-SNAPSHOT"
-            },
-            {
-                "group": "org.jmock",
-                "artefact": "jmock",
-                "version": "2.12.0"
-            },
-            {
-                "group": "org.jmock",
-                "artefact": "jmock-testjar",
-                "version": "2.12.0"
-            },
-            {
-                "group": "com.google.code.findbugs",
-                "artefact": "annotations",
-                "version": "3.0.1"
-            },
-            {
-                "group": "com.google.code.findbugs",
-                "artefact": "jsr305",
-                "version": "3.0.1"
-            },
-            {
-                "group": "org.apache.activemq",
-                "artefact": "activemq-client",
-                "version": "6.1.6"
-            },
-            {
-                "group": "org.fusesource.hawtbuf",
-                "artefact": "hawtbuf",
-                "version": "1.11"
-            },
-            {
-                "group": "org.apache.activemq",
-                "artefact": "activemq-broker",
-                "version": "6.1.6"
-            },
-            {
-                "group": "org.apache.activemq",
-                "artefact": "activemq-openwire-legacy",
-                "version": "6.1.6"
-            },
-            {
-                "group": "jakarta.annotation",
-                "artefact": "jakarta.annotation-api",
-                "version": "2.1.1"
-            },
-            {
-                "group": "com.fasterxml.jackson.core",
-                "artefact": "jackson-databind",
-                "version": "2.16.0"
-            },
-            {
-                "group": "com.fasterxml.jackson.core",
-                "artefact": "jackson-annotations",
-                "version": "2.16.0"
+                "groupId": "org.apache.activemq",
+                "artifactId": "activemq-client",
+                "version": "5.16.3"
             }
         ]
     },
-    "parameterizedTypes": [
-        {
-            "componentName": "JMS Consumer",
-            "implementingClassName": "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
-            "typeParameters": [
-                {
-                    "name": "LISTENER",
-                    "type": "org.ikasan.spec.event.EventListener<?>"
-                },
-                {
-                    "name": "EVENT_FACTORY",
-                    "type": "org.ikasan.spec.event.EventFactory"
-                }
-            ]
-        }
-    ]
+    "parameterizedTypes" : [ {
+        "implementingClassName" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+        "typeParameters" : [ {
+            "name" : "LISTENER",
+            "type" : "org.ikasan.spec.event.EventListener<?>"
+        }, {
+            "name" : "EVENT_FACTORY",
+            "type" : "org.ikasan.spec.event.EventFactory"
+        } ]
+    }, {
+        "implementingClassName" : "com.ikasan.sample.spring.boot.builderpattern.components.filter.MyFilter",
+        "typeParameters" : [ {
+            "name" : "T",
+            "type" : "java.lang.String"
+        } ]
+    }, {
+        "implementingClassName" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MySingleRecipientRouter",
+        "typeParameters" : [ {
+            "name" : "T",
+            "type" : "java.lang.String"
+        } ]
+    }, {
+        "implementingClassName" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MyMultiRecipientRouter",
+        "typeParameters" : [ {
+            "name" : "T",
+            "type" : "java.lang.String"
+        } ]
+    }, {
+        "implementingClassName" : "com.ikasan.sample.spring.boot.builderpattern.components.converter.MyRecipientFlowConverter",
+        "typeParameters" : [ {
+            "name" : "SOURCE",
+            "type" : "java.lang.String"
+        }, {
+            "name" : "TARGET",
+            "type" : "java.lang.String"
+        } ]
+    }, {
+        "implementingClassName" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+        "typeParameters" : [ {
+            "name" : "LISTENER",
+            "type" : "org.ikasan.spec.event.EventListener<?>"
+        }, {
+            "name" : "EVENT_FACTORY",
+            "type" : "org.ikasan.spec.event.EventFactory"
+        } ]
+    } ],
+    "constructorMetaData" : [ {
+        "componentName" : "JMS Producer",
+        "className" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+        "constructorArguments" : [ {
+            "name" : "arg0",
+            "type" : "org.springframework.jms.core.IkasanJmsTemplate"
+        } ]
+    }, {
+        "componentName" : "Exception Generating Broker",
+        "className" : "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
+        "constructorArguments" : [ {
+            "name" : "arg0",
+            "type" : "java.lang.String"
+        } ]
+    }, {
+        "componentName" : "JMS Consumer",
+        "className" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+        "constructorArguments" : [ ]
+    }, {
+        "componentName" : "My Recipient Flow JMS Producer 1",
+        "className" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+        "constructorArguments" : [ {
+            "name" : "arg0",
+            "type" : "org.springframework.jms.core.IkasanJmsTemplate"
+        } ]
+    }, {
+        "componentName" : "My Recipient Flow Filter",
+        "className" : "com.ikasan.sample.spring.boot.builderpattern.components.filter.MyFilter",
+        "constructorArguments" : [ ]
+    }, {
+        "componentName" : "My Recipient Flow JMS Producer 4",
+        "className" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+        "constructorArguments" : [ {
+            "name" : "arg0",
+            "type" : "org.springframework.jms.core.IkasanJmsTemplate"
+        } ]
+    }, {
+        "componentName" : "My Recipient Flow JMS Producer 5",
+        "className" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+        "constructorArguments" : [ {
+            "name" : "arg0",
+            "type" : "org.springframework.jms.core.IkasanJmsTemplate"
+        } ]
+    }, {
+        "componentName" : "MySingleRecipientRouter",
+        "className" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MySingleRecipientRouter",
+        "constructorArguments" : [ ]
+    }, {
+        "componentName" : "My Recipient Flow JMS Producer 3",
+        "className" : "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer",
+        "constructorArguments" : [ {
+            "name" : "arg0",
+            "type" : "org.springframework.jms.core.IkasanJmsTemplate"
+        } ]
+    }, {
+        "componentName" : "My Recipient Flow Router",
+        "className" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MyMultiRecipientRouter",
+        "constructorArguments" : [ ]
+    }, {
+        "componentName" : "My Recipient Flow Converter",
+        "className" : "com.ikasan.sample.spring.boot.builderpattern.components.converter.MyRecipientFlowConverter",
+        "constructorArguments" : [ ]
+    }, {
+        "componentName" : "My Recipient Flow JMS Consumer",
+        "className" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
+        "constructorArguments" : [ ]
+    } ],
+    "beanDefinitionMetaData" : [ {
+        "beanName" : "jmsTemplate",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.springframework.jms.core.JmsTemplate",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.ModuleTestConfig"
+    }, {
+        "beanName" : "thirdBroker",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/test-classes/test-beans.xml"
+    }, {
+        "beanName" : "anotherTestString",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "java.lang.String",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/test-classes/test-beans.xml"
+    }, {
+        "beanName" : "getModule",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.module.Module",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.ModuleConfig"
+    }, {
+        "beanName" : "exceptionGeneratingBroker",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.ModuleConfig"
+    }, {
+        "beanName" : "dependency",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "java.lang.String",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.ModuleConfig"
+    }, {
+        "beanName" : "recipientFlow",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.flow.Flow",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myMultiRecipientRouter",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.routing.MultiRecipientRouter",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myFilter",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.filter.Filter",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myRecipientFlowConsumer",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.endpoint.Consumer",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myRecipientFlowProducer1",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.endpoint.Producer",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myRecipientFlowProducer2",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.endpoint.Producer",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myRecipientFlowProducer3",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.endpoint.Producer",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myRecipientFlowProducer4",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.endpoint.Producer",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "myRecipientFlowProducer5",
+        "type" : "CONFIGURATION_CLASS_BEAN_DEFINITION",
+        "beanClass" : "org.ikasan.spec.component.endpoint.Producer",
+        "beanResource" : "com.ikasan.sample.spring.boot.builderpattern.flow.RecipientRouterFlowConfiguration"
+    }, {
+        "beanName" : "secondBroker",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.ExceptionGenerationgBroker",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/classes/beans.xml"
+    }, {
+        "beanName" : "testString",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "java.lang.String",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/classes/beans.xml"
+    }, {
+        "beanName" : "myRecipientFlowConverter",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.components.converter.MyRecipientFlowConverter",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/classes/beans.xml"
+    }, {
+        "beanName" : "myRecipientFlowConverterConfiguration",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.components.converter.configuration.MyRecipientFlowConverterConfiguration",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/classes/beans.xml"
+    }, {
+        "beanName" : "mySingleRecipientRouter",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.components.router.MySingleRecipientRouter",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/classes/beans.xml"
+    }, {
+        "beanName" : "mySingleRecipientRouterConfiguration",
+        "type" : "XML_BEAN_DEFINITION",
+        "beanClass" : "com.ikasan.sample.spring.boot.builderpattern.components.router.configuration.MySingleRecipientRouterConfiguration",
+        "beanResource" : "/Users/mick/workspace/archetype/jms-demo/jar/target/classes/beans.xml"
+    } ]
 }
 ```
