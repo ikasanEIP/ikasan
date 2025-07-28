@@ -34,7 +34,7 @@ public class ModuleGenerator {
         this.moduleFileManager = moduleFileManager;
 
         this.localBeanMigrationManager = new LocalBeanMigrationManager(migrationProjectBasePackage
-            , this.moduleFileManager);
+            , this.moduleFileManager, "jms-demo");
 
         this.migrationProjectBasePackage = migrationProjectBasePackage;
 
