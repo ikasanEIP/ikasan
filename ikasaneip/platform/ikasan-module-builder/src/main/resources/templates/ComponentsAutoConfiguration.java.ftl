@@ -1,17 +1,33 @@
+<#import "./components/endpoints.ftl" as endpoints>
 package ${packageName};
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.ikasan.builder.BuilderFactory;
+import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 <#list components as component>
     import ${component.componentType};
     import ${component.implementingClass};
+    <#if component.implementingClass == "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        import org.apache.activemq.ActiveMQXAConnectionFactory;
+        import jakarta.jms.ConnectionFactory;
+    <#elseif component.implementingClass == "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer">
+        import org.apache.activemq.ActiveMQXAConnectionFactory;
+        import jakarta.jms.ConnectionFactory;
+    </#if>
 </#list>
 <#list componentConfigurations as componentConfiguration>
     import ${componentConfiguration.packageName}.${componentConfiguration.className};
 </#list>
 @Configuration
 public class ComponentsAutoConfiguration {
+@Resource
+private BuilderFactory builderFactory;
+@Value("${"$"}{jms.provider.url}")
+private String brokerUrl;
 <#list components as component>
     /**
     * Create the ${component.name?replace(" ", "")?uncap_first} bean.
@@ -19,8 +35,26 @@ public class ComponentsAutoConfiguration {
     * @return the ${component.name?replace(" ", "")?uncap_first} bean.
     */
     @Bean("${component.name?replace(" ", "")?uncap_first}")
-    public ${component.componentTypeClassName} ${component.name?replace(" ", "")?uncap_first}() {
-        return new ${component.className}();
+    <#if component.isConfigured >
+        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?uncap_first}(@Qualifier("${component.name?replace(" ", "")?uncap_first}Configuration") ${component.configurationMetaData.configurationClassName} configuration) {
+    <#else>
+        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?uncap_first}() {
+    </#if>
+    <#if component.implementingClass == "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
+        <@endpoints.jmsConsumer component/>
+    <#elseif component.implementingClass == "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer">
+        <@endpoints.jmsProducer component/>
+    <#else>
+        <#if component.isConfigured >
+            ${component.className} component = new ${component.className}();
+            component.setConfiguredResourceId("${component.configurationId}");
+            component.setConfiguration(configuration);
+
+            return component;
+        <#else>
+            return new ${component.className}();
+        </#if>
+    </#if>
     }
 
 </#list>
@@ -31,10 +65,10 @@ public class ComponentsAutoConfiguration {
     *
     * @return the ${componentConfiguration.className?replace(" ", "")?uncap_first} bean.
     */
-    @Bean("${componentConfiguration.className?replace(" ", "")?uncap_first}")
-    @ConfigurationProperties(prefix = "${componentConfiguration.className?replace(" ", "")?uncap_first}")
-    public ${componentConfiguration.className?replace(" ", "")} ${componentConfiguration.className?replace(" ", "")?uncap_first}() {
-    return new ${componentConfiguration.className}();
+    @Bean("${componentConfiguration.componentName?replace(" ", "")?uncap_first}Configuration")
+    @ConfigurationProperties(prefix = "${componentConfiguration.componentName?replace(" ", "")?lower_case}")
+    public ${componentConfiguration.className?replace(" ", "")} ${componentConfiguration.componentName?replace(" ", "")?uncap_first}Configuration() {
+        return new ${componentConfiguration.className}();
     }
 
 </#list>

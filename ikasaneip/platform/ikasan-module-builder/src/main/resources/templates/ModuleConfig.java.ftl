@@ -7,16 +7,19 @@ import org.ikasan.spec.flow.Flow;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.Import;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import ${moduleBasePackage}.ComponentsAutoConfiguration;
 
 @Configuration
 @ImportResource( {
     "classpath:ikasan-transaction-pointcut-jms.xml",
     "classpath:h2-datasource-conf.xml"
 } )
+@Import({ ComponentsAutoConfiguration.class})
 public class ModuleConfig
 {
     @Value("${"$"}{module.name}")

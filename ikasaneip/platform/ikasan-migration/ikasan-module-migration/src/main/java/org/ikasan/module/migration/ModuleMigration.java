@@ -65,7 +65,7 @@ public class ModuleMigration {
     public void migrate() throws IOException, XmlPullParserException, TemplateException {
         File flowTest = this.getFlowTestFile();
         if(flowTest == null) {
-            logger.info(String.format("Could not locate the test class[%s], in an directories under[%s]. Exiting!"
+            logger.info(String.format("Could not locate the test class[%s], in a directory under[%s]. Exiting!"
                 , this.testClassName, this.migrationProjectBaseDirectory));
             return;
         }

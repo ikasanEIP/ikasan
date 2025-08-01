@@ -61,6 +61,7 @@
         <module>ikasan-migration</module>
         <module>ikasan-h2-backup</module>
         <module>ikasan-module-builder</module>
+        <module>ikasan-component-builder</module>
     </modules>
 
 </project>
