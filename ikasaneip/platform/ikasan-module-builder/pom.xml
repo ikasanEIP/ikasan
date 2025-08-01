@@ -83,6 +83,11 @@
         </dependency>
 
         <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-builder</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>org.freemarker</groupId>
             <artifactId>freemarker</artifactId>
             <version>2.3.32</version>
@@ -91,7 +96,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-text</artifactId>
-            <version>1.9</version>
+            <version>1.13.0</version>
         </dependency>
 
         <dependency>
@@ -105,6 +110,12 @@
         </dependency>
 
         <!-- Test Dependencies -->
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-component-builder</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

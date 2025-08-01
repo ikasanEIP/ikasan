@@ -44,15 +44,17 @@
             <scope>test</scope>
         </dependency>
 
-<#--        <dependency>-->
-<#--            <groupId>org.apache.activemq</groupId>-->
-<#--            <artifactId>activemq-client</artifactId>-->
-<#--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-client</artifactId>
+            <version>${"$"}{version.activemq}</version>
+        </dependency>
 
-<#--        <dependency>-->
-<#--            <groupId>org.apache.activemq</groupId>-->
-<#--            <artifactId>activemq-broker</artifactId>-->
-<#--        </dependency>-->
+        <dependency>
+            <groupId>org.apache.activemq</groupId>
+            <artifactId>activemq-broker</artifactId>
+            <version>${"$"}{version.activemq}</version>
+        </dependency>
 
 <#--        <dependency>-->
 <#--            <groupId>org.awaitility</groupId>-->

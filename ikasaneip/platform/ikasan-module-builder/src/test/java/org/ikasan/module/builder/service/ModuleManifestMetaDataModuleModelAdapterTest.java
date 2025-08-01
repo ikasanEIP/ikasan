@@ -14,7 +14,7 @@ public class ModuleManifestMetaDataModuleModelAdapterTest extends AbstractTest {
         String moduleMetaData = this.loadDataFile("/data/moduleMetaData.json");
         ModuleManifestMetaDataModuleModelAdapter adapter = new ModuleManifestMetaDataModuleModelAdapter();
 
-        ModuleModel model = adapter.adapt(ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData), "test");
+        ModuleModel model = adapter.adapt(ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData), "templates/test");
 
         System.out.println(model);
     }
