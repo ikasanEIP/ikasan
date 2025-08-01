@@ -23,6 +23,11 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>${moduleMetaData.name}-components</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-standalone</artifactId>
             <version>${"$"}{version.ikasan}</version>
         </dependency>

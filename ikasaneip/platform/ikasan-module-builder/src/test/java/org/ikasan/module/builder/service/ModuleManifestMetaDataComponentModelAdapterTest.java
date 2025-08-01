@@ -17,7 +17,7 @@ public class ModuleManifestMetaDataComponentModelAdapterTest extends AbstractTes
         ModuleManifestMetaDataComponentModelAdapter adapter = new ModuleManifestMetaDataComponentModelAdapter();
 
         List<Component> components = adapter.adapt(ModuleManifestMetaDataHelper
-            .deserialiseModuleManifest(moduleMetaData), "com.ikasan.sample.spring.boot");
+            .deserialiseModuleManifest(moduleMetaData), "com.ikasan.sample.spring.boot", true);
 
         System.out.println(components);
     }

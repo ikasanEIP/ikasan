@@ -16,6 +16,8 @@ public class Component {
     private String componentTypePackage;
     private ParameterizedType parameterizedType;
     private boolean isConfigured;
+    private boolean isLocal;
+    private String configurationId;
     private ComponentConfigurationMetaData configurationMetaData;
     private List<ConstructorMetaData> constructorMetaData;
 
@@ -179,6 +181,32 @@ public class Component {
      */
     public void setConfigured(boolean configured) {
         isConfigured = configured;
+    }
+
+    /**
+     * Retrieves the boolean value indicating if the component is local.
+     *
+     * @return true if the component is local, false otherwise
+     */
+    public boolean getIsLocal() {
+        return isLocal;
+    }
+
+    /**
+     * Sets the flag indicating if the component is local.
+     *
+     * @param local A boolean value indicating if the component is local.
+     */
+    public void setLocal(boolean local) {
+        isLocal = local;
+    }
+
+    public String getConfigurationId() {
+        return configurationId;
+    }
+
+    public void setConfigurationId(String configurationId) {
+        this.configurationId = configurationId;
     }
 
     /**

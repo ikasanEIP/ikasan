@@ -3,8 +3,10 @@ package org.ikasan.module.builder.model.configuration;
 public class ConfigurationParameter {
     private String name;
     private String type;
+    private String value;
     private String description;
     private String fullyQualifiedType;
+    private String paramType;
 
     /**
      * Retrieves the name of this configuration parameter.
@@ -40,6 +42,24 @@ public class ConfigurationParameter {
      */
     public void setType(String type) {
         this.type = type;
+    }
+
+    /**
+     * Retrieves the value of this configuration parameter.
+     *
+     * @return The value of the configuration parameter.
+     */
+    public String getValue() {
+        return value;
+    }
+
+    /**
+     * Sets the value for this configuration parameter.
+     *
+     * @param value The new value to set for this configuration parameter.
+     */
+    public void setValue(String value) {
+        this.value = value;
     }
 
     /**

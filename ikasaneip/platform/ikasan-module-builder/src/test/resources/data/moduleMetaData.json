@@ -25,7 +25,8 @@
         "from" : "My Very Special Translator",
         "to" : "JMS Producer",
         "name" : "default"
-      }, {
+      }
+      , {
         "from" : "JMS Consumer",
         "to" : "Exception Generating Broker",
         "name" : "default"
@@ -60,7 +61,7 @@
         "configurationId" : "myTranslator",
         "invokerConfigurationId" : "jms-demo_JMS FLow_Exception Generating Broker_1165847135_I",
         "decorators" : null,
-        "configurable" : false
+        "configurable" : true
       }, {
         "componentName" : "JMS Consumer",
         "description" : null,
@@ -434,7 +435,8 @@
       "description" : null,
       "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterBooleanImpl"
     } ]
-  }, {
+  }
+  , {
     "configurationId" : "jmsProducer",
     "description" : null,
     "implementingClass" : "org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration",

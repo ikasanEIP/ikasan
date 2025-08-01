@@ -21,7 +21,7 @@ public class ModuleManifestMetaDataComponentModelAdapter {
      * @param moduleBasePackage The base package of the module to filter components by.
      * @return A list of Component objects filtered by the module base package.
      */
-    public List<Component> adapt(ModuleManifestMetaData moduleManifestMetaData, String moduleBasePackage)
+    public List<Component> adapt(ModuleManifestMetaData moduleManifestMetaData, String moduleBasePackage, boolean localOnly)
     {
         Map<String, ComponentConfigurationMetaData> configurationMetaDataMap
             = this.getConfigurationMetaDataMap(moduleManifestMetaData.getConfigurationMetaData());
@@ -33,9 +33,10 @@ public class ModuleManifestMetaDataComponentModelAdapter {
         List<Component> results = new ArrayList<>();
         for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
             for (FlowElementMetaData flowElementMetaData : flowMetaData.getFlowElements()) {
-                if(flowElementMetaData.getImplementingClass().startsWith(moduleBasePackage)) {
+                if((flowElementMetaData.getImplementingClass().startsWith(moduleBasePackage) && localOnly) || !localOnly) {
                     Component component = new Component();
                     component.setName(flowElementMetaData.getComponentName());
+                    component.setLocal(flowElementMetaData.getImplementingClass().startsWith(moduleBasePackage));
                     component.setImplementingClass(flowElementMetaData.getImplementingClass());
                     component.setClassName(flowElementMetaData.getImplementingClass().substring(
                         flowElementMetaData.getImplementingClass().lastIndexOf(".") + 1
@@ -49,6 +50,7 @@ public class ModuleManifestMetaDataComponentModelAdapter {
                         flowElementMetaData.getComponentType().lastIndexOf(".")));
                     component.setComponentType(flowElementMetaData.getComponentType());
                     component.setConfigured(flowElementMetaData.isConfigurable());
+                    component.setConfigurationId(flowElementMetaData.getConfigurationId());
                     component.setParameterizedType(parameterizedTypeMap.get(flowElementMetaData.getImplementingClass()));
                     component.setConfigurationMetaData(configurationMetaDataMap.get(flowElementMetaData.getConfigurationId()));
                     if (constructorMetaDataMap.containsKey(flowElementMetaData.getComponentName())) {
