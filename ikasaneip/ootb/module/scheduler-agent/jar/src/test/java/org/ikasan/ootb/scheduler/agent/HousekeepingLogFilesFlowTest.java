@@ -76,6 +76,7 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.quartz.JobDataMap;
 import org.quartz.Trigger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -104,10 +105,20 @@ public class HousekeepingLogFilesFlowTest {
     @Resource
     private Module<Flow> moduleUnderTest;
 
+    @Value("${scheduler.agent.log.folder}")
+    private String logFolder;
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
 
+    @Before
+    public void createArchiveDirectory() {
+        File logDirectory = new File(logFolder);
+        if (!logDirectory.exists()) {
+            logDirectory.mkdirs();
+        }
+    }
 
     @Test
     @DirtiesContext
