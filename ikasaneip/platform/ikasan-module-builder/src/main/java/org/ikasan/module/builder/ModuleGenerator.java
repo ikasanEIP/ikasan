@@ -63,7 +63,7 @@ public class ModuleGenerator {
         File flowConfigPackage =  this.generateFlowConfigurationArtefacts(model, moduleBootBasePackage);
 
         this.generateFlowTestArtefacts(model);
-        this.generateTestProperties(moduleManifestMetaData);
+        this.generateScaffoldingTestResources(moduleManifestMetaData);
 
         File componentArtefactsPackage = this.generateComponentArtefacts(moduleManifestMetaData, moduleBootBasePackage);
 
@@ -95,10 +95,10 @@ public class ModuleGenerator {
             , migrationProjectBasePackage.replaceAll("\\.", "/"));
         moduleBootBasePackage.mkdirs();
 
-        this.executionFreeMarkerTemplate(moduleBootBasePackage, "Application.java.ftl"
+        this.executionFreeMarkerTemplate(moduleBootBasePackage, "scaffolding/main/boot/Application.java.ftl"
             , model, "Application.java");
 
-        this.executionFreeMarkerTemplate(moduleBootBasePackage, "ModuleConfig.java.ftl"
+        this.executionFreeMarkerTemplate(moduleBootBasePackage, "scaffolding/main/boot/ModuleConfig.java.ftl"
             , model, "ModuleConfig.java");
 
         return moduleBootBasePackage;
@@ -119,7 +119,7 @@ public class ModuleGenerator {
         flowConfigPackage.mkdirs();
 
         for (FlowModel flowModel : model.getFlowModelMap().values()) {
-            this.executionFreeMarkerTemplate(flowConfigPackage, "FlowConfig.java.ftl"
+            this.executionFreeMarkerTemplate(flowConfigPackage, "scaffolding/main/flow/FlowConfig.java.ftl"
                 , flowModel, capitalizeFirst(flowModel.getName().replaceAll(" ", "")) + "Config.java");
         }
 
@@ -132,14 +132,14 @@ public class ModuleGenerator {
         moduleBootTestPackage.mkdirs();
 
         for (FlowModel flowModel : model.getFlowModelMap().values()) {
-            this.executionFreeMarkerTemplate(moduleBootTestPackage, "test/FlowTest.java.ftl"
+            this.executionFreeMarkerTemplate(moduleBootTestPackage, "scaffolding/test/resources/FlowTest.java.ftl"
                 , flowModel, capitalizeFirst(flowModel.getName().replaceAll(" ", "")) + "Test.java");
         }
     }
 
-    private void generateTestProperties(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+    private void generateScaffoldingTestResources(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
         ModuleManifestMetaDataModulePropertiesModelAdapter adapter = new ModuleManifestMetaDataModulePropertiesModelAdapter();
-        this.executionFreeMarkerTemplate(this.moduleFileManager.getScaffoldingResourcesTestBase(), "properties/application.properties.ftl"
+        this.executionFreeMarkerTemplate(this.moduleFileManager.getScaffoldingResourcesTestBase(), "scaffolding/test/resources/application.properties.ftl"
             , adapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage), "application.properties");
     }
 
@@ -156,7 +156,7 @@ public class ModuleGenerator {
         File componentConfigPackage = new File(moduleBootBasePackage, "/component");
         componentConfigPackage.mkdirs();
 
-        this.executionFreeMarkerTemplate(componentConfigPackage, "ComponentFactory.java.ftl"
+        this.executionFreeMarkerTemplate(componentConfigPackage, "scaffolding/main/component/ComponentFactory.java.ftl"
             , moduleManifestMetaData.getModuleMetaData(), "ComponentFactory.java");
 
         this.generateComponents(moduleManifestMetaData);
@@ -174,31 +174,31 @@ public class ModuleGenerator {
             componentPackageDirectory.mkdirs();
 
             if(component.getComponentType().equals("org.ikasan.spec.component.endpoint.Broker")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomBroker.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomBroker.java.ftl"
                     , component, component.getClassName()+".java");
             }
             else if(component.getComponentType().equals("org.ikasan.spec.component.transformation.Converter")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomConverter.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomConverter.java.ftl"
                     , component, component.getClassName()+".java");
             }
             else if(component.getComponentType().equals("org.ikasan.spec.component.transformation.Translator")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomTranslator.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomTranslator.java.ftl"
                     , component, component.getClassName()+".java");
             }
             else if(component.getComponentType().equals("org.ikasan.spec.component.filter.Filter")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomFilter.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomFilter.java.ftl"
                     , component, component.getClassName()+".java");
             }
             else if(component.getComponentType().equals("org.ikasan.spec.component.routing.SingleRecipientRouter")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomSingleRecipientRouter.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomSingleRecipientRouter.java.ftl"
                     , component, component.getClassName()+".java");
             }
             else if(component.getComponentType().equals("org.ikasan.spec.component.routing.MultiRecipientRouter")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomMultiRecipientRouter.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomMultiRecipientRouter.java.ftl"
                     , component, component.getClassName()+".java");
             }
             else if(component.getComponentType().equals("org.ikasan.spec.component.endpoint.Producer")) {
-                this.executionFreeMarkerTemplate(componentPackageDirectory, "CustomProducer.java.ftl"
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomProducer.java.ftl"
                     , component, component.getClassName()+".java");
             }
         }
@@ -213,7 +213,7 @@ public class ModuleGenerator {
                     , componentConfiguration.getPackageName().replaceAll("\\.", "/"));
                 componentConfigurationPackageDirectory.mkdirs();
 
-                this.executionFreeMarkerTemplate(componentConfigurationPackageDirectory, "ComponentConfiguration.java.ftl"
+                this.executionFreeMarkerTemplate(componentConfigurationPackageDirectory, "components/main/component/configuration/ComponentConfiguration.java.ftl"
                     , componentConfiguration, componentConfiguration.getClassName() + ".java");
             }
         }
@@ -230,7 +230,7 @@ public class ModuleGenerator {
         File componentAutoConfigPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
             , componentAutoConfiguration.getPackageName().replaceAll("\\.", "/"));
 
-        this.executionFreeMarkerTemplate(componentAutoConfigPackageDirectory, "ComponentsAutoConfiguration.java.ftl"
+        this.executionFreeMarkerTemplate(componentAutoConfigPackageDirectory, "components/main/component/ComponentsAutoConfiguration.java.ftl"
             , componentAutoConfiguration, "ComponentsAutoConfiguration.java");
 
     }
@@ -244,7 +244,7 @@ public class ModuleGenerator {
      */
     private void generateDistributionArtefacts(ModuleManifestMetaData moduleManifestMetaData)
         throws TemplateException, IOException {
-        this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution.xml.ftl"
+        this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution/distribution.xml.ftl"
             , moduleManifestMetaData, "distribution.xml");
     }
 
@@ -263,13 +263,13 @@ public class ModuleGenerator {
             , "parent-pom.xml.ftl", moduleManifestMetaData);
         // Create the migrated module's scaffolding module POM.
         this.managePomCreation(moduleFileManager.getScaffoldingDir()
-            , "scaffolding-pom.xml.ftl", moduleManifestMetaData);
+            , "scaffolding/scaffolding-pom.xml.ftl", moduleManifestMetaData);
         // Create the migrated module's components module POM.
         this.managePomCreation(moduleFileManager.getComponentsDir()
-            , "components-pom.xml.ftl", moduleManifestMetaData);
+            , "components/components-pom.xml.ftl", moduleManifestMetaData);
         // Create the migrated module's distribution module POM.
         this.managePomCreation(moduleFileManager.getDistributionBase()
-            , "distribution-pom.xml.ftl", moduleManifestMetaData);
+            , "distribution/distribution-pom.xml.ftl", moduleManifestMetaData);
     }
 
     /**
