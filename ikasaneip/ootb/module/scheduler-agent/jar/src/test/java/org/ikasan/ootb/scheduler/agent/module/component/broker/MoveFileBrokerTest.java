@@ -6,6 +6,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.Mov
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -27,6 +28,14 @@ public class MoveFileBrokerTest {
     @Test(expected = IllegalArgumentException.class)
     public void test_exception_constructor_null_dry_run_service() {
         new MoveFileBroker(null);
+    }
+
+    @Before
+    public void createArchiveDirectory() {
+        File archiveDirectory = new File("src/test/resources/data/archive");
+        if (!archiveDirectory.exists()) {
+            archiveDirectory.mkdirs();
+        }
     }
 
     @Test
