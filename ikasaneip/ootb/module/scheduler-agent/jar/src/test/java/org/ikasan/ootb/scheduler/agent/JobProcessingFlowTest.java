@@ -127,6 +127,7 @@ public class JobProcessingFlowTest {
         outboundQueue.removeAll();
 
         ContextInstanceCache.instance().put("contextInstanceId", new ContextInstanceImpl());
+        ContextInstanceCache.instance().setInitialisationComplete(true);
     }
 
     @After
