@@ -1,4 +1,4 @@
-<#import "./components/endpoints.ftl" as endpoints>
+<#import "/components/endpoints.ftl" as endpoints>
 package ${packageName};
 
 import org.springframework.context.annotation.Bean;
