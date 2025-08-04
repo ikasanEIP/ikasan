@@ -37,7 +37,7 @@ deploy:
     skip_cleanup: true
     script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
-      branch: IKASAN-2607-backport-ikasan-manifest-to-3.3.x-branch
+      branch: IKASAN-2607-backport-ikasan-manifest-to-3.3.x-branch-v2
   # deploy develop 4.0.x to oss
   - provider: script
     skip_cleanup: true
