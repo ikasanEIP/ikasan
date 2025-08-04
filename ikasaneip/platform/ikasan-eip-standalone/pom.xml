@@ -111,6 +111,11 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-manifest</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-error-reporting-service</artifactId>
         </dependency>
 

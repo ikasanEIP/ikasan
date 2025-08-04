@@ -1,17 +1,12 @@
 package org.ikasan.manifest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
-import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
+import org.ikasan.manifest.model.*;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.StartupControl;
-import org.ikasan.manifest.model.*;
 import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
-import org.ikasan.topology.metadata.model.*;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
