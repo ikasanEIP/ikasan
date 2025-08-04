@@ -378,14 +378,6 @@ public class BigQueueConsumer<T>
      * @param executor
      */
     private void shutdownExecutor(ExecutorService executor) {
-        executor.shutdown();
-        try {
-            if (!executor.awaitTermination(2000, TimeUnit.MILLISECONDS)) {
-                executor.shutdownNow();
-            }
-        }
-        catch (InterruptedException e) {
-            executor.shutdownNow();
-        }
+        executor.shutdownNow();
     }
 }
