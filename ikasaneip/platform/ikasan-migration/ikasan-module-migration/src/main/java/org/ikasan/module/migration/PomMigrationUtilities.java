@@ -28,7 +28,14 @@ public class PomMigrationUtilities {
         Model tgtModel = reader.read(new FileReader(tgtPomFile));
 
         srcModel.getDependencies().forEach
-            (dependency -> tgtModel.addDependency(dependency));
+            (dependency -> {
+                if(tgtModel.getDependencies().stream().filter(d ->
+                    !d.getArtifactId().equals(dependency.getArtifactId()) && d.getGroupId().equals(dependency.getGroupId())
+                        ).findFirst().isPresent()) {
+                    tgtModel.addDependency(dependency);
+                }
+            });
+
         tgtModel.getProperties().putAll(srcModel.getProperties());
 
         MavenXpp3Writer writer = new MavenXpp3Writer();
