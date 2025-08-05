@@ -54,6 +54,10 @@ public class ModuleGenerator {
     }
 
     public void generate(ModuleManifestMetaData moduleManifestMetaData) throws IOException, TemplateException {
+        if(moduleManifestMetaData.getModuleMetaData().getVersion() == null) {
+            // Manually set version if not automatically set. Old versions of ikasan do not carry ths through.
+            moduleManifestMetaData.getModuleMetaData().setVersion("1.0.0-SNAPSHOT");
+        }
         ModuleMetaData moduleMetaData = moduleManifestMetaData.getModuleMetaData();
 
         this.moduleFileManager.getProjectRootDirectory().mkdirs();
