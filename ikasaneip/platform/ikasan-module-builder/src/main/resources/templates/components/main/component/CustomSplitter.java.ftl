@@ -1,6 +1,7 @@
 package ${classPackage};
 
 import org.ikasan.spec.component.splitting.Splitter;
+import java.util.List;
 <#if isConfigured>
     import org.ikasan.spec.configuration.ConfiguredResource;
     import ${configurationMetaData.configurationPackageName}.${configurationMetaData.configurationClassName};
