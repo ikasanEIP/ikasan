@@ -65,7 +65,7 @@ import ${moduleBasePackage}.component.ComponentFactory;
     * @param routeBuilder the RouteBuilder used to configure the route.
     * @return the configured Route for path ${key} for router ${routerName}.
     */
-    private Route route${routerName?replace(" ", "")?cap_first}${key?replace(" ", "")?cap_first}(RouteBuilder routeBuilder) {
+    private Route route${routerName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}${key?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}(RouteBuilder routeBuilder) {
         return routeBuilder
         <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleTransition")>
             <@addSingleTransitionComponentToBuilder component "false"/>
@@ -83,31 +83,31 @@ import ${moduleBasePackage}.component.ComponentFactory;
 <#macro addSingleTransitionComponentToBuilder component primaryRoute>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.ConsumerComponent")>
-        .consumer("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .consumer("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.ProducerComponent")>
-        .producer("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())<#if primaryRoute == "false">;</#if>
+        .producer("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())<#if primaryRoute == "false">;</#if>
         <#if primaryRoute == "true">
         .build();
         </#if>
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.BrokerComponent")>
-        .broker("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .broker("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.ConverterComponent")>
-        .converter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .converter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.SequencerComponent")>
-        .sequencer("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .sequencer("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.SplitterComponent")>
-        .splitter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .splitter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.TranslatorComponent")>
-        .translator("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .translator("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.FilterComponent")>
-        .filter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .filter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
     </#if>
     <#if component.transition??>
         <#if instanceOf(component.transition, "org.ikasan.module.builder.model.module.SingleTransition")>
@@ -125,22 +125,22 @@ import ${moduleBasePackage}.component.ComponentFactory;
 <#macro addMultiTransitionComponentToBuilder component>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.MultiRecipientRouterComponent")>
-        .multiRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .multiRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
         <#list component.transitions as key, value >
-            .when("${key}", route${component.name?replace(" ", "")?cap_first}${key?replace(" ", "")?cap_first}(builderFactory.getRouteBuilder()))
+            .when("${key}", route${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}${key?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}(builderFactory.getRouteBuilder()))
         </#list>
         .build();
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleRecipientRouterComponent")>
-        .singleRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?cap_first}())
+        .singleRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}())
         <#list component.transitions as key, value >
-            .when("${key}", route${component.name?replace(" ", "")?cap_first}${key?replace(" ", "")?cap_first}(builderFactory.getRouteBuilder()))
+            .when("${key}", route${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}${key?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}(builderFactory.getRouteBuilder()))
         </#list>
         .build();
     </#if>
 </#macro>
 @Configuration
-public class ${name?replace(" ", "")?cap_first}Config
+public class ${name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}Config
 {
     @Value("${"$"}{module.name}")
     private String moduleName;
@@ -154,8 +154,8 @@ public class ${name?replace(" ", "")?cap_first}Config
 
     * @return the flow bean.
     */
-    @Bean(name = "${name?replace(" ", "")?uncap_first}")
-    public Flow ${name?replace(" ", "")?cap_first}()
+    @Bean(name = "${name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}")
+    public Flow ${name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?cap_first}()
     {
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder(moduleName);
         return moduleBuilder.getFlowBuilder("${name}")

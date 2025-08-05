@@ -30,15 +30,15 @@ private BuilderFactory builderFactory;
 private String brokerUrl;
 <#list components as component>
     /**
-    * Create the ${component.name?replace(" ", "")?uncap_first} bean.
+    * Create the ${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return the ${component.name?replace(" ", "")?uncap_first} bean.
+    * @return the ${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     */
-    @Bean("${component.name?replace(" ", "")?uncap_first}")
+    @Bean("${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}")
     <#if component.isConfigured >
-        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?uncap_first}(@Qualifier("${component.name?replace(" ", "")?uncap_first}Configuration") ${component.configurationMetaData.configurationClassName} configuration) {
+        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}(@Qualifier("${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}Configuration") ${component.configurationMetaData.configurationClassName} configuration) {
     <#else>
-        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?uncap_first}() {
+        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}() {
     </#if>
     <#if component.implementingClass == "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
         <@endpoints.jmsConsumer component/>
@@ -61,13 +61,13 @@ private String brokerUrl;
 
 <#list componentConfigurations as componentConfiguration>
     /**
-    * Create the ${componentConfiguration.className?replace(" ", "")?uncap_first} bean.
+    * Create the ${componentConfiguration.className?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return the ${componentConfiguration.className?replace(" ", "")?uncap_first} bean.
+    * @return the ${componentConfiguration.className?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     */
-    @Bean("${componentConfiguration.componentName?replace(" ", "")?uncap_first}Configuration")
-    @ConfigurationProperties(prefix = "${componentConfiguration.componentName?replace(" ", "")?lower_case}")
-    public ${componentConfiguration.className?replace(" ", "")} ${componentConfiguration.componentName?replace(" ", "")?uncap_first}Configuration() {
+    @Bean("${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}Configuration")
+    @ConfigurationProperties(prefix = "${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?lower_case}")
+    public ${componentConfiguration.className?replace(" ", "")?replace("[^A-Za-z0-9]", "")} ${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}Configuration() {
         return new ${componentConfiguration.className}();
     }
 

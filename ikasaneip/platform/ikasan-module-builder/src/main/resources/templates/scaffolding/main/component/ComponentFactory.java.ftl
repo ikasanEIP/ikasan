@@ -23,27 +23,27 @@ public class ComponentFactory {
 <#list flows as flow>
     <#list flow.flowElements as component>
         @Resource
-        @Qualifier("${component.componentName?replace(" ", "")?uncap_first}")
+        @Qualifier("${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}")
         <#if component.componentType == "org.ikasan.spec.component.endpoint.Consumer">
-            private Consumer ${component.componentName?replace(" ", "")?uncap_first};
+            private Consumer ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Producer">
-            private Producer ${component.componentName?replace(" ", "")?uncap_first};
+            private Producer ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.filter.Filter">
-            private Filter ${component.componentName?replace(" ", "")?uncap_first};
+            private Filter ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.transformation.Converter">
-            private Converter ${component.componentName?replace(" ", "")?uncap_first};
+            private Converter ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.routing.MultiRecipientRouter">
-            private MultiRecipientRouter ${component.componentName?replace(" ", "")?uncap_first};
+            private MultiRecipientRouter ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.routing.SingleRecipientRouter">
-            private SingleRecipientRouter ${component.componentName?replace(" ", "")?uncap_first};
+            private SingleRecipientRouter ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.sequencing.Sequencer">
-            private Sequencer ${component.componentName?replace(" ", "")?uncap_first};
+            private Sequencer ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.splitting.Splitter">
-            private Splitter ${component.componentName?replace(" ", "")?uncap_first};
+            private Splitter ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.transformation.Translator">
-            private Translator ${component.componentName?replace(" ", "")?uncap_first};
+            private Translator ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Broker">
-            private Broker ${component.componentName?replace(" ", "")?uncap_first};
+            private Broker ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
         </#if>
     </#list>
 </#list>
@@ -53,102 +53,102 @@ public class ComponentFactory {
     <#list flow.flowElements as component>
     <#if component.componentType == "org.ikasan.spec.component.endpoint.Consumer">
     /**
-    * This method returns the Consumer associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Consumer associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Consumer bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Consumer bean.
     */
-    public Consumer get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Consumer get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Producer">
     /**
-    * This method returns the Producer associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Producer associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Producer bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Producer bean.
     */
-    public Producer get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Producer get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.filter.Filter">
     /**
-    * This method returns the Filter associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Filter associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Filter bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Filter bean.
     */
-    public Filter get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Filter get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.transformation.Converter">
     /**
-    * This method returns the Converter associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Converter associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Converter bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Converter bean.
     */
-    public Converter get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Converter get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.routing.MultiRecipientRouter">
     /**
-    * This method returns the MultiRecipientRouter associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the MultiRecipientRouter associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} MultiRecipientRouter bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} MultiRecipientRouter bean.
     */
-    public MultiRecipientRouter get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public MultiRecipientRouter get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.routing.SingleRecipientRouter">
     /**
-    * This method returns the SingleRecipientRouter associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the SingleRecipientRouter associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} SingleRecipientRouter bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} SingleRecipientRouter bean.
     */
-    public SingleRecipientRouter get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public SingleRecipientRouter get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.sequencing.Sequencer">
     /**
-    * This method returns the Sequencer associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Sequencer associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Sequencer bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Sequencer bean.
     */
-    public Sequencer get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Sequencer get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.splitting.Splitter">
     /**
-    * This method returns the Splitter associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Splitter associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Splitter bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Splitter bean.
     */
-    public Splitter get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Splitter get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.transformation.Translator">
     /**
-    * This method returns the Translator associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Translator associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Translator bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Translator bean.
     */
-    public Translator get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Translator get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     <#elseif component.componentType == "org.ikasan.spec.component.endpoint.Broker">
     /**
-    * This method returns the Broker associated with the ${component.componentName?replace(" ", "")?uncap_first} bean.
+    * This method returns the Broker associated with the ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} bean.
     *
-    * @return The ${component.componentName?replace(" ", "")?uncap_first} Broker bean.
+    * @return The ${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first} Broker bean.
     */
-    public Broker get${component.componentName?replace(" ", "")}() {
-        return this.${component.componentName?replace(" ", "")?uncap_first};
+    public Broker get${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")}() {
+        return this.${component.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
     }
 
     </#if>
