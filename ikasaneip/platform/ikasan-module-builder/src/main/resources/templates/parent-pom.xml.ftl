@@ -4,9 +4,9 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>${moduleMetaData.name}-parent</artifactId>
-    <version>${moduleMetaData.version}</version>
+    <groupId>${migrationProjectMavenGroupId}</groupId>
+    <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+    <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     <packaging>pom</packaging>
 
     <modules>

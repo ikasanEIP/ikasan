@@ -8,7 +8,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Path;
 
-class FlowTestInspectorTest {
+class   FlowTestInspectorTest {
 
     @TempDir
     Path tempDir;
@@ -29,9 +29,9 @@ class FlowTestInspectorTest {
 //        PomEditor.addDependency(new File("/Users/mick/workspace/archetype/jms-demo/jar/pom.xml")
 //            , "org.ikasan","ikasan-manifest", "4.1.1-SNAPSHOT");
 
-        ModuleMigration migration = new ModuleMigration("/Users/mick/workspace/archetype/jms-demo"
-            , "com.ikasan.sample.spring.boot", "/Users/mick/workspace/archetype"
-            , "JmsSampleFlowTest");
+        ModuleMigration migration = new ModuleMigration("jms-demo", "/Users/mick/workspace/archetype/jms-demo"
+            , "com.ikasan.sample.spring.boot", "migration-working"
+            , "JmsSampleFlowTest", "org.ikasan");
         migration.migrate();
     }
 }
