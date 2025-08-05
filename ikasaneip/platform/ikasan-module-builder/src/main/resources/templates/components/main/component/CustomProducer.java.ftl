@@ -6,9 +6,11 @@ import org.ikasan.spec.component.endpoint.Producer;
     import ${configurationMetaData.configurationPackageName}.${configurationMetaData.configurationClassName};
 </#if>
 <#if parameterizedType??>
-<#list parameterizedType.typeParameters as typeParam>
-import ${typeParam.type};
-</#list>
+    <#list parameterizedType.typeParameters as typeParam>
+        <#if typeParam.type?contains(".")>
+            import ${typeParam.type};
+        </#if>
+    </#list>
 </#if>
 
 public class ${className} implements Producer<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>, <#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {

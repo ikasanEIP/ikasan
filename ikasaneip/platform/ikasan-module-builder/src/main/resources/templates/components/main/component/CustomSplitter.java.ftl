@@ -1,28 +1,27 @@
 package ${classPackage};
 
-import org.ikasan.spec.component.routing.MultiRecipientRouter;
-import java.util.List;
+import org.ikasan.spec.component.splitting.Splitter;
 <#if isConfigured>
     import org.ikasan.spec.configuration.ConfiguredResource;
     import ${configurationMetaData.configurationPackageName}.${configurationMetaData.configurationClassName};
 </#if>
 <#if parameterizedType??>
-    <#list parameterizedType.typeParameters as typeParam>
-        <#if typeParam.type?contains(".")>
-            import ${typeParam.type};
-        </#if>
-    </#list>
+<#list parameterizedType.typeParameters as typeParam>
+    <#if typeParam.type?contains(".")>
+        import ${typeParam.type};
+    </#if>
+</#list>
 </#if>
 
-public class ${className} implements MultiRecipientRouter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
+public class ${className} implements Splitter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="SOURCE">${typeParam.parameterClass}</#if></#list>, <#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="TARGET">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured> , ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
 
-    <#if isConfigured>
+<#if isConfigured>
     private String configuredResourceId;
-    private ${configurationMetaData.configurationClassName} componentConfiguration;
-    </#if>
+    private ${configurationClassName} componentConfiguration;
+</#if>
 
     @Override
-    public List<String> route(<#if parameterizedType??><#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list><#else>Object</#if> payload) {
+    public <#if parameterizedType??>List<<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="TARGET">${typeParam.parameterClass}</#if></#list>><#else>List<Object></#if> invoke(<#if parameterizedType??><#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="SOURCE">${typeParam.parameterClass}</#if></#list><#else>Object</#if> payload) {
         // TODO: Implement custom logic for ${className} invoke method
         // Note: The invoke method signature is based on the component type.
         //       You may need to adjust it based on the specific Ikasan interface.
