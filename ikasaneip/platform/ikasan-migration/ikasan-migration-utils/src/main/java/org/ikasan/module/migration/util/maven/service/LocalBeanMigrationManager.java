@@ -71,6 +71,7 @@ public class LocalBeanMigrationManager {
                 +"/jar/src/main/java/", "");
             Path targetFile = Paths.get(moduleFileManager.getComponentsJavaSrcMainBase().getAbsolutePath()
                 , filePath);
+            Files.createDirectories(targetFile.getParent());
 
             Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
         }
