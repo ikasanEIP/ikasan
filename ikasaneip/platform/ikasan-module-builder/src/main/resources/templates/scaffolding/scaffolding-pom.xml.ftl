@@ -5,14 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>${moduleMetaData.name}-parent</artifactId>
-        <version>${moduleMetaData.version}</version>
+        <groupId>${migrationProjectMavenGroupId}</groupId>
+        <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+        <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>${moduleMetaData.name}</artifactId>
-    <version>${moduleMetaData.version}</version>
+    <groupId>${migrationProjectMavenGroupId}</groupId>
+    <artifactId>${moduleManifestMetaData.moduleMetaData.name}</artifactId>
+    <version>${moduleManifestMetaData.moduleMetaData.version}</version>
 
 
     <properties>
@@ -22,8 +22,8 @@
     <dependencies>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>${moduleMetaData.name}-components</artifactId>
+            <groupId>${migrationProjectMavenGroupId}</groupId>
+            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
         </dependency>
 
         <dependency>
@@ -53,8 +53,8 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>${moduleMetaData.name}-components</artifactId>
-            <version>${moduleMetaData.version}</version>
+            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
+            <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
 
         <dependency>
@@ -68,24 +68,6 @@
             <artifactId>activemq-broker</artifactId>
             <version>${"$"}{version.activemq}</version>
         </dependency>
-
-<#--        <dependency>-->
-<#--            <groupId>org.awaitility</groupId>-->
-<#--            <artifactId>awaitility</artifactId>-->
-<#--            <scope>test</scope>-->
-<#--        </dependency>-->
-
-<#--        <dependency>-->
-<#--            <groupId>org.glassfish.jaxb</groupId>-->
-<#--            <artifactId>jaxb-runtime</artifactId>-->
-<#--            <scope>test</scope>-->
-<#--        </dependency>-->
-
-<#--        <dependency>-->
-<#--            <groupId>org.slf4j</groupId>-->
-<#--            <artifactId>jul-to-slf4j</artifactId>-->
-<#--            <scope>test</scope>-->
-<#--        </dependency>-->
 
     </dependencies>
 

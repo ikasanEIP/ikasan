@@ -7,6 +7,7 @@ import freemarker.template.TemplateExceptionHandler;
 import org.ikasan.module.builder.model.autoconfiguration.ComponentAutoConfiguration;
 import org.ikasan.module.builder.model.component.Component;
 import org.ikasan.module.builder.model.configuration.ComponentConfiguration;
+import org.ikasan.module.builder.model.manifest.EnrichedModuleManifestMetaData;
 import org.ikasan.module.builder.model.module.FlowModel;
 import org.ikasan.module.builder.model.module.ModuleModel;
 import org.ikasan.module.builder.service.ModuleManifestMetaDataComponentModelAdapter;
@@ -30,14 +31,17 @@ public class ModuleGenerator {
     private ModuleManifestMetaDataModuleModelAdapter moduleManifestMetaDataModuleModelAdapter;
     private LocalBeanMigrationManager localBeanMigrationManager;
     private String migrationProjectBasePackage;
+    private String migrationProjectMavenGroupId;
 
-    public ModuleGenerator(ModuleFileManager moduleFileManager, String migrationProjectBasePackage) {
+    public ModuleGenerator(ModuleFileManager moduleFileManager, String migrationProjectBasePackage,
+                           String migrationProjectMavenGroupId) {
         this.moduleFileManager = moduleFileManager;
 
         this.localBeanMigrationManager = new LocalBeanMigrationManager(migrationProjectBasePackage
-            , this.moduleFileManager, "jms-demo");
+            , this.moduleFileManager, this.moduleFileManager.getProjectRootDirectory().getAbsolutePath());
 
         this.migrationProjectBasePackage = migrationProjectBasePackage;
+        this.migrationProjectMavenGroupId = migrationProjectMavenGroupId;
 
         this.freeMarkerConfiguration = new Configuration(Configuration.VERSION_2_3_32);
         this.freeMarkerConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
@@ -52,8 +56,7 @@ public class ModuleGenerator {
     public void generate(ModuleManifestMetaData moduleManifestMetaData) throws IOException, TemplateException {
         ModuleMetaData moduleMetaData = moduleManifestMetaData.getModuleMetaData();
 
-        File rootDir = new File(moduleMetaData.getName());
-        rootDir.mkdirs();
+        this.moduleFileManager.getProjectRootDirectory().mkdirs();
 
         ModuleModel model = this.moduleManifestMetaDataModuleModelAdapter.adapt(moduleManifestMetaData, migrationProjectBasePackage);
 
@@ -69,7 +72,7 @@ public class ModuleGenerator {
 
         this.generateDistributionArtefacts(moduleManifestMetaData);
 
-        this.generateAllModulePoms(rootDir, moduleManifestMetaData);
+        this.generateAllModulePoms(this.moduleFileManager.getProjectRootDirectory(), moduleManifestMetaData);
 
         this.generateComponentAutoConfiguration(moduleManifestMetaData);
 
@@ -258,18 +261,20 @@ public class ModuleGenerator {
      */
     private void generateAllModulePoms(File migrationRootDirectory
         , ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+        EnrichedModuleManifestMetaData enrichedModuleManifestMetaData = new EnrichedModuleManifestMetaData(this.migrationProjectMavenGroupId,
+            moduleManifestMetaData);
         // Create the migrated module's parent POM.
         this.managePomCreation(migrationRootDirectory
-            , "parent-pom.xml.ftl", moduleManifestMetaData);
+            , "parent-pom.xml.ftl", enrichedModuleManifestMetaData);
         // Create the migrated module's scaffolding module POM.
         this.managePomCreation(moduleFileManager.getScaffoldingDir()
-            , "scaffolding/scaffolding-pom.xml.ftl", moduleManifestMetaData);
+            , "scaffolding/scaffolding-pom.xml.ftl", enrichedModuleManifestMetaData);
         // Create the migrated module's components module POM.
         this.managePomCreation(moduleFileManager.getComponentsDir()
-            , "components/components-pom.xml.ftl", moduleManifestMetaData);
+            , "components/components-pom.xml.ftl", enrichedModuleManifestMetaData);
         // Create the migrated module's distribution module POM.
         this.managePomCreation(moduleFileManager.getDistributionBase()
-            , "distribution/distribution-pom.xml.ftl", moduleManifestMetaData);
+            , "distribution/distribution-pom.xml.ftl", enrichedModuleManifestMetaData);
     }
 
     /**
