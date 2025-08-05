@@ -24,6 +24,7 @@
         <dependency>
             <groupId>${migrationProjectMavenGroupId}</groupId>
             <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
+            <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
 
         <dependency>
