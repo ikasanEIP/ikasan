@@ -74,14 +74,21 @@ public class ModuleMigration {
             return;
         }
 
+        logger.info(String.format("Adding new extract method to flow test[%s]!", flowTest));
         this.modifyFlowTestTestClassInOrderToExtractModuleMetaData(flowTest);
+        logger.info(String.format("Running flow test[%s] in order to extract module metadata manifest!", flowTest));
         this.runFlowTestTestTestClassInOrderToExtractModuleMetaData();
 
         ModuleManifestMetaData moduleManifestMetaData = this.loadModuleManifestMetaData();
         logger.info(ModuleManifestMetaDataHelper.serialiseModuleManifest(moduleManifestMetaData));
 
+        logger.info(String.format("Generating module[%s] from extracted module metadata manifest!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.generateMigratedModule(moduleManifestMetaData);
+
+        logger.info(String.format("Migrating spring beans for module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.localBeanMigrationManager.migrateSpringBeans(moduleManifestMetaData);
+
+        logger.info(String.format("Attempting to build migrated module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.buildMigratedModule();
     }
 
