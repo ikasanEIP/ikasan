@@ -119,6 +119,6 @@ public class ModuleManifestMetaDataComponentModelAdapter {
      */
     private Map<String, ConstructorMetaData> getConstructorMetaDataMap(List<ConstructorMetaData> constructorMetaDataList) {
         return constructorMetaDataList.stream()
-            .collect(Collectors.toMap(ConstructorMetaData::getComponentName, Function.identity()));
+            .collect(Collectors.toMap(ConstructorMetaData::getComponentName, Function.identity(), (first, second) -> first));
     }
 }
