@@ -12,6 +12,7 @@
 
     <groupId>${migrationProjectMavenGroupId}</groupId>
     <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
+    <version>${moduleManifestMetaData.moduleMetaData.version}</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
