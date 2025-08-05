@@ -48,21 +48,21 @@ ikasan.exceptions.stopClasses[0]=java.lang.RuntimeException
             <#if param.fullyQualifiedType = "java.util.Map">
                 <#if param.value??>
                     <#list param.value as key, value>
-                        ${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?lower_case}.${param.name}.${key}=${value}
+                        ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}.${key}=${value}
                     </#list>
                 <#else>
-                    # ${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?lower_case}.${param.name}.key=value
+                    # ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}.key=value
                 </#if>
             <#elseif param.fullyQualifiedType = "java.util.List">
                 <#if param.value??>
                     <#list param.value as value>
-                        ${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?lower_case}.${param.name}[${value?index}]=${value}
+                        ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}[${value?index}]=${value}
                     </#list>
                 <#else>
-                    # ${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?lower_case}.${param.name}[0]=value
+                    # ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}[0]=value
                 </#if>
             <#else>
-                ${componentConfiguration.componentName?replace(" ", "")?replace("[^A-Za-z0-9]", "")?lower_case}.${param.name}=<#if param.value??>${param.value}</#if>
+                ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}=<#if param.value??>${param.value}</#if>
             </#if>
         </#list>
     </#compress>

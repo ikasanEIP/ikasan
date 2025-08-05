@@ -28,8 +28,8 @@ public class ModuleConfig
     private BuilderFactory builderFactory;
 <#list flowModelMap?values as flow>
     @Resource
-    @Qualifier("${flow.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first}")
-    private Flow ${flow.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first};
+    @Qualifier("${flow.name?replace(" ", "")?replace(",", "")?uncap_first}")
+    private Flow ${flow.name?replace(" ", "")?replace(",", "")?uncap_first};
 </#list>
     @Bean
     public Module getModule()
@@ -38,7 +38,7 @@ public class ModuleConfig
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder(moduleName);
         Module module = moduleBuilder.withDescription("todo")
 <#list flowModelMap?values as flow>
-            .addFlow(${flow.name?replace(" ", "")?replace("[^A-Za-z0-9]", "")?uncap_first})
+            .addFlow(${flow.name?replace(" ", "")?replace(",", "")?uncap_first})
 </#list>
             .build();
 
