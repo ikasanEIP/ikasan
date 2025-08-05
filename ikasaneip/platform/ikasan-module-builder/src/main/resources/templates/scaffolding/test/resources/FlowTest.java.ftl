@@ -112,18 +112,18 @@ import javax.annotation.Resource;
 import org.junit.Assert;
 
 /**
- * This test class supports the <code>${name?replace(" ", "")}</code> class.
+ * This test class supports the <code>${name?replace(" ", "")?replace("[^A-Za-z0-9]", "")}</code> class.
  *
  * @author Ikasan Development Team
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { Application.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-public class ${name?replace(" ", "")}Test {
+public class ${name?replace(" ", "")?replace("[^A-Za-z0-9]", "")}Test {
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    private Logger logger = LoggerFactory.getLogger(${name?replace(" ", "")}Test.class);
+    private Logger logger = LoggerFactory.getLogger(${name?replace(" ", "")?replace("[^A-Za-z0-9]", "")}Test.class);
 
     @Resource
     private Module<Flow> moduleUnderTest;
