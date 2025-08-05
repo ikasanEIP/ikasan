@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>${moduleMetaData.name}-parent</artifactId>
-        <version>${moduleMetaData.version}</version>
+        <groupId>${migrationProjectMavenGroupId}</groupId>
+        <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+        <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>${moduleMetaData.name}-distribution</artifactId>
+    <artifactId>${moduleManifestMetaData.moduleMetaData.name}-distribution</artifactId>
 
     <packaging>pom</packaging>
 
@@ -21,14 +21,14 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>${moduleMetaData.name}</artifactId>
-            <version>${moduleMetaData.version}</version>
+            <groupId>${migrationProjectMavenGroupId}</groupId>
+            <artifactId>${moduleManifestMetaData.moduleMetaData.name}</artifactId>
+            <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>${moduleMetaData.name}-components</artifactId>
-            <version>${moduleMetaData.version}</version>
+            <groupId>${migrationProjectMavenGroupId}</groupId>
+            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
+            <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -62,7 +62,6 @@
                         </configuration>
                     </execution>
                 </executions>
-
             </plugin>
         </plugins>
     </build>

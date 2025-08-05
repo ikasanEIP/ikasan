@@ -20,7 +20,8 @@ public class ModuleGeneratorTest extends AbstractTest {
         rootDir.mkdirs();
 
         ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
-        ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager, "com.ikasan.sample.spring.boot");
+        ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager
+            , "com.ikasan.sample.spring.boot", "org.ikasan");
         moduleGenerator.generate(root);
 
         MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));

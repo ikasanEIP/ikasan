@@ -18,10 +18,12 @@ import java.nio.file.Files;
 public class ModuleMigration {
     private static Logger logger = LoggerFactory.getLogger(ModuleMigration.class);
 
+    private String migrationModuleName;
     private String migrationProjectBaseDirectory;
     private String migrationProjectBasePackageName;
     private String migrationWorkingDirectory;
     private String testClassName;
+    private String migrationProjectMavenGroupId;
 
     private ModuleFileManager moduleFileManager;
     private ModuleBuildMigrationHelper moduleBuildMigrationHelper;
@@ -35,19 +37,21 @@ public class ModuleMigration {
      * @param migrationWorkingDirectory The working directory for the migration process.
      * @param testClassName The name of the test class to be used for migration.
      */
-    public ModuleMigration(String migrationProjectBaseDirectory, String migrationProjectBasePackageName
-        , String migrationWorkingDirectory, String testClassName) {
+    public ModuleMigration(String migrationModuleName, String migrationProjectBaseDirectory, String migrationProjectBasePackageName
+        , String migrationWorkingDirectory, String testClassName, String migrationProjectMavenGroupId) {
+        this.migrationModuleName = migrationModuleName;
         this.migrationProjectBaseDirectory = migrationProjectBaseDirectory;
         this.migrationProjectBasePackageName = migrationProjectBasePackageName;
         this.migrationWorkingDirectory = migrationWorkingDirectory;
         this.testClassName = testClassName;
+        this.migrationProjectMavenGroupId = migrationProjectMavenGroupId;
 
         // todo fix dir
-        File rootDir = new File("jms-demo");
+        File rootDir = new File(this.migrationWorkingDirectory, this.migrationModuleName);
         rootDir.mkdirs();
 
         this.moduleFileManager = new ModuleFileManager(rootDir);
-        this.localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot"
+        this.localBeanMigrationManager = new LocalBeanMigrationManager(migrationProjectBasePackageName
             , this.moduleFileManager, this.migrationProjectBaseDirectory);
         this.moduleBuildMigrationHelper = new ModuleBuildMigrationHelper(localBeanMigrationManager,
             moduleFileManager);
@@ -109,16 +113,15 @@ public class ModuleMigration {
         testClassEditor.addAutowiredApplicationContext(flowTest);
         testClassEditor.addJsonConfigurationMetaDataExtractor(flowTest);
         testClassEditor.addJsonModuleMetaDataProvider(flowTest);
+
+//        PomEditor.removeDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
+//            "org.ikasan", "ikasan-manifest");
 //        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
-//            , "org.ikasan","ikasan-manifest", "4.1.1-SNAPSHOT");
-        PomEditor.removeDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
-            "org.ikasan", "ikasan-manifest");
-        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
-            , "org.ikasan","ikasan-manifest", "3.3.9-SNAPSHOT");
-        PomEditor.removeDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
-            "org.ikasan", "ikasan-spec-metadata");
-        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
-            , "org.ikasan","ikasan-spec-metadata", "3.3.9-SNAPSHOT");
+//            , "org.ikasan","ikasan-manifest", "3.3.9-alpha-SNAPSHOT");
+//        PomEditor.removeDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
+//            "org.ikasan", "ikasan-spec-metadata");
+//        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
+//            , "org.ikasan","ikasan-spec-metadata", "3.3.9-alpha-SNAPSHOT");
     }
 
     /**
@@ -153,7 +156,7 @@ public class ModuleMigration {
      * @throws IOException if an I/O exception occurs during file operations.
      */
     private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
-        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager, "com.ikasan.sample.spring.boot");
+        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager, this.migrationProjectBasePackageName, this.migrationProjectMavenGroupId);
         moduleGenerator.generate(moduleManifestMetaData);
     }
 

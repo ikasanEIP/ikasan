@@ -5,13 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.ikasan</groupId>
-        <artifactId>${moduleMetaData.name}-parent</artifactId>
-        <version>${moduleMetaData.version}</version>
+        <groupId>${migrationProjectMavenGroupId}</groupId>
+        <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+        <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>${moduleMetaData.name}-components</artifactId>
+    <groupId>${migrationProjectMavenGroupId}</groupId>
+    <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -55,24 +55,6 @@
             <artifactId>activemq-broker</artifactId>
             <version>${"$"}{version.activemq}</version>
         </dependency>
-
-<#--        <dependency>-->
-<#--            <groupId>org.awaitility</groupId>-->
-<#--            <artifactId>awaitility</artifactId>-->
-<#--            <scope>test</scope>-->
-<#--        </dependency>-->
-
-<#--        <dependency>-->
-<#--            <groupId>org.glassfish.jaxb</groupId>-->
-<#--            <artifactId>jaxb-runtime</artifactId>-->
-<#--            <scope>test</scope>-->
-<#--        </dependency>-->
-
-<#--        <dependency>-->
-<#--            <groupId>org.slf4j</groupId>-->
-<#--            <artifactId>jul-to-slf4j</artifactId>-->
-<#--            <scope>test</scope>-->
-<#--        </dependency>-->
 
     </dependencies>
 
