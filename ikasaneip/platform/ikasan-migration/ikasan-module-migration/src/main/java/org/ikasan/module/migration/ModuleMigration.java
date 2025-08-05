@@ -85,6 +85,9 @@ public class ModuleMigration {
         logger.info(String.format("Generating module[%s] from extracted module metadata manifest!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.generateMigratedModule(moduleManifestMetaData);
 
+        logger.info(String.format("Migrating module[%s] component pom dependencies!", moduleManifestMetaData.getModuleMetaData().getName()));
+        this.migrateComponentPomDependencies();
+
         logger.info(String.format("Migrating spring beans for module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.localBeanMigrationManager.migrateSpringBeans(moduleManifestMetaData);
 
@@ -129,6 +132,11 @@ public class ModuleMigration {
 //            "org.ikasan", "ikasan-spec-metadata");
 //        PomEditor.addDependency(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml")
 //            , "org.ikasan","ikasan-spec-metadata", "3.3.9-alpha-SNAPSHOT");
+    }
+
+    private void migrateComponentPomDependencies() throws XmlPullParserException, IOException {
+        PomMigrationUtilities.migrateDependencies(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
+            new File(this.moduleFileManager.getComponentsDir(),"pom.xml"));
     }
 
     /**
