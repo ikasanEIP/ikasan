@@ -29,8 +29,8 @@ public class PomMigrationUtilities {
 
         srcModel.getDependencies().forEach
             (dependency -> {
-                if(tgtModel.getDependencies().stream().filter(d ->
-                    !d.getArtifactId().equals(dependency.getArtifactId()) && d.getGroupId().equals(dependency.getGroupId())
+                if(!tgtModel.getDependencies().stream().filter(d ->
+                    d.getArtifactId().equals(dependency.getArtifactId()) && d.getGroupId().equals(dependency.getGroupId())
                         ).findFirst().isPresent()) {
                     tgtModel.addDependency(dependency);
                 }
