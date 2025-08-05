@@ -14,7 +14,7 @@ import org.ikasan.spec.component.transformation.Translator;
 </#if>
 
 public class ${className}<#list parameterizedType.typeParameters as typeParam>
-    <#if typeParam.type?contains(".")>
+    <#if !typeParam.type?contains(".")>
         <${typeParam.type}>
     </#if>
 </#list> implements Translator<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
