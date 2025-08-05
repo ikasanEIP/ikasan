@@ -6,9 +6,11 @@ import org.ikasan.spec.component.transformation.Converter;
     import ${configurationMetaData.configurationPackageName}.${configurationMetaData.configurationClassName};
 </#if>
 <#if parameterizedType??>
-<#list parameterizedType.typeParameters as typeParam>
-import ${typeParam.type};
-</#list>
+    <#list parameterizedType.typeParameters as typeParam>
+        <#if typeParam.type?contains(".")>
+            import ${typeParam.type};
+        </#if>
+    </#list>
 </#if>
 
 public class ${className} implements Converter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="SOURCE">${typeParam.parameterClass}</#if></#list>, <#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="TARGET">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {

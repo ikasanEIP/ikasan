@@ -184,6 +184,10 @@ public class ModuleGenerator {
                 this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomBroker.java.ftl"
                     , component, component.getClassName()+".java");
             }
+            if(component.getComponentType().equals("org.ikasan.spec.component.splitting.Splitter")) {
+                this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomSplitter.java.ftl"
+                    , component, component.getClassName()+".java");
+            }
             else if(component.getComponentType().equals("org.ikasan.spec.component.transformation.Converter")) {
                 this.executionFreeMarkerTemplate(componentPackageDirectory, "components/main/component/CustomConverter.java.ftl"
                     , component, component.getClassName()+".java");

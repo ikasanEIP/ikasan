@@ -7,7 +7,9 @@ import org.ikasan.spec.component.transformation.Translator;
 </#if>
 <#if parameterizedType??>
 <#list parameterizedType.typeParameters as typeParam>
-import ${typeParam.type};
+    <#if typeParam.type?contains(".")>
+        import ${typeParam.type};
+    </#if>
 </#list>
 </#if>
 
