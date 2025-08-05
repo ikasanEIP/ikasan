@@ -13,7 +13,11 @@ import org.ikasan.spec.component.transformation.Translator;
 </#list>
 </#if>
 
-public class ${className} implements Translator<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
+public class ${className}<#list parameterizedType.typeParameters as typeParam>
+    <#if typeParam.type?contains(".")>
+        <${typeParam.type}>
+    </#if>
+</#list> implements Translator<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
 
     <#if isConfigured>
     private String configuredResourceId;
