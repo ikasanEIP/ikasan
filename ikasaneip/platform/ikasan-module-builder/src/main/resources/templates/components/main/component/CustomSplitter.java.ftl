@@ -13,7 +13,11 @@ import org.ikasan.spec.component.splitting.Splitter;
 </#list>
 </#if>
 
-public class ${className} implements Splitter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="SOURCE">${typeParam.parameterClass}</#if></#list>, <#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="TARGET">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured> , ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
+public class ${className}<#list parameterizedType.typeParameters as typeParam>
+    <#if typeParam.type?contains(".")>
+         <${typeParam.type}>
+    </#if>
+</#list> implements Splitter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="SOURCE">${typeParam.parameterClass}</#if></#list>, <#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="TARGET">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured> , ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
 
 <#if isConfigured>
     private String configuredResourceId;
