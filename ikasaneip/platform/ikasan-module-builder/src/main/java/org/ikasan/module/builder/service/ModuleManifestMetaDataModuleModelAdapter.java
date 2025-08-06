@@ -19,8 +19,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ModuleManifestMetaDataModuleModelAdapter {
-
-    private HashMap<String, String> fromTransitionLabelMap = new HashMap<>();
     private HashMap<String, String> toTransitionLabelMap = new HashMap<>();
 
     /**
@@ -65,7 +63,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
             Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData, (key1, key2) -> key1));
 
         List<Transition> uniqueTransitions = distinctList(flowMetaData.getTransitions(), Transition::getFrom, Transition::getTo);
-        this.buildFromTransitionLabelMap(flowMetaData.getTransitions());
+//        this.buildFromTransitionLabelMap(flowMetaData.getTransitions());
         this.buildToTransitionLabelMap(flowMetaData.getTransitions());
 
         ConsumerComponent consumer = (ConsumerComponent) manageFlowElement(flowMetaData.getConsumer(), uniqueTransitions
@@ -351,33 +349,6 @@ public class ModuleManifestMetaDataModuleModelAdapter {
     }
 
     /**
-     * Updates the fromTransitionLabelMap based on the given list of transitions.
-     *
-     * @param transitions List of Transition objects to update the fromTransitionLabelMap with
-     */
-    protected void buildFromTransitionLabelMap(List<Transition> transitions)
-    {
-        for(Transition transition: transitions)
-        {
-            if (this.fromTransitionLabelMap.containsKey(transition.getFrom()))
-            {
-                String label = fromTransitionLabelMap.get(transition.getFrom());
-
-                if(!label.contains(transition.getName()))
-                {
-                    label = label + ", " + transition.getName();
-                    fromTransitionLabelMap.put(transition.getFrom(), label);
-                }
-            }
-            else
-            {
-                String label = transition.getName();
-                fromTransitionLabelMap.put(transition.getFrom(), label);
-            }
-        }
-    }
-
-    /**
      * Builds a map of transition labels based on the provided list of transitions. Each transition is checked against
      * the existing map to determine if the 'to' component already has a label. If so, the transition name is appended to
      * the existing label. If not, a new label is created using the transition name. The labels are word-wrapped at 15
@@ -389,21 +360,8 @@ public class ModuleManifestMetaDataModuleModelAdapter {
     {
         for(Transition transition: transitions)
         {
-            if (this.toTransitionLabelMap.containsKey(transition.getTo()))
-            {
-                String label = toTransitionLabelMap.get(transition.getTo());
-
-                if(!label.contains(transition.getName()))
-                {
-                    label = label + ", " + transition.getName();
-                    toTransitionLabelMap.put(transition.getTo(), WordUtils.wrap(label, 15));
-                }
-            }
-            else
-            {
-                String label = transition.getName();
-                toTransitionLabelMap.put(transition.getTo(), label);
-            }
+            String label = transition.getName();
+                toTransitionLabelMap.put(transition.getTo()+label, label);
         }
     }
 
