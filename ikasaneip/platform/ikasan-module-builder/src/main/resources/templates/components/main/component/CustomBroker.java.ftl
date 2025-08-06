@@ -42,12 +42,12 @@ public class ${className} implements Broker<#if parameterizedType??><<#list para
     }
 
     @Override
-    public ${configurationClassName} getConfiguration() {
+    public ${configurationMetaData.configurationClassName} getConfiguration() {
         return componentConfiguration;
     }
 
     @Override
-    public void setConfiguration(${configurationClassName} componentConfiguration) {
+    public void setConfiguration(${configurationMetaData.configurationClassName} componentConfiguration) {
         this.componentConfiguration = componentConfiguration;
     }
 </#if>
