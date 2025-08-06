@@ -86,7 +86,7 @@ public class ModuleManifestMetaDataComponentModelAdapter {
     }
 
     /**
-     * Retrieves a map of implementating class names to their corresponding ParameterizedType objects.
+     * Retrieves a map of implementing class names to their corresponding ParameterizedType objects.
      *
      * @param parameterizedTypes A List of ParameterizedType objects from which to extract information.
      * @return A Map<String, ParameterizedType> where the key is the implementing class name and the value
@@ -98,10 +98,22 @@ public class ModuleManifestMetaDataComponentModelAdapter {
                 List<TypeParameter> typeParameters = new ArrayList<>();
                 parameterizedType.getTypeParameters().forEach(typeParameter -> {
                     ComponentTypeParameter componentTypeParameter = new ComponentTypeParameter();
-                    componentTypeParameter.setType(typeParameter.getType());
+                    if(typeParameter.getType().contains("<")) {
+                        componentTypeParameter.setType(typeParameter.getType().substring(0, typeParameter.getType().indexOf("<")));
+                    }
+                    else {
+                        componentTypeParameter.setType(typeParameter.getType());
+                    }
                     componentTypeParameter.setName(typeParameter.getName());
-                    componentTypeParameter.setParameterClass(typeParameter.getType()
-                        .substring(typeParameter.getType().lastIndexOf(".") + 1, typeParameter.getType().length()));
+
+                    if(typeParameter.getType().contains("<")) {
+                        componentTypeParameter.setParameterClass(typeParameter.getType());
+                    }
+                    else {
+                        componentTypeParameter.setParameterClass(typeParameter.getType()
+                            .substring(typeParameter.getType().lastIndexOf(".") + 1, typeParameter.getType().length()));
+                    }
+
                     typeParameters.add(componentTypeParameter);
                 });
 
