@@ -18,4 +18,14 @@ public class ModuleManifestMetaDataModuleModelAdapterTest extends AbstractTest {
 
         System.out.println(model);
     }
+
+    @Test
+    public void test_complex() throws IOException {
+        String moduleMetaData = this.loadDataFile("/data/moduleMetaDataComplex.json");
+        ModuleManifestMetaDataModuleModelAdapter adapter = new ModuleManifestMetaDataModuleModelAdapter();
+
+        ModuleModel model = adapter.adapt(ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData), "templates/scaffolding/test");
+
+        System.out.println(model);
+    }
 }

@@ -28,4 +28,21 @@ public class ModuleGeneratorTest extends AbstractTest {
         mavenProjectBuilder.build(rootDir, "spotless:apply");
         mavenProjectBuilder.build(rootDir, "clean install");
     }
+
+    @Test
+    public void test_module_generation_complex() throws IOException, TemplateException {
+        String moduleMetaData = this.loadDataFile("/data/moduleMetaDataComplex.json");
+        ModuleManifestMetaData root = ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
+        File rootDir = new File(root.getModuleMetaData().getName());
+        rootDir.mkdirs();
+
+        ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
+        ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager
+            , "com.acme.esb.sales.smartStreamCms.operation", "com.acme.esb");
+        moduleGenerator.generate(root);
+
+        MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));
+        mavenProjectBuilder.build(rootDir, "spotless:apply");
+        mavenProjectBuilder.build(rootDir, "clean install");
+    }
 }
