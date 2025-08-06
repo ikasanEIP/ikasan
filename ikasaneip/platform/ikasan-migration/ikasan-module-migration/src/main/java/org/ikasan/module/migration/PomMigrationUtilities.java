@@ -36,7 +36,11 @@ public class PomMigrationUtilities {
                 }
             });
 
-        tgtModel.getProperties().putAll(srcModel.getProperties());
+        srcModel.getProperties().entrySet().forEach(entry -> {
+            if(((String)entry.getKey()).startsWith("version") && !tgtModel.getProperties().containsKey(entry.getKey())) {
+                tgtModel.getProperties().put(entry.getKey(),entry.getValue());
+            }
+        });
 
         MavenXpp3Writer writer = new MavenXpp3Writer();
         writer.write(new FileWriter(tgtPomFile), tgtModel);
