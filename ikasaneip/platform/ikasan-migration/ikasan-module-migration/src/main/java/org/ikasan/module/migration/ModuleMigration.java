@@ -85,6 +85,9 @@ public class ModuleMigration {
         logger.info(String.format("Generating module[%s] from extracted module metadata manifest!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.generateMigratedModule(moduleManifestMetaData);
 
+        logger.info(String.format("Migrating module[%s] parent pom dependencies!", moduleManifestMetaData.getModuleMetaData().getName()));
+        this.migrateParentPomDependencies();
+
         logger.info(String.format("Migrating module[%s] component pom dependencies!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.migrateComponentPomDependencies();
 
@@ -137,6 +140,11 @@ public class ModuleMigration {
     private void migrateComponentPomDependencies() throws XmlPullParserException, IOException {
         PomMigrationUtilities.migrateDependencies(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
             new File(this.moduleFileManager.getComponentsDir(),"pom.xml"));
+    }
+
+    private void migrateParentPomDependencies() throws XmlPullParserException, IOException {
+        PomMigrationUtilities.migrateDependencies(new File(this.migrationProjectBaseDirectory + "/pom.xml"),
+            new File(this.moduleFileManager.getProjectRootDirectory(),"pom.xml"));
     }
 
     /**
