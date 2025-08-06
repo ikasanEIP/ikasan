@@ -13,11 +13,11 @@ import org.ikasan.spec.component.filter.Filter;
     </#list>
 </#if>
 
-public class ${className}<#list parameterizedType.typeParameters as typeParam>
+public class ${className}<#if parameterizedType??><#list parameterizedType.typeParameters as typeParam>
     <#if !typeParam.type?contains(".")>
         <${typeParam.type}>
     </#if>
-</#list> implements Filter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
+</#list></#if> implements Filter<#if parameterizedType??><<#list parameterizedType.typeParameters as typeParam><#if typeParam.name=="T">${typeParam.parameterClass}</#if></#list>></#if><#if isConfigured>, ConfiguredResource<${configurationMetaData.configurationClassName}> </#if> {
 
     <#if isConfigured>
     private String configuredResourceId;
