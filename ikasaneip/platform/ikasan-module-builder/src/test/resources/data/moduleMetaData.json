@@ -1241,7 +1241,7 @@
       "type" : "java.lang.String"
     }, {
       "name" : "TARGET",
-      "type" : "java.lang.String"
+      "type" : "java.util.List<java.lang.String>"
     } ]
   }, {
     "implementingClassName" : "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer",
