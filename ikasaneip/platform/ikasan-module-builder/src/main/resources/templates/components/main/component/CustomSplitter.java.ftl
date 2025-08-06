@@ -22,7 +22,7 @@ public class ${className}<#list parameterizedType.typeParameters as typeParam>
 
 <#if isConfigured>
     private String configuredResourceId;
-    private ${configurationClassName} componentConfiguration;
+    private ${configurationMetaData.configurationClassName} componentConfiguration;
 </#if>
 
     @Override
