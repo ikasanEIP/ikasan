@@ -19,7 +19,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ModuleManifestMetaDataModuleModelAdapter {
-    private HashMap<String, String> toTransitionLabelMap = new HashMap<>();
+    private HashMap<String, List<String>> toTransitionLabelMap = new HashMap<>();
 
     /**
      * Adapts the given ModuleManifestMetaData and moduleBasePackage to create a ModuleModel object.
@@ -63,7 +63,6 @@ public class ModuleManifestMetaDataModuleModelAdapter {
             Collectors.toMap(FlowElementMetaData::getComponentName, flowElementMetaData -> flowElementMetaData, (key1, key2) -> key1));
 
         List<Transition> uniqueTransitions = distinctList(flowMetaData.getTransitions(), Transition::getFrom, Transition::getTo);
-//        this.buildFromTransitionLabelMap(flowMetaData.getTransitions());
         this.buildToTransitionLabelMap(flowMetaData.getTransitions());
 
         ConsumerComponent consumer = (ConsumerComponent) manageFlowElement(flowMetaData.getConsumer(), uniqueTransitions
@@ -360,8 +359,21 @@ public class ModuleManifestMetaDataModuleModelAdapter {
     {
         for(Transition transition: transitions)
         {
-            String label = transition.getName();
-                toTransitionLabelMap.put(transition.getTo()+label, label);
+            if (this.toTransitionLabelMap.containsKey(transition.getTo()))
+            {
+                String label = toTransitionLabelMap.get(transition.getTo());
+
+                if(!label.contains(transition.getName()))
+                {
+                    label = label + "," + transition.getName();
+                    toTransitionLabelMap.put(transition.getTo(), label);
+                }
+            }
+            else
+            {
+                String label = transition.getName();
+                toTransitionLabelMap.put(transition.getTo(), label);
+            }
         }
     }
 
