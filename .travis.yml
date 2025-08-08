@@ -2,6 +2,8 @@ sudo: false
 arch: amd64          # optional, this is default, routes to a full VM
 os: linux            # optional, this is default
 dist: noble          # or jammy | focal | bionic | xenial | trusty | precise with xenial as default
+vm:
+  size: [large]
 language: java
 jdk:
    - openjdk17
