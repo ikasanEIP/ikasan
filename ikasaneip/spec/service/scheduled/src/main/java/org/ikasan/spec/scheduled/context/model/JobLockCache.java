@@ -3,6 +3,7 @@ package org.ikasan.spec.scheduled.context.model;
 import org.ikasan.spec.scheduled.core.listener.JobLockCacheEventListener;
 import org.ikasan.spec.scheduled.event.model.ContextualisedSchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.instance.model.SchedulerJobInstance;
 import org.ikasan.spec.scheduled.joblock.model.JobLockCacheRecord;
 import org.ikasan.spec.scheduled.joblock.service.JobLockCacheService;
 
@@ -91,6 +92,14 @@ public interface JobLockCache extends Serializable {
      * @param event
      */
     void addQueuedSchedulerJobInitiationEvent(String jobIdentifier, String contextName, SchedulerJobInitiationEvent event);
+
+    /**
+     * Remove a queued scheduler job from the JobLockCache. This method removes the specified SchedulerJobInstance
+     * from the queue of queued scheduler job initiation events.
+     *
+     * @param schedulerJobInstance The SchedulerJobInstance to be removed from the queued job initiation events.
+     */
+    void removeQueuedSchedulerJob(SchedulerJobInstance schedulerJobInstance);
 
     /**
      * Get the next job in the wait queue.
