@@ -12,6 +12,8 @@ cache:
 
 ## export GPG details
 before_install:
+  - export TRAVIS_WORKER_POOL_SIZE="1"
+  - export TRAVIS_WORKER_DOCKER_CPUS=0
   - echo use-agent >> ~/.gnupg/gpg.conf
   - echo pinentry-mode loopback >> ~/.gnupg/gpg.conf
   - echo allow-loopback-pinentry >> ~/.gnupg/gpg-agent.conf
