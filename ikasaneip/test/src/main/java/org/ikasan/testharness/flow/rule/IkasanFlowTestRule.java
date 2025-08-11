@@ -117,7 +117,6 @@ public class IkasanFlowTestRule implements TestRule
      * flag indicating the expected end state (stopped=false, stoppedInError=true)
      */
     private boolean errorEndState = false;
-    private boolean assertEndState = false;
 
     private boolean allowScheduledConsumerToRunOnSchedule;
 
@@ -197,18 +196,7 @@ public class IkasanFlowTestRule implements TestRule
      */
     public IkasanFlowTestRule withErrorEndState()
     {
-        this.errorEndState = true;
-        return this;
-    }
-
-    /**
-     * Indicate the flow end state will be 'stoppedInError', used in negative testing
-     *
-     * @return this rule
-     */
-    public IkasanFlowTestRule withAssertEndState()
-    {
-        this.assertEndState = true;
+        errorEndState = true;
         return this;
     }
 
@@ -568,11 +556,9 @@ public class IkasanFlowTestRule implements TestRule
     {
         flow.stop();
         flow.removeFlowListener(testHarnessFlowEventListener);
-        if(this.assertEndState) {
-            assertEquals("in stopFlow() - flow should be stopped", errorEndState ?
-                "stoppedInError" :
-                "stopped", flow.getState());
-        }
+        assertEquals("in stopFlow() - flow should be stopped", errorEndState ?
+            "stoppedInError" :
+            "stopped", flow.getState());
     }
 
 

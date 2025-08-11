@@ -41,14 +41,12 @@
 package org.ikasan.testharness.flow.rule;
 
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.flow.FlowEventListener;
 import org.ikasan.testharness.flow.FlowSubject;
 import org.ikasan.testharness.flow.FlowTestHarnessImpl;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runners.model.Statement;
 
@@ -122,39 +120,6 @@ public class IkasanFlowTestRuleTest
         rule.startFlow(flowSubject);
         Statement s = rule.apply(statement, null);
         s.evaluate();
-        mockery.assertIsSatisfied();
-    }
-
-    @Test
-    public void test_evaluate_with_stop_flow_error() throws Throwable
-    {
-        mockery.checking(new Expectations(){{
-            oneOf(statement).evaluate();
-            oneOf(flow).start();
-            oneOf(flow).getState();
-            will(returnValue("running"));
-            exactly(2).of(flow).stop();
-            oneOf(flow).getState();
-            will(returnValue("stoppedInError"));
-            exactly(1).of(flowSubject).removeAllObservers();
-            exactly(1).of(flow).removeFlowListener(with(any(FlowEventListener.class)));
-            oneOf(flowSubject).addObserver(with(any(FlowTestHarnessImpl.class)));
-            oneOf(flowSubject).setIgnoreEventCapture(true);
-        }});
-        IkasanFlowTestRule rule = new IkasanFlowTestRule().withFlow(flow).withAssertEndState();
-        rule.startFlow(flowSubject);
-        Statement s = rule.apply(statement, null);
-        s.evaluate();
-        boolean assertionError = false;
-
-        try {
-            rule.stopFlow();
-        }
-        catch (AssertionError error) {
-            assertionError = true;
-        }
-
-        Assert.assertTrue("Stop should have raised assertion error!", assertionError);
         mockery.assertIsSatisfied();
     }
 
