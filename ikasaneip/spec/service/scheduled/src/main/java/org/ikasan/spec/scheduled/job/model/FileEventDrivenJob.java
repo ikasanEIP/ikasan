@@ -139,8 +139,18 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
      */
     void setLogMatchedFilenames(boolean logMatchedFilenames);
 
+    /**
+     * Check if the file rename should be ignored while scanning.
+     *
+     * @return true if file rename should be ignored, false otherwise
+     */
     boolean isIgnoreFileRenameWhilstScanning();
 
+    /**
+     * Sets whether to ignore file renaming while scanning.
+     *
+     * @param ignoreFileRenameWhilstScanning true to ignore file renaming, false otherwise
+     */
     void setIgnoreFileRenameWhilstScanning(boolean ignoreFileRenameWhilstScanning);
 
     /**
@@ -171,4 +181,49 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
      * @param slaCronExpression in quartz format
      */
     void setSlaCronExpression(String slaCronExpression);
+
+
+    /**
+     * Check if the file watcher is dynamic or not.
+     *
+     * @return true if the file watcher is dynamic, false otherwise
+     */
+    boolean isDynamic();
+
+
+    /**
+     * Sets whether the file watcher is dynamic or not.
+     *
+     * @param isDynamic true if the file watcher is dynamic, false otherwise
+     */
+    void setDynamic(boolean isDynamic);
+
+    /**
+     * Get the SpEL expression for determining the file path.
+     *
+     * @return the SpEL expression for determining the file path
+     */
+    String getFilePathSpel();
+
+    /**
+     * Set the Spring Expression Language (SpEL) for determining the file path.
+     * This SpEL expression will be evaluated to fetch the file path at runtime.
+     *
+     * @param filePathSpel the SpEL expression for file path
+     */
+    void setFilePathSpel(String filePathSpel);
+
+    /**
+     * Retrieves the SpEL expression for generating the filename dynamically.
+     *
+     * @return the SpEL expression for generating the filename
+     */
+    String getFilenameSpel();
+
+    /**
+     * Set the SpEL expression for dynamically determining the filename to be processed.
+     *
+     * @param filenameSpel the SpEL expression for the filename
+     */
+    void setFilenameSpel(String filenameSpel);
 }
