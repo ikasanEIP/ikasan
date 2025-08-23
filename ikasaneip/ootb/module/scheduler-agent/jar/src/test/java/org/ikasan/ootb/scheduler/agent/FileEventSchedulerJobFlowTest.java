@@ -51,6 +51,8 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileLi
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
+import org.ikasan.job.orchestration.model.context.ContextParameterImpl;
+import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
@@ -71,6 +73,7 @@ import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
+import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.*;
 import org.junit.runner.RunWith;
@@ -86,6 +89,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+import static org.awaitility.Awaitility.await;
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -110,6 +115,9 @@ public class FileEventSchedulerJobFlowTest {
     @Resource
     private DryRunModeService dryRunModeService;
 
+    @MockitoBean
+    AgentInstanceRecoveryManager agentInstanceRecoveryManager;
+
     private static ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestExtensionRule flowTestRule = new IkasanFlowTestExtensionRule();
@@ -129,9 +137,14 @@ public class FileEventSchedulerJobFlowTest {
 
     @Before
     public void setup() throws IOException {
+        ContextInstanceCache.instance().removeAll();
         outboundQueue.removeAll();
         if(new File("src/test/resources/data/archive/test.txt").exists()) {
             FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+                , new File("src/test/resources/data"), true);
+        }
+        if(new File("src/test/resources/data/archive/test_abc.txt").exists()) {
+            FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test_abc.txt")
                 , new File("src/test/resources/data"), true);
         }
         if(new File("src/test/resources/data/archive/test1.txt").exists()) {
@@ -143,6 +156,7 @@ public class FileEventSchedulerJobFlowTest {
     @After
     public void teardown() throws IOException {
         outboundQueue.removeAll();
+        ContextInstanceCache.instance().removeAll();
         if(new File("src/test/resources/data/archive/test.txt").exists()) {
             FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
                 , new File("src/test/resources/data"), true);
@@ -182,13 +196,13 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(5000);
-
-        flowTestRule.assertIsSatisfied();
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -198,6 +212,233 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.stopFlow();
     }
+
+    @Test
+    @DirtiesContext
+    public void test_file_flow_success_dynamic_filename() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        ContextParameterInstanceImpl contextParameter = new ContextParameterInstanceImpl();
+        contextParameter.setName("filename_replacement");
+        contextParameter.setValue("abc");
+        ContextInstance contextInstance = ContextInstanceCache.instance().getContextInstanceMap()
+            .values().stream().findFirst().get();
+        contextInstance.setContextParameters(List.of(contextParameter));
+
+        String contextInstanceIdentifier = contextInstance.getId();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test_xxx.txt"));
+        fileConsumerConfiguration.setDynamicFileName(true);
+        fileConsumerConfiguration.setFileNameSpelExpression("#fileNamePattern.replace('xxx', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache)" +
+            ".getContextParameter(#correlatingIdentifier, 'filename_replacement'))");
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_file_flow_success_dynamic_file_path() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        ContextParameterInstanceImpl contextParameter = new ContextParameterInstanceImpl();
+        contextParameter.setName("filepath_replacement");
+        contextParameter.setValue("data");
+        ContextInstance contextInstance = ContextInstanceCache.instance().getContextInstanceMap()
+            .values().stream().findFirst().get();
+        contextInstance.setContextParameters(List.of(contextParameter));
+
+        String contextInstanceIdentifier = contextInstance.getId();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("test.txt"));
+        fileConsumerConfiguration.setFilePath("src/test/resources/<path-replacement>");
+        fileConsumerConfiguration.setDynamicFileName(true);
+        fileConsumerConfiguration.setFilePathSpelExpression("#filePathPattern.replace('<path-replacement>', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache)" +
+            ".getContextParameter(#correlatingIdentifier, 'filepath_replacement'))");
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_file_flow_success_dynamic_filename_and_file_path() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        ContextParameterInstanceImpl contextParameter = new ContextParameterInstanceImpl();
+        contextParameter.setName("filename_replacement");
+        contextParameter.setValue("abc");
+        ContextParameterInstanceImpl contextParameter2 = new ContextParameterInstanceImpl();
+        contextParameter2.setName("filepath_replacement");
+        contextParameter2.setValue("data");
+        ContextInstance contextInstance = ContextInstanceCache.instance().getContextInstanceMap()
+            .values().stream().findFirst().get();
+        contextInstance.setContextParameters(List.of(contextParameter, contextParameter2));
+
+        String contextInstanceIdentifier = contextInstance.getId();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("test_xxx.txt"));
+        fileConsumerConfiguration.setFilePath("src/test/resources/<path-replacement>");
+        fileConsumerConfiguration.setDynamicFileName(true);
+        fileConsumerConfiguration.setFileNameSpelExpression("#fileNamePattern.replace('xxx', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache)" +
+            ".getContextParameter(#correlatingIdentifier, 'filename_replacement'))");
+        fileConsumerConfiguration.setFilePathSpelExpression("#filePathPattern.replace('<path-replacement>', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache)" +
+            ".getContextParameter(#correlatingIdentifier, 'filepath_replacement'))");
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_file_flow_success_dynamic_filename_and_file_path_no_context_parameters_so_replaced_with_empty_string() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
+
+        ContextInstance contextInstance = ContextInstanceCache.instance().getContextInstanceMap()
+            .values().stream().findFirst().get();
+
+        String contextInstanceIdentifier = contextInstance.getId();
+
+        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
+            , CorrelatedFileConsumerConfiguration.class);
+        fileConsumerConfiguration.setFilenames(List.of("test.txt"));
+        fileConsumerConfiguration.setFilePath("src/test/resources/data");
+        fileConsumerConfiguration.setDynamicFileName(true);
+        fileConsumerConfiguration.setFileNameSpelExpression("#fileNamePattern.replace('xxx', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache)" +
+            ".getContextParameter(#correlatingIdentifier, 'filename_replacement'))");
+        fileConsumerConfiguration.setFilePathSpelExpression("#filePathPattern.replace('<path-replacement>', T(org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache)" +
+            ".getContextParameter(#correlatingIdentifier, 'filepath_replacement'))");
+        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
+
+        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
+            , MoveFileBrokerConfiguration.class);
+        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
+        moveFileBrokerConfiguration.setRenameArchiveFile(false);
+        flowTestRule.consumer("File Consumer")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .converter("JobExecution to ScheduledStatusEvent")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        flowTestRule.stopFlow();
+    }
+
+
 
     @Test
     @DirtiesContext
@@ -229,9 +470,8 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(5000);
-
-        flowTestRule.assertIsSatisfied();
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         String contextInstanceIdentifier2 = UUID.randomUUID().toString();
 
@@ -251,11 +491,10 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(5000);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-
-        assertEquals(2, outboundQueue.size());
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -301,10 +540,9 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(5000);
 
-        flowTestRule.assertIsSatisfied();
-
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
         fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
@@ -322,11 +560,11 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(5000);
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(2, outboundQueue.size());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -407,9 +645,8 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(2000);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
@@ -458,13 +695,13 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(2000);
-
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -512,7 +749,8 @@ public class FileEventSchedulerJobFlowTest {
 
         flowTestRule.sleep(2000);
 
-        flowTestRule.assertIsSatisfied();
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
@@ -551,9 +789,9 @@ public class FileEventSchedulerJobFlowTest {
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
         flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
 
-        flowTestRule.sleep(2000);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
-        flowTestRule.assertIsSatisfied();
         // Note, since the ContextInstanceFilter no longer requires plan name, and the reacts to a
         // JobExecutionContextImpl not a CorrelatedFileList, the flow will continue. This test could be expended with
         // a more complex scenario or make use of JobExecutionContext later

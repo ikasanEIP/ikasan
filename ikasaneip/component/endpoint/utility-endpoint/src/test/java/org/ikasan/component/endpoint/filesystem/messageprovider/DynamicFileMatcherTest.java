@@ -39,13 +39,49 @@ public class DynamicFileMatcherTest {
 
     @Test
     public void should_call_spel_expression_and_replace_create_dynamic_file_name() {
-        String spel = "#fileNamePattern.replace('xxx', 'abc')";
+        String filenameSpel = "#fileNamePattern.replace('xxx', 'abc')";
+        String filePathSpel = "#filePathPattern.replace('xxx', 'abc')";
         String fileNamePattern = "blah.out.xxx.xml";
         String fileNamePatternOnDisc = "blah.out.abc.xml";
         Path fileNamePath = Path.of(fileNamePatternOnDisc);
 
         DynamicFileMatcher matcher
-            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1, endpointListener, spel);
+            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1
+            , endpointListener, filenameSpel, filePathSpel);
+
+        when(endpointListener.isActive()).thenReturn(true);
+        when(path.getFileName()).thenReturn(fileNamePath);
+        MockedStatic<FileSystems> fileSystemsMockedStatic = Mockito.mockStatic(FileSystems.class);
+        fileSystemsMockedStatic.when(FileSystems::getDefault).thenReturn(fileSystem);
+        when(fileSystem.getPathMatcher("regex:blah.out.abc.xml")).thenReturn(pathMatcher);
+        when(pathMatcher.matches(fileNamePath)).thenReturn(true);
+
+        FileVisitResult result = matcher.match(path);
+
+        assertEquals(FileVisitResult.CONTINUE, result);
+
+        verify(endpointListener).isActive();
+        verify(endpointListener).onMessage(any());
+        verify(path).getFileName();
+        verify(pathMatcher).matches(fileNamePath);
+
+        fileSystemsMockedStatic.close();
+
+        String fileNamePatternActual = (String) ReflectionTestUtils.getField(matcher, "fileNamePattern");
+        assertEquals(fileNamePattern, fileNamePatternActual);
+    }
+
+    @Test
+    public void should_call_spel_expression_and_replace_create_dynamic_file_name_and_dynamic_file_path() {
+        String filenameSpel = "#fileNamePattern.replace('xxx', 'abc')";
+        String filePathSpel = "#filePathPattern.replace('xxx', 'abc')";
+        String fileNamePattern = "blah.out.xxx.xml";
+        String fileNamePatternOnDisc = "blah.out.abc.xml";
+        Path fileNamePath = Path.of(fileNamePatternOnDisc);
+
+        DynamicFileMatcher matcher
+            = new DynamicFileMatcher(true, "parentPath-xxx", fileNamePattern, 1
+            , endpointListener, filenameSpel, filePathSpel);
 
         when(endpointListener.isActive()).thenReturn(true);
         when(path.getFileName()).thenReturn(fileNamePath);
@@ -71,13 +107,15 @@ public class DynamicFileMatcherTest {
 
     @Test
     public void should_call_spel_expression_and_replace_create_dynamic_file_name_with_correlating_id_change() {
-        String spel = "#fileNamePattern.replace('xxx', 'abc')";
+        String filenameSpel = "#fileNamePattern.replace('xxx', 'abc')";
+        String filePathSpel = "#filePathPattern.replace('xxx', 'abc')";
         String fileNamePattern = "blah.out.xxx.xml";
         String fileNamePatternOnDisc = "blah.out.abc.xml";
         Path fileNamePath = Path.of(fileNamePatternOnDisc);
 
         DynamicFileMatcher matcher
-            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1, endpointListener, spel);
+            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1
+            , endpointListener, filenameSpel, filePathSpel);
         matcher.setCorrelatingIdentifier(UUID.randomUUID().toString());
         when(endpointListener.isActive()).thenReturn(true);
         when(path.getFileName()).thenReturn(fileNamePath);
@@ -119,13 +157,16 @@ public class DynamicFileMatcherTest {
 
     @Test
     public void complex_spel_with_logic_and_replace_create_dynamic_file_name() {
-        String spel = "#fileNamePattern.contains('xxx') ? #fileNamePattern.replace('xxx', 'abc') : (#fileNamePattern.contains('yyy') ? #fileNamePattern.replace('yyy', 'abc') : #fileNamePattern)";
+        String filenameSpel = "#fileNamePattern.contains('xxx') ? #fileNamePattern.replace('xxx', 'abc') : (#fileNamePattern.contains('yyy') " +
+            "? #fileNamePattern.replace('yyy', 'abc') : #fileNamePattern)";
+        String filePathSpel = "#filePathPattern.replace('xxx', 'abc')";
         String fileNamePattern = "blah.out.xxx.xml";
         String fileNamePatternOnDisc = "blah.out.abc.xml";
         Path fileNamePath = Path.of(fileNamePatternOnDisc);
 
         DynamicFileMatcher matcher
-            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1, endpointListener, spel);
+            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1
+            , endpointListener, filenameSpel, filePathSpel);
 
         when(endpointListener.isActive()).thenReturn(true);
         when(path.getFileName()).thenReturn(fileNamePath);
@@ -151,13 +192,16 @@ public class DynamicFileMatcherTest {
 
     @Test
     public void complex_spel_with_logic_and_replace_create_dynamic_file_name_no_replacement() {
-        String spel = "#fileNamePattern.contains('xxx') ? #fileNamePattern.replace('xxx', 'abc') : (#fileNamePattern.contains('yyy') ? #fileNamePattern.replace('yyy', 'abc') : #fileNamePattern)";
+        String filenameSpel = "#fileNamePattern.contains('xxx') ? #fileNamePattern.replace('xxx', 'abc') : (#fileNamePattern.contains('yyy') " +
+            "? #fileNamePattern.replace('yyy', 'abc') : #fileNamePattern)";
+        String filePathSpel = "#filePathPattern.replace('xxx', 'abc')";
         String fileNamePattern = "blah.out.zzz.xml";
         String fileNamePatternOnDisc = "blah.out.abc.xml";
         Path fileNamePath = Path.of(fileNamePatternOnDisc);
 
         DynamicFileMatcher matcher
-            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1, endpointListener, spel);
+            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1
+            , endpointListener, filenameSpel, filePathSpel);
 
         when(endpointListener.isActive()).thenReturn(true);
         when(path.getFileName()).thenReturn(fileNamePath);
@@ -184,10 +228,12 @@ public class DynamicFileMatcherTest {
     @Test
     public void should_not_call_spel_expression_if_null_uses_unchanged_file_name() {
         String fileNamePattern = "blah.out.xxx.xml";
+        String filePathSpel = "#filePathPattern.replace('xxx', 'abc')";
         Path fileNamePath = Path.of(fileNamePattern);
 
         DynamicFileMatcher matcher
-            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1, endpointListener, null);
+            = new DynamicFileMatcher(true, "parentPath", fileNamePattern, 1
+            , endpointListener, null, filePathSpel);
 
         when(endpointListener.isActive()).thenReturn(true);
         when(path.getFileName()).thenReturn(fileNamePath);

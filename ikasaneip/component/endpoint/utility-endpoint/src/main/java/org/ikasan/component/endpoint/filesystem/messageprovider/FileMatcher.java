@@ -55,7 +55,7 @@ import java.util.EnumSet;
 public class FileMatcher extends SimpleFileVisitor<Path>
 {
     /** parent path */
-    private String parentPath;
+    protected String parentPath;
 
     /** matcher instance */
     private final PathMatcher matcher;

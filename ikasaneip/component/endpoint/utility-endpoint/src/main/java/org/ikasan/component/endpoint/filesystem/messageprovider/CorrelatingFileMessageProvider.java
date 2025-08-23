@@ -40,7 +40,6 @@ package org.ikasan.component.endpoint.filesystem.messageprovider;
 
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
@@ -238,7 +237,7 @@ public class CorrelatingFileMessageProvider extends AbstractFileMessageProvider 
             {
                 this.fileMatchers.add(getFileMatcher(fileConsumerConfiguration.getFilePath(), filename, fileConsumerConfiguration.isDynamicFileName(),
                     this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), this.fileConsumerConfiguration.getDirectoryDepth(),
-                    this.fileConsumerConfiguration.getSpelExpression()) );
+                    this.fileConsumerConfiguration.getFileNameSpelExpression(), this.fileConsumerConfiguration.getFilePathSpelExpression()) );
             }
         }
 

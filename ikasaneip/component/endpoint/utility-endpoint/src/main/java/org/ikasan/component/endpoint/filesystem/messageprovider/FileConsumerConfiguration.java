@@ -87,7 +87,10 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
     private boolean dynamicFileName = false;
 
     /** spel expression for dynamic file name matcher */
-    private String spelExpression;
+    private String fileNameSpelExpression;
+
+    /** spel expression for dynamic file path matcher */
+    private String filePathSpelExpression;
 
     public List<String> getFilenames() {
         return filenames;
@@ -179,12 +182,20 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
         this.dynamicFileName = dynamicFileName;
     }
 
-    public String getSpelExpression() {
-        return spelExpression;
+    public String getFileNameSpelExpression() {
+        return fileNameSpelExpression;
     }
 
-    public void setSpelExpression(String spelExpression) {
-        this.spelExpression = spelExpression;
+    public void setFileNameSpelExpression(String fileNameSpelExpression) {
+        this.fileNameSpelExpression = fileNameSpelExpression;
+    }
+
+    public String getFilePathSpelExpression() {
+        return filePathSpelExpression;
+    }
+
+    public void setFilePathSpelExpression(String filePathSpelExpression) {
+        this.filePathSpelExpression = filePathSpelExpression;
     }
 
     @Override
