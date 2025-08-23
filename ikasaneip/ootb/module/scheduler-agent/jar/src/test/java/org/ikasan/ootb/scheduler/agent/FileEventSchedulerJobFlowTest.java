@@ -56,6 +56,7 @@ import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
@@ -80,6 +81,7 @@ import org.junit.runner.RunWith;
 import org.quartz.JobDataMap;
 import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -88,6 +90,7 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
@@ -115,7 +118,7 @@ public class FileEventSchedulerJobFlowTest {
     @Resource
     private DryRunModeService dryRunModeService;
 
-    @MockitoBean
+    @MockBean
     AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
     private static ObjectMapper objectMapper = new ObjectMapper();
