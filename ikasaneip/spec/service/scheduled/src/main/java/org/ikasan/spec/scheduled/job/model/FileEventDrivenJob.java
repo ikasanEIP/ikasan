@@ -1,6 +1,7 @@
 package org.ikasan.spec.scheduled.job.model;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
 
@@ -224,4 +225,33 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
      * @param filenameSpel the SpEL expression for the filename
      */
     void setFilenameSpel(String filenameSpel);
+
+    /**
+     * Returns a list of ReplacementPair objects representing the filename replacement pairs.
+     *
+     * @return List of ReplacementPair objects that contain the replacement token and job plan parameter name.
+     */
+    Set<ReplacementPair> getFilenameReplacementPairs();
+
+    /**
+     * Sets the list of ReplacementPair objects representing the filename replacement pairs to be used in the job.
+     *
+     * @param filenameReplacementPairs The list of ReplacementPair objects containing the replacement token and job plan parameter name.
+     */
+    void setFilenameReplacementPairs(Set<ReplacementPair> filenameReplacementPairs);
+
+    /**
+     * Retrieves the list of ReplacementPair objects representing the file path replacement pairs for the job.
+     *
+     * @return List of ReplacementPair objects containing the replacement token and job plan parameter name.
+     */
+    Set<ReplacementPair> getFilePathReplacementPairs();
+
+    /**
+     * Set the list of ReplacementPair objects representing the file path replacement pairs for the job.
+     * These ReplacementPair objects contain the replacement token and job plan parameter name
+     *
+     * @param filePathReplacementPairs The list of ReplacementPair objects containing the replacement token and job plan parameter name.
+     */
+    void setFilePathReplacementPairs(Set<ReplacementPair> filePathReplacementPairs);
 }

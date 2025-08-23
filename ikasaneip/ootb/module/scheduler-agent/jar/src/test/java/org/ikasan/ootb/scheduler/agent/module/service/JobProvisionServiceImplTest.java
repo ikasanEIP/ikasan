@@ -165,14 +165,11 @@ public class JobProvisionServiceImplTest {
     @Mock
     ConfiguredResource configuredResource;
 
-    @Mock
-    Configuration configuration;
-
     @InjectMocks
     private JobProvisionServiceImpl service;
 
     @Test
-    public void test_provision_success_no_spel_expressions() {
+    public void test_provision_success() {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
         setupWhen();
@@ -217,6 +214,9 @@ public class JobProvisionServiceImplTest {
         verify(fileConsumerConfiguration, times(1)).setIncludeTrailer(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortAscending(anyBoolean());
         verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
+        verify(fileConsumerConfiguration, times(1)).setDynamicFileName(anyBoolean());
+        verify(fileConsumerConfiguration, times(1)).setFileNameSpelExpression(anyString());
+        verify(fileConsumerConfiguration, times(1)).setFilePathSpelExpression(anyString());
 
         verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
 
@@ -230,108 +230,6 @@ public class JobProvisionServiceImplTest {
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
         verifyNoMoreInteractions(agentInstanceRecoveryManager);
-    }
-
-    @Test
-    public void test_provision_success_with_spel_expressions() {
-        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
-
-        Map<String, List<Object>> spelMap
-            = Map.of("contextName", List.of(true, "#fileName.replace(#someValue, 'thevaluetoreplace')", Map.of("#someValue", "contextName")));
-
-        ReflectionTestUtils.setField(service,"spelExpressionsMap", spelMap);
-
-        setupWhen();
-
-        this.service.provisionJobs(this.getJobs(), "system");
-
-        verify(fileConsumerConfiguration).setDynamicFileName(true);
-        verify(fileConsumerConfiguration).setSpelExpression("#fileName.replace('contextName', 'thevaluetoreplace')");
-        verify(agentInstanceRecoveryManager, times(1)).init();
-
-        verifyNoMoreInteractions(agentInstanceRecoveryManager);
-    }
-
-    @Test
-    public void get_spel_replacement_string() {
-        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
-        fileEventDrivenJob.setContextName("contextName");
-        fileEventDrivenJob.setJobName("jobName");
-        assertEquals("'contextName'", service.getSpelReplacement("contextName", fileEventDrivenJob));
-        assertEquals("'jobName'", service.getSpelReplacement("jobName", fileEventDrivenJob));
-        assertNull(service.getSpelReplacement("unknownVar", fileEventDrivenJob));
-    }
-
-    @Test
-    public void get_spel_replacement_list_strings() {
-        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
-        assertEquals("{}", service.getSpelReplacement("filenames", fileEventDrivenJob));
-        fileEventDrivenJob.setFilenames(List.of("fileName1", "fileName2"));
-        assertEquals("{'fileName1','fileName2'}", service.getSpelReplacement("filenames", fileEventDrivenJob));
-    }
-
-    @Test
-    public void get_spel_replacement_map_of_string_string() {
-        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
-        assertEquals("{}", service.getSpelReplacement("passthroughProperties", fileEventDrivenJob));
-        fileEventDrivenJob.setPassthroughProperties(Map.of("key1", "value1"));
-        assertEquals("{'key1':'value1'}", service.getSpelReplacement("passthroughProperties", fileEventDrivenJob));
-    }
-
-    @Test
-    public void test_remove_jobs_for_context() {
-        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
-
-        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
-        configuration.setFlowContextMap(this.getJobContextMap());
-        configuration.setFlowDefinitions(this.getJobContextMap());
-        configuration.setFlowDefinitionProfiles(this.getJobProfileMap());
-
-        Assert.assertEquals(3, configuration.getFlowContextMap().size());
-        Assert.assertEquals(3, configuration.getFlowDefinitions().size());
-        Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
-
-        when(moduleService.getModule(null)).thenReturn(module);
-        when(module.getConfiguration()).thenReturn(configuration);
-        when(module.getFlows()).thenReturn(List.of(flow1, flow2, flow3));
-        when(flow1.getName()).thenReturn("fileEventDrivenJobName");
-        when(flow2.getName()).thenReturn("quartzScheduleDrivenJobName");
-        when(flow1.getFlowElement(anyString())).thenReturn(flowElement);
-        when(flow2.getFlowElement(anyString())).thenReturn(flowElement);
-        when(flowElement.getFlowComponent()).thenReturn(configuredResource);
-        when(configuredResource.getConfiguredResourceId()).thenReturn("id");
-        when(configurationManagement.getConfiguration(anyString())).thenReturn(this.configuration);
-
-        this.service.removeJobs("contextName");
-
-        verify(moduleActivator).deactivate(module);
-        verify(moduleActivator).activate(module);
-        verify(flow1, times(3)).getName();
-        verify(flow2, times(4)).getName();
-        verify(flow3, times(1)).getName();
-        verify(flow1, times(7)).getFlowElement(anyString());
-        verify(flow2, times(5)).getFlowElement(anyString());
-        verify(flow3, times(0)).getFlowElement(anyString());
-        verify(flowElement, times(12)).getFlowComponent();
-        verify(configuredResource, times(12)).getConfiguredResourceId();
-        verify(configurationManagement, times(12)).getConfiguration(anyString());
-        verify(configurationManagement, times(12)).deleteConfiguration(any());
-
-        verifyNoMoreInteractions(fileConsumerConfiguration
-            , moduleActivator
-            , scheduledConsumerConfiguration
-            , converterConfiguration
-            , flow1
-            , flow2
-            , flow3
-            , flowElement
-            , configuredResource
-            , configurationManagement
-            , agentInstanceRecoveryManager);
-
-        Assert.assertEquals(0, configuration.getFlowContextMap().size());
-        Assert.assertEquals(0, configuration.getFlowDefinitions().size());
-        Assert.assertEquals(0, configuration.getFlowDefinitionProfiles().size());
     }
 
     @Test
@@ -475,6 +373,9 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setSortByModifiedDateTime(true);
         fileEventDrivenJob.setMinFileAgeSeconds(180);
         fileEventDrivenJob.setMoveDirectory("archive");
+        fileEventDrivenJob.setDynamic(true);
+        fileEventDrivenJob.setFilenameSpel("filename spel");
+        fileEventDrivenJob.setFilePathSpel("file path spel");
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
         quartzScheduleDrivenJob.setAgentName("agentName");
