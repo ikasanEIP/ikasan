@@ -87,7 +87,11 @@ public class ContextInstanceCache {
                 }
             }
         }
-        return null;
+
+        // We return an empty String if nothing found!
+        LOG.info(String.format("Could not find context parameter for job plan instance instance[%s] and parameter name [%s]. " +
+            "Returning empty String.", correlationId, contextParameterName));
+        return "";
     }
 
     public static boolean existsInCache(String correlationId) {

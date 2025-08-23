@@ -9,7 +9,8 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
     private static final String FQN_PATH_SEPARATOR_LINUX = "/";
     
     protected FileMatcher getFileMatcher(String filePath, String filename, boolean dynamicFileName,
-                                         boolean ignoreFileNameWhistScanning, int directoryDepth, String spelExpression)
+                                         boolean ignoreFileNameWhistScanning, int directoryDepth,
+                                         String filenameSpelExpression, String filePathSpelExpression)
     {
         String path;
         String name;
@@ -38,7 +39,8 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
                 name,
                 directoryDepth,
                 this,
-                spelExpression);
+                filenameSpelExpression,
+                filePathSpelExpression);
         }
         else
         {
