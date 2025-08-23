@@ -49,10 +49,8 @@ import org.junit.Test;
 import org.quartz.JobExecutionContext;
 
 import java.io.File;
-import java.nio.file.FileSystem;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -71,6 +69,14 @@ public class FileMessageProviderTest
             setImposteriser(ClassImposteriser.INSTANCE);
         }
     };
+
+    private static final List<String> DYNAMIC_FILE_NAME_PATTERN = Arrays.asList(
+        "./src/test/resources/data/unit/xxx/xxx_TradeLeg_20141212_99_20141212121212.txt");
+
+    private static final String DYNAMIC_FILE_PATH_PATTERN = "./src/test/resources/data/unit/xxx";
+
+    private static final List<String> DYNAMIC_DISTINCT_FILE_NAME_PATTERN = Arrays.asList(
+        "xxx_TradeLeg_20141212_99_20141212121212.txt");
 
     private static String DIRECTORY_NAME = "file_delivery";
 
@@ -104,7 +110,9 @@ public class FileMessageProviderTest
                 will(returnValue(true));
                 exactly(2).of(configuration).isDynamicFileName();
                 will(returnValue(false));
-                exactly(2).of(configuration).getSpelExpression();
+                exactly(2).of(configuration).getFileNameSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePathSpelExpression();
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
@@ -144,7 +152,9 @@ public class FileMessageProviderTest
                 will(returnValue(true));
                 exactly(2).of(configuration).isDynamicFileName();
                 will(returnValue(false));
-                exactly(2).of(configuration).getSpelExpression();
+                exactly(2).of(configuration).getFileNameSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePathSpelExpression();
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
@@ -189,48 +199,91 @@ public class FileMessageProviderTest
         mockery.assertIsSatisfied();
     }
 
-//    @Test
-//    public void testWindowsFileSystem() throws Exception {
-//        final List<String> filenames = new ArrayList<>();
-//        filenames.add("Trade_\\d{8}_\\d+_\\d{14}.txt");
-//
-//        // set test expectations
-//        mockery.checking(new Expectations() {
-//            {
-//                exactly(3).of(configuration).getFilenames();
-//                will(returnValue(filenames));
-//                exactly(2).of(configuration).getDirectoryDepth();
-//                // ensure we don't walk the subdirectory
-//                will(returnValue(1));
-//                exactly(1).of(configuration).isLogMatchedFilenames();
-//                will(returnValue(true));
-//                exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
-//                will(returnValue(true));
-//                exactly(2).of(configuration).isDynamicFileName();
-//                will(returnValue(false));
-//                exactly(2).of(configuration).getSpelExpression();
-//                will(returnValue("spel expression"));
-//                exactly(1).of(configuration).getFilePath();
-//                will(returnValue("src/test/resources/data/unit/"));
-//            }
-//        });
-//
-//
-//        FileMessageProvider messageProvider = new FileMessageProvider();
-//        messageProvider.setConfiguration(configuration);
-//        messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
-//        messageProvider.startManagedResource();
-//        List<File> files = messageProvider.invoke(context);
-//        Assert.assertTrue("Should have returned 2 files, but returned " + files.size() + " files.", files.size() == 2);
-//
-//        mockery.assertIsSatisfied();
-//    }
+    @Test
+    public void test_successful_list_of_files_dynamic_file_matcher()
+    {
+        setupDynamicFilenameExpectations(false);
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(false));
+                exactly(1).of(configuration).getDirectoryDepth();
+                will(returnValue(1));
+                exactly(1).of(configuration).getFilePath();
+                will(returnValue(null));
+            }
+        });
 
-    private Path getPathToFile(FileSystem fileSystem) throws Exception {
-        Path path = fileSystem.getPath(DIRECTORY_NAME);
-        Files.createDirectory(path);
+        FileMessageProvider messageProvider = new FileMessageProvider();
+        messageProvider.setConfiguration(configuration);
+        messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+        messageProvider.startManagedResource();
+        List<File> files = messageProvider.invoke(context);
 
-        return path;
+        Assert.assertTrue("Should have returned 1 files, but returned " + files.size() + " files."
+            , files.size() == 1);
+        Assert.assertEquals(new File("./src/test/resources/data/unit/abc/abc_TradeLeg_20141212_99_20141212121212.txt")
+            , files.get(0));
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_list_of_files_dynamic_file_matcher_distinct_file_path()
+    {
+        setupDynamicFilenameExpectations(true);
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(false));
+                exactly(1).of(configuration).getDirectoryDepth();
+                will(returnValue(1));
+            }
+        });
+
+        FileMessageProvider messageProvider = new FileMessageProvider();
+        messageProvider.setConfiguration(configuration);
+        messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+        messageProvider.startManagedResource();
+        List<File> files = messageProvider.invoke(context);
+
+        Assert.assertTrue("Should have returned 1 files, but returned " + files.size() + " files."
+            , files.size() == 1);
+        Assert.assertEquals(new File("./src/test/resources/data/unit/abc/abc_TradeLeg_20141212_99_20141212121212.txt")
+            , files.get(0));
+
+        mockery.assertIsSatisfied();
+    }
+
+    /**
+     * Sets up expectations for dynamic filename based on the provided distinct flag.
+     * If distinct is true, sets up expectations for distinct filename pattern and file path pattern.
+     *
+     * @param distinct flag indicating whether to set distinct filename expectations or not
+     */
+    private void setupDynamicFilenameExpectations(boolean distinct) {
+        mockery.checking(new Expectations() {
+            {
+                if(distinct) {
+                    exactly(2).of(configuration).getFilenames();
+                    will(returnValue(DYNAMIC_DISTINCT_FILE_NAME_PATTERN));
+                    exactly(1).of(configuration).getFilePath();
+                    will(returnValue(DYNAMIC_FILE_PATH_PATTERN));
+                }
+                else {
+                    exactly(2).of(configuration).getFilenames();
+                    will(returnValue(DYNAMIC_FILE_NAME_PATTERN));
+                }
+                exactly(1).of(configuration).isDynamicFileName();
+                will(returnValue(true));
+                exactly(1).of(configuration).isIgnoreFileRenameWhilstScanning();
+                will(returnValue(true));
+                exactly(1).of(configuration).getFileNameSpelExpression();
+                will(returnValue("#fileNamePattern.replace('xxx', 'abc')"));
+                exactly(1).of(configuration).getFilePathSpelExpression();
+                will(returnValue("#filePathPattern.replace('xxx', 'abc')"));
+            }
+        });
     }
 
 }

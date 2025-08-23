@@ -220,7 +220,7 @@ public class FileMessageProvider extends AbstractFileMessageProvider implements 
             {
                 this.fileMatchers.add( getFileMatcher(fileConsumerConfiguration.getFilePath(), filename, fileConsumerConfiguration.isDynamicFileName(),
                     this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), this.fileConsumerConfiguration.getDirectoryDepth(),
-                    this.fileConsumerConfiguration.getSpelExpression()) );
+                    this.fileConsumerConfiguration.getFileNameSpelExpression(), this.fileConsumerConfiguration.getFilePathSpelExpression()) );
             }
         }
 

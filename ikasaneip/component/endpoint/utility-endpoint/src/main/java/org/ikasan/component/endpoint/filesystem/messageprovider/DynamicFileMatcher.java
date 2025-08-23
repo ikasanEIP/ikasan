@@ -53,13 +53,13 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 
 /**
- * DynamicFileMatcher which extends FileMatcher.
  *
  */
 public class DynamicFileMatcher extends FileMatcher {
     private static final Logger LOG = LoggerFactory.getLogger(DynamicFileMatcher.class);
 
     public static final String FILE_NAME_PATTERN = "fileNamePattern";
+    public static final String FILE_PATH_PATTERN = "filePathPattern";
     public static final String CORRELATING_IDENTIFIER = "correlatingIdentifier";
     public static final String REGEX = "regex:";
 
@@ -72,10 +72,10 @@ public class DynamicFileMatcher extends FileMatcher {
      * endpoint listener to callback on event
      */
     private final EndpointListener<String, IOException> endpointListener;
-    /**
-     * spel expression can be null
-     */
-    private final String spelExpression;
+
+    private final String fileNameSpelExpression;
+
+    private final String filePathSpelExpression;
 
     private String correlatingIdentifier;
 
@@ -83,26 +83,21 @@ public class DynamicFileMatcher extends FileMatcher {
 
     private PathMatcher matcher;
 
-    /**
-     * Constructor
-     *
-     * @param ignoreFileRenameWhilstScanning
-     * @param parentPath
-     * @param fileNamePattern
-     * @param endpointListener
-     */
+
     DynamicFileMatcher(boolean ignoreFileRenameWhilstScanning,
                        String parentPath,
                        String fileNamePattern,
                        int directoryDepth,
                        EndpointListener<String, IOException> endpointListener,
-                       String spelExpression) {
+                       String fileNameSpelExpression,
+                       String filePathSpelExpression) {
         super(ignoreFileRenameWhilstScanning, parentPath, fileNamePattern, directoryDepth, endpointListener);
 
         this.fileNamePattern = fileNamePattern;
         this.endpointListener = endpointListener;
 
-        this.spelExpression = spelExpression;
+        this.fileNameSpelExpression = fileNameSpelExpression;
+        this.filePathSpelExpression = filePathSpelExpression;
     }
 
     /**
@@ -131,9 +126,16 @@ public class DynamicFileMatcher extends FileMatcher {
         return FileVisitResult.CONTINUE;
     }
 
+    /**
+     * Initialise the path matcher using the provided fileNameSpelExpression if available.
+     * If fileNameSpelExpression is provided, evaluate it using the fileNamePattern and correlatingIdentifier variables.
+     * The dynamicFilePattern is set based on the evaluation result.
+     * Create a new matcher every time as the fileNamePattern can change potentially every time.
+     * Logs the dynamicFilePattern being used for the path matcher initialization.
+     */
     private void initialiseMatcher() {
         String dynamicFilePattern = this.fileNamePattern;
-        if (spelExpression != null) {
+        if (fileNameSpelExpression != null) {
             StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
             // NOTE: variable names can be null for spel expression evaluation
             // it is up to the spel expression to decide if it needs them or not
@@ -142,14 +144,43 @@ public class DynamicFileMatcher extends FileMatcher {
             evaluationContext.setVariable(CORRELATING_IDENTIFIER, this.correlatingIdentifier);
 
             ExpressionParser parser = new SpelExpressionParser();
-            Expression exp = parser.parseExpression(this.spelExpression);
+            Expression exp = parser.parseExpression(this.fileNameSpelExpression);
 
             dynamicFilePattern = exp.getValue(evaluationContext, String.class);
         }
 
         // create a new matcher every time as the fileNamePattern can change potentially every time
-        LOG.info("Initialising path matcher with dynamicFilePattern[{}]", dynamicFilePattern);
+        LOG.info("Initialising dynamic file name matcher with dynamicFilePattern[{}]", dynamicFilePattern);
         this.matcher = FileSystems.getDefault().getPathMatcher(REGEX + dynamicFilePattern);
+    }
+
+
+    /**
+     * Initialises the dynamic filepath based on the provided SpEL expression.
+     * If filePathSpelExpression is not null, evaluates it using the FILE_PATH_PATTERN and CORRELATING_IDENTIFIER variables.
+     * The parentPath is updated with the evaluated result.
+     */
+    private void initialiseDynamicFilepath() {
+        if (filePathSpelExpression != null) {
+            StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+            // NOTE: variable names can be null for spel expression evaluation
+            // it is up to the spel expression to decide if it needs them or not
+            // in this case fileNamePattern will almost always be needed if evaluating it
+            evaluationContext.setVariable(FILE_PATH_PATTERN, super.parentPath);
+            evaluationContext.setVariable(CORRELATING_IDENTIFIER, this.correlatingIdentifier);
+
+            ExpressionParser parser = new SpelExpressionParser();
+            Expression exp = parser.parseExpression(this.filePathSpelExpression);
+
+            super.parentPath = exp.getValue(evaluationContext, String.class);
+        }
+        LOG.info("Initialising dynamic file path matcher with dynamicFilePattern[{}]", super.parentPath);
+    }
+
+    @Override
+    public void invoke() throws IOException {
+        this.initialiseDynamicFilepath();
+        super.invoke();
     }
 
     /**

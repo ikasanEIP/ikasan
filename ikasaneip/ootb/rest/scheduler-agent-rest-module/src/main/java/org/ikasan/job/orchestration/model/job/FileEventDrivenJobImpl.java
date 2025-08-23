@@ -1,9 +1,11 @@
 package org.ikasan.job.orchestration.model.job;
 
 import org.ikasan.spec.scheduled.job.model.FileEventDrivenJob;
+import org.ikasan.spec.scheduled.job.model.ReplacementPair;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implements FileEventDrivenJob {
 
@@ -41,6 +43,12 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
 
     /** cron expression on expected time of file availability */
     private String slaCronExpression;
+    private boolean isDynamic;
+    private String filePathSpel;
+    private String filenameSpel;
+
+    private Set<ReplacementPair> filenameReplacementPairs;
+    private Set<ReplacementPair> filePathReplacementPairs;
 
     @Override
     public String getFilePath() {
@@ -173,6 +181,56 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
     }
 
     @Override
+    public boolean isDynamic() {
+        return isDynamic;
+    }
+
+    @Override
+    public void setDynamic(boolean dynamic) {
+        isDynamic = dynamic;
+    }
+
+    @Override
+    public String getFilePathSpel() {
+        return filePathSpel;
+    }
+
+    @Override
+    public void setFilePathSpel(String filePathSpel) {
+        this.filePathSpel = filePathSpel;
+    }
+
+    @Override
+    public String getFilenameSpel() {
+        return filenameSpel;
+    }
+
+    @Override
+    public void setFilenameSpel(String filenameSpel) {
+        this.filenameSpel = filenameSpel;
+    }
+
+    @Override
+    public Set<ReplacementPair> getFilenameReplacementPairs() {
+        return filenameReplacementPairs;
+    }
+
+    @Override
+    public void setFilenameReplacementPairs(Set<ReplacementPair> filenameReplacementPairs) {
+        this.filenameReplacementPairs = filenameReplacementPairs;
+    }
+
+    @Override
+    public Set<ReplacementPair> getFilePathReplacementPairs() {
+        return filePathReplacementPairs;
+    }
+
+    @Override
+    public void setFilePathReplacementPairs(Set<ReplacementPair> filePathReplacementPairs) {
+        this.filePathReplacementPairs = filePathReplacementPairs;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("FileEventDrivenJobImpl{");
         sb.append("filePath='").append(filePath).append('\'');
@@ -186,6 +244,9 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
         sb.append(", logMatchedFilenames=").append(logMatchedFilenames);
         sb.append(", ignoreFileRenameWhilstScanning=").append(ignoreFileRenameWhilstScanning);
         sb.append(", slaCronExpression=").append(slaCronExpression);
+        sb.append(", isDynamic=").append(isDynamic);
+        sb.append(", filePathSpel=").append(filePathSpel);
+        sb.append(", filenameSpel=").append(filenameSpel);
         sb.append('}');
         return sb.toString();
     }
