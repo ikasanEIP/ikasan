@@ -84,14 +84,28 @@ public class DynamicFileMatcher extends FileMatcher {
     private PathMatcher matcher;
 
 
+    /**
+     * Constructor for DynamicFileMatcher class.
+     *
+     * @param ignoreFileRenameWhilstScanning whether to ignore file rename whilst scanning
+     * @param parentPath the parent path to start scanning from
+     * @param fileNamePattern the pattern to match against file names
+     * @param directoryDepth the depth of directories to scan
+     * @param endpointListener the listener for message and exception exchange
+     * @param fileNameSpelExpression SpEL expression for dynamic file names
+     * @param filePathSpelExpression SpEL expression for dynamic file paths
+     * @param followSymbolicLinks whether to follow symbolic links
+     */
     DynamicFileMatcher(boolean ignoreFileRenameWhilstScanning,
                        String parentPath,
                        String fileNamePattern,
                        int directoryDepth,
                        EndpointListener<String, IOException> endpointListener,
                        String fileNameSpelExpression,
-                       String filePathSpelExpression) {
-        super(ignoreFileRenameWhilstScanning, parentPath, fileNamePattern, directoryDepth, endpointListener);
+                       String filePathSpelExpression,
+                       boolean followSymbolicLinks) {
+        super(ignoreFileRenameWhilstScanning, parentPath, fileNamePattern
+            , directoryDepth, endpointListener, followSymbolicLinks);
 
         this.fileNamePattern = fileNamePattern;
         this.endpointListener = endpointListener;

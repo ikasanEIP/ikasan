@@ -116,6 +116,50 @@ public class FileMessageProviderTest
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
+            }
+        });
+
+        FileMessageProvider messageProvider = new FileMessageProvider();
+        messageProvider.setConfiguration(configuration);
+        messageProvider.setManagedResourceRecoveryManager(managedResourceRecoveryManager);
+        messageProvider.startManagedResource();
+        List<File> files = messageProvider.invoke(context);
+        Assert.assertTrue("Should have returned 2 files, but returned " + files.size() + " files.", files.size() == 2);
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_list_of_files_not_follow_links()
+    {
+        final List<String> filenames = new ArrayList<>();
+        filenames.add("src/test/resources/data/unit/Trade_\\d{8}_\\d+_\\d{14}.txt");
+        filenames.add("src/test/resources/data/unit/TradeLeg_\\d{8}_\\d+_\\d{14}.txt");
+
+        // set test expectations
+        mockery.checking(new Expectations() {
+            {
+                exactly(2).of(configuration).getFilenames();
+                will(returnValue(filenames));
+                exactly(2).of(configuration).getDirectoryDepth();
+                // ensure we don't walk the subdirectory
+                will(returnValue(1));
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(true));
+                exactly(2).of(configuration).isIgnoreFileRenameWhilstScanning();
+                will(returnValue(true));
+                exactly(2).of(configuration).isDynamicFileName();
+                will(returnValue(false));
+                exactly(2).of(configuration).getFileNameSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePathSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(false));
             }
         });
 
@@ -158,6 +202,8 @@ public class FileMessageProviderTest
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
@@ -211,6 +257,8 @@ public class FileMessageProviderTest
                 will(returnValue(1));
                 exactly(1).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(1).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
@@ -238,6 +286,8 @@ public class FileMessageProviderTest
                 will(returnValue(false));
                 exactly(1).of(configuration).getDirectoryDepth();
                 will(returnValue(1));
+                exactly(1).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
