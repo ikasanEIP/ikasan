@@ -69,14 +69,22 @@ public class FileMatcher extends SimpleFileVisitor<Path>
     /** whether to ignore changes to the file system whilst we are scanning */
     private boolean ignoreFileRenameWhilstScanning;
 
+    private boolean followSymbolicLinks;
+
+    private EnumSet fileWalkerOptions;
+
+
     /**
-     * Constructor
-     * @param ignoreFileRenameWhilstScanning
-     * @param parentPath
-     * @param pattern
-     * @param endpointListener
+     * Constructor for the FileMatcher class.
+     *
+     * @param ignoreFileRenameWhilstScanning whether to ignore file rename whilst scanning
+     * @param parentPath the parent path to start scanning from
+     * @param pattern the regex pattern to match against file/directory names
+     * @param directoryDepth the depth of directories to scan
+     * @param endpointListener the endpoint listener for message and exception exchange
      */
-    FileMatcher(boolean ignoreFileRenameWhilstScanning, String parentPath, String pattern, int directoryDepth, EndpointListener<String, IOException> endpointListener)
+    FileMatcher(boolean ignoreFileRenameWhilstScanning, String parentPath, String pattern
+        , int directoryDepth, EndpointListener<String, IOException> endpointListener, boolean followSymbolicLinks)
     {
         this.ignoreFileRenameWhilstScanning = ignoreFileRenameWhilstScanning;
         this.parentPath = parentPath;
@@ -88,6 +96,12 @@ public class FileMatcher extends SimpleFileVisitor<Path>
         matcher = FileSystems.getDefault().getPathMatcher("regex:" + pattern);
         this.endpointListener = endpointListener;
         this.directoryDepth = directoryDepth;
+        if(followSymbolicLinks) {
+            this.fileWalkerOptions = EnumSet.of(FileVisitOption.FOLLOW_LINKS);
+        }
+        else {
+            this.fileWalkerOptions = EnumSet.noneOf(FileVisitOption.class);
+        }
     }
 
 
@@ -159,6 +173,6 @@ public class FileMatcher extends SimpleFileVisitor<Path>
      */
     public void invoke() throws IOException
     {
-        Files.walkFileTree(Paths.get(parentPath), EnumSet.noneOf(FileVisitOption.class), directoryDepth, this);
+        Files.walkFileTree(Paths.get(parentPath), this.fileWalkerOptions, directoryDepth, this);
     }
 }

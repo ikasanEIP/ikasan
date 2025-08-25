@@ -10,7 +10,8 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
     
     protected FileMatcher getFileMatcher(String filePath, String filename, boolean dynamicFileName,
                                          boolean ignoreFileNameWhistScanning, int directoryDepth,
-                                         String filenameSpelExpression, String filePathSpelExpression)
+                                         String filenameSpelExpression, String filePathSpelExpression,
+                                         boolean followSymbolicLinks)
     {
         String path;
         String name;
@@ -40,7 +41,8 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
                 directoryDepth,
                 this,
                 filenameSpelExpression,
-                filePathSpelExpression);
+                filePathSpelExpression,
+                followSymbolicLinks);
         }
         else
         {
@@ -48,7 +50,8 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
                 path,
                 name,
                 directoryDepth,
-                this);
+                this,
+                followSymbolicLinks);
         }
     }
 
