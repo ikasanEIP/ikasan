@@ -562,33 +562,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         fileConsumerConfiguration.setDynamicFileName(job.isDynamic());
         fileConsumerConfiguration.setFileNameSpelExpression(job.getFilenameSpel());
         fileConsumerConfiguration.setFilePathSpelExpression(job.getFilePathSpel());
-
-//        if (spelExpressionsMap != null && !spelExpressionsMap.isEmpty()) {
-//            for (String contextId : spelExpressionsMap.keySet()) {
-//                if (contextId.equals(job.getContextName())) {
-//                    List<Object> spelParams = spelExpressionsMap.get(contextId);
-//                    // [0] = isDynamic File name (boolean)
-//                    // [1] = spelExpression (String)
-//                    // [2] = any parameters to replace on the spel expression (Map<String, String>)
-//                    boolean isDynamic = (boolean) spelParams.get(0);
-//                    if (isDynamic) {
-//                        fileConsumerConfiguration.setDynamicFileName(true);
-//                        String spelExpression = (String) spelParams.get(1);
-//                        Map<String, String> spelExpressionParamsToReplace = (Map<String, String>) spelParams.get(2);
-//                        if (spelExpressionParamsToReplace != null && !spelExpressionParamsToReplace.isEmpty()) {
-//                            for (String key : spelExpressionParamsToReplace.keySet()) {
-//                                String replacementValue = getSpelReplacement(spelExpressionParamsToReplace.get(key), job);
-//                                if (replacementValue != null) {
-//                                    spelExpression = spelExpression.replace(key, replacementValue);
-//                                }
-//                            }
-//                        }
-//                        logger.info("Setting spel expression on fileConsumerConfiguration: " + spelExpression);
-//                        fileConsumerConfiguration.setFileNameSpelExpression(spelExpression);
-//                    }
-//                }
-//            }
-//        }
     }
 
     /**
