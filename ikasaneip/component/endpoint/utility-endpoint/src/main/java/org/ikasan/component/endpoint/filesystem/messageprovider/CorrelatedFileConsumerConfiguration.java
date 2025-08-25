@@ -92,6 +92,9 @@ public class CorrelatedFileConsumerConfiguration extends CorrelatedScheduledCons
     /** spel expression for dynamic file path matcher */
     private String filePathSpelExpression;
 
+    /** should consumer traverse symbolic links */
+    private boolean followSymbolicLinks = true;
+
     public List<String> getFilenames() {
         return filenames;
     }
@@ -196,6 +199,14 @@ public class CorrelatedFileConsumerConfiguration extends CorrelatedScheduledCons
 
     public void setFilePathSpelExpression(String filePathSpelExpression) {
         this.filePathSpelExpression = filePathSpelExpression;
+    }
+
+    public boolean isFollowSymbolicLinks() {
+        return followSymbolicLinks;
+    }
+
+    public void setFollowSymbolicLinks(boolean followSymbolicLinks) {
+        this.followSymbolicLinks = followSymbolicLinks;
     }
 
     @Override

@@ -237,7 +237,8 @@ public class CorrelatingFileMessageProvider extends AbstractFileMessageProvider 
             {
                 this.fileMatchers.add(getFileMatcher(fileConsumerConfiguration.getFilePath(), filename, fileConsumerConfiguration.isDynamicFileName(),
                     this.fileConsumerConfiguration.isIgnoreFileRenameWhilstScanning(), this.fileConsumerConfiguration.getDirectoryDepth(),
-                    this.fileConsumerConfiguration.getFileNameSpelExpression(), this.fileConsumerConfiguration.getFilePathSpelExpression()) );
+                    this.fileConsumerConfiguration.getFileNameSpelExpression(), this.fileConsumerConfiguration.getFilePathSpelExpression(),
+                    this.fileConsumerConfiguration.isFollowSymbolicLinks()) );
             }
         }
 

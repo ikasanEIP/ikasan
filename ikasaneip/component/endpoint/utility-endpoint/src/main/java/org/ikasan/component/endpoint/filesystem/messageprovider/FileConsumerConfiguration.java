@@ -92,6 +92,8 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
     /** spel expression for dynamic file path matcher */
     private String filePathSpelExpression;
 
+    private boolean followSymbolicLinks = true;
+
     public List<String> getFilenames() {
         return filenames;
     }
@@ -196,6 +198,14 @@ public class FileConsumerConfiguration extends ScheduledConsumerConfiguration im
 
     public void setFilePathSpelExpression(String filePathSpelExpression) {
         this.filePathSpelExpression = filePathSpelExpression;
+    }
+
+    public boolean isFollowSymbolicLinks() {
+        return followSymbolicLinks;
+    }
+
+    public void setFollowSymbolicLinks(boolean followSymbolicLinks) {
+        this.followSymbolicLinks = followSymbolicLinks;
     }
 
     @Override

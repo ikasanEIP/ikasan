@@ -65,6 +65,8 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
         CorrelatedFileList files = messageProviderInvoke();
@@ -91,6 +93,42 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
+            }
+        });
+
+        CorrelatedFileList files = messageProviderInvoke();
+        Assert.assertTrue("Should have returned 2 files, but returned " + files.getFileList().size() + " files.", files.getFileList().size() == 2);
+        Assert.assertEquals(files.toString(), """
+            CorrelatedFileList{fileList=[\
+            ./src/test/resources/data/unit/Trade_20141212_99_20141212121212.txt, \
+            ./src/test/resources/data/unit/TradeLeg_20141212_99_20141212121212.txt], \
+            correlatingIdentifier='TestCorrelatingId'}\
+            """);
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_successful_list_of_files_not_follow_links()
+    {
+        // set test expectations
+        setupCorrelationIdExpectations();
+        setupStandardFilenameExpectations();
+        mockery.checking(new Expectations() {
+            {
+                exactly(1).of(configuration).isLogMatchedFilenames();
+                will(returnValue(true));
+                exactly(2).of(configuration).getDirectoryDepth();
+                will(returnValue(1));
+                exactly(2).of(configuration).getFileNameSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePathSpelExpression();
+                will(returnValue("spel expression"));
+                exactly(2).of(configuration).getFilePath();
+                will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(false));
             }
         });
 
@@ -118,6 +156,8 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(1));
                 exactly(1).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(1).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
@@ -144,6 +184,8 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(1));
                 exactly(1).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(1).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
@@ -179,6 +221,8 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue(1));
                 exactly(1).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(1).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
@@ -205,6 +249,8 @@ public class CorrelatingFileMessageProviderTest {
                 will(returnValue("spel expression"));
                 exactly(2).of(configuration).getFilePath();
                 will(returnValue(null));
+                exactly(2).of(configuration).isFollowSymbolicLinks();
+                will(returnValue(true));
             }
         });
 
