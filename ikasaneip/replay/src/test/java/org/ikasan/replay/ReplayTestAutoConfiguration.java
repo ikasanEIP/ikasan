@@ -64,7 +64,7 @@ public class ReplayTestAutoConfiguration
 
     @Bean(name = "deleteOnceHarvestedReplayManagementService")
     public ReplayManagementService deleteOnceHarvestedReplayManagementService(@Qualifier("deleteOnceHarvestedReplayDao")ReplayDao replayDao
-        , ReplayAuditDao replayAuditDao) {
+        , @Qualifier("replayDao")ReplayAuditDao replayAuditDao) {
         return new ReplayManagementServiceImpl(replayDao, replayAuditDao);
     }
 
