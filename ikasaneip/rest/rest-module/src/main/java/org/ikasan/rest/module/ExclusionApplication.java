@@ -78,6 +78,20 @@ public class ExclusionApplication
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
 
+    /**
+     * Retrieves a paged list of Exclusion Events based on the provided parameters.
+     *
+     * @param pageNumber the page number to retrieve
+     * @param pageSize the size of the page
+     * @param orderBy the field to order by
+     * @param orderAscending flag indicating the order is ascending
+     * @param flow the flow name
+     * @param componentName the component name
+     * @param identifier the exclusion identifier
+     * @param fromDateTime the starting date time in yyyy-MM-dd'T'HH:mm:ss format
+     * @param untilDateTime the ending date time in yyyy-MM-dd'T'HH:mm:ss format
+     * @return ResponseEntity containing a PagedSearchResult of ExclusionEvent objects
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")

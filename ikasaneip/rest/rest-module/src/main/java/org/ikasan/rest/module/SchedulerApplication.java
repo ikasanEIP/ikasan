@@ -46,10 +46,14 @@ public class SchedulerApplication
     @Autowired
     private ModuleContainer moduleContainer;
 
+
     /**
-     * Gets All Triggers
+     * Retrieves a list of triggers from the platform scheduler. If the scheduler is not shutdown, retrieves all triggers
+     * associated with the specified trigger group names. Returns a ResponseEntity with the list of triggers if successful,
+     * or an ErrorDto with an error message if an exception occurs during processing.
      *
-     * @return
+     * @return ResponseEntity containing a list of triggers if successful, or an ErrorDto with an error message if
+     * an exception occurs
      */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/",
@@ -162,6 +166,13 @@ public class SchedulerApplication
         }
     }
 
+    /**
+     * Resolves a proxied component by unwrapping it if it is a Spring AOP proxy.
+     *
+     * @param component The component to resolve
+     * @param <T> The type of the component
+     * @return The unwrapped target component if it is an AOP proxy, else the original component
+     */
     protected <T> T resolveProxiedComponent(T component)
     {
         try

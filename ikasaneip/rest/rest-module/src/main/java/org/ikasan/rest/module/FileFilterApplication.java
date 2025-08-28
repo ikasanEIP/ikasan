@@ -43,6 +43,15 @@ public class FileFilterApplication
         this.mapper.registerModule(m);
     }
 
+    /**
+     * Retrieves a paged result of FileFilter objects based on the provided criteria and client ID.
+     *
+     * @param pageNumber the page number to retrieve, default is 0
+     * @param pageSize the size of the page, default is 20
+     * @param criteria the criteria to search for, can be null
+     * @param clientId the client ID to filter the results by, can be null
+     * @return ResponseEntity containing the paged search result of FileFilter objects
+     */
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/search",
@@ -61,6 +70,12 @@ public class FileFilterApplication
 
     }
 
+    /**
+     * Retrieves a FileFilter object based on the provided ID.
+     *
+     * @param id the ID of the FileFilter to retrieve
+     * @return ResponseEntity containing the retrieved FileFilter object
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/",
                     produces = { MediaType.APPLICATION_JSON_VALUE })
@@ -71,6 +86,12 @@ public class FileFilterApplication
         return new ResponseEntity(fileFilter, HttpStatus.OK);
     }
 
+    /**
+     * Deletes a FileFilter object based on the provided ID.
+     *
+     * @param id the ID of the FileFilter to be deleted
+     * @return ResponseEntity indicating the result of the deletion operation
+     */
     @RequestMapping(method = RequestMethod.DELETE,
                     value = "/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -101,6 +122,12 @@ public class FileFilterApplication
 
     }
 
+    /**
+     * Creates a new file filter object in the system.
+     *
+     * @param fileFilter the file filter object to be created
+     * @return ResponseEntity representing the HTTP status of the create operation
+     */
     @RequestMapping(method = RequestMethod.POST,
                     value = "/",
                     consumes = { MediaType.APPLICATION_JSON_VALUE })
@@ -123,6 +150,11 @@ public class FileFilterApplication
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    /**
+     * Sets the BaseFileTransferDao to be used for file transfer operations.
+     *
+     * @param baseFileTransferDao the BaseFileTransferDao implementation to be set
+     */
     public void setBaseFileTransferDao(BaseFileTransferDao baseFileTransferDao)
     {
         this.baseFileTransferDao = baseFileTransferDao;

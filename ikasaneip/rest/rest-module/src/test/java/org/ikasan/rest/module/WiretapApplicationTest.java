@@ -161,8 +161,36 @@ public class WiretapApplicationTest
             Mockito.eq("user"));
 
         Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener, systemEventService );
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void deleteTrigger_no_user_when_returns_200() throws Exception
+    {
+
+        Mockito.when(jobAwareFlowEventListener.getTrigger(1202l))
+            .thenReturn(new TriggerImpl("testModule","testFlow","after","test"));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/wiretap/trigger/1202")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
 
 
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        Mockito.verify(jobAwareFlowEventListener).getTrigger(1202l);
+        Mockito.verify(jobAwareFlowEventListener).deleteDynamicTrigger(1202l);
+
+        Mockito.verify(systemEventService).logSystemEvent(
+            Mockito.eq("testModule"),
+            Mockito.startsWith("testModule-testFlow:org.ikasan.trigger.model.TriggerImpl[id=null,moduleName=testModule" +
+                ",flowName=testFlow,flowElementName=null,params={},jobName=test,relationship=AFTER]"),
+            Mockito.eq("Delete Wiretap"),
+            Mockito.eq("org.springframework.security.core.userdetails.User [Username=user, Password=[PROTECTED]" +
+                ", Enabled=true, AccountNonExpired=true, CredentialsNonExpired=true, AccountNonLocked=true, Granted Authorities=[WebServiceAdmin]]"));
+
+        Mockito.verifyNoMoreInteractions(jobAwareFlowEventListener, systemEventService );
     }
 
     @Test

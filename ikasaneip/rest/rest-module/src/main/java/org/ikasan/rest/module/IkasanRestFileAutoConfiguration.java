@@ -48,6 +48,11 @@ import org.springframework.context.annotation.Configuration;
 @ConditionalOnBean(name = "baseFileTransferDao")
 public class IkasanRestFileAutoConfiguration
 {
+    /**
+     * Factory method to create a new instance of FileFilterApplication.
+     *
+     * @return a new instance of FileFilterApplication
+     */
     @Bean
     public FileFilterApplication fileFilterApplication(){
         return new FileFilterApplication();

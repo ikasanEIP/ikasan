@@ -29,6 +29,12 @@ public class DownloadLogFileApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloadLogFileApplication.class);
 
+    /**
+     * Retrieves a list of log files filtered by maximum file size.
+     *
+     * @param maxFileSizeInBytes The maximum size in bytes for the log files to be included
+     * @return ResponseEntity representing the list of log files in JSON format
+     */
     @RequestMapping(method = RequestMethod.GET, path = {"/listLogFiles"}, produces = {MediaType.APPLICATION_JSON_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity listLogFiles(@RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
@@ -73,6 +79,13 @@ public class DownloadLogFileApplication {
         }
     }
 
+    /**
+     * Downloads a log file based on the given full file path and maximum file size.
+     *
+     * @param fullFilePath The full file path of the log file to download
+     * @param maxFileSizeInBytes The maximum size in bytes of the log file to be downloaded
+     * @return ResponseEntity containing the downloaded log file as octet-stream
+     */
     @RequestMapping(method = RequestMethod.GET, path = {"/downloadLogFile"}, produces = {MediaType.APPLICATION_OCTET_STREAM_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true, name = "fullFilePath") String fullFilePath,

@@ -70,6 +70,14 @@ public class IkasanErrorController implements ErrorController
     private ErrorAttributes errorAttributes;
 
 
+    /**
+     * Method for handling error responses and returning an HTML view.
+     *
+     * @param request the HttpServletRequest object representing the HTTP request
+     * @param webRequest the WebRequest object encapsulating the current request
+     * @param response the HttpServletResponse object representing the HTTP response
+     * @return a ModelAndView object containing the error view with the error attributes
+     */
     @RequestMapping(value = PATH,produces = "text/html")
     public ModelAndView errorHtml(HttpServletRequest request, WebRequest webRequest,
                                   HttpServletResponse response) {
@@ -81,6 +89,12 @@ public class IkasanErrorController implements ErrorController
         return  new ModelAndView("error", model);
     }
 
+    /**
+     * Gets the HTTP status code from the HttpServletRequest object.
+     *
+     * @param request the HttpServletRequest object from which to retrieve the status code
+     * @return the HttpStatus enum representing the status code, or internal server error if not found or unable to parse
+     */
     protected HttpStatus getStatus(HttpServletRequest request) {
         Integer statusCode = (Integer) request
                 .getAttribute("javax.servlet.error.status_code");
@@ -95,6 +109,12 @@ public class IkasanErrorController implements ErrorController
         }
     }
 
+    /**
+     * Retrieves error attributes from the ErrorAttributes service.
+     *
+     * @param request WebRequest object encapsulating the current request
+     * @return a Map containing error attributes retrieved from the ErrorAttributes service
+     */
     protected Map<String, Object> getErrorAttributes(WebRequest request)
     {
         return this.errorAttributes.getErrorAttributes(request, ErrorAttributeOptions.defaults());

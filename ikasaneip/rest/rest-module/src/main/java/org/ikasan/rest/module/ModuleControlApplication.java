@@ -43,6 +43,13 @@ public class ModuleControlApplication
     @Autowired
     private DashboardRestService moduleMetadataDashboardRestService;
 
+    /**
+     * Changes the state of a flow based on the specified action in the ChangeFlowStateDto object.
+     *
+     * @param changeFlowStateDto The data transfer object containing the module name, flow name, action,
+     *                           and optional username.
+     * @return A ResponseEntity object indicating the success or failure of the flow state change.
+     */
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity changeFlowState(@RequestBody ChangeFlowStateDto changeFlowStateDto)
@@ -75,6 +82,13 @@ public class ModuleControlApplication
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * Changes the startup mode of a flow based on the provided DTO.
+     *
+     * @param changeFlowStartupModeDto The data transfer object containing information for the startup mode change.
+     *                               Requires moduleName, flowName, startupType, comment, and optionally username.
+     * @return ResponseEntity indicating the success or failure of the startup mode change.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/startupMode")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -108,6 +122,13 @@ public class ModuleControlApplication
         }
     }
 
+    /**
+     * Changes the startup mode of all flows within a specified module.
+     *
+     * @param changeFlowStartupModeDto The data transfer object containing information for the startup mode change.
+     *                                 Requires moduleName, startupType, and comment.
+     * @return ResponseEntity indicating the success or failure of the startup mode change.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/startupMode/allFlows")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -144,6 +165,14 @@ public class ModuleControlApplication
         }
     }
 
+    /**
+     * Retrieves the startup mode of a specified module and flow.
+     *
+     * @param moduleName The name of the module to retrieve the startup mode for.
+     * @param flowName The name of the flow within the module to retrieve the startup mode for.
+     * @return ResponseEntity containing a FlowStartupTypeDto object representing the startup mode
+     * of the specified module and flow.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/startupMode/{moduleName}/{flowName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -159,6 +188,13 @@ public class ModuleControlApplication
         return new ResponseEntity(new FlowStartupTypeDto(moduleName, flowName, startupControl.getStartupType().name(), startupControl.getComment()), HttpStatus.OK);
     }
 
+    /**
+     * Retrieves a specific flow within a module based on the provided module name and flow name.
+     *
+     * @param moduleName The name of the module containing the flow.
+     * @param flowName The name of the specific flow to retrieve.
+     * @return ResponseEntity representing the retrieved FlowDto containing flow information.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/{moduleName}/{flowName}",
         produces = "application/json")
@@ -177,6 +213,13 @@ public class ModuleControlApplication
         }
     }
 
+    /**
+     * Retrieves information about a specific module based on the module name.
+     *
+     * @param moduleName The name of the module to retrieve information for.
+     * @return ResponseEntity containing a ModuleDto object representing the module information if found.
+     *         If the module with the provided name or its flows are not found, an ErrorDto object is returned.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/{moduleName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -197,6 +240,14 @@ public class ModuleControlApplication
         }
     }
 
+    /**
+     * Retrieves the state of context listeners for a specific module and flow.
+     *
+     * @param moduleName The name of the module to retrieve context listener state for.
+     * @param flowName The name of the flow within the module to retrieve context listener state for.
+     * @return The state of context listeners for the specified module and flow. Returns "running"
+     * if the context listeners are running, "stopped" otherwise.
+     */
     @SuppressWarnings("unchecked")
     @RequestMapping(method = RequestMethod.GET,
         value = "/contextListenersState/{moduleName}/{flowName}")
@@ -209,6 +260,18 @@ public class ModuleControlApplication
         return flow.areContextListenersRunning() ? "running" : "stopped";
     }
 
+    /**
+     * Changes the state of context listeners for a specific module and flow based on the action provided.
+     *
+     * @param moduleName The name of the module.
+     * @param flowName The name of the flow within the module.
+     * @param user The user performing the action.
+     * @param action The action to be performed on the context listeners. Allowed values are "start" and "stop".
+     *
+     * @return A ResponseEntity object indicating the status of the context listeners state change.
+     *         Returns a success response if the state change was successful.
+     *         Returns a Forbidden response with an error message if the action is unknown or an exception occurs.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/controlContextListenersState/{moduleName}/{flowName}/{user}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -237,6 +300,17 @@ public class ModuleControlApplication
         return new ResponseEntity("Context Listeners state changed successfully!", HttpStatus.OK);
     }
 
+    /**
+     * Handles activation or deactivation of a module based on the provided ModuleActivationDto.
+     *
+     * @param moduleActivationDto The data transfer object containing the action to be performed on the module.
+     *                           The action can be either "activate" or "deactivate".
+     *
+     * @return A ResponseEntity object indicating the success or failure of the module activation or deactivation.
+     *         If the action is unknown, a Forbidden response is returned.
+     *         If an exception occurs during the activation or deactivation process, a Forbidden response with the error message is returned.
+     *         If the activation or deactivation is successful, a success response is returned.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/activator")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -267,6 +341,12 @@ public class ModuleControlApplication
         return new ResponseEntity("Module action[%s] successfully applied!".formatted(moduleActivationDto.getAction()), HttpStatus.OK);
     }
 
+    /**
+     * Determines whether a specified module is activated or deactivated.
+     *
+     * @param moduleName The name of the module to check activation status for.
+     * @return "activated" if the module is activated, "deactivated" if the module is deactivated.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/isActivated/{moduleName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")

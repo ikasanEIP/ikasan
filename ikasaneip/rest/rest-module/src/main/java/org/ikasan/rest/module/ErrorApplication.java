@@ -76,6 +76,20 @@ public class ErrorApplication
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
+    /**
+     * Retrieves a paginated list of error occurrences based on the specified parameters.
+     *
+     * @param pageNumber The page number to retrieve (default is 0)
+     * @param pageSize The number of items per page (default is 20)
+     * @param orderBy The field by which to order the results (default is timestamp)
+     * @param orderAscending Flag indicating whether the results should be ordered in ascending order (default is false)
+     * @param flow The flow to filter the results by, can be null
+     * @param componentName The component name to filter the results by, can be null
+     * @param fromDateTime The starting date and time in format yyyy-MM-dd'T'HH:mm:ss, can be null
+     * @param untilDateTime The ending date and time in format yyyy-MM-dd'T'HH:mm:ss, can be null
+     * @return ResponseEntity containing a paginated list of error occurrences or an error message in case of
+     * invalid date format
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")

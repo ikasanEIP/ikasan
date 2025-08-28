@@ -38,6 +38,12 @@ public class ModuleVersionApplication
     private static Logger logger = LoggerFactory.getLogger(ModuleVersionApplication.class);
 
 
+    /**
+     * Retrieves module version information.
+     * This method is used to get the version information of the module.
+     *
+     * @return ResponseEntity - the response entity containing the module version information
+     */
     @RequestMapping(method = RequestMethod.GET,
             value = "/info",
             produces = {"application/json"})

@@ -35,6 +35,14 @@ public class InDoubtTransactionsApplication
     public InDoubtTransactionsApplication() {
     }
 
+    /**
+     * Retrieves all in-doubt transactions and converts them into a list of InDoubtTransactionDto objects.
+     * This endpoint requires the user to have 'ALL' or 'WebServiceAdmin' authority.
+     *
+     * @return ResponseEntity containing a List of InDoubtTransactionDto objects representing the in-doubt transactions
+     *         with HTTP status OK if successful, or an ErrorDto with an error message and HTTP status BAD_REQUEST if
+     *         an error occurs.
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/all",
                     produces = { "application/json" })
@@ -55,6 +63,13 @@ public class InDoubtTransactionsApplication
         }
     }
 
+    /**
+     * Retrieves the in-doubt transaction with the specified name.
+     *
+     * @param transactionName the name of the transaction to retrieve
+     * @return ResponseEntity containing the InDoubtTransactionDto representing the in-doubt transaction with HTTP
+     * status OK if successful or an ErrorDto with an error message and HTTP status BAD_REQUEST if an error occurs
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/get/{transactionName}",
         produces = { "application/json" })
@@ -78,6 +93,14 @@ public class InDoubtTransactionsApplication
         }
     }
 
+    /**
+     * Commits an in-doubt transaction with the specified transaction name.
+     *
+     * @param transactionName the name of the in-doubt transaction to commit
+     * @return ResponseEntity representing the status of the commit operation. Returns a ResponseEntity with
+     *         a success message and HTTP status OK if the commit is successful. Returns a ResponseEntity with
+     *         an error message and HTTP status BAD_REQUEST if an error occurs during the commit process.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/commit/{transactionName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -92,6 +115,18 @@ public class InDoubtTransactionsApplication
         return new ResponseEntity(String.format("Transaction[%s] successfully committed!", transactionName), HttpStatus.OK);
     }
 
+    /**
+     * Commits all in-doubt transactions.
+     *
+     * This method initiates the commit process for all in-doubt transactions. An in-doubt transaction
+     * is a transaction that has not yet been committed or rolled back and is in an uncertain state.
+     * By calling this method, all in-doubt transactions will be committed and their state will be
+     * updated accordingly.
+     *
+     * @return ResponseEntity representing the status of the commit operation. Returns a ResponseEntity with
+     *         a success message and HTTP status OK if the commit is successful. Returns a ResponseEntity with
+     *         an error message and HTTP status BAD_REQUEST if an error occurs during the commit process.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/commitAll")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -108,6 +143,14 @@ public class InDoubtTransactionsApplication
         return new ResponseEntity(String.format("All in doubt transactions have been successfully committed!"), HttpStatus.OK);
     }
 
+    /**
+     * Rolls back an in-doubt transaction with the specified transaction name.
+     *
+     * @param transactionName the name of the in-doubt transaction to rollback
+     * @return ResponseEntity containing a success message and HTTP status OK if the rollback is successful.
+     *         If an error occurs during the rollback process, returns a ResponseEntity with an error message
+     *         and HTTP status BAD_REQUEST.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/rollback/{transactionName}")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -122,6 +165,18 @@ public class InDoubtTransactionsApplication
         return new ResponseEntity("Transaction[%s] successfully rolled back!".formatted(transactionName), HttpStatus.OK);
     }
 
+    /**
+     * Rolls back all in-doubt transactions.
+     *
+     * This method initiates the rollback process for all in-doubt transactions. An in-doubt transaction
+     * is a transaction that has not yet been committed or rolled back and is in an uncertain state.
+     * By calling this method, all in-doubt transactions will be rolled back and their state will be
+     * updated accordingly.
+     *
+     * @return ResponseEntity representing the status of the rollback operation. Returns a ResponseEntity with
+     *         a success message and HTTP status OK if the rollback is successful. Returns a ResponseEntity with
+     *         an error message and HTTP status BAD_REQUEST if an error occurs during the rollback process.
+     */
     @RequestMapping(method = RequestMethod.PUT,
         value = "/rollbackAll")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -138,6 +193,12 @@ public class InDoubtTransactionsApplication
         return new ResponseEntity("All in doubt transactions have been successfully rolled back!", HttpStatus.OK);
     }
 
+    /**
+     * Converts an InDoubtTransaction object to an InDoubtTransactionDto object.
+     *
+     * @param inDoubtTransaction the InDoubtTransaction to be converted
+     * @return the converted InDoubtTransactionDto object
+     */
     private InDoubtTransactionDto convert(InDoubtTransaction inDoubtTransaction) {
         InDoubtTransactionDto inDoubtTransactionDto = new InDoubtTransactionDto();
         inDoubtTransactionDto.setTransactionName(inDoubtTransaction.getTransactionName());
