@@ -19,4 +19,15 @@ public interface TriggerService<T>
      * @return
      */
     public boolean delete(String contextUrl, String triggerId);
+
+
+    /**
+     * Deletes a trigger based on the context URL, trigger ID, and user.
+     *
+     * @param contextUrl the URL of the context/module where the trigger is to be deleted
+     * @param triggerId the ID of the trigger to be deleted
+     * @param user the user initiating the deletion
+     * @return true if the trigger was successfully deleted, false otherwise
+     */
+    public boolean delete(String contextUrl, String triggerId, String user);
 }
