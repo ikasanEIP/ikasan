@@ -30,6 +30,13 @@ public class PersistenceApplication
     public PersistenceApplication() {
     }
 
+    /**
+     * Retrieves the total record count for a given database table.
+     *
+     * @param tableName the name of the database table for which the record count is requested
+     * @return ResponseEntity containing a TableRowCountDto object with row count and table name if successful,
+     *         or an ErrorDto object with error details if an exception occurs
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/rowCount/{tableName}",
                     produces = { "application/json" })

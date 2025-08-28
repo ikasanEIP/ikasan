@@ -45,11 +45,13 @@ public class MetaDataApplication
     @Autowired
     private ModuleService moduleService;
 
+
     /**
+     * Retrieves metadata for a specified flow.
      *
-     * @param moduleName
-     * @param flowName
-     * @return
+     * @param moduleName the name of the module containing the flow
+     * @param flowName the name of the flow to retrieve metadata for
+     * @return ResponseEntity containing the metadata of the specified flow
      */
     @RequestMapping(method = RequestMethod.GET,
             value = "/flow/{moduleName}/{flowName}",
@@ -67,10 +69,12 @@ public class MetaDataApplication
         return new ResponseEntity(this.flowMetaDataProvider.describeFlow(flow, startupControl), HttpStatus.OK);
     }
 
+
     /**
+     * Retrieves metadata for a specified module.
      *
-     * @param moduleName
-     * @return
+     * @param moduleName the name of the module for which metadata is requested
+     * @return ResponseEntity containing the metadata of the specified module
      */
     @RequestMapping(method = RequestMethod.GET,
         value = "/module/{moduleName}",

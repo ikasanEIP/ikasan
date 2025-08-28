@@ -27,6 +27,17 @@ public class FilterApplication
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
+    /**
+     * Retrieves a paged list of FilterEntry entities based on the provided criteria.
+     *
+     * @param pageNumber the page number to retrieve
+     * @param pageSize the number of entries per page
+     * @param criteria optional search criteria
+     * @param clientId optional client ID for filtering
+     * @param fromDateTime optional start date/time filter
+     * @param untilDateTime optional end date/time filter
+     * @return ResponseEntity containing the paged results of FilterEntry entities
+     */
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/search",
@@ -56,6 +67,13 @@ public class FilterApplication
         }
     }
 
+    /**
+     * Retrieves a FilterEntry based on the provided criteria and clientId.
+     *
+     * @param criteria the criteria for filtering
+     * @param clientId the client ID for filtering
+     * @return ResponseEntity containing the retrieved FilterEntry
+     */
     @RequestMapping(
         method = RequestMethod.GET,
         value = "/",
@@ -71,6 +89,13 @@ public class FilterApplication
         return new ResponseEntity(filterEntry, HttpStatus.OK);
     }
 
+    /**
+     * Delete operation for a specific criteria and clientId.
+     *
+     * @param criteria the criteria value to identify the entry to delete
+     * @param clientId the client ID associated with the entry to delete
+     * @return ResponseEntity indicating the status of the delete operation
+     */
     @RequestMapping(
         method = RequestMethod.DELETE,
         value = "/"
@@ -85,6 +110,12 @@ public class FilterApplication
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * Creates a new FilterEntry based on the provided DefaultFilterEntry object and saves it using the managementFilterService.
+     *
+     * @param filterEntry the DefaultFilterEntry object to create and save
+     * @return ResponseEntity representing the HTTP response entity with status CREATED
+     */
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/",
@@ -99,6 +130,11 @@ public class FilterApplication
         return new ResponseEntity(HttpStatus.CREATED);
     }
 
+    /**
+     * Set the ManagementFilterService for the FilterApplication.
+     *
+     * @param managementFilterService the ManagementFilterService to be set
+     */
     public void setManagementFilterService(ManagementFilterService managementFilterService)
     {
         this.managementFilterService = managementFilterService;

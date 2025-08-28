@@ -54,6 +54,10 @@ public class ConfigurationApplication
 
     private ObjectMapper mapper;
 
+    /**
+     * Constructor for ConfigurationApplication class.
+     * Initializes the ObjectMapper with custom configuration settings.
+     */
     public ConfigurationApplication() {
         this.mapper = new ObjectMapper();
         this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -62,6 +66,16 @@ public class ConfigurationApplication
         this.mapper.registerModule(m);
     }
 
+    /**
+     * Method to retrieve the configuration of flows.
+     *
+     * This method fetches the configuration metadata of flows from the module specified in the service.
+     * The configuration metadata contains information about the configured resources of the flow.
+     *
+     * Requires 'ALL' or 'WebServiceAdmin' authority.
+     *
+     * @return ResponseEntity containing the list of ConfigurationMetaData for the configured resources of the flow
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/flows")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -72,6 +86,17 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    /**
+     * Method to retrieve the configuration of the module.
+     *
+     * This method fetches the configuration metadata of the module.
+     * If the module is an instance of ConfiguredResource, it extracts the configuration using ConfigurationMetaDataExtractor.
+     *
+     * Requires 'ALL' or 'WebServiceAdmin' authority for access.
+     *
+     * @return ResponseEntity containing the ConfigurationMetaData object for the configured resources of the module
+     * if found, HttpStatus.NOT_FOUND otherwise.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/module")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -87,6 +112,13 @@ public class ConfigurationApplication
         return new ResponseEntity(HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Retrieves the configuration of a specific flow for a given module.
+     *
+     * @param moduleName The name of the module containing the flow.
+     * @param flowName The name of the flow for which configuration is to be retrieved.
+     * @return ResponseEntity containing the configuration metadata of the specified flow.
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/{moduleName}/{flowName}/flow",
                     produces = { "application/json" })
@@ -99,6 +131,16 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    /**
+     * Method to retrieve the configuration of invokers.
+     *
+     * This method fetches the configuration metadata of invokers from the specified module using ConfigurationMetaDataExtractor.
+     * The configuration metadata contains information about the configured resources of the invokers.
+     *
+     * Requires 'ALL' or 'WebServiceAdmin' authority for access.
+     *
+     * @return ResponseEntity containing the list of ConfigurationMetaData for the configured resources of the invokers.
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/invokers",
                     produces = { "application/json" })
@@ -111,6 +153,17 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    /**
+     * Method to retrieve the configuration of components.
+     *
+     * Fetches the configuration metadata of components from the specified module.
+     * Configured resources contain information about the configured components.
+     *
+     * Requires 'ALL' or 'WebServiceAdmin' authority for access.
+     *
+     * @return ResponseEntity containing a list of ConfigurationMetaData for the configured components,
+     *         with HTTP status OK if successful.
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/components",
                     produces = { "application/json" })
@@ -123,6 +176,13 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves the configuration metadata of invokers.
+     *
+     * @param moduleName The name of the module containing the invoker configuration.
+     * @param flowName The name of the flow for which invoker configuration is to be retrieved.
+     * @return ResponseEntity containing the list of ConfigurationMetaData for the configured resources of the invokers.
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/{moduleName}/{flowName}/invokers",
                     produces = { "application/json" })
@@ -135,6 +195,14 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves the configuration of a specific invoker for a given module, flow, and component.
+     *
+     * @param moduleName The name of the module.
+     * @param flowName The name of the flow.
+     * @param componentname The name of the component representing the invoker.
+     * @return ResponseEntity containing the ConfigurationMetaData object for the configured resource of the invoker.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/{moduleName}/{flowName}/{componentName}/invoker",
         produces = { "application/json" })
@@ -152,6 +220,14 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResource, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves the configuration metadata of components.
+     *
+     * @param moduleName The name of the module containing the components.
+     * @param flowName The name of the flow for which component configuration is to be retrieved.
+     * @return ResponseEntity containing a list of ConfigurationMetaData for the configured components,
+     *         with HTTP status OK if successful.
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/{moduleName}/{flowName}/components",
                     produces = { "application/json" })
@@ -165,6 +241,15 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResources, HttpStatus.OK);
     }
 
+    /**
+     * Retrieves the configuration of a specific component within a specified flow and module.
+     *
+     * @param moduleName The name of the module containing the component.
+     * @param flowName The name of the flow containing the component.
+     * @param componentName The name of the specific component for which configuration is to be retrieved.
+     * @return ResponseEntity containing the ConfigurationMetaData object for the configured resource of the component,
+     * with HTTP status OK.
+     */
     @RequestMapping(method = RequestMethod.GET,
         value = "/{moduleName}/{flowName}/{componentName}",
         produces = { "application/json" })
@@ -180,6 +265,13 @@ public class ConfigurationApplication
         return new ResponseEntity(configuredResource, HttpStatus.OK);
     }
 
+    /**
+     * Updates the configuration with the provided configuration metadata and request headers.
+     *
+     * @param configurationMetaData The configuration metadata to update
+     * @param headers The request headers containing the username for logging
+     * @return ResponseEntity with HTTP status OK upon successful update
+     */
     @RequestMapping(method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity putConfiguration(@RequestBody ConfigurationMetaData configurationMetaData,
@@ -211,6 +303,51 @@ public class ConfigurationApplication
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    /**
+     * Delete the configuration with the specified configuration ID.
+     *
+     * @param configurationId the unique identifier of the configuration to be deleted
+     * @param headers the HttpHeaders containing the username for logging
+     * @return ResponseEntity with HttpStatus.OK if the configuration was successfully deleted,
+     *         or ResponseEntity with HttpStatus.NOT_FOUND if the configuration was not found
+     */
+    @RequestMapping(method = RequestMethod.DELETE,
+        value = "/{configurationId}")
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity deleteConfiguration(@PathVariable("configurationId") String configurationId,
+                                              @RequestHeader HttpHeaders headers)
+    {
+        Configuration configuration = this.configurationManagement.getConfiguration(configurationId);
+        if ( configuration != null )
+        {
+            this.configurationManagement.deleteConfiguration(configuration);
+            try
+            {
+                String deletedConfigJson = mapper.writeValueAsString(configuration);
+                String username = headers.getFirst("username");
+                this.systemEventService.logSystemEvent(
+                    configuration.getConfigurationId(),
+                    "Configuration Deleted OldConfig [%s]".formatted(deletedConfigJson),
+                    username != null ? username : UserUtil.getUser());
+            }
+            catch (JsonProcessingException e)
+            {
+                logger.warn("Issue converting configuration to json.", e);
+            }
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        else
+        {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Converts the given ConfigurationMetaData object into a Configuration object.
+     *
+     * @param metaData the ConfigurationMetaData object to be converted
+     * @return a Configuration object created from the given metaData
+     */
     private Configuration convert(ConfigurationMetaData<List<ConfigurationParameterMetaData>> metaData)
     {
 
@@ -221,6 +358,12 @@ public class ConfigurationApplication
 
     }
 
+    /**
+     * Converts the provided ConfigurationParameterMetaData object into an AbstractComponentParameter object based on its implementing class.
+     *
+     * @param metaData the ConfigurationParameterMetaData object to be converted
+     * @return an AbstractComponentParameter object created from the given metaData
+     */
     private AbstractComponentParameter convertParam(ConfigurationParameterMetaData metaData)
     {
         AbstractComponentParameter cp = null;
@@ -270,36 +413,5 @@ public class ConfigurationApplication
 
         cp.setId(metaData.getId());
         return cp;
-    }
-
-    @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/{configurationId}")
-    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-    public ResponseEntity deleteConfiguration(@PathVariable("configurationId") String configurationId,
-                                              @RequestHeader HttpHeaders headers)
-    {
-        Configuration configuration = this.configurationManagement.getConfiguration(configurationId);
-        if ( configuration != null )
-        {
-            this.configurationManagement.deleteConfiguration(configuration);
-            try
-            {
-                String deletedConfigJson = mapper.writeValueAsString(configuration);
-                String username = headers.getFirst("username");
-                this.systemEventService.logSystemEvent(
-                    configuration.getConfigurationId(),
-                    "Configuration Deleted OldConfig [%s]".formatted(deletedConfigJson),
-                    username != null ? username : UserUtil.getUser());
-            }
-            catch (JsonProcessingException e)
-            {
-                logger.warn("Issue converting configuration to json.", e);
-            }
-            return new ResponseEntity(HttpStatus.OK);
-        }
-        else
-        {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
-        }
     }
 }

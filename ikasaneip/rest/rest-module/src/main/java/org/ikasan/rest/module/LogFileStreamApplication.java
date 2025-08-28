@@ -66,6 +66,12 @@ public class LogFileStreamApplication {
     @Autowired
     private MonitoringFileService monitoringFileServiceExecutor;
 
+    /**
+     * Method to stream a log file via Server Side Events (SSE).
+     *
+     * @param fullFilePath the full path of the log file to be streamed
+     * @return a Server-Sent Events (SSE) emitter for streaming the log file
+     */
     @RequestMapping(method = RequestMethod.GET, produces = {MediaType.TEXT_EVENT_STREAM_VALUE})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public SseEmitter streamLogFile(@RequestParam("fullFilePath") String fullFilePath) {

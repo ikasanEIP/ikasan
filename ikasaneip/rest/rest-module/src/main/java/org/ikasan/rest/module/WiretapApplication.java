@@ -91,40 +91,12 @@ public class WiretapApplication
 
     private DateTimeConverter dateTimeConverter = new DateTimeConverter();
 
-//    @Deprecated
-//    @RequestMapping(method = RequestMethod.PUT,
-//                    value = "/createTrigger/{moduleName}/{flowName}/{flowElementName}/{relationship}/{jobType}")
-//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-//
-//    public ResponseEntity createTrigger(@PathVariable("moduleName") String moduleName,
-//                                        @PathVariable("flowName") String flowName,
-//                                        @PathVariable("flowElementName") String flowElementName,
-//                                        @PathVariable("relationship") String relationship,
-//                                        @PathVariable("jobType") String jobType, @RequestBody String timeToLive)
-//    {
-//        HashMap<String, String> params = new HashMap<String, String>();
-//
-//        if ( timeToLive != null && timeToLive.length() > 0 )
-//        {
-//            params.put("timeToLive", timeToLive);
-//        }
-//
-//        Trigger trigger = new TriggerImpl(moduleName, flowName, relationship, jobType, flowElementName, params);
-//
-//        try
-//        {
-//            this.jobAwareFlowEventListener.addDynamicTrigger(trigger);
-//        }
-//        catch (Exception e)
-//        {
-//            return new ResponseEntity("An error has occurred trying to create a new trigger: " + e.getMessage(),
-//                HttpStatus.FORBIDDEN
-//            );
-//        }
-//
-//        return new ResponseEntity("Trigger successfully created!", HttpStatus.OK);
-//    }
-
+    /**
+     * Creates a new trigger based on the provided TriggerDto object.
+     *
+     * @param triggerDto The TriggerDto object containing trigger details.
+     * @return ResponseEntity indicating the success or failure of trigger creation.
+     */
     @RequestMapping(method = RequestMethod.PUT,
                     value = "/trigger")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -163,34 +135,18 @@ public class WiretapApplication
 
     }
 
-//    @Deprecated
-//    @RequestMapping(method = RequestMethod.PUT,
-//                    value = "/deleteTrigger")
-//    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
-//    public ResponseEntity deleteTrigger(@RequestBody Long triggerId)
-//    {
-//        try
-//        {
-//            this.jobAwareFlowEventListener.deleteDynamicTrigger(triggerId);
-//        }
-//        catch (Exception e)
-//        {
-//
-//            return new ResponseEntity("An error has occurred trying to delete a trigger: " + e.getMessage(),
-//                HttpStatus.FORBIDDEN
-//            );
-//
-//        }
-//
-//        return new ResponseEntity("Trigger successfully deleted!", HttpStatus.OK);
-//
-//    }
-
+    /**
+     * Deletes a trigger based on the provided triggerId and user if specified.Uses Spring's DELETE method type.
+     *
+     * @param triggerId The id of the trigger to be deleted
+     * @param user The user requesting the delete operation, default is the logged in user if not provided
+     * @return ResponseEntity with status indicating success or failure of the delete operation
+     */
     @RequestMapping(method = RequestMethod.DELETE,
-                    value = "/trigger/{triggerId}/{user}")
+                    value = {"/trigger/{triggerId}", "/trigger/{triggerId}/{user}"})
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity delete(@PathVariable("triggerId") Long triggerId,
-                                 @PathVariable("user") String user)
+                                 @PathVariable(value = "user", required = false) String user)
     {
         try
         {
@@ -218,6 +174,11 @@ public class WiretapApplication
 
     }
 
+    /**
+     * Retrieves a list of TriggerDto objects representing triggers.
+     *
+     * @return ResponseEntity with the list of TriggerDto objects and HTTP status OK
+     */
     @RequestMapping(method = RequestMethod.GET,
                     value = "/triggers")
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
@@ -229,6 +190,12 @@ public class WiretapApplication
         return new ResponseEntity(dtos, HttpStatus.OK);
     }
 
+    /**
+     * Converts a Trigger object to a TriggerDto object.
+     *
+     * @param trigger The Trigger object to be converted.
+     * @return TriggerDto object representing the converted trigger.
+     */
     private TriggerDto convertDto(Trigger trigger)
     {
         TriggerDto dto = new TriggerDto();
