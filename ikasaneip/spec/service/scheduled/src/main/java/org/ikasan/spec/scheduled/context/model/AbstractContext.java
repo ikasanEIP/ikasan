@@ -5,23 +5,24 @@ import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public abstract class AbstractContext<CONTEXT extends Context, JOB extends SchedulerJob, JOB_LOCK extends JobLock> implements Serializable {
 
-    protected List<CONTEXT> contexts = new ArrayList<>();
-    protected List<JOB> scheduledJobs = new ArrayList<>() ;
-    protected List<JOB_LOCK> jobLocks = new ArrayList<>();
+    protected List<CONTEXT> contexts = new CopyOnWriteArrayList<>();
+    protected List<JOB> scheduledJobs = new CopyOnWriteArrayList<>() ;
+    protected List<JOB_LOCK> jobLocks = new CopyOnWriteArrayList<>();
 
     @JsonIgnore
-    protected Map<String, JOB> scheduledJobsMap = new HashMap<>();
+    protected Map<String, JOB> scheduledJobsMap = new ConcurrentHashMap<>();
     @JsonIgnore
-    protected Map<String, CONTEXT> contextsMap = new HashMap<>();
+    protected Map<String, CONTEXT> contextsMap = new ConcurrentHashMap<>();
     @JsonIgnore
-    protected Map<String, JOB_LOCK> jobLocksMap = new HashMap<>();
+    protected Map<String, JOB_LOCK> jobLocksMap = new ConcurrentHashMap<>();
 
     /**
      * Method to get the context name.
