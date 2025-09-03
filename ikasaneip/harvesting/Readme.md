@@ -46,5 +46,16 @@ messageHistoryHarvestingJob-harvestBatchSize=200
 messageHistoryHarvestingJob-cronExpression=0 0/1 * * * ?
 messageHistoryHarvestingJob-enabled=true
 
+# System Event harvesting settings
+systemEventHarvestingJob-harvestBatchSize=200
+systemEventHarvestingJob-cronExpression=0 0/1 * * * ?
+systemEventHarvestingJob-enabled=true
+
+# Module Flow State harvesting settings
+# Note - batch size is irrelevant as all flow states reported to dashboard.
+moduleFlowStateJob-harvestBatchSize=200
+moduleFlowStateJob-cronExpression=0 0/1 * * * ?
+moduleFlowStateJob-enabled=true
+
 
 ```

@@ -92,4 +92,15 @@ public class HarvestingAutoConfiguration
         harvestingJob.setMonitor(jobMonitor);
         return harvestingJob;
     }
+
+    @Bean
+    public HarvestingJob moduleFlowStateJob(HarvestService moduleService, Environment environment
+        , DashboardRestService flowCacheStatesAllRestService, JobMonitor jobMonitor)
+    {
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("moduleFlowStateJob", moduleService, environment, flowCacheStatesAllRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
+    }
 }

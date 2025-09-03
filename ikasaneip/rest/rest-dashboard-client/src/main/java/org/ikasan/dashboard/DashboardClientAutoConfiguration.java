@@ -40,6 +40,8 @@ public class DashboardClientAutoConfiguration
 
     public static final String FLOW_STATES_CACHE_PATH = "/rest/flowStates/cache";
 
+    public static final String FLOW_STATES_ALL_CACHE_PATH = "/rest/flowStatesAll/cache";
+
     public static final String METRICS_CONSUME_PATH = "/rest/metrics";
 
     @Bean
@@ -128,6 +130,14 @@ public class DashboardClientAutoConfiguration
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, FLOW_STATES_CACHE_PATH);
+
+    }
+
+    @Bean(name = "flowCacheStatesAllRestService")
+    public DashboardRestService flowCacheStatesAllRestService(Environment environment
+        , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
+    {
+        return new DashboardRestServiceImpl(environment, customHttpRequestFactory, FLOW_STATES_ALL_CACHE_PATH);
 
     }
 }
