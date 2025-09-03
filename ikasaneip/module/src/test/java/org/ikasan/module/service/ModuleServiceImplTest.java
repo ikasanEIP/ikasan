@@ -43,6 +43,7 @@ package org.ikasan.module.service;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowState;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.StartupControl;
@@ -53,6 +54,11 @@ import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Test;
+
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Test cases for ModuleServiceImpl
@@ -316,6 +322,57 @@ public class ModuleServiceImplTest
             oneOf(flow).stopContextListeners();
         }});
         moduleService.stopContextListeners(MODULE_NAME, FLOW_NAME, ACTOR);
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_get_flow_states() {
+        mockery.checking(new Expectations(){{
+            exactly(2).of(moduleContainer).getModules();
+            will(returnValue(List.of(module)));
+            oneOf(module).getFlows();
+            will(returnValue(List.of(flow)));
+            oneOf(module).getName();
+            will(returnValue("moduleName"));
+            oneOf(flow).getName();
+            will(returnValue("flowName"));
+            oneOf(flow).getState();
+            will(returnValue("running"));
+        }});
+
+        List<FlowState> flowStates = moduleService.harvest(-1);
+        assertEquals(1, flowStates.size());
+
+        assertTrue(moduleService.harvestableRecordsExist());
+        assertEquals("moduleName", flowStates.get(0).getModuleName());
+        assertEquals("flowName", flowStates.get(0).getFlowName());
+        assertEquals("running", flowStates.get(0).getState());
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_get_flow_states_no_result_null_modules() {
+        mockery.checking(new Expectations(){{
+            exactly(1).of(moduleContainer).getModules();
+            will(returnValue(null));
+        }});
+
+        List<FlowState> flowStates = moduleService.harvest(-1);
+        assertEquals(0, flowStates.size());
+
+        mockery.assertIsSatisfied();
+    }
+
+    @Test
+    public void test_get_flow_states_no_result_empty_modules() {
+        mockery.checking(new Expectations(){{
+            exactly(2).of(moduleContainer).getModules();
+            will(returnValue(List.of()));
+        }});
+
+        List<FlowState> flowStates = moduleService.harvest(-1);
+        assertEquals(0, flowStates.size());
+
         mockery.assertIsSatisfied();
     }
 }
