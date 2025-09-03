@@ -40,16 +40,21 @@
  */
 package org.ikasan.module.service;
 
+import org.ikasan.module.model.FlowStateImpl;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowState;
+import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.*;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Default implementation of <code>ModuleService</code>
@@ -57,7 +62,7 @@ import java.util.List;
  * @author Ikasan Development Team
  *
  */
-public class ModuleServiceImpl implements ModuleService
+public class ModuleServiceImpl implements ModuleService, HarvestService<FlowState>
 {
     /**
      * service to log significant system happenings
@@ -343,5 +348,35 @@ public class ModuleServiceImpl implements ModuleService
         {
             flow.startContextListeners();
         }
+    }
+
+    @Override
+    public List<FlowState> harvest(int transactionBatchSize) {
+        List<FlowState> flowStates = new ArrayList<>();
+        if(this.moduleContainer != null && this.moduleContainer.getModules() != null) {
+            for (Module<Flow> module : this.moduleContainer.getModules()) {
+                flowStates.addAll(module.getFlows().stream()
+                    .map(flow -> new FlowStateImpl(module.getName(), flow.getName(), flow.getState()))
+                    .collect(Collectors.toList()));
+            }
+        }
+
+        return flowStates;
+    }
+
+    @Override
+    public boolean harvestableRecordsExist() {
+        // There are always harvestable records
+        return true;
+    }
+
+    @Override
+    public void saveHarvestedRecord(FlowState harvestedRecord) {
+        // no implementation necessary
+    }
+
+    @Override
+    public void updateAsHarvested(List<FlowState> events) {
+        // no implementation necessary
     }
 }

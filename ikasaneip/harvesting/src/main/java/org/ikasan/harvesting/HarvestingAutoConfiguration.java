@@ -18,7 +18,8 @@ import java.util.List;
  * Harvesting related configuration required by every module.
  * This autoconfig should be excluded from dashboard.
  */
-@DependsOn({"replayManagementService", "wiretapService", "errorReportingManagementService", "exclusionManagementService", "messageHistoryService", "systemEventService"})
+@DependsOn({"replayManagementService", "wiretapService", "errorReportingManagementService", "exclusionManagementService"
+    , "messageHistoryService", "systemEventService", "moduleService"})
 public class HarvestingAutoConfiguration
 {
     @Bean(name = "harvestingSchedulerService")
@@ -98,6 +99,18 @@ public class HarvestingAutoConfiguration
         , @Qualifier("systemEventsDashboardRestService") DashboardRestService systemEventsDashboardRestService, JobMonitor jobMonitor)
     {
         HarvestingJobImpl harvestingJob = new HarvestingJobImpl("systemEventHarvestingJob", systemEventService, environment, systemEventsDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
+    }
+
+    @Bean
+    @DependsOn("moduleService")
+    public HarvestingJob moduleFlowStateJob(@Qualifier("moduleService")HarvestService moduleService, Environment environment
+        , @Qualifier("flowCacheStatesAllRestService") DashboardRestService flowCacheStatesAllRestService, JobMonitor jobMonitor)
+    {
+        HarvestingJobImpl harvestingJob = new HarvestingJobImpl("moduleFlowStateJob", moduleService, environment, flowCacheStatesAllRestService);
         jobMonitor.setJobName(harvestingJob.getJobName());
 
         harvestingJob.setMonitor(jobMonitor);
