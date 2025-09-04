@@ -25,6 +25,13 @@ public class MoveFileBroker implements Broker<CorrelatedFileList, CorrelatedFile
 
     public static SimpleDateFormat ARCHIVE_FILE_DATE_FORMATTER = new SimpleDateFormat("YYYYddMM_hhmmss");
 
+
+    /**
+     * Constructs a MoveFileBroker with the provided DryRunModeService.
+     *
+     * @param dryRunModeService the DryRunModeService to be set for the MoveFileBroker
+     * @throws IllegalArgumentException if the dryRunModeService is null
+     */
     public MoveFileBroker(DryRunModeService dryRunModeService) {
         this.dryRunModeService = dryRunModeService;
         if(this.dryRunModeService == null) {
@@ -42,15 +49,19 @@ public class MoveFileBroker implements Broker<CorrelatedFileList, CorrelatedFile
             for (File file : files.getFileList()) {
                 if(!configuration.getMoveDirectory().isEmpty() && !configuration.getMoveDirectory().equals(".")) {
                     logger.info(String.format("Moving file[%s] to directory[%s]", file.getAbsolutePath(), configuration.getMoveDirectory()));
+                    File destDir = new File(configuration.getMoveDirectory());
 
-                    File archiveFile;
-                    if(this.configuration.isRenameArchiveFile()) {
-                        archiveFile = renameArchiveFile(file);
+                    if(file.getParentFile().equals(destDir)) {
+                        logger.info(String.format("Not moving file[%s] to directory[%s], as the source and destination directories are the same!"
+                            , file.getAbsolutePath(), configuration.getMoveDirectory()));
                     }
                     else {
-                        archiveFile = new File(file.getAbsolutePath());
+                        File destFile = new File(destDir, file.getName());
+                        if (destFile.exists()) {
+                            this.renameArchiveFile(destFile);
+                        }
+                        FileUtils.moveFileToDirectory(new File(file.getAbsolutePath()), destDir, true);
                     }
-                    FileUtils.moveFileToDirectory(archiveFile, new File(configuration.getMoveDirectory()), true);
                 }
             }
         }
@@ -61,6 +72,12 @@ public class MoveFileBroker implements Broker<CorrelatedFileList, CorrelatedFile
         return files;
     }
 
+    /**
+     * Renames the given file by appending a timestamp to its name.
+     *
+     * @param file the file to be renamed
+     * @return the newly renamed File object
+     */
     private File renameArchiveFile(File file) {
         String filename;
         if(file.getName().contains(".")) {
