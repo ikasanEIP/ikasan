@@ -89,6 +89,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -186,7 +188,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
@@ -242,7 +243,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
@@ -298,7 +298,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
@@ -358,7 +357,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
@@ -412,7 +410,6 @@ public class FileEventSchedulerJobFlowTest {
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
@@ -459,7 +456,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
@@ -529,7 +525,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer")
             .filter("File Age Filter")
@@ -595,7 +590,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
         flowTestRule.consumer("File Consumer");
 
@@ -629,7 +623,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
@@ -678,7 +671,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
@@ -727,7 +719,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
@@ -777,7 +768,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
@@ -941,7 +931,6 @@ public class FileEventSchedulerJobFlowTest {
 
         MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
             , MoveFileBrokerConfiguration.class);
-        moveFileBrokerConfiguration.setRenameArchiveFile(false);
         moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
 
         flowTestRule.consumer("File Consumer")
