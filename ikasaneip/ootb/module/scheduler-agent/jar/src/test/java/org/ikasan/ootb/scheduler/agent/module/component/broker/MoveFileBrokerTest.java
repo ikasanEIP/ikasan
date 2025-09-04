@@ -47,7 +47,6 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/archive");
         configuration.setJobName("jobName");
-        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
@@ -63,6 +62,43 @@ public class MoveFileBrokerTest {
     }
 
     @Test
+    public void test_same_file_twice_move_file_success() throws IOException {
+        when(dryRunModeService.getDryRunMode()).thenReturn(false);
+
+        List<File> files = List.of(new File("src/test/resources/data/test.txt"));
+
+        MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
+        configuration.setMoveDirectory("src/test/resources/data/archive");
+        configuration.setJobName("jobName");
+        MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
+        broker.setConfiguration(configuration);
+
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
+
+        String[] archiveFiles = new File("src/test/resources/data/archive").list();
+
+        Assert.assertEquals("test.txt", archiveFiles[0]);
+
+        FileUtils.copyFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+            , new File("src/test/resources/data"), true);
+
+        broker.invoke(correlatedFileList);
+
+        archiveFiles = new File("src/test/resources/data/archive").list();
+
+        Assert.assertEquals(2, archiveFiles.length);
+
+        FileUtils.moveFileToDirectory(new File("src/test/resources/data/archive/test.txt")
+            , new File("src/test/resources/data"), true);
+        FileUtils.cleanDirectory(new File("src/test/resources/data/archive"));
+
+        archiveFiles = new File("src/test/resources/data/archive").list();
+
+        Assert.assertEquals(0, archiveFiles.length);
+    }
+
+    @Test
     public void test_move_file_dry_run_success() {
         when(dryRunModeService.getDryRunMode()).thenReturn(true);
 
@@ -71,7 +107,6 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/archive");
         configuration.setJobName("jobName");
-        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
@@ -93,7 +128,6 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/archive");
         configuration.setJobName("jobName");
-        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
@@ -105,8 +139,8 @@ public class MoveFileBrokerTest {
         Assert.assertEquals(0, archiveFiles.length);
     }
 
-    @Test(expected = EndpointException.class)
-    public void test_move_file_dry_run_exception_bad_move_directory() throws IOException {
+    @Test
+    public void test_move_file_dry_run_exception_bad_move_directory_same_as_src_directory() throws IOException {
         when(dryRunModeService.getDryRunMode()).thenReturn(false);
 
         List<File> files = List.of(new File("src/test/resources/data/test.txt"));
@@ -114,12 +148,35 @@ public class MoveFileBrokerTest {
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setMoveDirectory("src/test/resources/data/");
         configuration.setJobName("jobName");
-        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
         CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
         broker.invoke(correlatedFileList);
+
+        String[] archiveFiles = new File("src/test/resources/data/archive").list();
+
+        Assert.assertEquals(0, archiveFiles.length);
+    }
+
+    @Test
+    public void test_move_file_dry_run_exception_bad_move_directory_same_as_src_directory_due_to_dot() throws IOException {
+        when(dryRunModeService.getDryRunMode()).thenReturn(false);
+
+        List<File> files = List.of(new File("src/test/resources/data/test.txt"));
+
+        MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
+        configuration.setMoveDirectory(".");
+        configuration.setJobName("jobName");
+        MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
+        broker.setConfiguration(configuration);
+
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+        broker.invoke(correlatedFileList);
+
+        String[] archiveFiles = new File("src/test/resources/data/archive").list();
+
+        Assert.assertEquals(0, archiveFiles.length);
     }
 
     @Test
@@ -130,7 +187,6 @@ public class MoveFileBrokerTest {
 
         MoveFileBrokerConfiguration configuration = new MoveFileBrokerConfiguration();
         configuration.setJobName("jobName");
-        configuration.setRenameArchiveFile(false);
         MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
         broker.setConfiguration(configuration);
 
