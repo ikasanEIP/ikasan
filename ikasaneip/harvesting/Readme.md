@@ -57,5 +57,17 @@ moduleFlowStateJob-harvestBatchSize=200
 moduleFlowStateJob-cronExpression=0 0/1 * * * ?
 moduleFlowStateJob-enabled=true
 
+# Module Metadata harvesting settings
+# Note - batch size is irrelevant as there is only one module.
+moduleMetaDataHarvestJob-harvestBatchSize=-1
+moduleMetaDataHarvestJob-cronExpression=0 0/1 * * * ?
+moduleMetaDataHarvestJob-enabled=true
+
+# Configuration Metadata harvesting settings
+# Note - batch size is irrelevant as there is only one module and configuration is derived from that module.
+configurationMetaDataHarvestJob-harvestBatchSize=-1
+configurationMetaDataHarvestJob-cronExpression=0 0/1 * * * ?
+configurationMetaDataHarvestJob-enabled=true
+
 
 ```
