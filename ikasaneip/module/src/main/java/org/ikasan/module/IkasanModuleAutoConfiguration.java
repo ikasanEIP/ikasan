@@ -46,6 +46,7 @@ import org.ikasan.module.startup.dao.HibernateStartupControlDao;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
+import org.ikasan.spec.harvest.HarvestService;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.ModuleActivator;
@@ -95,6 +96,11 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
     public ModuleServiceImpl moduleService(ModuleContainer moduleContainer, SystemEventService systemEventService,
         StartupControlDao startupControlDao){
         return new ModuleServiceImpl(moduleContainer, systemEventService, startupControlDao);
+    }
+
+    @Bean
+    public HarvestService moduleHarvestService(ModuleContainer moduleContainer){
+        return new ModuleHarvestServiceImpl(moduleContainer);
     }
 
     @Bean

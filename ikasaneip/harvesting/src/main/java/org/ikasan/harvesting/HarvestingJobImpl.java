@@ -25,18 +25,18 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
     /** Logger for this class */
     private static Logger logger = LoggerFactory.getLogger(HarvestingJobImpl.class);
 
-    private String jobName;
-    private HarvestService harvestService;
-    private DashboardRestService dashboardRestService;
-    private Environment environment;
-    private Integer harvestSize;
-    private String cronExpression;
-    private Boolean enabled = true;
-    private Boolean lastExecutionSuccessful = true;
-    private String executionErrorMessage;
-    private Boolean initialised = false;
+    protected String jobName;
+    protected HarvestService harvestService;
+    protected DashboardRestService dashboardRestService;
+    protected Environment environment;
+    protected Integer harvestSize;
+    protected String cronExpression;
+    protected Boolean enabled = true;
+    protected Boolean lastExecutionSuccessful = true;
+    protected String executionErrorMessage;
+    protected Boolean initialised = false;
 
-    private Monitor monitor;
+    protected Monitor monitor;
 
     public HarvestingJobImpl(String jobName, HarvestService harvestService,
         Environment environment,
