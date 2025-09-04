@@ -116,4 +116,30 @@ public class HarvestingAutoConfiguration
         harvestingJob.setMonitor(jobMonitor);
         return harvestingJob;
     }
+
+    @Bean
+    @DependsOn("moduleHarvestService")
+    public HarvestingJob moduleMetaDataHarvestJob(@Qualifier("moduleHarvestService")HarvestService moduleHarvestService, Environment environment
+        , @Qualifier("moduleMetadataDashboardRestService") DashboardRestService moduleMetadataDashboardRestService, JobMonitor jobMonitor)
+    {
+        HarvestingJobImpl harvestingJob = new SingleResultHarvestingJobImpl("moduleMetaDataHarvestJob", moduleHarvestService, environment
+            , moduleMetadataDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
+    }
+
+    @Bean
+    @DependsOn("moduleHarvestService")
+    public HarvestingJob configurationMetaDataHarvestJob(@Qualifier("moduleHarvestService")HarvestService moduleHarvestService, Environment environment
+        , @Qualifier("configurationMetadataDashboardRestService") DashboardRestService configurationMetadataDashboardRestService, JobMonitor jobMonitor)
+    {
+        HarvestingJobImpl harvestingJob = new SingleResultHarvestingJobImpl("configurationMetaDataHarvestJob", moduleHarvestService, environment
+            , configurationMetadataDashboardRestService);
+        jobMonitor.setJobName(harvestingJob.getJobName());
+
+        harvestingJob.setMonitor(jobMonitor);
+        return harvestingJob;
+    }
 }
