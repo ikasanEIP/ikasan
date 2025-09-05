@@ -41,11 +41,10 @@
 
 package org.ikasan.rest.module;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS;
-
 import org.ikasan.rest.module.exception.MaxThreadException;
 import org.ikasan.rest.module.sse.MonitoringFileService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -56,12 +55,17 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static org.springframework.http.HttpStatus.TOO_MANY_REQUESTS;
+
 /**
  * Module application implementing the REST contract to stream logs via Server Side Events (sse)
  */
 @RequestMapping("/rest/logs")
 @RestController
 public class LogFileStreamApplication {
+
+    private static final Logger LOG = LoggerFactory.getLogger(LogFileStreamApplication.class);
 
     @Autowired
     private MonitoringFileService monitoringFileServiceExecutor;
@@ -72,10 +76,10 @@ public class LogFileStreamApplication {
         try {
             return monitoringFileServiceExecutor.addMonitoringFileService(fullFilePath);
         } catch (MaxThreadException mte) {
-            mte.printStackTrace();
+            LOG.error(String.format("An MaxThreadException occurred stream a log file[%s]!", fullFilePath), mte);
             throw new ResponseStatusException(TOO_MANY_REQUESTS, mte.getLocalizedMessage(), mte);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(String.format("An general exception has occurred stream a log file[%s]!", fullFilePath), e);
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getLocalizedMessage(), e);
         }
     }
