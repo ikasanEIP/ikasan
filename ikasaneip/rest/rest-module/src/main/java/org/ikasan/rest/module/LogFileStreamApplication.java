@@ -78,8 +78,10 @@ public class LogFileStreamApplication {
         try {
             return monitoringFileServiceExecutor.addMonitoringFileService(fullFilePath);
         } catch (MaxThreadException mte) {
+            mte.printStackTrace();
             throw new ResponseStatusException(TOO_MANY_REQUESTS, mte.getLocalizedMessage(), mte);
         } catch (Exception e) {
+            e.printStackTrace();
             throw new ResponseStatusException(INTERNAL_SERVER_ERROR, e.getLocalizedMessage(), e);
         }
     }

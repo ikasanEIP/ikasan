@@ -119,6 +119,7 @@ public class MonitoringFileServiceThread extends Thread {
             // do nothing as chances are the file is being rolled
             // the constructor will get an error if the file does not exist
         } catch (Exception ex) {
+            ex.printStackTrace();
             end(ex);
         }
     }
@@ -139,6 +140,7 @@ public class MonitoringFileServiceThread extends Thread {
         try {
             sendMessage();
         } catch (IOException e) {
+            e.printStackTrace();
             end(e);
         }
     }
@@ -151,6 +153,7 @@ public class MonitoringFileServiceThread extends Thread {
             try {
                 sseEmitter.send(SseEmitter.event().data(line));
             } catch (IOException e) {
+                e.printStackTrace();
                 end(e);
             }
         }
