@@ -119,7 +119,7 @@ public class MonitoringFileServiceThread extends Thread {
             // do nothing as chances are the file is being rolled
             // the constructor will get an error if the file does not exist
         } catch (Exception ex) {
-            ex.printStackTrace();
+            LOG.error("An general exception has occurred monitoring for messages!", ex);
             end(ex);
         }
     }
@@ -140,7 +140,7 @@ public class MonitoringFileServiceThread extends Thread {
         try {
             sendMessage();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("An error has occurred sending all messages for the first time!", e);
             end(e);
         }
     }
@@ -153,7 +153,7 @@ public class MonitoringFileServiceThread extends Thread {
             try {
                 sseEmitter.send(SseEmitter.event().data(line));
             } catch (IOException e) {
-                e.printStackTrace();
+                LOG.error(String.format("An error has occurred sending log stream line[%s]!", line), e);
                 end(e);
             }
         }
