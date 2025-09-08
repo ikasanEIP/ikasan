@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan Spring Resource</name>
     <artifactId>ikasan-spring-resource</artifactId>
     <packaging>jar</packaging>
 

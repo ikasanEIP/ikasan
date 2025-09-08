@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan H2 Standalone Persistence</name>
     <artifactId>ikasan-h2-standalone-persistence</artifactId>
     <packaging>jar</packaging>
 

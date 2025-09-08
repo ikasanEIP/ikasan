@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan EIP Standalone BOM</name>
     <artifactId>ikasan-eip-standalone-bom</artifactId>
     <packaging>pom</packaging>
 

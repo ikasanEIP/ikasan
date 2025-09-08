@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan System Event</name>
     <artifactId>ikasan-system-event</artifactId>
     <packaging>jar</packaging>
 

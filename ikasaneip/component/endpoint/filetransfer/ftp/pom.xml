@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
    </parent>
 
+    <name>Ikasan FTP Endpoint</name>
     <artifactId>ikasan-ftp-endpoint</artifactId>
     <packaging>jar</packaging>
 

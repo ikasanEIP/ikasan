@@ -47,6 +47,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan Housekeeping Parent</name>
     <artifactId>ikasan-housekeeping-parent</artifactId>
     <packaging>pom</packaging>
 

@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan Filetransfer Common</name>
     <artifactId>ikasan-filetransfer-common</artifactId>
     <packaging>jar</packaging>
 

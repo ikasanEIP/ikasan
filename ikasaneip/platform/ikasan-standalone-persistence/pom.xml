@@ -52,6 +52,7 @@
         <version>3.3.9-SNAPSHOT</version>
     </parent>
 
+    <name>Ikasan Standalone Persistence</name>
     <artifactId>ikasan-standalone-persistence</artifactId>
     <packaging>jar</packaging>
 
