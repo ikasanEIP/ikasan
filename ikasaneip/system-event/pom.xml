@@ -53,6 +53,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan System Event</name>
     <artifactId>ikasan-system-event</artifactId>
     <packaging>jar</packaging>
 

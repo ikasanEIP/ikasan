@@ -52,6 +52,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan Spring Resource</name>
     <artifactId>ikasan-spring-resource</artifactId>
     <packaging>jar</packaging>
 

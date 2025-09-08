@@ -53,6 +53,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan FTP Endpoint</name>
     <artifactId>ikasan-ftp-endpoint</artifactId>
     <packaging>jar</packaging>
 

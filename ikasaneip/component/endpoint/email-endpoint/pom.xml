@@ -48,9 +48,10 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <name>Ikasan Email Endpoint</name>
     <artifactId>ikasan-email-endpoint</artifactId>
 
-        <dependencies>
+    <dependencies>
          <dependency>
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>

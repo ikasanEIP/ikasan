@@ -53,6 +53,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan EIP Standalone</name>
     <artifactId>ikasan-eip-standalone</artifactId>
     <packaging>jar</packaging>
 

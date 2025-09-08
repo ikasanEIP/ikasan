@@ -52,6 +52,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan Filetransfer Common</name>
     <artifactId>ikasan-filetransfer-common</artifactId>
     <packaging>jar</packaging>
 

@@ -10,6 +10,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
+    <name>Ikasan H2 Migration</name>
     <artifactId>ikasan-h2-migration</artifactId>
 
 

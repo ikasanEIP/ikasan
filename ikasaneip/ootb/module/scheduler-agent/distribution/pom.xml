@@ -9,6 +9,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan Enterprise Scheduler Agent Distribution</name>
     <artifactId>scheduler-agent-distribution</artifactId>
     <packaging>pom</packaging>
 
@@ -53,7 +54,6 @@
                         </configuration>
                     </execution>
                 </executions>
-
             </plugin>
         </plugins>
     </build>

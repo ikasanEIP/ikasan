@@ -52,6 +52,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan EIP Standalone BOM</name>
     <artifactId>ikasan-eip-standalone-bom</artifactId>
     <packaging>pom</packaging>
 

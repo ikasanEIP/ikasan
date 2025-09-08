@@ -72,12 +72,6 @@
         <module>distribution</module>
     </modules>
 
-    <!-- SCM URLS -->
-    <scm>
-        <developerConnection><!-- scm:svn: developer connection URL --></developerConnection>
-        <url><!-- SCM connection URL --></url>
-        <connection><!-- scm:svn: connection URL --></connection>
-    </scm>
 
     <properties>
         <version.ikasan>${project.version}</version.ikasan>

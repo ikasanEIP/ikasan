@@ -52,6 +52,7 @@
         <version>4.1.1</version>
     </parent>
 
+    <name>Ikasan Connector Base</name>
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-connector-base</artifactId>
     <packaging>jar</packaging>
