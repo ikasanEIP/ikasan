@@ -42,7 +42,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>3.3.9-SNAPSHOT</version>
+    <version>3.3.9</version>
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
@@ -676,19 +676,15 @@
             </activation>
             <build>
                 <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <!-- The Base URL of Nexus instance where we want to stage -->
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <!-- The server "id" element from settings to use authentication from -->
-                            <serverId>ikasaneip-releases</serverId>
-                            <autoReleaseAfterClose />
-                        </configuration>
-                    </plugin>
+		    <plugin>
+         		<groupId>org.sonatype.central</groupId>
+          		<artifactId>central-publishing-maven-plugin</artifactId>
+          		<version>0.8.0</version>
+          		<extensions>true</extensions>
+          		<configuration>
+            			<publishingServerId>ikasaneip-releases</publishingServerId>
+          		</configuration>
+        	    </plugin>
 
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

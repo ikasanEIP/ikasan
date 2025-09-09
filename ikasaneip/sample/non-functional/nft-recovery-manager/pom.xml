@@ -6,12 +6,12 @@
     <name>Ikasan NFT Recovery Manager</name>
     <groupId>org.ikasan</groupId>
     <artifactId>nft-recovery-manager</artifactId>
-    <version>3.3.9-SNAPSHOT</version>
+    <version>3.3.9</version>
 
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>non-functional</artifactId>
-        <version>3.3.9-SNAPSHOT</version>
+        <version>3.3.9</version>
     </parent>
 
     <properties>
