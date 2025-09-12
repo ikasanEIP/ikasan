@@ -39,34 +39,28 @@ classDiagram
         -jobLockCache: JobLockCacheData
     }
 
-    interface JobLockCache {
-        +addLocks(List~JobLock~)
-        +lock(String, String): boolean
-        +release(String, String): boolean
-    }
 
-    interface JobLockCacheEventListener {
+    class JobLockCacheEventListener {
         +onJobLockCacheEvent(JobLockCacheEvent)
     }
 
-    interface JobLockCacheData {
+    class JobLockCacheData {
     }
 
-    interface JobLockHolder {
+    class JobLockHolder {
     }
     
-    interface JobLockCacheRecord {
+    class JobLockCacheRecord {
     }
 
-    interface JobLockCacheService {
+    class JobLockCacheService {
         +save(JobLockCacheRecord)
     }
     
-    interface JobLockCacheEventBroadcaster {
+    class JobLockCacheEventBroadcaster {
         +broadcast(JobLockCacheEvent)
     }
 
-    JobLockCacheImpl --|> JobLockCache
     JobLockCacheImpl --|> JobLockCacheEventListener
     JobLockCacheImpl o-- JobLockCacheData
     JobLockCacheImpl --> JobLockCacheService
