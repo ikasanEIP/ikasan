@@ -40,24 +40,15 @@ classDiagram
     }
 
 
-    class JobLockCacheEventListener {
+    class JobLockCacheEventListenerImpl {
         +onJobLockCacheEvent(JobLockCacheEvent)
     }
-
-    class JobLockCacheData {
-    }
-
-    class JobLockHolder {
-    }
-    
-    class JobLockCacheRecord {
-    }
-
-    class JobLockCacheService {
+   
+    class JobLockCacheServiceImpl {
         +save(JobLockCacheRecord)
     }
     
-    class JobLockCacheEventBroadcaster {
+    class JobLockCacheEventBroadcasterImpl {
         +broadcast(JobLockCacheEvent)
     }
 
@@ -65,10 +56,7 @@ classDiagram
     JobLockCacheImpl o-- JobLockCacheData
     JobLockCacheImpl --> JobLockCacheService
     JobLockCacheImpl --> JobLockCacheEventBroadcaster
-    JobLockCacheDataImpl --|> JobLockCacheData
-    JobLockHolderImpl --|> JobLockHolder
-    JobLockCacheRecordImpl --|> JobLockCacheRecord
-    JobLockCacheImpl o-- JobLockCacheRecord
-    JobLockCacheRecordImpl o-- JobLockCacheData
-    JobLockCacheDataImpl o-- JobLockHolder
+    JobLockCacheImpl o-- JobLockCacheRecordImpl
+    JobLockCacheRecordImpl o-- JobLockCacheDataImpl
+    JobLockCacheDataImpl o-- JobLockHolderImpl
 ```
