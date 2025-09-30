@@ -71,7 +71,7 @@ public class ModuleConfig
         Flow jmsConsumer1Flow = moduleBuilder.getFlowBuilder("jmsToDevNullFlow1")
                 .withDescription("First JMS Consuming flow.")
                 .withExceptionResolver(builderFactory.getExceptionResolverBuilder().addExceptionToAction(RuntimeException.class, OnException.retryIndefinitely(1000)))
-                .consumer("JMS Consumer", componentFactory.getJmsConsumer("jmsConsumer1"))
+                .consumer("JMS Consumer", componentFactory.getJmsConsumer("jmsConsumerTxnFailPreAmq"))
                 .producer("Dev Null Producer", builderFactory.getComponentBuilder().logProducer()  .build())
                 .build();
 
