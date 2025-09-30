@@ -8,6 +8,8 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.IOException;
 import java.nio.file.Path;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 class   FlowTestInspectorTest {
 
     @TempDir
@@ -27,11 +29,11 @@ class   FlowTestInspectorTest {
 //        testClassEditor.addJsonConfigurationMetaDataExtractor(flowTests.get(0));
 //        testClassEditor.addJsonModuleMetaDataProvider(flowTests.get(0));
 //        PomEditor.addDependency(new File("/Users/mick/workspace/archetype/jms-demo/jar/pom.xml")
-//            , "org.ikasan","ikasan-manifest", "4.1.1-SNAPSHOT");
+//            , "org.ikasan","ikasan-manifest", "4.1.2-SNAPSHOT");
 
         ModuleMigration migration = new ModuleMigration("jms-demo", "/Users/mick/workspace/archetype/jms-demo"
             , "com.ikasan.sample.spring.boot", "migration-working"
             , "JmsSampleFlowTest", "org.ikasan");
-        migration.migrate();
+        assertThrows(RuntimeException.class, () -> migration.migrate());
     }
 }

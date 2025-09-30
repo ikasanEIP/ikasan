@@ -11,6 +11,8 @@ public class ModuleBuildMigrationHelper {
     private LocalBeanMigrationManager localBeanMigrationManager;
     private ModuleFileManager moduleFileManager;
 
+    private int buildIterations = 5;
+
     public ModuleBuildMigrationHelper(LocalBeanMigrationManager localBeanMigrationManager, ModuleFileManager moduleFileManager) {
         this.localBeanMigrationManager = localBeanMigrationManager;
         this.moduleFileManager = moduleFileManager;
@@ -24,6 +26,7 @@ public class ModuleBuildMigrationHelper {
             , "spotless:apply");
 
         boolean buildPass = false;
+        int buildIteration = 0;
         while(!buildPass) {
             if (!builder.build(this.moduleFileManager.getProjectRootDirectory()
                 , "clean install")) {
@@ -33,6 +36,10 @@ public class ModuleBuildMigrationHelper {
             }
             else {
                 buildPass = true;
+            }
+            buildIteration++;
+            if(buildIteration >= buildIterations) {
+                throw new RuntimeException("Number of build iterations exceeded!");
             }
         }
     }

@@ -164,6 +164,7 @@ public class AbstractMavenCommand<RESULT> implements MavenCommand<RESULT>
     InvocationResult executeCommand() throws MavenInvocationException
     {
         InvocationRequest request = new DefaultInvocationRequest();
+        request.setMavenHome(new File(System.getenv("M2_HOME")));
         request.setGoals(goals);
         request.setDebug(debug);
         request.setBatchMode(batchMode);

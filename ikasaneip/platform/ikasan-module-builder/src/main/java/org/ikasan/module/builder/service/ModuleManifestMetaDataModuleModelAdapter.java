@@ -1,6 +1,5 @@
 package org.ikasan.module.builder.service;
 
-import org.apache.commons.text.WordUtils;
 import org.ikasan.module.builder.model.module.*;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -10,7 +9,11 @@ import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.metadata.ModuleManifestMetaData;
+import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.FlowElementMetaData;
+import org.ikasan.spec.metadata.FlowMetaData;
+import org.ikasan.spec.metadata.Transition;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,7 +22,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class ModuleManifestMetaDataModuleModelAdapter {
-    private HashMap<String, List<String>> toTransitionLabelMap = new HashMap<>();
+    private HashMap<String, String> toTransitionLabelMap = new HashMap<>();
 
     /**
      * Adapts the given ModuleManifestMetaData and moduleBasePackage to create a ModuleModel object.
