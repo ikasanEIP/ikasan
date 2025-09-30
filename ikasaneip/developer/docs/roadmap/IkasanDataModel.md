@@ -328,7 +328,7 @@ An array of objects, each providing metadata for a bean definition within the mo
         "name" : "jms-demo",
         "description" : "Sample Module",
         "version" : "1.0.0-SNAPSHOT",
-        "ikasanVersion" : "4.1.1-SNAPSHOT",
+        "ikasanVersion" : "4.1.2-SNAPSHOT",
         "flows" : [ {
             "name" : "JMS FLow",
             "consumer" : {

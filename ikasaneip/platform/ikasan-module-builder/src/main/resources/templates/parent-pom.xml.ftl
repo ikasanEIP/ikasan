@@ -17,7 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.ikasan>4.1.1-SNAPSHOT</version.ikasan>
+        <version.ikasan>4.1.2-SNAPSHOT</version.ikasan>
         <version.org.springboot>3.4.5</version.org.springboot>
         <version.activemq>6.1.6</version.activemq>
         <version.com.h2database>2.2.224</version.com.h2database>

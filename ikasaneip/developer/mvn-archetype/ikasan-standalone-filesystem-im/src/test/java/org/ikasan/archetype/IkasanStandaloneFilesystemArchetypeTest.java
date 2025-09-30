@@ -87,8 +87,7 @@ public class IkasanStandaloneFilesystemArchetypeTest
      * Test.
      */
     @Test
-    public void test_successful_archetype_generate_and_test() throws URISyntaxException
-    {
+    public void test_successful_archetype_generate_and_test() throws URISyntaxException, MavenInvocationException, CommandLineException {
         MavenArchetypeCommand mavenArchetypeCommand = MavenFactory.getArchetypeCommand();
         mavenArchetypeCommand.setArchetypeArtifactId(archetypeArtefactId);
         mavenArchetypeCommand.setArchetypeGroupId(archetypeGroupId);
@@ -100,8 +99,8 @@ public class IkasanStandaloneFilesystemArchetypeTest
         mavenArchetypeCommand.setDebug(false);
         mavenArchetypeCommand.setWorkingDir(projectLocation);
 
-        try
-        {
+//        try
+//        {
             MavenProject mavenProject = mavenArchetypeCommand.execute();
             MavenCommand clean = MavenFactory.getCleanCommand();
             clean.setBatchMode(true);
@@ -110,10 +109,10 @@ public class IkasanStandaloneFilesystemArchetypeTest
             MavenCommand test = MavenFactory.getCleanCommand();
             test.setBatchMode(true);
             mavenProject.invoke(test);
-        }
-        catch(CommandLineException|MavenInvocationException e)
-        {
-            Assert.fail("Project failed to create from the Maven archetype - " + e.getMessage());
-        }
+//        }
+//        catch(CommandLineException|MavenInvocationException e)
+//        {
+//            Assert.fail("Project failed to create from the Maven archetype - " + e.getMessage());
+//        }
     }
 }

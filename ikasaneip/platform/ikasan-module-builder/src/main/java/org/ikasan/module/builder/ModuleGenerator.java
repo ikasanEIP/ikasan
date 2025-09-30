@@ -311,10 +311,11 @@ public class ModuleGenerator {
      * @throws IOException If an I/O error occurs during file writing.
      * @throws TemplateException If an error occurs during FreeMarker template processing.
      */
-    private void executionFreeMarkerTemplate(File outputDir , String templateName
+    private void executionFreeMarkerTemplate(File outputDir, String templateName
         , Object data, String outputFileName)
         throws IOException, TemplateException {
         Template pomTemplate = this.freeMarkerConfiguration.getTemplate(templateName);
+        outputDir.mkdirs();
         try (Writer fileWriter = new FileWriter(new File(outputDir, outputFileName))) {
             pomTemplate.process(data, fileWriter);
         }
