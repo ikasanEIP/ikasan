@@ -93,7 +93,7 @@ public class ModuleConfig
         // jms consumer flow 1
         Flow jmsConsumer1Flow = moduleBuilder.getFlowBuilder("jmsToDevNullFlow1")
                 .withDescription("First JMS Consuming flow.")
-                .consumer("JMS Consumer", componentFactory.getJmsConsumer("jmsConsumer1"))
+                .consumer("JMS Consumer", componentFactory.getJmsConsumer("jmsConsumerComponentFail"))
                 .producer("Dev Null Producer", builderFactory.getComponentBuilder().devNullProducer().build())
                 .build();
 
