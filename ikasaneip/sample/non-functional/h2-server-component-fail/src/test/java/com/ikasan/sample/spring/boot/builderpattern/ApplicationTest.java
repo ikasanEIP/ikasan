@@ -136,7 +136,7 @@ public class ApplicationTest
         FileTestUtil.deleteFile(new File(objectStoreDir));
 
         // start a AMQ broker
-        broker = BrokerFactory.createBroker(new URI("broker:(" + brokerUrl + ")"));
+        broker = BrokerFactory.createBroker(new URI("broker:(" + brokerUrl + "&allowLinkStealing=true)"));
         broker.getPersistenceAdapter().setDirectory( new File(amqPersistenceDir) );
         broker.start();
 
