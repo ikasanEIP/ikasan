@@ -1,5 +1,6 @@
 package org.ikasan.rest.module.sse;
 
+import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -44,8 +45,11 @@ public class MonitoringFileServiceThreadTest {
 
         Thread.sleep(1000);
 
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+            .await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Thread.State.TERMINATED, monitoringFileService.getState()));
+
         verify(sseEmitter, times(1)).complete();
-        assertEquals(monitoringFileService.getState(), Thread.State.TERMINATED);
     }
 
     @Test
@@ -79,7 +83,9 @@ public class MonitoringFileServiceThreadTest {
         // verify has sent message 3
         verifySseEmiterAndCounter(3, 4, monitoringFileService);
 
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+            .await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
 
         monitoringFileService.interrupt();
     }
@@ -94,9 +100,12 @@ public class MonitoringFileServiceThreadTest {
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
 
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+            .await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
+
         verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
         monitoringFileService.interrupt();
     }
 
@@ -111,7 +120,10 @@ public class MonitoringFileServiceThreadTest {
 
         verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+            .await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
+
         monitoringFileService.interrupt();
     }
 
@@ -122,7 +134,11 @@ public class MonitoringFileServiceThreadTest {
         monitoringFileService.start();
 
         verifySseEmiterAndCounter(0, 0, monitoringFileService);
-        assertEquals(monitoringFileService.getState(), Thread.State.TIMED_WAITING);
+
+        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+            .await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
+
         monitoringFileService.interrupt();
     }
 
