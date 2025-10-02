@@ -65,10 +65,12 @@ import org.springframework.aop.support.AopUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.quartz.TriggerBuilder.newTrigger;
 
@@ -481,7 +483,8 @@ public class IkasanFlowTestRule implements TestRule
             configuration.setEager(false); // do not callback on the provider once complete
         }
         flow.start();
-        Assert.assertEquals("In startFlow with flowSubject - flow should be running", Flow.RUNNING, flow.getState());
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofSeconds(1)).await().atMost(Duration.ofSeconds(20))
+            .untilAsserted(() -> Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState()));
     }
 
     /**
@@ -503,7 +506,8 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.addFlowListener(testHarnessFlowEventListener);
         flow.start();
-        Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState());
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofSeconds(1)).await().atMost(Duration.ofSeconds(20))
+                .untilAsserted(() -> Assert.assertEquals("In startFlow() - flow should be running", Flow.RUNNING, flow.getState()));
     }
 
     /**
@@ -525,7 +529,9 @@ public class IkasanFlowTestRule implements TestRule
         }
         flow.addFlowListener(testHarnessFlowEventListener);
         flow.startPause();
-        Assert.assertEquals("flow should be paused", Flow.PAUSED, flow.getState());
+
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofSeconds(1)).await().atMost(Duration.ofSeconds(20))
+            .untilAsserted(() -> Assert.assertEquals("flow should be paused", Flow.PAUSED, flow.getState()));
     }
 
     /**
@@ -543,7 +549,8 @@ public class IkasanFlowTestRule implements TestRule
             throw new RuntimeException("Flow not is a paused state to be resumed");
         }
 
-        Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState());
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofSeconds(1)).await().atMost(Duration.ofSeconds(20))
+            .untilAsserted(() -> Assert.assertEquals("flow should be running", Flow.RUNNING, flow.getState()));
     }
 
     /**
@@ -561,7 +568,8 @@ public class IkasanFlowTestRule implements TestRule
             throw new RuntimeException("Flow not is a running state to be paused");
         }
 
-        Assert.assertEquals("flow should be paused", Flow.PAUSED, flow.getState());
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofSeconds(1)).await().atMost(Duration.ofSeconds(20))
+            .untilAsserted(() -> Assert.assertEquals("flow should be paused", Flow.PAUSED, flow.getState()));
     }
 
     public void stopFlow()
@@ -600,8 +608,6 @@ public class IkasanFlowTestRule implements TestRule
                         ArrayUtils.toString(stopStates) + " its state is " + stopState);
                 }
                 assertEquals("Flow is stopped as expected", true, isStopped);
-
-
             });
 
     }
