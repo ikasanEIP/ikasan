@@ -646,7 +646,8 @@ public class FileEventSchedulerJobFlowTest {
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -790,7 +791,8 @@ public class FileEventSchedulerJobFlowTest {
         // a more complex scenario or make use of JobExecutionContext later
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
 
         flowTestRule.stopFlow();
     }
@@ -839,7 +841,8 @@ public class FileEventSchedulerJobFlowTest {
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(2, outboundQueue.size());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -901,7 +904,8 @@ public class FileEventSchedulerJobFlowTest {
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(2, outboundQueue.size());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
@@ -960,7 +964,8 @@ public class FileEventSchedulerJobFlowTest {
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        assertEquals(1, outboundQueue.size());
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
 
         ContextualisedScheduledProcessEvent event = this.getEvent();
 
