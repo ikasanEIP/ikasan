@@ -56,7 +56,7 @@ public class MonitoringFileServiceThreadTest {
     public void test_monitoringService_monitorsForMessages_should_reset_atomic_count_if_file_deleted_and_send_new_messages() throws Exception {
 
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
+        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
         monitoringFileService.start();
 
         // verify has sent message 1
@@ -98,7 +98,7 @@ public class MonitoringFileServiceThreadTest {
     @Test
     public void test_monitoringService_monitors_for_new_messages() throws IOException {
 
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
+        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
 
         monitoringFileService.start();
 
@@ -124,7 +124,7 @@ public class MonitoringFileServiceThreadTest {
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
         FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
 
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
+        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
 
         monitoringFileService.start();
 
@@ -144,7 +144,7 @@ public class MonitoringFileServiceThreadTest {
 
     @Test
     public void test_monitoringService_no_messages_to_send() throws IOException {
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 300000);
+        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
 
         monitoringFileService.start();
 
