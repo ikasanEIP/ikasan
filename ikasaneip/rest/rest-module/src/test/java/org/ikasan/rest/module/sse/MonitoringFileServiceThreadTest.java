@@ -87,7 +87,12 @@ public class MonitoringFileServiceThreadTest {
             .await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
 
-        monitoringFileService.interrupt();
+        try {
+            monitoringFileService.interrupt();
+        }
+        catch (ThreadDeath e) {
+            // Ignore thread death
+        }
     }
 
     @Test
@@ -106,7 +111,12 @@ public class MonitoringFileServiceThreadTest {
 
         verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        monitoringFileService.interrupt();
+        try {
+            monitoringFileService.interrupt();
+        }
+        catch (ThreadDeath e) {
+            // Ignore thread death
+        }
     }
 
     @Test
@@ -124,7 +134,12 @@ public class MonitoringFileServiceThreadTest {
             .await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
 
-        monitoringFileService.interrupt();
+        try {
+            monitoringFileService.interrupt();
+        }
+        catch (ThreadDeath e) {
+            // Ignore thread death
+        }
     }
 
     @Test
@@ -139,7 +154,12 @@ public class MonitoringFileServiceThreadTest {
             .await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
 
-        monitoringFileService.interrupt();
+        try {
+            monitoringFileService.interrupt();
+        }
+        catch (ThreadDeath e) {
+            // Ignore thread death
+        }
     }
 
     private void verifySseEmiterAndCounter(int seeEmitterCount, int fileMessageCounter, Thread service) {
