@@ -48,7 +48,6 @@
             <plugin>
                 <groupId>com.googlecode.maven-download-plugin</groupId>
                 <artifactId>download-maven-plugin</artifactId>
-                <version>1.4.2</version>
                 <executions>
                     <execution>
                         <id>download-h2-1.4.200-jar</id>
@@ -62,14 +61,6 @@
                             <outputDirectory>${project.build.directory}</outputDirectory>
                         </configuration>
                     </execution>
-                </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.4.2</version>
-                <executions>
                     <execution>
                         <id>download-h2-2.2.224-jar</id>
                         <phase>compile</phase>
