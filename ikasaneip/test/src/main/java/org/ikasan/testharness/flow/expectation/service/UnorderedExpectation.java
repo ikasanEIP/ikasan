@@ -46,6 +46,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import static org.junit.Assert.fail;
 
@@ -105,9 +106,9 @@ public class UnorderedExpectation extends AbstractListExpectation
                 """;
         // @formatter:on
         String message = format
-            .formatted(formatList(expectations), formatList(captures),
-                formatList(diff.getUnsatisfiedExpectations()),
-                formatList(diff.getUnexpectedCaptures()));
+            .formatted(formatList(new CopyOnWriteArrayList(expectations)), formatList(captures),
+                formatList(new CopyOnWriteArrayList(diff.getUnsatisfiedExpectations())),
+                formatList(new CopyOnWriteArrayList(diff.getUnexpectedCaptures())));
         fail(message);
     }
 }
