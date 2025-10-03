@@ -76,12 +76,12 @@ class SolrCommandTest
         Assert.assertNotNull("username should be not null", result.get("username"));
         Assert.assertNotNull("pid should be not null", result.get("pid"));
 
-        result = command._stopSolr("sampleProcess", "kill -9 " + result.get("pid"));
-        Assert.assertTrue("running should be false", result.get("running").equals(false));
-        Assert.assertTrue("type should be Solr", result.get("type").equals("Solr"));
-        Assert.assertTrue("operation should be start", result.get("operation").equals("stop"));
-        Assert.assertNotNull("username should be not null", result.get("username"));
-        Assert.assertNotNull("pid should be not null", result.get("pid"));
+        JSONObject stopResult = command._stopSolr("sampleProcess", "kill -9 " + result.get("pid"));
+        Assert.assertTrue("running should be false", stopResult.get("running").equals(false));
+        Assert.assertTrue("type should be Solr", stopResult.get("type").equals("Solr"));
+        Assert.assertTrue("operation should be start", stopResult.get("operation").equals("stop"));
+        Assert.assertNotNull("username should be not null", stopResult.get("username"));
+        Assert.assertNotNull("pid should be not null", stopResult.get("pid"));
     }
 
     @AfterEach
