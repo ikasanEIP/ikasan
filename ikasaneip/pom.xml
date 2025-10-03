@@ -94,6 +94,36 @@
             <timezone>0</timezone>
         </developer>
         <developer>
+            <id>majead</id>
+            <name>Andrzej Majewski</name>
+            <organization>Ikasan</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>stemic</id>
+            <name>Michael Stewart</name>
+            <organization>Ikasan</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
+            <id>hildav</id>
+            <name>David Hilton</name>
+            <organization>Ikasan</organization>
+            <organizationUrl>http://www.ikasan.org</organizationUrl>
+            <roles>
+                <role>developer</role>
+            </roles>
+            <timezone>0</timezone>
+        </developer>
+        <developer>
             <id>hasasu</id>
             <name>Summer Hasani</name>
             <organization>Ikasan</organization>
@@ -258,7 +288,7 @@
         <version.org.hibernate>6.4.1.Final</version.org.hibernate>
         <version.org.hibernate-validator>8.0.1.Final</version.org.hibernate-validator>
         <version.org.springframework>6.2.11</version.org.springframework>
-        <version.org.springframework.security>6.5.3</version.org.springframework.security>
+        <version.org.springframework.security>6.5.5</version.org.springframework.security>
         <version.org.springframework.ldap>3.2.8</version.org.springframework.ldap>
         <version.org.springframework.webflow>3.0.0</version.org.springframework.webflow>
         <version.org.springframework.webflow-spring-js>2.4.8.RELEASE</version.org.springframework.webflow-spring-js>
