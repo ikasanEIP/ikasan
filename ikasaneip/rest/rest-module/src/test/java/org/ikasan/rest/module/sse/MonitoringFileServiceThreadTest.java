@@ -54,40 +54,39 @@ public class MonitoringFileServiceThreadTest {
 
     @Test
     public void test_monitoringService_monitorsForMessages_should_reset_atomic_count_if_file_deleted_and_send_new_messages() throws Exception {
+        try {
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
+            MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
+            monitoringFileService.start();
 
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
-        monitoringFileService.start();
+            // verify has sent message 1
+            verifySseEmiterAndCounter(1, 4, monitoringFileService);
 
-        // verify has sent message 1
-        verifySseEmiterAndCounter(1, 4, monitoringFileService);
+            // add another line
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
 
-        // add another line
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
+            // verify has sent message 2
+            verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        // verify has sent message 2
-        verifySseEmiterAndCounter(2, 8, monitoringFileService);
+            // recreate the file
+            FileUtils.forceDelete(new File(sampleLogFileStr));
+            // this sleep is so we can run the tests on macs - takes a while for the delete to propagate events
+            Thread.sleep(15000);
 
-        // recreate the file
-        FileUtils.forceDelete(new File(sampleLogFileStr));
-        // this sleep is so we can run the tests on macs - takes a while for the delete to propagate events
-        Thread.sleep(15000);
+            FileUtils.write(new File(sampleLogFileStr), "", StandardCharsets.UTF_8);
+            // wait until counter is reset to 0
+            verifySseEmiterAndCounter(2, 0, monitoringFileService);
 
-        FileUtils.write(new File(sampleLogFileStr), "", StandardCharsets.UTF_8);
-        // wait until counter is reset to 0
-        verifySseEmiterAndCounter(2, 0, monitoringFileService);
+            // add another line
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("333"), true);
 
-        // add another line
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("333"), true);
+            // verify has sent message 3
+            verifySseEmiterAndCounter(3, 4, monitoringFileService);
 
-        // verify has sent message 3
-        verifySseEmiterAndCounter(3, 4, monitoringFileService);
-
-        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
-            .await().atMost(30, TimeUnit.SECONDS)
+            with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+                .await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
 
-        try {
             monitoringFileService.interrupt();
         }
         catch (ThreadDeath e) {
@@ -97,21 +96,20 @@ public class MonitoringFileServiceThreadTest {
 
     @Test
     public void test_monitoringService_monitors_for_new_messages() throws IOException {
+        try {
+            MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
 
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
+            monitoringFileService.start();
 
-        monitoringFileService.start();
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
 
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
-
-        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
-            .await().atMost(30, TimeUnit.SECONDS)
+            with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+                .await().atMost(30, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
 
-        verifySseEmiterAndCounter(2, 8, monitoringFileService);
+            verifySseEmiterAndCounter(2, 8, monitoringFileService);
 
-        try {
             monitoringFileService.interrupt();
         }
         catch (ThreadDeath e) {
@@ -121,20 +119,20 @@ public class MonitoringFileServiceThreadTest {
 
     @Test
     public void test_monitoringService_sends_all_messages_when_started() throws IOException {
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
-        FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
-
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
-
-        monitoringFileService.start();
-
-        verifySseEmiterAndCounter(2, 8, monitoringFileService);
-
-        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
-            .await().atMost(30, TimeUnit.SECONDS)
-            .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
-
         try {
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("111"), true);
+            FileUtils.writeLines(Paths.get(sampleLogFileStr).toFile(), List.of("222"), true);
+
+            MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
+
+            monitoringFileService.start();
+
+            verifySseEmiterAndCounter(2, 8, monitoringFileService);
+
+            with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+                .await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
+
             monitoringFileService.interrupt();
         }
         catch (ThreadDeath e) {
@@ -144,17 +142,17 @@ public class MonitoringFileServiceThreadTest {
 
     @Test
     public void test_monitoringService_no_messages_to_send() throws IOException {
-        MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
-
-        monitoringFileService.start();
-
-        verifySseEmiterAndCounter(0, 0, monitoringFileService);
-
-        with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
-            .await().atMost(30, TimeUnit.SECONDS)
-            .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
-
         try {
+            MonitoringFileServiceThread monitoringFileService = new MonitoringFileServiceThread(sampleLogFileStr, sseEmitter, 100, 600000);
+
+            monitoringFileService.start();
+
+            verifySseEmiterAndCounter(0, 0, monitoringFileService);
+
+            with().pollInterval(1, TimeUnit.SECONDS).and().with().pollDelay(1, TimeUnit.SECONDS)
+                .await().atMost(30, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertEquals(Thread.State.TIMED_WAITING, monitoringFileService.getState()));
+
             monitoringFileService.interrupt();
         }
         catch (ThreadDeath e) {

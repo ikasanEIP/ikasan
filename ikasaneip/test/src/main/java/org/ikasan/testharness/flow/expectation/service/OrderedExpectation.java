@@ -120,7 +120,7 @@ public class OrderedExpectation extends AbstractListExpectation
                             "  <%s>%n";
                     // @formatter:on
                     String message = String
-                        .format(format, formatList(new CopyOnWriteArrayList(expectations)), formatList(captures), expectation.getOrder(), expectation, capture);
+                        .format(formatList(new CopyOnWriteArrayList(expectations)), formatList(new CopyOnWriteArrayList(captures)), expectation.getOrder(), expectation, capture);
                     fail(message);
                 }
                 i++;
@@ -139,8 +139,8 @@ public class OrderedExpectation extends AbstractListExpectation
                 "  <%s>%n";
         // @formatter:on
         String message = String
-            .format(format, formatList(new CopyOnWriteArrayList(expectations)), formatList(captures), formatList(diff.getUnsatisfiedExpectations()),
-                formatList(diff.getUnexpectedCaptures()));
+            .format(formatList(new CopyOnWriteArrayList(expectations)), formatList(new CopyOnWriteArrayList(captures)), formatList(new CopyOnWriteArrayList(diff.getUnsatisfiedExpectations())),
+                formatList(new CopyOnWriteArrayList(diff.getUnexpectedCaptures())));
         fail(message);
     }
 }
