@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-ootb-module</artifactId>
-        <version>4.1.2-SNAPSHOT</version>
+        <version>5.0.0</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -78,8 +78,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.commons.compress>1.20</version.commons.compress>
         <version.com.h2database>2.2.224</version.com.h2database>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
@@ -87,7 +87,7 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-eip-standalone-bom</artifactId>
-                <version>4.1.2-SNAPSHOT</version>
+                <version>5.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

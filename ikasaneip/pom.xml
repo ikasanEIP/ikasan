@@ -42,7 +42,7 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>ikasan-build</artifactId>
-    <version>4.1.2-SNAPSHOT</version>
+    <version>5.0.0</version>
     <packaging>pom</packaging>
     <name>Ikasan Parent Project</name>
     <description>Ikasan Parent Project</description>
@@ -297,7 +297,7 @@
         <version.org.springframework.shell>3.2.1</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
-        <version.net.bytebuddy.byte-buddy>1.12.19</version.net.bytebuddy.byte-buddy>
+        <version.net.bytebuddy.byte-buddy>1.17.7</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>2.0.12</version.org.slf4j>
         <version.junit>4.13.1</version.junit>
         <version.org.awaitility>4.0.2</version.org.awaitility>
@@ -399,8 +399,8 @@
         <version.jakarta.transaction-api>2.0.1</version.jakarta.transaction-api>
         <version.jboss-transaction-spi>8.0.0.Final</version.jboss-transaction-spi>
         <version.commons-text>1.13.0</version.commons-text>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <!-- Distribution for releases -->
