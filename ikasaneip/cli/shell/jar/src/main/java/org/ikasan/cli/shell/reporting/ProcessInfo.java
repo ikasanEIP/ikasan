@@ -157,28 +157,28 @@ public class ProcessInfo
         return this;
     }
 
-    public ProcessInfo setProcess(Process process)
+    public synchronized ProcessInfo setProcess(Process process)
     {
         this.process = process;
-        if(process != null && process.info() != null)
+        if(this.process != null && this.process.info() != null)
         {
-            this.running = process.isAlive();
+            this.running = this.process.isAlive();
             this.pid = process.pid();
 
-            if (process.info().command().isPresent())
+            if (this.process.info().command().isPresent())
             {
-                this.command = process.info().command().get();
+                this.command = this.process.info().command().get();
             }
 
-            if (process.info().user().isPresent())
+            if (this.process.info().user().isPresent())
             {
-                this.username = process.info().user().get();
+                this.username = this.process.info().user().get();
             }
 
-            Optional<String> commandLine = process.info().commandLine();
+            Optional<String> commandLine = this.process.info().commandLine();
             if (commandLine.isPresent())
             {
-                this.commandLine = process.info().commandLine().get();
+                this.commandLine = this.process.info().commandLine().get();
             }
         }
 
