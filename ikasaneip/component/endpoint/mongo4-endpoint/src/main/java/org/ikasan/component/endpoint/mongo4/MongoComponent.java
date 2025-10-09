@@ -57,7 +57,7 @@ import java.util.*;
  * 
  * @author Ikasan Development Team
  */
-public abstract class MongoComponent implements ManagedResource, ConfiguredResource<MongoClientConfiguration>
+public abstract class MongoComponent<C extends MongoClientConfiguration> implements ManagedResource, ConfiguredResource<C>
 {
     /** logger instance */
     private static Logger logger = LoggerFactory.getLogger(MongoComponent.class);
@@ -66,7 +66,7 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     private String configuredResourceId;
 
     /** configuration */
-    protected MongoClientConfiguration configuration;
+    protected C configuration;
 
     /** is this a critical resource for startup of the flow */
     private boolean isCriticalOnStartup;
@@ -194,13 +194,13 @@ public abstract class MongoComponent implements ManagedResource, ConfiguredResou
     }
 
     @Override
-    public MongoClientConfiguration getConfiguration()
+    public C getConfiguration()
     {
         return this.configuration;
     }
 
     @Override
-    public void setConfiguration(MongoClientConfiguration configuration)
+    public void setConfiguration(C configuration)
     {
         this.configuration = configuration;
     }
