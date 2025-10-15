@@ -24,7 +24,7 @@ public class LocalBeanMigrationManagerTest extends AbstractTest {
         ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
 
         LocalBeanMigrationManager localBeanMigrationManager = new LocalBeanMigrationManager("com.ikasan.sample.spring.boot",
-             moduleFileManager, "jms-demo");
+             moduleFileManager, "target/jms-demo");
         localBeanMigrationManager.migrateSpringBeans(moduleMetaDataManifest);
     }
 }

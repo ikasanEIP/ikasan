@@ -13,8 +13,14 @@ import java.util.stream.Collectors;
 public class ModuleManifestMetaDataConfigurationModelAdapter {
 
 
-    public List<ComponentConfiguration> adapt(ModuleManifestMetaData moduleManifestMetaData, String moduleBasePackage)
-    {
+    /**
+     * Adapts the ModuleManifestMetaData to a list of ComponentConfiguration objects based on the provided module base package.
+     *
+     * @param moduleManifestMetaData The metadata of the module to adapt.
+     * @param moduleBasePackage The base package of the module to determine local components.
+     * @return A list of ComponentConfiguration objects adapted from the module metadata.
+     */
+    public List<ComponentConfiguration> adapt(ModuleManifestMetaData moduleManifestMetaData, String moduleBasePackage) {
         Map<String, FlowElementMetaData> componentsMap = new HashMap<>();
         if(moduleManifestMetaData.getModuleMetaData() != null && moduleManifestMetaData.getModuleMetaData().getFlows() != null) {
             for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
@@ -54,6 +60,12 @@ public class ModuleManifestMetaDataConfigurationModelAdapter {
     }
 
 
+    /**
+     * Retrieves a ConfigurationParameter object based on the provided ConfigurationParameterMetaData.
+     *
+     * @param configurationParameterMetaData The metadata of the configuration parameter.
+     * @return A ConfigurationParameter object with updated properties based on the metadata.
+     */
     private ConfigurationParameter getConfigurationParameter(ConfigurationParameterMetaData configurationParameterMetaData) {
         ConfigurationParameter configurationParameter = new ConfigurationParameter();
         configurationParameter.setName(configurationParameterMetaData.getName());

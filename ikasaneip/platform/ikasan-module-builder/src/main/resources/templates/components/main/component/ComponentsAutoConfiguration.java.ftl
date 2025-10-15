@@ -44,9 +44,14 @@ private String brokerUrl;
         <@endpoints.jmsConsumer component/>
     <#elseif component.implementingClass == "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer">
         <@endpoints.jmsProducer component/>
+    <#-- todo need to work out how to narrow to SftpConsumer -->
+    <#elseif component.implementingClass == "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
+        <@endpoints.sftpConsumer component/>
+    <#elseif component.implementingClass == "org.ikasan.endpoint.sftp.producer.SftpProducer">
+        <@endpoints.sftpProducer component/>
     <#else>
         <#if component.isConfigured >
-            ${component.className} component = new ${component.className}();
+            ${component.className} component = new ${component.className}(<#if component.constructorMetaData??><#list component.constructorMetaData as constructorMetaData></#list></#if>);
             component.setConfiguredResourceId("${component.configurationId}");
             component.setConfiguration(configuration);
 

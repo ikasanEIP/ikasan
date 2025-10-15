@@ -9,11 +9,7 @@ import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.Translator;
-import org.ikasan.spec.metadata.ModuleManifestMetaData;
-import org.ikasan.spec.metadata.ConfigurationMetaData;
-import org.ikasan.spec.metadata.FlowElementMetaData;
-import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.spec.metadata.Transition;
+import org.ikasan.spec.metadata.*;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -42,7 +38,14 @@ public class ModuleManifestMetaDataModuleModelAdapter {
                 collect(Collectors.toMap(metaData -> metaData.getConfigurationId(), metaData -> metaData));
         }
 
-        ModuleModel model = new ModuleModel(moduleManifestMetaData.getModuleMetaData().getName(), moduleBasePackage);
+        ModuleManifestMetaDataImportedResourcesAdapter importedResourcesAdapter = new ModuleManifestMetaDataImportedResourcesAdapter();
+        List<ImportedResourceMetaData> importedConfigurationResources = importedResourcesAdapter.adapt(moduleManifestMetaData, moduleBasePackage,
+            ImportedResourceMetaData.IMPORTED_CONFIGURATION_CLASS);
+        List<ImportedResourceMetaData> importedXmlResources = importedResourcesAdapter.adapt(moduleManifestMetaData, moduleBasePackage,
+            ImportedResourceMetaData.IMPORTED_XML_RESOURCE);
+
+        ModuleModel model = new ModuleModel(moduleManifestMetaData.getModuleMetaData().getName(), moduleBasePackage,
+            importedConfigurationResources, importedXmlResources);
         for(FlowMetaData flowMetaData: moduleManifestMetaData.getModuleMetaData().getFlows())
         {
             model.addFlow(this.manageFlow(flowMetaData, configurationMetaDataMap, moduleBasePackage));
@@ -93,19 +96,16 @@ public class ModuleManifestMetaDataModuleModelAdapter {
             || flowElement.getComponentType().equals(Splitter.class.getName())
             || flowElement.getComponentType().equals(Filter.class.getName())
             || flowElement.getComponentType().equals(Broker.class.getName())
-            || flowElement.getComponentType().equals(Producer.class.getName()))
-        {
+            || flowElement.getComponentType().equals(Producer.class.getName())) {
             Component node =  manageSingleTransition(flowElement, transitions, flowElements, configurationMetaDataMap);
             return node;
         }
         else if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName())||
-            flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
-        {
+            flowElement.getComponentType().equals(MultiRecipientRouter.class.getName())) {
             Component node = manageMultiTransition(flowElement, transitions, flowElements, configurationMetaDataMap);
             return node;
         }
-        else
-        {
+        else {
             throw new IllegalArgumentException("Unknown component type encountered");
         }
     }
@@ -123,40 +123,32 @@ public class ModuleManifestMetaDataModuleModelAdapter {
                                                          Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
     {
 
-        if (flowElement.getComponentType().equals(Producer.class.getName()))
-        {
+        if (flowElement.getComponentType().equals(Producer.class.getName())) {
             return this.manageProducers(flowElement, configurationMetaDataMap);
         }
 
         // As the name of this method implies, this method only deals with components that have a single transition so get the first.
         FlowElementMetaData flowElementMetaData = this.getTransitions(flowElement, transitions, flowElements).get(0);
 
-        if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName()))
-        {
+        if (flowElement.getComponentType().equals(org.ikasan.spec.component.endpoint.Consumer.class.getName())) {
             return this.manageConsumers(flowElement, flowElementMetaData, transitions, flowElements, configurationMetaDataMap);
         }
-        else if (flowElement.getComponentType().equals(Converter.class.getName()))
-        {
+        else if (flowElement.getComponentType().equals(Converter.class.getName())) {
             return this.manageConverter(flowElement, flowElementMetaData, transitions, flowElements, configurationMetaDataMap);
         }
-        else if (flowElement.getComponentType().equals(Translator.class.getName()))
-        {
+        else if (flowElement.getComponentType().equals(Translator.class.getName())) {
             return this.manageTranslator(flowElement, flowElementMetaData, transitions, flowElements, configurationMetaDataMap);
         }
-        else if (flowElement.getComponentType().equals(Splitter.class.getName()))
-        {
+        else if (flowElement.getComponentType().equals(Splitter.class.getName())) {
             return this.manageSplitter(flowElement, flowElementMetaData, transitions, flowElements, configurationMetaDataMap);
         }
-        else if (flowElement.getComponentType().equals(Filter.class.getName()))
-        {
+        else if (flowElement.getComponentType().equals(Filter.class.getName())) {
             return this.manageFilter(flowElement, flowElementMetaData, transitions, flowElements, configurationMetaDataMap);
         }
-        else if (flowElement.getComponentType().equals(Broker.class.getName()))
-        {
+        else if (flowElement.getComponentType().equals(Broker.class.getName())) {
             return this.manageBroker(flowElement, flowElementMetaData, transitions, flowElements, configurationMetaDataMap);
         }
-        else
-        {
+        else {
             throw new IllegalArgumentException("Unknown component type encountered");
         }
 
@@ -173,21 +165,17 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @return The Component representing the transition managed based on the FlowElement's type.
      */
     protected Component manageMultiTransition(FlowElementMetaData flowElement, List<Transition> transitions,
-                                                        Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
-    {
+                                                        Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
         List<FlowElementMetaData> flowElementMetaDataTransitions
             = this.getTransitions(flowElement, transitions, flowElements);
 
-        if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName()))
-        {
+        if (flowElement.getComponentType().equals(SingleRecipientRouter.class.getName())) {
             return this.manageSingleRecipientRouter(flowElement, transitions, flowElements, configurationMetaDataMap, flowElementMetaDataTransitions);
         }
-        else if (flowElement.getComponentType().equals(MultiRecipientRouter.class.getName()))
-        {
+        else if (flowElement.getComponentType().equals(MultiRecipientRouter.class.getName())) {
             return this.manageMultiRecipientRouter(flowElement, transitions, flowElements, configurationMetaDataMap, flowElementMetaDataTransitions);
         }
-        else
-        {
+        else {
             throw new IllegalArgumentException("Unknown component type encountered");
         }
     }
@@ -200,8 +188,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @param configurationMetaDataMap The map containing configuration metadata for the flow.
      * @return A new ProducerComponent object representing the managed producer.
      */
-    private Component manageProducers(FlowElementMetaData flowElement, Map<String, ConfigurationMetaData> configurationMetaDataMap)
-    {
+    private Component manageProducers(FlowElementMetaData flowElement, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
         return new ProducerComponent(flowElement.getComponentName(), flowElement.getImplementingClass(), null);
     }
 
@@ -216,8 +203,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @return A new ConsumerComponent for the given flow element.
      */
     private Component manageConsumers(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
-                                                Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
-    {
+                                                Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
         return new ConsumerComponent(flowElement.getComponentName(), flowElement.getImplementingClass()
             , manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap));
     }
@@ -232,8 +218,8 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @param configurationMetaDataMap map of configuration metadata by name
      * @return a new ConverterComponent based on the input parameters
      */
-    private Component manageConverter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions, Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
-    {
+    private Component manageConverter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions
+        , Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
         return new ConverterComponent(flowElement.getComponentName(), flowElement.getImplementingClass()
             , manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap));
     }
@@ -249,8 +235,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @return a new TranslatorComponent instance
      */
     private Component manageTranslator(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
-                                                 Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
-    {
+                                                 Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
         return new TranslatorComponent(flowElement.getComponentName(), flowElement.getImplementingClass()
             , manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap));
     }
@@ -266,8 +251,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @return A new SplitterComponent instance based on the provided metadata.
      */
     private Component manageSplitter(FlowElementMetaData flowElement, FlowElementMetaData flowElementMetaData, List<Transition> transitions,
-                                               Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap)
-    {
+                                               Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap) {
         return new SplitterComponent(flowElement.getComponentName(), flowElement.getImplementingClass()
             , manageFlowElement(flowElementMetaData, transitions, flowElements, configurationMetaDataMap));
     }
@@ -316,8 +300,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      */
     private Component manageSingleRecipientRouter(FlowElementMetaData flowElement, List<Transition> transitions,
                                                             Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap,
-                                                            List<FlowElementMetaData> flowElementMetaDataTransitions)
-    {
+                                                            List<FlowElementMetaData> flowElementMetaDataTransitions) {
         SingleRecipientRouterComponent router = new SingleRecipientRouterComponent(flowElement.getComponentName(), flowElement.getImplementingClass());
 
         flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
@@ -339,8 +322,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      */
     private Component manageMultiRecipientRouter(FlowElementMetaData flowElement, List<Transition> transitions,
                                                  Map<String, FlowElementMetaData> flowElements, Map<String, ConfigurationMetaData> configurationMetaDataMap,
-                                                 List<FlowElementMetaData> flowElementMetaDataTransitions)
-    {
+                                                 List<FlowElementMetaData> flowElementMetaDataTransitions) {
         MultiRecipientRouterComponent router = new MultiRecipientRouterComponent(flowElement.getComponentName(), flowElement.getImplementingClass());
 
         flowElementMetaDataTransitions.stream().forEach(flowElementMetaData ->
@@ -358,8 +340,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      *
      * @param transitions the list of transitions to build the label map from
      */
-    protected void buildToTransitionLabelMap(List<Transition> transitions)
-    {
+    protected void buildToTransitionLabelMap(List<Transition> transitions) {
         for(Transition transition: transitions)
         {
             if (this.toTransitionLabelMap.containsKey(transition.getTo()))
@@ -389,8 +370,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @return a List of FlowElementMetaData representing transitions for the input FlowElementMetaData
      */
     protected List<FlowElementMetaData> getTransitions(FlowElementMetaData flowElement, List<Transition> transitions,
-                                                       Map<String, FlowElementMetaData> flowElements)
-    {
+                                                       Map<String, FlowElementMetaData> flowElements) {
         return transitions.stream()
             .filter(transition -> transition.getFrom().equals(flowElement.getComponentName()))
             .map(transition -> flowElements.get(transition.getTo()))
@@ -405,8 +385,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @param <T> The type of elements in the list.
      * @return A new list containing distinct elements.
      */
-    private static <T> List<T> distinctList(List<T> list, Function<? super T, ?>... keyExtractors)
-    {
+    private static <T> List<T> distinctList(List<T> list, Function<? super T, ?>... keyExtractors) {
         return list
             .stream()
             .filter(distinctByKeys(keyExtractors))
@@ -420,12 +399,10 @@ public class ModuleManifestMetaDataModuleModelAdapter {
      * @param keyExtractors the key extractors to extract unique keys from elements
      * @return the predicate to filter elements based on unique keys
      */
-    private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors)
-    {
+    private static <T> Predicate<T> distinctByKeys(Function<? super T, ?>... keyExtractors) {
         final Map<List<?>, Boolean> seen = new ConcurrentHashMap<>();
 
-        return t ->
-        {
+        return t -> {
 
             final List<?> keys = Arrays.stream(keyExtractors)
                 .map(ke -> ke.apply(t))

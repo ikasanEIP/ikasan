@@ -10,10 +10,7 @@ import org.ikasan.module.builder.model.configuration.ComponentConfiguration;
 import org.ikasan.module.builder.model.manifest.EnrichedModuleManifestMetaData;
 import org.ikasan.module.builder.model.module.FlowModel;
 import org.ikasan.module.builder.model.module.ModuleModel;
-import org.ikasan.module.builder.service.ModuleManifestMetaDataComponentModelAdapter;
-import org.ikasan.module.builder.service.ModuleManifestMetaDataConfigurationModelAdapter;
-import org.ikasan.module.builder.service.ModuleManifestMetaDataModuleModelAdapter;
-import org.ikasan.module.builder.service.ModuleManifestMetaDataModulePropertiesModelAdapter;
+import org.ikasan.module.builder.service.*;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
 import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
 import org.ikasan.spec.metadata.*;
@@ -233,11 +230,18 @@ public class ModuleGenerator {
     public void generateComponentAutoConfiguration(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
         ModuleManifestMetaDataConfigurationModelAdapter configurationModelAdapter = new ModuleManifestMetaDataConfigurationModelAdapter();
         List<ComponentConfiguration> componentConfigurations = configurationModelAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage);
+
         ModuleManifestMetaDataComponentModelAdapter componentModelAdapter = new ModuleManifestMetaDataComponentModelAdapter();
         List<Component> components = componentModelAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage, false);
 
+        ModuleManifestMetaDataImportedResourcesAdapter importedResourcesAdapter = new ModuleManifestMetaDataImportedResourcesAdapter();
+        List<ImportedResourceMetaData> importedConfigurationResources = importedResourcesAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage,
+            ImportedResourceMetaData.IMPORTED_CONFIGURATION_CLASS);
+        List<ImportedResourceMetaData> importedXmlResources = importedResourcesAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage,
+            ImportedResourceMetaData.IMPORTED_XML_RESOURCE);
+
         ComponentAutoConfiguration componentAutoConfiguration = new ComponentAutoConfiguration
-            (this.migrationProjectBasePackage, components, componentConfigurations);
+            (this.migrationProjectBasePackage, components, componentConfigurations, importedConfigurationResources, importedXmlResources);
         File componentAutoConfigPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
             , componentAutoConfiguration.getPackageName().replaceAll("\\.", "/"));
 

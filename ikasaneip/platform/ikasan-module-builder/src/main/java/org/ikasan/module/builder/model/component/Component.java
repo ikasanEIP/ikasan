@@ -1,6 +1,5 @@
 package org.ikasan.module.builder.model.component;
 
-import org.ikasan.spec.metadata.ConfigurationMetaData;
 import org.ikasan.spec.metadata.ConstructorMetaData;
 import org.ikasan.spec.metadata.ParameterizedType;
 

@@ -13,7 +13,7 @@ server.servlet.context-path=/jms-demo
 server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar,mchange-commons-java-0.2.15.jar
 spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration,org.ikasan.backup.IkasanBackupAutoConfiguration
 
-spring.liquibase.change-log=classpath:db-changelog.xml
+spring.liquibase.change-log=classpath:db-changelog-master.xml
 spring.liquibase.enabled=true
 spring.liquibase.drop-first=true
 
@@ -62,7 +62,7 @@ ikasan.exceptions.stopClasses[0]=java.lang.RuntimeException
                     # ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}[0]=value
                 </#if>
             <#else>
-                ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}=<#if param.value??>${param.value}</#if>
+                <#if param.value??><#else>#</#if>${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}=<#if param.value??>${param.value}</#if>
             </#if>
         </#list>
     </#compress>

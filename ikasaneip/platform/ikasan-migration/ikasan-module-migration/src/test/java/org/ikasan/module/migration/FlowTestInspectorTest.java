@@ -17,23 +17,9 @@ class   FlowTestInspectorTest {
 
     @Test
     public void test_against_real_project() throws IOException, XmlPullParserException, TemplateException {
-//        FlowTestInspector inspector = new FlowTestInspector();
-//        List<File> flowTests = inspector.findFlowTests(new File("/Users/mick/workspace/archetype/jms-demo"));
-//        assertEquals(1, flowTests.size());
-//        assertEquals("JmsSampleFlowTest.java", flowTests.get(0).getName());
-//
-//        TestClassEditor testClassEditor = new TestClassEditor("com.ikasan.sample.spring.boot", flowTests.get(0)
-//        , new File("/Users/mick/workspace/archetype/moduleMetaData.json"), new File("/Users/mick/workspace/archetype/springContext.json"));
-//        testClassEditor.addMetaDataGenerationMethod("metadata_extractor");
-//        testClassEditor.addAutowiredApplicationContext(flowTests.get(0));
-//        testClassEditor.addJsonConfigurationMetaDataExtractor(flowTests.get(0));
-//        testClassEditor.addJsonModuleMetaDataProvider(flowTests.get(0));
-//        PomEditor.addDependency(new File("/Users/mick/workspace/archetype/jms-demo/jar/pom.xml")
-//            , "org.ikasan","ikasan-manifest", "4.1.2-SNAPSHOT");
-
-        ModuleMigration migration = new ModuleMigration("jms-demo", "/Users/mick/workspace/archetype/jms-demo"
-            , "com.ikasan.sample.spring.boot", "migration-working"
-            , "JmsSampleFlowTest", "org.ikasan");
-        assertThrows(RuntimeException.class, () -> migration.migrate());
+        ModuleMigration migration = new ModuleMigration("sftp-jms-im-4-1-x", "/Users/mick/workspace/archetype/sftp-jms-im-4-1-x"
+            , "com.ikasan.sample.spring.boot", "/Users/mick/workspace/migration-working"
+            , "JmsToSftpFlowTest", "org.ikasan");
+        migration.migrate();
     }
 }

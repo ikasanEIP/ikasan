@@ -11,6 +11,7 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     private List<ParameterizedType> parameterizedTypes;
     private List<ConstructorMetaData> constructorMetaData;
     private List<BeanDefinitionMetaData> beanDefinitionMetaData;
+    private List<ImportedResourceMetaData> importedResourceMetaData;
 
     @Override
     public ModuleMetaData getModuleMetaData() {
@@ -70,5 +71,15 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     @Override
     public void setBeanDefinitionMetaData(List<BeanDefinitionMetaData> beanDefinitionMetaData) {
         this.beanDefinitionMetaData = beanDefinitionMetaData;
+    }
+
+    @Override
+    public List<ImportedResourceMetaData> getImportedResourceMetaData() {
+        return importedResourceMetaData;
+    }
+
+    @Override
+    public void setImportedResourceMetaData(List<ImportedResourceMetaData> importedResourceMetaData) {
+        this.importedResourceMetaData = importedResourceMetaData;
     }
 }

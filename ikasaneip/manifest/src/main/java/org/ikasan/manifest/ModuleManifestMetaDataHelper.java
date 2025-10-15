@@ -30,6 +30,7 @@ public class ModuleManifestMetaDataHelper {
         m.addAbstractTypeMapping(BeanDefinitionMetaData.class, BeanDefinitionMetaDataImpl.class);
         m.addAbstractTypeMapping(ParameterizedType.class, ParameterizedTypeImpl.class);
         m.addAbstractTypeMapping(TypeParameter.class, TypeParameterImpl.class);
+        m.addAbstractTypeMapping(ImportedResourceMetaData.class, ImportedResourceMetaDataImpl.class);
 
         MAPPER.registerModule(m);
     }

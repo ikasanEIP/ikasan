@@ -16,10 +16,11 @@ import ${moduleBasePackage}.ComponentsAutoConfiguration;
 
 @Configuration
 @ImportResource( {
-    "classpath:ikasan-transaction-pointcut-jms.xml",
-    "classpath:h2-datasource-conf.xml"
+    <#list importedXmlResources as importedXmlResource>
+        "${importedXmlResource.resource}"<#if importedXmlResource?has_next>, </#if>
+    </#list>
 } )
-@Import({ ComponentsAutoConfiguration.class})
+@Import({ ComponentsAutoConfiguration.class, <#list importedClassConfigurationResources as importedClassConfigurationResource>${importedClassConfigurationResource.resource}.class<#if importedClassConfigurationResource?has_next>, </#if></#list>})
 public class ModuleConfig
 {
     @Value("${"$"}{module.name}")
