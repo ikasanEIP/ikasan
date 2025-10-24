@@ -72,6 +72,9 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     QuartzSchedulerJobEventFlowFactory quartzSchedulerJobEventFlowFactory;
 
     @Resource
+    QuartzSchedulerFileEventJobFlowFactory quartzSchedulerFileEventJobFlowFactory;
+
+    @Resource
     FileEventSchedulerJobFlowFactory fileEventSchedulerJobFlowFactory;
 
     @Resource
@@ -91,19 +94,16 @@ public class SchedulerAgentFlowFactory implements FlowFactory
             }
             switch (profile) {
                 case AgentFlowProfiles.FILE: {
-                    return this.createFileEventFlows(jobName);
+                    logger.info("Creating flow for job: " + jobName);
+                    return this.createQuartzSchedulerFileEventJobFlowFactory(jobName);
                 }
                 case AgentFlowProfiles.SCHEDULER_JOB: {
+                    logger.info("Creating flow for job: " + jobName);
                     return this.createSchedulerJobFlows(jobName);
                 }
                 case AgentFlowProfiles.QUARTZ: {
+                    logger.info("Creating flow for job: " + jobName);
                     return this.createQuartzFlows(jobName);
-                }
-                case AgentFlowProfiles.OUTBOUND: {
-                    return this.createOutboundScheduledEventFlows();
-                }
-                case AgentFlowProfiles.HOUSEKEEP_LOG: {
-                    return this.createHousekeepLogFilesFlows();
                 }
                 default: {
                     throw new RuntimeException(String.format("Unknown profile[%s] encountered in flow factory!", profile));
@@ -131,8 +131,8 @@ public class SchedulerAgentFlowFactory implements FlowFactory
      * @param jobName
      * @return
      */
-    private List<Flow> createFileEventFlows(String jobName) {
-        return List.of(this.fileEventSchedulerJobFlowFactory.create(jobName));
+    private List<Flow> createQuartzSchedulerFileEventJobFlowFactory(String jobName) throws IOException {
+        return List.of(this.quartzSchedulerFileEventJobFlowFactory.create(jobName));
     }
 
     /**
@@ -163,6 +163,17 @@ public class SchedulerAgentFlowFactory implements FlowFactory
      */
     private List<Flow> createHousekeepLogFilesFlows() throws IOException {
         return List.of(this.housekeepLogFilesFlowFactory.create());
+    }
+
+    /**
+     * Creates a list of flows for file watcher job event based on the provided job name.
+     *
+     * @param jobName the name of the job for which the flows will be created
+     * @return a list of flow instances for the specified job
+     * @throws IOException if an IO error occurs during flow creation
+     */
+    private List<Flow> createFileWatcherJobEventFlows(String jobName) throws IOException {
+        return List.of(this.fileEventSchedulerJobFlowFactory.create(jobName));
     }
 }
 

@@ -1,14 +1,13 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.QuartzScheduleDrivenJobImpl;
 import org.ikasan.module.ConfiguredModuleImpl;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.FileWatcherJobConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
@@ -32,17 +31,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.FILE;
 import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.QUARTZ;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -70,13 +67,13 @@ public class JobProvisionServiceImplTest {
     private Flow flow;
 
     @Mock
-    private FlowElement fileConsumerElement;
+    private FlowElement fileWatcherJobConverterElement;
 
     @Mock
-    private ConfiguredResource<CorrelatedFileConsumerConfiguration> fileConsumer;
+    private ConfiguredResource<FileWatcherJobConverterConfiguration> fileWatcherJob;
 
     @Mock
-    private CorrelatedFileConsumerConfiguration fileConsumerConfiguration;
+    private FileWatcherJobConverterConfiguration fileWatcherJobConverterConfiguration;
 
     @Mock
     private FlowElement converterElement;
@@ -112,15 +109,6 @@ public class JobProvisionServiceImplTest {
     @Mock SchedulerFileFilterConfiguration schedulerFileFilterConfiguration;
 
     @Mock
-    private FlowElement moveFileBrokerElement;
-
-    @Mock
-    private ConfiguredResource<MoveFileBrokerConfiguration> moveFileBroker;
-
-    @Mock
-    MoveFileBrokerConfiguration moveFileBrokerConfiguration;
-
-    @Mock
     IkasanAuthentication ikasanAuthentication;
 
     @Mock
@@ -151,6 +139,9 @@ public class JobProvisionServiceImplTest {
     AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
     @Mock
+    Configuration configuration;
+
+    @Mock
     Flow flow1;
 
     @Mock
@@ -168,6 +159,13 @@ public class JobProvisionServiceImplTest {
     @InjectMocks
     private JobProvisionServiceImpl service;
 
+    @Test(expected = JobProvisionServiceException.class)
+    public void test_provision_exception() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        this.service.provisionJobs(this.getJobs(), "system");
+    }
+
     @Test
     public void test_provision_success() {
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
@@ -176,57 +174,39 @@ public class JobProvisionServiceImplTest {
 
         this.service.provisionJobs(this.getJobs(), "system");
 
-        verify(scheduledConsumerConfiguration, times(1)).setJobName(anyString());
-        verify(scheduledConsumerConfiguration, times(1)).setJobGroupName(anyString());
-        verify(scheduledConsumerConfiguration, times(1)).setDescription(anyString());
-        verify(scheduledConsumerConfiguration, times(1)).setCronExpression(anyString());
-        verify(scheduledConsumerConfiguration, times(1)).setTimezone(anyString());
-        verify(scheduledConsumerConfiguration, times(1)).setEager(anyBoolean());
-        verify(scheduledConsumerConfiguration, times(1)).setIgnoreMisfire(anyBoolean());
-        verify(scheduledConsumerConfiguration, times(1)).setMaxEagerCallbacks(anyInt());
-        verify(scheduledConsumerConfiguration, times(1)).setPassthroughProperties(anyMap());
-        verify(scheduledConsumerConfiguration, times(1)).setPersistentRecovery(anyBoolean());
-        verify(scheduledConsumerConfiguration, times(1)).setRecoveryTolerance(anyLong());
+        verify(scheduledConsumerConfiguration, times(2)).setJobName(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setJobGroupName(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setDescription(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setCronExpression(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setTimezone(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setEager(anyBoolean());
+        verify(scheduledConsumerConfiguration, times(2)).setIgnoreMisfire(anyBoolean());
+        verify(scheduledConsumerConfiguration, times(2)).setMaxEagerCallbacks(anyInt());
+        verify(scheduledConsumerConfiguration, times(2)).setPassthroughProperties(anyMap());
+        verify(scheduledConsumerConfiguration, times(2)).setPersistentRecovery(anyBoolean());
+        verify(scheduledConsumerConfiguration, times(2)).setRecoveryTolerance(anyLong());
 
-        verify(fileConsumerConfiguration, times(1)).setJobName(anyString());
-        verify(fileConsumerConfiguration, times(1)).setJobGroupName(anyString());
-        verify(fileConsumerConfiguration, times(1)).setDescription(anyString());
-        verify(fileConsumerConfiguration, times(1)).setCronExpression(anyString());
-        verify(fileConsumerConfiguration, times(1)).setTimezone(anyString());
-        verify(fileConsumerConfiguration, times(1)).setEager(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setIgnoreMisfire(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setMaxEagerCallbacks(anyInt());
-        verify(fileConsumerConfiguration, times(1)).setPassthroughProperties(anyMap());
-        verify(fileConsumerConfiguration, times(1)).setPersistentRecovery(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setRecoveryTolerance(anyLong());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setJobName(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFilename(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFilePath(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFileNameSpelExpression(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFilePathSpelExpression(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setContextName(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setMoveDirectory(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setMinFileAgeSeconds(anyInt());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setChildContextNames(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setBlackoutWindowCronExpressions(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setBlackoutWindowDateTimeRanges(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setSlaCronExpression(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setTimeZone(anyString());
 
-        verify(fileAgeFilterConfiguration, times(1)).setFileAgeSeconds((anyInt()));
-        verify(moveFileBrokerConfiguration, times(1)).setMoveDirectory((anyString()));
-
-        verify(fileConsumerConfiguration, times(1)).setFilenames(anyList());
-        verify(fileConsumerConfiguration, times(1)).setFilePath(anyString());
-        verify(fileConsumerConfiguration, times(1)).setDirectoryDepth(anyInt());
-        verify(fileConsumerConfiguration, times(1)).setEncoding(anyString());
-        verify(fileConsumerConfiguration, times(1)).setIgnoreFileRenameWhilstScanning(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setIncludeHeader(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setLogMatchedFilenames(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setIgnoreMisfire(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setIncludeTrailer(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setSortAscending(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setSortByModifiedDateTime(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setDynamicFileName(anyBoolean());
-        verify(fileConsumerConfiguration, times(1)).setFileNameSpelExpression(anyString());
-        verify(fileConsumerConfiguration, times(1)).setFilePathSpelExpression(anyString());
-
-        verify(schedulerFileFilterConfiguration, times(1)).setJobName(anyString());
-
-        verify(converterConfiguration, times(2)).setContextName(anyString());
-        verify(converterConfiguration, times(2)).setJobName(anyString());
-        verify(converterConfiguration, times(2)).setChildContextNames(anyList());
+        verify(converterConfiguration, times(1)).setContextName(anyString());
+        verify(converterConfiguration, times(1)).setJobName(anyString());
+        verify(converterConfiguration, times(1)).setChildContextNames(anyList());
 
         verify(agentInstanceRecoveryManager, times(1)).init();
 
-        verifyNoMoreInteractions(fileConsumerConfiguration);
+        verifyNoMoreInteractions(fileWatcherJobConverterConfiguration);
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
         verifyNoMoreInteractions(agentInstanceRecoveryManager);
@@ -247,7 +227,7 @@ public class JobProvisionServiceImplTest {
 
         when(moduleService.getModule(null)).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configuration);
-        when(module.getFlows()).thenReturn(List.of(flow1, flow2, flow3));
+        when(module.getFlows()).thenReturn(List.of(flow1, flow2, flow3).stream().collect(Collectors.toList()));
         when(flow1.getName()).thenReturn("fileEventDrivenJobName");
         when(flow2.getName()).thenReturn("quartzScheduleDrivenJobName");
 
@@ -259,7 +239,7 @@ public class JobProvisionServiceImplTest {
         verify(flow2, times(4)).getName();
         verify(flow3, times(1)).getName();
 
-        verifyNoMoreInteractions(fileConsumerConfiguration
+        verifyNoMoreInteractions(fileWatcherJobConverterConfiguration
             , moduleActivator
             , scheduledConsumerConfiguration
             , converterConfiguration
@@ -276,37 +256,91 @@ public class JobProvisionServiceImplTest {
         Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
     }
 
+    @Test
+    public void test_remove_jobs_for_context_success() {
+        this.setupWhen();
+
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        SchedulerAgentConfiguredModuleConfiguration configuration = new SchedulerAgentConfiguredModuleConfiguration();
+        configuration.setFlowContextMap(this.getJobContextMap("contextName"));
+        configuration.setFlowDefinitions(this.getJobContextMap());
+        configuration.setFlowDefinitionProfiles(this.getJobProfileMap());
+
+        Assert.assertEquals(3, configuration.getFlowContextMap().size());
+        Assert.assertEquals(3, configuration.getFlowDefinitions().size());
+        Assert.assertEquals(2, configuration.getFlowDefinitionProfiles().size());
+
+        when(moduleService.getModule(null)).thenReturn(module);
+        when(module.getConfiguration()).thenReturn(configuration);
+        when(module.getFlows()).thenReturn(List.of(flow, flow2, flow3).stream().collect(Collectors.toList()));
+        when(flow.getName()).thenReturn("fileEventDrivenJobName");
+        when(flow2.getName()).thenReturn("quartzScheduleDrivenJobName");
+        when(configurationManagement.getConfiguration(anyString())).thenReturn(this.configuration);
+
+        this.service.removeJobs("contextName");
+
+        verify(moduleActivator).deactivate(module);
+        verify(moduleActivator).activate(module);
+        verify(flow, times(4)).getName();
+        verify(flow, times(2)).getFlowElement(anyString());
+        verify(flow2, times(5)).getName();
+        verify(flow2, times(4)).getFlowElement(anyString());
+        verify(flow3, times(1)).getName();
+
+        verify(configurationManagement, times(6)).getConfiguration(anyString());
+        verify(configurationManagement, times(6)).deleteConfiguration(any());
+
+        verifyNoMoreInteractions(fileWatcherJobConverterConfiguration
+            , moduleActivator
+            , scheduledConsumerConfiguration
+            , converterConfiguration
+            , flow
+            , flow2
+            , flow3
+            , flowElement
+            , configuredResource
+            , configurationManagement
+            , agentInstanceRecoveryManager);
+
+        Assert.assertEquals(0, configuration.getFlowContextMap().size());
+        Assert.assertEquals(0, configuration.getFlowDefinitions().size());
+        Assert.assertEquals(0, configuration.getFlowDefinitionProfiles().size());
+    }
+
 
 
     private void setupWhen() {
         when(moduleService.getModule(null)).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModuleConfiguration);
         when(module.getFlow(anyString())).thenReturn(flow);
-        when(flow.getFlowElement("File Consumer")).thenReturn(fileConsumerElement);
-        when(fileConsumerElement.getFlowComponent()).thenReturn(fileConsumer);
-        when(fileConsumer.getConfiguration()).thenReturn(fileConsumerConfiguration);
+        when(flow.getFlowElement("JobExecution to FileWatcherJobEvent")).thenReturn(fileWatcherJobConverterElement);
+        when(fileWatcherJobConverterElement.getFlowComponent()).thenReturn(fileWatcherJob);
+        when(fileWatcherJob.getConfiguration()).thenReturn(fileWatcherJobConverterConfiguration);
+        when(fileWatcherJob.getConfiguredResourceId()).thenReturn("id");
+        when(fileWatcherJobConverterElement.getFlowComponent()).thenReturn(fileWatcherJob);
+        when(fileWatcherJob.getConfiguration()).thenReturn(fileWatcherJobConverterConfiguration);
+        when(fileWatcherJobConverterElement.getFlowComponent()).thenReturn(fileWatcherJob);
+        when(fileWatcherJob.getConfiguration()).thenReturn(fileWatcherJobConverterConfiguration);
         when(flow.getFlowElement("JobExecution to ScheduledStatusEvent")).thenReturn(converterElement);
+        when(flow2.getFlowElement("JobExecution to ScheduledStatusEvent")).thenReturn(converterElement);
         when(converterElement.getFlowComponent()).thenReturn(converter);
         when(converter.getConfiguration()).thenReturn(converterConfiguration);
+        when(converter.getConfiguredResourceId()).thenReturn("id");
         when(flow.getFlowElement("Scheduled Consumer")).thenReturn(scheduledConsumerElement);
+        when(flow2.getFlowElement("Scheduled Consumer")).thenReturn(scheduledConsumerElement);
         when(scheduledConsumerElement.getFlowComponent()).thenReturn(scheduledConsumer);
         when(scheduledConsumer.getConfiguration()).thenReturn(scheduledConsumerConfiguration);
-        when(flow.getFlowElement("File Age Filter")).thenReturn(fileAgeFilterElement);
-        when(fileAgeFilterElement.getFlowComponent()).thenReturn(fileAgeFilter);
-        when(fileAgeFilter.getConfiguration()).thenReturn(fileAgeFilterConfiguration);
-        when(flow.getFlowElement("File Move Broker")).thenReturn(moveFileBrokerElement);
-        when(moveFileBrokerElement.getFlowComponent()).thenReturn(moveFileBroker);
-        when(moveFileBroker.getConfiguration()).thenReturn(moveFileBrokerConfiguration);
-        when(flow.getFlowElement("Context Instance Active Filter")).thenReturn(contextFilterElement);
-        when(contextFilterElement.getFlowComponent()).thenReturn(contextFilter);
-        when(flow.getFlowElement("Duplicate Message Filter")).thenReturn(duplicateMessageFilterElement);
-        when(duplicateMessageFilterElement.getFlowComponent()).thenReturn(duplicateMessageFilter);
-        when(duplicateMessageFilter.getConfiguration()).thenReturn(schedulerFileFilterConfiguration);
+        when(scheduledConsumer.getConfiguredResourceId()).thenReturn("id");
         when(flow.getFlowElement("Blackout Router")).thenReturn(blackoutRouterElement);
+        when(flow2.getFlowElement("Blackout Router")).thenReturn(blackoutRouterElement);
         when(blackoutRouterElement.getFlowComponent()).thenReturn(blackoutRouter);
         when(blackoutRouter.getConfiguration()).thenReturn(blackoutRouterConfiguration);
+        when(blackoutRouter.getConfiguredResourceId()).thenReturn("id");
         when(flow.getFlowElement("Publish Scheduled Status")).thenReturn(scheduledStatusFilterElement);
+        when(flow2.getFlowElement("Publish Scheduled Status")).thenReturn(scheduledStatusFilterElement);
         when(scheduledStatusFilterElement.getFlowComponent()).thenReturn(scheduledProcessEventFilter);
+        when(scheduledProcessEventFilter.getConfiguredResourceId()).thenReturn("id");
         when(scheduledProcessEventFilter.getConfiguration()).thenReturn(scheduledProcessEventFilterConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
     }
@@ -351,7 +385,7 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setJobName("fileEventDrivenJobName");
         fileEventDrivenJob.setContextName("contextName");
         fileEventDrivenJob.setChildContextNames(childIds);
-        fileEventDrivenJob.setFilenames(new ArrayList<>());
+        fileEventDrivenJob.setFilenames(List.of("filenames"));
         fileEventDrivenJob.setFilePath("file-path");
         fileEventDrivenJob.setJobGroup("group");
         fileEventDrivenJob.setJobDescription("description");
@@ -376,6 +410,7 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setDynamic(true);
         fileEventDrivenJob.setFilenameSpel("filename spel");
         fileEventDrivenJob.setFilePathSpel("file path spel");
+        fileEventDrivenJob.setSlaCronExpression("sla cron expression");
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
         quartzScheduleDrivenJob.setAgentName("agentName");

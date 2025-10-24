@@ -40,6 +40,8 @@
  */
 package org.ikasan.module;
 
+import java.awt.*;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,25 +50,48 @@ import java.util.Map;
  *
  * @author Ikasan Development Team
  */
-public class ConfiguredModuleConfiguration
+public class ConfiguredModuleConfiguration implements Serializable
 {
-    Map<String,String> flowDefinitions = new HashMap();
-    Map<String,String> flowDefinitionProfiles = new HashMap();
+    protected Map<String,String> flowDefinitions = new HashMap();
+    protected Map<String,String> flowDefinitionProfiles = new HashMap();
 
+    /**
+     * Retrieves the flow definitions associated with this module configuration.
+     *
+     * @return a map containing the flow definitions where the key is the flow name
+     *         and the value is the startup type of that flow
+     */
     public Map<String, String> getFlowDefinitions()
     {
         return flowDefinitions;
     }
 
+    /**
+     * Sets the flow definitions for the module configuration.
+     *
+     * @param flowDefinitions a map containing the flow definitions where the key is the flow name
+     *                        and the value is the startup type of that flow
+     */
     public void setFlowDefinitions(Map<String,String> flowDefinitions)
     {
         this.flowDefinitions = flowDefinitions;
     }
 
+    /**
+     * Returns the map containing the flow definition profiles for this module configuration.
+     *
+     * @return a map where the key is the flow name and the value is the profile for that particular flow
+     */
     public Map<String, String> getFlowDefinitionProfiles() {
         return flowDefinitionProfiles;
     }
 
+    /**
+     * Set the flow definition profiles for the module configuration.
+     *
+     * @param flowDefinitionProfiles a map containing the flow definition profiles where the key is the flow name
+     *                               and the value is the profile for that particular flow
+     */
     public void setFlowDefinitionProfiles(Map<String, String> flowDefinitionProfiles) {
         this.flowDefinitionProfiles = flowDefinitionProfiles;
     }

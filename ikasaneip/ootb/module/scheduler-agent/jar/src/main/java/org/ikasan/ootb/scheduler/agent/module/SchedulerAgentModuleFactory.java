@@ -43,13 +43,21 @@ package org.ikasan.ootb.scheduler.agent.module;
 import javax.annotation.Resource;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.ModuleBuilder;
+import org.ikasan.ootb.scheduler.agent.module.boot.FileEventSchedulerJobFlowFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.HousekeepLogFilesFlowFactory;
+import org.ikasan.ootb.scheduler.agent.module.boot.ScheduledProcessEventOutboundFlowFactory;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Module implementation.
@@ -66,11 +74,23 @@ public class SchedulerAgentModuleFactory
     @Value( "${module.name}" )
     String moduleName;
 
+    @Value("${number.of.file.watcher.event.processing.flows:10}")
+    private int numberOfFileWatcherJobEventProcessingFlows;
+
     @Resource
     BuilderFactory builderFactory;
 
     @Resource
     SchedulerAgentFlowFactory schedulerAgentFlowFactory;
+
+    @Resource
+    FileEventSchedulerJobFlowFactory fileEventSchedulerJobFlowFactory;
+
+    @Resource
+    ScheduledProcessEventOutboundFlowFactory scheduledProcessEventOutboundFlowFactory;
+
+    @Resource
+    HousekeepLogFilesFlowFactory housekeepLogFilesFlowFactory;
 
     @Bean
     public SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration() {
@@ -78,13 +98,22 @@ public class SchedulerAgentModuleFactory
     }
 
     @Bean(name = "scheduler-agent-module")
-    public Module createModule(SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration)
-    {
+    public Module createModule(SchedulerAgentConfiguredModuleConfiguration schedulerAgentConfiguredModuleConfiguration) throws IOException {
         // get the module builder
-        return builderFactory.getModuleBuilder(moduleName)
+        ModuleBuilder moduleBuilder =  builderFactory.getModuleBuilder(moduleName)
                 .withDescription("Scheduler Agent Integration Module.")
-                .withType(ModuleType.SCHEDULER_AGENT)
-                .withFlowFactory(schedulerAgentFlowFactory)
+                .withType(ModuleType.SCHEDULER_AGENT);
+
+        moduleBuilder.addFlow(this.scheduledProcessEventOutboundFlowFactory.create());
+
+        moduleBuilder.addFlow(this.housekeepLogFilesFlowFactory.create());
+
+        // Add the configured number of file watcher event processing flows.
+        for(int i = 1; i<this.numberOfFileWatcherJobEventProcessingFlows + 1; i++) {
+            moduleBuilder.addFlow(fileEventSchedulerJobFlowFactory.create(AgentFlowProfiles.FILE_WATCHER_JOB_EVENT_PROCESSING_FLOW_NAME_PREFIX + i));
+        }
+
+        return moduleBuilder.withFlowFactory(schedulerAgentFlowFactory)
                 .setConfiguration(schedulerAgentConfiguredModuleConfiguration)
             .build();
     }

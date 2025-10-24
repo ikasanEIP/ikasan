@@ -41,13 +41,16 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.module.startup.StartupControlImpl;
+import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.ScheduledProcessEventOutboundFlowComponentFactory;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.io.IOException;
 
 /**
  * Scheduled process event outbound flow factory. Consumes events from the outbound BigQueue
@@ -67,8 +70,14 @@ public class ScheduledProcessEventOutboundFlowFactory
     @Resource
     ScheduledProcessEventOutboundFlowComponentFactory componentFactory;
 
+    @Resource
+    StartupControlDao startupControlDao;
 
-    public Flow create() throws IOException {
+    public Flow create() {
+        StartupControl startupControl = new StartupControlImpl(moduleName, "Scheduled Process Event Outbound Flow");
+        startupControl.setStartupType(StartupType.AUTOMATIC);
+        this.startupControlDao.save(startupControl);
+
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder("Scheduled Process Event Outbound Flow")
             .withDescription("Scheduled Process Event Outbound Flow")
             .consumer("Scheduled Event Consumer", componentFactory.getOutboundBigQueueConsumer())

@@ -40,6 +40,7 @@
  */
 package org.ikasan.spec.flow;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -49,5 +50,12 @@ import java.util.List;
  */
 public interface FlowFactory
 {
+    /**
+     * Creates a new flow with the given name and profile.
+     *
+     * @param flowName the name of the flow to create
+     * @param profile the profile of the flow to create
+     * @return a list of Flow objects representing the newly created flow
+     */
     List<Flow> create(String flowName, String profile);
 }

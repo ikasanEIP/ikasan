@@ -3,6 +3,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.filter;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntryConverterException;
+import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -23,7 +24,14 @@ public class SchedulerFilterEntryConverterTest {
         List<File> files = List.of();
 
         CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
-        converter.convert(correlatedFileList);
+
+        FileWatcherJobEvent event = new FileWatcherJobEvent();
+        event.setCorrelationIdentifier("correlationIdentifier");
+        event.setCorrelatedFileList(correlatedFileList);
+        event.setJobName("jobName");
+        event.setMinFileAgeSeconds(30);
+
+        converter.convert(event);
     }
 
     @Test
@@ -33,9 +41,16 @@ public class SchedulerFilterEntryConverterTest {
         List<File> files = List.of(new File("."));
 
         CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
-        FilterEntry entry = converter.convert(correlatedFileList);
 
-        Assert.assertEquals((Integer) new File(".correlationIdentifier").getName().hashCode(), entry.getCriteria());
+        FileWatcherJobEvent event = new FileWatcherJobEvent();
+        event.setCorrelatedFileList(correlatedFileList);
+        event.setCorrelationIdentifier("correlationIdentifier");
+        event.setJobName("jobName");
+        event.setMinFileAgeSeconds(30);
+
+        FilterEntry entry = converter.convert(event);
+
+        Assert.assertEquals((Integer) new File(event.getJobName()+".correlationIdentifier").getName().hashCode(), entry.getCriteria());
         Assert.assertEquals("configurationId", entry.getClientId());
     }
 
@@ -46,9 +61,16 @@ public class SchedulerFilterEntryConverterTest {
         List<File> files = List.of(new File("."), new File("."));
 
         CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
-        FilterEntry entry = converter.convert(correlatedFileList);
 
-        Assert.assertEquals((Integer) new File(".correlationIdentifier").getName().hashCode(), entry.getCriteria());
+        FileWatcherJobEvent event = new FileWatcherJobEvent();
+        event.setCorrelatedFileList(correlatedFileList);
+        event.setCorrelationIdentifier("correlationIdentifier");
+        event.setJobName("jobName");
+        event.setMinFileAgeSeconds(30);
+
+        FilterEntry entry = converter.convert(event);
+
+        Assert.assertEquals((Integer) new File(event.getJobName()+".correlationIdentifier").getName().hashCode(), entry.getCriteria());
         Assert.assertEquals("configurationId", entry.getClientId());
     }
 }

@@ -41,42 +41,13 @@
 package org.ikasan.ootb.scheduler.agent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.RandomStringUtils;
-import org.ikasan.bigqueue.IBigQueue;
-import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
-import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
-import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
-import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
-import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
-import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.scheduled.context.model.ContextParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
-import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
-import org.ikasan.spec.scheduled.event.model.DryRunParameters;
-import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
-import org.junit.*;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.quartz.JobDataMap;
-import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -86,14 +57,13 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.FileSystemUtils;
 
 import javax.annotation.Resource;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.*;
-import java.util.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.quartz.TriggerBuilder.newTrigger;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**

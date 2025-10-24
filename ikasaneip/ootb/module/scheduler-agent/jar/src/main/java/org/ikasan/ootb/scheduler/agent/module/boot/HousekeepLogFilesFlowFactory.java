@@ -41,8 +41,12 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
+import org.ikasan.module.startup.StartupControlImpl;
+import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.HousekeepLogFilesFlowComponentFactory;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -65,9 +69,13 @@ public class HousekeepLogFilesFlowFactory
     @Resource
     HousekeepLogFilesFlowComponentFactory componentFactory;
 
+    @Resource
+    StartupControlDao startupControlDao;
 
-    public Flow create()
-    {
+    public Flow create() {
+        StartupControl startupControl = new StartupControlImpl(moduleName, "Housekeep Log Files Flow");
+        startupControl.setStartupType(StartupType.AUTOMATIC);
+        this.startupControlDao.save(startupControl);
         return builderFactory.getModuleBuilder(moduleName)
             .getFlowBuilder("Housekeep Log Files Flow")
             .withDescription("Housekeeping job generated log files")

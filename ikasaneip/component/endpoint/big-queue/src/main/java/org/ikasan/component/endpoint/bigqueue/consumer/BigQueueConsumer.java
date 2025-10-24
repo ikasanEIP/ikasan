@@ -1,11 +1,13 @@
 package org.ikasan.component.endpoint.bigqueue.consumer;
 
 import com.google.common.util.concurrent.ListenableFuture;
+import jakarta.transaction.RollbackException;
+import jakarta.transaction.SystemException;
+import jakarta.transaction.TransactionManager;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.consumer.configuration.BigQueueConsumerConfiguration;
 import org.ikasan.component.endpoint.bigqueue.serialiser.BigQueueMessageJsonSerialiser;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
@@ -17,16 +19,12 @@ import org.ikasan.spec.serialiser.Serialiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import jakarta.transaction.RollbackException;
-import jakarta.transaction.SystemException;
-import jakarta.transaction.TransactionManager;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Implementation of a BigQueue consumer.
@@ -176,7 +174,7 @@ public class BigQueueConsumer<T>
             logger.debug("Peeking onto the inbound queue. listenableFuture: " + listenableFuture);
             this.listenableFuture.addListener(this.inboundQueueMessageRunner
                 , bigQueueListenerExecutor);
-            logger.debug("Sucessfully added inbound listener!");
+            logger.debug("Successfully added inbound listener!");
         }
     }
 

@@ -83,20 +83,21 @@ package org.ikasan.ootb.scheduler.agent.module.boot.components;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.boot.builder.CorrelatingScheduledConsumerBuilderImpl;
+import org.ikasan.component.endpoint.bigqueue.producer.BigQueueProducer;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.JobExecutionToContextualisedScheduledProcessEventConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledContextEventContextInstancesActiveFilter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
+import org.ikasan.ootb.scheduler.agent.module.component.splitter.ScheduledProcessEventEventCorrelationIdentifierSplitter;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
+import org.ikasan.spec.component.splitting.Splitter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.quartz.Scheduler;
@@ -138,12 +139,13 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     AopProxyProvider aopProxyProvider;
 
     public Consumer getScheduledConsumer() {
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration = new CorrelatedScheduledConsumerConfiguration();
-        correlatedScheduledConsumerConfiguration.setCronExpression("0 0 0 * * ?");
+        ScheduledConsumerConfiguration consumerConfiguration = new ScheduledConsumerConfiguration();
+        consumerConfiguration.setCronExpression("0 0 0 * * ?");
 
-        CorrelatingScheduledConsumerBuilderImpl scheduledConsumerEnhancedBuilder = new CorrelatingScheduledConsumerBuilderImpl
-            (scheduler, scheduledJobFactory, aopProxyProvider);
-        return scheduledConsumerEnhancedBuilder.setConfiguration(correlatedScheduledConsumerConfiguration).build();
+        return builderFactory.getComponentBuilder()
+            .scheduledConsumer()
+            .setConfiguration(consumerConfiguration)
+            .build();
     }
 
     /**
@@ -151,13 +153,8 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      *
      * @return
      */
-    public Filter getContextInstanceFilter() {
-        ContextInstanceFilterConfiguration configuration = new ContextInstanceFilterConfiguration();
-        ContextInstanceFilter contextInstanceFilter = new ContextInstanceFilter(dryRunModeService, agentRecoveryActive);
-
-        contextInstanceFilter.setConfiguration(configuration);
-
-        return contextInstanceFilter;
+    public Filter getContextInstancesActiveFilter() {
+        return new ScheduledContextEventContextInstancesActiveFilter(dryRunModeService);
     }
 
     /**
@@ -172,6 +169,15 @@ public class QuartzSchedulerJobEventFlowComponentFactory
         converter.setConfiguration(configuration);
 
         return converter;
+    }
+
+    /**
+     * Get the Splitter instance responsible for splitting FileWatcherJobEvent instances based on correlation identifiers.
+     *
+     * @return the FileWatcherEventCorrelationIdentifierSplitter instance
+     */
+    public Splitter getScheduledProcessEventEventCorrelationIdentifierSplitter() {
+        return new ScheduledProcessEventEventCorrelationIdentifierSplitter  ();
     }
 
     /**
@@ -200,10 +206,10 @@ public class QuartzSchedulerJobEventFlowComponentFactory
      */
     public Producer getScheduledStatusProducer()
     {
-        return builderFactory.getComponentBuilder().bigQueueProducer()
-            .setOutboundQueue(this.outboundQueue)
-            .setSerialiser(new ScheduledProcessEventToBigQueueMessageSerialiser())
-            .build();
+        BigQueueProducer producer = new BigQueueProducer(this.outboundQueue);
+        producer.setSerialiser(new ScheduledProcessEventToBigQueueMessageSerialiser());
+
+        return producer;
     }
 }
 

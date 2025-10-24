@@ -96,7 +96,7 @@ public class DynamicFileMatcher extends FileMatcher {
      * @param filePathSpelExpression SpEL expression for dynamic file paths
      * @param followSymbolicLinks whether to follow symbolic links
      */
-    DynamicFileMatcher(boolean ignoreFileRenameWhilstScanning,
+    public DynamicFileMatcher(boolean ignoreFileRenameWhilstScanning,
                        String parentPath,
                        String fileNamePattern,
                        int directoryDepth,

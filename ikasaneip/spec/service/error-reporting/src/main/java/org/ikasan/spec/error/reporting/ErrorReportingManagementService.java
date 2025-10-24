@@ -68,9 +68,6 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, MODULE_ERROR_CO
      */
     public List<ACTIONED_EVENT> find(List<String> moduleName, List<String> flowName, List<String> flowElementname,
     		Date startDate, Date endDate);
-    
-
-
 
     /**
      * Allow entities blacklisted to be marked with a timeToLive.
@@ -85,10 +82,15 @@ public interface ErrorReportingManagementService<ACTIONED_EVENT, MODULE_ERROR_CO
      */
     public void housekeep();
 
-	/**
-	 * 
-	 * @param moduleName
-	 * @return
-	 */
+    /**
+     * Retrieves the error count for each module based on the provided parameters.
+     *
+     * @param moduleNames List of module names to fetch error counts for
+     * @param excluded Boolean indicating whether to include excluded errors or not
+     * @param actioned Boolean indicating whether to include actioned errors or not
+     * @param startDate Start date for the error count range
+     * @param endDate End date for the error count range
+     * @return List of MODULE_ERROR_COUNT objects representing the error counts for each module
+     */
 	public List<MODULE_ERROR_COUNT> getModuleErrorCount(List<String> moduleNames,  boolean excluded, boolean actioned, Date startDate, Date endDate);
 }

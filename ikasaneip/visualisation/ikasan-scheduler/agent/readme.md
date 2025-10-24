@@ -34,10 +34,16 @@ agent is ready to perform the jobs on behalf of any future `Job Plan Instances` 
 ## Ikasan Enterprise Scheduler Agent Job Flows
 The following flow descriptions outline each of the flows that are created for each job type.
 
-### File Watcher Job Flow
+### File Watcher Job Flows
 For each `File Watcher Job` in a `Job Plan`, an individual `File Watcher Job Flow` is created on the relevant agent that
 the job is targeted to. This flow is responsible for polling on a regular interval, for the arrival of a file on the file system
-of the agent host, and reporting its arrival back to the `Ikasan Enterprise Scheduler Dashboard`.
+of the agent host, and raising a [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+and publish that to a BigQueue destination in order for the downstream File Watcher Job Event Processing Flow to determine if
+the file has arrived.
+
+Theare a fixed number of downstream File Watcher Job Event Processing Flows and the number of those is determined by
+configuration parameter `number.of.file.watcher.event.processing.flows`. The default number of File Watcher Job Event Processing Flows
+is 10.
 
 The below diagram outlines the components and the flow of control that supports the `File Watcher Job`. 
 
@@ -47,10 +53,54 @@ The below diagram outlines the components and the flow of control that supports 
 The flow comprises the following components, that when combined, fulfil the functional requirements
 of the `File Watcher Job`.
 ##### File Consumer
-An instance of a [Local File Consumer](../../../component/endpoint/quartz-schedule/localFileConsumer.md)
-that is responsible for detecting the arrival of a file on the file system. It polls the file system on a 
-cron defined polling schedule.
+An instance of a [Scheduled Consumer](../../../component/endpoint/quartz-schedule/Readme.md)
+that is responsible for firing on a regular schedule.
  
+##### JobExecution to FileEventWatcherJobEvent Converter  
+An instance of a [Converter](../../../component/converter/Readme.md) that populates the [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+based upon its configuration.
+
+##### Context Instances Active Filter
+An instance of a [Filter](../../../component/filter/Readme.md) that allows an event to be raised once only
+if there are any active job plan instances for the job plan the event relates to.
+
+##### File Watcher Event Correlation Identifier Splitter
+An implementation of a [Splitter](../../../spec/component/src/main/java/org/ikasan/spec/component/splitting/Splitter.java) that 
+creates a [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+for each active job plan instance that the event relates to.
+
+##### File Watcher Job Queue Size Weighted Router
+An implementation of a [SingleRecipientRouter](../../../spec/component/src/main/java/org/ikasan/spec/component/routing/SingleRecipientRouter.java)
+that is responsible for determining the size of the downstream BigQueue and publishes the [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+to the route with the smallest queue size.
+
+##### No File Watcher Flows Available Producer
+A [Producer](../../../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Producer.java)
+that raised an EndpointException to raise alerts that there are no File Watcher Event Producers configured.
+
+##### File Watcher Event Producer
+A [BigQueueProducer](../../../component/endpoint/big-queue/src/main/java/org/ikasan/component/endpoint/bigqueue/producer/BigQueueProducer.java)
+that published the [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+to the relevant file watcher job event processing outbound queue.
+
+For the value associated with `number.of.file.watcher.event.processing.flows`, n number of `File Watcher Job Event Processing Flows`
+will be created. The responsibility of these flows is to determine if a file has arrived, and raising an event to dashboard 
+when the file is detected.
+
+![fwj](../../images/file-watcher-job-event-processing-flow.png)
+
+
+##### File Event BigQueue Consumer
+A [BigQueueConsumer](../../../component/endpoint/big-queue/src/main/java/org/ikasan/component/endpoint/bigqueue/consumer/BigQueueConsumer.java)
+that consumes a [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+that requires processing.
+
+##### File Matching Broker
+An implementation of a [Broker](../../../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java)
+that delegates to the  [DynamicFileMatcher](../../../component/endpoint/utility-endpoint/src/main/java/org/ikasan/component/endpoint/filesystem/messageprovider/DynamicFileMatcher.java)
+to a determine if the file that the [FileWatcherJobEvent](../../../ootb/module/scheduler-agent/jar/src/main/java/org/ikasan/ootb/scheduler/agent/module/model/FileWatcherJobEvent.java)
+is interested in has arrived on the filesystem. The event is enriched with the file details if the file exists, otherwise the event is dropped.
+
 ##### File Age Filter
 An instance of a [Filter](../../../component/filter/Readme.md) that detects the age of the file and
 only allows events to flow if the file has been on the file system for a period of time.
@@ -60,13 +110,8 @@ An instance of a [Filter](../../../component/filter/Readme.md) that allows an ev
 upon the arrival of a file.
 
 ##### File Move Broker
-An implementation of a [Broker](../../../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java) that 
+An implementation of a [Broker](../../../spec/component/src/main/java/org/ikasan/spec/component/endpoint/Broker.java) that
 will move the received file to a certain location if it is configured to do so.
-
-##### JobExecution to ScheduledProcessEvent Converter
-An implementation of a [Converter](../../../spec/component/src/main/java/org/ikasan/spec/component/transformation/Converter.java)
-that is responsible for converting a [CorrelatedFileList](../../../component/endpoint/utility-endpoint/src/main/java/org/ikasan/component/endpoint/filesystem/messageprovider/CorrelatedFileList.java)
-to a [ContextualisedScheduledProcessEvent](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/event/model/ContextualisedScheduledProcessEvent.java).
 
 ##### Blackout Router
 An implementation of a [SingleRecipientRouter](../../../spec/component/src/main/java/org/ikasan/spec/component/routing/SingleRecipientRouter.java)
@@ -82,7 +127,6 @@ to the agent outbound queue.
 An instance of a [Filter](../../../component/filter/Readme.md) that determines
 if the scheduler agent should send the [ContextualisedScheduledProcessEvent](../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/event/model/ContextualisedScheduledProcessEvent.java)
 to the Ikasan Enterprise Scheduler Dashboard.
-
 
 ##### Blackout Scheduled Status Producer
 A [BigQueueProducer](../../../component/endpoint/big-queue/src/main/java/org/ikasan/component/endpoint/bigqueue/producer/BigQueueProducer.java)
