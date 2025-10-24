@@ -63,6 +63,8 @@ public class JobExecutionContextToFileWatcherJobConverter implements Converter<J
             }
         }
 
+        fileWatcherJobEvent.setFireTime(jobExecutionContext.getFireTime().getTime());
+
         if (jobExecutionContext.getNextFireTime() != null) {
             fileWatcherJobEvent.setNextFireTime(jobExecutionContext.getNextFireTime().getTime());
         }

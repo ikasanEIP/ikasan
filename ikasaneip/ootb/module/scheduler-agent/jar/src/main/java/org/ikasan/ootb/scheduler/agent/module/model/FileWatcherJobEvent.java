@@ -1,11 +1,13 @@
 package org.ikasan.ootb.scheduler.agent.module.model;
 
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.StringJoiner;
 
 public class FileWatcherJobEvent implements Serializable {
     private String contextName;
@@ -24,10 +26,12 @@ public class FileWatcherJobEvent implements Serializable {
     private List<String> blackoutWindowCronExpressions;
     private Map<String,String> blackoutWindowDateTimeRanges;
     private CorrelatedFileList correlatedFileList;
+    private long fireTime;
     private long nextFireTime;
     private String jobGroup;
     private String jobDescription;
     private boolean dryRun;
+    private String outcome;
 
     public String getContextName() {
         return contextName;
@@ -181,25 +185,47 @@ public class FileWatcherJobEvent implements Serializable {
         this.dryRun = dryRun;
     }
 
+    public long getFireTime() {
+        return fireTime;
+    }
+
+    public void setFireTime(long fireTime) {
+        this.fireTime = fireTime;
+    }
+
+    public String getOutcome() {
+        return outcome;
+    }
+
+    public void setOutcome(String outcome) {
+        this.outcome = outcome;
+    }
+
     @Override
     public String toString() {
-        return "FileWatcherJobEvent{" +
-                "contextName='" + contextName + '\'' +
-                ", jobName='" + jobName + '\'' +
-                ", childContextNames=" + childContextNames +
-                ", correlationIdentifier='" + correlationIdentifier + '\'' +
-                ", filePath='" + filePath + '\'' +
-                ", filename='" + filename + '\'' +
-                ", fileNameSpelExpression='" + fileNameSpelExpression + '\'' +
-                ", filePathSpelExpression='" + filePathSpelExpression + '\'' +
-                ", moveDirectory='" + moveDirectory + '\'' +
-                ", minFileAgeSeconds=" + minFileAgeSeconds +
-                ", slaCronExpression='" + slaCronExpression + '\'' +
-                ", timeZone='" + timeZone + '\'' +
-                ", blackoutWindowCronExpressions=" + blackoutWindowCronExpressions +
-                ", blackoutWindowDateTimeRanges=" + blackoutWindowDateTimeRanges +
-                ", correlatedFileList=" + correlatedFileList +
-                '}';
+        return new StringJoiner(", ", FileWatcherJobEvent.class.getSimpleName() + "[", "]")
+            .add("contextName='" + contextName + "'")
+            .add("jobName='" + jobName + "'")
+            .add("childContextNames=" + childContextNames)
+            .add("correlationIdentifier='" + correlationIdentifier + "'")
+            .add("filePath='" + filePath + "'")
+            .add("filename='" + filename + "'")
+            .add("fileNameSpelExpression='" + fileNameSpelExpression + "'")
+            .add("filePathSpelExpression='" + filePathSpelExpression + "'")
+            .add("moveDirectory='" + moveDirectory + "'")
+            .add("minFileAgeSeconds=" + minFileAgeSeconds)
+            .add("slaCronExpression='" + slaCronExpression + "'")
+            .add("timeZone='" + timeZone + "'")
+            .add("blackoutWindowCronExpressions=" + blackoutWindowCronExpressions)
+            .add("blackoutWindowDateTimeRanges=" + blackoutWindowDateTimeRanges)
+            .add("correlatedFileList=" + correlatedFileList)
+            .add("fireTime=" + fireTime)
+            .add("nextFireTime=" + nextFireTime)
+            .add("jobGroup='" + jobGroup + "'")
+            .add("jobDescription='" + jobDescription + "'")
+            .add("dryRun=" + dryRun)
+            .add("outcome='" + outcome + "'")
+            .toString();
     }
 
     @Override
@@ -207,23 +233,11 @@ public class FileWatcherJobEvent implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FileWatcherJobEvent that = (FileWatcherJobEvent) o;
-        return minFileAgeSeconds == that.minFileAgeSeconds && Objects.equals(contextName, that.contextName)
-            && Objects.equals(jobName, that.jobName) && Objects.equals(childContextNames, that.childContextNames)
-            && Objects.equals(correlationIdentifier, that.correlationIdentifier)
-            && Objects.equals(filePath, that.filePath) && Objects.equals(filename, that.filename)
-            && Objects.equals(fileNameSpelExpression, that.fileNameSpelExpression)
-            && Objects.equals(filePathSpelExpression, that.filePathSpelExpression)
-            && Objects.equals(moveDirectory, that.moveDirectory)
-            && Objects.equals(slaCronExpression, that.slaCronExpression)
-            && Objects.equals(timeZone, that.timeZone)
-            && Objects.equals(blackoutWindowCronExpressions, that.blackoutWindowCronExpressions)
-            && Objects.equals(blackoutWindowDateTimeRanges, that.blackoutWindowDateTimeRanges);
+        return minFileAgeSeconds == that.minFileAgeSeconds && fireTime == that.fireTime && nextFireTime == that.nextFireTime && dryRun == that.dryRun && Objects.equals(contextName, that.contextName) && Objects.equals(jobName, that.jobName) && Objects.equals(childContextNames, that.childContextNames) && Objects.equals(correlationIdentifier, that.correlationIdentifier) && Objects.equals(filePath, that.filePath) && Objects.equals(filename, that.filename) && Objects.equals(fileNameSpelExpression, that.fileNameSpelExpression) && Objects.equals(filePathSpelExpression, that.filePathSpelExpression) && Objects.equals(moveDirectory, that.moveDirectory) && Objects.equals(slaCronExpression, that.slaCronExpression) && Objects.equals(timeZone, that.timeZone) && Objects.equals(blackoutWindowCronExpressions, that.blackoutWindowCronExpressions) && Objects.equals(blackoutWindowDateTimeRanges, that.blackoutWindowDateTimeRanges) && Objects.equals(correlatedFileList, that.correlatedFileList) && Objects.equals(jobGroup, that.jobGroup) && Objects.equals(jobDescription, that.jobDescription) && Objects.equals(outcome, that.outcome);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(contextName, jobName, childContextNames, correlationIdentifier, filePath, filename
-            , fileNameSpelExpression, filePathSpelExpression, moveDirectory, minFileAgeSeconds, slaCronExpression, timeZone
-            , blackoutWindowCronExpressions, blackoutWindowDateTimeRanges, correlatedFileList);
+        return Objects.hash(contextName, jobName, childContextNames, correlationIdentifier, filePath, filename, fileNameSpelExpression, filePathSpelExpression, moveDirectory, minFileAgeSeconds, slaCronExpression, timeZone, blackoutWindowCronExpressions, blackoutWindowDateTimeRanges, correlatedFileList, fireTime, nextFireTime, jobGroup, jobDescription, dryRun, outcome);
     }
 }

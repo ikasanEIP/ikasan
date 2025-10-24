@@ -46,6 +46,7 @@ import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.Outcome;
 
 /**
  * File list to contextualised scheduled process event converter.
@@ -84,8 +85,12 @@ public class FileWatcherJobEventToContextualisedScheduledProcessEventConverter i
         scheduledProcessEvent.setContextInstanceId(event.getCorrelationIdentifier());
         scheduledProcessEvent.setJobDescription(event.getJobDescription());
         scheduledProcessEvent.setJobGroup(event.getJobGroup());
+        scheduledProcessEvent.setFireTime(event.getFireTime());
         scheduledProcessEvent.setNextFireTime(event.getNextFireTime());
         scheduledProcessEvent.setDryRun(event.isDryRun());
+        if(event.getOutcome() != null && !event.getOutcome().isEmpty()) {
+            scheduledProcessEvent.setOutcome(Outcome.valueOf(event.getOutcome()));
+        }
 
         return scheduledProcessEvent;
     }

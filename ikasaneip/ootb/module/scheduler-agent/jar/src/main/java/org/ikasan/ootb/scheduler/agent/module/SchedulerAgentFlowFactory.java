@@ -94,15 +94,15 @@ public class SchedulerAgentFlowFactory implements FlowFactory
             }
             switch (profile) {
                 case AgentFlowProfiles.FILE: {
-                    logger.info("Creating flow for job: " + jobName);
+                    logger.info("Creating file watcher job flow for job: " + jobName + " with profile " + profile);
                     return this.createQuartzSchedulerFileEventJobFlowFactory(jobName);
                 }
                 case AgentFlowProfiles.SCHEDULER_JOB: {
-                    logger.info("Creating flow for job: " + jobName);
+                    logger.info("Creating command execution flow for job: " + jobName + " with profile " + profile);
                     return this.createSchedulerJobFlows(jobName);
                 }
                 case AgentFlowProfiles.QUARTZ: {
-                    logger.info("Creating flow for job: " + jobName);
+                    logger.info("Creating scheduled job flow for job: " + jobName + " with profile " + profile);
                     return this.createQuartzFlows(jobName);
                 }
                 default: {

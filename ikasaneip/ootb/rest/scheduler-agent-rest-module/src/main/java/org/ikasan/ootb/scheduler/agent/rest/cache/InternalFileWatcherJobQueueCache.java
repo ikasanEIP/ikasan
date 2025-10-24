@@ -2,7 +2,7 @@ package org.ikasan.ootb.scheduler.agent.rest.cache;
 
 public class InternalFileWatcherJobQueueCache extends AbstractBigQueueCache {
 
-    private static InternalFileWatcherJobQueueCache INSTANCE;
+    private volatile static InternalFileWatcherJobQueueCache INSTANCE;
 
     /**
      * Returns the singleton instance of InternalFileWatcherJobQueueCache.

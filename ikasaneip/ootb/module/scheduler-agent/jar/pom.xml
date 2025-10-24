@@ -183,44 +183,6 @@
                     <reuseForks>true</reuseForks>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>dev.aspectj</groupId>-->
-<!--                <artifactId>aspectj-maven-plugin</artifactId>-->
-<!--                <version>1.13.1</version>-->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>org.aspectj</groupId>-->
-<!--                        <artifactId>aspectjtools</artifactId>-->
-<!--                        &lt;!&ndash; AspectJ compiler version, in sync with runtime &ndash;&gt;-->
-<!--                        <version>${version.org.aspectj}</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
-<!--                <configuration>-->
-<!--                    <complianceLevel>17</complianceLevel>-->
-<!--                    <source>17</source>-->
-<!--                    <target>17</target>-->
-<!--                    <showWeaveInfo>true</showWeaveInfo>-->
-<!--                    <verbose>true</verbose>-->
-<!--                    <Xlint>ignore</Xlint>-->
-<!--                    <encoding>UTF-8</encoding>-->
-<!--                    <weaveDependencies>-->
-<!--                        <weaveDependency>-->
-<!--                            <groupId>org.ikasan</groupId>-->
-<!--                            <artifactId>ikasan-utility-endpoint</artifactId>-->
-<!--                        </weaveDependency>-->
-<!--                    </weaveDependencies>-->
-<!--                </configuration>-->
-<!--                <executions>-->
-<!--                    <execution>-->
-<!--                        <goals>-->
-<!--                            &lt;!&ndash; use this goal to weave all your main classes &ndash;&gt;-->
-<!--                            <goal>compile</goal>-->
-<!--                            &lt;!&ndash; use this goal to weave all your test classes &ndash;&gt;-->
-<!--                            <goal>test-compile</goal>-->
-<!--                        </goals>-->
-<!--                    </execution>-->
-<!--                </executions>-->
-<!--            </plugin>-->
         </plugins>
     </build>
 

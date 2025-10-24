@@ -95,6 +95,7 @@ import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilt
 import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
+import org.ikasan.ootb.scheduler.agent.module.component.router.FileWatcherJobBlackoutRouter;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.FileWatcherJobEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InternalFileWatcherJobQueueCache;
@@ -243,7 +244,7 @@ public class FileEventSchedulerJobFlowComponentFactory  {
      * @return a BlackoutRouter instance implementing the SingleRecipientRouter interface
      */
     public SingleRecipientRouter getBlackoutRouter() {
-        return new BlackoutRouter();
+        return new FileWatcherJobBlackoutRouter();
     }
 
     /**
