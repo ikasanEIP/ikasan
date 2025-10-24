@@ -307,6 +307,10 @@ public class QuartzSchedulerJobEventFlowTest {
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
         blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
 
+        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration
+            = flowTestRule.getComponentConfig("Publish Scheduled Status", ScheduledProcessEventFilterConfiguration.class);
+        scheduledProcessEventFilterConfiguration.setDropOnBlackout(false);
+
 
         ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
             = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);

@@ -34,6 +34,7 @@ public class JobExecutionContextToFileWatcherJobConverterTest {
     public void test_convert_success() {
         Date nextFireTime = new Date(System.currentTimeMillis() + 600000);
 
+        when(jobExecutionContext.getFireTime()).thenReturn(new Date());
         when(jobExecutionContext.getNextFireTime()).thenReturn(nextFireTime);
         when(jobExecutionContext.getTrigger()).thenReturn(trigger);
         when(trigger.getDescription()).thenReturn("description");

@@ -179,7 +179,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect() throws IOException {
+    public void test_file_flow_success() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
 
@@ -190,8 +190,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
@@ -247,8 +247,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
@@ -304,8 +304,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
@@ -364,8 +364,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
@@ -420,8 +420,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
@@ -461,7 +461,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect_changing_correlating_id() throws IOException {
+    public void test_file_flow_success_changing_correlating_id() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
 
@@ -472,8 +472,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
@@ -505,8 +505,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
@@ -532,7 +532,7 @@ public class FileEventSchedulerJobFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_file_flow_success_without_aspect_same_correlating_id() throws IOException {
+    public void test_file_flow_success_same_correlating_id() throws IOException {
         createContextAndPutInCache();
         flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
 
@@ -543,8 +543,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer")
             .consumer("File Event BigQueue Consumer")
             .broker("File Matching Broker")
@@ -585,317 +585,150 @@ public class FileEventSchedulerJobFlowTest {
         flowTestRule.stopFlow();
     }
 
-//    @Test
-//    @DirtiesContext
-//    public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
-//        createContextAndPutInCache();
-//        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-//
-//        String contextInstanceIdentifier = UUID.randomUUID().toString();
-//
-//        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-//            , CorrelatedFileConsumerConfiguration.class);
-//        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
-//        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
-//
-////        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
-////            , MoveFileBrokerConfiguration.class);
-////        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-//
-//        BlackoutRouterConfiguration blackoutRouterConfiguration
-//            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
-//        blackoutRouterConfiguration.setCronExpressions(List.of("0 15 10 * * ? 3000"));
-//
-//        flowTestRule.consumer("File Consumer")
-//            .filter("File Age Filter")
-//            .filter("Duplicate Message Filter")
-//            .broker("File Move Broker")
-//            .converter("JobExecution to ScheduledStatusEvent")
-//            .router("Blackout Router")
-//            .producer("Scheduled Status Producer");
-//
-//        flowTestRule.startFlow();
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
-//
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
-//
-//        ContextualisedScheduledProcessEvent event = this.getEvent();
-//
-//        // Confirm that the correlating identifier has been carried through.
-//        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-//
-//        flowTestRule.stopFlow();
-//    }
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
 
-//    @Test
-//    @DirtiesContext
-//    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success() throws IOException {
-//        createContextAndPutInCache();
-//        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-//
-//        String contextInstanceIdentifier = UUID.randomUUID().toString();
-//
-//        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-//            , CorrelatedFileConsumerConfiguration.class);
-//        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
-//        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
-//
-////        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
-////            , MoveFileBrokerConfiguration.class);
-////        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-//
-//        BlackoutRouterConfiguration blackoutRouterConfiguration
-//            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
-//        blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
-//
-//        flowTestRule.consumer("File Consumer")
-//            .filter("File Age Filter")
-//            .filter("Duplicate Message Filter")
-//            .broker("File Move Broker")
-//            .converter("JobExecution to ScheduledStatusEvent")
-//            .router("Blackout Router")
-//            .filter("Publish Scheduled Status")
-//            .producer("Blackout Scheduled Status Producer");
-//
-//        flowTestRule.startFlow();
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
-//
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//
-//        await().atMost(30, TimeUnit.SECONDS)
-//            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
-//
-//        ContextualisedScheduledProcessEvent event = this.getEvent();
-//
-//        // Confirm that the correlating identifier has been carried through.
-//        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-//
-//        flowTestRule.stopFlow();
-//    }
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
 
-//    @Test
-//    @DirtiesContext
-//    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filtered() throws IOException {
-//        createContextAndPutInCache();
-//        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-//
-//        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-//            , CorrelatedFileConsumerConfiguration.class);
-//        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
-//        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(UUID.randomUUID().toString()));
-//
-////        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
-////            , MoveFileBrokerConfiguration.class);
-////        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-//
-//        BlackoutRouterConfiguration blackoutRouterConfiguration
-//            = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
-//        blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
-//
-//        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration
-//            = flowTestRule.getComponentConfig("Publish Scheduled Status", ScheduledProcessEventFilterConfiguration.class);
-//        scheduledProcessEventFilterConfiguration.setDropOnBlackout(true);
-//
-//        flowTestRule.consumer("File Consumer")
-//            .filter("File Age Filter")
-//            .filter("Duplicate Message Filter")
-//            .broker("File Move Broker")
-//            .converter("JobExecution to ScheduledStatusEvent")
-//            .router("Blackout Router")
-//            .filter("Publish Scheduled Status");
-//
-//        flowTestRule.startFlow();
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        flowTestRule.sleep(2000);
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
-//
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//
-//        assertEquals(0, outboundQueue.size());
-//
-//        flowTestRule.stopFlow();
-//    }
-//
-//    @Test
-//    @DirtiesContext
-//    // TODO need to think about this case as may not be necessary.
-//    public void test_file_flow_recovery_no_instance_in_cache() {
-//        // do not create the cache
-//
-//        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-//
-//        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-//            , CorrelatedFileConsumerConfiguration.class);
-//        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
-//        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(UUID.randomUUID().toString()));
-//
-////        MoveFileBrokerConfiguration moveFileBrokerConfiguration = flowTestRule.getComponentConfig("File Move Broker"
-////            , MoveFileBrokerConfiguration.class);
-////        moveFileBrokerConfiguration.setMoveDirectory("src/test/resources/data/archive");
-//
-//        flowTestRule.consumer("File Consumer")
-//            .filter("File Age Filter")
-//            .filter("Duplicate Message Filter")
-//            .broker("File Move Broker")
-//            .converter("JobExecution to ScheduledStatusEvent")
-//            .router("Blackout Router")
-//            .producer("Scheduled Status Producer");
-//
-//        flowTestRule.startFlow();
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
-//
-//        // Note, since the ScheduledContextEventContextInstancesActiveFilter no longer requires plan name, and the reacts to a
-//        // JobExecutionContextImpl not a CorrelatedFileList, the flow will continue. This test could be expended with
-//        // a more complex scenario or make use of JobExecutionContext later
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
-//
-//        flowTestRule.stopFlow();
-//    }
-//
-//    @Test
-//    @DirtiesContext
-//    public void test_file_flow_success_with_aspect() throws IOException {
-//        createContextAndPutInCache();
-//        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-//
-//        dryRunModeService.setDryRunMode(true);
-//
-//        DryRunFileListJobParameter jobs = new DryRunFileListJobParameterDto();
-//        jobs.setJobName("Flow 2 Job Name");
-//        jobs.setFileName("/some/bogus/file/bogus1.txt");
-//        dryRunModeService.addDryRunFileList(List.of(jobs));
-//
-//        String contextInstanceIdentifier = UUID.randomUUID().toString();
-//
-//        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-//            , CorrelatedFileConsumerConfiguration.class);
-//        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
-//        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
-//        fileConsumerConfiguration.setJobName("Flow 2 Job Name");
-//
-//        flowTestRule.consumer("File Consumer")
-//            .filter("File Age Filter")
-//            .filter("Duplicate Message Filter")
-//            .broker("File Move Broker")
-//            .converter("JobExecution to ScheduledStatusEvent")
-//            .producer("Scheduled Status Producer");
-//
-//        flowTestRule.startFlow();
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        flowTestRule.sleep(2000);
-//
-//        jobs = new DryRunFileListJobParameterDto();
-//        jobs.setJobName("Flow 2 Job Name");
-//        jobs.setFileName("/some/bogus/file/bogus1.txt");
-//        dryRunModeService.addDryRunFileList(List.of(jobs));
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        flowTestRule.sleep(2000);
-//
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
-//
-//        ContextualisedScheduledProcessEvent event = this.getEvent();
-//
-//        // Confirm that the correlating identifier has been carried through.
-//        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-//
-//        event = this.getEvent();
-//
-//        // Confirm that the correlating identifier has been carried through.
-//        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-//
-//        flowTestRule.stopFlow();
-//    }
-//
-//    @Test
-//    @DirtiesContext
-//    public void test_file_flow_success_with_aspect_job_dry_run() throws IOException {
-//        createContextAndPutInCache();
-//        flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-//
-//        dryRunModeService.setDryRunMode(false);
-//        dryRunModeService.setJobDryRun("Scheduler Flow 2", true);
-//
-//        SchedulerFileFilterConfiguration schedulerFileFilterConfiguration = flowTestRule.getComponentConfig("Duplicate Message Filter"
-//            , SchedulerFileFilterConfiguration.class);
-//        schedulerFileFilterConfiguration.setJobName("Scheduler Flow 2");
-//
-//        FileAgeFilterConfiguration fileAgeFilterConfiguration = flowTestRule.getComponentConfig("File Age Filter"
-//            , FileAgeFilterConfiguration.class);
-//        fileAgeFilterConfiguration.setJobName("Scheduler Flow 2");
-//
-//        String contextInstanceIdentifier = UUID.randomUUID().toString();
-//
-//        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-//            , CorrelatedFileConsumerConfiguration.class);
-//        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test.txt"));
-//        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(contextInstanceIdentifier));
-//        fileConsumerConfiguration.setJobName("Scheduler Flow 2");
-//
-//        flowTestRule.consumer("File Consumer")
-//            .filter("File Age Filter")
-//            .filter("Duplicate Message Filter")
-//            .broker("File Move Broker")
-//            .converter("JobExecution to ScheduledStatusEvent")
-//            .producer("Scheduled Status Producer");
-//
-//        flowTestRule.startFlow();
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        flowTestRule.sleep(2000);
-//
-//        dryRunModeService.setDryRunMode(false);
-//        dryRunModeService.setJobDryRun("Scheduler Flow 2", true);
-//
-//        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
-//
-//        flowTestRule.sleep(2000);
-//
-//        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-//
-//        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-//            .untilAsserted(() -> assertEquals(2, outboundQueue.size()));
-//
-//        ContextualisedScheduledProcessEvent event = this.getEvent();
-//
-//        // Confirm that the correlating identifier has been carried through.
-//        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-//
-//        event = this.getEvent();
-//
-//        // Confirm that the correlating identifier has been carried through.
-//        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-//
-//        flowTestRule.stopFlow();
-//    }
+        IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
+            .get("scheduler-agent-file-watcher-job-event-processing-flow-1-file-watcher-inbound-queue");
+        queue1.removeAll();
+
+        flowTestRule.consumer("File Event BigQueue Consumer")
+            .broker("File Matching Broker")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
+            .producer("Scheduled Status Producer");
+
+        FileWatcherJobEvent fileWatcherJobEvent = new FileWatcherJobEvent();
+        fileWatcherJobEvent.setContextName("contextName");
+        fileWatcherJobEvent.setCorrelationIdentifier(contextInstanceIdentifier);
+        fileWatcherJobEvent.setFilename("src/test/resources/data/test.txt");
+        fileWatcherJobEvent.setBlackoutWindowCronExpressions(List.of("0 15 10 * * ? 3000"));
+        this.publishBigQueueMessage(fileWatcherJobEvent, queue1);
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
+            .get("scheduler-agent-file-watcher-job-event-processing-flow-1-file-watcher-inbound-queue");
+        queue1.removeAll();
+
+        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration
+            = flowTestRule.getComponentConfig("Publish Scheduled Status", ScheduledProcessEventFilterConfiguration.class);
+        scheduledProcessEventFilterConfiguration.setDropOnBlackout(false);
+
+
+        flowTestRule.consumer("File Event BigQueue Consumer")
+            .broker("File Matching Broker")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
+            .filter("Publish Scheduled Status")
+            .producer("Blackout Scheduled Status Producer");
+
+        FileWatcherJobEvent fileWatcherJobEvent = new FileWatcherJobEvent();
+        fileWatcherJobEvent.setContextName("contextName");
+        fileWatcherJobEvent.setCorrelationIdentifier(contextInstanceIdentifier);
+        fileWatcherJobEvent.setFilename("src/test/resources/data/test.txt");
+        fileWatcherJobEvent.setBlackoutWindowCronExpressions(List.of("*/1 * * * * ?"));
+
+        this.publishBigQueueMessage(fileWatcherJobEvent, queue1);
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(1, outboundQueue.size()));
+
+        ContextualisedScheduledProcessEvent event = this.getEvent();
+
+        // Confirm that the correlating identifier has been carried through.
+        Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_quartz_flow_not_filtered_due_to_inside_blackout_window_success_event_filtered() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
+            .get("scheduler-agent-file-watcher-job-event-processing-flow-1-file-watcher-inbound-queue");
+        queue1.removeAll();
+
+        flowTestRule.consumer("File Event BigQueue Consumer")
+            .broker("File Matching Broker")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker")
+            .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
+            .filter("Publish Scheduled Status");
+
+        FileWatcherJobEvent fileWatcherJobEvent = new FileWatcherJobEvent();
+        fileWatcherJobEvent.setContextName("contextName");
+        fileWatcherJobEvent.setCorrelationIdentifier(contextInstanceIdentifier);
+        fileWatcherJobEvent.setFilename("src/test/resources/data/test.txt");
+        fileWatcherJobEvent.setBlackoutWindowCronExpressions(List.of("*/1 * * * * ?"));
+
+        this.publishBigQueueMessage(fileWatcherJobEvent, queue1);
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        flowTestRule.sleep(2000);
+
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        assertEquals(0, outboundQueue.size());
+
+        flowTestRule.stopFlow();
+    }
 
     @Test
     @DirtiesContext
@@ -911,8 +744,8 @@ public class FileEventSchedulerJobFlowTest {
             .filter("File Age Filter")
             .filter("Duplicate Message Filter")
             .broker("File Move Broker")
-            .converter("JobExecution to ScheduledStatusEvent")
             .router("Blackout Router")
+            .converter("FileWatcherJobEvent to ScheduledStatusEvent")
             .producer("Scheduled Status Producer")
             .consumer("File Event BigQueue Consumer")
             .broker("File Matching Broker")
@@ -957,39 +790,6 @@ public class FileEventSchedulerJobFlowTest {
 
         dryRunModeService.setDryRunMode(false);
     }
-
-//    @Test
-//    @DirtiesContext
-//    public void test_file_aspect() {
-//        JobExecutionContextDefaultImpl context = new JobExecutionContextDefaultImpl();
-//        Trigger trigger = newTrigger().withIdentity("Job Name", "Job Group").build();
-//        context.setTrigger(trigger);
-//
-//        context.setJobDataMap(new JobDataMap());
-//        context.getMergedJobDataMap().put(CorrelatingScheduledConsumer.CORRELATION_ID
-//            , UUID.randomUUID().toString());
-//
-//        // will get an error as the file message provider has nothing wired in etc
-//        CorrelatingFileMessageProvider fileMessageProvider = new CorrelatingFileMessageProvider();
-//
-//        try {
-//            fileMessageProvider.invoke(context);
-//            fail("should not get here");
-//        } catch (Exception e) {
-//        }
-//
-//        dryRunModeService.setDryRunMode(true);
-//        DryRunFileListJobParameterDto dto = new DryRunFileListJobParameterDto();
-//        dto.setJobName("Job Name");
-//        dto.setFileName("/my/bogus/file3.txt");
-//        dryRunModeService.addDryRunFileList(List.of(dto));
-//
-//        CorrelatedFileList files = fileMessageProvider.invoke(context);
-//        assertEquals(1, files.getFileList().size());
-//        assertEquals("/my/bogus/file3.txt", files.getFileList().get(0).getAbsolutePath());
-//
-//        dryRunModeService.setDryRunMode(false);
-//    }
 
     private ContextualisedScheduledProcessEvent getEvent() throws IOException {
         byte[] dequeued = outboundQueue.dequeue();
