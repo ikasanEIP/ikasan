@@ -42,22 +42,77 @@ package org.ikasan.ootb.scheduler.agent.module.configuration;
 
 import org.ikasan.ootb.scheduled.dryrun.configuration.DryRunConfiguredModuleConfiguration;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration {
+public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration implements Serializable {
 
-    Map<String, String> flowContextMap = new HashMap<>();
+    private Map<String, String> flowContextMap = new HashMap<>();
+    private Map<String, String> fileWatcherJobMap = new  HashMap();
+    private Map<String, String> scheduledJobMap = new  HashMap();
+
 
     /**
-     * Get plan/context (not instance!) details
-     * @return return the map of flow name -> plan name
+     * Retrieves the flow context map stored in the configuration.
+     *
+     * @return A map containing flow context information where the keys represent job names
+     * and values represent the corresponding context names.
      */
     public Map<String, String> getFlowContextMap() {
         return flowContextMap;
     }
 
+    /**
+     * Sets the flow context map in the configuration. The flow context map stores
+     * flow context information where the keys represent job names and values represent
+     * the corresponding context names.
+     *
+     * @param flowContextMap A map containing flow context information with job names as keys
+     *                       and context names as values.
+     */
     public void setFlowContextMap(Map<String, String> flowContextMap) {
         this.flowContextMap = flowContextMap;
+    }
+
+    /**
+     * Retrieves the map containing file watcher job information.
+     *
+     * @return A map where the keys represent file watcher job names and values represent the corresponding job definitions.
+     */
+    public Map<String, String> getFileWatcherJobMap() {
+        return fileWatcherJobMap;
+    }
+
+    /**
+     * Sets the file watcher job map in the configuration.
+     *
+     * @param fileWatcherJobMap A map containing file watcher job information where the keys represent
+     *                         job names and values represent the corresponding job definitions.
+     */
+    public void setFileWatcherJobMap(Map<String, String> fileWatcherJobMap) {
+        this.fileWatcherJobMap = fileWatcherJobMap;
+    }
+
+    /**
+     * Retrieves the scheduled job map stored in the configuration.
+     *
+     * @return A map containing scheduled job information where the keys represent job names
+     *         and values represent the corresponding job definitions.
+     */
+    public Map<String, String> getScheduledJobMap() {
+        return scheduledJobMap;
+    }
+
+    /**
+     * Sets the scheduled job map in the configuration. The scheduled job map stores
+     * scheduled job information where the keys represent job names and values represent
+     * the corresponding job definitions.
+     *
+     * @param scheduledJobMap A map containing scheduled job information where the keys represent
+     *                        job names and values represent the corresponding job definitions.
+     */
+    public void setScheduledJobMap(Map<String, String> scheduledJobMap) {
+        this.scheduledJobMap = scheduledJobMap;
     }
 }

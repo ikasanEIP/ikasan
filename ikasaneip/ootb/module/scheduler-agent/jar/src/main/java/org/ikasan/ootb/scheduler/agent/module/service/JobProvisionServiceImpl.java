@@ -1,26 +1,17 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
-import org.ikasan.configurationService.util.ReflectionUtils;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.FileWatcherJobConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
+import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
@@ -41,9 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class JobProvisionServiceImpl implements JobProvisionService {
 
@@ -67,28 +56,13 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     @Autowired
     private AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
-    private ObjectMapper mapper;
+    private ObjectMapper objectMapper;
 
     /**
      * Constructor
      */
     public JobProvisionServiceImpl() {
-        this.mapper = new ObjectMapper();
-        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-            .allowIfSubType("org.ikasan.spec.scheduled.job.model")
-            .allowIfSubType("org.ikasan.job.orchestration.model.job")
-            .allowIfSubType("org.ikasan.job.orchestration.model.context")
-            .allowIfSubType("java.util.ArrayList")
-            .allowIfSubType("java.util.HashMap")
-            .build();
-        final var simpleModule = new SimpleModule()
-            .addAbstractTypeMapping(List.class, ArrayList.class)
-            .addAbstractTypeMapping(Map.class, HashMap.class);
-
-        this.mapper.registerModule(simpleModule);
-        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        this.mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
-        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.objectMapper = ObjectMapperFactory.newInstance();
     }
 
     @Override
@@ -131,9 +105,8 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
             agentInstanceRecoveryManager.init();
         }
-        catch (Exception e)
-        {
-            e.printStackTrace();
+        catch (Exception e) {
+            logger.error("An error has occurred attempting to provision jobs!", e);
             throw new JobProvisionServiceException(e);
         }
     }
@@ -168,36 +141,44 @@ public class JobProvisionServiceImpl implements JobProvisionService {
      * @param jobs
      * @param configuredModuleConfiguration
      */
-    private void updateInitialModuleConfiguration(List<SchedulerJob> jobs, ConfiguredModuleConfiguration configuredModuleConfiguration) {
+    private void updateInitialModuleConfiguration(List<SchedulerJob> jobs, ConfiguredModuleConfiguration configuredModuleConfiguration) throws JsonProcessingException {
         String contextName = jobs.get(0).getContextName();
         clearFlowConfig(configuredModuleConfiguration, contextName);
 
-        jobs.forEach(job -> {
+        for (SchedulerJob job : jobs) {
             if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
                 SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
                 configuration.getFlowContextMap().put(job.getAggregateJobName(), job.getContextName());
             }
-            if(job instanceof FileEventDrivenJob) {
+            if (job instanceof FileEventDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.FILE);
-            }
-            else if(job instanceof QuartzScheduleDrivenJob) {
+
+                if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+                    ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
+                            .getFileWatcherJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
+                }
+            } else if (job instanceof QuartzScheduleDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.QUARTZ);
-            }
-            else if(job instanceof InternalEventDrivenJob) {
+
+                if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+                    ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
+                        .getScheduledJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
+                }
+            } else if (job instanceof InternalEventDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.SCHEDULER_JOB);
             }
-        });
-
-        configuredModuleConfiguration.getFlowDefinitions().put("Scheduled Process Event Outbound Flow", "AUTOMATIC");
-        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Scheduled Process Event Outbound Flow", AgentFlowProfiles.OUTBOUND);
-
-        configuredModuleConfiguration.getFlowDefinitions().put("Housekeep Log Files Flow", "AUTOMATIC");
-        configuredModuleConfiguration.getFlowDefinitionProfiles().put("Housekeep Log Files Flow", AgentFlowProfiles.HOUSEKEEP_LOG);
+        }
     }
 
+    /**
+     * Clear the flow configuration for a specific context in the given ConfiguredModuleConfiguration.
+     *
+     * @param configuredModuleConfiguration the ConfiguredModuleConfiguration containing the flow configurations
+     * @param contextName the name of the context to clear the flow configurations for
+     */
     private void clearFlowConfig(ConfiguredModuleConfiguration configuredModuleConfiguration, String contextName) {
         if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
             SchedulerAgentConfiguredModuleConfiguration configuration = (SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration;
@@ -245,7 +226,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     private void configureComponents(List<SchedulerJob> jobs, Module<Flow> module) {
         jobs.forEach(job -> {
             if(job instanceof FileEventDrivenJob) {
-                configureFileEventDrivenFlowComponents(module, job);
+                configureQuartzSchedulerFileEventJobFlowComponents(module, job);
             }
             else if(job instanceof QuartzScheduleDrivenJob) {
                 configureQuartzScheduledFlowComponents(module, job);
@@ -267,30 +248,37 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 if(configuration.getFlowDefinitionProfiles().containsKey(flow.getName())) {
                     if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.FILE)
                         && configuration.getFlowContextMap().get(flow.getName()).equals(contextName)) {
-                        this.deleteConfigurationsForFileEventDrivenFlowComponents(flow);
+                        this.deleteQuartzSchedulerFileEventJobFlowComponents(flow);
+
+                        // remove the job from the file matcher job map on the module configuration
+                        configuration.getFileWatcherJobMap().remove(flow.getName());
                     } else if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.QUARTZ)
                         && configuration.getFlowContextMap().get(flow.getName()).equals(contextName)) {
                         this.deleteConfigurationsForQuartzScheduledFlowComponents(flow);
+
+                        // remove the job from the scheduled job map on the module configuration
+                        configuration.getScheduledJobMap().remove(flow.getName());
                     }
                 }
             });
         }
     }
 
+    /**
+     * Configure Quartz scheduled flow components in the provided module based on the given SchedulerJob.
+     *
+     * @param module the Module of the Flow containing the components to be configured
+     * @param job the SchedulerJob providing the configuration details for the components
+     */
     private void configureQuartzScheduledFlowComponents(Module<Flow> module, SchedulerJob job) {
         Flow flow = module.getFlow(job.getAggregateJobName());
-        ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow
+        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
             .getFlowElement("Scheduled Consumer").getFlowComponent();
 
-        CorrelatedScheduledConsumerConfiguration configuration = consumer.getConfiguration();
+        ScheduledConsumerConfiguration configuration = consumer.getConfiguration();
         this.updateScheduleConsumerConfiguration((QuartzScheduleDrivenJob) job, configuration);
 
         this.configurationService.update(consumer);
-
-        ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
-            .getFlowElement("Context Instance Active Filter").getFlowComponent();
-
-        this.configurationService.update(contextFilter);
 
         ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
             .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
@@ -320,8 +308,13 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         this.configurationService.update(scheduledProcessEventFilter);
     }
 
+    /**
+     * Delete configurations related to Quartz scheduled flow components from the provided Flow.
+     *
+     * @param flow the Flow from which to delete the Quartz scheduled flow components configurations
+     */
     private void deleteConfigurationsForQuartzScheduledFlowComponents(Flow flow) {
-        ConfiguredResource<CorrelatedScheduledConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedScheduledConsumerConfiguration>)flow
+        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
             .getFlowElement("Scheduled Consumer").getFlowComponent();
 
         Configuration configuration = this.configurationManagement.getConfiguration(consumer.getConfiguredResourceId());
@@ -330,15 +323,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             this.configurationManagement.deleteConfiguration(configuration);
         }
 
-        ConfiguredResource<ContextInstanceFilterConfiguration> contextFilter = (ConfiguredResource<ContextInstanceFilterConfiguration>)flow
-            .getFlowElement("Context Instance Active Filter").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(contextFilter.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
         ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
             .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
 
@@ -361,136 +345,6 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             .getFlowElement("Publish Scheduled Status").getFlowComponent();
 
         configuration = this.configurationManagement.getConfiguration(scheduledProcessEventFilter.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-    }
-
-    private void configureFileEventDrivenFlowComponents(Module<Flow> module, SchedulerJob job) {
-        Flow flow = module.getFlow(job.getAggregateJobName());
-        ConfiguredResource<CorrelatedFileConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedFileConsumerConfiguration>)flow
-            .getFlowElement("File Consumer").getFlowComponent();
-
-        CorrelatedFileConsumerConfiguration configuration = consumer.getConfiguration();
-        this.updateFileConsumerConfiguration((FileEventDrivenJob) job, configuration);
-
-        this.configurationService.update(consumer);
-
-        ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
-            .getFlowElement("File Age Filter").getFlowComponent();
-
-        FileAgeFilterConfiguration filterConfiguration = filter.getConfiguration();
-        filterConfiguration.setFileAgeSeconds(((FileEventDrivenJob) job).getMinFileAgeSeconds());
-        filterConfiguration.setJobName(job.getAggregateJobName());
-
-        this.configurationService.update(filter);
-
-        ConfiguredResource<SchedulerFileFilterConfiguration> schedulerFileFilterConfigurationConfiguredResource = (ConfiguredResource<SchedulerFileFilterConfiguration>)flow
-            .getFlowElement("Duplicate Message Filter").getFlowComponent();
-
-        SchedulerFileFilterConfiguration schedulerFileFilterConfiguration = schedulerFileFilterConfigurationConfiguredResource.getConfiguration();
-        schedulerFileFilterConfiguration.setJobName(job.getAggregateJobName());
-
-        this.configurationService.update(schedulerFileFilterConfigurationConfiguredResource);
-
-
-        ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
-            .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
-
-        ContextualisedConverterConfiguration converterConfiguration = converter.getConfiguration();
-        converterConfiguration.setContextName(job.getContextName());
-        converterConfiguration.setChildContextNames(job.getChildContextNames());
-        converterConfiguration.setJobName(job.getJobName());
-
-        this.configurationService.update(converter);
-
-        ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter = (ConfiguredResource<BlackoutRouterConfiguration>)flow
-            .getFlowElement("Blackout Router").getFlowComponent();
-
-        BlackoutRouterConfiguration blackoutRouterConfiguration = blackoutRouter.getConfiguration();
-        blackoutRouterConfiguration.setCronExpressions(((FileEventDrivenJob) job).getBlackoutWindowCronExpressions());
-        blackoutRouterConfiguration.setDateTimeRanges(((FileEventDrivenJob) job).getBlackoutWindowDateTimeRanges());
-
-        this.configurationService.update(blackoutRouter);
-
-        ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter = (ConfiguredResource<ScheduledProcessEventFilterConfiguration>)flow
-            .getFlowElement("Publish Scheduled Status").getFlowComponent();
-
-        ScheduledProcessEventFilterConfiguration scheduledProcessEventFilterConfiguration = scheduledProcessEventFilter.getConfiguration();
-        scheduledProcessEventFilterConfiguration.setDropOnBlackout(((FileEventDrivenJob) job).isDropEventOnBlackout());
-
-        this.configurationService.update(scheduledProcessEventFilter);
-
-        ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
-            .getFlowElement("File Move Broker").getFlowComponent();
-
-        MoveFileBrokerConfiguration moveFileBrokerConfiguration = broker.getConfiguration();
-        moveFileBrokerConfiguration.setMoveDirectory(((FileEventDrivenJob) job).getMoveDirectory());
-        moveFileBrokerConfiguration.setJobName(job.getAggregateJobName());
-
-        this.configurationService.update(broker);
-    }
-
-    private void deleteConfigurationsForFileEventDrivenFlowComponents(Flow flow) {
-        ConfiguredResource<CorrelatedFileConsumerConfiguration> consumer = (ConfiguredResource<CorrelatedFileConsumerConfiguration>)flow
-            .getFlowElement("File Consumer").getFlowComponent();
-
-        Configuration configuration = this.configurationManagement.getConfiguration(consumer.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
-        ConfiguredResource<FileAgeFilterConfiguration> filter = (ConfiguredResource<FileAgeFilterConfiguration>)flow
-            .getFlowElement("File Age Filter").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(filter.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
-        ConfiguredResource<SchedulerFileFilterConfiguration> schedulerFileFilterConfigurationConfiguredResource = (ConfiguredResource<SchedulerFileFilterConfiguration>)flow
-            .getFlowElement("Duplicate Message Filter").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(schedulerFileFilterConfigurationConfiguredResource.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
-        ConfiguredResource<ContextualisedConverterConfiguration> converter = (ConfiguredResource<ContextualisedConverterConfiguration>)flow
-            .getFlowElement("JobExecution to ScheduledStatusEvent").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(converter.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
-        ConfiguredResource<BlackoutRouterConfiguration> blackoutRouter = (ConfiguredResource<BlackoutRouterConfiguration>)flow
-            .getFlowElement("Blackout Router").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(blackoutRouter.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
-        ConfiguredResource<ScheduledProcessEventFilterConfiguration> scheduledProcessEventFilter = (ConfiguredResource<ScheduledProcessEventFilterConfiguration>)flow
-            .getFlowElement("Publish Scheduled Status").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(scheduledProcessEventFilter.getConfiguredResourceId());
-
-        if(configuration != null) {
-            this.configurationManagement.deleteConfiguration(configuration);
-        }
-
-        ConfiguredResource<MoveFileBrokerConfiguration> broker = (ConfiguredResource<MoveFileBrokerConfiguration>)flow
-            .getFlowElement("File Move Broker").getFlowComponent();
-
-        configuration = this.configurationManagement.getConfiguration(broker.getConfiguredResourceId());
 
         if(configuration != null) {
             this.configurationManagement.deleteConfiguration(configuration);
@@ -498,9 +352,60 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     }
 
     /**
-     * Method to star all jobs if they are configured to be started.
+     * Configure Quartz scheduler file event job flow components.
      *
-     * @param jobs
+     * @param module the Module of the Flow
+     * @param job the SchedulerJob to be configured
+     */
+    private void configureQuartzSchedulerFileEventJobFlowComponents(Module<Flow> module, SchedulerJob job) {
+        Flow flow = module.getFlow(job.getAggregateJobName());
+        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
+            .getFlowElement("Scheduled Consumer").getFlowComponent();
+
+        ScheduledConsumerConfiguration configuration = consumer.getConfiguration();
+        this.updateFileWatcherScheduleConsumerConfiguration((FileEventDrivenJob) job, configuration);
+
+        this.configurationService.update(consumer);
+
+
+        ConfiguredResource<FileWatcherJobConverterConfiguration> converter = (ConfiguredResource<FileWatcherJobConverterConfiguration>)flow
+            .getFlowElement("JobExecution to FileWatcherJobEvent").getFlowComponent();
+
+        FileWatcherJobConverterConfiguration converterConfiguration = converter.getConfiguration();
+        this.updateFileWatcherJobConverterConfiguration((FileEventDrivenJob) job, converterConfiguration);
+
+        this.configurationService.update(converter);
+    }
+
+    /**
+     * Deletes the configuration related to the Quartz scheduler file event job flow components from the provided Flow.
+     *
+     * @param flow the Flow from which to delete the Quartz scheduler file event job flow components configuration
+     */
+    private void deleteQuartzSchedulerFileEventJobFlowComponents(Flow flow) {
+        ConfiguredResource<ScheduledConsumerConfiguration> consumer = (ConfiguredResource<ScheduledConsumerConfiguration>)flow
+            .getFlowElement("Scheduled Consumer").getFlowComponent();
+
+        Configuration consumerConfiguration = this.configurationManagement.getConfiguration(consumer.getConfiguredResourceId());
+
+        if(consumerConfiguration != null) {
+            this.configurationManagement.deleteConfiguration(consumerConfiguration);
+        }
+
+        ConfiguredResource<FileWatcherJobConverterConfiguration> converter = (ConfiguredResource<FileWatcherJobConverterConfiguration>)flow
+            .getFlowElement("JobExecution to FileWatcherJobEvent").getFlowComponent();
+
+        Configuration configuration = this.configurationManagement.getConfiguration(converter.getConfiguredResourceId());
+
+        if(configuration != null) {
+            this.configurationManagement.deleteConfiguration(configuration);
+        }
+    }
+
+    /**
+     * Starts the jobs that have a startup control type of "AUTOMATIC".
+     *
+     * @param jobs the list of SchedulerJob objects to start
      */
     private void startJobs(List<SchedulerJob> jobs) {
         String user = UserUtil.getUser();
@@ -511,11 +416,12 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         });
     }
 
+
     /**
-     * Update the scheduled consumer configuration.
+     * Updates the ScheduledConsumerConfiguration with information from a QuartzScheduleDrivenJob.
      *
-     * @param job
-     * @param scheduledConsumerConfiguration
+     * @param job the QuartzScheduleDrivenJob providing the configuration details
+     * @param scheduledConsumerConfiguration the ScheduledConsumerConfiguration to be updated
      */
     private void updateScheduleConsumerConfiguration(QuartzScheduleDrivenJob job, ScheduledConsumerConfiguration scheduledConsumerConfiguration) {
         scheduledConsumerConfiguration.setJobName(job.getAggregateJobName());
@@ -531,64 +437,50 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         scheduledConsumerConfiguration.setRecoveryTolerance(job.getRecoveryTolerance());
     }
 
-    /**
-     * Update the file consumer configuration.
-     *
-     * @param job
-     * @param fileConsumerConfiguration
-     */
-    private void updateFileConsumerConfiguration(FileEventDrivenJob job, CorrelatedFileConsumerConfiguration fileConsumerConfiguration) {
-        fileConsumerConfiguration.setFilenames(job.getFilenames());
-        fileConsumerConfiguration.setFilePath(job.getFilePath());
-        fileConsumerConfiguration.setJobName(job.getAggregateJobName());
-        fileConsumerConfiguration.setJobGroupName(job.getJobGroup());
-        fileConsumerConfiguration.setDescription(job.getJobDescription());
-        fileConsumerConfiguration.setCronExpression(job.getCronExpression());
-        fileConsumerConfiguration.setTimezone(job.getTimeZone());
-        fileConsumerConfiguration.setEager(job.isEager());
-        fileConsumerConfiguration.setIgnoreMisfire(job.isIgnoreMisfire());
-        fileConsumerConfiguration.setMaxEagerCallbacks(job.getMaxEagerCallbacks());
-        fileConsumerConfiguration.setPassthroughProperties(job.getPassthroughProperties());
-        fileConsumerConfiguration.setPersistentRecovery(job.isPersistentRecovery());
-        fileConsumerConfiguration.setRecoveryTolerance(job.getRecoveryTolerance());
-        fileConsumerConfiguration.setDirectoryDepth(job.getDirectoryDepth());
-        fileConsumerConfiguration.setEncoding(job.getEncoding());
-        fileConsumerConfiguration.setIgnoreFileRenameWhilstScanning(job.isIgnoreFileRenameWhilstScanning());
-        fileConsumerConfiguration.setIncludeHeader(job.isIncludeHeader());
-        fileConsumerConfiguration.setLogMatchedFilenames(job.isLogMatchedFilenames());
-        fileConsumerConfiguration.setIncludeTrailer(job.isIncludeTrailer());
-        fileConsumerConfiguration.setSortAscending(job.isSortAscending());
-        fileConsumerConfiguration.setSortByModifiedDateTime(job.isSortByModifiedDateTime());
-        fileConsumerConfiguration.setDynamicFileName(job.isDynamic());
-        fileConsumerConfiguration.setFileNameSpelExpression(job.getFilenameSpel());
-        fileConsumerConfiguration.setFilePathSpelExpression(job.getFilePathSpel());
 
-//        if (spelExpressionsMap != null && !spelExpressionsMap.isEmpty()) {
-//            for (String contextId : spelExpressionsMap.keySet()) {
-//                if (contextId.equals(job.getContextName())) {
-//                    List<Object> spelParams = spelExpressionsMap.get(contextId);
-//                    // [0] = isDynamic File name (boolean)
-//                    // [1] = spelExpression (String)
-//                    // [2] = any parameters to replace on the spel expression (Map<String, String>)
-//                    boolean isDynamic = (boolean) spelParams.get(0);
-//                    if (isDynamic) {
-//                        fileConsumerConfiguration.setDynamicFileName(true);
-//                        String spelExpression = (String) spelParams.get(1);
-//                        Map<String, String> spelExpressionParamsToReplace = (Map<String, String>) spelParams.get(2);
-//                        if (spelExpressionParamsToReplace != null && !spelExpressionParamsToReplace.isEmpty()) {
-//                            for (String key : spelExpressionParamsToReplace.keySet()) {
-//                                String replacementValue = getSpelReplacement(spelExpressionParamsToReplace.get(key), job);
-//                                if (replacementValue != null) {
-//                                    spelExpression = spelExpression.replace(key, replacementValue);
-//                                }
-//                            }
-//                        }
-//                        logger.info("Setting spel expression on fileConsumerConfiguration: " + spelExpression);
-//                        fileConsumerConfiguration.setFileNameSpelExpression(spelExpression);
-//                    }
-//                }
-//            }
-//        }
+    /**
+     * Updates the configuration of a ScheduledConsumerConfiguration with information from a FileEventDrivenJob.
+     *
+     * @param job the FileEventDrivenJob providing the configuration details
+     * @param scheduledConsumerConfiguration the ScheduledConsumerConfiguration to be updated
+     */
+    private void updateFileWatcherScheduleConsumerConfiguration(FileEventDrivenJob job, ScheduledConsumerConfiguration scheduledConsumerConfiguration) {
+        scheduledConsumerConfiguration.setJobName(job.getAggregateJobName());
+        scheduledConsumerConfiguration.setJobGroupName(job.getJobGroup());
+        scheduledConsumerConfiguration.setDescription(job.getJobDescription());
+        scheduledConsumerConfiguration.setCronExpression(job.getCronExpression());
+        scheduledConsumerConfiguration.setTimezone(job.getTimeZone());
+        scheduledConsumerConfiguration.setEager(job.isEager());
+        scheduledConsumerConfiguration.setIgnoreMisfire(job.isIgnoreMisfire());
+        scheduledConsumerConfiguration.setMaxEagerCallbacks(job.getMaxEagerCallbacks());
+        scheduledConsumerConfiguration.setPassthroughProperties(job.getPassthroughProperties());
+        scheduledConsumerConfiguration.setPersistentRecovery(job.isPersistentRecovery());
+        scheduledConsumerConfiguration.setRecoveryTolerance(job.getRecoveryTolerance());
+    }
+
+
+    /**
+     * Updates the configuration of a FileWatcherJobConverterConfiguration with information from a FileEventDrivenJob.
+     *
+     * @param job the FileEventDrivenJob providing the configuration details
+     * @param fileConsumerConfiguration the FileWatcherJobConverterConfiguration to be updated
+     */
+    private void updateFileWatcherJobConverterConfiguration(FileEventDrivenJob job, FileWatcherJobConverterConfiguration fileConsumerConfiguration) {
+        fileConsumerConfiguration.setContextName(job.getContextName());
+        fileConsumerConfiguration.setJobName(job.getJobName());
+        fileConsumerConfiguration.setMoveDirectory(job.getMoveDirectory());
+        if(job.getFilenames() != null && job.getFilenames().size() > 0) {
+            fileConsumerConfiguration.setFilename(job.getFilenames().get(0));
+        }
+        fileConsumerConfiguration.setFilePath(job.getFilePath());
+        fileConsumerConfiguration.setMinFileAgeSeconds(job.getMinFileAgeSeconds());
+        fileConsumerConfiguration.setFilePathSpelExpression(job.getFilePathSpel());
+        fileConsumerConfiguration.setFileNameSpelExpression(job.getFilenameSpel());
+        fileConsumerConfiguration.setChildContextNames(job.getChildContextNames());
+        fileConsumerConfiguration.setBlackoutWindowCronExpressions(job.getBlackoutWindowCronExpressions());
+        fileConsumerConfiguration.setBlackoutWindowDateTimeRanges(job.getBlackoutWindowDateTimeRanges());
+        fileConsumerConfiguration.setSlaCronExpression(job.getSlaCronExpression());
+        fileConsumerConfiguration.setTimeZone(job.getTimeZone());
     }
 
     /**
@@ -601,60 +493,4 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     {
         return (ConfiguredResource<ConfiguredModuleConfiguration>)module;
     }
-
-    /**
-     * Get the fieldName value of an object.
-     * This is very specific for spel expressions and quoting strings
-     * Only currently used in this class, hence here.
-     */
-    protected String getSpelReplacement(String fieldName, Object clazz) {
-        try {
-            Object property = ReflectionUtils.getProperty(clazz, fieldName);
-            if (property != null) {
-                if (property instanceof String) {
-                    return "'" + property + "'";
-                } else if (property instanceof List) {
-                    // assumes its a list of strings so far this is the case
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("{");
-                    int i = 0;
-                    for (Object object : ((List<?>) property)) {
-                        i++;
-                        builder.append("'" + object + "'");
-                        if (((List<?>) property).size() != i) {
-                            builder.append(",");
-                        }
-                    }
-                    builder.append("}");
-                    return builder.toString();
-
-                } else if (property instanceof Map) {
-                    int i = 0;
-                    // assumes the map is a map of string to string so far this is the case
-                    Map map = (Map) property;
-                    StringBuilder builder = new StringBuilder();
-                    builder.append("{");
-                    for (Object key : map.keySet()) {
-                        i++;
-                        builder.append("'" + key + "'");
-                        builder.append(":");
-                        builder.append("'" + map.get(key) + "'");
-                        if (((Map) property).size() != i) {
-                            builder.append(",");
-                        }
-                    }
-                    builder.append("}");
-                    return builder.toString();
-                } else {
-                    return property.toString();
-                }
-            }
-        } catch (Exception e) {
-            logger.warn(String.format("Could not get field name [%s] on class [%s]. Error [%s]",
-                fieldName, clazz.getClass().getName(), e.getMessage()));
-        }
-
-        return null;
-    }
-    
 }

@@ -43,6 +43,7 @@ package org.ikasan.ootb.scheduler.agent;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.awaitility.Awaitility;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
@@ -51,6 +52,7 @@ import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
@@ -74,6 +76,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import javax.annotation.Resource;
 import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import static org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer.EMPTY_CORRELATION_ID;
 import static org.junit.Assert.assertEquals;
@@ -118,49 +121,57 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Before
     public void setup() throws IOException {
+        ContextInstanceCache.instance().removeAll();
         outboundQueue.removeAll();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_success_start_no_correlation_id() throws IOException {
+    public void test_quartz_flow_success_start_agent_recovery_not_complete() {
+        ContextInstanceCache.instance().setInitialisationComplete(false);
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter");
+            .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
-        flowTestRule.stopFlow();
-        assertEquals(Flow.STOPPED, flowTestRule.getFlowState());
+        Awaitility.await()
+            .atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() ->assertEquals(Flow.RECOVERING, flowTestRule.getFlowState()));
 
+        flowTestRule.stopFlow();
         flowTestRule.assertIsSatisfied();
     }
 
     @Test
     @DirtiesContext
     public void test_quartz_flow_success() throws IOException {
+        ContextInstanceCache.instance().setInitialisationComplete(true);
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
+
+        ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);
+        correlatedScheduledConsumerConfiguration.setContextName("contextInstanceName");
 
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter")
             .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter")
+            .splitter("Scheduled Status Event Correlation Identifier Splitter")
             .router("Blackout Router")
             .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
@@ -178,54 +189,58 @@ public class QuartzSchedulerJobEventFlowTest {
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_recovery_context_instance_not_found() {
-        // Create cache but use a different correlationID
+    public void test_quartz_flow_success_2_instances_in_cache() throws IOException {
+        ContextInstanceCache.instance().setInitialisationComplete(true);
         createContextAndPutInCache();
-        String contextInstanceId = UUID.randomUUID().toString();
+        createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
+        ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);
+        correlatedScheduledConsumerConfiguration.setContextName("contextInstanceName");
 
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter");
+            .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter")
+            .splitter("Scheduled Status Event Correlation Identifier Splitter")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer")
+            .router("Blackout Router")
+            .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
         flowTestRule.assertIsSatisfied();
 
-        assertEquals(Flow.RECOVERING, flowTestRule.getFlowState());
-
-        assertEquals(0, outboundQueue.size());
+        assertEquals(2, outboundQueue.size());
 
         flowTestRule.stopFlow();
     }
 
     @Test
     @DirtiesContext
-    public void test_quartz_flow_filter_empty_context_instance_id() {
-        // Create cache but use a different correlationID
+    public void test_quartz_event_filtered_context_instance_not_found() {
+        ContextInstanceCache.instance().setInitialisationComplete(true);
         createContextAndPutInCache();
-        String contextInstanceId = EMPTY_CORRELATION_ID;
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
+        ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);
+        correlatedScheduledConsumerConfiguration.setContextName("anotherContextInstanceName");
 
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter");
+            .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
@@ -241,27 +256,30 @@ public class QuartzSchedulerJobEventFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_not_filtered_due_to_outside_blackout_window_success() throws IOException {
+        ContextInstanceCache.instance().setInitialisationComplete(true);
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
-
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
         blackoutRouterConfiguration.setCronExpressions(List.of("0 15 10 * * ? 3000"));
 
+
+        ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);
+        correlatedScheduledConsumerConfiguration.setContextName("contextInstanceName");
+
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter")
             .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter")
+            .splitter("Scheduled Status Event Correlation Identifier Splitter")
             .router("Blackout Router")
             .producer("Scheduled Status Producer");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
@@ -280,28 +298,30 @@ public class QuartzSchedulerJobEventFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_not_dropped_success() throws IOException {
+        ContextInstanceCache.instance().setInitialisationComplete(true);
         String contextInstanceId = createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
-
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
         blackoutRouterConfiguration.setCronExpressions(List.of("*/1 * * * * ?"));
 
+
+        ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);
+        correlatedScheduledConsumerConfiguration.setContextName("contextInstanceName");
+
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter")
             .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter")
+            .splitter("Scheduled Status Event Correlation Identifier Splitter")
             .router("Blackout Router")
             .filter("Publish Scheduled Status")
             .producer("Blackout Scheduled Status Producer");
-
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 
@@ -320,13 +340,14 @@ public class QuartzSchedulerJobEventFlowTest {
     @Test
     @DirtiesContext
     public void test_quartz_flow_filtered_due_to_outside_blackout_window_but_scheduler_event_dropped_success() {
-        String contextInstanceId = createContextAndPutInCache();
+        ContextInstanceCache.instance().setInitialisationComplete(true);
+        createContextAndPutInCache();
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(contextInstanceId);
+        ContextualisedConverterConfiguration correlatedScheduledConsumerConfiguration
+            = flowTestRule.getComponentConfig("JobExecution to ScheduledStatusEvent", ContextualisedConverterConfiguration.class);
+        correlatedScheduledConsumerConfiguration.setContextName("contextInstanceName");
 
         BlackoutRouterConfiguration blackoutRouterConfiguration
             = flowTestRule.getComponentConfig("Blackout Router", BlackoutRouterConfiguration.class);
@@ -337,14 +358,15 @@ public class QuartzSchedulerJobEventFlowTest {
         scheduledProcessEventFilterConfiguration.setDropOnBlackout(true);
 
         flowTestRule.consumer("Scheduled Consumer")
-            .filter("Context Instance Active Filter")
             .converter("JobExecution to ScheduledStatusEvent")
+            .filter("Context Instances Active Filter")
+            .splitter("Scheduled Status Event Correlation Identifier Splitter")
             .router("Blackout Router")
             .filter("Publish Scheduled Status");
 
         flowTestRule.startFlow();
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
-        flowTestRule.fireScheduledConsumerWithExistingTriggerEnhanced();
+        flowTestRule.fireScheduledConsumer();
 
         flowTestRule.sleep(2000);
 

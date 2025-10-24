@@ -8,6 +8,19 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
 
     private static final String FQN_PATH_SEPARATOR_LINUX = "/";
     
+    /**
+     * Retrieves a FileMatcher based on the provided parameters.
+     *
+     * @param filePath the file path to search within. If null or empty, assumes the files are fully qualified.
+     * @param filename the name of the file to search for.
+     * @param dynamicFileName whether the filename is dynamic or static.
+     * @param ignoreFileNameWhistScanning whether to ignore filename while scanning.
+     * @param directoryDepth the depth of the directory tree to walk.
+     * @param filenameSpelExpression the SpEL expression for the filename.
+     * @param filePathSpelExpression the SpEL expression for the file path.
+     * @param followSymbolicLinks whether to follow symbolic links.
+     * @return a FileMatcher instance based on the provided parameters.
+     */
     protected FileMatcher getFileMatcher(String filePath, String filename, boolean dynamicFileName,
                                          boolean ignoreFileNameWhistScanning, int directoryDepth,
                                          String filenameSpelExpression, String filePathSpelExpression,
@@ -55,6 +68,12 @@ public abstract class AbstractFileMessageProvider implements EndpointListener<St
         }
     }
 
+    /**
+     * Modifies the provided file path for Unix-style systems by applying necessary adjustments.
+     *
+     * @param filePath the file path to be modified
+     * @return the modified file path with appropriate adjustments
+     */
     protected String modifyPathForUnix(String filePath) {
         boolean isWindows = System.getProperty("os.name").toLowerCase().contains("win");
         if (!isWindows && !filePath.startsWith("/") && !filePath.startsWith(".")) {

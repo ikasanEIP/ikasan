@@ -22,7 +22,7 @@ import java.util.Map;
 public class ScheduledProcessEventToBigQueueMessageSerialiser implements Serialiser<ScheduledProcessEvent, byte[]> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledProcessEventToBigQueueMessageSerialiser.class);
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
     @Override
     public byte[] serialise(ScheduledProcessEvent source) {
@@ -56,7 +56,7 @@ public class ScheduledProcessEventToBigQueueMessageSerialiser implements Seriali
             byte [] bytes = OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage.getMessage());
             return OBJECT_MAPPER.readValue(new String(bytes), ContextualisedScheduledProcessEventImpl.class);
         } catch (Exception e) {
-            LOGGER.warn("Got exception deserialising " + e.getMessage());
+            LOGGER.warn("Got exception de-serialising " + e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }

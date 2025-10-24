@@ -80,25 +80,24 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import org.ikasan.bigqueue.BigArrayImpl;
+import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.bigqueue.IBigQueue;
-import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.component.endpoint.CorrelatingFileConsumerBuilderImpl;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
 import org.ikasan.filter.duplicate.IsDuplicateFilterRule;
 import org.ikasan.filter.duplicate.service.DuplicateFilterService;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.CorrelatingFileMatcherBroker;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.MoveFileBroker;
-import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.MoveFileBrokerConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.FileListToContextualisedScheduledProcessEventConverter;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.*;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ContextInstanceFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.component.converter.FileWatcherJobEventToContextualisedScheduledProcessEventConverter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.FileAgeFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.ScheduledProcessEventFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFileFilter;
+import org.ikasan.ootb.scheduler.agent.module.component.filter.SchedulerFilterEntryConverter;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
+import org.ikasan.ootb.scheduler.agent.module.component.serialiser.FileWatcherJobEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.ScheduledProcessEventToBigQueueMessageSerialiser;
-import org.ikasan.scheduler.ScheduledJobFactory;
+import org.ikasan.ootb.scheduler.agent.rest.cache.InternalFileWatcherJobQueueCache;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -106,12 +105,13 @@ import org.ikasan.spec.component.filter.Filter;
 import org.ikasan.spec.component.routing.SingleRecipientRouter;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
-import org.quartz.Scheduler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.io.IOException;
 
 /**
  * File scheduler job event flow component factory.
@@ -119,13 +119,17 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @Configuration
-public class FileEventSchedulerJobFlowComponentFactory
-{
+public class FileEventSchedulerJobFlowComponentFactory  {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Value( "${module.name}" )
     String moduleName;
 
     @Value( "${scheduler.file.filter.days.ttl:30}" )
     Integer filterTtl;
+
+    @Value( "${big.queue.consumer.queueDir}" )
+    private String queueDir;
 
     @Resource
     BuilderFactory builderFactory;
@@ -142,108 +146,110 @@ public class FileEventSchedulerJobFlowComponentFactory
     @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
-    @Resource
-    Scheduler scheduler;
-
-    @Resource
-    ScheduledJobFactory scheduledJobFactory;
-
-    @Resource
-    AopProxyProvider aopProxyProvider;
+    @Value("${big.queue.page.size:"+ BigArrayImpl.DEFAULT_DATA_PAGE_SIZE + "}")
+    private int bigQueuePageSize;
 
     /**
-     * Return an instance of a configured file consumer
+     * Creates a BigQueueConsumer component for consuming messages from a specified inbound queue.
      *
-     * @return
+     * @param threadIdentifier the identifier for the consumer thread
+     * @return a Consumer object representing the BigQueueConsumer component
+     * @throws IOException if an I/O error occurs
      */
-    public Consumer getFileConsumer()
-    {
-        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = new CorrelatedFileConsumerConfiguration();
-        fileConsumerConfiguration.setFilenames(List.of("set me"));
-        fileConsumerConfiguration.setCronExpression("0 0 0 * * ?");
-        CorrelatingFileConsumerBuilderImpl builder = new CorrelatingFileConsumerBuilderImpl
-            (this.scheduler,  this.scheduledJobFactory, this.aopProxyProvider, new CorrelatingFileMessageProvider());
+    public Consumer bigQueueConsumer(String threadIdentifier) throws IOException {
+        String queueName = moduleName+"-"+threadIdentifier+"-file-watcher-inbound-queue";
 
-        return builder.setConfiguration(fileConsumerConfiguration)
+        if(bigQueuePageSize < BigArrayImpl.MINIMUM_DATA_PAGE_SIZE) {
+            logger.info("bigQueuePageSize[{}] is smaller than BigArrayImpl.MINIMUM_DATA_PAGE_SIZE[{}]. Setting to [{}]"
+                , bigQueuePageSize, BigArrayImpl.MINIMUM_DATA_PAGE_SIZE, BigArrayImpl.MINIMUM_DATA_PAGE_SIZE);
+            bigQueuePageSize = BigArrayImpl.MINIMUM_DATA_PAGE_SIZE;
+        }
+
+        IBigQueue inboundQueue = new BigQueueImpl(queueDir, queueName, bigQueuePageSize);
+
+        // Add the inbound queue to the cache.
+        InternalFileWatcherJobQueueCache.instance().put(queueName, inboundQueue);
+
+        return builderFactory.getComponentBuilder().bigQueueConsumer()
+            .setInboundQueue(inboundQueue)
+            .setPutErrorsToBackOfQueue(false)
+            .setSerialiser(new FileWatcherJobEventToBigQueueMessageSerialiser())
             .build();
     }
 
     /**
-     * Get the file age filter.
+     * Retrieves a CorrelatingFileMatcherBroker instance that implements the Broker interface.
+     * The CorrelatingFileMatcherBroker is responsible for matching files based on provided criteria and correlation identifier.
      *
-     * @return
+     * @return a CorrelatingFileMatcherBroker object implementing the Broker interface for handling file correlation
      */
-    public Filter getFileAgeFilter() {
-        FileAgeFilterConfiguration configuration = new FileAgeFilterConfiguration();
-        FileAgeFilter fileAgeFilter = new FileAgeFilter(this.dryRunModeService);
-
-        fileAgeFilter.setConfiguration(configuration);
-
-        return fileAgeFilter;
+    public Broker correlatingFileMatcherBroker() {
+        return new CorrelatingFileMatcherBroker();
     }
 
     /**
-     * Get the duplicate message filter.
+     * Returns a FileAgeFilter object that filters FileWatcherJobEvent based on specified criteria.
      *
-     * @param jobName
-     * @return
+     * @return FileAgeFilter object implementing the Filter interface for filtering FileWatcherJobEvent
      */
-    public Filter getDuplicateMessageFilter(String jobName) {
+    public Filter getFileAgeFilter() {
+        return new FileAgeFilter();
+    }
+
+    /**
+     * Retrieves a duplicate message filter based on the given job name.
+     *
+     * @return a Filter object representing the duplicate message filter
+     */
+    public Filter getDuplicateMessageFilter() {
         SchedulerFilterEntryConverter converter
-            = new SchedulerFilterEntryConverter("duplicate-message-filter-"+jobName, filterTtl);
+            = new SchedulerFilterEntryConverter("file-watcher-duplicate-message-filter", filterTtl);
 
         IsDuplicateFilterRule isDuplicateFilterRule
             = new IsDuplicateFilterRule(duplicateFilterService, converter);
 
         SchedulerFileFilterConfiguration configuration = new SchedulerFileFilterConfiguration();
 
-        SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule, dryRunModeService);
+        SchedulerFileFilter filter = new SchedulerFileFilter(isDuplicateFilterRule);
         filter.setConfiguration(configuration);
 
         return filter;
     }
 
     /**
-     * Get the broker that moves files if the job is configured to do so.
+     * Retrieves a MoveFileBroker instance that implements the Broker interface.
+     * The MoveFileBroker is responsible for processing file moving operations with optional dry run mode.
      *
-     * @return
+     * @return a MoveFileBroker object for handling file moving operations
      */
     public Broker getMoveFileBroker() {
-        MoveFileBrokerConfiguration moveFileBrokerConfiguration = new MoveFileBrokerConfiguration();
-        MoveFileBroker broker = new MoveFileBroker(this.dryRunModeService);
-        broker.setConfiguration(moveFileBrokerConfiguration);
-
-        return broker;
+        return new MoveFileBroker();
     }
 
     /**
-     * Get the converter that converts messages from a JobExecution to a ScheduledProcessEvent.
+     * Method to retrieve a Converter implementation that converts FileWatcherJobEvent objects to
+     * ContextualisedScheduledProcessEvent objects.
      *
-     * @return the converter
+     * @return a Converter object capable of converting FileWatcherJobEvent to ContextualisedScheduledProcessEvent
      */
     public Converter getFileEventToScheduledProcessEventConverter() {
-        ContextualisedConverterConfiguration configuration = new ContextualisedConverterConfiguration();
-        FileListToContextualisedScheduledProcessEventConverter converter
-            = new FileListToContextualisedScheduledProcessEventConverter(moduleName);
-        converter.setConfiguration(configuration);
-
-        return converter;
+        return new FileWatcherJobEventToContextualisedScheduledProcessEventConverter(moduleName);
     }
 
     /**
-     * Get the router responsible for determining if a job has been run in a blackout window.
+     * Retrieves the BlackoutRouter instance used for determining whether a scheduled process event
+     * has fired within a defined blackout period.
      *
-     * @return
+     * @return a BlackoutRouter instance implementing the SingleRecipientRouter interface
      */
-    public SingleRecipientRouter getBlackoutRouter()
-    {
+    public SingleRecipientRouter getBlackoutRouter() {
         return new BlackoutRouter();
     }
 
     /**
-     * Get the filter that drops ScheduledProcessEvents that should not be published back to the dashboard.
+     * Retrieves a filter that ignores scheduled process events within the blackout period.
      *
-     * @return
+     * @return a Filter object representing the ScheduledProcessEventFilter
      */
     public Filter getScheduledStatusFilter()
     {
@@ -251,9 +257,10 @@ public class FileEventSchedulerJobFlowComponentFactory
     }
 
     /**
-     * Get the producer that publishes ScheduledProcessEvents.
+     * Retrieves a Producer component for distributing to an endpoint.
+     * The Producer defines a contract for translation.
      *
-     * @return
+     * @return a Producer object that can push payload to a protocol endpoint
      */
     public Producer getScheduledStatusProducer()
     {

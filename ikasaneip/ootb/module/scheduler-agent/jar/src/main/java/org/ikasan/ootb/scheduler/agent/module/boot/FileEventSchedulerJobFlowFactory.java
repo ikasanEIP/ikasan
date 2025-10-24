@@ -41,15 +41,18 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.OnException;
+import org.ikasan.module.startup.StartupControlImpl;
+import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.FileEventSchedulerJobFlowComponentFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilterException;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.module.StartupControl;
+import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
+import java.io.IOException;
 
 /**
  * File event scheduler job flow factory.
@@ -75,19 +78,21 @@ public class FileEventSchedulerJobFlowFactory
     @Resource
     FileEventSchedulerJobFlowComponentFactory componentFactory;
 
+    @Resource
+    StartupControlDao startupControlDao;
 
-    public Flow create(String jobName)
-    {
+
+    public Flow create(String jobName) throws IOException {
+        StartupControl startupControl = new StartupControlImpl(moduleName, jobName);
+        startupControl.setStartupType(StartupType.AUTOMATIC);
+        this.startupControlDao.save(startupControl);
+
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
-            .withDescription("The " + jobName + " File Event Flow is responsible for kicking off jobs when an expected file arrives.")
-            .withExceptionResolver(
-                builderFactory
-                    .getExceptionResolverBuilder()
-                    .addExceptionToAction(ContextInstanceFilterException.class, OnException.retry(agentRecoveryRetryDelay, agentRecoveryMaxRetries))
-            )
-            .consumer("File Consumer", componentFactory.getFileConsumer())
+            .withDescription("The [" + jobName +"] flow is responsible for determining if a file exists and raising an event if it does.")
+            .consumer("File Event BigQueue Consumer", componentFactory.bigQueueConsumer(jobName.toLowerCase().replace(" ", "-")))
+            .broker("File Matching Broker", componentFactory.correlatingFileMatcherBroker())
             .filter("File Age Filter", componentFactory.getFileAgeFilter())
-            .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter(jobName))
+            .filter("Duplicate Message Filter", componentFactory.getDuplicateMessageFilter())
             .broker("File Move Broker", componentFactory.getMoveFileBroker())
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getFileEventToScheduledProcessEventConverter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())

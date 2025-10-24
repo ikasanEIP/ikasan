@@ -42,10 +42,11 @@ package org.ikasan.ootb.scheduled.dryrun.configuration;
 
 import org.ikasan.module.ConfiguredModuleConfiguration;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class DryRunConfiguredModuleConfiguration extends ConfiguredModuleConfiguration {
+public class DryRunConfiguredModuleConfiguration extends ConfiguredModuleConfiguration implements Serializable {
     private boolean dryRunMode = false;
     private Map<String, String>  dryRunJobsMap = new HashMap<>();
 

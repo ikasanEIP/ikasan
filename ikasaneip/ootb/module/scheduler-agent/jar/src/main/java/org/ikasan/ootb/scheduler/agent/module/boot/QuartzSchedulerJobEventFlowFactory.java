@@ -43,10 +43,9 @@ package org.ikasan.ootb.scheduler.agent.module.boot;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.OnException;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.QuartzSchedulerJobEventFlowComponentFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.ContextInstanceFilterException;
+import org.ikasan.ootb.scheduler.agent.module.component.router.AgentRecoveryNotCompleteException;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
-import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
@@ -63,13 +62,6 @@ public class QuartzSchedulerJobEventFlowFactory
     @Value( "${module.name}" )
     private String moduleName;
 
-    @Value("${agent.recovery.instance.exception.retry.delay.millis:5000}")
-    private long agentRecoveryRetryDelay;
-
-    // -1 means retry indefinitely
-    @Value("${agent.recovery.instance.exception.max.retries:-1}")
-    private int agentRecoveryMaxRetries;
-
     @Resource
     private BuilderFactory builderFactory;
 
@@ -80,14 +72,10 @@ public class QuartzSchedulerJobEventFlowFactory
     {
         return builderFactory.getModuleBuilder(moduleName).getFlowBuilder(jobName)
             .withDescription("The " + jobName + " Quartz Schedule Flow is responsible for kicking off jobs on a scheduled basis based on the configured cron expression.")
-            .withExceptionResolver(
-                builderFactory
-                    .getExceptionResolverBuilder()
-                    .addExceptionToAction(ContextInstanceFilterException.class, OnException.retry(agentRecoveryRetryDelay, agentRecoveryMaxRetries))
-            )
             .consumer("Scheduled Consumer", componentFactory.getScheduledConsumer())
-            .filter("Context Instance Active Filter", componentFactory.getContextInstanceFilter())
             .converter("JobExecution to ScheduledStatusEvent", componentFactory.getJobExecutionConverter())
+            .filter("Context Instances Active Filter", componentFactory.getContextInstancesActiveFilter())
+            .splitter("Scheduled Status Event Correlation Identifier Splitter", componentFactory.getScheduledProcessEventEventCorrelationIdentifierSplitter())
             .singleRecipientRouter("Blackout Router", componentFactory.getBlackoutRouter())
             .when(BlackoutRouter.OUTSIDE_BLACKOUT_PERIOD, builderFactory.getRouteBuilder()
                 .producer("Scheduled Status Producer", componentFactory.getScheduledStatusProducer()))

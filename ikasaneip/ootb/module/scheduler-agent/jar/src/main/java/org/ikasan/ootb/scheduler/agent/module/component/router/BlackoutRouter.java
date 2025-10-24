@@ -74,6 +74,10 @@ public class BlackoutRouter implements SingleRecipientRouter<ScheduledProcessEve
     @Override
     public String route(ScheduledProcessEvent messageToRoute) throws RouterException
     {
+        if(messageToRoute.isDryRun()) {
+            return OUTSIDE_BLACKOUT_PERIOD;
+        }
+
         Date now = new Date();
         if(configuration.getCronExpressions() != null && configuration.getCronExpressions().size() > 0)
         {

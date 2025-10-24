@@ -83,11 +83,15 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
     @Override
     public ContextualisedScheduledProcessEvent convert(JobExecutionContext jobExecutionContext) throws TransformationException {
         try {
-            String contextInstanceIdentifier = (String)jobExecutionContext.getMergedJobDataMap()
-                .get(CorrelatingScheduledConsumer.CORRELATION_ID);
+            String contextInstanceIdentifier = null;
 
-            logger.debug(CorrelatingScheduledConsumer.CORRELATION_ID
-                + " " + contextInstanceIdentifier);
+            if(jobExecutionContext.getMergedJobDataMap() != null) {
+                contextInstanceIdentifier = (String) jobExecutionContext.getMergedJobDataMap()
+                    .get(CorrelatingScheduledConsumer.CORRELATION_ID);
+
+                logger.debug(CorrelatingScheduledConsumer.CORRELATION_ID
+                    + " " + contextInstanceIdentifier);
+            }
 
             ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
             scheduledProcessEvent.setFireTime(jobExecutionContext.getFireTime().getTime());
@@ -99,7 +103,11 @@ public class JobExecutionToContextualisedScheduledProcessEventConverter implemen
 
             // This is where the correlation identifier is set onto the scheduler process event
             // that is sent to the dashboard.
-            scheduledProcessEvent.setContextInstanceId(contextInstanceIdentifier);
+            if(contextInstanceIdentifier != null && !contextInstanceIdentifier.isEmpty()) {
+                // we know the event is dry run if there is a correlation event identifiers
+                scheduledProcessEvent.setDryRun(true);
+                scheduledProcessEvent.setContextInstanceId(contextInstanceIdentifier);
+            }
 
             Trigger jobTrigger = jobExecutionContext.getTrigger();
             if (jobTrigger != null) {

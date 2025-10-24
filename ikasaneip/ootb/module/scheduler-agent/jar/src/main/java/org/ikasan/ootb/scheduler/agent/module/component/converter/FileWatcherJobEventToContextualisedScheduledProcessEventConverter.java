@@ -41,12 +41,10 @@
 package org.ikasan.ootb.scheduler.agent.module.component.converter;
 
 
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
-import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.ContextualisedConverterConfiguration;
+import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
-import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 
 /**
@@ -54,18 +52,17 @@ import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent
  *
  * @author Ikasan Development Team
  */
-public class FileListToContextualisedScheduledProcessEventConverter implements Converter<CorrelatedFileList, ContextualisedScheduledProcessEvent>
-    , ConfiguredResource<ContextualisedConverterConfiguration>
-{
+public class FileWatcherJobEventToContextualisedScheduledProcessEventConverter implements Converter<FileWatcherJobEvent, ContextualisedScheduledProcessEvent> {
     private final String agentName;
-    private String configurationId;
-    private ContextualisedConverterConfiguration configuration;
 
 
     /**
-     * Constructor
+     * Creates a converter to convert FileWatcherJobEvent to ContextualisedScheduledProcessEvent.
+     *
+     * @param agentName the name of the agent
+     * @throws IllegalArgumentException if agentName is null
      */
-    public FileListToContextualisedScheduledProcessEventConverter(String agentName)
+    public FileWatcherJobEventToContextualisedScheduledProcessEventConverter(String agentName)
     {
         this.agentName = agentName;
         if(agentName == null)
@@ -75,37 +72,21 @@ public class FileListToContextualisedScheduledProcessEventConverter implements C
     }
 
     @Override
-    public ContextualisedScheduledProcessEvent convert(CorrelatedFileList event) throws TransformationException
+    public ContextualisedScheduledProcessEvent convert(FileWatcherJobEvent event) throws TransformationException
     {
         ContextualisedScheduledProcessEvent scheduledProcessEvent = new ContextualisedScheduledProcessEventImpl();
         scheduledProcessEvent.setFireTime(System.currentTimeMillis());
         scheduledProcessEvent.setAgentName(this.agentName);
-        scheduledProcessEvent.setJobName(this.configuration.getJobName());
+        scheduledProcessEvent.setJobName(event.getJobName());
         scheduledProcessEvent.setSuccessful(true);
-        scheduledProcessEvent.setContextName(this.configuration.getContextName());
-        scheduledProcessEvent.setChildContextNames(this.configuration.getChildContextNames());
-        scheduledProcessEvent.setContextInstanceId(event.getCorrelatingIdentifier());
+        scheduledProcessEvent.setContextName(event.getContextName());
+        scheduledProcessEvent.setChildContextNames(event.getChildContextNames());
+        scheduledProcessEvent.setContextInstanceId(event.getCorrelationIdentifier());
+        scheduledProcessEvent.setJobDescription(event.getJobDescription());
+        scheduledProcessEvent.setJobGroup(event.getJobGroup());
+        scheduledProcessEvent.setNextFireTime(event.getNextFireTime());
+        scheduledProcessEvent.setDryRun(event.isDryRun());
 
         return scheduledProcessEvent;
-    }
-
-    @Override
-    public String getConfiguredResourceId() {
-        return this.configurationId;
-    }
-
-    @Override
-    public void setConfiguredResourceId(String id) {
-        this.configurationId = id;
-    }
-
-    @Override
-    public ContextualisedConverterConfiguration getConfiguration() {
-        return this.configuration;
-    }
-
-    @Override
-    public void setConfiguration(ContextualisedConverterConfiguration configuration) {
-        this.configuration = configuration;
     }
 }

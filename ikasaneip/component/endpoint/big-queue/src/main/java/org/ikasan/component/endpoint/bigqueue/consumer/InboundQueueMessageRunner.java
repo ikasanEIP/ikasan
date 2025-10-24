@@ -47,6 +47,7 @@ public class InboundQueueMessageRunner implements Runnable {
                 if(this.nullPayloadCallback != null)this.nullPayloadCallback.executeNullPayloadCallback();
                 return;
             }
+            logger.debug("Peek big queue - " + new String(event));
             Object payload = this.serialiser.deserialise(event);
             logger.debug("Attempting to process inbound message message " + payload);
             this.messageListener.onMessage(payload);

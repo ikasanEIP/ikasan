@@ -1,18 +1,14 @@
 package org.ikasan.ootb.scheduler.agent.rest.cache;
 
-import org.ikasan.bigqueue.IBigQueue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-public class InboundJobQueueCache
-{
-    private Logger logger = LoggerFactory.getLogger(InboundJobQueueCache.class);
+public class InboundJobQueueCache extends AbstractBigQueueCache {
 
     private static InboundJobQueueCache INSTANCE;
 
+    /**
+     * Returns the singleton instance of InboundJobQueueCache.
+     *
+     * @return the singleton instance of InboundJobQueueCache
+     */
     public static InboundJobQueueCache instance()
     {
         if(INSTANCE == null) {
@@ -23,37 +19,5 @@ public class InboundJobQueueCache
             }
         }
         return INSTANCE;
-    }
-
-    private ConcurrentHashMap<String, IBigQueue> cache;
-
-    private InboundJobQueueCache() {
-        cache = new ConcurrentHashMap<>();
-    }
-
-    public void put(String contextName, IBigQueue contextMachine)
-    {
-        logger.debug("%s attempting to put key[%s]".formatted(this, contextName));
-
-        this.cache.put(contextName, contextMachine);
-    }
-
-
-    public IBigQueue get(String contextName)
-    {
-        logger.debug("%s attempting to get context[%s]".formatted(this, contextName));
-
-        return this.cache.get(contextName);
-    }
-
-    public boolean contains(String contextName)
-    {
-        logger.debug("%s check contains[%s] - result [%s]".formatted(this
-        , contextName, this.cache.containsKey(contextName)));
-        return this.cache.containsKey(contextName);
-    }
-
-    public Set keys() {
-        return this.cache.keySet();
     }
 }

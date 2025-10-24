@@ -122,6 +122,7 @@ import java.util.List;
 @Configuration
 public class JobProcessingFlowComponentFactory {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     @Value( "${module.name}" )
     String moduleName;
 

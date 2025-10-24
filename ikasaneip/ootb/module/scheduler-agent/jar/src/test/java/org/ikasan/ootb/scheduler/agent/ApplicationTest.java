@@ -129,10 +129,6 @@ public class ApplicationTest {
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 4"));
 
-        CorrelatedScheduledConsumerConfiguration correlatedScheduledConsumerConfiguration
-            = flowTestRule.getComponentConfig("Scheduled Consumer", CorrelatedScheduledConsumerConfiguration.class);
-        correlatedScheduledConsumerConfiguration.getCorrelatingIdentifiers().add(UUID.randomUUID().toString());
-
         flow = moduleUnderTest.getFlow("Scheduler Flow 4");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
@@ -141,11 +137,6 @@ public class ApplicationTest {
         assertEquals(Flow.STOPPED, flow.getState());
 
         flowTestRule.withFlow(moduleUnderTest.getFlow("Scheduler Flow 2"));
-
-        CorrelatedFileConsumerConfiguration fileConsumerConfiguration = flowTestRule.getComponentConfig("File Consumer"
-            , CorrelatedFileConsumerConfiguration.class);
-        fileConsumerConfiguration.setFilenames(List.of("src/test/resources/data/test1.txt"));
-        fileConsumerConfiguration.setCorrelatingIdentifiers(List.of(UUID.randomUUID().toString()));
 
         flow = moduleUnderTest.getFlow("Scheduler Flow 2");
         flow.start();
@@ -162,6 +153,13 @@ public class ApplicationTest {
         assertEquals(Flow.STOPPED, flow.getState());
 
         flow = moduleUnderTest.getFlow("Housekeep Log Files Flow");
+        flow.start();
+        assertEquals(Flow.RUNNING, flow.getState());
+
+        flow.stop();
+        assertEquals(Flow.STOPPED, flow.getState());
+
+        flow = moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1");
         flow.start();
         assertEquals(Flow.RUNNING, flow.getState());
 
