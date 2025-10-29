@@ -49,7 +49,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.ObjectDeletedException;
 import org.ikasan.history.model.ComponentInvocationMetricImpl;
 import org.ikasan.history.model.CustomMetric;
 import org.ikasan.history.model.FlowInvocationMetricImpl;
@@ -70,7 +69,7 @@ import java.util.stream.Collectors;
  * @author Ikasan Development Team
  *
  */
-public class HibernateMessageHistoryDao implements MessageHistoryDao
+    public class HibernateMessageHistoryDao implements MessageHistoryDao
 {
     /**
      * logger instance
@@ -91,6 +90,8 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
     public static final String UPDATE_HARVESTED_QUERY = "update FlowInvocationMetricImpl w set w.harvestedDateTime = :" + NOW + ", w.harvested = true" +
         " where w.id in(:" + EVENT_IDS + ")";
+
+    public static final String DELETE_METRIC_EVENTS = "delete MetricEvent me where Id in(:" + EVENT_IDS + ")";
 
     private boolean isHarvestQueryOrdered = false;
 
@@ -417,7 +418,8 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
         for(FlowInvocationMetric<ComponentInvocationMetric> flowInvocationMetric : flowInvocationMetrics) {
             for (ComponentInvocationMetric<String, CustomMetric, MetricEvent> messageHistoryEvent : flowInvocationMetric.getFlowInvocationEvents()) {
                 MetricEvent event = eventsMap.get(messageHistoryEvent.getBeforeEventIdentifier()
-                        + flowInvocationMetric.getModuleName() + flowInvocationMetric.getFlowName() + messageHistoryEvent.getComponentName());
+                        + flowInvocationMetric.getModuleName() + flowInvocationMetric.getFlowName()
+                        + messageHistoryEvent.getComponentName());
 
                 if (event != null) {
                     if (event.getComponentName().equals(messageHistoryEvent.getComponentName())
@@ -458,18 +460,13 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
 
     @Override
     public void deleteHarvestedRecords(List<FlowInvocationMetric> flowInvocationMetrics) {
+        List<MetricEvent> metricEvents = new ArrayList<>();
         for(FlowInvocationMetric flowInvocationMetric : flowInvocationMetrics) {
             Set<ComponentInvocationMetric> events = flowInvocationMetric.getFlowInvocationEvents();
 
             for (ComponentInvocationMetric event : events) {
                 if (event.getWiretapFlowEvent() != null) {
-                    try {
-                        entityManager.remove(entityManager.contains(event.getWiretapFlowEvent())
-                            ? event.getWiretapFlowEvent() : entityManager.merge(event.getWiretapFlowEvent()));
-                    }
-                    catch (ObjectDeletedException e) {
-                        logger.info(String.format("Metric Event [%s] has already been deleted.", event.getWiretapFlowEvent()));
-                    }
+                    metricEvents.add((MetricEvent) event.getWiretapFlowEvent());
                 }
 
                 for (CustomMetric metric : (Set<CustomMetric>) event.getMetrics()) {
@@ -484,6 +481,8 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
             entityManager.remove(entityManager.contains(flowInvocationMetric)
                 ? flowInvocationMetric : entityManager.merge(flowInvocationMetric));
         }
+
+        this.deleteMetricEvents(metricEvents);
     }
 
     @Override
@@ -502,6 +501,30 @@ public class HibernateMessageHistoryDao implements MessageHistoryDao
                 query.setParameter(EVENT_IDS, eventIds);
                 query.executeUpdate();
             }
+    }
+
+
+    /**
+     * Deletes MetricEvents from the database based on a list of MetricEvent objects.
+     *
+     * @param events List of MetricEvent objects to be deleted
+     */
+    private void deleteMetricEvents(List<MetricEvent> events) {
+        List<Long> metricEventIdentifiers = new ArrayList<>();
+
+        for(MetricEvent event: events) {
+            if(!metricEventIdentifiers.contains(event.getIdentifier())) {
+                metricEventIdentifiers.add(event.getIdentifier());
+            }
+        }
+
+        List<List<Long>> partitionedIds = Lists.partition(metricEventIdentifiers, 300);
+
+        for(List<Long> eventIds: partitionedIds) {
+            Query query = entityManager.createQuery(DELETE_METRIC_EVENTS);
+            query.setParameter(EVENT_IDS, eventIds);
+            query.executeUpdate();
+        }
     }
 
     /**

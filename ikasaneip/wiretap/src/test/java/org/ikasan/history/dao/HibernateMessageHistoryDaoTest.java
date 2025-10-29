@@ -40,6 +40,8 @@
  */
 package org.ikasan.history.dao;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.WiretapTestAutoConfiguration;
 import org.ikasan.history.model.ComponentInvocationMetricImpl;
@@ -57,6 +59,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -176,6 +179,10 @@ public class HibernateMessageHistoryDaoTest
             }
         }
 
+        EntityManager entityManager = (EntityManager) ReflectionTestUtils.getField(this.messageHistoryDao, "entityManager");
+        Query count = entityManager.createQuery("select count(me) from MetricEvent me");
+        Assert.assertEquals(5005L, count.getSingleResult());
+
         messageHistoryDao.deleteHarvestedRecords(events);
 
         events =  messageHistoryDao.getHarvestedRecords(50);
@@ -231,6 +238,9 @@ public class HibernateMessageHistoryDaoTest
                 , null, null, null);
 
         Assert.assertEquals(5, results.getPagedResults().size());
+
+        count = entityManager.createQuery("select count(me) from MetricEvent me");
+        Assert.assertEquals(5L, count.getSingleResult());
     }
 
     @Test
@@ -257,6 +267,10 @@ public class HibernateMessageHistoryDaoTest
             }
         }
 
+        EntityManager entityManager = (EntityManager) ReflectionTestUtils.getField(this.messageHistoryDao, "entityManager");
+        Query count = entityManager.createQuery("select count(me) from MetricEvent me");
+        Assert.assertEquals(6L, count.getSingleResult());
+
         messageHistoryDao.deleteHarvestedRecords(events);
 
         events =  messageHistoryDao.getHarvestedRecords(50);
@@ -335,6 +349,9 @@ public class HibernateMessageHistoryDaoTest
                 , null, null, null);
 
         Assert.assertEquals(5, results.getPagedResults().size());
+
+        count = entityManager.createQuery("select count(me) from MetricEvent me");
+        Assert.assertEquals(5L, count.getSingleResult());
     }
 
     @Test
