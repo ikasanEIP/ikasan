@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
  * @author Ikasan Development Team
  *
  */
-    public class HibernateMessageHistoryDao implements MessageHistoryDao
+public class HibernateMessageHistoryDao implements MessageHistoryDao
 {
     /**
      * logger instance
