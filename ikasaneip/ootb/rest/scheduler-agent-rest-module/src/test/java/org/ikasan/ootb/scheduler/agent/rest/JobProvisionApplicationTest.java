@@ -12,6 +12,7 @@ import org.ikasan.job.orchestration.model.context.*;
 import org.ikasan.job.orchestration.model.job.*;
 import org.ikasan.spec.scheduled.context.model.*;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
+import org.ikasan.spec.scheduled.job.model.ReplacementPair;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobWrapper;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
@@ -37,10 +38,9 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -133,6 +133,21 @@ public class JobProvisionApplicationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_success_job_provision_jobs_put_concurrent_collections() throws Exception {
+        String payload = createSchedulerJobWrapperUsingConcurrentCollections();
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/jobProvision")
+            .content(payload)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
+    }
+
+    @Test
     @WithMockUser(authorities = "readonly")
     public void test_success_job_initiation_event_put_read_only() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
@@ -199,6 +214,44 @@ public class JobProvisionApplicationTest {
         quartzScheduleDrivenJob.setContextName("contextId");
         quartzScheduleDrivenJob.setChildContextNames(childIds);
         ArrayList<SchedulerJob> jobs = new ArrayList<>();
+        jobs.add(internalEventDrivenJob);
+        jobs.add(fileEventDrivenJob);
+        jobs.add(quartzScheduleDrivenJob);
+        wrapper.setJobs(jobs);
+
+        return this.mapper.writerWithDefaultPrettyPrinter().writeValueAsString(wrapper);
+    }
+
+    private String createSchedulerJobWrapperUsingConcurrentCollections() throws JsonProcessingException {
+        SchedulerJobWrapper wrapper = new SchedulerJobWrapperImpl();
+
+        List<String> childIds = new CopyOnWriteArrayList<>();
+        childIds.add("childId");
+
+        InternalEventDrivenJobImpl internalEventDrivenJob = new InternalEventDrivenJobImpl();
+        internalEventDrivenJob.setAgentName("agentName");
+        internalEventDrivenJob.setJobName("jobName");
+        internalEventDrivenJob.setContextName("contextId");
+        internalEventDrivenJob.setChildContextNames(childIds);
+
+        FileEventDrivenJobImpl fileEventDrivenJob = new FileEventDrivenJobImpl();
+        fileEventDrivenJob.setAgentName("agentName");
+        fileEventDrivenJob.setJobName("jobName");
+        fileEventDrivenJob.setContextName("contextId");
+        fileEventDrivenJob.setChildContextNames(childIds);
+        Set<ReplacementPair> filenameReplacementPairs = new CopyOnWriteArraySet<>();
+        ReplacementPair replacementPair = new ReplacementPairImpl();
+        replacementPair.setReplacementToken("token");
+        replacementPair.setJobPlanParameterName("name");
+        filenameReplacementPairs.add(replacementPair);
+        fileEventDrivenJob.setFilenameReplacementPairs(filenameReplacementPairs);
+
+        QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();
+        quartzScheduleDrivenJob.setAgentName("agentName");
+        quartzScheduleDrivenJob.setJobName("jobName");
+        quartzScheduleDrivenJob.setContextName("contextId");
+        quartzScheduleDrivenJob.setChildContextNames(childIds);
+        List<SchedulerJob> jobs = new CopyOnWriteArrayList<>();
         jobs.add(internalEventDrivenJob);
         jobs.add(fileEventDrivenJob);
         jobs.add(quartzScheduleDrivenJob);
