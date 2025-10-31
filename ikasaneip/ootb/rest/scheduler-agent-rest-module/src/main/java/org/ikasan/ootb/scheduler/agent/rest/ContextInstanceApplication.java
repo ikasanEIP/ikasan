@@ -70,24 +70,6 @@ public class ContextInstanceApplication {
     @Autowired
     private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
 
-    public ContextInstanceApplication() {
-        ObjectMapper mapper = new ObjectMapper();
-        PolymorphicTypeValidator ptv = BasicPolymorphicTypeValidator.builder()
-            .allowIfSubType("org.ikasan.spec.scheduled.instance.model")
-            .allowIfSubType("org.ikasan.job.orchestration.model.context")
-            .allowIfSubType("java.util.ArrayList")
-            .allowIfSubType("java.util.HashMap")
-            .build();
-        final var simpleModule = new SimpleModule()
-            .addAbstractTypeMapping(List.class, ArrayList.class)
-            .addAbstractTypeMapping(Map.class, HashMap.class);
-
-        mapper.registerModule(simpleModule);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        mapper.activateDefaultTyping(ptv, ObjectMapper.DefaultTyping.NON_FINAL);
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-    }
-
     @RequestMapping(path = "/save", method = RequestMethod.PUT)
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity save(@RequestBody ContextInstance contextInstance) {
