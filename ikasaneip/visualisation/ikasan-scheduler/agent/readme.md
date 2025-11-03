@@ -41,9 +41,14 @@ of the agent host, and raising a [FileWatcherJobEvent](../../../ootb/module/sche
 and publish that to a BigQueue destination in order for the downstream File Watcher Job Event Processing Flow to determine if
 the file has arrived.
 
-Theare a fixed number of downstream File Watcher Job Event Processing Flows and the number of those is determined by
+There are a fixed number of downstream File Watcher Job Event Processing Flows and the number of those is determined by
 configuration parameter `number.of.file.watcher.event.processing.flows`. The default number of File Watcher Job Event Processing Flows
 is 10.
+
+> [!IMPORTANT]
+> If you are upgrading an Ikasan Scheduler Agent containing file watcher jobs from a version prior to 4.1.1, you are 
+> required to set property `file.watcher.job.migration.required=true` in the agent property file in order for the 
+> agent to be reconfigured for the new file processing flows.
 
 The below diagram outlines the components and the flow of control that supports the `File Watcher Job`. 
 

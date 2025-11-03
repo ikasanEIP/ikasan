@@ -111,6 +111,36 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         }
     }
 
+    public void provisionJobConfigurationsOnly(List<SchedulerJob> jobs, String actor) {
+        try
+        {
+            long now = System.currentTimeMillis();
+            logger.info(String.format("Provisioning %s job configurations for agent %s", jobs.size(), this.moduleName));
+
+            Module<Flow> module = this.moduleService.getModule(moduleName);
+
+            logger.info(String.format("Stopping jobs [%s]", this.moduleName));
+            this.stopJobs(jobs);
+            logger.info(String.format("Finished stopping %s jobs. Time taken %s milliseconds."
+                , jobs.size(), System.currentTimeMillis()-now));
+
+            logger.info(String.format("Configuring components [%s]", this.moduleName));
+            this.configureComponents(jobs, module);
+            logger.info(String.format("Configured components [%s]", this.moduleName));
+
+            logger.info(String.format("Starting jobs [%s]", this.moduleName));
+            this.startJobs(jobs);
+            logger.info(String.format("Finished provisioning %s jobs. Time taken %s milliseconds."
+                , jobs.size(), System.currentTimeMillis()-now));
+
+            agentInstanceRecoveryManager.init();
+        }
+        catch (Exception e) {
+            logger.error("An error has occurred attempting to provision jobs!", e);
+            throw new JobProvisionServiceException(e);
+        }
+    }
+
     @Override
     public void removeJobs(String contextName) {
         logger.info(String.format("Removing jobs for context[%s].", contextName));
@@ -413,6 +443,18 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             if(job.getStartupControlType().equals("AUTOMATIC")) {
                 this.moduleService.startFlow(job.getAgentName(), job.getAggregateJobName(), user);
             }
+        });
+    }
+
+    /**
+     * Stop the execution of the specified SchedulerJobs by calling stopFlow method in ModuleService for each job.
+     *
+     * @param jobs the list of SchedulerJob objects to stop
+     */
+    private void stopJobs(List<SchedulerJob> jobs) {
+        String user = UserUtil.getUser();
+        jobs.forEach(job -> {
+            this.moduleService.stopFlow(job.getAgentName(), job.getAggregateJobName(), user);
         });
     }
 

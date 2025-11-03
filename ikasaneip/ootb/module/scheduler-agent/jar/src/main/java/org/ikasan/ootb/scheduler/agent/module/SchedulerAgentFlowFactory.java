@@ -50,6 +50,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.Resource;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -104,6 +105,11 @@ public class SchedulerAgentFlowFactory implements FlowFactory
                 case AgentFlowProfiles.QUARTZ: {
                     logger.info("Creating scheduled job flow for job: " + jobName + " with profile " + profile);
                     return this.createQuartzFlows(jobName);
+                }
+                case AgentFlowProfiles.HOUSEKEEP_LOG: case AgentFlowProfiles.OUTBOUND: {
+                    logger.info("Not creating legacy job: " + jobName + " with profile " + profile + " as these flows are " +
+                        "created by default for all scheduler agent modules!");
+                    return new ArrayList<>();
                 }
                 default: {
                     throw new RuntimeException(String.format("Unknown profile[%s] encountered in flow factory!", profile));

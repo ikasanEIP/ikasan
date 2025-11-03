@@ -105,12 +105,12 @@ public class SchedulerAgentModuleFactory
                 .withType(ModuleType.SCHEDULER_AGENT);
 
         moduleBuilder.addFlow(this.scheduledProcessEventOutboundFlowFactory.create());
-
         moduleBuilder.addFlow(this.housekeepLogFilesFlowFactory.create());
 
         // Add the configured number of file watcher event processing flows.
         for(int i = 1; i<this.numberOfFileWatcherJobEventProcessingFlows + 1; i++) {
-            moduleBuilder.addFlow(fileEventSchedulerJobFlowFactory.create(AgentFlowProfiles.FILE_WATCHER_JOB_EVENT_PROCESSING_FLOW_NAME_PREFIX + i));
+            moduleBuilder.addFlow(fileEventSchedulerJobFlowFactory
+                .create(AgentFlowProfiles.FILE_WATCHER_JOB_EVENT_PROCESSING_FLOW_NAME_PREFIX + i));
         }
 
         return moduleBuilder.withFlowFactory(schedulerAgentFlowFactory)

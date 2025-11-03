@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.ikasan.job.orchestration.model.context.*;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
+import org.ikasan.job.orchestration.model.job.ReplacementPairImpl;
 import org.ikasan.job.orchestration.model.job.SchedulerJobImpl;
 import org.ikasan.job.orchestration.model.job.SchedulerJobLockParticipantImpl;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
@@ -17,6 +18,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
 import org.ikasan.spec.scheduled.instance.model.*;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
+import org.ikasan.spec.scheduled.job.model.ReplacementPair;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -72,6 +74,7 @@ public class ObjectMapperFactory {
             .addAbstractTypeMapping(SchedulerJobInitiationEvent.class, SchedulerJobInitiationEventImpl.class)
             .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class)
             .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceDto.class)
+            .addAbstractTypeMapping(ReplacementPair.class, ReplacementPairImpl.class)
             .addAbstractTypeMapping(List.class, ArrayList.class)
             .addAbstractTypeMapping(Map.class, HashMap.class);
     }

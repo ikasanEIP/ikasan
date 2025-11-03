@@ -9,7 +9,8 @@ public class UserUtil
     {
         String user = "unknown";
         SecurityContext context = SecurityContextHolder.getContext();
-        if (context != null)
+        if (context != null && context.getAuthentication() != null
+            && context.getAuthentication().getPrincipal() != null)
         {
             user = context.getAuthentication().getPrincipal().toString();
         }
