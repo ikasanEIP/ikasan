@@ -24,7 +24,6 @@ public class FileWatcherJobQueueSizeWeightedRouter implements SingleRecipientRou
         // that is smallest in size (least messages on it to be processed).
         InternalFileWatcherJobQueueCache.instance().keys().forEach(key -> {
             IBigQueue queue = InternalFileWatcherJobQueueCache.instance().get(key);
-            LOGGER.info(String.format("Routing job name[%s] to queue[%s] size[%s]!", messageToRoute.getJobName(), key, queue.size()));
             if(queue.size() < queueSize.get()) {
                 queueSize.set(queue.size());
                 routeName.set(key);

@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ikasan.dashboard.AbstractRestServiceImpl;
+import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
+import org.ikasan.spec.scheduled.job.model.FileEventDrivenJob;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -62,7 +64,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
         HttpHeaders headers = super.createHttpHeaders(moduleName);
         HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
         try {
-            String urlTemplate = UriComponentsBuilder.fromHttpUrl(url + "/getByAgentName")
+            String urlTemplate = UriComponentsBuilder.fromHttpUrl(url + "/jobContext/getByAgentName")
                 .queryParam("agentName", "{agentName}")
                 .encode()
                 .toUriString();
@@ -74,6 +76,33 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
 
             return this.mapper.readValue(response.getBody(), new TypeReference<>() {
             });
+
+        } catch (RestClientException | JsonProcessingException e) {
+            String message = "Issue getting context instance for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
+            logger.error(message);
+            throw new EndpointException(e);
+        }
+    }
+
+    @Override
+    public FileEventDrivenJob getFileEventJob(String jobName, String contextName) {
+        if (this.token == null) {
+            authenticate(moduleName);
+        }
+        HttpHeaders headers = super.createHttpHeaders(moduleName);
+        HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
+        try {
+            String urlTemplate = UriComponentsBuilder.fromHttpUrl(url + "/job")
+                .path("/")
+                .path(contextName)
+                .path("/")
+                .path(jobName)
+                .encode()
+                .toUriString();
+
+            ResponseEntity<String> response = restTemplate.exchange(urlTemplate, HttpMethod.GET, entity, String.class);
+
+            return this.mapper.readValue(response.getBody(), FileEventDrivenJobImpl.class);
 
         } catch (RestClientException | JsonProcessingException e) {
             String message = "Issue getting context instance for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";

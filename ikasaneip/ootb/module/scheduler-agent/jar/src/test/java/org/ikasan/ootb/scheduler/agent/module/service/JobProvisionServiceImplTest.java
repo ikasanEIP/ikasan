@@ -44,7 +44,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class JobProvisionServiceImplTest {
+    public class JobProvisionServiceImplTest {
     @Mock
     private ModuleService moduleService;
 
@@ -173,6 +173,52 @@ public class JobProvisionServiceImplTest {
         setupWhen();
 
         this.service.provisionJobs(this.getJobs(), "system");
+
+        verify(scheduledConsumerConfiguration, times(2)).setJobName(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setJobGroupName(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setDescription(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setCronExpression(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setTimezone(anyString());
+        verify(scheduledConsumerConfiguration, times(2)).setEager(anyBoolean());
+        verify(scheduledConsumerConfiguration, times(2)).setIgnoreMisfire(anyBoolean());
+        verify(scheduledConsumerConfiguration, times(2)).setMaxEagerCallbacks(anyInt());
+        verify(scheduledConsumerConfiguration, times(2)).setPassthroughProperties(anyMap());
+        verify(scheduledConsumerConfiguration, times(2)).setPersistentRecovery(anyBoolean());
+        verify(scheduledConsumerConfiguration, times(2)).setRecoveryTolerance(anyLong());
+
+        verify(fileWatcherJobConverterConfiguration, times(1)).setJobName(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFilename(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFilePath(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFileNameSpelExpression(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setFilePathSpelExpression(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setContextName(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setMoveDirectory(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setMinFileAgeSeconds(anyInt());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setChildContextNames(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setBlackoutWindowCronExpressions(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setBlackoutWindowDateTimeRanges(any());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setSlaCronExpression(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setTimeZone(anyString());
+
+        verify(converterConfiguration, times(1)).setContextName(anyString());
+        verify(converterConfiguration, times(1)).setJobName(anyString());
+        verify(converterConfiguration, times(1)).setChildContextNames(anyList());
+
+        verify(agentInstanceRecoveryManager, times(1)).init();
+
+        verifyNoMoreInteractions(fileWatcherJobConverterConfiguration);
+        verifyNoMoreInteractions(scheduledConsumerConfiguration);
+        verifyNoMoreInteractions(converterConfiguration);
+        verifyNoMoreInteractions(agentInstanceRecoveryManager);
+    }
+
+    @Test
+    public void test_provision_job_configurations_only_success() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        setupWhen();
+
+        this.service.provisionJobConfigurationsOnly(this.getJobs(), "system");
 
         verify(scheduledConsumerConfiguration, times(2)).setJobName(anyString());
         verify(scheduledConsumerConfiguration, times(2)).setJobGroupName(anyString());

@@ -47,10 +47,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfiguredModuleConfiguration implements Serializable {
-
+    public static final String UPDATE_FILE_WATCHER_JOB_CONFIG_COMPLETE_FLAG
+        = "UPDATE_FILE_WATCHER_JOB_CONFIG_COMPLETE_FLAG";
     private Map<String, String> flowContextMap = new HashMap<>();
     private Map<String, String> fileWatcherJobMap = new  HashMap();
     private Map<String, String> scheduledJobMap = new  HashMap();
+    private Map<String, String> managementFlagsMap = new  HashMap();
 
 
     /**
@@ -114,5 +116,27 @@ public class SchedulerAgentConfiguredModuleConfiguration extends DryRunConfigure
      */
     public void setScheduledJobMap(Map<String, String> scheduledJobMap) {
         this.scheduledJobMap = scheduledJobMap;
+    }
+
+    /**
+     * Retrieves the management flags map stored in the configuration.
+     *
+     * @return A map containing management flags information where the keys represent
+     * flag names and values represent the corresponding flag values.
+     */
+    public Map<String, String> getManagementFlagsMap() {
+        return managementFlagsMap;
+    }
+
+    /**
+     * Sets the management flags map in the configuration. The management flags map stores
+     * flags for management purposes where the keys represent the flag names and values represent
+     * the corresponding flag values.
+     *
+     * @param managementFlagsMap A map containing management flags information where the keys represent
+     *                          flag names and values represent the corresponding flag values.
+     */
+    public void setManagementFlagsMap(Map<String, String> managementFlagsMap) {
+        this.managementFlagsMap = managementFlagsMap;
     }
 }

@@ -38,22 +38,49 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.ootb.scheduler.agent.rest.client.context;
+package org.ikasan.ootb.scheduler.agent.module.boot.components;
 
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
+import org.ikasan.ootb.scheduler.agent.module.boot.recovery.ConfigureFileWatcherJobsManager;
+import org.ikasan.ootb.scheduler.agent.module.service.JobProvisionServiceImpl;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.dashboard.ContextInstanceRestService;
+import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
+import org.ikasan.spec.scheduled.provision.JobProvisionService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.env.Environment;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+
+import javax.annotation.Resource;
 
 /**
- * Context instance service related configuration.
+ * Agent context instances recovery component factory.
+ *
+ * @author Ikasan Development Team
  */
-public class ContextInstanceRestServiceConfiguration {
+@Configuration
+public class FileWatcherJobMigrationConfiguration {
 
-    public static final String JOB_CONTEXT_PATH = "/rest";
+    @Value("${module.name}")
+    private String moduleName;
+
+    @Value("${file.watcher.job.migration.required:false}")
+    private boolean fileWatcherJobMigrationRequired;
+
+    @Resource
+    private ContextInstanceRestService contextInstanceRestService;
+
+    @Resource
+    private JobProvisionServiceImpl jobProvisionService;
 
     @Bean
-    public ContextInstanceRestService contextInstanceRestService(Environment environment, HttpComponentsClientHttpRequestFactory customHttpRequestFactory) {
-        return new ContextInstanceRestServiceImpl(environment, customHttpRequestFactory, JOB_CONTEXT_PATH);
+    @DependsOn("moduleLoader")
+    public ConfigureFileWatcherJobsManager configureFileWatcherJobsManager(ModuleService moduleService,
+                                                                           ConfigurationService configurationService) {
+        return new ConfigureFileWatcherJobsManager(this.moduleName, moduleService
+            , configurationService, this.contextInstanceRestService, jobProvisionService
+            , fileWatcherJobMigrationRequired);
     }
 }
