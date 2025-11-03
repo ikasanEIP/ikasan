@@ -21,6 +21,7 @@ import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
+import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
@@ -31,6 +32,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +46,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-    public class JobProvisionServiceImplTest {
+public class JobProvisionServiceImplTest {
     @Mock
     private ModuleService moduleService;
 
@@ -214,11 +216,19 @@ import static org.mockito.Mockito.*;
 
     @Test
     public void test_provision_job_configurations_only_success() {
+        ReflectionTestUtils.setField(this.service, "moduleName", "moduleName");
         SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
 
         setupWhen();
 
+        when(this.moduleService.getModule(anyString())).thenReturn(this.module);
+        when(this.module.getName()).thenReturn("module-name");
+
         this.service.provisionJobConfigurationsOnly(this.getJobs(), "system");
+
+        verify(this.moduleService).getModule(anyString());
+        verify(this.moduleService,times(3)).stopFlow(anyString(), anyString(),anyString());
+        verify(this.moduleService,times(3)).startFlow(anyString(), anyString(),anyString());
 
         verify(scheduledConsumerConfiguration, times(2)).setJobName(anyString());
         verify(scheduledConsumerConfiguration, times(2)).setJobGroupName(anyString());
@@ -256,6 +266,7 @@ import static org.mockito.Mockito.*;
         verifyNoMoreInteractions(scheduledConsumerConfiguration);
         verifyNoMoreInteractions(converterConfiguration);
         verifyNoMoreInteractions(agentInstanceRecoveryManager);
+        verifyNoMoreInteractions(moduleService);
     }
 
     @Test
