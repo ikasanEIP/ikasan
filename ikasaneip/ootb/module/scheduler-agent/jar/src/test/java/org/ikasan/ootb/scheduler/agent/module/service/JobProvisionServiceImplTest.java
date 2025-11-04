@@ -222,7 +222,6 @@ public class JobProvisionServiceImplTest {
         setupWhen();
 
         when(this.moduleService.getModule(anyString())).thenReturn(this.module);
-        when(this.module.getName()).thenReturn("module-name");
 
         this.service.provisionJobConfigurationsOnly(this.getJobs(), "system");
 
