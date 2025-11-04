@@ -1,6 +1,5 @@
 package org.ikasan.component.endpoint.kafka.consumer;
 
-import kafka.server.BrokerTopicMetrics;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
@@ -26,7 +25,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.IntStream;
 
 @RunWith(SpringRunner.class)
 @DirtiesContext

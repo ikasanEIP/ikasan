@@ -84,7 +84,6 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
-import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumer;
 import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
@@ -115,7 +114,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
-import javax.jms.TextMessage;
+import jakarta.jms.TextMessage;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

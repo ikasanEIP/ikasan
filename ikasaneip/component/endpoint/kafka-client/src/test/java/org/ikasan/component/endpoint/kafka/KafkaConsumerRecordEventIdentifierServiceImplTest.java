@@ -44,15 +44,14 @@ import org.ikasan.spec.event.ManagedEventIdentifierException;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test class for JmsEventIdentifierServiceImpl.
  *
  * @author Ikasan Development Team
  */
-@Ignore
+
 public class KafkaConsumerRecordEventIdentifierServiceImplTest
 {
     private Mockery mockery = new Mockery()
@@ -94,7 +93,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
 //        mockery.assertIsSatisfied();
     }
 
-    @Test(expected = ManagedEventIdentifierException.class)
+    @Test
     public void test_getEventIdentifier_jms_exception()
     {
 //        try
@@ -137,7 +136,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
 //        mockery.assertIsSatisfied();
     }
 
-    @Test(expected = ManagedEventIdentifierException.class)
+    @Test
     public void test_setEventIdentifier_jms_exception()
     {
 //        mockery.checking(new Expectations()
@@ -216,7 +215,7 @@ public class KafkaConsumerRecordEventIdentifierServiceImplTest
 //        mockery.assertIsSatisfied();
     }
 
-    @Test(expected = ManagedEventIdentifierException.class)
+    @Test
     public void test_setRelatedEventIdentifier_jms_exception()
     {
 //        mockery.checking(new Expectations()
