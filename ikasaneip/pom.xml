@@ -376,7 +376,7 @@
         <version.json.assert>1.5.0</version.json.assert>
         <version.org.junit.jupiter>5.12.1</version.org.junit.jupiter>
         <version.jacoco>0.8.7</version.jacoco>
-        <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
+        <version.junit.platform.commons>1.13.4</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.aws.java.sdk>1.11.837</version.aws.java.sdk>

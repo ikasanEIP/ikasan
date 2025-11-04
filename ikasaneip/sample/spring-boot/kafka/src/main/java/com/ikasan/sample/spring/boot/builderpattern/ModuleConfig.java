@@ -40,12 +40,11 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import liquibase.integration.spring.SpringLiquibase;
+import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.*;
 import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumer;
 import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumerConfiguration;
-import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
@@ -54,12 +53,9 @@ import org.ikasan.spec.module.Module;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 
 import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
-import javax.sql.DataSource;
 
 @Configuration
 @ImportResource( {

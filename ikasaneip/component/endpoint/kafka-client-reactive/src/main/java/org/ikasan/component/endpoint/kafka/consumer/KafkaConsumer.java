@@ -81,7 +81,6 @@ public class KafkaConsumer<KEY, VALUE>
 
     private KafkaConsumerConfiguration kafkaConsumerConfiguration;
 
-
     private ConsumerFactory<KEY, VALUE> consumerFactory;
 
     private Disposable disposable;
