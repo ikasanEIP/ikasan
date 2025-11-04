@@ -52,6 +52,8 @@ public class KafkaConsumerTest {
 
     EventFactory flowEventFactory = mockery.mock(EventFactory.class);
 
+    FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
+
     private KafkaConsumerConfiguration consumerConfiguration;
 
     @Before
@@ -69,8 +71,6 @@ public class KafkaConsumerTest {
     @Test
     @DirtiesContext
     public void test_consume_message_success() throws InterruptedException {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-
         mockery.checking(new Expectations()
         {
             {
@@ -109,8 +109,6 @@ public class KafkaConsumerTest {
     @Test
     @DirtiesContext
     public void test_consume_message_success_stop_start_with_offset() throws InterruptedException {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-
         mockery.checking(new Expectations()
         {
             {
@@ -165,8 +163,6 @@ public class KafkaConsumerTest {
     @Test
     @DirtiesContext
     public void test_consume_message_success_reset_offset() throws InterruptedException {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
-
         mockery.checking(new Expectations()
         {
             {
@@ -229,7 +225,6 @@ public class KafkaConsumerTest {
     @Test
     @DirtiesContext
     public void test_consume_message_invoke_exception() throws InterruptedException {
-        final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
         final Exception exception = new RuntimeException("test exception");
 
         mockery.checking(new Expectations()
