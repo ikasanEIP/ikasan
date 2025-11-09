@@ -1,9 +1,12 @@
 package org.ikasan.component.endpoint.kafka.producer;
 
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.testharness.flow.kafka.MessageListenerVerifier;
 import org.jmock.Mockery;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.jmock.lib.legacy.ClassImposteriser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -78,18 +81,18 @@ public class KafkaProducerTest {
 
         IntStream.range(0, 100000).forEach(i -> kafkaProducer.invoke("test message"));
 
-//        MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(this.embeddedKafka.getBrokersAsString(),
-//            "test-topic", StringDeserializer.class, StringDeserializer.class, "testClient");
-//        messageListenerVerifier.start();
+        MessageListenerVerifier messageListenerVerifier = new MessageListenerVerifier(this.embeddedKafka.getBrokersAsString(),
+            "test-topic", StringDeserializer.class, StringDeserializer.class, "testClient");
+        messageListenerVerifier.start();
 
         Thread.sleep(1000);
 
         kafkaProducer.stopManagedResource();
         mockery.assertIsSatisfied();
 
-//        Assert.assertEquals(100000, messageListenerVerifier.getCaptureResults().size());
-//
-//        messageListenerVerifier.stop();
+        Assert.assertEquals(100000, messageListenerVerifier.getCaptureResults().size());
+
+        messageListenerVerifier.stop();
     }
 
     @Test (expected = EndpointException.class)

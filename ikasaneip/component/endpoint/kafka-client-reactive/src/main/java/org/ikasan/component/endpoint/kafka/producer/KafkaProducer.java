@@ -50,7 +50,6 @@ import org.ikasan.spec.management.ManagedResource;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import reactor.kafka.sender.KafkaSender;
 
 import java.util.concurrent.atomic.AtomicReference;
@@ -136,10 +135,7 @@ public class KafkaProducer<VALUE>
     @Override
     public void startManagedResource() {
         try {
-            DefaultKafkaProducerFactory<Object, VALUE> defaultKafkaProducerFactory
-                = new DefaultKafkaProducerFactory<>(this.configuration.getProducerProps());
-
-            this.producer = defaultKafkaProducerFactory.createProducer();
+                this.producer = new org.apache.kafka.clients.producer.KafkaProducer<>(this.configuration.getProducerProps());
         }
         catch (ClassNotFoundException e) {
             throw new RuntimeException(e);

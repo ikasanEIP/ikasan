@@ -53,7 +53,6 @@ import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import org.ikasan.spec.resubmission.ResubmissionService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
 import reactor.core.Disposable;
 import reactor.core.publisher.Flux;
 import reactor.kafka.receiver.KafkaReceiver;
@@ -80,8 +79,6 @@ public class KafkaConsumer<KEY, VALUE>
     private String configurationId;
 
     private KafkaConsumerConfiguration kafkaConsumerConfiguration;
-
-    private ConsumerFactory<KEY, VALUE> consumerFactory;
 
     private Disposable disposable;
 
