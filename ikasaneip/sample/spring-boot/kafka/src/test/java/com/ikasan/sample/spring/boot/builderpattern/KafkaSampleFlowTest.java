@@ -84,6 +84,7 @@ import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.awaitility.Awaitility;
 import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
@@ -115,6 +116,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.annotation.Resource;
 import jakarta.jms.TextMessage;
+
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -420,11 +423,11 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(5000L);
-        assertEquals("recovering",flowTestRule.getFlowState());
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+                .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
 
-        flowTestRule.assertIsSatisfied();
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+                .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
         assertEquals(0, messageListenerVerifier.getCaptureResults().size());

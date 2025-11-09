@@ -1,5 +1,6 @@
 package org.ikasan.component.endpoint.kafka.consumer;
 
+import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
@@ -15,7 +16,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.test.EmbeddedKafkaBroker;
 import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.kafka.test.utils.KafkaTestUtils;
@@ -95,7 +95,7 @@ public class KafkaConsumerTest {
         kafkaConsumer.start();
 
         Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
+        Producer<Integer, String> producer = new KafkaProducer<>(configs, new IntegerSerializer(), new StringSerializer());
         producer.send(new ProducerRecord<>("test-topic", 3, "my-test-value3"));
         producer.send(new ProducerRecord<>("test-topic", 4, "my-test-value4"));
         producer.flush();
@@ -139,7 +139,7 @@ public class KafkaConsumerTest {
         kafkaConsumer.start();
 
         Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
+        Producer<Integer, String> producer = new KafkaProducer<>(configs, new IntegerSerializer(), new StringSerializer());
         producer.send(new ProducerRecord<>("test-topic", 3, "my-test-value3"));
         producer.send(new ProducerRecord<>("test-topic", 4, "my-test-value4"));
         producer.flush();
@@ -199,7 +199,7 @@ public class KafkaConsumerTest {
         kafkaConsumer.start();
 
         Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
+        Producer<Integer, String> producer = new KafkaProducer<>(configs, new IntegerSerializer(), new StringSerializer());
         producer.send(new ProducerRecord<>("test-topic", 3, "my-test-value3"));
         producer.send(new ProducerRecord<>("test-topic", 4, "my-test-value4"));
         producer.flush();
@@ -250,7 +250,7 @@ public class KafkaConsumerTest {
         kafkaConsumer.start();
 
         Map<String, Object> configs = new HashMap<>(KafkaTestUtils.producerProps(embeddedKafka));
-        Producer<Integer, String> producer = new DefaultKafkaProducerFactory<>(configs, new IntegerSerializer(), new StringSerializer()).createProducer();
+        Producer<Integer, String> producer = new KafkaProducer<>(configs, new IntegerSerializer(), new StringSerializer());
         producer.send(new ProducerRecord<>("test-topic", 1, "my-test-value1"));
         producer.flush();
 
