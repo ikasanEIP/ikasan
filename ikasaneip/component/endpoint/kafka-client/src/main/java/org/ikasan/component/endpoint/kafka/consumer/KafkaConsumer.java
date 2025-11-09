@@ -58,8 +58,6 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
 import org.ikasan.spec.management.ManagedIdentifierService;
 import org.ikasan.spec.resubmission.ResubmissionService;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 
 import java.time.Duration;
 import java.util.List;
@@ -86,8 +84,6 @@ public class KafkaConsumer<KEY, VALUE>
     private KafkaConsumerConfiguration kafkaConsumerConfiguration;
 
     private ExecutorService executor = null;
-
-    private ConsumerFactory<KEY, VALUE> consumerFactory;
 
     private org.apache.kafka.clients.consumer.Consumer<KEY, VALUE> consumer;
 
@@ -148,8 +144,7 @@ public class KafkaConsumer<KEY, VALUE>
     @Override
     public void start() {
         try {
-                this.consumerFactory = new DefaultKafkaConsumerFactory<>(this.kafkaConsumerConfiguration.getConsumerProps());
-                this.consumer = consumerFactory.createConsumer();
+                this.consumer = new org.apache.kafka.clients.consumer.KafkaConsumer<>(this.kafkaConsumerConfiguration.getConsumerProps());
 
                 TopicPartition topicPartition = new TopicPartition(this.kafkaConsumerConfiguration.getTopicName(), 0);
                 this.consumer.assign(List.of(topicPartition));
