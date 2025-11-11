@@ -5,6 +5,7 @@ import org.ikasan.manifest.ModuleManifestMetaDataHelper;
 import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
 import org.ikasan.spec.metadata.ModuleManifestMetaData;
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.io.File;
@@ -25,8 +26,8 @@ public class ModuleGeneratorTest extends AbstractTest {
         moduleGenerator.generate(root);
 
         MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));
-        mavenProjectBuilder.build(rootDir, "spotless:apply");
-        mavenProjectBuilder.build(rootDir, "clean install");
+        Assert.assertTrue(mavenProjectBuilder.build(rootDir, "spotless:apply"));
+        Assert.assertTrue(mavenProjectBuilder.build(rootDir, "clean install"));
     }
 
     @Test
@@ -42,7 +43,7 @@ public class ModuleGeneratorTest extends AbstractTest {
         moduleGenerator.generate(root);
 
         MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));
-        mavenProjectBuilder.build(rootDir, "spotless:apply");
-        mavenProjectBuilder.build(rootDir, "clean install");
+        Assert.assertTrue(mavenProjectBuilder.build(rootDir, "spotless:apply"));
+        Assert.assertTrue(mavenProjectBuilder.build(rootDir, "clean install"));
     }
 }

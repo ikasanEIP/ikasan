@@ -41,6 +41,16 @@ public class ModuleManifestMetaDataComponentModelAdapter {
                     component.setClassName(flowElementMetaData.getImplementingClass().substring(
                         flowElementMetaData.getImplementingClass().lastIndexOf(".") + 1
                             ,  flowElementMetaData.getImplementingClass().length()));
+
+                    // Deal with the possibility of inner classes!
+                    if(component.getClassName().contains("$")) {
+                        component.setClassName(component.getClassName()
+                            .substring(component.getClassName().indexOf("$")+1));
+                        component.setImplementingClass(flowElementMetaData.getImplementingClass()
+                            .substring(0, flowElementMetaData.getImplementingClass().lastIndexOf(".")+1)
+                            + component.getClassName());
+                    }
+
                     component.setClassPackage(flowElementMetaData.getImplementingClass().substring(0,
                         flowElementMetaData.getImplementingClass().lastIndexOf(".")));
                     component.setComponentTypeClassName(flowElementMetaData.getComponentType().substring(

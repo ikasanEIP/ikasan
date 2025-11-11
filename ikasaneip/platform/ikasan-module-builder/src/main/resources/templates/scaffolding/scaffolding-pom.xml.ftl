@@ -53,12 +53,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.ikasan</groupId>
-            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
-            <version>${moduleManifestMetaData.moduleMetaData.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
             <version>${"$"}{version.activemq}</version>

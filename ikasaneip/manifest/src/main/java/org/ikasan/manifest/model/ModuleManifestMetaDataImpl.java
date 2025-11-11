@@ -3,6 +3,7 @@ package org.ikasan.manifest.model;
 import org.ikasan.spec.metadata.*;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     private ModuleMetaData moduleMetaData;
@@ -81,5 +82,25 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     @Override
     public void setImportedResourceMetaData(List<ImportedResourceMetaData> importedResourceMetaData) {
         this.importedResourceMetaData = importedResourceMetaData;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModuleManifestMetaDataImpl that = (ModuleManifestMetaDataImpl) o;
+        return Objects.equals(moduleMetaData, that.moduleMetaData)
+            && Objects.equals(configurationMetaData, that.configurationMetaData)
+            && Objects.equals(dependencyManagement, that.dependencyManagement)
+            && Objects.equals(parameterizedTypes, that.parameterizedTypes)
+            && Objects.equals(constructorMetaData, that.constructorMetaData)
+            && Objects.equals(beanDefinitionMetaData, that.beanDefinitionMetaData)
+            && Objects.equals(importedResourceMetaData, that.importedResourceMetaData);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(moduleMetaData, configurationMetaData, dependencyManagement
+            , parameterizedTypes, constructorMetaData, beanDefinitionMetaData, importedResourceMetaData);
     }
 }

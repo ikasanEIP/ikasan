@@ -4,6 +4,7 @@ import org.ikasan.spec.metadata.ConstructorMetaData;
 import org.ikasan.spec.metadata.TypeParameter;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ConstructorMetaDataImpl implements ConstructorMetaData {
     private String componentName;
@@ -38,5 +39,20 @@ public class ConstructorMetaDataImpl implements ConstructorMetaData {
     @Override
     public void setConstructorArguments(List<TypeParameter> constructorArguments) {
         this.constructorArguments = constructorArguments;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ConstructorMetaDataImpl that = (ConstructorMetaDataImpl) o;
+        return Objects.equals(componentName, that.componentName)
+            && Objects.equals(className, that.className)
+            && Objects.equals(constructorArguments, that.constructorArguments);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(componentName, className, constructorArguments);
     }
 }

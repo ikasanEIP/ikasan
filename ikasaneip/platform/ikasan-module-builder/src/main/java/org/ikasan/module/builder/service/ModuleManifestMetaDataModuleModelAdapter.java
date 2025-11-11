@@ -46,6 +46,7 @@ public class ModuleManifestMetaDataModuleModelAdapter {
 
         ModuleModel model = new ModuleModel(moduleManifestMetaData.getModuleMetaData().getName(), moduleBasePackage,
             importedConfigurationResources, importedXmlResources);
+
         for(FlowMetaData flowMetaData: moduleManifestMetaData.getModuleMetaData().getFlows())
         {
             model.addFlow(this.manageFlow(flowMetaData, configurationMetaDataMap, moduleBasePackage));
