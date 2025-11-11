@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>${migrationProjectMavenGroupId}</groupId>
-        <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+        <artifactId>${migrationProjectMavenArtefactId}-parent</artifactId>
         <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
-    <artifactId>${moduleManifestMetaData.moduleMetaData.name}-distribution</artifactId>
+    <artifactId>${migrationProjectMavenArtefactId}-distribution</artifactId>
 
     <packaging>pom</packaging>
 
@@ -22,14 +22,14 @@
     <dependencies>
         <dependency>
             <groupId>${migrationProjectMavenGroupId}</groupId>
-            <artifactId>${moduleManifestMetaData.moduleMetaData.name}</artifactId>
+            <artifactId>${migrationProjectMavenArtefactId}</artifactId>
             <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
-        <dependency>
-            <groupId>${migrationProjectMavenGroupId}</groupId>
-            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
-            <version>${moduleManifestMetaData.moduleMetaData.version}</version>
-        </dependency>
+<#--        <dependency>-->
+<#--            <groupId>${migrationProjectMavenGroupId}</groupId>-->
+<#--            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>-->
+<#--            <version>${moduleManifestMetaData.moduleMetaData.version}</version>-->
+<#--        </dependency>-->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

@@ -6,12 +6,12 @@
 
     <parent>
         <groupId>${migrationProjectMavenGroupId}</groupId>
-        <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+        <artifactId>${migrationProjectMavenArtefactId}-parent</artifactId>
         <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     </parent>
 
     <groupId>${migrationProjectMavenGroupId}</groupId>
-    <artifactId>${moduleManifestMetaData.moduleMetaData.name}</artifactId>
+    <artifactId>${migrationProjectMavenArtefactId}</artifactId>
     <version>${moduleManifestMetaData.moduleMetaData.version}</version>
 
 
@@ -23,7 +23,7 @@
 
         <dependency>
             <groupId>${migrationProjectMavenGroupId}</groupId>
-            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>
+            <artifactId>${migrationProjectMavenArtefactId}-components</artifactId>
             <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
 

@@ -259,8 +259,10 @@ public class ModuleGenerator {
      */
     private void generateDistributionArtefacts(ModuleManifestMetaData moduleManifestMetaData)
         throws TemplateException, IOException {
+        EnrichedModuleManifestMetaData enrichedModuleManifestMetaData
+            = new EnrichedModuleManifestMetaData(moduleManifestMetaData);
         this.executionFreeMarkerTemplate(this.moduleFileManager.getDistributionBase(), "distribution/distribution.xml.ftl"
-            , moduleManifestMetaData, "distribution.xml");
+            , enrichedModuleManifestMetaData, "distribution.xml");
     }
 
     /**
@@ -273,8 +275,9 @@ public class ModuleGenerator {
      */
     private void generateAllModulePoms(File migrationRootDirectory
         , ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
-        EnrichedModuleManifestMetaData enrichedModuleManifestMetaData = new EnrichedModuleManifestMetaData(this.migrationProjectMavenGroupId,
-            moduleManifestMetaData);
+        EnrichedModuleManifestMetaData enrichedModuleManifestMetaData
+            = new EnrichedModuleManifestMetaData(moduleManifestMetaData);
+
         // Create the migrated module's parent POM.
         this.managePomCreation(migrationRootDirectory
             , "parent-pom.xml.ftl", enrichedModuleManifestMetaData);

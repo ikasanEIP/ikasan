@@ -13,6 +13,7 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     private List<ConstructorMetaData> constructorMetaData;
     private List<BeanDefinitionMetaData> beanDefinitionMetaData;
     private List<ImportedResourceMetaData> importedResourceMetaData;
+    private ModulePomMetaData modulePomMetaData;
 
     @Override
     public ModuleMetaData getModuleMetaData() {
@@ -82,6 +83,16 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     @Override
     public void setImportedResourceMetaData(List<ImportedResourceMetaData> importedResourceMetaData) {
         this.importedResourceMetaData = importedResourceMetaData;
+    }
+
+    @Override
+    public ModulePomMetaData getModulePomMetaData() {
+        return modulePomMetaData;
+    }
+
+    @Override
+    public void setModulePomMetaData(ModulePomMetaData modulePomMetaData) {
+        this.modulePomMetaData = modulePomMetaData;
     }
 
     @Override

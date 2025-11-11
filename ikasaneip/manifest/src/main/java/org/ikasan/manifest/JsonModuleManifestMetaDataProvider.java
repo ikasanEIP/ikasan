@@ -1,5 +1,6 @@
 package org.ikasan.manifest;
 
+import org.ikasan.IkasanVersion;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 import org.ikasan.manifest.model.*;
 import org.ikasan.spec.flow.Flow;
@@ -7,12 +8,12 @@ import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
-import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -40,7 +41,6 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
     private org.ikasan.topology.metadata.JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
     private JsonConfigurationMetaDataExtractor jsonConfigurationMetaDataExtractor;
     private ApplicationContext applicationContext;
-
 
     /**
      * Constructor for JsonModuleManifestMetaDataProvider class.
@@ -88,6 +88,7 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
             this.populateConstructorDetails(moduleManifestMetaData);
             this.populateBeanDefinitionMetaData(moduleManifestMetaData);
             this.populateImportedResourceMetadata(moduleManifestMetaData);
+            this.populateModulePomMetaData(moduleManifestMetaData);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -161,6 +162,13 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         return null;
     }
 
+    /**
+     * Populates the list of ConstructorMetaData for a given ModuleManifestMetaData object based on the FlowElementMetaData
+     * of each FlowMetaData within the module manifest metadata.
+     *
+     * @param moduleManifestMetaData the ModuleManifestMetaDataImpl object to populate the constructor metadata for
+     * @throws ClassNotFoundException If the implementing class specified in FlowElementMetaData cannot be found
+     */
     private void populateConstructorDetails(ModuleManifestMetaDataImpl moduleManifestMetaData) throws ClassNotFoundException {
         List<ConstructorMetaData> constructorMetaData = new ArrayList<>();
         for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
@@ -171,6 +179,13 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         moduleManifestMetaData.setConstructorMetaData(constructorMetaData);
     }
 
+    /**
+     * Inspects the constructors of a given FlowElementMetaData and returns a list of ConstructorMetaData.
+     *
+     * @param flowElementMetaData the FlowElementMetaData to inspect constructors for
+     * @return a list of ConstructorMetaData representing the constructor information
+     * @throws ClassNotFoundException if the implementing class specified in FlowElementMetaData cannot be found
+     */
     private List<ConstructorMetaData> inspectConstructors(FlowElementMetaData flowElementMetaData) throws ClassNotFoundException {
         Class<?> clazz = Class.forName(flowElementMetaData.getImplementingClass());
         List<ConstructorMetaData> constructorDescriptions = new ArrayList<>();
@@ -194,6 +209,12 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         return constructorDescriptions;
     }
 
+    /**
+     * Populates the bean definition metadata based on the beans registered in the application context.
+     *
+     * @param moduleManifestMetaData the ModuleManifestMetaData object to populate the bean definition metadata for
+     * @throws IOException if an I/O error occurs while processing the bean definitions
+     */
     private void populateBeanDefinitionMetaData(ModuleManifestMetaData moduleManifestMetaData) throws IOException {
         List<BeanDefinitionMetaData> beanDefinitionMetaDataList = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
@@ -227,6 +248,13 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         moduleManifestMetaData.setBeanDefinitionMetaData(beanDefinitionMetaDataList);
     }
 
+    /**
+     * Populates the imported resource metadata for the given ModuleManifestMetaData object based on the annotations
+     * @Import and @ImportResource
+     *
+     * @param moduleManifestMetaData the ModuleManifestMetaData object for which to populate imported resource metadata
+     * @throws IOException if an I/O error occurs while processing the imported resource metadata
+     */
     private void populateImportedResourceMetadata(ModuleManifestMetaData moduleManifestMetaData) throws IOException {
         SimpleMetadataReaderFactory metadataReaderFactory = new SimpleMetadataReaderFactory();
         List<ImportedResourceMetaData> importedResourceMetaDataList = new ArrayList<>();
@@ -275,6 +303,22 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
 
             moduleManifestMetaData.setImportedResourceMetaData(importedResourceMetaDataList);
         }
+    }
+
+    /**
+     * Populates the POM metadata of a module with information such as group ID, artifact ID, and version.
+     *
+     * @param moduleManifestMetaData the ModuleManifestMetaData object to populate the POM metadata for
+     */
+    private void populateModulePomMetaData(ModuleManifestMetaData moduleManifestMetaData) {
+        BuildProperties buildProperties = (BuildProperties) applicationContext.getBean("buildProperties");
+
+        ModulePomMetaData modulePomMetaData = new ModulePomMetaDataImpl();
+        modulePomMetaData.setPomArtefactId(buildProperties.getArtifact());
+        modulePomMetaData.setPomGroupId(buildProperties.getGroup());
+        modulePomMetaData.setVersion(buildProperties.getVersion());
+
+        moduleManifestMetaData.setModulePomMetaData(modulePomMetaData);
     }
 
     @Override

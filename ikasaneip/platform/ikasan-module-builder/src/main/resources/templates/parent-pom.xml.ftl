@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>${migrationProjectMavenGroupId}</groupId>
-    <artifactId>${moduleManifestMetaData.moduleMetaData.name}-parent</artifactId>
+    <artifactId>${migrationProjectMavenArtefactId}-parent</artifactId>
     <version>${moduleManifestMetaData.moduleMetaData.version}</version>
     <packaging>pom</packaging>
 

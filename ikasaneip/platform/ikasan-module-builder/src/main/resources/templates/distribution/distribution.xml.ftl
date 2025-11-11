@@ -9,7 +9,7 @@
             <directory>../bin</directory>
             <filtered>true</filtered>
             <fileMode>755</fileMode>
-            <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}</outputDirectory>
+            <outputDirectory>${moduleManifestMetaData.moduleMetaData.name}-${moduleManifestMetaData.moduleMetaData.version}</outputDirectory>
         </fileSet>
         <fileSet>
             <directory>../jar/src/main/resources</directory>
@@ -18,7 +18,7 @@
                 <include>application.properties</include>
                 <include>logback-spring.xml</include>
             </includes>
-            <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}/config</outputDirectory>
+            <outputDirectory>${moduleManifestMetaData.moduleMetaData.name}-${moduleManifestMetaData.moduleMetaData.version}/config</outputDirectory>
         </fileSet>
     </fileSets>
 
@@ -30,10 +30,10 @@
             <useProjectArtifact>false</useProjectArtifact>
             <!-- Now, select which projects to include in this module-set. -->
             <includes>
-                <include>org.ikasan:jms-demo</include>
+                <include>${migrationProjectMavenGroupId}:${migrationProjectMavenArtefactId}</include>
                 <include>com.h2database:h2:jar:2.2.224</include>
             </includes>
-            <outputDirectory>jms-demo-1.0.0-SNAPSHOT/lib</outputDirectory>
+            <outputDirectory>${moduleManifestMetaData.moduleMetaData.name}-${moduleManifestMetaData.moduleMetaData.version}/lib</outputDirectory>
         </dependencySet>
         <dependencySet>
             <!-- Enable access to all projects in the current multimodule build! -->
@@ -43,7 +43,7 @@
                 <include>org.ikasan:ikasan-shell-distribution:zip:${"$"}{version.ikasan}</include>
             </includes>
             <unpack>true</unpack>
-            <outputDirectory>${moduleMetaData.name}-${moduleMetaData.version}/</outputDirectory>
+            <outputDirectory>${moduleManifestMetaData.moduleMetaData.name}-${moduleManifestMetaData.moduleMetaData.version}/</outputDirectory>
         </dependencySet>
     </dependencySets>
 </assembly>
