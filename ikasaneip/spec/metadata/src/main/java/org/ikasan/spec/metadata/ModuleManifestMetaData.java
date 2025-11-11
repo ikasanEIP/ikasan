@@ -86,4 +86,18 @@ public interface ModuleManifestMetaData {
      * @param beanDefinitionMetaData List of BeanDefinitionMetaData objects representing the bean definitions.
      */
     void setBeanDefinitionMetaData(List<BeanDefinitionMetaData> beanDefinitionMetaData);
+
+    /**
+     * Retrieves a list of ImportedResourceMetaData objects representing the imported resources metadata.
+     *
+     * @return A list of ImportedResourceMetaData objects.
+     */
+    List<ImportedResourceMetaData> getImportedResourceMetaData();
+
+    /**
+     * Sets the imported resource metadata for a module manifest.
+     *
+     * @param importedResourceMetaData The list of ImportedResourceMetaData objects to be set as imported resource metadata.
+     */
+    void setImportedResourceMetaData(List<ImportedResourceMetaData> importedResourceMetaData);
 }

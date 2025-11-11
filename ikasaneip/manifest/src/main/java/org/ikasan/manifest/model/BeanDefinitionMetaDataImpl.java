@@ -2,6 +2,8 @@ package org.ikasan.manifest.model;
 
 import org.ikasan.spec.metadata.BeanDefinitionMetaData;
 
+import java.util.Objects;
+
 public class BeanDefinitionMetaDataImpl implements BeanDefinitionMetaData {
     private String beanName;
     private String type;
@@ -46,5 +48,18 @@ public class BeanDefinitionMetaDataImpl implements BeanDefinitionMetaData {
     @Override
     public void setBeanResource(String beanResource) {
         this.beanResource = beanResource;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        BeanDefinitionMetaDataImpl that = (BeanDefinitionMetaDataImpl) o;
+        return Objects.equals(beanName, that.beanName) && Objects.equals(type, that.type) && Objects.equals(beanClass, that.beanClass) && Objects.equals(beanResource, that.beanResource);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(beanName, type, beanClass, beanResource);
     }
 }

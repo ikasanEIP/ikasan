@@ -2,6 +2,8 @@ package org.ikasan.manifest.model;
 
 import org.ikasan.spec.metadata.DependencyMetaData;
 
+import java.util.Objects;
+
 public class DependencyMetaDataImpl implements DependencyMetaData {
     private String group;
     private String artefact;
@@ -35,5 +37,20 @@ public class DependencyMetaDataImpl implements DependencyMetaData {
     @Override
     public void setVersion(String version) {
         this.version = version;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        DependencyMetaDataImpl that = (DependencyMetaDataImpl) o;
+        return Objects.equals(group, that.group)
+            && Objects.equals(artefact, that.artefact)
+            && Objects.equals(version, that.version);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(group, artefact, version);
     }
 }
