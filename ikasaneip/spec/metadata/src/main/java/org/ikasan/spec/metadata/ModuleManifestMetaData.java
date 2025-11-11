@@ -100,4 +100,18 @@ public interface ModuleManifestMetaData {
      * @param importedResourceMetaData The list of ImportedResourceMetaData objects to be set as imported resource metadata.
      */
     void setImportedResourceMetaData(List<ImportedResourceMetaData> importedResourceMetaData);
+
+    /**
+     * Retrieves the module's POM metadata.
+     *
+     * @return ModulePomMetaData containing information such as group ID, artifact ID, and version.
+     */
+    ModulePomMetaData getModulePomMetaData();
+
+    /**
+     * Set the POM metadata for the module.
+     *
+     * @param modulePomMetaData The POM metadata containing group ID, artifact ID, and version.
+     */
+    void setModulePomMetaData(ModulePomMetaData modulePomMetaData);
 }
