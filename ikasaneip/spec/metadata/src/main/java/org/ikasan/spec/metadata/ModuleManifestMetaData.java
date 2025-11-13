@@ -114,4 +114,18 @@ public interface ModuleManifestMetaData {
      * @param modulePomMetaData The POM metadata containing group ID, artifact ID, and version.
      */
     void setModulePomMetaData(ModulePomMetaData modulePomMetaData);
+
+    /**
+     * Retrieves a list of ScheduledConsumerMetaData objects representing scheduled consumers' metadata.
+     *
+     * @return A list of ScheduledConsumerMetaData objects containing information about scheduled consumers.
+     */
+    List<ScheduledConsumerMetaData> getScheduledConsumerMetaData();
+
+    /**
+     * Sets the list of ScheduledConsumerMetaData objects representing scheduled consumers' metadata.
+     *
+     * @param scheduledConsumerMetaData A list of ScheduledConsumerMetaData objects to set as scheduled consumers' metadata
+     */
+    void setScheduledConsumerMetaData(List<ScheduledConsumerMetaData> scheduledConsumerMetaData);
 }

@@ -1,13 +1,20 @@
 package org.ikasan.manifest;
 
-import org.ikasan.IkasanVersion;
+import org.hibernate.Hibernate;
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 import org.ikasan.manifest.model.*;
 import org.ikasan.spec.flow.Flow;
+import org.ikasan.spec.flow.FlowElement;
 import org.ikasan.spec.metadata.*;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.topology.metadata.JsonModuleMetaDataProvider;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.framework.AopProxyUtils;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
@@ -24,13 +31,14 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
+import org.springframework.security.access.method.P;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Proxy;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +46,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDataProvider<String>, ApplicationContextAware {
+    private static Logger logger = LoggerFactory.getLogger(JsonModuleManifestMetaDataProvider.class);
     private org.ikasan.topology.metadata.JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
     private JsonConfigurationMetaDataExtractor jsonConfigurationMetaDataExtractor;
     private ApplicationContext applicationContext;
@@ -89,6 +98,7 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
             this.populateBeanDefinitionMetaData(moduleManifestMetaData);
             this.populateImportedResourceMetadata(moduleManifestMetaData);
             this.populateModulePomMetaData(moduleManifestMetaData);
+            this.populateScheduledConsumerMetaData(module, moduleManifestMetaData);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -133,8 +143,9 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         Type[] genericInterfaces = targetClass.getGenericInterfaces();
 
         for (Type genericInterface : genericInterfaces) {
-            if (genericInterface instanceof ParameterizedType) {
-                ParameterizedType parameterizedType = (ParameterizedType) genericInterface;
+            if (genericInterface instanceof java.lang.reflect.ParameterizedType) {
+                java.lang.reflect.ParameterizedType parameterizedType
+                    = (java.lang.reflect.ParameterizedType) genericInterface;
 
                 Type rawType = parameterizedType.getRawType();
                 rawType.getTypeName();
@@ -215,7 +226,7 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
      * @param moduleManifestMetaData the ModuleManifestMetaData object to populate the bean definition metadata for
      * @throws IOException if an I/O error occurs while processing the bean definitions
      */
-    private void populateBeanDefinitionMetaData(ModuleManifestMetaData moduleManifestMetaData) throws IOException {
+    private void populateBeanDefinitionMetaData(ModuleManifestMetaData moduleManifestMetaData) throws Exception {
         List<BeanDefinitionMetaData> beanDefinitionMetaDataList = new ArrayList<>();
         for (String beanName : applicationContext.getBeanDefinitionNames()) {
             ConfigurableListableBeanFactory beanFactory = ((ConfigurableApplicationContext) applicationContext).getBeanFactory();
@@ -228,7 +239,7 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
                     BeanDefinitionMetaDataImpl beanDefinitionMetaData = new BeanDefinitionMetaDataImpl();
                     beanDefinitionMetaData.setBeanName(beanName);
                     beanDefinitionMetaData.setType("XML_BEAN_DEFINITION");
-                    beanDefinitionMetaData.setBeanClass(beanDefinition.getBeanClassName());
+                    beanDefinitionMetaData.setBeanClass(this.getBeanClassName(beanName));
                     beanDefinitionMetaData.setBeanResource(((GenericBeanDefinition) beanDefinition).getResource().getURL().getPath());
                     beanDefinitionMetaDataList.add(beanDefinitionMetaData);
                 }
@@ -236,16 +247,35 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
                     abstractBeanDefinition.getSource() instanceof MethodMetadata &&
                     ((MethodMetadata) abstractBeanDefinition.getSource()).getDeclaringClassName().startsWith("com.ikasan.sample.spring.boot")) {
                 BeanDefinitionMetaDataImpl beanDefinitionMetaData = new BeanDefinitionMetaDataImpl();
-                Object bean = applicationContext.getBean(beanName);
                 beanDefinitionMetaData.setBeanName(beanName);
                 beanDefinitionMetaData.setType("CONFIGURATION_CLASS_BEAN_DEFINITION");
-                beanDefinitionMetaData.setBeanClass(bean.getClass().getName());
+                beanDefinitionMetaData.setBeanClass(this.getBeanClassName(beanName));
                 beanDefinitionMetaData.setBeanResource(((MethodMetadata) abstractBeanDefinition.getSource()).getDeclaringClassName());
                 beanDefinitionMetaDataList.add(beanDefinitionMetaData);
             }
         }
 
         moduleManifestMetaData.setBeanDefinitionMetaData(beanDefinitionMetaDataList);
+    }
+
+    /**
+     * Retrieves the class name of a bean registered in the application context, considering proxying.
+     *
+     * @param beanName the name of the bean to retrieve the class name for
+     * @return the class name of the bean, considering proxying if applicable
+     */
+    private String getBeanClassName(String beanName) throws Exception {
+        Object bean = applicationContext.getBean(beanName);
+        if ( AopUtils.isJdkDynamicProxy(bean) || AopUtils.isAopProxy(bean)
+            || AopUtils.isCglibProxy(bean)) {
+            return AopProxyUtils.ultimateTargetClass(bean).getName();
+        }
+        else if(Proxy.isProxyClass(bean.getClass())) {
+            return Hibernate.unproxy(bean).getClass().getName();
+        }
+        else {
+            return bean.getClass().getName();
+        }
     }
 
     /**
@@ -319,6 +349,45 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         modulePomMetaData.setVersion(buildProperties.getVersion());
 
         moduleManifestMetaData.setModulePomMetaData(modulePomMetaData);
+    }
+
+    /**
+     * Populates scheduled consumer meta data for a given module and module manifest meta data.
+     *
+     * @param module the module containing flows to extract scheduled consumer meta data from
+     * @param moduleManifestMetaData the module manifest meta data object to populate scheduled consumer meta data
+     * @throws ClassNotFoundException if the implementing class specified in FlowElementMetaData cannot be found
+     */
+    private void populateScheduledConsumerMetaData(Module<Flow> module, ModuleManifestMetaDataImpl moduleManifestMetaData)
+        throws Exception {
+        List<ScheduledConsumerMetaData> scheduledConsumerMetaDataList = new ArrayList<>();
+        for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
+            if(flowMetaData.getConsumer().getImplementingClass()
+                .equals("org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer")) {
+                ScheduledConsumerMetaData scheduledConsumerMetaData = new ScheduledConsumerMetaDataImpl();
+                scheduledConsumerMetaData.setName(flowMetaData.getConsumer().getComponentName());
+                scheduledConsumerMetaData.setFlow(flowMetaData.getName());
+                Flow flow = module.getFlows().stream()
+                    .filter(f -> f.getName().equals(flowMetaData.getName())).findFirst().get();
+                FlowElement flowElement = flow.getFlowElement(flowMetaData.getConsumer().getComponentName());
+
+                if ( AopUtils.isJdkDynamicProxy(flowElement.getFlowComponent())
+                    || AopUtils.isAopProxy(flowElement.getFlowComponent())
+                    || AopUtils.isCglibProxy(flowElement.getFlowComponent()))
+                {
+                    ScheduledConsumer target = (ScheduledConsumer) ((Advised)flowElement.getFlowComponent())
+                        .getTargetSource().getTarget();
+                    scheduledConsumerMetaData.setMessageProviderClass(target.getMessageProvider().getClass().getName());
+                }
+                else
+                {
+                    scheduledConsumerMetaData.setMessageProviderClass(flowElement.getFlowComponent().getClass().getName());
+                }
+
+                scheduledConsumerMetaDataList.add(scheduledConsumerMetaData);
+            }
+        }
+        moduleManifestMetaData.setScheduledConsumerMetaData(scheduledConsumerMetaDataList);
     }
 
     @Override
