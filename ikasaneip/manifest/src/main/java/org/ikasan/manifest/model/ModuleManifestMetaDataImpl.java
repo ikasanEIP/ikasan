@@ -14,6 +14,7 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     private List<BeanDefinitionMetaData> beanDefinitionMetaData;
     private List<ImportedResourceMetaData> importedResourceMetaData;
     private ModulePomMetaData modulePomMetaData;
+    private List<ScheduledConsumerMetaData> scheduledConsumerMetaData;
 
     @Override
     public ModuleMetaData getModuleMetaData() {
@@ -96,6 +97,16 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
     }
 
     @Override
+    public List<ScheduledConsumerMetaData> getScheduledConsumerMetaData() {
+        return scheduledConsumerMetaData;
+    }
+
+    @Override
+    public void setScheduledConsumerMetaData(List<ScheduledConsumerMetaData> scheduledConsumerMetaData) {
+        this.scheduledConsumerMetaData = scheduledConsumerMetaData;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -106,12 +117,15 @@ public class ModuleManifestMetaDataImpl implements ModuleManifestMetaData {
             && Objects.equals(parameterizedTypes, that.parameterizedTypes)
             && Objects.equals(constructorMetaData, that.constructorMetaData)
             && Objects.equals(beanDefinitionMetaData, that.beanDefinitionMetaData)
-            && Objects.equals(importedResourceMetaData, that.importedResourceMetaData);
+            && Objects.equals(importedResourceMetaData, that.importedResourceMetaData)
+            && Objects.equals(modulePomMetaData, that.modulePomMetaData)
+            && Objects.equals(scheduledConsumerMetaData, that.scheduledConsumerMetaData);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(moduleMetaData, configurationMetaData, dependencyManagement
-            , parameterizedTypes, constructorMetaData, beanDefinitionMetaData, importedResourceMetaData);
+        return Objects.hash(moduleMetaData, configurationMetaData, dependencyManagement, parameterizedTypes
+            , constructorMetaData, beanDefinitionMetaData, importedResourceMetaData, modulePomMetaData
+            , scheduledConsumerMetaData);
     }
 }

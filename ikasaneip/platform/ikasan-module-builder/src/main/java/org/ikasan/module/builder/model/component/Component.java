@@ -19,6 +19,7 @@ public class Component {
     private String configurationId;
     private ComponentConfigurationMetaData configurationMetaData;
     private List<ConstructorMetaData> constructorMetaData;
+    private String messageProviderClass;
 
     /**
      * Retrieves the name of the component.
@@ -242,5 +243,13 @@ public class Component {
      */
     public void setConstructorMetaData(List<ConstructorMetaData> constructorMetaData) {
         this.constructorMetaData = constructorMetaData;
+    }
+
+    public String getMessageProviderClass() {
+        return messageProviderClass;
+    }
+
+    public void setMessageProviderClass(String messageProviderClass) {
+        this.messageProviderClass = messageProviderClass;
     }
 }

@@ -9,6 +9,7 @@ import org.ikasan.module.builder.model.component.Component;
 import org.ikasan.module.builder.model.configuration.ComponentConfiguration;
 import org.ikasan.module.builder.model.manifest.EnrichedModuleManifestMetaData;
 import org.ikasan.module.builder.model.module.FlowModel;
+import org.ikasan.module.builder.model.module.ModuleMetaDataModel;
 import org.ikasan.module.builder.model.module.ModuleModel;
 import org.ikasan.module.builder.service.*;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
@@ -160,8 +161,11 @@ public class ModuleGenerator {
         File componentConfigPackage = new File(moduleBootBasePackage, "/component");
         componentConfigPackage.mkdirs();
 
+        ModuleMetaDataModel moduleMetaDataModel = new ModuleMetaDataModel(this.migrationProjectBasePackage
+            , moduleManifestMetaData.getModuleMetaData());
+
         this.executionFreeMarkerTemplate(componentConfigPackage, "scaffolding/main/component/ComponentFactory.java.ftl"
-            , moduleManifestMetaData.getModuleMetaData(), "ComponentFactory.java");
+            , moduleMetaDataModel, "ComponentFactory.java");
 
         this.generateComponents(moduleManifestMetaData);
         this.generateConfigurations(moduleManifestMetaData);

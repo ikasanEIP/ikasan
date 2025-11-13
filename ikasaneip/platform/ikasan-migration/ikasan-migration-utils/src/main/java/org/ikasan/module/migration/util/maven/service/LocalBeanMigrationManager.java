@@ -31,7 +31,6 @@ public class LocalBeanMigrationManager {
         moduleManifestMetaData.getBeanDefinitionMetaData().forEach(beanDefinitionMetaData -> {
             if(beanDefinitionMetaData.getBeanClass().startsWith(projectBaseNamespace)) {
                 // migrate bean
-                System.out.println(beanDefinitionMetaData.getBeanClass());
                 String beanNamespace = beanDefinitionMetaData.getBeanClass()
                     .substring(0, beanDefinitionMetaData.getBeanClass().lastIndexOf("."));
 
@@ -78,6 +77,27 @@ public class LocalBeanMigrationManager {
     }
 
     /**
+     * Copies main resources from the specified directory to the target directory while maintaining the directory structure.
+     * This method searches for files in the source directory and copies them to the target location.
+     *
+     * @throws IOException if an I/O error occurs during the file copy process
+     */
+    public void copyMainResources() throws IOException {
+        List<Path> files = this.findFile(new File(this.migrationProjectBaseDirectory
+            .getAbsolutePath()+"/jar/src/main/resources/").toPath(), "*");
+
+        for (Path file : files) {
+            String filePath = file.toAbsolutePath().toString().replace(this.migrationProjectBaseDirectory.getAbsolutePath()
+                +"/jar/src/main/resources/", "");
+            Path targetFile = Paths.get(moduleFileManager.getScaffoldingResourcesMainBase().getAbsolutePath()
+                , filePath);
+            Files.createDirectories(targetFile.getParent());
+
+            Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    /**
      * Finds files with a specific file name in the given starting path.
      *
      * @param startPath The starting path for the search
@@ -91,7 +111,7 @@ public class LocalBeanMigrationManager {
         {
             @Override
             public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) {
-                if (file.getFileName().toString().equals(fileNameToFind)) {
+                if (fileNameToFind.equals("*") || file.getFileName().toString().equals(fileNameToFind)) {
                     foundFiles.add(file);
                 }
                 return FileVisitResult.CONTINUE; // Continue traversing

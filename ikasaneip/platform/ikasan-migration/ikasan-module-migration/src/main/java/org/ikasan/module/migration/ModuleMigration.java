@@ -94,6 +94,8 @@ public class ModuleMigration {
         logger.info(String.format("Migrating spring beans for module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.localBeanMigrationManager.migrateSpringBeans(moduleManifestMetaData);
 
+        this.localBeanMigrationManager.copyMainResources();
+
         logger.info(String.format("Attempting to build migrated module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.buildMigratedModule();
     }

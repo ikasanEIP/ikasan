@@ -1,5 +1,6 @@
 package org.ikasan.module.builder.service;
 
+import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
 import org.ikasan.module.builder.model.component.Component;
 import org.ikasan.module.builder.model.component.ComponentConfigurationMetaData;
 import org.ikasan.module.builder.model.component.ComponentTypeParameter;
@@ -29,6 +30,8 @@ public class ModuleManifestMetaDataComponentModelAdapter {
             = this.getParameterisedTypesMap(moduleManifestMetaData.getParameterizedTypes());
         Map<String, ConstructorMetaData> constructorMetaDataMap
             = this.getConstructorMetaDataMap(moduleManifestMetaData.getConstructorMetaData());
+        Map<String, ScheduledConsumerMetaData> scheduledConsumerMetaDataMap
+            = this.getScheduledConsumerMetaDataMap(moduleManifestMetaData.getScheduledConsumerMetaData());
 
         List<Component> results = new ArrayList<>();
         for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
@@ -38,6 +41,11 @@ public class ModuleManifestMetaDataComponentModelAdapter {
                     component.setName(flowElementMetaData.getComponentName());
                     component.setLocal(flowElementMetaData.getImplementingClass().startsWith(moduleBasePackage));
                     component.setImplementingClass(flowElementMetaData.getImplementingClass());
+                    if(component.getImplementingClass().equals(ScheduledConsumer.class.getName())) {
+                        if(scheduledConsumerMetaDataMap.containsKey(component.getName())) {
+                            component.setMessageProviderClass(scheduledConsumerMetaDataMap.get(component.getName()).getMessageProviderClass());
+                        }
+                    }
                     component.setClassName(flowElementMetaData.getImplementingClass().substring(
                         flowElementMetaData.getImplementingClass().lastIndexOf(".") + 1
                             ,  flowElementMetaData.getImplementingClass().length()));
@@ -142,5 +150,16 @@ public class ModuleManifestMetaDataComponentModelAdapter {
     private Map<String, ConstructorMetaData> getConstructorMetaDataMap(List<ConstructorMetaData> constructorMetaDataList) {
         return constructorMetaDataList.stream()
             .collect(Collectors.toMap(ConstructorMetaData::getComponentName, Function.identity(), (first, second) -> first));
+    }
+
+    /**
+     * Retrieves a mapping of component names to ConstructorMetaData objects.
+     *
+     * @param scheduledConsumerMetaData a list of ConstructorMetaData objects
+     * @return a map where the key is the component name and the value is the corresponding ConstructorMetaData object
+     */
+    private Map<String, ScheduledConsumerMetaData> getScheduledConsumerMetaDataMap(List<ScheduledConsumerMetaData> scheduledConsumerMetaData) {
+        return scheduledConsumerMetaData.stream()
+            .collect(Collectors.toMap(ScheduledConsumerMetaData::getName, Function.identity(), (first, second) -> first));
     }
 }

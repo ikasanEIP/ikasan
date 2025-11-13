@@ -26,7 +26,7 @@ public class FlowTestInspectorTest {
     @Test
     public void test_db_jms_im_4_1_x_archetype_migration() throws IOException, XmlPullParserException, TemplateException {
         ModuleMigration migration = new ModuleMigration("db-jms-im-4-1-x", "./src/test/modules/archetype/db-jms-im-4-1-x"
-            , "com.ikasan.sample.spring.boot", "./target/modules/migrated/db-jms-im-4-1-x-working"
+            , "com.ikasan.sample", "./target/modules/migrated/db-jms-im-4-1-x-working"
             , "ApplicationTest", "com.sample");
         migration.migrate();
     }

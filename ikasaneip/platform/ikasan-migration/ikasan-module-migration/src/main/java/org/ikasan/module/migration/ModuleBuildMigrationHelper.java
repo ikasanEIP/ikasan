@@ -4,10 +4,13 @@ import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
 import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingClass;
 import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 public class ModuleBuildMigrationHelper {
+    private static Logger logger = LoggerFactory.getLogger(ModuleBuildMigrationHelper.class);
     private LocalBeanMigrationManager localBeanMigrationManager;
     private ModuleFileManager moduleFileManager;
 
@@ -31,6 +34,7 @@ public class ModuleBuildMigrationHelper {
             if (!builder.build(this.moduleFileManager.getProjectRootDirectory()
                 , "clean install")) {
                 for (CompilationFailureMissingClass compilationFailureMissingClass : builder.getMissingClassList()) {
+                    logger.info("Copying missing dependency - " + compilationFailureMissingClass.getSymbol());
                     this.localBeanMigrationManager.copyMissingDependency(compilationFailureMissingClass.getSymbol());
                 }
             }

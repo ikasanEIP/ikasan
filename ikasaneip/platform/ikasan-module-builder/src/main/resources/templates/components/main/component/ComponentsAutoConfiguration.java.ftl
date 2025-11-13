@@ -1,4 +1,5 @@
 <#import "/components/endpoints.ftl" as endpoints>
+<#import "/components/converters.ftl" as converters>
 package ${packageName};
 
 import org.springframework.context.annotation.Bean;
@@ -44,11 +45,27 @@ private String brokerUrl;
         <@endpoints.jmsConsumer component/>
     <#elseif component.implementingClass == "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer">
         <@endpoints.jmsProducer component/>
-    <#-- todo need to work out how to narrow to SftpConsumer -->
     <#elseif component.implementingClass == "org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer">
-        <@endpoints.sftpConsumer component/>
+        <#-- For SchduledConsumers we need to delegate to the messageProviderClass to get context -->
+        <#if component.messageProviderClass == "org.ikasan.component.endpoint.filesystem.messageprovider.FileMessageProvider">
+            <@endpoints.fileConsumer component/>
+        <#elseif component.messageProviderClass == "org.ikasan.endpoint.sftp.consumer.SftpMessageProvider">
+            <@endpoints.sftpConsumer component/>
+        <#elseif component.messageProviderClass == "org.ikasan.endpoint.ftp.consumer.FtpMessageProvider">
+            <@endpoints.ftpConsumer component/>
+        <#else>
+            <@endpoints.unknownScheduledConsumer component/>
+        </#if>
     <#elseif component.implementingClass == "org.ikasan.endpoint.sftp.producer.SftpProducer">
         <@endpoints.sftpProducer component/>
+    <#elseif component.implementingClass == "org.ikasan.endpoint.ftp.producer.FtpProducer">
+        <@endpoints.ftpProducer component/>
+    <#elseif component.implementingClass == "org.ikasan.component.endpoint.consumer.EventGeneratingConsumer">
+        <@endpoints.eventGeneratingConsumer component/>
+    <#elseif component.implementingClass == "org.ikasan.component.converter.xml.XmlStringToObjectConverter">
+        <@converters.xmlStringToObjectConverter component/>
+    <#elseif component.implementingClass == "org.ikasan.component.converter.xml.ObjectToXMLStringConverter">
+        <@converters.objectToXmlStringConverter component/>
     <#else>
         <#if component.isConfigured >
             ${component.className} component = new ${component.className}(<#if component.constructorMetaData??><#list component.constructorMetaData as constructorMetaData></#list></#if>);

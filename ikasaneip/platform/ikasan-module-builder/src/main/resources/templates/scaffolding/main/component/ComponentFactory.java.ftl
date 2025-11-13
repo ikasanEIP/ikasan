@@ -1,4 +1,4 @@
-package com.ikasan.sample.spring.boot.component;
+package ${moduleBasePackage}.component;
 
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -20,7 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class ComponentFactory {
 
 <#compress>
-<#list flows as flow>
+<#list moduleMetaData.flows as flow>
     <#list flow.flowElements as component>
         @Resource
         @Qualifier("${component.componentName?replace(" ", "")?replace(",", "")?uncap_first}")
@@ -49,7 +49,7 @@ public class ComponentFactory {
 </#list>
 </#compress>
 
-<#list flows as flow>
+<#list moduleMetaData.flows as flow>
     <#list flow.flowElements as component>
     <#if component.componentType == "org.ikasan.spec.component.endpoint.Consumer">
     /**
