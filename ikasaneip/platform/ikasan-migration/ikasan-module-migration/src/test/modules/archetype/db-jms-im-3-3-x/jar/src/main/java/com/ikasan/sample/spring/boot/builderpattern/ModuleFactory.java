@@ -66,7 +66,7 @@ public class ModuleFactory
         // get the builders
         ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("myIntegrationModule");
 
-        Flow sourceFlow = moduleBuilder.getFlowBuilder("dbToJMSFlow")
+        Flow sourceFlow = moduleBuilder.getFlowBuilder("DB to JMS Flow")
             .withDescription("Sample DB to JMS flow")
             .withExceptionResolver( componentFactory.getSourceFlowExceptionResolver() )
             .consumer("DB Consumer", componentFactory.getDBConsumer())
@@ -75,7 +75,7 @@ public class ModuleFactory
             .converter("Person to XML", componentFactory.getObjectToXmlStringConverter())
             .producer("JMS Producer", componentFactory.getJmsProducer()).build();
 
-        Flow targetFlow = moduleBuilder.getFlowBuilder("jmsToDbFlow")
+        Flow targetFlow = moduleBuilder.getFlowBuilder("JMS To DB Flow")
             .withDescription("Sample JMS to DB flow")
             .consumer("JMS Consumer", componentFactory.getJmsConsumer())
             .converter("XML to Person", componentFactory.getXmlToObjectConverter())

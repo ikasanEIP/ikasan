@@ -40,45 +40,17 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.OnException;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import com.ulisesbocchio.jasyptspringboot.environment.StandardEncryptableEnvironment;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 
-import javax.annotation.Resource;
-
-@Configuration("ModuleFactory")
-public class MyModule
+@SpringBootApplication
+public class Application
 {
-    @Resource
-    BuilderFactory builderFactory;
-    @Resource
-    ComponentFactory componentFactory;
-
-    @Bean
-    public Module myModule()
+    public static void main(String[] args)
     {
-        // get the module builder
-        ModuleBuilder moduleBuilder = builderFactory.getModuleBuilder("vanilla-im-3-3-x")
-                .withDescription("Vanilla Integration Module.");
-
-        Flow flow = moduleBuilder.getFlowBuilder("Vanilla Flow")
-            .withDescription("Vanilla source flow")
-            .withExceptionResolver( builderFactory.getExceptionResolverBuilder().addExceptionToAction(Exception.class, OnException.retryIndefinitely()))
-            .withMonitor( builderFactory.getMonitorBuilder().withFlowStateChangeMonitor())
-            .consumer("Event Generating Consumer", builderFactory.getComponentBuilder().eventGeneratingConsumer())
-            .converter("Event Converter", componentFactory.getConverter())
-            .producer("Logging Producer", builderFactory.getComponentBuilder().logProducer()).build();
-
-        Module module = moduleBuilder
-            .addFlow(flow)
-            .build();
-
-        return module;
+        new SpringApplicationBuilder()
+            .environment(new StandardEncryptableEnvironment())
+            .sources(Application.class).run(args);
     }
 }
-
-

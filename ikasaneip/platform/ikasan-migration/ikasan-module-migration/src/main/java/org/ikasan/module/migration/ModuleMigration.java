@@ -172,6 +172,7 @@ public class ModuleMigration {
      * @throws IOException if an I/O exception occurs during file operations.
      */
     private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+        ImportedResourceMigrationHelper.migrate(moduleManifestMetaData);
         ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager, this.migrationProjectBasePackageName, this.migrationProjectMavenGroupId);
         moduleGenerator.generate(moduleManifestMetaData);
     }

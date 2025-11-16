@@ -1,7 +1,11 @@
 package org.ikasan.module.migration.util.maven.service;
 
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
+import org.ikasan.spec.metadata.BeanDefinitionMetaData;
+import org.ikasan.spec.metadata.ImportedResourceMetaData;
 import org.ikasan.spec.metadata.ModuleManifestMetaData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,8 +13,11 @@ import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class LocalBeanMigrationManager {
+    private static Logger logger = LoggerFactory.getLogger(LocalBeanMigrationManager.class);
+
     private String projectBaseNamespace;
     private File migrationProjectBaseDirectory;
     private ModuleFileManager moduleFileManager;
@@ -28,30 +35,54 @@ public class LocalBeanMigrationManager {
      * @param moduleManifestMetaData The ModuleManifestMetaData object containing bean definitions to migrate.
      */
     public void migrateSpringBeans(ModuleManifestMetaData moduleManifestMetaData) {
-        moduleManifestMetaData.getBeanDefinitionMetaData().forEach(beanDefinitionMetaData -> {
-            if(beanDefinitionMetaData.getBeanClass().startsWith(projectBaseNamespace)) {
-                // migrate bean
-                String beanNamespace = beanDefinitionMetaData.getBeanClass()
-                    .substring(0, beanDefinitionMetaData.getBeanClass().lastIndexOf("."));
+        List<String> classesToMigrate = moduleManifestMetaData.getBeanDefinitionMetaData().stream()
+                .filter(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanClass().startsWith(projectBaseNamespace))
+                .map(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanClass())
+                .collect(Collectors.toList());
 
-                String beanFilePath = beanNamespace.replaceAll("\\.", "/");
-                String beanClassName = beanDefinitionMetaData.getBeanClass()
-                    .substring(beanDefinitionMetaData.getBeanClass().lastIndexOf(".")+1
-                        , beanDefinitionMetaData.getBeanClass().length());
-                Path beanDir = Paths.get(moduleFileManager.getComponentsJavaSrcMainBase().getAbsolutePath(), beanFilePath);
-                Path srcProjectJavaDir = Paths.get(this.migrationProjectBaseDirectory.getAbsolutePath(), "jar/src/main/java");
-                Path sourceJavaFile = Paths.get(srcProjectJavaDir.toString(), beanFilePath, beanClassName+".java");
-                Path targetJavaFile = Paths.get(beanDir.toString(), beanClassName+".java");
-                try {
-                    // Create the nested directories
-                    Files.createDirectories(beanDir);
-                    Files.copy(sourceJavaFile, targetJavaFile, StandardCopyOption.REPLACE_EXISTING);
-                    System.out.println("Nested directories created successfully at: " + beanDir.toAbsolutePath());
-                } catch (IOException e) {
-                    // Handle potential I/O errors during directory creation
-                    System.err.println("Error creating nested directories: " + e.getMessage());
-                    e.printStackTrace();
-                }
+        classesToMigrate.addAll(moduleManifestMetaData.getBeanDefinitionMetaData().stream()
+            .filter(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanClass().startsWith(projectBaseNamespace) &&
+                beanDefinitionMetaData.getBeanResource().startsWith(projectBaseNamespace) &&
+                beanDefinitionMetaData.getType().equals("CONFIGURATION_CLASS_BEAN_DEFINITION"))
+            .map(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanResource())
+            .distinct()
+            .collect(Collectors.toList()));
+
+        classesToMigrate.addAll(moduleManifestMetaData.getModuleMetaData().getFlows().stream()
+                .flatMap(flowMetaData -> flowMetaData.getFlowElements().stream())
+                    .filter(flowElementMetaData -> flowElementMetaData.getImplementingClass().startsWith(projectBaseNamespace))
+                        .map(flowElementMetaData -> flowElementMetaData.getImplementingClass())
+                            .collect(Collectors.toList()));
+
+        classesToMigrate.addAll(moduleManifestMetaData.getImportedResourceMetaData().stream()
+            .filter(importedResourceMetaData -> importedResourceMetaData.getSource().startsWith(projectBaseNamespace))
+                .filter(importedResourceMetaData -> importedResourceMetaData.getResourceType()
+                    .equals(ImportedResourceMetaData.IMPORTED_CONFIGURATION_CLASS))
+                    .map(importedResourceMetaData -> importedResourceMetaData.getResource())
+                        .collect(Collectors.toList()));
+
+
+        classesToMigrate.forEach(classToMigrate -> {
+            // migrate bean
+            String beanNamespace = classToMigrate
+                .substring(0, classToMigrate.lastIndexOf("."));
+
+            String beanFilePath = beanNamespace.replaceAll("\\.", "/");
+            String beanClassName = classToMigrate
+                .substring(classToMigrate.lastIndexOf(".")+1
+                    , classToMigrate.length());
+            Path beanDir = Paths.get(moduleFileManager.getComponentsJavaSrcMainBase().getAbsolutePath(), beanFilePath);
+            Path srcProjectJavaDir = Paths.get(this.migrationProjectBaseDirectory.getAbsolutePath(), "jar/src/main/java");
+            Path sourceJavaFile = Paths.get(srcProjectJavaDir.toString(), beanFilePath, beanClassName+".java");
+            Path targetJavaFile = Paths.get(beanDir.toString(), beanClassName+".java");
+            try {
+                // Create the nested directories
+                Files.createDirectories(beanDir);
+                Files.copy(sourceJavaFile, targetJavaFile, StandardCopyOption.REPLACE_EXISTING);
+                logger.info("Nested directories created successfully at: " + beanDir.toAbsolutePath());
+            } catch (IOException e) {
+                // Handle potential I/O errors during directory creation
+                logger.error("Error creating nested directories: " + e.getMessage(), e);
             }
         });
     }

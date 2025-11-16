@@ -16,9 +16,17 @@ public class FlowTestInspectorTest {
     Path tempDir;
 
     @Test
-    public void test_against_real_project() throws IOException, XmlPullParserException, TemplateException {
+    public void test_sftp_jms_im_4_1_x_archetype_migration() throws IOException, XmlPullParserException, TemplateException {
         ModuleMigration migration = new ModuleMigration("sftp-jms-im-4-1-x", "./src/test/modules/archetype/sftp-jms-im-4-1-x"
             , "com.ikasan.sample.spring.boot", "./target/modules/migrated/sftp-jms-im-4-1-x-working"
+            , "JmsToSftpFlowTest", "com.sample");
+        migration.migrate();
+    }
+
+    @Test
+    public void test_sftp_jms_im_3_3_x_archetype_migration() throws IOException, XmlPullParserException, TemplateException {
+        ModuleMigration migration = new ModuleMigration("sftp-jms-im-3-3-x", "./src/test/modules/archetype/sftp-jms-im-3-3-x"
+            , "com.ikasan.sample.spring.boot", "./target/modules/migrated/sftp-jms-im-3-3-x-working"
             , "JmsToSftpFlowTest", "com.sample");
         migration.migrate();
     }
@@ -34,7 +42,7 @@ public class FlowTestInspectorTest {
     @Test
     public void test_db_jms_im_3_3_x_archetype_migration() throws IOException, XmlPullParserException, TemplateException {
         ModuleMigration migration = new ModuleMigration("db-jms-im-3-3-x", "./src/test/modules/archetype/db-jms-im-3-3-x"
-            , "com.ikasan.sample.spring.boot", "./target/modules/migrated/db-jms-im-3-3-x-working"
+            , "com.ikasan.sample", "./target/modules/migrated/db-jms-im-3-3-x-working"
             , "ApplicationTest", "com.sample");
         migration.migrate();
     }
