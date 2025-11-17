@@ -23,10 +23,8 @@ public class MissingClassInvocationOutputHandler implements InvocationOutputHand
         }
         else if(s.contains(ERROR) && s.contains(SYMBOL) && errorStarted) {
             symbol = s.substring(s.lastIndexOf("class ")+6, s.length());
-        }
-        else if(s.contains(ERROR) && s.contains(LOCATION) && errorStarted) {
-            missingClassList.add(new CompilationFailureMissingClass(symbol
-                , s.substring(s.lastIndexOf("class ")+6, s.length())));
+
+            missingClassList.add(new CompilationFailureMissingClass(symbol, symbol));
             errorStarted = false;
             symbol = null;
         }
