@@ -20,8 +20,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 public class ComponentFactory {
 
 <#compress>
-<#list moduleMetaData.flows as flow>
-    <#list flow.flowElements as component>
+    <#list flowElementMetaData as component>
         @Resource
         @Qualifier("${component.componentName?replace(" ", "")?replace(",", "")?uncap_first}")
         <#if component.componentType == "org.ikasan.spec.component.endpoint.Consumer">
@@ -46,11 +45,10 @@ public class ComponentFactory {
             private Broker ${component.componentName?replace(" ", "")?replace(",", "")?uncap_first};
         </#if>
     </#list>
-</#list>
 </#compress>
 
-<#list moduleMetaData.flows as flow>
-    <#list flow.flowElements as component>
+
+<#list flowElementMetaData as component>
     <#if component.componentType == "org.ikasan.spec.component.endpoint.Consumer">
     /**
     * This method returns the Consumer associated with the ${component.componentName?replace(" ", "")?replace(",", "")?uncap_first} bean.
@@ -152,6 +150,5 @@ public class ComponentFactory {
     }
 
     </#if>
-    </#list>
 </#list>
 }

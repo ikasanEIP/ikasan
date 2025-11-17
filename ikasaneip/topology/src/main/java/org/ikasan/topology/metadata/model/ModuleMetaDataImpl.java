@@ -6,6 +6,7 @@ import org.ikasan.spec.module.ModuleType;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ModuleMetaDataImpl implements ModuleMetaData
 {
@@ -155,5 +156,30 @@ public class ModuleMetaDataImpl implements ModuleMetaData
     @Override
     public void setConfiguredResourceId(String id) {
         this.configuredResourceId = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ModuleMetaDataImpl that = (ModuleMetaDataImpl) o;
+        return moduleType == that.moduleType
+            && Objects.equals(url, that.url)
+            && Objects.equals(host, that.host)
+            && Objects.equals(port, that.port)
+            && Objects.equals(context, that.context)
+            && Objects.equals(protocol, that.protocol)
+            && Objects.equals(name, that.name)
+            && Objects.equals(description, that.description)
+            && Objects.equals(version, that.version)
+            && Objects.equals(ikasanVersion, that.ikasanVersion)
+            && Objects.equals(flows, that.flows)
+            && Objects.equals(configuredResourceId, that.configuredResourceId);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(moduleType, url, host, port, context, protocol, name, description
+            , version, ikasanVersion, flows, configuredResourceId);
     }
 }

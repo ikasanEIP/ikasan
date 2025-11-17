@@ -6,6 +6,7 @@ import org.ikasan.spec.metadata.Transition;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class FlowMetaDataImpl implements FlowMetaData
 {
@@ -16,7 +17,6 @@ public class FlowMetaDataImpl implements FlowMetaData
     private String configurationId;
     private String flowStartupType;
     private String flowStartupComment;
-    private String moduleVersion;
 
     @Override
     public void setName(String name)
@@ -96,5 +96,25 @@ public class FlowMetaDataImpl implements FlowMetaData
     @Override
     public void setFlowStartupComment(String flowStartupComment) {
         this.flowStartupComment = flowStartupComment;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FlowMetaDataImpl that = (FlowMetaDataImpl) o;
+        return Objects.equals(name, that.name)
+            && Objects.equals(consumer, that.consumer)
+            && Objects.equals(transitions, that.transitions)
+            && Objects.equals(flowElements, that.flowElements)
+            && Objects.equals(configurationId, that.configurationId)
+            && Objects.equals(flowStartupType, that.flowStartupType)
+            && Objects.equals(flowStartupComment, that.flowStartupComment);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, consumer, transitions, flowElements, configurationId
+            , flowStartupType, flowStartupComment);
     }
 }

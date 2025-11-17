@@ -4,6 +4,7 @@ import org.ikasan.spec.metadata.DecoratorMetaData;
 import org.ikasan.spec.metadata.FlowElementMetaData;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FlowElementMetaDataImpl implements FlowElementMetaData
 {
@@ -112,4 +113,24 @@ public class FlowElementMetaDataImpl implements FlowElementMetaData
         this.decorators = decorators;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FlowElementMetaDataImpl that = (FlowElementMetaDataImpl) o;
+        return isConfigurable == that.isConfigurable
+            && Objects.equals(componentName, that.componentName)
+            && Objects.equals(description, that.description)
+            && Objects.equals(componentType, that.componentType)
+            && Objects.equals(implementingClass, that.implementingClass)
+            && Objects.equals(configurationId, that.configurationId)
+            && Objects.equals(invokerConfigurationId, that.invokerConfigurationId)
+            && Objects.equals(decorators, that.decorators);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(componentName, description, componentType, implementingClass, isConfigurable
+            , configurationId, invokerConfigurationId, decorators);
+    }
 }
