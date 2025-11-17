@@ -211,7 +211,16 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
             for (int i = 0; i < parameters.length; i++) {
                 TypeParameterImpl typeParameter = new TypeParameterImpl();
                 typeParameter.setName(parameters[i].getName());
-                typeParameter.setType(parameters[i].getType().getName());
+                if(parameters[i].getType().getName().contains("[L") &&
+                    parameters[i].getType().getName().contains(";")) {
+                    // Dealing with ... types in java for example String... is represented as
+                    // [Ljava.lang.String; when type is described using reflection.
+                    typeParameter.setType(parameters[i].getType().getName()
+                        .replace("[L", "").replace(";", "") + "...");
+                }
+                else {
+                    typeParameter.setType(parameters[i].getType().getName());
+                }
                 typeParameters.add(typeParameter);
             }
             constructorMetaData.setConstructorArguments(typeParameters);
