@@ -30,6 +30,9 @@ private BuilderFactory builderFactory;
 @Value("${"$"}{jms.provider.url}")
 private String brokerUrl;
 <#list components as component>
+
+    <#assign constructorMetaData = component.constructorMetaData?first!null>
+
     /**
     * Create the ${component.name?replace(" ", "")?replace(",", "")?uncap_first} bean.
     *
@@ -39,7 +42,7 @@ private String brokerUrl;
     <#if component.isConfigured >
         public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace(",", "")?uncap_first}(@Qualifier("${component.name?replace(" ", "")?replace(",", "")?uncap_first}Configuration") ${component.configurationMetaData.configurationClassName} configuration) {
     <#else>
-        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace(",", "")?uncap_first}() {
+        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace(",", "")?uncap_first}(<#if constructorMetaData?? && constructorMetaData.constructorArguments??><#list constructorMetaData.constructorArguments as item>${item.type} ${item.name}<#sep>, </#list></#if>) {
     </#if>
     <#if component.implementingClass == "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
         <@endpoints.jmsConsumer component/>
@@ -68,13 +71,13 @@ private String brokerUrl;
         <@converters.objectToXmlStringConverter component/>
     <#else>
         <#if component.isConfigured >
-            ${component.className} component = new ${component.className}(<#if component.constructorMetaData??><#list component.constructorMetaData as constructorMetaData></#list></#if>);
+            ${component.className} component = new ${component.className}(<#if constructorMetaData?? && constructorMetaData.constructorArguments??><#list constructorMetaData.constructorArguments as item>${item.name}<#sep>, </#list></#if>);
             component.setConfiguredResourceId("${component.configurationId}");
             component.setConfiguration(configuration);
 
             return component;
         <#else>
-            return new ${component.className}();
+            return new ${component.className}(<#if constructorMetaData?? && constructorMetaData.constructorArguments??><#list constructorMetaData.constructorArguments as item>${item.name}<#sep>, </#list></#if>);
         </#if>
     </#if>
     }
