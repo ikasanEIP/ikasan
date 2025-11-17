@@ -75,7 +75,11 @@ public class ModuleManifestMetaDataComponentModelAdapter {
                         component.setConstructorMetaData
                             (List.of(constructorMetaDataMap.get(flowElementMetaData.getComponentName())));
                     }
-                    results.add(component);
+
+
+                    if(!results.contains(component)) {
+                        results.add(component);
+                    }
                 }
             }
         }

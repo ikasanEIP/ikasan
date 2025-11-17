@@ -4,6 +4,7 @@ import org.ikasan.spec.metadata.ConstructorMetaData;
 import org.ikasan.spec.metadata.ParameterizedType;
 
 import java.util.List;
+import java.util.Objects;
 
 public class Component {
     private String name;
@@ -251,5 +252,33 @@ public class Component {
 
     public void setMessageProviderClass(String messageProviderClass) {
         this.messageProviderClass = messageProviderClass;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Component component = (Component) o;
+        return isConfigured == component.isConfigured
+            && isLocal == component.isLocal
+            && Objects.equals(name, component.name)
+            && Objects.equals(implementingClass, component.implementingClass)
+            && Objects.equals(className, component.className)
+            && Objects.equals(classPackage, component.classPackage)
+            && Objects.equals(componentType, component.componentType)
+            && Objects.equals(componentTypeClassName, component.componentTypeClassName)
+            && Objects.equals(componentTypePackage, component.componentTypePackage)
+            && Objects.equals(parameterizedType, component.parameterizedType)
+            && Objects.equals(configurationId, component.configurationId)
+            && Objects.equals(configurationMetaData, component.configurationMetaData)
+            && Objects.equals(constructorMetaData, component.constructorMetaData)
+            && Objects.equals(messageProviderClass, component.messageProviderClass);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, implementingClass, className, classPackage, componentType
+            , componentTypeClassName, componentTypePackage, parameterizedType, isConfigured, isLocal
+            , configurationId, configurationMetaData, constructorMetaData, messageProviderClass);
     }
 }

@@ -1,6 +1,7 @@
 package org.ikasan.module.builder.model.configuration;
 
 import java.util.List;
+import java.util.Objects;
 
 public class ComponentConfiguration {
     private String packageName;
@@ -131,5 +132,24 @@ public class ComponentConfiguration {
      */
     public void setLocal(boolean local) {
         this.local = local;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ComponentConfiguration that = (ComponentConfiguration) o;
+        return local == that.local && Objects.equals(packageName, that.packageName)
+            && Objects.equals(className, that.className)
+            && Objects.equals(implementingClass, that.implementingClass)
+            && Objects.equals(componentName, that.componentName)
+            && Objects.equals(configuredResourceId, that.configuredResourceId)
+            && Objects.equals(configurationParameters, that.configurationParameters);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(packageName, className, implementingClass, componentName, configuredResourceId
+            , configurationParameters, local);
     }
 }
