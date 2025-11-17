@@ -37,7 +37,7 @@ public class PomMigrationUtilities {
             });
 
         srcModel.getProperties().entrySet().forEach(entry -> {
-            if(((String)entry.getKey()).startsWith("version") && !tgtModel.getProperties().containsKey(entry.getKey())) {
+            if(((String)entry.getKey()).contains("version") && !tgtModel.getProperties().containsKey(entry.getKey())) {
                 tgtModel.getProperties().put(entry.getKey(),entry.getValue());
             }
         });
