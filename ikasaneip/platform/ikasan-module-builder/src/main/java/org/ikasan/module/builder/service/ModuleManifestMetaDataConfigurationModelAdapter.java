@@ -43,7 +43,7 @@ public class ModuleManifestMetaDataConfigurationModelAdapter {
             componentConfiguration.setImplementingClass(configurationMetaData.getImplementingClass());
             componentConfiguration.setComponentName(componentsMap.get(configurationMetaData.getConfigurationId()).getComponentName());
             componentConfiguration.setLocal(componentsMap.get(configurationMetaData.getConfigurationId())
-                .getImplementingClass().startsWith(moduleBasePackage));
+                .getImplementingClass().startsWith(moduleBasePackage) && componentConfiguration.getPackageName().startsWith(moduleBasePackage));
             List<ConfigurationParameterMetaData> configurationParameterMetaDataList
                 = (List<ConfigurationParameterMetaData>) configurationMetaData.getParameters();
 
