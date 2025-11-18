@@ -96,6 +96,9 @@ public class ModuleMigration {
 
         this.localBeanMigrationManager.copyMainResources();
 
+        JakartaTransformerWrapper.run(this.migrationWorkingDirectory,
+            this.migrationWorkingDirectory+"/jakarta/", this.migrationModuleName);
+
         logger.info(String.format("Attempting to build migrated module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.buildMigratedModule();
     }
