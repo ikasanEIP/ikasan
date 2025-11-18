@@ -130,13 +130,28 @@ public class ModuleMigration {
         testClassEditor.addJsonModuleMetaDataProvider(flowTest);
     }
 
+    /**
+     * Migrates all dependencies from a source POM file to a target POM file.
+     *
+     * @throws XmlPullParserException if an error occurs in parsing XML.
+     * @throws IOException if an I/O exception occurs during file operations.
+     */
     private void migrateComponentPomDependencies() throws XmlPullParserException, IOException {
         PomMigrationUtilities.migrateDependencies(new File(this.migrationProjectBaseDirectory + "/jar/pom.xml"),
             new File(this.moduleFileManager.getComponentsDir(),"pom.xml"));
     }
 
+    /**
+     * Migrates all dependencies and parent POM reference from the source POM file to the target POM file.
+     * This method utilizes PomMigrationUtilities class to handle the migration process.
+     *
+     * @throws XmlPullParserException if an error occurs in parsing XML.
+     * @throws IOException if an I/O exception occurs during file operations.
+     */
     private void migrateParentPomDependencies() throws XmlPullParserException, IOException {
         PomMigrationUtilities.migrateDependencies(new File(this.migrationProjectBaseDirectory + "/pom.xml"),
+            new File(this.moduleFileManager.getProjectRootDirectory(),"pom.xml"));
+        PomMigrationUtilities.migrateParentPomReference(new File(this.migrationProjectBaseDirectory + "/pom.xml"),
             new File(this.moduleFileManager.getProjectRootDirectory(),"pom.xml"));
     }
 

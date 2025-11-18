@@ -45,4 +45,26 @@ public class PomMigrationUtilities {
         MavenXpp3Writer writer = new MavenXpp3Writer();
         writer.write(new FileWriter(tgtPomFile), tgtModel);
     }
+
+    /**
+     * Migrates the parent POM reference from the source POM file to the target POM file.
+     *
+     * @param srcPomFile The source POM file containing the parent POM reference to migrate.
+     * @param tgtPomFile The target POM file where the parent POM reference will be migrated to.
+     * @throws IOException If an I/O error occurs while reading or writing the POM files.
+     * @throws XmlPullParserException If an error occurs during XML parsing of the POM files.
+     */
+    public static void migrateParentPomReference(File srcPomFile, File tgtPomFile)
+        throws IOException, XmlPullParserException {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model srcModel = reader.read(new FileReader(srcPomFile));
+        Model tgtModel = reader.read(new FileReader(tgtPomFile));
+
+        if(srcModel.getParent() != null) {
+            tgtModel.setParent(srcModel.getParent());
+
+            MavenXpp3Writer writer = new MavenXpp3Writer();
+            writer.write(new FileWriter(tgtPomFile), tgtModel);
+        }
+    }
 }
