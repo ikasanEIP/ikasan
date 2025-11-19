@@ -7,6 +7,7 @@ import org.ikasan.module.builder.model.component.ComponentTypeParameter;
 import org.ikasan.spec.metadata.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -163,6 +164,7 @@ public class ModuleManifestMetaDataComponentModelAdapter {
      * @return a map where the key is the component name and the value is the corresponding ConstructorMetaData object
      */
     private Map<String, ScheduledConsumerMetaData> getScheduledConsumerMetaDataMap(List<ScheduledConsumerMetaData> scheduledConsumerMetaData) {
+        if(scheduledConsumerMetaData == null) return new HashMap<>();
         return scheduledConsumerMetaData.stream()
             .collect(Collectors.toMap(ScheduledConsumerMetaData::getName, Function.identity(), (first, second) -> first));
     }
