@@ -31,7 +31,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
-import org.springframework.security.access.method.P;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 
@@ -207,7 +206,14 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
             constructorMetaData.setComponentName(flowElementMetaData.getComponentName());
             List<TypeParameter> typeParameters = new ArrayList<>();
             Parameter[] parameters = constructor.getParameters();
-            for (int i = 0; i < parameters.length; i++) {
+            int i=0;
+            if(flowElementMetaData.getImplementingClass().contains("$")) {
+                // We have detected an inner class and the outer class
+                // is always the first type parameter returned as a
+                // constructor argument.
+                i=1;
+            }
+            for (; i < parameters.length; i++) {
                 TypeParameterImpl typeParameter = new TypeParameterImpl();
                 typeParameter.setName(parameters[i].getName());
                 if(parameters[i].getType().getName().contains("[L") &&
