@@ -1,6 +1,7 @@
 package org.ikasan.module.builder;
 
 import freemarker.template.TemplateException;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.ikasan.manifest.ModuleManifestMetaDataHelper;
 import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
@@ -14,7 +15,7 @@ import java.io.IOException;
 public class ModuleGeneratorTest extends AbstractTest {
 
     @Test
-    public void test_module_generation() throws IOException, TemplateException {
+    public void test_module_generation() throws IOException, TemplateException, XmlPullParserException {
         String moduleMetaData = this.loadDataFile("/data/moduleMetaData.json");
         ModuleManifestMetaData root = ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
         File rootDir = new File("target/"+root.getModuleMetaData().getName());
@@ -22,7 +23,26 @@ public class ModuleGeneratorTest extends AbstractTest {
 
         ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
         ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager
-            , "com.ikasan.sample.spring.boot", "org.ikasan");
+            , "com.ikasan.sample.spring.boot"
+            , "org.ikasan", false);
+        moduleGenerator.generate(root);
+
+//        MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));
+//        Assert.assertTrue(mavenProjectBuilder.build(rootDir, "spotless:apply"));
+//        Assert.assertTrue(mavenProjectBuilder.build(rootDir, "clean install"));
+    }
+
+    @Test
+    public void test_module_generation_no_configuration() throws IOException, TemplateException, XmlPullParserException {
+        String moduleMetaData = this.loadDataFile("/data/moduleMetaDataNoConfigurationMetadata.json");
+        ModuleManifestMetaData root = ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
+        File rootDir = new File("target/"+root.getModuleMetaData().getName());
+        rootDir.mkdirs();
+
+        ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
+        ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager
+            , "com.ikasan.sample.spring.boot"
+            , "org.ikasan", false);
         moduleGenerator.generate(root);
 
         MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));
@@ -31,7 +51,7 @@ public class ModuleGeneratorTest extends AbstractTest {
     }
 
     @Test
-    public void test_module_generation_complex() throws IOException, TemplateException {
+    public void test_module_generation_complex() throws IOException, TemplateException, XmlPullParserException {
         String moduleMetaData = this.loadDataFile("/data/moduleMetaDataComplex.json");
         ModuleManifestMetaData root = ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
         File rootDir = new File("target/"+root.getModuleMetaData().getName());
@@ -39,7 +59,8 @@ public class ModuleGeneratorTest extends AbstractTest {
 
         ModuleFileManager moduleFileManager = new ModuleFileManager(rootDir);
         ModuleGenerator moduleGenerator = new ModuleGenerator(moduleFileManager
-            , "com.acme.esb.sales.dumbStreamCms.operation", "com.acme.esb");
+            , "com.acme.esb.sales.dumbStreamCms.operation"
+            , "com.acme.esb", false);
         moduleGenerator.generate(root);
 
         MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));

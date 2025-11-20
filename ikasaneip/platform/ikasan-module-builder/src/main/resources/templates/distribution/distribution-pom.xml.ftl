@@ -25,11 +25,6 @@
             <artifactId>${migrationProjectMavenArtefactId}</artifactId>
             <version>${moduleManifestMetaData.moduleMetaData.version}</version>
         </dependency>
-<#--        <dependency>-->
-<#--            <groupId>${migrationProjectMavenGroupId}</groupId>-->
-<#--            <artifactId>${moduleManifestMetaData.moduleMetaData.name}-components</artifactId>-->
-<#--            <version>${moduleManifestMetaData.moduleMetaData.version}</version>-->
-<#--        </dependency>-->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>

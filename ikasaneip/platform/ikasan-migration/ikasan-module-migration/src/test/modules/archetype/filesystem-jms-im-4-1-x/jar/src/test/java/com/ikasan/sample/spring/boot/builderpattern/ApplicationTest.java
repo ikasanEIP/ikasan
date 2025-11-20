@@ -86,8 +86,6 @@ import java.util.HashMap;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.context.ApplicationContext;
-import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 
 /**
  * This test class supports the <code>SimpleExample</code> class.
@@ -97,15 +95,6 @@ import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtract
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class ApplicationTest {
-
-    @Autowired()
-    JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
-
-    @Autowired()
-    JsonConfigurationMetaDataExtractor jsonConfigurationMetaDataExtractor;
-
-    @Autowired()
-    ApplicationContext applicationContext;
 
     private static String FILE_PRODUCER_FILE_NAME = "testProducer.out";
 
@@ -224,19 +213,5 @@ public class ApplicationTest {
         File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
         assertTrue("File does not exist.", result.exists());
         assertEquals("Generated file, has different content.", message, new String(Files.readAllBytes(result.toPath())));
-    }
-
-    @Test()
-    public void metadata_extractor() throws IOException {
-        JsonModuleManifestMetaDataProvider moduleMetaDataProvider = new JsonModuleManifestMetaDataProvider(jsonModuleMetaDataProvider, jsonConfigurationMetaDataExtractor);
-        moduleMetaDataProvider.setApplicationContext(applicationContext);
-        Module module = applicationContext.getBean(Module.class);
-        String moduleMetaData = moduleMetaDataProvider.serialiseModuleManifest(moduleMetaDataProvider.describeModuleManifest(module, new HashMap()));
-        this.writeStringToFile("/Users/mick/workspace/ikasan/ikasaneip/platform/ikasan-migration/ikasan-module-migration/./target/modules/migrated/filesystem-jms-im-4-1-x-working/moduleMetaData.json", moduleMetaData);
-    }
-
-    void writeStringToFile(String filePath, String contents) throws IOException {
-        Path path = Paths.get(filePath);
-        Files.write(path, contents.getBytes());
     }
 }

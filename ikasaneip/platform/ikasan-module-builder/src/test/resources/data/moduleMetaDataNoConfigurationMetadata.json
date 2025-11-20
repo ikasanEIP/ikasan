@@ -65,30 +65,6 @@
     "configuredResourceId" : null,
     "type" : "INTEGRATION_MODULE"
   },
-  "configurationMetaData" : [ {
-    "configurationId" : "vanilla-im-4-1-x_Vanilla Flow_Logging Producer_729287509_C",
-    "description" : null,
-    "implementingClass" : "org.ikasan.component.endpoint.util.producer.LogProducerConfiguration",
-    "parameters" : [ {
-      "id" : null,
-      "name" : "logEveryNth",
-      "value" : 0,
-      "description" : null,
-      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterLongImpl"
-    }, {
-      "id" : null,
-      "name" : "regExpPattern",
-      "value" : null,
-      "description" : null,
-      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-    }, {
-      "id" : null,
-      "name" : "replacementText",
-      "value" : null,
-      "description" : null,
-      "implementingClass" : "org.ikasan.configurationService.model.ConfigurationParameterStringImpl"
-    } ]
-  } ],
   "dependencyManagement" : {
     "repositories" : null,
     "dependencies" : [ {

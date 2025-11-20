@@ -1,4 +1,4 @@
-package org.ikasan.module.migration;
+package org.ikasan.module.migration.util.maven.service;
 
 import java.io.File;
 import java.io.IOException;

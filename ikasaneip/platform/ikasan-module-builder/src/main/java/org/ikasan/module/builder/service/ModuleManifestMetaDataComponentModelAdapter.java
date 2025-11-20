@@ -94,6 +94,7 @@ public class ModuleManifestMetaDataComponentModelAdapter {
      * @return A map of ComponentConfigurationMetaData objects where the key is the configuration id.
      */
     private Map<String, ComponentConfigurationMetaData> getConfigurationMetaDataMap(List<ConfigurationMetaData> configurationMetaDataList) {
+        if(configurationMetaDataList == null) return new HashMap<>();
         return configurationMetaDataList.stream()
             .map(configurationMetaData -> {
                 ComponentConfigurationMetaData componentConfigurationMetaData = new ComponentConfigurationMetaData(configurationMetaData);

@@ -80,8 +80,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
-import org.springframework.context.ApplicationContext;
-import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 
 /**
  * This test Sftp To Log Flow.
@@ -92,15 +90,6 @@ import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtract
 @SpringBootTest(classes = { Application.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsToSftpFlowTest {
-
-    @Autowired()
-    JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
-
-    @Autowired()
-    JsonConfigurationMetaDataExtractor jsonConfigurationMetaDataExtractor;
-
-    @Autowired()
-    ApplicationContext applicationContext;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
@@ -155,19 +144,5 @@ public class JmsToSftpFlowTest {
         flowTestRule.sleep(2000L);
         flowTestRule.assertIsSatisfied();
         assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
-    }
-
-    @Test()
-    public void metadata_extractor() throws IOException {
-        JsonModuleManifestMetaDataProvider moduleMetaDataProvider = new JsonModuleManifestMetaDataProvider(jsonModuleMetaDataProvider, jsonConfigurationMetaDataExtractor);
-        moduleMetaDataProvider.setApplicationContext(applicationContext);
-        Module module = applicationContext.getBean(Module.class);
-        String moduleMetaData = moduleMetaDataProvider.serialiseModuleManifest(moduleMetaDataProvider.describeModuleManifest(module, new HashMap()));
-        this.writeStringToFile("/Users/mick/workspace/ikasan/ikasaneip/platform/ikasan-migration/ikasan-module-migration/./target/modules/migrated/sftp-jms-im-3-3-x-working/moduleMetaData.json", moduleMetaData);
-    }
-
-    void writeStringToFile(String filePath, String contents) throws IOException {
-        Path path = Paths.get(filePath);
-        Files.write(path, contents.getBytes());
     }
 }

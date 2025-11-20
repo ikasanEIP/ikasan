@@ -1,4 +1,4 @@
-package org.ikasan.module.migration;
+package org.ikasan.module.migration.util.maven.service;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;

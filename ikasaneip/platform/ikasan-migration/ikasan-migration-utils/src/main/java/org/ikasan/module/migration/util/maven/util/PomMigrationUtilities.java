@@ -1,4 +1,4 @@
-package org.ikasan.module.migration;
+package org.ikasan.module.migration.util.maven.util;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;

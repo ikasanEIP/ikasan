@@ -21,7 +21,14 @@ public class ModuleManifestMetaDataConfigurationModelAdapter {
      * @return A list of ComponentConfiguration objects adapted from the module metadata.
      */
     public List<ComponentConfiguration> adapt(ModuleManifestMetaData moduleManifestMetaData, String moduleBasePackage) {
+        List<ComponentConfiguration> results = new ArrayList<>();
+
+        if(moduleManifestMetaData.getConfigurationMetaData() == null || moduleManifestMetaData.getConfigurationMetaData().isEmpty()) {
+           return results;
+        }
+
         Map<String, FlowElementMetaData> componentsMap = new HashMap<>();
+
         if(moduleManifestMetaData.getModuleMetaData() != null && moduleManifestMetaData.getModuleMetaData().getFlows() != null) {
             for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
                 flowMetaData.getFlowElements().forEach(flowElementMetaData -> {
@@ -32,7 +39,6 @@ public class ModuleManifestMetaDataConfigurationModelAdapter {
             }
         }
 
-        List<ComponentConfiguration> results = new ArrayList<>();
         for (ConfigurationMetaData configurationMetaData : moduleManifestMetaData.getConfigurationMetaData()) {
             ComponentConfiguration componentConfiguration = new ComponentConfiguration();
             componentConfiguration.setPackageName(configurationMetaData.getImplementingClass()

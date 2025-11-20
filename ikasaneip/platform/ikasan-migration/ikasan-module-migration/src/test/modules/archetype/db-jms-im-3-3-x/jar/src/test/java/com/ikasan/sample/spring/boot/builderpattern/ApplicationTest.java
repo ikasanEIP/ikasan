@@ -79,8 +79,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import org.springframework.context.ApplicationContext;
-import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 
 /**
  * This test class supports the <code>Application</code> class.
@@ -91,16 +89,6 @@ import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtract
 @SpringBootTest(classes = { com.ikasan.sample.spring.boot.builderpattern.Application.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(locations = { "/transaction-pointcut-components-on-test.xml" })
 public class ApplicationTest {
-
-    @Autowired()
-    JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
-
-    @Autowired()
-    JsonConfigurationMetaDataExtractor jsonConfigurationMetaDataExtractor;
-
-    @Autowired()
-    ApplicationContext applicationContext;
-
     @Resource
     private Module<Flow> moduleUnderTest;
 
@@ -179,19 +167,5 @@ public class ApplicationTest {
         List<Person> persons = personDao.findAll();
         assertNotNull("One person should exist", persons);
         assertTrue("One person should exist, but found " + persons.size(), persons.size() == 1);
-    }
-
-    @Test()
-    public void metadata_extractor() throws IOException {
-        JsonModuleManifestMetaDataProvider moduleMetaDataProvider = new JsonModuleManifestMetaDataProvider(jsonModuleMetaDataProvider, jsonConfigurationMetaDataExtractor);
-        moduleMetaDataProvider.setApplicationContext(applicationContext);
-        Module module = applicationContext.getBean(Module.class);
-        String moduleMetaData = moduleMetaDataProvider.serialiseModuleManifest(moduleMetaDataProvider.describeModuleManifest(module, new HashMap()));
-        this.writeStringToFile("/Users/mick/workspace/ikasan/ikasaneip/platform/ikasan-migration/ikasan-module-migration/./target/modules/migrated/db-jms-im-3-3-x-working/moduleMetaData.json", moduleMetaData);
-    }
-
-    void writeStringToFile(String filePath, String contents) throws IOException {
-        Path path = Paths.get(filePath);
-        Files.write(path, contents.getBytes());
     }
 }

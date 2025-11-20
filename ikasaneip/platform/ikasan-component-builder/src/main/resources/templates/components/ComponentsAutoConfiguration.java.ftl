@@ -39,11 +39,6 @@ private String brokerUrl;
     * @return the ${component.name?replace(" ", "")?replace(",", "")?uncap_first} bean.
     */
     @Bean("${component.name?replace(" ", "")?replace(",", "")?uncap_first}")
-<#--    <#if component.isConfigured && component.configurationMetaData??>-->
-<#--        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace(",", "")?uncap_first}(@Qualifier("${component.name?replace(" ", "")?replace(",", "")?uncap_first}Configuration") ${component.configurationMetaData.configurationClassName} configuration<#if constructorMetaData?? && constructorMetaData.constructorArguments?? && constructorMetaData.constructorArguments?has_content>, <#list constructorMetaData.constructorArguments as item>${item.type} ${item.name}<#sep>, </#list></#if>) {-->
-<#--    <#else>-->
-<#--        public ${component.componentTypeClassName} ${component.name?replace(" ", "")?replace(",", "")?uncap_first}(<#if constructorMetaData?? && constructorMetaData.constructorArguments??><#list constructorMetaData.constructorArguments as item>${item.type} ${item.name}<#sep>, </#list></#if>) {-->
-<#--    </#if>-->
     <#if component.implementingClass == "org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer">
         <@endpoints.jmsConsumer component/>
     <#elseif component.implementingClass == "org.ikasan.component.endpoint.jms.spring.producer.ArjunaJmsTemplateProducer">

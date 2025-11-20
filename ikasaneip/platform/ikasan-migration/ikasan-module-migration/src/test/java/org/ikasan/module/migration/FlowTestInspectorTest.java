@@ -82,7 +82,7 @@ public class FlowTestInspectorTest {
     @Test
     public void test_jms_im_4_1_x_archetype_migration() throws IOException, XmlPullParserException, TemplateException {
         ModuleMigration migration = new ModuleMigration("jms-im-4-1-x", "./src/test/modules/archetype/jms-im-4-1-x"
-            , "com.ikasan.sample.spring.boot", "./target/modules/migrated/jms-im-4-1-x-working"
+            , "com.ikasan.sample.spring.boot.builderpattern", "./target/modules/migrated/jms-im-4-1-x-working"
             , "JmsSampleFlowTest", "com.sample");
         migration.migrate();
     }
@@ -90,7 +90,7 @@ public class FlowTestInspectorTest {
     @Test
     public void test_jms_im_3_3_x_archetype_migration() throws IOException, XmlPullParserException, TemplateException {
         ModuleMigration migration = new ModuleMigration("jms-im-3-3-x", "./src/test/modules/archetype/jms-im-3-3-x"
-            , "com.ikasan.sample.spring.boot", "./target/modules/migrated/jms-im-3-3-x-working"
+            , "com.ikasan.sample.spring.boot.builderpattern", "./target/modules/migrated/jms-im-3-3-x-working"
             , "JmsSampleFlowTest", "com.sample");
         migration.migrate();
     }

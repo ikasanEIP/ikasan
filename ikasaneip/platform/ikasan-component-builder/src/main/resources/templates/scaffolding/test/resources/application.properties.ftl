@@ -9,7 +9,7 @@ server.error.whitelabel.enabled=false
 # Web Bindings
 server.port=8080
 server.address=localhost
-server.servlet.context-path=/jms-demo
+server.servlet.context-path=/${moduleName}
 server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar,mchange-commons-java-0.2.15.jar
 spring.autoconfigure.exclude=org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration,org.springframework.boot.autoconfigure.quartz.QuartzAutoConfiguration,org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,,me.snowdrop.boot.narayana.autoconfigure.NarayanaConfiguration,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration,org.ikasan.backup.IkasanBackupAutoConfiguration
 
@@ -27,17 +27,6 @@ datasource.dialect=org.hibernate.dialect.H2Dialect
 datasource.show-sql=false
 datasource.hbm2ddl.auto=none
 datasource.validationQuery=select 1
-
-# Person persistence store
-person.db.username=sa
-person.db.password=sa
-person.db.driver-class-name=org.h2.Driver
-person.db.xadriver-class-name=org.h2.jdbcx.JdbcDataSource
-person.db.url=jdbc:h2:mem:persondb;DB_CLOSE_DELAY=-1;NON_KEYWORDS=VALUE
-person.db.dialect=org.hibernate.dialect.H2Dialect
-person.db.show-sql=false
-person.db.hbm2ddl.auto=create
-person.db.validationQuery=select 1
 
 # JMS in memory in VM Broker setup
 jms.provider.url=vm://embedded-broker?create=true&broker.persistent=false&broker.useJmx=false

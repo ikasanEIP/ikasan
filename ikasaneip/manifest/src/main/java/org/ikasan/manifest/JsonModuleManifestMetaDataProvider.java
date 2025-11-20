@@ -31,8 +31,6 @@ import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.core.type.MethodMetadata;
 import org.springframework.core.type.classreading.MetadataReader;
 import org.springframework.core.type.classreading.SimpleMetadataReaderFactory;
-import org.springframework.data.util.ProxyUtils;
-import org.springframework.security.access.method.P;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 
@@ -285,17 +283,13 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         Object bean = applicationContext.getBean(beanName);
         if ( AopUtils.isJdkDynamicProxy(bean) || AopUtils.isAopProxy(bean)
             || AopUtils.isCglibProxy(bean)) {
-//            return ((Advised)bean).getTargetSource().getTarget().getClass().getName();
-//            return AopProxyUtils.getSingletonTarget(bean).getClass().getName();
             return AopProxyUtils.ultimateTargetClass(bean).getName();
-//            return "attempted aop bad class name";
         }
         else if(Proxy.isProxyClass(bean.getClass())) {
             return Hibernate.unproxy(bean).getClass().getName();
         }
         else {
             return bean.getClass().getName();
-//            return "bad class name";
         }
     }
 

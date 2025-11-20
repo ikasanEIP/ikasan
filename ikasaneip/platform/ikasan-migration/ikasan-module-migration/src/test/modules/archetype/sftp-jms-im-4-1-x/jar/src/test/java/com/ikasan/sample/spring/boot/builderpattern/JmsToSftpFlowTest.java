@@ -45,7 +45,6 @@ import jakarta.jms.MapMessage;
 import jakarta.jms.Message;
 import jakarta.jms.Session;
 import org.apache.activemq.command.ActiveMQMapMessage;
-import org.ikasan.configurationService.metadata.JsonConfigurationMetaDataExtractor;
 import org.ikasan.endpoint.sftp.producer.SftpProducerConfiguration;
 import org.ikasan.manifest.JsonModuleManifestMetaDataProvider;
 import org.ikasan.spec.flow.Flow;
@@ -61,7 +60,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.ApplicationContext;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.test.annotation.DirtiesContext;
@@ -94,15 +92,6 @@ import java.util.List;
 @SpringBootTest(classes = { Application.class }, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 public class JmsToSftpFlowTest {
-
-    @Autowired()
-    JsonModuleMetaDataProvider jsonModuleMetaDataProvider;
-
-    @Autowired()
-    JsonConfigurationMetaDataExtractor jsonConfigurationMetaDataExtractor;
-
-    @Autowired()
-    ApplicationContext applicationContext;
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
@@ -156,19 +145,5 @@ public class JmsToSftpFlowTest {
         });
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> flowTestRule.assertIsSatisfied());
         assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
-    }
-
-    @Test()
-    public void metadata_extractor() throws IOException {
-        JsonModuleManifestMetaDataProvider moduleMetaDataProvider = new JsonModuleManifestMetaDataProvider(jsonModuleMetaDataProvider, jsonConfigurationMetaDataExtractor);
-        moduleMetaDataProvider.setApplicationContext(applicationContext);
-        Module module = applicationContext.getBean(Module.class);
-        String moduleMetaData = moduleMetaDataProvider.serialiseModuleManifest(moduleMetaDataProvider.describeModuleManifest(module, new HashMap()));
-        this.writeStringToFile("/Users/mick/workspace/ikasan/ikasaneip/platform/ikasan-migration/ikasan-module-migration/./target/modules/migrated/sftp-jms-im-4-1-x-working/moduleMetaData.json", moduleMetaData);
-    }
-
-    void writeStringToFile(String filePath, String contents) throws IOException {
-        Path path = Paths.get(filePath);
-        Files.write(path, contents.getBytes());
     }
 }

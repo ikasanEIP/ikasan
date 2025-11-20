@@ -4,6 +4,13 @@ import freemarker.template.Configuration;
 import freemarker.template.Template;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateExceptionHandler;
+import org.apache.commons.io.IOUtils;
+import org.apache.maven.model.Dependency;
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
+import org.ikasan.manifest.ModuleManifestMetaDataHelper;
 import org.ikasan.module.builder.model.autoconfiguration.ComponentAutoConfiguration;
 import org.ikasan.module.builder.model.component.Component;
 import org.ikasan.module.builder.model.configuration.ComponentConfiguration;
@@ -12,14 +19,20 @@ import org.ikasan.module.builder.model.module.FlowModel;
 import org.ikasan.module.builder.model.module.ModuleMetaDataModel;
 import org.ikasan.module.builder.model.module.ModuleModel;
 import org.ikasan.module.builder.service.*;
+import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
+import org.ikasan.module.migration.util.maven.service.FlowTestInspector;
 import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
-import org.ikasan.spec.metadata.*;
+import org.ikasan.module.migration.util.maven.service.TestClassEditor;
+import org.ikasan.spec.metadata.DependencyMetaData;
+import org.ikasan.spec.metadata.ImportedResourceMetaData;
+import org.ikasan.spec.metadata.ModuleManifestMetaData;
+import org.ikasan.spec.metadata.ModuleMetaData;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Writer;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 public class ModuleGenerator {
@@ -30,9 +43,10 @@ public class ModuleGenerator {
     private LocalBeanMigrationManager localBeanMigrationManager;
     private String migrationProjectBasePackage;
     private String migrationProjectMavenGroupId;
+    private boolean isMigration = false;
 
     public ModuleGenerator(ModuleFileManager moduleFileManager, String migrationProjectBasePackage,
-                           String migrationProjectMavenGroupId) {
+                           String migrationProjectMavenGroupId, boolean isMigration) {
         this.moduleFileManager = moduleFileManager;
 
         this.localBeanMigrationManager = new LocalBeanMigrationManager(migrationProjectBasePackage
@@ -48,10 +62,12 @@ public class ModuleGenerator {
         this.freeMarkerConfiguration.setLogTemplateExceptions(false);
         this.freeMarkerConfiguration.setWrapUncheckedExceptions(true);
 
+        this.isMigration = isMigration;
+
         this.moduleManifestMetaDataModuleModelAdapter = new ModuleManifestMetaDataModuleModelAdapter();
     }
 
-    public void generate(ModuleManifestMetaData moduleManifestMetaData) throws IOException, TemplateException {
+    public void generate(ModuleManifestMetaData moduleManifestMetaData) throws IOException, TemplateException, XmlPullParserException {
         if(moduleManifestMetaData.getModuleMetaData().getVersion() == null) {
             // Manually set version if not automatically set. Old versions of ikasan do not carry ths through.
             moduleManifestMetaData.getModuleMetaData().setVersion("1.0.0-SNAPSHOT");
@@ -78,7 +94,19 @@ public class ModuleGenerator {
 
         this.generateComponentAutoConfiguration(moduleManifestMetaData);
 
-        System.out.println("Successfully generated Ikasan module: " + moduleMetaData.getName());
+        if(!isMigration) {
+            FlowModel flowModel = model.getFlowModelMap().values().stream().findFirst().get();
+            String testName = capitalizeFirst(flowModel.getName().replaceAll(" ", "")) + "Test";
+            this.extractModuleManifestMetadataFromRuntime(testName);
+            this.generateScaffoldingTestResources(resolveModuleManifestMetaData());
+            this.runMavenBuild();
+        }
+    }
+
+    private ModuleManifestMetaData resolveModuleManifestMetaData() throws IOException {
+        String moduleMetaData = IOUtils.toString(new FileInputStream(this.moduleFileManager.getProjectRootDirectory()
+            + "/moduleMetaData.json"), StandardCharsets.UTF_8);;
+        return ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
     }
 
     /**
@@ -142,6 +170,13 @@ public class ModuleGenerator {
         }
     }
 
+    /**
+     * Generates scaffolding test resources based on the provided module manifest metadata.
+     *
+     * @param moduleManifestMetaData The metadata of the module containing information about the scaffolding test resources.
+     * @throws TemplateException If an error occurs during template processing.
+     * @throws IOException If an I/O error occurs.
+     */
     private void generateScaffoldingTestResources(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
         ModuleManifestMetaDataModulePropertiesModelAdapter adapter = new ModuleManifestMetaDataModulePropertiesModelAdapter();
         this.executionFreeMarkerTemplate(this.moduleFileManager.getScaffoldingResourcesTestBase(), "scaffolding/test/resources/application.properties.ftl"
@@ -249,7 +284,7 @@ public class ModuleGenerator {
         File componentAutoConfigPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
             , componentAutoConfiguration.getPackageName().replaceAll("\\.", "/"));
 
-        this.executionFreeMarkerTemplate(componentAutoConfigPackageDirectory, "components/main/component/ComponentsAutoConfiguration.java.ftl"
+        this.executionFreeMarkerTemplate(componentAutoConfigPackageDirectory, "components/ComponentsAutoConfiguration.java.ftl"
             , componentAutoConfiguration, "ComponentsAutoConfiguration.java");
 
     }
@@ -278,7 +313,7 @@ public class ModuleGenerator {
      * @throws IOException If an I/O error occurs.
      */
     private void generateAllModulePoms(File migrationRootDirectory
-        , ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+        , ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException, XmlPullParserException {
         EnrichedModuleManifestMetaData enrichedModuleManifestMetaData
             = new EnrichedModuleManifestMetaData(moduleManifestMetaData);
 
@@ -294,6 +329,64 @@ public class ModuleGenerator {
         // Create the migrated module's distribution module POM.
         this.managePomCreation(moduleFileManager.getDistributionBase()
             , "distribution/distribution-pom.xml.ftl", enrichedModuleManifestMetaData);
+
+        if(!isMigration) {
+            this.addDependencies(new File(moduleFileManager.getComponentsDir(), "pom.xml")
+                , moduleManifestMetaData.getDependencyManagement().getDependencies());
+        }
+    }
+
+    public static void addDependencies(File pomFile, List<DependencyMetaData> dependencyMetaData)
+        throws IOException, XmlPullParserException {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+
+        Model tgtModel = reader.read(new FileReader(pomFile));
+
+        dependencyMetaData.forEach
+            (dependency -> {
+                if(!tgtModel.getDependencies().stream().filter(d ->
+                    d.getArtifactId().equals(dependency.getArtefact()) && d.getGroupId().equals(dependency.getGroup())
+                ).findFirst().isPresent()) {
+                    Dependency d = new Dependency();
+                    d.setArtifactId(dependency.getArtefact());
+                    d.setGroupId(dependency.getGroup());
+                    d.setVersion(dependency.getVersion());
+                    tgtModel.addDependency(d);
+                }
+            });
+
+        MavenXpp3Writer writer = new MavenXpp3Writer();
+        writer.write(new FileWriter(pomFile), tgtModel);
+    }
+
+    /**
+     * Modifies the provided Flow Test class file in order to extract module metadata.
+     *
+     * @return The File object representing the modified Flow Test class file with extracted module metadata.
+     * @throws IOException if an I/O exception occurs during file operations.
+     * @throws XmlPullParserException if an error occurs in parsing XML.
+     */
+    private void extractModuleManifestMetadataFromRuntime(String testClassName) throws IOException, XmlPullParserException {
+        FlowTestInspector flowTestInspector = new FlowTestInspector();
+        File flowTest = flowTestInspector.findFlowTest(moduleFileManager.getScaffoldingDir(), testClassName);
+        // Take a copy of the test class as we will modify that and throw it away after extracting the module manifest.
+        File testFileTempCopy = new File(flowTest.getAbsolutePath().replace(".java", "Generated.java"));
+        Files.copy(flowTest.toPath(), testFileTempCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        String content = new String(Files.readAllBytes(testFileTempCopy.toPath()), StandardCharsets.UTF_8);
+        String modifiedContent = content.replace(testClassName, testClassName+"Generated");
+        Files.write(testFileTempCopy.toPath(), modifiedContent.getBytes(StandardCharsets.UTF_8));
+
+        TestClassEditor testClassEditor = new TestClassEditor(this.migrationProjectBasePackage, testFileTempCopy
+            , new File(this.moduleFileManager.getProjectRootDirectory() + "/moduleMetaData.json"));
+        testClassEditor.addMetaDataGenerationMethod("metadata_extractor");
+        testClassEditor.addAutowiredApplicationContext(testFileTempCopy);
+        testClassEditor.addJsonConfigurationMetaDataExtractor(testFileTempCopy);
+        testClassEditor.addJsonModuleMetaDataProvider(testFileTempCopy);
+
+        MavenProjectBuilder builder = new MavenProjectBuilder(System.getenv("M2_HOME"));
+        builder.build(moduleFileManager.getScaffoldingDir()
+            , "clean test -Dtest="+testClassName+"Generated#metadata_extractor");
     }
 
     /**
@@ -309,6 +402,12 @@ public class ModuleGenerator {
     private void managePomCreation(File outputDir , String pomTemplateName, Object data)
         throws IOException, TemplateException {
         this.executionFreeMarkerTemplate(outputDir, pomTemplateName, data, "pom.xml");
+    }
+
+    private boolean runMavenBuild() {
+        MavenProjectBuilder mavenProjectBuilder = new MavenProjectBuilder(System.getenv("M2_HOME"));
+        mavenProjectBuilder.build(moduleFileManager.getProjectRootDirectory(), "spotless:apply");
+        return mavenProjectBuilder.build(moduleFileManager.getProjectRootDirectory(), "clean install");
     }
 
     /**
@@ -332,6 +431,12 @@ public class ModuleGenerator {
         }
     }
 
+    /**
+     * Capitalizes the first letter of a given string.
+     *
+     * @param str The input string to capitalize the first letter.
+     * @return A new string with the first letter capitalized. Returns the input string if it is null or empty.
+     */
     public static String capitalizeFirst(String str) {
         if (str == null || str.isEmpty()) {
             return str; // Handle null or empty strings

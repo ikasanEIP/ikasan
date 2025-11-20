@@ -6,14 +6,19 @@ import org.ikasan.manifest.ModuleManifestMetaDataHelper;
 import org.ikasan.module.builder.ModuleGenerator;
 import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
+import org.ikasan.module.migration.util.maven.service.FlowTestInspector;
 import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
+import org.ikasan.module.migration.util.maven.service.TestClassEditor;
+import org.ikasan.module.migration.util.maven.util.PomMigrationUtilities;
 import org.ikasan.spec.metadata.ModuleManifestMetaData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 public class ModuleMigration {
     private static Logger logger = LoggerFactory.getLogger(ModuleMigration.class);
@@ -75,9 +80,12 @@ public class ModuleMigration {
         }
 
         logger.info(String.format("Adding new extract method to flow test[%s]!", flowTest));
-        this.modifyFlowTestTestClassInOrderToExtractModuleMetaData(flowTest);
+        File modifiedTest = this.modifyFlowTestTestClassInOrderToExtractModuleMetaData(flowTest);
         logger.info(String.format("Running flow test[%s] in order to extract module metadata manifest!", flowTest));
         this.runFlowTestTestTestClassInOrderToExtractModuleMetaData();
+
+        // The modified test class is now obsolete and can be deleted!
+        Files.delete(modifiedTest.toPath());
 
         ModuleManifestMetaData moduleManifestMetaData = this.loadModuleManifestMetaData();
         logger.info(ModuleManifestMetaDataHelper.serialiseModuleManifest(moduleManifestMetaData));
@@ -99,6 +107,12 @@ public class ModuleMigration {
         JakartaTransformerWrapper.run(this.migrationWorkingDirectory,
             this.migrationWorkingDirectory+"/jakarta/", this.migrationModuleName);
 
+        PropertiesMigrator.comparePropertiesFiles
+            (this.migrationProjectBaseDirectory
+                    +"/jar/src/test/resources/application.properties",
+                this.migrationWorkingDirectory + "/" + migrationModuleName
+                    +"/scaffolding/src/test/resources/application.properties");
+
         logger.info(String.format("Attempting to build migrated module[%s]!", moduleManifestMetaData.getModuleMetaData().getName()));
         this.buildMigratedModule();
     }
@@ -115,22 +129,32 @@ public class ModuleMigration {
         return inspector.findFlowTest(new File(migrationProjectBaseDirectory), testClassName);
     }
 
+
     /**
-     * Modifies the provided Flow Test class in order to extract module metadata.
-     * This method adds metadata generation method, autowired application context, json configuration metadata extractor,
-     * json module metadata provider, and a new dependency to the pom.xml file of the migration project.
+     * Modifies the provided Flow Test class file in order to extract module metadata.
      *
-     * @param flowTest The File object representing the Flow Test class to be modified.
+     * @param flowTest The File object representing the original Flow Test class file to be modified.
+     * @return The File object representing the modified Flow Test class file with extracted module metadata.
      * @throws IOException if an I/O exception occurs during file operations.
      * @throws XmlPullParserException if an error occurs in parsing XML.
      */
-    private void modifyFlowTestTestClassInOrderToExtractModuleMetaData(File flowTest) throws IOException, XmlPullParserException {
-        TestClassEditor testClassEditor = new TestClassEditor(this.migrationProjectBasePackageName, flowTest
+    private File modifyFlowTestTestClassInOrderToExtractModuleMetaData(File flowTest) throws IOException, XmlPullParserException {
+        // Take a copy of the test class as we will modify that and throw it away after extracting the module manifest.
+        File testFileTempCopy = new File(flowTest.getAbsolutePath().replace(".java", "Generated.java"));
+        Files.copy(flowTest.toPath(), testFileTempCopy.toPath(), StandardCopyOption.REPLACE_EXISTING);
+
+        String content = new String(Files.readAllBytes(testFileTempCopy.toPath()), StandardCharsets.UTF_8);
+        String modifiedContent = content.replace(this.testClassName, this.testClassName+"Generated");
+        Files.write(testFileTempCopy.toPath(), modifiedContent.getBytes(StandardCharsets.UTF_8));
+
+        TestClassEditor testClassEditor = new TestClassEditor(this.migrationProjectBasePackageName, testFileTempCopy
             , new File(this.migrationWorkingDirectory + "/moduleMetaData.json"));
         testClassEditor.addMetaDataGenerationMethod("metadata_extractor");
-        testClassEditor.addAutowiredApplicationContext(flowTest);
-        testClassEditor.addJsonConfigurationMetaDataExtractor(flowTest);
-        testClassEditor.addJsonModuleMetaDataProvider(flowTest);
+        testClassEditor.addAutowiredApplicationContext(testFileTempCopy);
+        testClassEditor.addJsonConfigurationMetaDataExtractor(testFileTempCopy);
+        testClassEditor.addJsonModuleMetaDataProvider(testFileTempCopy);
+
+        return testFileTempCopy;
     }
 
     /**
@@ -164,7 +188,7 @@ public class ModuleMigration {
     private void runFlowTestTestTestClassInOrderToExtractModuleMetaData() {
         MavenProjectBuilder builder = new MavenProjectBuilder(System.getenv("M2_HOME"));
         builder.build(new File(migrationProjectBaseDirectory+"/jar")
-            , "clean test -Dtest="+testClassName+"#metadata_extractor");
+            , "clean test -Dtest="+testClassName+"Generated#metadata_extractor");
     }
 
     /**
@@ -189,9 +213,10 @@ public class ModuleMigration {
      * @throws TemplateException if an error occurs during template processing.
      * @throws IOException if an I/O exception occurs during file operations.
      */
-    private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException {
+    private void generateMigratedModule(ModuleManifestMetaData moduleManifestMetaData) throws TemplateException, IOException, XmlPullParserException {
         ImportedResourceMigrationHelper.migrate(moduleManifestMetaData);
-        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager, this.migrationProjectBasePackageName, this.migrationProjectMavenGroupId);
+        ModuleGenerator moduleGenerator = new ModuleGenerator(this.moduleFileManager, this.migrationProjectBasePackageName
+            , this.migrationProjectMavenGroupId, true);
         moduleGenerator.generate(moduleManifestMetaData);
     }
 
