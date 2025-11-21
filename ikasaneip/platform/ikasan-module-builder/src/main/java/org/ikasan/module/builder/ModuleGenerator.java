@@ -97,6 +97,7 @@ public class ModuleGenerator {
         if(!isMigration) {
             FlowModel flowModel = model.getFlowModelMap().values().stream().findFirst().get();
             String testName = capitalizeFirst(flowModel.getName().replaceAll(" ", "")) + "Test";
+            this.runMavenBuild();
             this.extractModuleManifestMetadataFromRuntime(testName);
             this.generateScaffoldingTestResources(resolveModuleManifestMetaData());
             this.runMavenBuild();
