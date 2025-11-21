@@ -105,7 +105,7 @@ public class ModuleGenerator {
 
     private ModuleManifestMetaData resolveModuleManifestMetaData() throws IOException {
         String moduleMetaData = IOUtils.toString(new FileInputStream(this.moduleFileManager.getProjectRootDirectory()
-            + "/moduleMetaData.json"), StandardCharsets.UTF_8);;
+            + "/moduleMetaData.json"), StandardCharsets.UTF_8);
         return ModuleManifestMetaDataHelper.deserialiseModuleManifest(moduleMetaData);
     }
 
