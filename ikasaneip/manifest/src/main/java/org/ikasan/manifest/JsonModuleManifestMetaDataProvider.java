@@ -259,8 +259,7 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
                     beanDefinitionMetaDataList.add(beanDefinitionMetaData);
                 }
             } else if (beanDefinition.getClass().getName().contains("ConfigurationClassBeanDefinition") &&
-                    abstractBeanDefinition.getSource() instanceof MethodMetadata &&
-                    ((MethodMetadata) abstractBeanDefinition.getSource()).getDeclaringClassName().startsWith("com.ikasan.sample.spring.boot")) {
+                    abstractBeanDefinition.getSource() instanceof MethodMetadata) {
                 BeanDefinitionMetaDataImpl beanDefinitionMetaData = new BeanDefinitionMetaDataImpl();
                 beanDefinitionMetaData.setBeanName(beanName);
                 beanDefinitionMetaData.setType("CONFIGURATION_CLASS_BEAN_DEFINITION");
