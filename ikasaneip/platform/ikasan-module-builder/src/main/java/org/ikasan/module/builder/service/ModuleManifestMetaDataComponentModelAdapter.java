@@ -40,6 +40,7 @@ public class ModuleManifestMetaDataComponentModelAdapter {
                 if((flowElementMetaData.getImplementingClass().startsWith(moduleBasePackage) && localOnly) || !localOnly) {
                     Component component = new Component();
                     component.setName(flowElementMetaData.getComponentName());
+                    component.setFlowName(flowMetaData.getName());
                     component.setLocal(flowElementMetaData.getImplementingClass().startsWith(moduleBasePackage));
                     component.setImplementingClass(flowElementMetaData.getImplementingClass());
                     if(component.getImplementingClass().equals(ScheduledConsumer.class.getName())) {

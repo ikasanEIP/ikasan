@@ -8,6 +8,7 @@ import java.util.Objects;
 
 public class Component {
     private String name;
+    private String flowName;
     private String implementingClass;
     private String className;
     private String classPackage;
@@ -38,6 +39,24 @@ public class Component {
      */
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * Retrieves the name of the flow.
+     *
+     * @return A String representing the name of the flow.
+     */
+    public String getFlowName() {
+        return flowName;
+    }
+
+    /**
+     * Sets the name of the flow.
+     *
+     * @param flowName A String representing the name of the flow to be set.
+     */
+    public void setFlowName(String flowName) {
+        this.flowName = flowName;
     }
 
     /**

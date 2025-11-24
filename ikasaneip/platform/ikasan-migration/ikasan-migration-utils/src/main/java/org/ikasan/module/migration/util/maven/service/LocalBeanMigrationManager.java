@@ -107,6 +107,21 @@ public class LocalBeanMigrationManager {
         }
     }
 
+    public void copyMissingPackage(String missingPackage) throws IOException {
+        List<Path> files = this.findFile(new File(this.migrationProjectBaseDirectory
+            .getAbsolutePath()+"/jar/src/main/java/"+missingPackage.replace(".", "/")).toPath(), "*");
+
+        for (Path file : files) {
+            String filePath = file.toAbsolutePath().toString().replace(this.migrationProjectBaseDirectory.getAbsolutePath()
+                +"/jar/src/main/java/", "");
+            Path targetFile = Paths.get(moduleFileManager.getComponentsJavaSrcMainBase().getAbsolutePath()
+                , filePath);
+            Files.createDirectories(targetFile.getParent());
+
+            Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
     /**
      * Copies main resources from the specified directory to the target directory while maintaining the directory structure.
      * This method searches for files in the source directory and copies them to the target location.
@@ -114,6 +129,21 @@ public class LocalBeanMigrationManager {
      * @throws IOException if an I/O error occurs during the file copy process
      */
     public void copyMainResources() throws IOException {
+        List<Path> files = this.findFile(new File(this.migrationProjectBaseDirectory
+            .getAbsolutePath()+"/jar/src/main/resources/").toPath(), "*");
+
+        for (Path file : files) {
+            String filePath = file.toAbsolutePath().toString().replace(this.migrationProjectBaseDirectory.getAbsolutePath()
+                +"/jar/src/main/resources/", "");
+            Path targetFile = Paths.get(moduleFileManager.getScaffoldingResourcesMainBase().getAbsolutePath()
+                , filePath);
+            Files.createDirectories(targetFile.getParent());
+
+            Files.copy(file, targetFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+    }
+
+    public void copyFlowTests() throws IOException {
         List<Path> files = this.findFile(new File(this.migrationProjectBaseDirectory
             .getAbsolutePath()+"/jar/src/main/resources/").toPath(), "*");
 

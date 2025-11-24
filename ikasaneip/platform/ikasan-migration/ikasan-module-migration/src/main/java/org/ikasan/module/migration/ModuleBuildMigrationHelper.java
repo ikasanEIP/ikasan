@@ -3,6 +3,7 @@ package org.ikasan.module.migration;
 import org.ikasan.module.migration.util.maven.MavenProjectBuilder;
 import org.ikasan.module.migration.util.maven.file.ModuleFileManager;
 import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingClass;
+import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingPackage;
 import org.ikasan.module.migration.util.maven.service.LocalBeanMigrationManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +37,11 @@ public class ModuleBuildMigrationHelper {
                 for (CompilationFailureMissingClass compilationFailureMissingClass : builder.getMissingClassList()) {
                     logger.info("Copying missing dependency - " + compilationFailureMissingClass.getSymbol());
                     this.localBeanMigrationManager.copyMissingDependency(compilationFailureMissingClass.getSymbol());
+                }
+
+                for(CompilationFailureMissingPackage compilationFailureMissingPackage: builder.getCompilationFailureMissingPackages()) {
+                    logger.info("Copying missing package - " + compilationFailureMissingPackage.getPackageName());
+                    this.localBeanMigrationManager.copyMissingPackage(compilationFailureMissingPackage.getPackageName());
                 }
             }
             else {

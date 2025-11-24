@@ -38,53 +38,22 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package com.ikasan.sample.spring.boot.builderpattern;
-
-import org.ikasan.spec.component.endpoint.Broker;
-import org.ikasan.spec.component.endpoint.EndpointException;
-import com.ikasan.sample.spring.boot.builderpattern.exception.SampleGeneratedException2;
+package com.ikasan.sample.spring.boot.builderpattern.exception;
 
 /**
- * Created by majean on 09/10/2017.
+ * Sample exception.
+ *
+ * @author Ikasan Development Team
  */
-public class BaseBroker implements Broker
+public class SampleGeneratedException2 extends RuntimeException
 {
-    private boolean shouldThrowExclusionException = false;
-
-    private boolean shouldThrowRecoveryException = false;
-
-    private boolean shouldThrowStoppedInErrorException = false;
-
-    private SampleGeneratedException2 exception2;
-
-    @Override public Object invoke(Object o) throws EndpointException
-    {
-        if(shouldThrowExclusionException){
-            throw  new SampleGeneratedException("This exception is thrown to test exclusion.");
-        }
-
-        if(shouldThrowRecoveryException){
-            throw  new EndpointException("This exception is thrown to test recovery.");
-        }
-
-        if(shouldThrowStoppedInErrorException){
-            throw  new RuntimeException("This exception is thrown to test stoppedInError.");
-        }
-        return o;
+    public SampleGeneratedException2(Throwable e){
+        super(e);
     }
 
-    public void setShouldThrowExclusionException(boolean shouldThrowExclusionException)
-    {
-        this.shouldThrowExclusionException = shouldThrowExclusionException;
+    public SampleGeneratedException2(String m){
+        super(m);
     }
 
-    public void setShouldThrowRecoveryException(boolean shouldThrowRecoveryException)
-    {
-        this.shouldThrowRecoveryException = shouldThrowRecoveryException;
-    }
 
-    public void setShouldThrowStoppedInErrorException(boolean shouldThrowStoppedInErrorException)
-    {
-        this.shouldThrowStoppedInErrorException = shouldThrowStoppedInErrorException;
-    }
 }

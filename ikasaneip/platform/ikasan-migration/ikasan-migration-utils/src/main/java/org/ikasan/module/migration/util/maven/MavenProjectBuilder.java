@@ -3,6 +3,7 @@ package org.ikasan.module.migration.util.maven;
 import org.apache.maven.shared.invoker.*;
 import org.ikasan.module.migration.util.maven.handler.MissingClassInvocationOutputHandler;
 import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingClass;
+import org.ikasan.module.migration.util.maven.model.CompilationFailureMissingPackage;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,9 @@ public class MavenProjectBuilder {
     public static final String COMPILATION_FAILURE = "Compilation failure";
     public static final String CANNOT_FIND_SYMBOL = "cannot find symbol";
     public static final String SYMBOL = "symbol:";
-    public static final String LOCATION = "location:";
     public static final String ERROR = "[ERROR]";
+    public static final String PACKAGE = "package";
+    public static final String DOES_NOT_EXIST = "does not exist";
 
     private final Invoker invoker;
     private MissingClassInvocationOutputHandler missingClassInvocationOutputHandler;
@@ -56,7 +58,23 @@ public class MavenProjectBuilder {
         }
     }
 
+    /**
+     * Retrieves the list of CompilationFailureMissingClass instances representing missing classes
+     * that were not found during the compilation process.
+     *
+     * @return The list of CompilationFailureMissingClass instances.
+     */
     public List<CompilationFailureMissingClass> getMissingClassList() {
         return this.missingClassInvocationOutputHandler.getMissingClassList();
+    }
+
+    /**
+     * Retrieves the list of CompilationFailureMissingPackage instances representing missing packages
+     * that were not found during the compilation process.
+     *
+     * @return The list of CompilationFailureMissingPackage instances.
+     */
+    public List<CompilationFailureMissingPackage> getCompilationFailureMissingPackages() {
+        return this.missingClassInvocationOutputHandler.getCompilationFailureMissingPackages();
     }
 }
