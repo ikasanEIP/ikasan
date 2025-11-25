@@ -40,82 +40,58 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.FlowBuilder;
-import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.OnException;
 import org.ikasan.spec.component.endpoint.Consumer;
-import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.module.Module;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.apache.activemq.ActiveMQXAConnectionFactory;
+import org.springframework.beans.factory.annotation.Value;
+import javax.jms.ConnectionFactory;
+import com.ikasan.sample.spring.boot.builderpattern.component.cdw.*;
 import com.ikasan.sample.spring.boot.builderpattern.component.broker.*;
 
 import javax.annotation.Resource;
-import javax.jms.ConnectionFactory;
 
 @Configuration
-@ImportResource( {
-        "classpath:ikasan-transaction-pointcut-jms.xml",
-        "classpath:h2-datasource-conf.xml"
-} )
-public class ModuleConfig
+public class ComponentFactory
 {
     @Resource
     private BuilderFactory builderFactory;
 
-    @Resource
-    private ErrorReportingServiceFactory errorReportingServiceFactory;
-
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Resource
-    private Consumer jmsConsumer;
-
-    @Resource
-    private CdwBroker cdwBroker;
-
     @Bean
-    public Module getModule(){
-
-        ModuleBuilder mb = builderFactory.getModuleBuilder("jms-im-3-3-x");
-
-        FlowBuilder fb = mb.getFlowBuilder("JMS to JMS Flow");
-
-
-        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
-
-        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
-                .setConnectionFactory(producerConnectionFactory)
-                .setDestinationJndiName("target")
-                .setConfiguredResourceId("jmsProducer")
-                .build();
-
-        Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
-                .withExceptionResolver(builderFactory.getExceptionResolverBuilder()
-                        .addExceptionToAction(SampleGeneratedException.class, OnException.excludeEvent())
-                        .addExceptionToAction(EndpointException.class, OnException.retryIndefinitely(10000)))
-                .withErrorReportingServiceFactory(errorReportingServiceFactory)
-                .consumer("JMS Consumer", jmsConsumer)
-                .broker( "Exception Generating Broker", new ExceptionGenerationgBroker())
-                .broker("CDW", cdwBroker)
-                .producer("JMS Producer", jmsProducer)
-                .build();
-
-        Module module = mb.withDescription("Sample Module")
-            .addFlow(flow)
-            .build();
-        return module;
+    public CdwClient cdwClient() {
+        return new CdwClient();
     }
 
+    @Bean
+    public CdwBroker cdwBroker(CdwClient cdwClient) {
+        return new CdwBroker(cdwClient);
+    }
+
+    @Bean
+    public Consumer jmsConsumer() {
+        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        return builderFactory.getComponentBuilder().jmsConsumer()
+            .setConnectionFactory(consumerConnectionFactory)
+            .setDestinationJndiName("source")
+            .setAutoContentConversion(true)
+            .setConfiguredResourceId("jmsConsumer")
+            .build();
+    }
+
+    @Bean
+    public Producer jmsProducer() {
+        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        return builderFactory.getComponentBuilder().jmsProducer()
+            .setConnectionFactory(producerConnectionFactory)
+            .setDestinationJndiName("target")
+            .setConfiguredResourceId("jmsProducer")
+            .build();
+    }
 
 
 }

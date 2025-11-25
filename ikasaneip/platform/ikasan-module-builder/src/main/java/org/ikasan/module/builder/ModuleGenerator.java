@@ -201,7 +201,7 @@ public class ModuleGenerator {
             , moduleManifestMetaData.getModuleMetaData());
 
         this.executionFreeMarkerTemplate(componentConfigPackage, "scaffolding/main/component/ComponentFactory.java.ftl"
-            , moduleMetaDataModel, "ComponentFactory.java");
+            , moduleMetaDataModel, "ScaffoldingComponentFactory.java");
 
         this.generateComponents(moduleManifestMetaData);
         this.generateConfigurations(moduleManifestMetaData);

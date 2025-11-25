@@ -228,6 +228,6 @@ public class ModuleMigration {
      * @throws IOException if an I/O exception occurs during file operations
      */
     private void buildMigratedModule() throws IOException {
-        this.moduleBuildMigrationHelper.runBuild();
+        this.moduleBuildMigrationHelper.runBuild(this.migrationWorkingDirectory, this.migrationModuleName);
     }
 }

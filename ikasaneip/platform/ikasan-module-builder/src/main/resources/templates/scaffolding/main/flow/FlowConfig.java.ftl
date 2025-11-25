@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
 
-import ${moduleBasePackage}.component.ComponentFactory;
+import ${moduleBasePackage}.component.ScaffoldingComponentFactory;
 <#--
     Entry point macro that initiates the recursive traversing of the flow graph and
      wireup the flow using the Ikasan builder classes
@@ -83,31 +83,31 @@ import ${moduleBasePackage}.component.ComponentFactory;
 <#macro addSingleTransitionComponentToBuilder component primaryRoute>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.ConsumerComponent")>
-        .consumer("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .consumer("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.ProducerComponent")>
-        .producer("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())<#if primaryRoute == "false">;</#if>
+        .producer("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())<#if primaryRoute == "false">;</#if>
         <#if primaryRoute == "true">
         .build();
         </#if>
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.BrokerComponent")>
-        .broker("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .broker("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.ConverterComponent")>
-        .converter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .converter("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.SequencerComponent")>
-        .sequencer("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .sequencer("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.SplitterComponent")>
-        .splitter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .splitter("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.TranslatorComponent")>
-        .translator("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .translator("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.FilterComponent")>
-        .filter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .filter("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
     </#if>
     <#if component.transition??>
         <#if instanceOf(component.transition, "org.ikasan.module.builder.model.module.SingleTransition")>
@@ -125,14 +125,14 @@ import ${moduleBasePackage}.component.ComponentFactory;
 <#macro addMultiTransitionComponentToBuilder component>
     <#assign instanceOf = "org.ikasan.module.builder.template.InstanceOfMethod"?new()>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.MultiRecipientRouterComponent")>
-        .multiRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .multiRecipientRouter("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
         <#list component.transitions as key, value >
             .when("${key}", route${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}${key?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}(builderFactory.getRouteBuilder()))
         </#list>
         .build();
     </#if>
     <#if instanceOf(component, "org.ikasan.module.builder.model.module.SingleRecipientRouterComponent")>
-        .singleRecipientRouter("${component.name}", componentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
+        .singleRecipientRouter("${component.name}", scaffoldingComponentFactory.get${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}())
         <#list component.transitions as key, value >
             .when("${key}", route${component.name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}${key?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_first}(builderFactory.getRouteBuilder()))
         </#list>
@@ -147,7 +147,7 @@ public class ${name?replace(" ", "")?replace(",", "")?replace("-", "_")?cap_firs
     @Resource
     private BuilderFactory builderFactory;
     @Resource
-    private ComponentFactory componentFactory;
+    private ScaffoldingComponentFactory scaffoldingComponentFactory;
 
     /**
     * Create flow bean for flow ${name}.

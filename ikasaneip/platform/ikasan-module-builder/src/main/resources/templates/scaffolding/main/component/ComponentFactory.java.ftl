@@ -17,7 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @Configuration
-public class ComponentFactory {
+public class ScaffoldingComponentFactory {
 
 <#compress>
     <#list flowElementMetaData as component>

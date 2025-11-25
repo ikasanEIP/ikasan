@@ -22,7 +22,7 @@ public class ModuleBuildMigrationHelper {
         this.moduleFileManager = moduleFileManager;
     }
 
-    public void runBuild() throws IOException {
+    public void runBuild(String migrationWorkingDirectory, String migrationModuleName) throws IOException {
         MavenProjectBuilder builder = new MavenProjectBuilder(System.getenv("M2_HOME"));
 
         // Format the java code using spotless
@@ -43,6 +43,9 @@ public class ModuleBuildMigrationHelper {
                     logger.info("Copying missing package - " + compilationFailureMissingPackage.getPackageName());
                     this.localBeanMigrationManager.copyMissingPackage(compilationFailureMissingPackage.getPackageName());
                 }
+
+                JakartaTransformerWrapper.run(migrationWorkingDirectory,
+                    migrationWorkingDirectory+"/jakarta/", migrationModuleName);
             }
             else {
                 buildPass = true;
