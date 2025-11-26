@@ -12,6 +12,7 @@ import org.apache.maven.model.io.xpp3.MavenXpp3Writer;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 import org.ikasan.manifest.ModuleManifestMetaDataHelper;
 import org.ikasan.module.builder.model.autoconfiguration.ComponentAutoConfiguration;
+import org.ikasan.module.builder.model.component.BeanComponent;
 import org.ikasan.module.builder.model.component.Component;
 import org.ikasan.module.builder.model.configuration.ComponentConfiguration;
 import org.ikasan.module.builder.model.manifest.EnrichedModuleManifestMetaData;
@@ -274,6 +275,9 @@ public class ModuleGenerator {
         ModuleManifestMetaDataComponentModelAdapter componentModelAdapter = new ModuleManifestMetaDataComponentModelAdapter();
         List<Component> components = componentModelAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage, false);
 
+        ModuleManifestMetaDataLocallyDeclaredBeansModelAdapter moduleManifestMetaDataLocallyDeclaredBeansModelAdapter =
+            new ModuleManifestMetaDataLocallyDeclaredBeansModelAdapter();
+        List<BeanComponent> beanComponents = moduleManifestMetaDataLocallyDeclaredBeansModelAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage);
         ModuleManifestMetaDataImportedResourcesAdapter importedResourcesAdapter = new ModuleManifestMetaDataImportedResourcesAdapter();
         List<ImportedResourceMetaData> importedConfigurationResources = importedResourcesAdapter.adapt(moduleManifestMetaData, this.migrationProjectBasePackage,
             ImportedResourceMetaData.IMPORTED_CONFIGURATION_CLASS);
@@ -281,7 +285,7 @@ public class ModuleGenerator {
             ImportedResourceMetaData.IMPORTED_XML_RESOURCE);
 
         ComponentAutoConfiguration componentAutoConfiguration = new ComponentAutoConfiguration
-            (this.migrationProjectBasePackage, components, componentConfigurations, importedConfigurationResources, importedXmlResources);
+            (this.migrationProjectBasePackage, components, beanComponents, componentConfigurations, importedConfigurationResources, importedXmlResources);
         File componentAutoConfigPackageDirectory = new File(this.moduleFileManager.getComponentsJavaSrcMainBase()
             , componentAutoConfiguration.getPackageName().replaceAll("\\.", "/"));
 

@@ -1,6 +1,6 @@
 package org.ikasan.module.migration;
 
-import org.ikasan.module.migration.util.OrderedProperties;
+import org.codejive.properties.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -8,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -32,7 +31,10 @@ public class PropertiesMigrator {
         missingInFile2.removeAll(keys2);
         if (!missingInFile2.isEmpty()) {
             logger.info("Keys present in File 1 but missing in File 2:");
-            missingInFile2.forEach(f -> logger.info(f));
+            missingInFile2.forEach(f -> {
+                logger.info(f);
+                prop2.putCommented(f, prop1.getProperty(f), "property update from source");
+            });
         }
 
         // 2. Check for keys in File 2 missing in File 1
@@ -55,6 +57,7 @@ public class PropertiesMigrator {
                 logger.info("Key: " + key);
                 logger.info("  File 1 Value: " + value1);
                 logger.info("  File 2 Value: " + value2);
+//                prop2.put(key, value1);
                 differencesFound = true;
             }
         }
@@ -66,7 +69,7 @@ public class PropertiesMigrator {
     }
 
     private static Properties loadProperties(String filePath) throws IOException {
-        Properties prop = new OrderedProperties();
+        Properties prop = new Properties();
         try (InputStream input = new FileInputStream(filePath)) {
             prop.load(input); // The Properties class can load data from an InputStream
         }

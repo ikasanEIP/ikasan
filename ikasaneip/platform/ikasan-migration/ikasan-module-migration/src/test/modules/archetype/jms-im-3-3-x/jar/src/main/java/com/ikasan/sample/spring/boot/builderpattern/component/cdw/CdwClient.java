@@ -49,5 +49,9 @@ import com.ikasan.sample.spring.boot.builderpattern.exception.SampleGeneratedExc
  */
 public class CdwClient
 {
+    private String connectionUrl;
 
+    public CdwClient(String connectionUrl) {
+        this.connectionUrl = connectionUrl;
+    }
 }

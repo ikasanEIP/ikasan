@@ -93,8 +93,8 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
 
             moduleManifestMetaData.setDependencyManagement(dependencyManagementMetaData);
             this.populateParameterizedTypes(moduleManifestMetaData);
-            this.populateConstructorDetails(moduleManifestMetaData);
             this.populateBeanDefinitionMetaData(moduleManifestMetaData);
+            this.populateConstructorDetails(moduleManifestMetaData);
             this.populateImportedResourceMetadata(moduleManifestMetaData);
             this.populateModulePomMetaData(moduleManifestMetaData);
             this.populateScheduledConsumerMetaData(module, moduleManifestMetaData);
@@ -183,53 +183,65 @@ public class JsonModuleManifestMetaDataProvider implements ModuleManifestMetaDat
         List<ConstructorMetaData> constructorMetaData = new ArrayList<>();
         for (FlowMetaData flowMetaData : moduleManifestMetaData.getModuleMetaData().getFlows()) {
             for (FlowElementMetaData flowElementMetaData : flowMetaData.getFlowElements()) {
-                constructorMetaData.addAll(this.inspectConstructors(flowElementMetaData));
+                constructorMetaData.addAll(this.inspectConstructors(flowElementMetaData.getImplementingClass()
+                    , flowElementMetaData.getComponentName()));
             }
+        }
+        for(BeanDefinitionMetaData beanDefinitionMetaData: moduleManifestMetaData.getBeanDefinitionMetaData()) {
+            constructorMetaData.addAll(this.inspectConstructors(beanDefinitionMetaData.getBeanClass()
+                , beanDefinitionMetaData.getBeanName()));
         }
         moduleManifestMetaData.setConstructorMetaData(constructorMetaData);
     }
 
+
     /**
-     * Inspects the constructors of a given FlowElementMetaData and returns a list of ConstructorMetaData.
+     * Inspects the constructors of a given implementation class and retrieves metadata about them.
      *
-     * @param flowElementMetaData the FlowElementMetaData to inspect constructors for
-     * @return a list of ConstructorMetaData representing the constructor information
-     * @throws ClassNotFoundException if the implementing class specified in FlowElementMetaData cannot be found
+     * @param implementationClass the fully qualified name of the implementation class to inspect
+     * @param componentName the name of the component associated with the implementation class
+     * @return a list of ConstructorMetaData objects representing metadata about the constructors
+     * @throws ClassNotFoundException if the implementation class specified cannot be found
      */
-    private List<ConstructorMetaData> inspectConstructors(FlowElementMetaData flowElementMetaData) throws ClassNotFoundException {
-        Class<?> clazz = Class.forName(flowElementMetaData.getImplementingClass());
+    private List<ConstructorMetaData> inspectConstructors(String implementationClass, String componentName) throws ClassNotFoundException {
         List<ConstructorMetaData> constructorDescriptions = new ArrayList<>();
 
-        for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
-            ConstructorMetaDataImpl constructorMetaData = new ConstructorMetaDataImpl();
-            constructorMetaData.setClassName(flowElementMetaData.getImplementingClass());
-            constructorMetaData.setComponentName(flowElementMetaData.getComponentName());
-            List<TypeParameter> typeParameters = new ArrayList<>();
-            Parameter[] parameters = constructor.getParameters();
-            int i=0;
-            if(flowElementMetaData.getImplementingClass().contains("$")) {
-                // We have detected an inner class and the outer class
-                // is always the first type parameter returned as a
-                // constructor argument.
-                i=1;
-            }
-            for (; i < parameters.length; i++) {
-                TypeParameterImpl typeParameter = new TypeParameterImpl();
-                typeParameter.setName(parameters[i].getName());
-                if(parameters[i].getType().getName().contains("[L") &&
-                    parameters[i].getType().getName().contains(";")) {
-                    // Dealing with ... types in java for example String... is represented as
-                    // [Ljava.lang.String; when type is described using reflection.
-                    typeParameter.setType(parameters[i].getType().getName()
-                        .replace("[L", "").replace(";", "") + "...");
+        try {
+            Class<?> clazz = Class.forName(implementationClass);
+
+            for (Constructor<?> constructor : clazz.getDeclaredConstructors()) {
+                ConstructorMetaDataImpl constructorMetaData = new ConstructorMetaDataImpl();
+                constructorMetaData.setClassName(implementationClass);
+                constructorMetaData.setComponentName(componentName);
+                List<TypeParameter> typeParameters = new ArrayList<>();
+                Parameter[] parameters = constructor.getParameters();
+                int i = 0;
+                if (implementationClass.contains("$")) {
+                    // We have detected an inner class and the outer class
+                    // is always the first type parameter returned as a
+                    // constructor argument.
+                    i = 1;
                 }
-                else {
-                    typeParameter.setType(parameters[i].getType().getName());
+                for (; i < parameters.length; i++) {
+                    TypeParameterImpl typeParameter = new TypeParameterImpl();
+                    typeParameter.setName(parameters[i].getName());
+                    if (parameters[i].getType().getName().contains("[L") &&
+                        parameters[i].getType().getName().contains(";")) {
+                        // Dealing with ... types in java for example String... is represented as
+                        // [Ljava.lang.String; when type is described using reflection.
+                        typeParameter.setType(parameters[i].getType().getName()
+                            .replace("[L", "").replace(";", "") + "...");
+                    } else {
+                        typeParameter.setType(parameters[i].getType().getName());
+                    }
+                    typeParameters.add(typeParameter);
                 }
-                typeParameters.add(typeParameter);
+                constructorMetaData.setConstructorArguments(typeParameters);
+                constructorDescriptions.add(constructorMetaData);
             }
-            constructorMetaData.setConstructorArguments(typeParameters);
-            constructorDescriptions.add(constructorMetaData);
+        }
+        catch (Exception e) {
+            logger.warn(String.format("Could not determine constructor for calls[%s]!", implementationClass));
         }
 
         return constructorDescriptions;

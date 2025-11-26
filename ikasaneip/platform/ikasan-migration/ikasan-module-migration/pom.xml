@@ -53,6 +53,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.codejive</groupId>
+            <artifactId>java-properties</artifactId>
+            <version>0.0.7</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.eclipse.transformer</groupId>
             <artifactId>org.eclipse.transformer.cli</artifactId>
             <version>1.0.0</version>
