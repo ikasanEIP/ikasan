@@ -51,7 +51,7 @@ ikasan.exceptions.stopClasses[0]=java.lang.RuntimeException
                         ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}.${key}=${value}
                     </#list>
                 <#else>
-                    # ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}.key=value
+                    #${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}.key=value
                 </#if>
             <#elseif param.fullyQualifiedType = "java.util.List">
                 <#if param.value??>
@@ -59,10 +59,10 @@ ikasan.exceptions.stopClasses[0]=java.lang.RuntimeException
                         ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}[${value?index}]=${value}
                     </#list>
                 <#else>
-                    # ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}[0]=value
+                    #${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}[0]=value
                 </#if>
             <#else>
-                <#if param.value??><#else>#</#if>${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}=<#if param.value??>${param.value}</#if>
+                <#if param.value?? && param.value?has_content><#else>#</#if>${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?lower_case}.${param.name}=<#if param.value??>${param.value}</#if>
             </#if>
         </#list>
     </#compress>

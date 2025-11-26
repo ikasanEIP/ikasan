@@ -3,6 +3,7 @@ package org.ikasan.module.builder.model.component;
 import org.ikasan.spec.metadata.ConstructorMetaData;
 import org.ikasan.spec.metadata.ParameterizedType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -12,7 +13,7 @@ public class BeanComponent {
     private String className;
     private String classPackage;
     private boolean isLocal;
-    private List<ConstructorMetaData> constructorMetaData;
+    private List<ConstructorMetaData> constructorMetaData = new ArrayList<>();
 
     /**
      * Retrieves the name of the component.

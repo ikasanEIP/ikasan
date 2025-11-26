@@ -33,6 +33,13 @@ public class ModuleManifestMetaDataLocallyDeclaredBeansModelAdapter {
                 && !beanDefinitionMetaData.getBeanResource().toLowerCase().contains("Test".toLowerCase())
                 && !beanDefinitionMetaData.getBeanClass().equals("org.ikasan.module.SimpleModule")
                 && !beanDefinitionMetaData.getBeanClass().equals("org.ikasan.module.SimpleModule.VisitingInvokerFlow")) {
+                if(moduleManifestMetaData.getModuleMetaData().getFlows().stream()
+                    .flatMap(flowMetaData -> flowMetaData.getFlowElements().stream())
+                    .filter(flowElementMetaData -> flowElementMetaData.getComponentName().replace(" ", "")
+                        .toLowerCase().equals(beanDefinitionMetaData.getBeanName().toLowerCase())).findFirst().isPresent()) {
+                    continue;
+                }
+
                 BeanComponent component = new BeanComponent();
                 component.setName(beanDefinitionMetaData.getBeanName());
                 component.setLocal(beanDefinitionMetaData.getBeanClass().startsWith(moduleBasePackage));

@@ -51,7 +51,6 @@ public class CdwClient
 {
     private String connectionUrl;
 
-    public CdwClient(String connectionUrl) {
-        this.connectionUrl = connectionUrl;
+    public CdwClient() {
     }
 }

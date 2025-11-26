@@ -40,13 +40,13 @@ public class LocalBeanMigrationManager {
                 .map(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanClass())
                 .collect(Collectors.toList());
 
-        classesToMigrate.addAll(moduleManifestMetaData.getBeanDefinitionMetaData().stream()
-            .filter(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanClass().startsWith(projectBaseNamespace) &&
-                beanDefinitionMetaData.getBeanResource().startsWith(projectBaseNamespace) &&
-                beanDefinitionMetaData.getType().equals("CONFIGURATION_CLASS_BEAN_DEFINITION"))
-            .map(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanResource())
-            .distinct()
-            .collect(Collectors.toList()));
+//        classesToMigrate.addAll(moduleManifestMetaData.getBeanDefinitionMetaData().stream()
+//            .filter(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanClass().startsWith(projectBaseNamespace) &&
+//                beanDefinitionMetaData.getBeanResource().startsWith(projectBaseNamespace) &&
+//                beanDefinitionMetaData.getType().equals("CONFIGURATION_CLASS_BEAN_DEFINITION"))
+//            .map(beanDefinitionMetaData -> beanDefinitionMetaData.getBeanResource())
+//            .distinct()
+//            .collect(Collectors.toList()));
 
         classesToMigrate.addAll(moduleManifestMetaData.getModuleMetaData().getFlows().stream()
                 .flatMap(flowMetaData -> flowMetaData.getFlowElements().stream())

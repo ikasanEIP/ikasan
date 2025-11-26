@@ -64,7 +64,7 @@ public class ComponentFactory
 
     @Bean
     public CdwClient cdwClient() {
-        return new CdwClient(brokerUrl);
+        return new CdwClient();
     }
 
     @Bean

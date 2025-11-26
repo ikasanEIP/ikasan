@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
         import jakarta.jms.ConnectionFactory;
     </#if>
 </#list>
+<#list beanComponents as beanComponent>
+import ${beanComponent.implementingClass};
+</#list>
 <#list componentConfigurations as componentConfiguration>
     import ${componentConfiguration.packageName}.${componentConfiguration.className};
 </#list>
@@ -31,7 +34,7 @@ private BuilderFactory builderFactory;
 private String brokerUrl;
 <#list components as component>
 
-    <#assign constructorMetaData = component.constructorMetaData?first!null>
+    <#if component.constructorMetaData?? && component.constructorMetaData?has_content><#assign constructorMetaData = component.constructorMetaData?first!null></#if>
 
     /**
     * Create the ${component.name?replace(" ", "")?replace(",", "")?uncap_first} bean.
@@ -95,6 +98,19 @@ private String brokerUrl;
     public ${componentConfiguration.className?replace(" ", "")?replace(",", "")} ${componentConfiguration.componentName?replace(" ", "")?replace(",", "")?uncap_first}Configuration() {
         return new ${componentConfiguration.className}();
     }
+</#list>
 
+<#list beanComponents as beanComponent>
+
+    <#if beanComponent.constructorMetaData?? && beanComponent.constructorMetaData?has_content><#assign constructorMetaData = beanComponent.constructorMetaData?first!null></#if>
+    /**
+    * Create the ${beanComponent.name?replace(" ", "")?replace(",", "")?uncap_first} bean.
+    *
+    * @return the ${beanComponent.name?replace(" ", "")?replace(",", "")?uncap_first} bean.
+    */
+    @Bean("${beanComponent.name?replace(" ", "")?replace(",", "")?uncap_first}")
+    public ${beanComponent.className} ${beanComponent.name?replace(" ", "")?replace(",", "")?uncap_first}(<#if constructorMetaData?? && constructorMetaData.constructorArguments??><#list constructorMetaData.constructorArguments as item>${item.type} ${item.name}<#sep>, </#list></#if>) {
+        return new ${beanComponent.className}(<#if constructorMetaData?? && constructorMetaData.constructorArguments??><#list constructorMetaData.constructorArguments as item>${item.name}<#sep>, </#list></#if>);
+    }
 </#list>
 }
