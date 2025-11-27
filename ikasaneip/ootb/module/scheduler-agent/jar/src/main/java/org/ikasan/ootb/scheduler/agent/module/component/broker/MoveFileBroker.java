@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.io.FileUtils;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.exception.MoveFileBrokerException;
 import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -15,13 +16,6 @@ public class MoveFileBroker implements Broker<FileWatcherJobEvent, FileWatcherJo
 
     private static Logger logger = LoggerFactory.getLogger(MoveFileBroker.class);
     public static SimpleDateFormat ARCHIVE_FILE_DATE_FORMATTER = new SimpleDateFormat("YYYYddMM_hhmmss");
-
-
-    /**
-     * Constructs a MoveFileBroker with the provided DryRunModeService.
-     */
-    public MoveFileBroker() {
-    }
 
     @Override
     public FileWatcherJobEvent invoke(FileWatcherJobEvent fileWatcherJobEvent) throws EndpointException {
@@ -50,7 +44,8 @@ public class MoveFileBroker implements Broker<FileWatcherJobEvent, FileWatcherJo
                     }
                 }
             } catch (Exception e) {
-                throw new EndpointException(String.format("Error moving fileWatcherJobEvent to dir %s. %s", fileWatcherJobEvent.getMoveDirectory(), e.getMessage(), e));
+                throw new MoveFileBrokerException(String.format("Error moving fileWatcherJobEvent to dir %s. %s"
+                    , fileWatcherJobEvent.getMoveDirectory(), e.getMessage()), e);
             }
         }
 

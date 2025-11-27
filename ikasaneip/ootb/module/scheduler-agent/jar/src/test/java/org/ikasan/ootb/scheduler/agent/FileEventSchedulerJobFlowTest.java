@@ -45,35 +45,25 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.ikasan.bigqueue.IBigQueue;
-import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileConsumerConfiguration;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
-import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.job.orchestration.model.context.ContextParameterInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.FileAgeFilterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.ScheduledProcessEventFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.filter.configuration.SchedulerFileFilterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.component.router.configuration.BlackoutRouterConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.component.serialiser.FileWatcherJobEventToBigQueueMessageSerialiser;
 import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InternalFileWatcherJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
-import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunFileListJobParameterDto;
 import org.ikasan.ootb.scheduler.agent.rest.dto.DryRunParametersDto;
-import org.ikasan.serialiser.model.JobExecutionContextDefaultImpl;
-import org.ikasan.spec.bigqueue.message.BigQueueMessage;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
-import org.ikasan.spec.scheduled.dryrun.DryRunFileListJobParameter;
 import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
@@ -81,8 +71,6 @@ import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.*;
 import org.junit.runner.RunWith;
-import org.quartz.JobDataMap;
-import org.quartz.Trigger;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -100,8 +88,6 @@ import java.util.concurrent.TimeUnit;
 import static org.awaitility.Awaitility.await;
 import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.quartz.TriggerBuilder.newTrigger;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
@@ -124,6 +110,9 @@ public class FileEventSchedulerJobFlowTest {
 
     @Resource
     private DryRunModeService dryRunModeService;
+
+    @Resource
+    private ErrorReportingService errorReportingService;
 
     @MockitoBean
     AgentInstanceRecoveryManager agentInstanceRecoveryManager;
@@ -791,6 +780,107 @@ public class FileEventSchedulerJobFlowTest {
         dryRunModeService.setDryRunMode(false);
     }
 
+    @Test
+    @DirtiesContext
+    public void test_exclusion_bad_file_name_directory() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        flowTestRule.consumer("File Event BigQueue Consumer")
+            .broker("File Matching Broker");
+
+        IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
+            .get("scheduler-agent-file-watcher-job-event-processing-flow-1-file-watcher-inbound-queue");
+        queue1.removeAll();
+
+        FileWatcherJobEvent fileWatcherJobEvent = new FileWatcherJobEvent();
+        fileWatcherJobEvent.setContextName("contextName");
+        fileWatcherJobEvent.setCorrelationIdentifier(contextInstanceIdentifier);
+        fileWatcherJobEvent.setMoveDirectory("src/test/resources/data/archive");
+        fileWatcherJobEvent.setFilename("////\\\\////\\\\bad-file");
+
+        this.publishBigQueueMessage(fileWatcherJobEvent, queue1);
+
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(0, outboundQueue.size()));
+
+        List<ErrorOccurrence> errors = errorReportingService.find(List.of(this.moduleUnderTest.getName())
+            , List.of(), List.of(), new Date(0L), new Date(), 1000);
+
+        assertEquals(1, errors.size());
+        assertEquals("ExcludeEvent", errors.get(0).getAction());
+        assertEquals("org.ikasan.ootb.scheduler.agent.module.component.broker.exception.CorrelatingFileMatcherBrokerException"
+            , errors.get(0).getExceptionClass());
+
+        flowTestRule.stopFlow();
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_exclusion_bad_file_move_directory() throws IOException {
+        createContextAndPutInCache();
+        flowTestRule.withFlow(moduleUnderTest.getFlow("File Watcher Job Event Processing Flow 1"));
+
+        String contextInstanceIdentifier = UUID.randomUUID().toString();
+
+        flowTestRule.consumer("File Event BigQueue Consumer")
+            .broker("File Matching Broker")
+            .filter("File Age Filter")
+            .filter("Duplicate Message Filter")
+            .broker("File Move Broker");
+
+        IBigQueue queue1 = InternalFileWatcherJobQueueCache.instance()
+            .get("scheduler-agent-file-watcher-job-event-processing-flow-1-file-watcher-inbound-queue");
+        queue1.removeAll();
+
+        FileWatcherJobEvent fileWatcherJobEvent = new FileWatcherJobEvent();
+        fileWatcherJobEvent.setContextName("contextName");
+        fileWatcherJobEvent.setCorrelationIdentifier(contextInstanceIdentifier);
+        fileWatcherJobEvent.setMoveDirectory("///\\\\\\//## << BAD DIRECTORY! >> ##");
+        fileWatcherJobEvent.setFilename("src/test/resources/data/test.txt");
+
+        this.publishBigQueueMessage(fileWatcherJobEvent, queue1);
+
+
+        flowTestRule.startFlow();
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
+
+        await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(0, outboundQueue.size()));
+
+        List<ErrorOccurrence> errors = errorReportingService.find(List.of(this.moduleUnderTest.getName())
+            , List.of(), List.of(), new Date(0L), new Date(), 1000);
+
+        assertEquals(1, errors.size());
+        assertEquals("ExcludeEvent", errors.get(0).getAction());
+        assertEquals("org.ikasan.ootb.scheduler.agent.module.component.broker.exception.MoveFileBrokerException"
+            , errors.get(0).getExceptionClass());
+
+        flowTestRule.stopFlow();
+    }
+
+    /**
+     * Retrieves a ContextualisedScheduledProcessEvent from the outbound queue.
+     *
+     * @throws IOException if an I/O error occurs during processing
+     * @return the ContextualisedScheduledProcessEvent retrieved from the outbound queue
+     */
     private ContextualisedScheduledProcessEvent getEvent() throws IOException {
         byte[] dequeued = outboundQueue.dequeue();
         BigQueueMessageImpl dequeuedMessage = objectMapper.readValue(dequeued, BigQueueMessageImpl.class);
@@ -800,6 +890,12 @@ public class FileEventSchedulerJobFlowTest {
     }
 
 
+    /**
+     * Generates a new context instance ID using RandomStringUtils and creates a new ContextInstanceImpl object.
+     * The generated context instance is then stored in the ContextInstanceCache.
+     *
+     * @return The context instance ID generated and stored in the cache
+     */
     private String createContextAndPutInCache() {
         String contextInstanceID = RandomStringUtils.randomAlphabetic(15);
         ContextInstanceImpl instance = new ContextInstanceImpl();
