@@ -1,6 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.ikasan.component.endpoint.filesystem.messageprovider.DynamicFileMatcher;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.exception.CorrelatingFileMatcherBrokerException;
 import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.event.ForceTransactionRollbackException;
@@ -171,7 +172,7 @@ public class CorrelatingFileMatcherBrokerTest {
         when(fileWatcherJobEvent.getCorrelationIdentifier()).thenReturn(correlationIdentifier);
         when(fileWatcherJobEvent.isDryRun()).thenReturn(false);
 
-        Assert.assertThrows(EndpointException.class, () -> broker.invoke(fileWatcherJobEvent));
+        Assert.assertThrows(CorrelatingFileMatcherBrokerException.class, () -> broker.invoke(fileWatcherJobEvent));
 
         verify(fileMatcher).setCorrelatingIdentifier(correlationIdentifier);
         verify(fileMatcher).invoke();

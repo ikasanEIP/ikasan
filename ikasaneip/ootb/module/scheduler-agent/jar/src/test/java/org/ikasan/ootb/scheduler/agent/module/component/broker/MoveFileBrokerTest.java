@@ -2,6 +2,7 @@ package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.io.FileUtils;
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileList;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.exception.MoveFileBrokerException;
 import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.junit.Assert;
 import org.junit.Before;
@@ -134,7 +135,7 @@ public class MoveFileBrokerTest {
     }
 
     @Test
-    public void test_move_file_dry_run_exception_bad_move_directory_same_as_src_directory() throws IOException {
+    public void test_move_file_dry_run_move_directory_same_as_src_directory() throws IOException {
         List<File> files = List.of(new File("src/test/resources/data/test.txt"));
 
         MoveFileBroker broker = new MoveFileBroker();
@@ -157,7 +158,7 @@ public class MoveFileBrokerTest {
     }
 
     @Test
-    public void test_move_file_dry_run_exception_bad_move_directory_same_as_src_directory_due_to_dot() throws IOException {
+    public void test_move_file_dry_run_move_directory_same_as_src_directory_due_to_dot() throws IOException {
         List<File> files = List.of(new File("src/test/resources/data/test.txt"));
 
         MoveFileBroker broker = new MoveFileBroker();
@@ -199,5 +200,48 @@ public class MoveFileBrokerTest {
         String[] archiveFiles = new File("src/test/resources/data/archive").list();
 
         Assert.assertEquals(0, archiveFiles.length);
+    }
+
+    @Test(expected = MoveFileBrokerException.class)
+    public void test_exception_bad_tgt_directory() {
+        List<File> files = List.of(new File("src/test/resources/data/test.txt"));
+
+        MoveFileBroker broker = new MoveFileBroker();
+
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+
+        FileWatcherJobEvent event = new FileWatcherJobEvent();
+        event.setCorrelationIdentifier("correlationIdentifier");
+        event.setCorrelatedFileList(correlatedFileList);
+        event.setJobName("jobName");
+        event.setMinFileAgeSeconds(30);
+        event.setMoveDirectory("////\\\\\\////\\\\\\BAD DIRECTORY");
+        event.setJobName("jobName");
+        event.setDryRun(false);
+
+        broker.invoke(event);
+    }
+
+    @Test(expected = MoveFileBrokerException.class)
+    public void test_exception_bad_src_file() throws IOException {
+        List<File> files = List.of(new File("///\\\\////\\\\BAD FILE PATH/test.txt"));
+
+        MoveFileBroker broker = new MoveFileBroker();
+
+        CorrelatedFileList correlatedFileList = new CorrelatedFileList(files, "correlationIdentifier");
+
+        FileWatcherJobEvent event = new FileWatcherJobEvent();
+        event.setCorrelationIdentifier("correlationIdentifier");
+        event.setCorrelatedFileList(correlatedFileList);
+        event.setJobName("jobName");
+        event.setMinFileAgeSeconds(30);
+        event.setMoveDirectory("src/test/resources/data/archive");
+        event.setJobName("jobName");
+
+        broker.invoke(event);
+
+        String[] archiveFiles = new File("src/test/resources/data/archive").list();
+
+        Assert.assertEquals("test.txt", archiveFiles[0]);
     }
 }

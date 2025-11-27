@@ -4,6 +4,7 @@ import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatedFileLi
 import org.ikasan.component.endpoint.filesystem.messageprovider.CorrelatingFileMessageProvider;
 import org.ikasan.component.endpoint.filesystem.messageprovider.DynamicFileMatcher;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer;
+import org.ikasan.ootb.scheduler.agent.module.component.broker.exception.CorrelatingFileMatcherBrokerException;
 import org.ikasan.ootb.scheduler.agent.module.model.FileWatcherJobEvent;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -29,7 +30,6 @@ public class CorrelatingFileMatcherBroker implements Broker<FileWatcherJobEvent,
     /** record all filenames returned from the fileMatcher */
     private List<String> filenames = new ArrayList<>();
     private IOException matcherException;
-
     private boolean active = false;
 
     @Override
@@ -66,7 +66,8 @@ public class CorrelatingFileMatcherBroker implements Broker<FileWatcherJobEvent,
                 fileMatcher.invoke();
             }
             catch(IOException e) {
-                throw new EndpointException(e);
+                throw new CorrelatingFileMatcherBrokerException("An exception has occurred invoking file matcher when processing FileWatcherJobEvent - "
+                    + fileWatcherJobEvent, e);
             }
         }
         catch(ConcurrentModificationException e) {
@@ -78,7 +79,8 @@ public class CorrelatingFileMatcherBroker implements Broker<FileWatcherJobEvent,
         }
 
         if(matcherException != null) {
-            throw new EndpointException(matcherException);
+            throw new CorrelatingFileMatcherBrokerException("An exception has occurred processing FileWatcherJobEvent - "
+                + fileWatcherJobEvent, matcherException);
         }
 
         for(String filename:this.getFilenames()) {

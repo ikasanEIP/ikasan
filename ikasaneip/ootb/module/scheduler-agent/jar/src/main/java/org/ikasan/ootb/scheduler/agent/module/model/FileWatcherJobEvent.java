@@ -233,11 +233,30 @@ public class FileWatcherJobEvent implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         FileWatcherJobEvent that = (FileWatcherJobEvent) o;
-        return minFileAgeSeconds == that.minFileAgeSeconds && fireTime == that.fireTime && nextFireTime == that.nextFireTime && dryRun == that.dryRun && Objects.equals(contextName, that.contextName) && Objects.equals(jobName, that.jobName) && Objects.equals(childContextNames, that.childContextNames) && Objects.equals(correlationIdentifier, that.correlationIdentifier) && Objects.equals(filePath, that.filePath) && Objects.equals(filename, that.filename) && Objects.equals(fileNameSpelExpression, that.fileNameSpelExpression) && Objects.equals(filePathSpelExpression, that.filePathSpelExpression) && Objects.equals(moveDirectory, that.moveDirectory) && Objects.equals(slaCronExpression, that.slaCronExpression) && Objects.equals(timeZone, that.timeZone) && Objects.equals(blackoutWindowCronExpressions, that.blackoutWindowCronExpressions) && Objects.equals(blackoutWindowDateTimeRanges, that.blackoutWindowDateTimeRanges) && Objects.equals(correlatedFileList, that.correlatedFileList) && Objects.equals(jobGroup, that.jobGroup) && Objects.equals(jobDescription, that.jobDescription) && Objects.equals(outcome, that.outcome);
+        return minFileAgeSeconds == that.minFileAgeSeconds && fireTime == that.fireTime
+            && nextFireTime == that.nextFireTime && dryRun == that.dryRun
+            && Objects.equals(contextName, that.contextName) && Objects.equals(jobName, that.jobName)
+            && Objects.equals(childContextNames, that.childContextNames)
+            && Objects.equals(correlationIdentifier, that.correlationIdentifier)
+            && Objects.equals(filePath, that.filePath) && Objects.equals(filename, that.filename)
+            && Objects.equals(fileNameSpelExpression, that.fileNameSpelExpression)
+            && Objects.equals(filePathSpelExpression, that.filePathSpelExpression)
+            && Objects.equals(moveDirectory, that.moveDirectory)
+            && Objects.equals(slaCronExpression, that.slaCronExpression)
+            && Objects.equals(timeZone, that.timeZone)
+            && Objects.equals(blackoutWindowCronExpressions, that.blackoutWindowCronExpressions)
+            && Objects.equals(blackoutWindowDateTimeRanges, that.blackoutWindowDateTimeRanges)
+            && Objects.equals(correlatedFileList, that.correlatedFileList)
+            && Objects.equals(jobGroup, that.jobGroup)
+            && Objects.equals(jobDescription, that.jobDescription)
+            && Objects.equals(outcome, that.outcome);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(contextName, jobName, childContextNames, correlationIdentifier, filePath, filename, fileNameSpelExpression, filePathSpelExpression, moveDirectory, minFileAgeSeconds, slaCronExpression, timeZone, blackoutWindowCronExpressions, blackoutWindowDateTimeRanges, correlatedFileList, fireTime, nextFireTime, jobGroup, jobDescription, dryRun, outcome);
+        return Objects.hash(contextName, jobName, childContextNames, correlationIdentifier, filePath
+            , filename, fileNameSpelExpression, filePathSpelExpression, moveDirectory, minFileAgeSeconds
+            , slaCronExpression, timeZone, blackoutWindowCronExpressions, blackoutWindowDateTimeRanges
+            , correlatedFileList, fireTime, nextFireTime, jobGroup, jobDescription, dryRun, outcome);
     }
 }
