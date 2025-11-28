@@ -7,6 +7,7 @@ import org.apache.commons.io.FileUtils;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +38,7 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @param queueName Name of the queue
      * @return the related IBigQueue instance of that queueName.
      */
-    public abstract IBigQueue getBigQueue(String queueName);
+    public abstract IBigQueue getBigQueue(String queueName) throws BigQueueNotFoundException;
 
     /**
      * Users getBigQueue(String queueName) to check if a queue exist
@@ -45,7 +46,11 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @return true if non null is returned
      */
     public boolean queueExists(String queueName) {
-        return getBigQueue(queueName) != null;
+        try {
+            return getBigQueue(queueName) != null;
+        } catch (BigQueueNotFoundException e) {
+            return false;
+        }
     }
 
     /**
@@ -65,7 +70,7 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @return true if the messageId is found
      * @throws IOException if error looking at the queue
      */
-    private boolean messageIdExistsInMessages(String queueName, String biQueueMessageId) throws IOException {
+    private boolean messageIdExistsInMessages(String queueName, String biQueueMessageId) throws IOException, BigQueueNotFoundException {
         return getMessages(queueName).stream().anyMatch(m -> biQueueMessageId.equals(m.getMessageId()));
     }
 
@@ -75,14 +80,9 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public synchronized long size(String queueName) {
-        if (queueExists(queueName)) {
-            return getBigQueue(queueName).size();
-        }
-        return 0;
+    public synchronized long size(String queueName) throws BigQueueNotFoundException {
+        return getBigQueue(queueName).size();
     }
-
-
 
     /**
      * Get the first message off the queue.
@@ -90,7 +90,7 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public synchronized BigQueueMessage peek(String queueName) throws IOException {
+    public synchronized BigQueueMessage peek(String queueName) throws IOException, BigQueueNotFoundException {
         if (queueExists(queueName)) {
             byte[] peek = getBigQueue(queueName).peek();
             if (peek != null) {
@@ -108,7 +108,7 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @param biQueueMessageId - the message id of the big queue message to delete
      */
     @Override
-    public synchronized void deleteMessage(String queueName, String biQueueMessageId) throws IOException {
+    public synchronized void deleteMessage(String queueName, String biQueueMessageId) throws IOException, BigQueueNotFoundException {
         if (biQueueMessageId != null
             && queueExists(queueName)
             && messageIdExistsInMessages(queueName, biQueueMessageId)) {
@@ -137,7 +137,7 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @throws IOException exception throws if there is any IO error during dequeue operation.
      */
     @Override
-    public synchronized void deleteAllMessage(String queueName) throws IOException {
+    public synchronized void deleteAllMessage(String queueName) throws IOException, BigQueueNotFoundException {
         if (queueExists(queueName)) {
             getBigQueue(queueName).removeAll();
             getBigQueue(queueName).gc();
@@ -181,7 +181,7 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @param queueName - the name of the queue to inspect
      */
     @Override
-    public synchronized List<BigQueueMessage> getMessages(String queueName) throws IOException {
+    public synchronized List<BigQueueMessage> getMessages(String queueName) throws IOException, BigQueueNotFoundException {
         if (queueExists(queueName)) {
             MessagesIterator messagesIterator = new MessagesIterator();
             getBigQueue(queueName).applyForEach(messagesIterator);

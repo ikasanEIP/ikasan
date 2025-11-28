@@ -4,6 +4,7 @@ import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
+import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -99,6 +100,23 @@ public class BigQueueManagementApplicationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void size_web_admin_queue_not_found_error() throws Exception {
+        when(bigQueueDirectoryManagementService.size("queueName")).thenThrow(new BigQueueNotFoundException("Expected"));
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/size/queueName")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("\"Got exception trying to get size for queue [queueName]. Error [Expected]\""
+            , result.getResponse().getContentAsString());
+
+        verify(bigQueueDirectoryManagementService).size("queueName");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
     @WithMockUser(authorities = "readonly")
     public void peek_read_only_user() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
@@ -146,6 +164,24 @@ public class BigQueueManagementApplicationTest {
 
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("",
+            result.getResponse().getContentAsString());
+
+        verify(bigQueueDirectoryManagementService).peek("queueName");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void peek_web_admin_queue_not_found_error_response() throws Exception {
+        when(bigQueueDirectoryManagementService.peek("queueName")).thenThrow(new BigQueueNotFoundException("no queue!"));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/peek/queueName")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("\"Got exception trying to peek queue for queue [queueName]. Error [no queue!]\"",
             result.getResponse().getContentAsString());
 
         verify(bigQueueDirectoryManagementService).peek("queueName");
@@ -230,6 +266,25 @@ public class BigQueueManagementApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
+    public void messages_web_admin_queue_not_found_error_response() throws Exception {
+        when(bigQueueDirectoryManagementService.getMessages("queueName"))
+            .thenThrow(new BigQueueNotFoundException("no queue!"));
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/big/queue/messages/queueName")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("\"Got exception trying to get message for queue [queueName]. Error [no queue!]\"",
+            result.getResponse().getContentAsString());
+
+        verify(bigQueueDirectoryManagementService).getMessages("queueName");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
     public void messages_web_admin_error_response() throws Exception {
         when(bigQueueDirectoryManagementService.getMessages("queueName")).thenThrow(new RuntimeException("Expected"));
 
@@ -290,6 +345,23 @@ public class BigQueueManagementApplicationTest {
     }
 
     @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void delete_admin_queue_not_found_error() throws Exception {
+        doThrow(new BigQueueNotFoundException("Expected")).when(bigQueueDirectoryManagementService).deleteMessage("queueName", "messageId");
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/big/queue/delete/queueName/messageId")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("\"Got exception trying to delete message for queue [queueName] message [messageId]. Error [Expected]\"", result.getResponse().getContentAsString());
+
+        verify(bigQueueDirectoryManagementService).deleteMessage("queueName", "messageId");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
     @WithMockUser(authorities = "readonly")
     public void delete_all_messages_read_only_user() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
@@ -306,7 +378,8 @@ public class BigQueueManagementApplicationTest {
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
     public void delete_all_messages_admin() throws Exception {
-        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/big/queue/delete/allMessages/queueName")
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+            .delete("/rest/big/queue/delete/allMessages/queueName")
             .accept(MediaType.APPLICATION_JSON)
             .contentType(MediaType.APPLICATION_JSON);
 
@@ -329,6 +402,23 @@ public class BigQueueManagementApplicationTest {
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 
         assertEquals(400, result.getResponse().getStatus());
+
+        verify(bigQueueDirectoryManagementService).deleteAllMessage("queueName");
+        verifyNoMoreInteractions(bigQueueDirectoryManagementService);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void delete_all_messages_admin_queue_not_found_error() throws Exception {
+        doThrow(new BigQueueNotFoundException("Expected")).when(bigQueueDirectoryManagementService).deleteAllMessage("queueName");
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/big/queue/delete/allMessages/queueName")
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("\"Got exception trying to delete all messages for queue [queueName]. Error [Expected]\"", result.getResponse().getContentAsString());
 
         verify(bigQueueDirectoryManagementService).deleteAllMessage("queueName");
         verifyNoMoreInteractions(bigQueueDirectoryManagementService);

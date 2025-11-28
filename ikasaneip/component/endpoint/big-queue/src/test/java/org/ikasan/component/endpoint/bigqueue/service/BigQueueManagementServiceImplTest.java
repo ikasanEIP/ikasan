@@ -9,6 +9,7 @@ import org.ikasan.component.endpoint.bigqueue.serialiser.TestEvent;
 import org.ikasan.component.endpoint.bigqueue.serialiser.TestParam;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -42,11 +43,11 @@ public class BigQueueManagementServiceImplTest {
         }
 
         @Override
-        public IBigQueue getBigQueue(String queueName) {
+        public IBigQueue getBigQueue(String queueName) throws BigQueueNotFoundException {
             if (QUEUE_NAME.equals(queueName)) {
                 return bigQueue;
             }
-            return null;
+            throw new BigQueueNotFoundException("not found");
         }
     }
 
@@ -366,15 +367,10 @@ public class BigQueueManagementServiceImplTest {
         assertEquals(bigQueueMessage2, message);
     }
 
-    @Test
+    @Test(expected = BigQueueNotFoundException.class)
     public void size_unknown_queue_returns_zero() throws Exception {
         String randomString = randomAlphabetic(10);
-        assertEquals(0, service.size(randomString));
-        validateNoQueueCreated(randomString);
-
-        assertEquals(0, service.size(randomString));
-        assertEquals(0, service.size(null));
-        assertEquals(0, service.size(null));
+        service.size(randomString);
     }
 
     @Test
