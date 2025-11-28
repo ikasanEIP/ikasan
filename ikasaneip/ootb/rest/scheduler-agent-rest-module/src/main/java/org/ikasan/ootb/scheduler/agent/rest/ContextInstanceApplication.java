@@ -40,13 +40,7 @@
  */
 package org.ikasan.ootb.scheduler.agent.rest;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.jsontype.BasicPolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.jsontype.PolymorphicTypeValidator;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
+import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
 import org.ikasan.spec.scheduled.provision.ContextInstanceIdentifierProvisionService;
@@ -54,14 +48,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @RequestMapping("/rest/contextInstance")
 @RestController
@@ -111,8 +101,41 @@ public class ContextInstanceApplication {
             e.printStackTrace();
             return new ResponseEntity(
                 new ErrorDto(
-                    "An error has occurred attempting to remove all correlationIds. Error message [%s]".formatted(e.getMessage())), HttpStatus.BAD_REQUEST);
+                    ("An error has occurred attempting to remove all correlationIds. " +
+                        "Error message [%s]").formatted(e.getMessage())), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/cache/identifiers",
+        produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity contextInstanceCacheIdentifiers() {
+        try {
+            return new ResponseEntity(ContextInstanceCache.getCorrelationIds(), HttpStatus.OK);
+
+        } catch (Exception e) {
+            String message = ("An exception has occurred while requesting job plan instance cache " +
+                "identifiers. Error [%s]").formatted(e.getMessage());
+            logger.warn(message);
+            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(method = RequestMethod.GET,
+        value = "/cache/{identifier}",
+        produces = {MediaType.APPLICATION_JSON_VALUE})
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity getContextInstance(@PathVariable("identifier") String identifier) {
+        try {
+            return new ResponseEntity(ContextInstanceCache.instance().getByCorrelationId(identifier), HttpStatus.OK);
+
+        } catch (Exception e) {
+            String message = ("An error has occurred requesting job plan instance with identifier [%s]." +
+                " Error [%s]").formatted(identifier, e.getMessage());
+            logger.warn(message);
+            return new ResponseEntity(message, HttpStatus.BAD_REQUEST);
+        }
     }
 }
