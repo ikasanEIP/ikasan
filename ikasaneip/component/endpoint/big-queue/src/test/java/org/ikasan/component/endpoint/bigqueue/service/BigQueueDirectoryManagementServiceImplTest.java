@@ -5,6 +5,7 @@ import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -118,7 +119,7 @@ public class BigQueueDirectoryManagementServiceImplTest {
     }
 
     @Test
-    public void sizeOfAllQueuesWithReturnZeroTrue() throws IOException {
+    public void sizeOfAllQueuesWithReturnZeroTrue() throws IOException, BigQueueNotFoundException {
         String queueName = RandomStringUtils.randomAlphabetic(12);
         String queueName2 = RandomStringUtils.randomAlphabetic(12);
         when(bigQueueManagementService.listQueues(queueDir)).thenReturn(List.of(queueName, queueName2));
@@ -138,7 +139,7 @@ public class BigQueueDirectoryManagementServiceImplTest {
     }
 
     @Test
-    public void sizeOfAllQueuesWithReturnZeroFalse() throws IOException {
+    public void sizeOfAllQueuesWithReturnZeroFalse() throws IOException, BigQueueNotFoundException {
         String queueName = RandomStringUtils.randomAlphabetic(12);
         String queueName2 = RandomStringUtils.randomAlphabetic(12);
         when(bigQueueManagementService.listQueues(queueDir)).thenReturn(List.of(queueName, queueName2));

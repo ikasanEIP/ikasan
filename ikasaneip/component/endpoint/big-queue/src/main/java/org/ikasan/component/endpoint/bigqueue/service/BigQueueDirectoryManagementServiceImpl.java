@@ -3,6 +3,9 @@ package org.ikasan.component.endpoint.bigqueue.service;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
+import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -10,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectoryManagementService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(BigQueueDirectoryManagementServiceImpl.class);
 
     private final String queueDirectory;
     private final BigQueueManagementService bigQueueManagementService;
@@ -31,38 +35,42 @@ public class BigQueueDirectoryManagementServiceImpl implements BigQueueDirectory
         Map<String, Long> mapQueuesWithSize = new HashMap<>();
         List<String> listQueues = listQueues();
         for (String queue: listQueues) {
-            long size = size(queue);
-            // Skip if includeZero == false and the size of the queue is 0
-            if (!includeZeros && size == 0) {
-                continue;
+            try {
+                long size = size(queue);
+                // Skip if includeZero == false and the size of the queue is 0
+                if (!includeZeros && size == 0) {
+                    continue;
+                }
+                mapQueuesWithSize.put(queue, size);
+            } catch (BigQueueNotFoundException e) {
+                LOGGER.info(String.format("Requesting queue size of [%s] but the queue does not exist!", queue));
             }
-            mapQueuesWithSize.put(queue, size);
         }
         return mapQueuesWithSize;
     }
 
     @Override
-    public long size(String queueName) throws IOException {
+    public long size(String queueName) throws IOException, BigQueueNotFoundException {
         return bigQueueManagementService.size(queueName);
     }
 
     @Override
-    public BigQueueMessage peek(String queueName) throws IOException {
+    public BigQueueMessage peek(String queueName) throws IOException, BigQueueNotFoundException {
         return bigQueueManagementService.peek(queueName);
     }
 
     @Override
-    public List<BigQueueMessage> getMessages(String queueName) throws IOException {
+    public List<BigQueueMessage> getMessages(String queueName) throws IOException, BigQueueNotFoundException {
         return bigQueueManagementService.getMessages(queueName);
     }
 
     @Override
-    public void deleteAllMessage(String queueName) throws IOException {
+    public void deleteAllMessage(String queueName) throws IOException, BigQueueNotFoundException {
         bigQueueManagementService.deleteAllMessage(queueName);
     }
 
     @Override
-    public void deleteMessage(String queueName, String biQueueMessageId) throws IOException {
+    public void deleteMessage(String queueName, String biQueueMessageId) throws IOException, BigQueueNotFoundException {
         bigQueueManagementService.deleteMessage(queueName, biQueueMessageId);
     }
 
