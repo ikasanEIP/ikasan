@@ -12,6 +12,8 @@ import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.skyscreamer.jsonassert.JSONAssert;
+import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +23,7 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -145,6 +148,70 @@ public class ContextInstanceApplicationTest {
         mockMvc.perform(requestBuilder).andExpect(status().isOk());
 
         verify(this.contextInstanceIdentifierProvisionService).removeAll();
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void context_instance_cache_id_not_present() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/rest/contextInstance/cache/004bc348-472f-4e62-bbf8-f84c1baa224a")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void context_instance_cache_id_present() throws Exception {
+        ContextInstanceCache.instance().put("004bc348-472f-4e62-bbf8-f84c1baa224a"
+            , new ContextInstanceImpl());
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/rest/contextInstance/cache/004bc348-472f-4e62-bbf8-f84c1baa224a")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("{\"contexts\":[],\"scheduledJobs\":[],\"jobLocks\":[],\"customWeekDayOfMonth\":false," +
+            "\"treeViewExpandLevel\":1,\"ableToRunConcurrently\":false,\"useDisplayName\":false,\"ordinal\":-1," +
+            "\"renderLogicalBoundaries\":true,\"useAutoLayout\":true,\"endJobPlanUponCompletion\":false,\"createdDateTime\":0" +
+            ",\"updatedDateTime\":0,\"startTime\":0,\"projectedEndTime\":0,\"endTime\":0,\"containsRepeatingJobs\":false," +
+            "\"runContextUntilManuallyEnded\":false,\"contextTtlMilliseconds\":0,\"quartzScheduleDrivenJobsDisabledForContext\"" +
+            ":false,\"errorAcknowledged\":false}", result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void context_instance_cache_empty_no_identifiers() throws Exception {
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/rest/contextInstance/cache/identifiers")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("[]", result.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void context_instance_cache_empty_with_identifiers() throws Exception {
+        ContextInstanceCache.instance().put("004bc348-472f-4e62-bbf8-f84c1baa224a"
+            , new ContextInstanceImpl());
+
+        MockHttpServletRequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/rest/contextInstance/cache/identifiers")
+            .accept(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        JSONAssert.assertEquals("[\"004bc348-472f-4e62-bbf8-f84c1baa224a\"]"
+            , result.getResponse().getContentAsString(), JSONCompareMode.LENIENT);
     }
 
     private ConcurrentHashMap<String, ContextInstance> getContextInstanceMap() {
