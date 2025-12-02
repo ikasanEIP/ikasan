@@ -1,5 +1,6 @@
 package org.ikasan.spec.scheduled.context.service;
 
+import org.ikasan.spec.scheduled.context.ScheduledContextRecordLite;
 import org.ikasan.spec.scheduled.context.model.ContextTemplate;
 import org.ikasan.spec.scheduled.context.model.ScheduledContextRecord;
 import org.ikasan.spec.scheduled.context.model.ScheduledContextSearchFilter;
@@ -39,6 +40,20 @@ public interface ScheduledContextService {
      * @return SearchResults containing a List of ScheduledContextRecord and associated meta data.
      */
     SearchResults<ScheduledContextRecord> findByFilter(ScheduledContextSearchFilter filter, int limit, int offset, String sortColumn, String sortOrder);
+
+    /**
+     * Find all ScheduledContextRecordLite containing keyword with limit and offset. Used for result paging.
+     *
+     * @param filter
+     * @param limit
+     * @param offset
+     * @param sortColumn
+     * @param sortOrder
+     *
+     * @return SearchResults containing a List of ScheduledContextRecord and associated meta data.
+     */
+    SearchResults<ScheduledContextRecordLite> findByFilterLite(ScheduledContextSearchFilter filter, int limit, int offset, String sortColumn, String sortOrder);
+
 
     /**
      * Find ScheduledContextRecord by id.
