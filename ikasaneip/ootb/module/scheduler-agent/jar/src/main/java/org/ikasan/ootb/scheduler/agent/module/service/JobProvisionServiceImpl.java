@@ -184,18 +184,18 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.FILE);
 
-                if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
-                    ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
-                            .getFileWatcherJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
-                }
+//                if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+//                    ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
+//                            .getFileWatcherJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
+//                }
             } else if (job instanceof QuartzScheduleDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.QUARTZ);
 
-                if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
-                    ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
-                        .getScheduledJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
-                }
+//                if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
+//                    ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
+//                        .getScheduledJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
+//                }
             } else if (job instanceof InternalEventDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
                 configuredModuleConfiguration.getFlowDefinitionProfiles().put(job.getAggregateJobName(), AgentFlowProfiles.SCHEDULER_JOB);
@@ -281,13 +281,13 @@ public class JobProvisionServiceImpl implements JobProvisionService {
                         this.deleteQuartzSchedulerFileEventJobFlowComponents(flow);
 
                         // remove the job from the file matcher job map on the module configuration
-                        configuration.getFileWatcherJobMap().remove(flow.getName());
+//                        configuration.getFileWatcherJobMap().remove(flow.getName());
                     } else if (configuration.getFlowDefinitionProfiles().get(flow.getName()).equals(AgentFlowProfiles.QUARTZ)
                         && configuration.getFlowContextMap().get(flow.getName()).equals(contextName)) {
                         this.deleteConfigurationsForQuartzScheduledFlowComponents(flow);
 
-                        // remove the job from the scheduled job map on the module configuration
-                        configuration.getScheduledJobMap().remove(flow.getName());
+//                        // remove the job from the scheduled job map on the module configuration
+//                        configuration.getScheduledJobMap().remove(flow.getName());
                     }
                 }
             });
