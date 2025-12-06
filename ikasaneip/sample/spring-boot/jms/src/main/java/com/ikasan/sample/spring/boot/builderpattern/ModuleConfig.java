@@ -66,8 +66,11 @@ public class ModuleConfig
     @Resource
     private BuilderFactory builderFactory;
 
-    @Value("${jms.provider.url}")
+    @Value("${jms.provider.url.persistent}")
     private String brokerUrl;
+
+    @Value("${jms.provider.url}")
+    private String brokerUrlN;
 
     @Bean
     public Module getModule(){
@@ -85,7 +88,7 @@ public class ModuleConfig
                 .build();
 
 
-        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrlN);
 
         Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
                 .setConnectionFactory(producerConnectionFactory)

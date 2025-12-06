@@ -47,7 +47,10 @@ import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerCo
 import org.ikasan.spec.exclusion.IsExclusionServiceAware;
 import org.ikasan.spec.configuration.Configured;
 import org.ikasan.spec.exclusion.ExclusionService;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.util.JndiUtils;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -69,6 +72,8 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         super();
         setAutoStartup(false);
     }
+
+
 
     /**
      * Stop Spring from failing on deployment if we dont have an initial configuration - that's ok.
@@ -96,6 +101,27 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
     public void setConfiguration(SpringMessageConsumerConfiguration configuration)
     {
         this.configuration = configuration;
+    }
+
+    public void stopLocal() throws JmsException {
+        AtomicBoolean stopped = new AtomicBoolean(false);
+        super.stop(() -> {
+            stopped.set(true);
+        });
+
+        while (true) {
+            if (!stopped.get()) {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            else {
+                this.isRunning();
+                break;
+            }
+        }
     }
 
     /**
@@ -192,6 +218,8 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         setConcurrentConsumers(configuration.getConcurrentConsumers());
         setMaxConcurrentConsumers(configuration.getMaxConcurrentConsumers());
         setCacheLevel(configuration.getCacheLevel());
+//        setSubscriptionShared(true);
+
 
         if(configuration.getDurable() != null)
         {

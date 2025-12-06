@@ -145,7 +145,8 @@ public class JmsContainerConsumer
     @Override
     public void stop()
     {
-        this.messageProvider.stop();
+        ((IkasanMessageListenerContainer)this.messageProvider).stopLocal();
+//        this.messageProvider.stop();
     }
 
     /**
