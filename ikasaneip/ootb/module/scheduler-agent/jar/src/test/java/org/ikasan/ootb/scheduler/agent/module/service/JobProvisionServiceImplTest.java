@@ -338,9 +338,9 @@ public class JobProvisionServiceImplTest {
 
         verify(moduleActivator).deactivate(module);
         verify(moduleActivator).activate(module);
-        verify(flow, times(4)).getName();
+        verify(flow, times(3)).getName();
         verify(flow, times(2)).getFlowElement(anyString());
-        verify(flow2, times(5)).getName();
+        verify(flow2, times(4)).getName();
         verify(flow2, times(4)).getFlowElement(anyString());
         verify(flow3, times(1)).getName();
 
