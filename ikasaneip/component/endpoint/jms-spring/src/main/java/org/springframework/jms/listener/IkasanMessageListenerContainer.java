@@ -130,10 +130,10 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
                 }
             }
             else {
-                if(i >= this.configuration.getStopWaitTimeoutMilliseconds()) {
-                    // For good measure call stop if we timeout waiting
-                    // for the callback!
-                    super.stop();
+                try {
+                    super.doStop();
+                } catch (JMSException e) {
+                    throw new RuntimeException(e);
                 }
                 logger.info("Message listener container has stopped!");
                 break;
