@@ -80,6 +80,26 @@ public class ActiveMqHelper
         }
     }
 
+    public void startBroker(){
+        System.out.println("Start Broker called -  will start any registered brokers");
+        Map<String, BrokerService> brokers = BrokerRegistry.getInstance().getBrokers();
+        try
+        {
+            for (BrokerService brokerService : brokers.values())
+            {
+                System.out.println("Waiting for broker " + brokerService.getBrokerName() + " to start");
+                brokerService.start();
+                brokerService.waitUntilStarted();
+                System.out.println("Broker " + brokerService.getBrokerName() + " is started, check = "
+                    + brokerService.isStarted());
+            }
+        }
+        catch (Exception e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
     public void removeAllMessages()
     {
         Map<String, BrokerService> brokers = BrokerRegistry.getInstance().getBrokers();

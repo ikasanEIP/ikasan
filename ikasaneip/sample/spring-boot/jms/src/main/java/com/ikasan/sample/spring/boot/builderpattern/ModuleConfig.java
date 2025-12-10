@@ -56,6 +56,8 @@ import org.springframework.context.annotation.ImportResource;
 import javax.annotation.Resource;
 import jakarta.jms.ConnectionFactory;
 
+import java.util.Map;
+
 @Configuration
 @ImportResource( {
         "classpath:ikasan-transaction-pointcut-jms.xml",
@@ -67,47 +69,93 @@ public class ModuleConfig
     private BuilderFactory builderFactory;
 
     @Value("${jms.provider.url.persistent}")
-    private String brokerUrl;
+    private String brokerUrlPersistent;
 
     @Value("${jms.provider.url}")
-    private String brokerUrlN;
+    private String brokerUrl;
 
     @Bean
     public Module getModule(){
 
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-jms");
 
-        FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
-
-        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
-        Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
-                .setConnectionFactory(consumerConnectionFactory)
-                .setDestinationJndiName("source")
-                .setAutoContentConversion(true)
-                .setConfiguredResourceId("jmsConsumer")
-                .build();
-
-
-        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrlN);
-
-        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
-                .setConnectionFactory(producerConnectionFactory)
-                .setDestinationJndiName("target")
-                .setConfiguredResourceId("jmsProducer")
-                .build();
-
-        Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
-                .consumer("JMS Consumer", jmsConsumer)
-                .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
-                .broker( "Delay Generating Broker", new DelayGenerationBroker())
-                .producer("JMS Producer", jmsProducer)
-                .build();
-
         Module module = mb.withDescription("Sample Module")
-            .addFlow(flow)
+            .addFlow(this.jmsSampleFlow(mb))
+            .addFlow(this.jmsSampleFlowDurableTopic(mb))
             .build();
         return module;
     }
 
+    private Flow jmsSampleFlow(ModuleBuilder mb) {
+        FlowBuilder fb = mb.getFlowBuilder("Jms Sample Flow");
+
+        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
+            .setConnectionFactory(consumerConnectionFactory)
+            .setDestinationJndiName("source")
+            .setAutoContentConversion(true)
+            .setConfiguredResourceId("jmsConsumer")
+            .build();
+
+
+        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+
+        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
+            .setConnectionFactory(producerConnectionFactory)
+            .setDestinationJndiName("target")
+            .setConfiguredResourceId("jmsProducer")
+            .build();
+
+        return fb
+            .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+            .consumer("JMS Consumer", jmsConsumer)
+            .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
+            .broker( "Delay Generating Broker", new DelayGenerationBroker())
+            .producer("JMS Producer", jmsProducer)
+            .build();
+    }
+
+    private Flow jmsSampleFlowDurableTopic(ModuleBuilder mb) {
+        FlowBuilder fb = mb.getFlowBuilder("Jms Durable Sample Flow");
+
+        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrlPersistent);
+        Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
+            .setConnectionFactory(consumerConnectionFactory)
+            .setDestinationJndiName("dynamicTopics/source")
+            .setAutoContentConversion(true)
+            .setConfiguredResourceId("jmsConsumer")
+            .setDurable(true)
+            .setDurableSubscriptionName("test-sub")
+            .setMaxConcurrentConsumers(1)
+            .setConcurrentConsumers(1)
+            .setPubSubDomain(false)
+            .setSessionTransacted(true)
+            .setCacheLevel(1)
+            .setStopWaitTimeoutMilliseconds(3000)
+            .setStopWaitIntervalMilliseconds(300)
+            .setDestinationJndiProperties(Map.of(
+                "java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
+                "naming.provider.url", brokerUrl+"&jms.clientID=test-sub"))
+            .setConnectionFactoryJndiProperties(Map.of(
+                "java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
+                "naming.provider.url", brokerUrl+"&jms.clientID=test-sub"))
+            .setConnectionFactoryName("XAConnectionFactory")
+            .build();
+
+        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+
+        Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
+            .setConnectionFactory(producerConnectionFactory)
+            .setDestinationJndiName("target")
+            .setConfiguredResourceId("jmsProducer")
+            .build();
+
+        return fb
+            .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+            .consumer("JMS Consumer", jmsConsumer)
+            .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
+            .broker( "Delay Generating Broker", new DelayGenerationBroker())
+            .producer("JMS Producer", jmsProducer)
+            .build();
+    }
 }

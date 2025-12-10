@@ -129,6 +129,9 @@ public class JmsConsumerBuilderTest {
                 .setSessionAcknowledgeMode(2)
                 .setSessionTransacted(true)
                 .setPubSubDomain(true)
+                .setStopWaitTimeoutMilliseconds(10000)
+                .setStopWaitIntervalMilliseconds(1000)
+                .setSubscriptionShared(true)
                 .build();
 
         assertTrue("instance should be a JmsConsumer", jmsConsumer instanceof JmsContainerConsumer);
@@ -165,7 +168,12 @@ public class JmsConsumerBuilderTest {
                 configuration.getSessionTransacted());
         assertTrue("PubSubDomain should be 'true'",
                 configuration.getPubSubDomain());
-
+        assertEquals("stopWaitIntervalMilliseconds should be '1000'", 1000,
+            configuration.getStopWaitIntervalMilliseconds());
+        assertEquals("stopWaitTimeoutMilliseconds should be '10000'", 10000,
+            configuration.getStopWaitTimeoutMilliseconds());
+        assertTrue("SubscriptionShared should be 'true'",
+            configuration.isSubscriptionShared());
     }
 
     /**

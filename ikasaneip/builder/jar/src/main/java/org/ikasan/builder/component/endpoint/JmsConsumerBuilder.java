@@ -135,5 +135,10 @@ public interface JmsConsumerBuilder extends Builder<Consumer> {
 
     JmsConsumerBuilder setConnectionPassword(String password);
 
+    JmsConsumerBuilder setStopWaitIntervalMilliseconds(int stopWaitIntervalMilliseconds);
+
+    JmsConsumerBuilder setStopWaitTimeoutMilliseconds(int stopWaitTimeoutMilliseconds);
+
+    JmsConsumerBuilder setSubscriptionShared(boolean subscriptionShared);
 }
 

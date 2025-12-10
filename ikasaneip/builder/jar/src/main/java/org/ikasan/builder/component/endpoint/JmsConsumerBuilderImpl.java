@@ -449,6 +449,24 @@ public class JmsConsumerBuilderImpl implements JmsConsumerBuilder, RequiresAopPr
         return this;
     }
 
+    @Override
+    public JmsConsumerBuilder setStopWaitIntervalMilliseconds(int stopWaitIntervalMilliseconds) {
+        this.getConfiguration().setStopWaitIntervalMilliseconds(stopWaitIntervalMilliseconds);
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setStopWaitTimeoutMilliseconds(int stopWaitTimeoutMilliseconds) {
+        this.getConfiguration().setStopWaitTimeoutMilliseconds(stopWaitTimeoutMilliseconds);
+        return this;
+    }
+
+    @Override
+    public JmsConsumerBuilder setSubscriptionShared(boolean subscriptionShared) {
+        this.getConfiguration().setSubscriptionShared(subscriptionShared);
+        return this;
+    }
+
     /**
      * Configure the raw component based on the properties passed to the builder, configure it
      * ready for use and return the instance.

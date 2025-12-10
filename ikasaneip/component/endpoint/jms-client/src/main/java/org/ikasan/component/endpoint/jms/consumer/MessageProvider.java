@@ -52,7 +52,7 @@ public interface MessageProvider
     /**
      * Stop the container from delivering messages
      */
-    public void stop();
+    public void stopProvider();
     
     /**
      * Start the container 

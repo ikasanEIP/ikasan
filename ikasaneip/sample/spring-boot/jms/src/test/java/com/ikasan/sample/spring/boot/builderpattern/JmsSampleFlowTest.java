@@ -43,34 +43,20 @@ import jakarta.jms.JMSException;
 import jakarta.jms.TextMessage;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
 import org.ikasan.spec.exclusion.ExclusionEvent;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.hospital.service.HospitalService;
-import org.ikasan.spec.module.Module;
-import org.ikasan.testharness.flow.database.DatabaseHelper;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
-import org.junit.*;
-import org.junit.rules.TestName;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -85,50 +71,10 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class JmsSampleFlowTest {
-    protected final static String MODULE_REST_USERNAME_PROPERTY = "rest.module.username";
-    protected final static String MODULE_REST_PASSWORD_PROPERTY = "rest.module.password";
-
-    private static String SAMPLE_MESSAGE = "Hello world!";
-
-    private Logger logger = LoggerFactory.getLogger(JmsSampleFlowTest.class);
-
-    @Rule
-    public TestName name = new TestName();
-
-    @Resource
-    private Module<Flow> moduleUnderTest;
-
-    @Resource
-    private JmsTemplate jmsTemplate;
+public class JmsSampleFlowTest extends JmsSampleFlowTestBase {
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
-
-    @Resource
-    private ErrorReportingServiceFactory errorReportingServiceFactory;
-
-    @Resource
-    private HospitalService hospitalService;
-
-    private ErrorReportingService errorReportingService;
-
-    @Resource
-    private ExclusionManagementService exclusionManagementService;
-
-    private IkasanFlowTestRule flowTestRule;
-
-    @Resource
-    @Autowired
-    @Qualifier("ikasan.xads")
-    private DataSource ikasanxads;
-
-    @LocalServerPort
-    private int randomServerPort;
-
-    private BrowseMessagesOnQueueVerifier browseMessagesOnQueueVerifier;
-
-
 
     @Before
     public void setup() throws JMSException {
@@ -186,34 +132,6 @@ public class JmsSampleFlowTest {
 
     }
 
-    /**
-     * On retry the original message is rolled back - this leaves the message on the consumer destination, this can interfere
-     * with tests that follow if they are waiting for messages to be *produced* on that destination -
-     * contrary to popular belief the AMQBroker is outside the control of Spring
-     * so there is no AMQ restart between tests regardless what DirtiesContext is set to.
-     *
-     * @throws JMSException
-     */
-    private void removeAllMessages() throws Exception {
-        new ActiveMqHelper().removeAllMessages();
-    }
-
-    private void clearDatabase() throws SQLException {
-        new DatabaseHelper(ikasanxads).clearDatabase();
-    }
-
-    private void resetExceptionGeneratingBroker() {
-        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule
-            .getComponent("Exception Generating Broker");
-        exceptionGeneratingBroker.reset();
-    }
-
-    public void resetDelayGeneratingBroker(){
-        DelayGenerationBroker delayGenerationBroker = (DelayGenerationBroker) flowTestRule
-            .getComponent("Delay Generating Broker");
-        delayGenerationBroker.reset();
-    }
-
     @Test
     public void test_exclusion() {
 
@@ -255,7 +173,6 @@ public class JmsSampleFlowTest {
         ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
         assertEquals(error.getUri(), exclusionEvent.getErrorUri());
     }
-
 
     @Test
     public void test_exclusion_followed_by_resubmission() {
@@ -311,24 +228,6 @@ public class JmsSampleFlowTest {
         exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
     }
-
-    private void assertErrorsWithWait(int expectedNumberOfErrors) {
-        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
-                assertEquals(expectedNumberOfErrors, errors.size());
-            });
-    }
-
-
-    private void assertExclusionsWithWait(int expectedNumberOfExclusions) {
-        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(10, TimeUnit.SECONDS)
-            .untilAsserted(() -> {
-                List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
-                assertEquals(expectedNumberOfExclusions, exclusions.size());
-            });
-    }
-
 
     @Test
     public void test_exclusion_followed_by_ignore() {
@@ -407,7 +306,6 @@ public class JmsSampleFlowTest {
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-
         with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
             .untilAsserted(() -> assertEquals("recovering", flowTestRule.getFlowState()));
 
@@ -428,7 +326,6 @@ public class JmsSampleFlowTest {
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
     }
-
 
     @Test
     public void test_flow_in_scheduled_recovery() {
@@ -486,7 +383,6 @@ public class JmsSampleFlowTest {
 
     }
 
-
     @Test
     public void test_flow_stopped_in_error() {
         // setup custom broker to throw an exception
@@ -531,7 +427,6 @@ public class JmsSampleFlowTest {
 
 
     }
-
 
     @Test
     public void test_transaction_timeout_stopped_in_error() {

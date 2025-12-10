@@ -103,22 +103,39 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         this.configuration = configuration;
     }
 
-    public void stopLocal() throws JmsException {
+    @Override
+    public void stopProvider() {
+        this._stop();
+    }
+
+    /**
+     * Stops the message listener container, waiting for it to fully stop before returning.
+     */
+    private void _stop() {
         AtomicBoolean stopped = new AtomicBoolean(false);
         super.stop(() -> {
             stopped.set(true);
         });
 
+        int i = 0;
         while (true) {
-            if (!stopped.get()) {
+            if (!stopped.get() && i<this.configuration.getStopWaitTimeoutMilliseconds()) {
                 try {
-                    Thread.sleep(500);
+                    Thread.sleep(this.configuration
+                        .getStopWaitIntervalMilliseconds());
+                    i+=this.configuration.getStopWaitIntervalMilliseconds();
+                    logger.info("Waiting for message listener container to stop!");
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
             }
             else {
-                this.isRunning();
+                if(i >= this.configuration.getStopWaitTimeoutMilliseconds()) {
+                    // For good measure call stop if we timeout waiting
+                    // for the callback!
+                    super.stop();
+                }
+                logger.info("Message listener container has stopped!");
                 break;
             }
         }
@@ -218,7 +235,7 @@ public class IkasanMessageListenerContainer extends DefaultMessageListenerContai
         setConcurrentConsumers(configuration.getConcurrentConsumers());
         setMaxConcurrentConsumers(configuration.getMaxConcurrentConsumers());
         setCacheLevel(configuration.getCacheLevel());
-//        setSubscriptionShared(true);
+        setSubscriptionShared(configuration.isSubscriptionShared());
 
 
         if(configuration.getDurable() != null)

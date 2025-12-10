@@ -44,6 +44,7 @@ import org.ikasan.spec.configuration.Masked;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Implementation of a consumer configuration for a Spring JMS consumer.
@@ -111,6 +112,24 @@ public class SpringMessageConsumerConfiguration
     private int cacheLevel = 1;
 
     private Integer sessionAcknowledgeMode;
+
+    /**
+     * The interval in milliseconds to determine if the consumer stop callback has been received.
+     */
+    private int stopWaitIntervalMilliseconds = 500;
+
+
+    /**
+     * Timeout total value in milliseconds for waiting for the consumer to stop.
+     */
+    private int stopWaitTimeoutMilliseconds = 5000;
+
+
+    /**
+     * Represents whether the subscription is shared or not.
+     * Default value is false.
+     */
+    private boolean subscriptionShared = false;
 
     public String getDestinationJndiName()
     {
@@ -297,28 +316,54 @@ public class SpringMessageConsumerConfiguration
         this.sessionAcknowledgeMode = sessionAcknowledgeMode;
     }
 
+    public int getStopWaitIntervalMilliseconds() {
+        return stopWaitIntervalMilliseconds;
+    }
+
+    public void setStopWaitIntervalMilliseconds(int stopWaitIntervalMilliseconds) {
+        this.stopWaitIntervalMilliseconds = stopWaitIntervalMilliseconds;
+    }
+
+    public int getStopWaitTimeoutMilliseconds() {
+        return stopWaitTimeoutMilliseconds;
+    }
+
+    public void setStopWaitTimeoutMilliseconds(int stopWaitTimeoutMilliseconds) {
+        this.stopWaitTimeoutMilliseconds = stopWaitTimeoutMilliseconds;
+    }
+
+    public boolean isSubscriptionShared() {
+        return subscriptionShared;
+    }
+
+    public void setSubscriptionShared(boolean subscriptionShared) {
+        this.subscriptionShared = subscriptionShared;
+    }
+
     @Override
-    public String toString()
-    {
-        return "SpringMessageConsumerConfiguration{" +
-                "destinationJndiProperties=" + destinationJndiProperties +
-                ", destinationJndiName='" + destinationJndiName + '\'' +
-                ", connectionFactoryJndiProperties=" + connectionFactoryJndiProperties +
-                ", connectionFactoryName='" + connectionFactoryName + '\'' +
-                ", connectionFactoryUsername='" + connectionFactoryUsername + '\'' +
-                ", connectionFactoryPassword='" + connectionFactoryPassword + '\'' +
-                ", pubSubDomain=" + pubSubDomain +
-                ", durableSubscriptionName='" + durableSubscriptionName + '\'' +
-                ", durable=" + durable +
-                ", sessionTransacted=" + sessionTransacted +
-                ", autoContentConversion=" + autoContentConversion +
-                ", batchMode=" + batchMode +
-                ", batchSize=" + batchSize +
-                ", autoSplitBatch=" + autoSplitBatch +
-                ", maxConcurrentConsumers=" + maxConcurrentConsumers +
-                ", concurrentConsumers=" + concurrentConsumers +
-                ", cacheLevel=" + cacheLevel +
-                ", sessionAcknowledgeMode=" + sessionAcknowledgeMode +
-                '}';
+    public String toString() {
+        return new StringJoiner(", ", SpringMessageConsumerConfiguration.class.getSimpleName() + "[", "]")
+            .add("destinationJndiProperties=" + destinationJndiProperties)
+            .add("destinationJndiName='" + destinationJndiName + "'")
+            .add("connectionFactoryJndiProperties=" + connectionFactoryJndiProperties)
+            .add("connectionFactoryName='" + connectionFactoryName + "'")
+            .add("connectionFactoryUsername='" + connectionFactoryUsername + "'")
+            .add("connectionFactoryPassword='" + connectionFactoryPassword + "'")
+            .add("pubSubDomain=" + pubSubDomain)
+            .add("durableSubscriptionName='" + durableSubscriptionName + "'")
+            .add("durable=" + durable)
+            .add("sessionTransacted=" + sessionTransacted)
+            .add("autoContentConversion=" + autoContentConversion)
+            .add("batchMode=" + batchMode)
+            .add("batchSize=" + batchSize)
+            .add("autoSplitBatch=" + autoSplitBatch)
+            .add("maxConcurrentConsumers=" + maxConcurrentConsumers)
+            .add("concurrentConsumers=" + concurrentConsumers)
+            .add("cacheLevel=" + cacheLevel)
+            .add("sessionAcknowledgeMode=" + sessionAcknowledgeMode)
+            .add("stopWaitIntervalMilliseconds=" + stopWaitIntervalMilliseconds)
+            .add("stopWaitTimeoutMilliseconds=" + stopWaitTimeoutMilliseconds)
+            .add("subscriptionShared=" + subscriptionShared)
+            .toString();
     }
 }

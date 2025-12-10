@@ -40,37 +40,25 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
 import jakarta.jms.JMSException;
+import jakarta.jms.Session;
 import jakarta.jms.TextMessage;
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.command.ActiveMQTopic;
-import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
-import org.ikasan.component.endpoint.jms.spring.consumer.SpringMessageConsumerConfiguration;
-import org.ikasan.spec.error.reporting.ErrorReportingService;
-import org.ikasan.spec.error.reporting.ErrorReportingServiceFactory;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.hospital.service.HospitalService;
-import org.ikasan.spec.module.Module;
-import org.ikasan.testharness.flow.database.DatabaseHelper;
+import org.ikasan.spec.component.endpoint.EndpointException;
+import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.testharness.flow.jms.ActiveMqHelper;
 import org.ikasan.testharness.flow.jms.BrowseMessagesOnQueueVerifier;
 import org.ikasan.testharness.flow.rule.IkasanFlowTestRule;
 import org.junit.*;
-import org.junit.rules.TestName;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.jms.core.JmsTemplate;
+import org.springframework.mock.env.MockEnvironment;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-import javax.sql.DataSource;
-import java.sql.SQLException;
-import java.util.Map;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
@@ -84,57 +72,21 @@ import static org.junit.Assert.assertTrue;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class JmsSampleFlowDurableSubscriptionTest {
-    private static String SAMPLE_MESSAGE = "Hello world!";
-
-    private Logger logger = LoggerFactory.getLogger(JmsSampleFlowDurableSubscriptionTest.class);
-
-    @Rule
-    public TestName name = new TestName();
-
-    @Resource
-    private Module<Flow> moduleUnderTest;
-
-    @Resource
-    private JmsTemplate jmsTemplate;
+@DirtiesContext
+public class JmsSampleFlowDurableSubscriptionTest extends JmsSampleFlowTestBase {
 
     @Value("${jms.provider.url.persistent}")
     private String brokerUrl;
 
     @Value("${jms.provider.url}")
-    private String brokerUrl2;
-
-    @Resource
-    private ErrorReportingServiceFactory errorReportingServiceFactory;
-
-    @Resource
-    private HospitalService hospitalService;
-
-    private ErrorReportingService errorReportingService;
-
-    @Resource
-    private ExclusionManagementService exclusionManagementService;
-
-    private IkasanFlowTestRule flowTestRule;
-
-    @Resource
-    @Autowired
-    @Qualifier("ikasan.xads")
-    private DataSource ikasanxads;
-
-    @LocalServerPort
-    private int randomServerPort;
-
-    private BrowseMessagesOnQueueVerifier browseMessagesOnQueueVerifier;
-
-
+    private String brokerUrlNonPersistent;
 
     @Before
     public void setup() throws JMSException {
         flowTestRule = new IkasanFlowTestRule();
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Durable Sample Flow"));
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
-        browseMessagesOnQueueVerifier = new BrowseMessagesOnQueueVerifier(brokerUrl2, "target" );
+        browseMessagesOnQueueVerifier = new BrowseMessagesOnQueueVerifier(brokerUrlNonPersistent, "target" );
         browseMessagesOnQueueVerifier.start();
     }
 
@@ -146,11 +98,9 @@ public class JmsSampleFlowDurableSubscriptionTest {
         resetExceptionGeneratingBroker();
         resetDelayGeneratingBroker();
         flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError"});
-//        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(brokerUrl);
-//        connectionFactory.createConnection().createSession().unsubscribe("test-sub");
+        this.removeSubscription();
+        this.restartBroker();
     }
-
-
 
     @AfterClass
     public static void shutdownBroker(){
@@ -159,111 +109,256 @@ public class JmsSampleFlowDurableSubscriptionTest {
 
     @Test
     public void test_jms_sample_flow_durable_subscription() throws Exception {
-        // Prepare test dat
+        flowTestRule.startFlow();
 
-//        try {
-            JmsContainerConsumer consumer = (JmsContainerConsumer) this.flowTestRule.getComponent("JMS Consumer");
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
 
-            SpringMessageConsumerConfiguration configuration = this.flowTestRule
-                .getComponentConfig("JMS Consumer", SpringMessageConsumerConfiguration.class);
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.setPubSubDomain(true);
+        ActiveMQTopic activeMQTopic = new ActiveMQTopic("source");
+        for (int i = 0; i < 10000; i++) {
+            jmsTemplate.convertAndSend(activeMQTopic, message);
+        }
 
-            configuration.setDurable(true);
-            configuration.setDurableSubscriptionName("test-sub");
-            configuration.setMaxConcurrentConsumers(1);
-            configuration.setConcurrentConsumers(1);
-            configuration.setPubSubDomain(true);
-            configuration.setSessionTransacted(true);
-            configuration.setDestinationJndiName("dynamicTopics/source");
-            configuration.setCacheLevel(1);
-            configuration.setDestinationJndiProperties(Map.of(
-                "java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
-                "naming.provider.url", brokerUrl));
-            configuration.setConnectionFactoryJndiProperties(Map.of(
-                "java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
-                "naming.provider.url", brokerUrl));
-            configuration.setConnectionFactoryName("XAConnectionFactory");
+        flowTestRule.stopFlow();
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("stopped", flowTestRule.getFlowState()));
+        flowTestRule.startFlow();
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
+        flowTestRule.stopFlow();
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("stopped", flowTestRule.getFlowState()));
+        flowTestRule.startFlow();
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
+        flowTestRule.stopFlow();
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("stopped", flowTestRule.getFlowState()));
+        flowTestRule.startFlow();
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
 
-            //Setup component expectations
-            // start the flow and assert it runs
-            flowTestRule.startFlow();
-            flowTestRule.stopFlow();
 
-            String message = SAMPLE_MESSAGE;
-            logger.info("Sending a JMS message.[" + message + "]");
-            jmsTemplate.setPubSubDomain(true);
-            ActiveMQTopic activeMQTopic = new ActiveMQTopic("source");
-            for (int i = 0; i < 10000; i++) {
-                jmsTemplate.convertAndSend(activeMQTopic, message);
-            }
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(10000, browseMessagesOnQueueVerifier.getCaptureResults().size()));
+        assertEquals(((TextMessage) browseMessagesOnQueueVerifier.getCaptureResults().get(0)).getText(), SAMPLE_MESSAGE);
+    }
 
-//        ActiveMqHelper activeMqHelper = new ActiveMqHelper();
-//        activeMqHelper.shutdownBroker();
-//        activeMqHelper.startBroker(brokerUrl);
-//
-//        browseMessagesOnQueueVerifier = new BrowseMessagesOnQueueVerifier(brokerUrl2, "target" );
-//        browseMessagesOnQueueVerifier.start();
+    @Test
+    public void test_exclusion() {
+        // update broker config to force exception throwing
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowExclusionException(true);
 
-            flowTestRule.startFlow();
+        //Setup component expectations
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
 
-            flowTestRule.stopFlow();
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("stopped", flowTestRule.getFlowState()));
-            flowTestRule.startFlow();
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
-            flowTestRule.stopFlow();
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("stopped", flowTestRule.getFlowState()));
-            flowTestRule.startFlow();
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
-            flowTestRule.stopFlow();
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("stopped", flowTestRule.getFlowState()));
-            flowTestRule.startFlow();
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(30, TimeUnit.SECONDS)
-                .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
 
-            // wait for a brief while to let the flow complete
-//        Thread.sleep(10000);
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
 
-            with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
-                .untilAsserted(() -> assertEquals(10000, browseMessagesOnQueueVerifier.getCaptureResults().size()));
-            assertEquals(((TextMessage) browseMessagesOnQueueVerifier.getCaptureResults().get(0)).getText(), SAMPLE_MESSAGE);
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        ActiveMQTopic activeMQTopic = new ActiveMQTopic("source");
+        jmsTemplate.convertAndSend(activeMQTopic, message);
 
-//        }
-//        catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        //verify no messages were published
+        assertEquals(0, browseMessagesOnQueueVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        assertErrorsWithWait(1);
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ExcludeEvent", error.getAction());
+
+        // Verify the exclusion was stored to DB was stored in DB
+        assertExclusionsWithWait(1);
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(1, exclusions.size());
+        ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
+        assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+    }
+
+
+    @Test
+    public void test_exclusion_followed_by_resubmission() {
+        // update broker config to force exception throwing
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowExclusionException(true);
+
+        //Setup component expectations
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        ActiveMQTopic activeMQTopic = new ActiveMQTopic("source");
+        jmsTemplate.convertAndSend(activeMQTopic, message);
+
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> flowTestRule.assertIsSatisfied());
+
+        //verify no messages were published
+        assertEquals(0, browseMessagesOnQueueVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        assertErrorsWithWait(1);
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(SampleGeneratedException.class.getName(), error.getExceptionClass());
+        assertEquals("ExcludeEvent", error.getAction());
+
+        // Verify the exclusion was stored to DB was stored in DB
+        assertExclusionsWithWait(1);
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(1, exclusions.size());
+        ExclusionEvent exclusionEvent = (ExclusionEvent) exclusions.get(0);
+        assertEquals(error.getUri(), exclusionEvent.getErrorUri());
+
+        MockEnvironment mockEnvironment = new MockEnvironment();
+        mockEnvironment.setProperty(MODULE_REST_USERNAME_PROPERTY, "admin");
+        mockEnvironment.setProperty(MODULE_REST_PASSWORD_PROPERTY, "admin");
+
+        // Prevent the exclusion from being thrown when resubmitting and restart the flow.
+        exceptionGeneratingBroker.setShouldThrowExclusionException(false);
+        this.flowTestRule.stopFlow();
+        this.flowTestRule.startFlow();
+
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", this.flowTestRule.getFlowState()));
+
+        hospitalService.resubmit(this.moduleUnderTest.getName(),
+            "Jms Durable Sample Flow", exclusionEvent.getErrorUri(), "username");
+
+        exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+    }
+
+    @Test
+    public void test_flow_in_recovery() throws JMSException {
+        // setup custom broker to throw an exception
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowRecoveryException(true);
+
+        //Setup component expectations
+        flowTestRule.consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> Assert.assertEquals("running", flowTestRule.getFlowState()));
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        jmsTemplate.setPubSubDomain(true);
+        ActiveMQTopic activeMQTopic = new ActiveMQTopic("source");
+        jmsTemplate.convertAndSend(activeMQTopic, message);
+
+
+        // wait for a brief while to let the flow complete
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering", flowTestRule.getFlowState()));
+
+        flowTestRule.assertIsSatisfied();
+
+        //verify no messages were published
+        assertEquals(0, browseMessagesOnQueueVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        assertErrorsWithWait(1);
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(EndpointException.class.getName(), error.getExceptionClass());
+        assertEquals("Retry (delay=10000, maxRetries=10)", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+    }
+
+    @Test
+    public void test_flow_stopped_in_error() {
+        // setup custom broker to throw an exception
+        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule.getComponent("Exception Generating Broker");
+        exceptionGeneratingBroker.setShouldThrowStoppedInErrorException(true);
+
+        //Setup component expectations
+        flowTestRule
+            .withErrorEndState()
+            .consumer("JMS Consumer")
+            .broker("Exception Generating Broker");
+
+        // start the flow and assert it runs
+        flowTestRule.startFlow();
+
+        // Prepare test data
+        String message = SAMPLE_MESSAGE;
+        logger.info("Sending a JMS message.[" + message + "]");
+        ActiveMQTopic activeMQTopic = new ActiveMQTopic("source");
+        jmsTemplate.convertAndSend(activeMQTopic, message);
+
+        with().pollInterval(50, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("stoppedInError", flowTestRule.getFlowState()));
+
+        flowTestRule.assertIsSatisfied();
+
+        //verify no messages were published
+        assertEquals(0, browseMessagesOnQueueVerifier.getCaptureResults().size());
+
+        // Verify the error was stored in DB
+        assertErrorsWithWait(1);
+        List<Object> errors = errorReportingService.find(null, null, null, null, null, 100);
+        assertEquals(1, errors.size());
+        ErrorOccurrence error = (ErrorOccurrence) errors.get(0);
+        assertEquals(RuntimeException.class.getName(), error.getExceptionClass());
+        assertEquals("Stop", error.getAction());
+
+        // Verify the exclusion was not stored to DB
+        List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
+        assertEquals(0, exclusions.size());
+
 
     }
 
     /**
-     * On retry the original message is rolled back - this leaves the message on the consumer destination, this can interfere
-     * with tests that follow if they are waiting for messages to be *produced* on that destination -
-     * contrary to popular belief the AMQBroker is outside the control of Spring
-     * so there is no AMQ restart between tests regardless what DirtiesContext is set to.
-     *
-     * @throws JMSException
+     * Removes a durable subscription from the specified ActiveMQ broker URL.
+     * If an error occurs during the removal process, an error message is printed to the console.
      */
-    private void removeAllMessages() throws Exception {
-        new ActiveMqHelper().removeAllMessages();
-    }
+    private void removeSubscription()  {
+        try {
+            ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory(this.brokerUrl);
+            Session session = connectionFactory.createConnection().createSession();
 
-    private void clearDatabase() throws SQLException {
-        new DatabaseHelper(ikasanxads).clearDatabase();
-    }
-
-    private void resetExceptionGeneratingBroker() {
-        ExceptionGeneratingBroker exceptionGeneratingBroker = (ExceptionGeneratingBroker) flowTestRule
-            .getComponent("Exception Generating Broker");
-        exceptionGeneratingBroker.reset();
-    }
-
-    public void resetDelayGeneratingBroker(){
-        DelayGenerationBroker delayGenerationBroker = (DelayGenerationBroker) flowTestRule
-            .getComponent("Delay Generating Broker");
-        delayGenerationBroker.reset();
+            session.unsubscribe("test-sub");
+            session.close();
+        }
+        catch (Exception e) {
+            System.out.println("Error removing durable subscription!");
+            e.printStackTrace();
+        }
     }
 
 }
