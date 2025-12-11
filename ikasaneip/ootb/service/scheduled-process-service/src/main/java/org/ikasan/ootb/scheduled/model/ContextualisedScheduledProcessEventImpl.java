@@ -50,6 +50,7 @@ import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contextualised Scheduled Process Event defines the core event managed by the Scheduler Agent that runs within a context
@@ -67,6 +68,8 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     private InternalEventDrivenJobInstance internalEventDrivenJob;
     private boolean raisedDueToFailureResubmission;
     private ScheduledProcessEvent catalystEvent;
+    private Map<String, String> jobExecutionOutputParameters;
+
     @Override
     public String getContextName() {
         return this.contextId;
@@ -135,6 +138,16 @@ public class ContextualisedScheduledProcessEventImpl extends ScheduledProcessEve
     @Override
     public void setCatalystEvent(ScheduledProcessEvent catalystEvent) {
         this.catalystEvent = catalystEvent;
+    }
+
+    @Override
+    public Map<String, String> getJobExecutionOutputParameters() {
+        return jobExecutionOutputParameters;
+    }
+
+    @Override
+    public void setJobExecutionOutputParameters(Map<String, String> jobExecutionOutputParameters) {
+        this.jobExecutionOutputParameters = jobExecutionOutputParameters;
     }
 
     @Override

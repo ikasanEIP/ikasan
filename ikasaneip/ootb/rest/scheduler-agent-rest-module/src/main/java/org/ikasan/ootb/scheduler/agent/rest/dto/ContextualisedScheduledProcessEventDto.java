@@ -6,6 +6,8 @@ import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
+import java.util.StringJoiner;
 
 public class ContextualisedScheduledProcessEventDto implements ContextualisedScheduledProcessEvent<String, DryRunParametersDto>, Serializable {
     private Long id;
@@ -36,6 +38,7 @@ public class ContextualisedScheduledProcessEventDto implements ContextualisedSch
     private boolean raisedDueToFailureResubmission;
     private String executionDetails;
     private ScheduledProcessEvent catalystEvent;
+    private Map<String, String> jobExecutionOutputParameters;
 
     public Long getId()
     {
@@ -326,40 +329,47 @@ public class ContextualisedScheduledProcessEventDto implements ContextualisedSch
     }
 
     @Override
+    public Map<String, String> getJobExecutionOutputParameters() {
+        return jobExecutionOutputParameters;
+    }
+
+    @Override
+    public void setJobExecutionOutputParameters(Map<String, String> jobExecutionOutputParameters) {
+        this.jobExecutionOutputParameters = jobExecutionOutputParameters;
+    }
+
+    @Override
     public String toString() {
-        final StringBuffer sb = new StringBuffer("ContextualisedScheduledProcessEventImpl{");
-        sb.append("id=").append(id);
-        sb.append(", agentName='").append(agentName).append('\'');
-        sb.append(", agentHostname='").append(agentHostname).append('\'');
-        sb.append(", jobName='").append(jobName).append('\'');
-        sb.append(", jobGroup='").append(jobGroup).append('\'');
-        sb.append(", jobDescription='").append(jobDescription).append('\'');
-        sb.append(", commandLine='").append(commandLine).append('\'');
-        sb.append(", returnCode=").append(returnCode);
-        sb.append(", successful=").append(successful);
-        sb.append(", outcome='").append(outcome).append('\'');
-        sb.append(", resultOutput='").append(resultOutput).append('\'');
-        sb.append(", resultError='").append(resultError).append('\'');
-        sb.append(", pid=").append(pid);
-        sb.append(", user='").append(user).append('\'');
-        sb.append(", fireTime=").append(fireTime);
-        sb.append(", nextFireTime=").append(nextFireTime);
-        sb.append(", completionTime=").append(completionTime);
-        sb.append(", dryRun=").append(dryRun);
-        sb.append(", contextName='").append(contextName).append('\'');
-        if(childContextNames != null) {
-            sb.append(", childContextNames=[ ");
-            childContextNames.forEach(id -> sb.append("[").append(id).append("] "));
-        }
-        else {
-            sb.append(", childContextNames='").append(this.childContextNames).append('\'');
-        }
-        sb.append("], contextInstanceId='").append(contextInstanceId).append('\'');
-        sb.append(", jobStarting=").append(jobStarting);
-        sb.append(", dryRunParameters=").append(dryRunParameters);
-        sb.append(", skipped=").append(skipped);
-        sb.append(", internalEventDrivenJob=").append(internalEventDrivenJob);
-        sb.append('}');
-        return sb.toString();
+        return new StringJoiner(", ", ContextualisedScheduledProcessEventDto.class.getSimpleName() + "[", "]")
+            .add("id=" + id)
+            .add("agentName='" + agentName + "'")
+            .add("agentHostname='" + agentHostname + "'")
+            .add("jobName='" + jobName + "'")
+            .add("jobGroup='" + jobGroup + "'")
+            .add("jobDescription='" + jobDescription + "'")
+            .add("commandLine='" + commandLine + "'")
+            .add("returnCode=" + returnCode)
+            .add("successful=" + successful)
+            .add("outcome='" + outcome + "'")
+            .add("resultOutput='" + resultOutput + "'")
+            .add("resultError='" + resultError + "'")
+            .add("pid=" + pid)
+            .add("user='" + user + "'")
+            .add("fireTime=" + fireTime)
+            .add("nextFireTime=" + nextFireTime)
+            .add("completionTime=" + completionTime)
+            .add("dryRun=" + dryRun)
+            .add("contextName='" + contextName + "'")
+            .add("childContextNames=" + childContextNames)
+            .add("contextInstanceId='" + contextInstanceId + "'")
+            .add("jobStarting=" + jobStarting)
+            .add("dryRunParameters=" + dryRunParameters)
+            .add("skipped=" + skipped)
+            .add("internalEventDrivenJob=" + internalEventDrivenJob)
+            .add("raisedDueToFailureResubmission=" + raisedDueToFailureResubmission)
+            .add("executionDetails='" + executionDetails + "'")
+            .add("catalystEvent=" + catalystEvent)
+            .add("jobExecutionOutputParameters=" + jobExecutionOutputParameters)
+            .toString();
     }
 }

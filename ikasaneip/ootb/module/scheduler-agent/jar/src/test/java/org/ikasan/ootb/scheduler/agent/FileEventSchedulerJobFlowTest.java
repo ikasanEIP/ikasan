@@ -211,7 +211,10 @@ public class FileEventSchedulerJobFlowTest {
 
         // Confirm that the correlating identifier has been carried through.
         Assert.assertEquals(contextInstanceIdentifier, event.getContextInstanceId());
-
+        Assert.assertNotNull(event.getJobExecutionOutputParameters());
+        Assert.assertEquals(1, event.getJobExecutionOutputParameters().size());
+        Assert.assertTrue(((String)event.getJobExecutionOutputParameters().get("MATCHED_FILE_ABSOLUTE_PATH"))
+            .contains("src/test/resources/data/test.txt"));
 
         flowTestRule.stopFlow();
     }

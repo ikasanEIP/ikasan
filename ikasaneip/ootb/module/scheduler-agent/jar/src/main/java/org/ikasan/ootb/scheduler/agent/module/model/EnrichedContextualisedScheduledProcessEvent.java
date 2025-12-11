@@ -115,6 +115,7 @@ public class EnrichedContextualisedScheduledProcessEvent extends ContextualisedS
             ", dryRun=" + dryRun +
             ", jobStarting=" + jobStarting +
             ", dryRunParameters=" + dryRunParameters +
+            ", jobExecutionOutputParameters=" + getJobExecutionOutputParameters() +
             '}';
     }
 }

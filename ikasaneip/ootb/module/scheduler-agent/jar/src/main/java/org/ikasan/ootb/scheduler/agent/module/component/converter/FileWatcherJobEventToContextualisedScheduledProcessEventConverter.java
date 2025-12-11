@@ -48,6 +48,9 @@ import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.ikasan.spec.scheduled.event.model.Outcome;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * File list to contextualised scheduled process event converter.
  *
@@ -55,7 +58,6 @@ import org.ikasan.spec.scheduled.event.model.Outcome;
  */
 public class FileWatcherJobEventToContextualisedScheduledProcessEventConverter implements Converter<FileWatcherJobEvent, ContextualisedScheduledProcessEvent> {
     private final String agentName;
-
 
     /**
      * Creates a converter to convert FileWatcherJobEvent to ContextualisedScheduledProcessEvent.
@@ -90,6 +92,15 @@ public class FileWatcherJobEventToContextualisedScheduledProcessEventConverter i
         scheduledProcessEvent.setDryRun(event.isDryRun());
         if(event.getOutcome() != null && !event.getOutcome().isEmpty()) {
             scheduledProcessEvent.setOutcome(Outcome.valueOf(event.getOutcome()));
+        }
+
+        if(event.getCorrelatedFileList() != null && event.getCorrelatedFileList().getFileList() != null
+            && !event.getCorrelatedFileList().getFileList().isEmpty()) {
+            Map<String, String> jobOutputParameters = new HashMap<>();
+            jobOutputParameters.put("MATCHED_FILE_ABSOLUTE_PATH", event.getCorrelatedFileList()
+                .getFileList().get(0).getAbsolutePath());
+
+            scheduledProcessEvent.setJobExecutionOutputParameters(jobOutputParameters);
         }
 
         return scheduledProcessEvent;

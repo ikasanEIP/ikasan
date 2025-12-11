@@ -4,6 +4,7 @@ import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
     extends DryRunParameters> extends ScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS>, Serializable {
@@ -104,4 +105,18 @@ public interface ContextualisedScheduledProcessEvent<OUTCOME, DRY_RUN_PARAMETERS
      * @return
      */
     ScheduledProcessEvent getCatalystEvent();
+
+    /**
+     * Sets the output parameters for the job execution.
+     *
+     * @param jobExecutionOutputParameters a map containing the output parameters of the job execution
+     */
+    void setJobExecutionOutputParameters(Map<String, String> jobExecutionOutputParameters);
+
+    /**
+     * Returns the output parameters of the job execution.
+     *
+     * @return a map containing the output parameters of the job execution
+     */
+    Map<String, String> getJobExecutionOutputParameters();
 }
