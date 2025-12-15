@@ -52,10 +52,20 @@ public class ModuleTestConfig
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Bean
+    @Value("${jms.provider.url.persistent}")
+    private String brokerUrlPersistent;
+
+    @Bean(name = "jmsTemplate")
     JmsTemplate jmsTemplate()
     {
-        JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(brokerUrl));
+        JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(this.brokerUrl));
+        return jmsTemplate;
+    }
+
+    @Bean(name = "jmsTemplateDurable")
+    JmsTemplate jmsTemplateDurable()
+    {
+        JmsTemplate jmsTemplate = new JmsTemplate(new ActiveMQConnectionFactory(this.brokerUrlPersistent));
         return jmsTemplate;
     }
 }

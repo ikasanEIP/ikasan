@@ -118,7 +118,7 @@ public class ModuleConfig
     private Flow jmsSampleFlowDurableTopic(ModuleBuilder mb) {
         FlowBuilder fb = mb.getFlowBuilder("Jms Durable Sample Flow");
 
-        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrlPersistent);
+        ConnectionFactory consumerConnectionFactory = new ActiveMQXAConnectionFactory(this.brokerUrlPersistent+"?jms.clientID=test-sub");
         Consumer jmsConsumer = builderFactory.getComponentBuilder().jmsConsumer()
             .setConnectionFactory(consumerConnectionFactory)
             .setDestinationJndiName("dynamicTopics/source")
@@ -135,23 +135,23 @@ public class ModuleConfig
             .setStopWaitIntervalMilliseconds(300)
             .setDestinationJndiProperties(Map.of(
                 "java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
-                "naming.provider.url", brokerUrl+"&jms.clientID=test-sub"))
+                "naming.provider.url", this.brokerUrlPersistent+"?jms.clientID=test-sub"))
             .setConnectionFactoryJndiProperties(Map.of(
                 "java.naming.factory.initial", "org.apache.activemq.jndi.ActiveMQInitialContextFactory",
-                "naming.provider.url", brokerUrl+"&jms.clientID=test-sub"))
+                "naming.provider.url", this.brokerUrlPersistent+"?jms.clientID=test-sub"))
             .setConnectionFactoryName("XAConnectionFactory")
             .build();
 
-        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(brokerUrl);
+        ConnectionFactory producerConnectionFactory = new ActiveMQXAConnectionFactory(this.brokerUrlPersistent);
 
         Producer jmsProducer = builderFactory.getComponentBuilder().jmsProducer()
             .setConnectionFactory(producerConnectionFactory)
-            .setDestinationJndiName("target")
+            .setDestinationJndiName("dynamicQueues/target")
             .setConfiguredResourceId("jmsProducer")
             .build();
 
         return fb
-            .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+            .withDescription("Flow demonstrates usage of JMS Consumer and JMS Producer")
             .consumer("JMS Consumer", jmsConsumer)
             .broker( "Exception Generating Broker", new ExceptionGeneratingBroker())
             .broker( "Delay Generating Broker", new DelayGenerationBroker())

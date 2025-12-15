@@ -88,9 +88,6 @@ public abstract class JmsSampleFlowTestBase {
     @Resource
     protected Module<Flow> moduleUnderTest;
 
-    @Resource
-    protected JmsTemplate jmsTemplate;
-
     @Value("${jms.provider.url}")
     protected String brokerUrl;
 

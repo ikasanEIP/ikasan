@@ -117,7 +117,7 @@ public class ActiveMqHelper
         }
     }
 
-    private class ActiveMQBrokerExtension
+    public static class ActiveMQBrokerExtension
     {
         private final Broker broker;
 
