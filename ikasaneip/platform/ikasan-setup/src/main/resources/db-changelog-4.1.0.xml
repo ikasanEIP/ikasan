@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.0.xsd">
+
+    <!-- 4.1.x table creation -->
+
+    <!-- 4.1.x table alterations -->
+
+    <!-- 4.1.x cardinality creation -->
+
+    <!-- 4.1.x data creation -->
+
+    <!-- 4.1.x index creation -->
+
+    <!-- 4.1.x table drop -->
+
+    <!-- 4.1.x table modify -->
+    <include file="db/modify/db-changeLog-modifyConfParamMapStringValueColumnToText.xml" relativeToChangelogFile="true" />
+
+</databaseChangeLog>
