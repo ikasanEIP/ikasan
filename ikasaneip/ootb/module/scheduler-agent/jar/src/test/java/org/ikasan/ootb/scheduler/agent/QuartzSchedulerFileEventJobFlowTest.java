@@ -46,11 +46,9 @@ import org.awaitility.Awaitility;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
-import org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles;
 import org.ikasan.ootb.scheduler.agent.module.Application;
 import org.ikasan.ootb.scheduler.agent.module.boot.recovery.AgentInstanceRecoveryManager;
 import org.ikasan.ootb.scheduler.agent.module.component.converter.configuration.FileWatcherJobConverterConfiguration;
-import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.rest.cache.ContextInstanceCache;
 import org.ikasan.ootb.scheduler.agent.rest.cache.InternalFileWatcherJobQueueCache;
 import org.ikasan.ootb.scheduler.agent.rest.dto.ContextParameterInstanceDto;
@@ -59,7 +57,6 @@ import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.scheduled.context.model.ContextParameter;
 import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.ContextInstance;
@@ -69,7 +66,6 @@ import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -80,8 +76,6 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
 /**

@@ -109,8 +109,14 @@ public class ContextInstanceCache {
      * @return The value of the context parameter matching the correlation ID and parameter name. If not found, returns an empty string.
      */
     public static String getContextParameter(String correlationId, String contextParameterName) {
+        String returnValue;
         if (correlationId != null && contextParameterName != null) {
             ContextInstance instance = ContextInstanceCache.instance().getByCorrelationId(correlationId);
+            if(instance == null) {
+                LOG.info(String.format("Could not find context parameter for job plan instance instance[%s] and parameter name [%s]. " +
+                    "The context instance was not present in the context instance cache!", correlationId, contextParameterName));
+                return "JOB_PLAN_INSTANCE_NOT_FOUND_IN_CACHE";
+            }
             if (instance != null) {
                 List<ContextParameterInstance> contextParameters = instance.getContextParameters();
                 if (contextParameters != null) {
@@ -127,8 +133,8 @@ public class ContextInstanceCache {
 
         // We return an empty String if nothing found!
         LOG.info(String.format("Could not find context parameter for job plan instance instance[%s] and parameter name [%s]. " +
-            "Returning empty String.", correlationId, contextParameterName));
-        return "";
+            "The context parameter was not present in the context instance!", correlationId, contextParameterName));
+        return "CONTEXT_PARAMETER_NOT_FOUND_IN_JOB_PLAN_INSTANCE";
     }
 
     /**
