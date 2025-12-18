@@ -16,25 +16,25 @@ import static org.junit.Assert.*;
 public class ContextInstanceCacheTest {
 
     @Test
-    public void getContextParameter_should_return_empth_string_values() {
-        assertEquals("",ContextInstanceCache.getContextParameter(null, "contextParameterName"));
-        assertEquals("",ContextInstanceCache.getContextParameter("contextInstanceId", null));
+    public void getContextParameter_should_return_relevant_string_values() {
+        assertEquals("CONTEXT_PARAMETER_NOT_FOUND_IN_JOB_PLAN_INSTANCE",ContextInstanceCache.getContextParameter(null, "contextParameterName"));
+        assertEquals("CONTEXT_PARAMETER_NOT_FOUND_IN_JOB_PLAN_INSTANCE",ContextInstanceCache.getContextParameter("contextInstanceId", null));
     }
 
     @Test
-    public void getContextParameter_should_return_empth_string_null_context_instance() {
+    public void getContextParameter_should_return_relevant_string_null_context_instance() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
-        assertEquals("",ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
+        assertEquals("JOB_PLAN_INSTANCE_NOT_FOUND_IN_CACHE",ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
     }
 
     @Test
-    public void getContextParameter_should_return_empty_string_null_context_parameters() {
+    public void getContextParameter_should_return_relevant_string_null_context_parameters() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
 
         ContextInstanceCache.instance().put(instance.getId(), instance);
-        assertEquals("", ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
+        assertEquals("CONTEXT_PARAMETER_NOT_FOUND_IN_JOB_PLAN_INSTANCE", ContextInstanceCache.getContextParameter(contextInstanceId, "contextParameterName"));
     }
 
     @Test
@@ -54,7 +54,7 @@ public class ContextInstanceCacheTest {
     }
 
     @Test
-    public void getContextParameter_should_return_empty_string_with_context_parameters_null_name() {
+    public void getContextParameter_should_return_relevant_string_with_context_parameters_null_name() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -66,11 +66,11 @@ public class ContextInstanceCacheTest {
         instance.setContextParameters(params);
 
         ContextInstanceCache.instance().put(instance.getId(), instance);
-        assertEquals("", ContextInstanceCache.getContextParameter(contextInstanceId, "BusinessDate"));
+        assertEquals("CONTEXT_PARAMETER_NOT_FOUND_IN_JOB_PLAN_INSTANCE", ContextInstanceCache.getContextParameter(contextInstanceId, "BusinessDate"));
     }
 
     @Test
-    public void getContextParameter_should_return_empty_string_with_context_parameters_null_value() {
+    public void getContextParameter_should_return_relevant_string_with_context_parameters_null_value() {
         String contextInstanceId = RandomStringUtils.randomAlphanumeric(12);
         ContextInstance instance = new ContextInstanceImpl();
         instance.setId(contextInstanceId);
@@ -81,7 +81,7 @@ public class ContextInstanceCacheTest {
         instance.setContextParameters(params);
 
         ContextInstanceCache.instance().put(instance.getId(), instance);
-        assertEquals("",ContextInstanceCache.getContextParameter(contextInstanceId, "BusinessDate"));
+        assertEquals("CONTEXT_PARAMETER_NOT_FOUND_IN_JOB_PLAN_INSTANCE",ContextInstanceCache.getContextParameter(contextInstanceId, "BusinessDate"));
     }
 
     @Test
