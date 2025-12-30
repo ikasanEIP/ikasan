@@ -10,12 +10,14 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.job.orchestration.model.context.*;
 import org.ikasan.job.orchestration.model.job.*;
+import org.ikasan.ootb.scheduler.agent.rest.dto.ErrorDto;
 import org.ikasan.spec.scheduled.context.model.*;
 import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.spec.scheduled.job.model.ReplacementPair;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobWrapper;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
+import org.ikasan.spec.scheduled.provision.JobProvisionServiceLockedException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -119,6 +121,50 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_unable_to_obtain_lock_exception_job_provision_jobs_put() throws Exception {
+        doThrow(new JobProvisionServiceLockedException("error provisioning jobs!"))
+            .when(jobProvisionService).provisionJobs(anyList(), anyString());
+
+        String payload = createSchedulerJobWrapper();
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/jobProvision")
+            .content(payload)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        ErrorDto errorDto = new ObjectMapper().readValue(result.getResponse().getContentAsString(), ErrorDto.class);
+        assertEquals("LOCK_ACQUISITION_ERROR", errorDto.getErrorCode());
+        assertEquals("An error has occurred attempting to provision scheduler " +
+            "jobs! Error message [error provisioning jobs!]", errorDto.getErrorMessage());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_unable_to_obtain_lock_exception_job_provision_jobs_remove() throws Exception {
+        doThrow(new JobProvisionServiceLockedException("error provisioning jobs!"))
+            .when(jobProvisionService).removeJobs(anyString());
+
+        String payload = "contextName";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/rest/jobProvision/remove")
+            .content(payload)
+            .accept(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.BAD_REQUEST.value(), result.getResponse().getStatus());
+        ErrorDto errorDto = new ObjectMapper().readValue(result.getResponse().getContentAsString(), ErrorDto.class);
+        assertEquals("LOCK_ACQUISITION_ERROR", errorDto.getErrorCode());
+        assertEquals("An error has occurred attempting to remove scheduler jobs for context[contextName]! " +
+            "Error message [error provisioning jobs!]", errorDto.getErrorMessage());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
     public void test_success_job_provision_jobs_put() throws Exception {
         String payload = createSchedulerJobWrapper();
 
@@ -178,7 +224,7 @@ public class JobProvisionApplicationTest {
 
     @Test
     @WithMockUser(authorities = "readonly")
-    public void test_execption_job_remove_delete_read_only() throws Exception {
+    public void test_exception_job_remove_delete_read_only() throws Exception {
         exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
         String payload = "contextName";
 

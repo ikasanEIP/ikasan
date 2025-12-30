@@ -1,5 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
+import org.awaitility.Awaitility;
 import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.job.orchestration.model.job.InternalEventDrivenJobImpl;
@@ -21,10 +22,11 @@ import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
+import org.ikasan.spec.scheduled.provision.JobProvisionServiceException;
+import org.ikasan.spec.scheduled.provision.JobProvisionServiceLockedException;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,14 +36,19 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.FILE;
 import static org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles.QUARTZ;
+import static org.mockito.AdditionalAnswers.answersWithDelay;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
@@ -214,6 +221,153 @@ public class JobProvisionServiceImplTest {
         verifyNoMoreInteractions(agentInstanceRecoveryManager);
     }
 
+    @Test(expected = JobProvisionServiceLockedException.class)
+    public void test_provision_twice_with_lock_acquisition_failure() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        setupWhenDelay();
+
+        AtomicReference<JobProvisionServiceLockedException> exception =
+            new AtomicReference<>();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        executor.submit(() ->  {
+            try {
+                this.service.provisionJobs(this.getJobs(), "system");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+        executor.submit(() -> {
+            try {
+                this.service.provisionJobs(this.getJobs(), "system");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> Assert.assertNotNull(exception.get()));
+
+        Assert.assertEquals("An attempt to provision jobs has failed to obtain the lock indicating that " +
+            "another thread is currently performing a reconfiguration operation against the agent!", exception.get().getMessage());
+
+        throw exception.get();
+    }
+
+    @Test(expected = JobProvisionServiceLockedException.class)
+    public void test_remove_jobs_twice_with_lock_acquisition_failure() {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        setupWhenDelay();
+
+        AtomicReference<JobProvisionServiceLockedException> exception =
+            new AtomicReference<>();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        executor.submit(() ->  {
+            try {
+                this.service.removeJobs("contextName");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+        executor.submit(() -> {
+            try {
+                this.service.removeJobs("contextName");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> Assert.assertNotNull(exception.get()));
+
+        Assert.assertEquals("An attempt to remove jobs for job plan[contextName] has failed to obtain the lock " +
+            "indicating that another thread is currently performing a reconfiguration operation against the agent!"
+            , exception.get().getMessage());
+
+        throw exception.get();
+    }
+
+    @Test(expected = JobProvisionServiceLockedException.class)
+    public void test_provision_jobs_followed_by_remove_jobs_with_lock_acquisition_failure() throws InterruptedException {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        setupWhenDelay();
+
+        AtomicReference<JobProvisionServiceLockedException> exception =
+            new AtomicReference<>();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        executor.submit(() ->  {
+            try {
+                this.service.provisionJobs(this.getJobs(), "system");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+        // Add sleep to make sure provision job thread gets lock
+        Thread.sleep(200);
+        executor.submit(() -> {
+            try {
+                this.service.removeJobs("contextName");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> Assert.assertNotNull(exception.get()));
+
+        Assert.assertEquals("An attempt to remove jobs for job plan[contextName] has failed to obtain the lock " +
+                "indicating that another thread is currently performing a reconfiguration operation against the agent!"
+            , exception.get().getMessage());
+
+        throw exception.get();
+    }
+
+    @Test(expected = JobProvisionServiceLockedException.class)
+    public void test_remove_jobs_followed_by_provision_jobs_with_lock_acquisition_failure() throws InterruptedException {
+        SecurityContextHolder.getContext().setAuthentication(ikasanAuthentication);
+
+        setupWhenDelay();
+
+        AtomicReference<JobProvisionServiceLockedException> exception =
+            new AtomicReference<>();
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        executor.submit(() ->  {
+            try {
+                this.service.removeJobs("contextName");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+        // Add sleep to make sure provision job thread gets lock
+        Thread.sleep(200);
+        executor.submit(() -> {
+            try {
+                this.service.provisionJobs(this.getJobs(), "system");
+            }
+            catch (JobProvisionServiceLockedException e) {
+                exception.set(e);
+            }
+        });
+
+        Awaitility.await().atMost(Duration.ofSeconds(30))
+            .untilAsserted(() -> Assert.assertNotNull(exception.get()));
+
+        Assert.assertEquals("An attempt to provision jobs has failed to obtain the lock indicating that another " +
+                "thread is currently performing a reconfiguration operation against the agent!"
+            , exception.get().getMessage());
+
+        throw exception.get();
+    }
+
     @Test
     public void test_provision_job_configurations_only_success() {
         ReflectionTestUtils.setField(this.service, "moduleName", "moduleName");
@@ -364,8 +518,6 @@ public class JobProvisionServiceImplTest {
         Assert.assertEquals(0, configuration.getFlowDefinitionProfiles().size());
     }
 
-
-
     private void setupWhen() {
         when(moduleService.getModule(null)).thenReturn(module);
         when(module.getConfiguration()).thenReturn(configureModuleConfiguration);
@@ -399,6 +551,13 @@ public class JobProvisionServiceImplTest {
         when(scheduledProcessEventFilter.getConfiguredResourceId()).thenReturn("id");
         when(scheduledProcessEventFilter.getConfiguration()).thenReturn(scheduledProcessEventFilterConfiguration);
         when(ikasanAuthentication.getPrincipal()).thenReturn("ikasan-user");
+    }
+
+    private void setupWhenDelay() {
+        when(this.moduleService.getModule(null))
+            .thenAnswer(answersWithDelay(1000, invocation -> module));
+        when(module.getConfiguration()).thenReturn(configureModuleConfiguration);
+        when(module.getFlow(anyString())).thenReturn(flow);
     }
 
     private Map<String, String> getJobContextMap() {
