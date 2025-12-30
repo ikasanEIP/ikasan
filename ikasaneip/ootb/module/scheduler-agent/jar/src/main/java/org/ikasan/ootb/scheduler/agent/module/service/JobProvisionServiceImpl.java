@@ -70,12 +70,14 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     }
 
     @Override
-    public synchronized void provisionJobs(List<SchedulerJob> jobs, String actor) {
-        if(!lock.tryLock()) {
-            String message = "An attempt to provision jobs has failed to obtain the lock indicating that " +
-                "another thread is currently performing a reconfiguration operation against the agent!";
-            logger.warn(message);
-            throw new JobProvisionServiceLockedException(message);
+    public void provisionJobs(List<SchedulerJob> jobs, String actor) {
+        synchronized (this) {
+            if (!lock.tryLock()) {
+                String message = "An attempt to provision jobs has failed to obtain the lock indicating that " +
+                    "another thread is currently performing a reconfiguration operation against the agent!";
+                logger.warn(message);
+                throw new JobProvisionServiceLockedException(message);
+            }
         }
 
         try
@@ -163,12 +165,14 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     }
 
     @Override
-    public synchronized void removeJobs(String contextName) {
-        if(!lock.tryLock()) {
-            String message = String.format("An attempt to remove jobs for job plan[%s] has failed to obtain the lock indicating that " +
-                "another thread is currently performing a reconfiguration operation against the agent!", contextName);
-            logger.warn(message);
-            throw new JobProvisionServiceLockedException(message);
+    public void removeJobs(String contextName) {
+        synchronized (this) {
+            if (!lock.tryLock()) {
+                String message = String.format("An attempt to remove jobs for job plan[%s] has failed to obtain the lock indicating that " +
+                    "another thread is currently performing a reconfiguration operation against the agent!", contextName);
+                logger.warn(message);
+                throw new JobProvisionServiceLockedException(message);
+            }
         }
 
         try {
