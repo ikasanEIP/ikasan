@@ -26,6 +26,8 @@ import org.ikasan.spec.scheduled.job.model.InternalEventDrivenJob;
 import org.ikasan.spec.scheduled.job.model.QuartzScheduleDrivenJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
+import org.ikasan.spec.scheduled.provision.JobProvisionServiceException;
+import org.ikasan.spec.scheduled.provision.JobProvisionServiceLockedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class JobProvisionServiceImpl implements JobProvisionService {
 
@@ -56,6 +59,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     @Autowired
     private AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
+    private final ReentrantLock lock = new ReentrantLock();
     private ObjectMapper objectMapper;
 
     /**
@@ -66,7 +70,14 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     }
 
     @Override
-    public void provisionJobs(List<SchedulerJob> jobs, String actor) {
+    public synchronized void provisionJobs(List<SchedulerJob> jobs, String actor) {
+        if(!lock.tryLock()) {
+            String message = "An attempt to provision jobs has failed to obtain the lock indicating that " +
+                "another thread is currently performing a reconfiguration operation against the agent!";
+            logger.warn(message);
+            throw new JobProvisionServiceLockedException(message);
+        }
+
         try
         {
             long now = System.currentTimeMillis();
@@ -109,8 +120,18 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             logger.error("An error has occurred attempting to provision jobs!", e);
             throw new JobProvisionServiceException(e);
         }
+        finally {
+            lock.unlock();
+        }
     }
 
+
+    /**
+     * Provision job configurations for a list of SchedulerJob objects with only configuration changes.
+     *
+     * @param jobs the list of SchedulerJob objects to provision configurations for
+     * @param actor the actor performing the job provisioning
+     */
     public void provisionJobConfigurationsOnly(List<SchedulerJob> jobs, String actor) {
         try
         {
@@ -136,32 +157,49 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             agentInstanceRecoveryManager.init();
         }
         catch (Exception e) {
-            logger.error("An error has occurred attempting to provision jobs!", e);
+            logger.error("An error has occurred attempting to provision job configurations olny!", e);
             throw new JobProvisionServiceException(e);
         }
     }
 
     @Override
-    public void removeJobs(String contextName) {
-        logger.info(String.format("Removing jobs for context[%s].", contextName));
-        Module<Flow> module = this.moduleService.getModule(moduleName);
-        ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
-        ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
+    public synchronized void removeJobs(String contextName) {
+        if(!lock.tryLock()) {
+            String message = String.format("An attempt to remove jobs for job plan[%s] has failed to obtain the lock indicating that " +
+                "another thread is currently performing a reconfiguration operation against the agent!", contextName);
+            logger.warn(message);
+            throw new JobProvisionServiceLockedException(message);
+        }
 
-        this.deleteComponentConfigurations(module.getFlows(), configuredModuleConfiguration, contextName);
+        try {
+            logger.info(String.format("Removing jobs for context[%s].", contextName));
+            Module<Flow> module = this.moduleService.getModule(moduleName);
+            ConfiguredResource<ConfiguredModuleConfiguration> configuredModule = getConfiguredResource(module);
+            ConfiguredModuleConfiguration configuredModuleConfiguration = configuredModule.getConfiguration();
 
-        logger.info(String.format("Deactivating module [%s]", this.moduleName));
-        moduleActivator.deactivate(module);
-        logger.info(String.format("Deactivated module [%s]", this.moduleName));
+            this.deleteComponentConfigurations(module.getFlows(), configuredModuleConfiguration, contextName);
 
-        this.clearFlowConfig(configuredModuleConfiguration, contextName);
-        this.configurationService.update(configuredModule);
+            logger.info(String.format("Deactivating module [%s]", this.moduleName));
+            moduleActivator.deactivate(module);
+            logger.info(String.format("Deactivated module [%s]", this.moduleName));
 
-        logger.info(String.format("Activating module [%s]", this.moduleName));
-        moduleActivator.activate(module);
-        logger.info(String.format("Activated module [%s]", this.moduleName));
+            this.clearFlowConfig(configuredModuleConfiguration, contextName);
+            this.configurationService.update(configuredModule);
 
-        logger.info(String.format("Finished removing jobs for context[%s].", contextName));
+            logger.info(String.format("Activating module [%s]", this.moduleName));
+            moduleActivator.activate(module);
+            logger.info(String.format("Activated module [%s]", this.moduleName));
+
+            logger.info(String.format("Finished removing jobs for context[%s].", contextName));
+        }
+        catch (Exception e) {
+            logger.error(String.format("An error has occurred attempting to remove jobs for context[%s]!", contextName)
+                , e);
+            throw new JobProvisionServiceException(e);
+        }
+        finally {
+            this.lock.unlock();
+        }
     }
 
     /**

@@ -20,6 +20,7 @@ import org.ikasan.spec.module.ModuleActivator;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.scheduled.job.model.*;
 import org.ikasan.spec.scheduled.provision.JobProvisionService;
+import org.ikasan.spec.scheduled.provision.JobProvisionServiceLockedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +88,15 @@ public class JobProvisionApplication {
 
             this.jobProvisionService.provisionJobs(schedulerJobWrapper.getJobs(), "system");
         }
+        catch (JobProvisionServiceLockedException e)
+        {
+            logger.error("An error has occurred attempting to provision scheduler jobs! Could not acquire lock!", e);
+            return new ResponseEntity(
+                new ErrorDto("LOCK_ACQUISITION_ERROR", "An error has occurred attempting to " +
+                    "provision scheduler jobs! Error message [" + e.getMessage() + "]"), HttpStatus.BAD_REQUEST);
+        }
         catch (Exception e)
         {
-            e.printStackTrace();
             logger.error("An error has occurred attempting to provision scheduler jobs!", e);
             return new ResponseEntity(
                 new ErrorDto("An error has occurred attempting to provision scheduler jobs! Error message ["
@@ -104,11 +111,19 @@ public class JobProvisionApplication {
         try {
             this.jobProvisionService.removeJobs(contextName);
         }
+        catch (JobProvisionServiceLockedException e)
+        {
+            logger.error("An error has occurred attempting to remove scheduler jobs for context[%s]!".formatted(contextName), e);
+            return new ResponseEntity(
+                new ErrorDto("LOCK_ACQUISITION_ERROR", "An error has occurred attempting to remove " +
+                    "scheduler jobs for context[%s]! Error message [%s]".formatted(contextName, e.getMessage())), HttpStatus.BAD_REQUEST);
+        }
         catch (Exception e) {
             e.printStackTrace();
             logger.error("An error has occurred attempting to remove scheduler jobs for context[%s]!".formatted(contextName), e);
             return new ResponseEntity(
-                new ErrorDto("An error has occurred attempting to remove scheduler jobs for context[%s]! Error message [%s]".formatted(contextName, e.getMessage())), HttpStatus.BAD_REQUEST);
+                new ErrorDto(("An error has occurred attempting to remove scheduler jobs for context[%s]! " +
+                    "Error message [%s]").formatted(contextName, e.getMessage())), HttpStatus.BAD_REQUEST);
         }
         return new ResponseEntity(HttpStatus.OK);
     }
