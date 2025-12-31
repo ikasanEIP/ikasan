@@ -556,8 +556,6 @@ public class JobProvisionServiceImplTest {
     private void setupWhenDelay() {
         when(this.moduleService.getModule(null))
             .thenAnswer(answersWithDelay(1000, invocation -> module));
-        when(module.getConfiguration()).thenReturn(configureModuleConfiguration);
-        when(module.getFlow(anyString())).thenReturn(flow);
     }
 
     private Map<String, String> getJobContextMap() {
