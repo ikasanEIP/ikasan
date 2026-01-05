@@ -158,7 +158,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
             agentInstanceRecoveryManager.init();
         }
         catch (Exception e) {
-            logger.error("An error has occurred attempting to provision job configurations olny!", e);
+            logger.error("An error has occurred attempting to provision job configurations only!", e);
             throw new JobProvisionServiceException(e);
         }
     }
