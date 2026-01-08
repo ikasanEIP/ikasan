@@ -76,12 +76,14 @@ public class AuthenticationMethod
     private String ldapUserSearchBaseDn = "";
     @Column(name = "AppSecBaseDn", nullable = false)
     private String applicationSecurityBaseDn = "";
-    @Column(name = "AppSecDescAttributeName", nullable = false)
+    @Column(name = "AppSecGroupAttributeName", nullable = false)
     private String applicationSecurityGroupAttributeName = "";
     @Column(name = "LdapUserSearchFilter", nullable = false)
     private String ldapUserSearchFilter = "";
     @Column(name = "AccountTypeAttributeName", nullable = false)
     private String accountTypeAttributeName = "";
+    @Column(name = "UserAccMappingAttributeName", nullable = false)
+    private String userAccountMappingAttributeName = "";
     @Column(name = "UserAccNameAttributeName", nullable = false)
     private String userAccountNameAttributeName = "";
     @Column(name = "EmailAttributeName", nullable = false)
@@ -94,7 +96,7 @@ public class AuthenticationMethod
     private String departmentAttributeName = "";
     @Column(name = "LdapUserDescAttributeName", nullable = false)
     private String ldapUserDescriptionAttributeName = "";
-    @Column(name = "AppSecGroupAttributeName", nullable = false)
+    @Column(name = "AppSecDescAttributeName", nullable = false)
     private String applicationSecurityDescriptionAttributeName = "";
     @Column(name = "MemberofAttributeName", nullable = false)
     private String memberofAttributeName = "";
@@ -255,8 +257,26 @@ public class AuthenticationMethod
 	{
 		this.accountTypeAttributeName = accountTypeAttributeName;
 	}
-	
-	/**
+
+    /**
+     * Retrieves the name of the attribute used for mapping the user account in the authentication method.
+     *
+     * @return the user account mapping attribute name
+     */
+    public String getUserAccountMappingAttributeName() {
+        return userAccountMappingAttributeName;
+    }
+
+    /**
+     * Sets the name of the attribute used for mapping the user account in the authentication method.
+     *
+     * @param userAccountMappingAttributeName the name of the attribute used for mapping the user account
+     */
+    public void setUserAccountMappingAttributeName(String userAccountMappingAttributeName) {
+        this.userAccountMappingAttributeName = userAccountMappingAttributeName;
+    }
+
+    /**
 	 * @return the userAccountNameAttributeName
 	 */
 	public String getUserAccountNameAttributeName()

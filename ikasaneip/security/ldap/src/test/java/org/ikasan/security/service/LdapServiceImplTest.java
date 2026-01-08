@@ -12,6 +12,7 @@ import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethod;
+import org.ikasan.security.model.User;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -20,20 +21,21 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import javax.naming.NamingException;
-
+import org.springframework.ldap.CommunicationException;
 import org.springframework.ldap.UncategorizedLdapException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import org.springframework.ldap.CommunicationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.util.Optional;
 import java.util.stream.Stream;
+
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SecurityAutoConfiguration.class, LdapSecurityTestAutoConfiguration.class})
@@ -52,6 +54,9 @@ public class LdapServiceImplTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private User user;
 
     @Mock
     private PasswordEncoder passwordEncoder;
@@ -142,6 +147,46 @@ public class LdapServiceImplTest {
             Assert.assertEquals("LDAP response read timed out, timeout used: 1 ms.", rootCause.get().getMessage());
             throw exception;
         }
+    }
+
+    @Test
+    public void test_synchronise_success() throws LdapServiceException {
+        when(this.userDao.getUser(anyString())).thenReturn(this.user);
+        AuthenticationMethod authMethod = new AuthenticationMethod();
+        authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
+        authMethod.setLdapServerUrl(this.ldapServerUrl);
+        authMethod.setOrder(1L);
+        authMethod.setEnabled(true);
+        authMethod.setLdapBindUserDn("cn=Directory Manager");
+        authMethod.setLdapBindUserPassword("password");
+        authMethod.setLdapUserSearchBaseDn("ou=people,dc=slidev,dc=org");
+        authMethod.setApplicationSecurityBaseDn("ou=groups,ou=IL-Sunset,ou=DevTest,dc=slidev,dc=org");
+        authMethod.setLdapUserSearchFilter("(uid={0})");
+        authMethod.setUserSynchronisationFilter("(objectClass=account)");
+        authMethod.setGroupSynchronisationFilter("(objectClass=posixGroup)");
+        authMethod.setUserAccountMappingAttributeName("gecos");
+        authMethod.setAccountTypeAttributeName("uid");
+        authMethod.setEmailAttributeName("uid");
+        authMethod.setSurnameAttributeName("uid");
+        authMethod.setFirstNameAttributeName("uid");
+        authMethod.setUserAccountNameAttributeName("uid");
+        authMethod.setDepartmentAttributeName("uid");
+        authMethod.setLdapUserDescriptionAttributeName("uid");
+        authMethod.setMemberofAttributeName("uid");
+        authMethod.setApplicationSecurityGroupAttributeName("cn");
+        authMethod.setApplicationSecurityDescriptionAttributeName("cn");
+        ldapService = new LdapServiceImpl(this.securityDao, this.userDao, this.passwordEncoder
+            , 1000, 1000);
+
+        ldapService.synchronize(authMethod);
+
+        verify(securityDao, times(38)).getPrincipalByName(anyString());
+        verify(securityDao, times(38)).saveOrUpdatePrincipal(any());
+        verify(userDao, times(34)).getUser(anyString());
+        verify(userDao, times(34)).save(any());
+
+        verifyNoMoreInteractions(this.securityDao,
+            this.userDao);
     }
 
     @Test
