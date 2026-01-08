@@ -70,10 +70,10 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void saveOrUpdateRole(Role role)
     {
-    	role.setUpdatedDateTime(new Date());
         if(!this.entityManager.contains(role)) {
             role = entityManager.merge(role);
         }
+        role.setUpdatedDateTime(new Date());
     	this.entityManager.persist(role);
     }
 
@@ -84,10 +84,10 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void saveOrUpdatePolicy(Policy policy)
     {
-    	policy.setUpdatedDateTime(new Date());
         if(!this.entityManager.contains(policy)) {
             policy = entityManager.merge(policy);
         }
+        policy.setUpdatedDateTime(new Date());
     	this.entityManager.persist(policy);
     }
 
@@ -98,10 +98,10 @@ public class HibernateSecurityDao implements SecurityDao
     @Override
     public void saveOrUpdatePrincipal(IkasanPrincipal principal)
     {
-    	principal.setUpdatedDateTime(new Date());
         if(!this.entityManager.contains(principal)) {
             principal = entityManager.merge(principal);
         }
+        principal.setUpdatedDateTime(new Date());
     	this.entityManager.persist(principal);
     }
 

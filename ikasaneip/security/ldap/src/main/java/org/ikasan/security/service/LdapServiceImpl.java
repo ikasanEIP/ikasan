@@ -85,25 +85,24 @@ public class LdapServiceImpl implements LdapService
 
 	private SecurityDao securityDao;
 	private UserDao userDao;
-	private AuthenticationMethod authenticationMethod;
     private int ldapReadTimeoutMilliseconds;
-
     private int ldapConnectTimeoutMilliseconds;
+
 	/*
      * <code>PasswordEncoder</code> for encoding user passwords
      */
     private PasswordEncoder passwordEncoder;
 
 
-	/**
+
+    /**
      * Constructor for LdapServiceImpl class.
      *
-     * @param securityDao             the SecurityDao object for security operations
-     * @param userDao                 the UserDao object for user operations
-     * @param passwordEncoder         the PasswordEncoder object for encoding passwords
-     * @param ldapReadTimeoutMilliseconds  the timeout in milliseconds for LDAP read operations
-     * @param ldapConnectTimeoutMilliseconds the timeout in milliseconds for LDAP connection
-     * @throws IllegalArgumentException if any of the parameters is null
+     * @param securityDao the SecurityDao object to interact with security-related data
+     * @param userDao the UserDao object to interact with user-related data
+     * @param passwordEncoder the PasswordEncoder object for encoding passwords
+     * @param ldapReadTimeoutMilliseconds LDAP read timeout value in milliseconds
+     * @param ldapConnectTimeoutMilliseconds LDAP connection timeout value in milliseconds
      */
     public LdapServiceImpl(SecurityDao securityDao
         , UserDao userDao, PasswordEncoder passwordEncoder
@@ -131,26 +130,24 @@ public class LdapServiceImpl implements LdapService
 	}
 
 	
-	/**
-     * Retrieves an LDAP user based on the provided username.
+
+    /**
+     * Retrieves an LDAP user based on the provided user name, authentication method, and context source.
      *
-     * @param userName the username of the LDAP user to retrieve
-     * @return the LDAP user object containing user information such as account type, account name, email, etc.
-     * @throws LdapServiceException if an error occurs during LDAP user retrieval
+     * @param userName the user name of the LDAP user to retrieve
+     * @param authenticationMethod the authentication method used for LDAP user search
+     * @param contextSource the context source for interacting with LDAP
+     * @return the retrieved LdapUser object with user information
+     * @throws LdapServiceException if an error occurs during LDAP user search
      */
-    protected LdapUser getLdapUser(String userName) throws LdapServiceException
+    private LdapUser getLdapUser(String userName, AuthenticationMethod authenticationMethod
+        , DefaultSpringSecurityContextSource contextSource)
 	{		
-		AuthenticationMethod authenticationMethod = this
-				.getAuthenticationMethod();
-
-
-		DefaultSpringSecurityContextSource contextSource = this.getContextSource();
-
-		FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(
+        FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(
 				authenticationMethod.getLdapUserSearchBaseDn(), "CN={0}",
 				contextSource);
 		
-                DirContextOperations dir = null;
+        DirContextOperations dir;
 		try
 		{
 			dir = userSearch.searchForUser(userName);
@@ -158,19 +155,15 @@ public class LdapServiceImpl implements LdapService
 		catch (UsernameNotFoundException e)
 		{
 			logger.warn("An exception occurred trying to search for LDAP user: " + e.getMessage());
-			e.printStackTrace();
 			return null;
 		} 
 		catch (RuntimeException e)
 		{
 			logger.warn("An exception occurred trying to search for LDAP user: " + e.getMessage());
-			e.printStackTrace();
 			return null;
 		}
 
 		String accountType = dir.getStringAttribute(authenticationMethod.getAccountTypeAttributeName());
-		LdapUser user = null;
-			
 		String email = dir.getStringAttribute(authenticationMethod.getEmailAttributeName());
 		String surname = dir.getStringAttribute(authenticationMethod.getSurnameAttributeName());
 		String firstName = dir.getStringAttribute(authenticationMethod.getFirstNameAttributeName());
@@ -196,8 +189,8 @@ public class LdapServiceImpl implements LdapService
 		{
 			firstName = "no firstname";
 		}
-		
-		user = new LdapUser();
+
+        LdapUser user = new LdapUser();
 		user.accountName = accountName.toLowerCase();
 		user.email = email;
 		user.surname = surname;
@@ -210,40 +203,29 @@ public class LdapServiceImpl implements LdapService
 		return user;
 	}
 	
-	/**
-     * Retrieves all LDAP users from the LDAP server.
+
+    /**
+     * Retrieves all LDAP users using paged search.
      *
-     * @return List of LDAP user names
-     * @throws LdapServiceException if an error occurs during LDAP operation
+     * @param authenticationMethod the authentication method used for LDAP user search
+     * @param contextSource the context source for interacting with LDAP
+     * @return a list of LDAP user names
+     * @throws LdapServiceException if an error occurs during the LDAP operation
      */
-    public List<String> getAllLdapUsers() throws LdapServiceException
+    private List<String> getAllLdapUsers(AuthenticationMethod authenticationMethod, DefaultSpringSecurityContextSource contextSource) throws LdapServiceException
 	{
-		 AuthenticationMethod authenticationMethod = this.getAuthenticationMethod();
-
-		 DefaultSpringSecurityContextSource contextSource = this.getContextSource();
-		 contextSource.setBase(authenticationMethod.getLdapUserSearchBaseDn());
-
-		try
-		{
-			contextSource.afterPropertiesSet();
-		} 
-		catch (Exception e)
-		{
-			throw new LdapServiceException("An exception has occurred setting properties on the spring security context!");
-		}
-
-		LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+		 LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
 
 		// Get all groups in many paged results (needed for large numbers of
 		// groups)
 		PagedResultsCookie cookie = null;
 		PagedResult result;
 
-		List<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<>();
 
 		do
 		{
-			result = getAllUsers(cookie, ldapTemplate);
+			result = getAllUsers(cookie, ldapTemplate, authenticationMethod);
 			results.addAll(new ArrayList(result.getResultList()));
 			cookie = result.getCookie();
 		} 
@@ -261,56 +243,43 @@ public class LdapServiceImpl implements LdapService
      * @param ldapTemplate the LdapTemplate to perform the search operation
      * @return a PagedResult object containing the list of users and the updated cookie for paged search
      */
-    protected PagedResult getAllUsers(PagedResultsCookie cookie,
-			LdapTemplate ldapTemplate)
+    private PagedResult getAllUsers(PagedResultsCookie cookie, LdapTemplate ldapTemplate, AuthenticationMethod authenticationMethod)
 	{
 		PagedResultsDirContextProcessor contextProcessor = new PagedResultsDirContextProcessor(
 				200, cookie);
 		SearchControls searchControls = new SearchControls();
 		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-		List<?> groups = ldapTemplate.search("",
-				this.authenticationMethod.getUserSynchronisationFilter(), searchControls, new ApplicationUserAttributeMapper(),
+		List<?> groups = ldapTemplate.search(authenticationMethod.getLdapUserSearchBaseDn(),
+				authenticationMethod.getUserSynchronisationFilter(), searchControls, new ApplicationUserAttributeMapper(authenticationMethod),
 				contextProcessor);
 
 		return new PagedResult(groups, contextProcessor.getCookie());
 	}
 
 
-	/**
-     * Retrieves all application security groups from the LDAP server.
+    /**
+     * Retrieves all application security details for the current user based on the provided authentication method and context source.
      *
-     * @return List of application security group names
-     * @throws LdapServiceException if an error occurs during LDAP operation
+     * @param authenticationMethod the authentication method used for retrieving application security details
+     * @param contextSource the context source for interacting with LDAP
+     * @return a list of application security details for the user
      */
-    public List<String> getAllApplicationSecurity() throws LdapServiceException
+    private List<String> getAllApplicationSecurity(AuthenticationMethod authenticationMethod
+        , DefaultSpringSecurityContextSource contextSource)
 	{
-		 AuthenticationMethod authenticationMethod = this.getAuthenticationMethod();
-
-		 DefaultSpringSecurityContextSource contextSource = this.getContextSource();
-		 contextSource.setBase(authenticationMethod.getApplicationSecurityBaseDn());
-
-		try
-		{
-			contextSource.afterPropertiesSet();
-		} 
-		catch (Exception e)
-		{
-			throw new LdapServiceException("An exception has occurred setting properties on the spring security context!");
-		}
-
-		LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
+        LdapTemplate ldapTemplate = new LdapTemplate(contextSource);
 
 		// Get all groups in many paged results (needed for large numbers of
 		// groups)
 		PagedResultsCookie cookie = null;
 		PagedResult result;
 
-		List<String> results = new ArrayList<String>();
+		List<String> results = new ArrayList<>();
 
 		do
 		{
-			result = getAllGroups(cookie, ldapTemplate);
+			result = getAllGroups(cookie, ldapTemplate, authenticationMethod);
 			results.addAll(new ArrayList(result.getResultList()));
 			cookie = result.getCookie();
 		} 
@@ -326,17 +295,17 @@ public class LdapServiceImpl implements LdapService
      * @param ldapTemplate the LdapTemplate to perform the search operation
      * @return a PagedResult object containing the list of groups and the updated cookie for paged search
      */
-    protected PagedResult getAllGroups(PagedResultsCookie cookie,
-			LdapTemplate ldapTemplate)
+    private PagedResult getAllGroups(PagedResultsCookie cookie,
+			LdapTemplate ldapTemplate, AuthenticationMethod authenticationMethod)
 	{
 		PagedResultsDirContextProcessor contextProcessor = new PagedResultsDirContextProcessor(
 				200, cookie);
 		SearchControls searchControls = new SearchControls();
 		searchControls.setSearchScope(SearchControls.SUBTREE_SCOPE);
 
-		List<?> groups = ldapTemplate.search("",
-				this.authenticationMethod.getGroupSynchronisationFilter(), 
-				searchControls, new ApplicationSecurityGroupAttributeMapper(),
+		List<?> groups = ldapTemplate.search(authenticationMethod.getApplicationSecurityBaseDn(),
+				authenticationMethod.getGroupSynchronisationFilter(),
+				searchControls, new ApplicationSecurityGroupAttributeMapper(authenticationMethod),
 				contextProcessor);
 
 		return new PagedResult(groups, contextProcessor.getCookie());
@@ -349,17 +318,14 @@ public class LdapServiceImpl implements LdapService
      * @return the IkasanPrincipal object representing the application security details for the user
      * @throws LdapServiceException if an error occurs during LDAP user search
      */
-    public IkasanPrincipal getApplicationSecurity(String userName)
+    private IkasanPrincipal getApplicationSecurity(String userName, AuthenticationMethod authenticationMethod,
+                                                   DefaultSpringSecurityContextSource contextSource)
 			throws LdapServiceException
 	{		
-		AuthenticationMethod authenticationMethod = this.getAuthenticationMethod();
-
-		DefaultSpringSecurityContextSource contextSource = this.getContextSource();
-
 		FilterBasedLdapUserSearch userSearch = new FilterBasedLdapUserSearch(
 				authenticationMethod.getApplicationSecurityBaseDn(), "CN={0}", contextSource);
 
-		DirContextOperations dir = null;
+		DirContextOperations dir;
 		try
 		{
 			dir = userSearch.searchForUser(userName);
@@ -405,9 +371,8 @@ public class LdapServiceImpl implements LdapService
 	@Override
 	public void synchronize(AuthenticationMethod authenticationMethod) throws LdapServiceException
 	{
-		this.authenticationMethod = authenticationMethod;
-		
-		List<String> applicationSecurities = getAllApplicationSecurity();
+        DefaultSpringSecurityContextSource contextSource = this.getContextSource(authenticationMethod);
+        List<String> applicationSecurities = getAllApplicationSecurity(authenticationMethod, contextSource);
 		
 		for (String applicationSecurity : applicationSecurities)
 		{
@@ -416,25 +381,24 @@ public class LdapServiceImpl implements LdapService
 
 			if (principal == null)
 			{
-				principal = getApplicationSecurity(applicationSecurity);
+				principal = getApplicationSecurity(applicationSecurity, authenticationMethod, contextSource);
 			}
 
 			if(principal != null)
 			{
-                principal.setApplicationSecurityBaseDn(this.authenticationMethod.getApplicationSecurityBaseDn());
+                principal.setApplicationSecurityBaseDn(authenticationMethod.getApplicationSecurityBaseDn());
 				this.securityDao.saveOrUpdatePrincipal(principal);
 			}
 		}
 
-		List<String> users = getAllLdapUsers();
-
+		List<String> users = getAllLdapUsers(authenticationMethod, contextSource);
 
 		for (String username : users)
 		{
             LdapUser ldapUser = null;
 		    try
             {
-                ldapUser = getLdapUser(username);
+                ldapUser = getLdapUser(username, authenticationMethod, contextSource);
 
                 if (ldapUser == null)
                 {
@@ -490,7 +454,7 @@ public class LdapServiceImpl implements LdapService
                 {
                     for (String name : ldapUser.memberOf)
                     {
-                        if (name.contains(this.getAuthenticationMethod().getApplicationSecurityBaseDn()))
+                        if (name.contains(authenticationMethod.getApplicationSecurityBaseDn()))
                         {
                             DistinguishedName dn = new DistinguishedName(name);
                             String cn = dn.getValue("cn");
@@ -517,7 +481,7 @@ public class LdapServiceImpl implements LdapService
                 }
 
                 userPrincipals = userPrincipals.stream()
-                    .filter(up -> up.getApplicationSecurityBaseDn() != null && !up.getApplicationSecurityBaseDn().equals(this.authenticationMethod.getApplicationSecurityBaseDn()))
+                    .filter(up -> up.getApplicationSecurityBaseDn() != null && !up.getApplicationSecurityBaseDn().equals(authenticationMethod.getApplicationSecurityBaseDn()))
                     .collect(Collectors.toSet());
 
                 userPrincipals.addAll(ikasanPrincipals);
@@ -583,64 +547,56 @@ public class LdapServiceImpl implements LdapService
         return true;
     }
 
-	/**
-     * Retrieves the authentication method currently set for the LDAP service.
-     * Throws a LdapServiceException if the authentication method is null.
+
+    /**
+     * Retrieves the Spring Security context source for interacting with LDAP.
      *
-     * @return the authentication method currently set for the LDAP service
-     * @throws LdapServiceException if the authentication method is null
+     * @param authenticationMethod the authentication method containing LDAP server information
+     * @return the configured DefaultSpringSecurityContextSource for LDAP connection
+     * @throws LdapServiceException if an error occurs during the configuration or connection setup
      */
-    protected AuthenticationMethod getAuthenticationMethod()
-			throws LdapServiceException
-	{		
-		if(this.authenticationMethod == null)
-		 {
-			 throw new	LdapServiceException("Null AuthenticationMethod!");
-		 }
-		
-		return this.authenticationMethod;
-	}
-	
-	/**
-     * Retrieves the DefaultSpringSecurityContextSource object configured with LDAP and authentication details.
-     *
-     * @return the DefaultSpringSecurityContextSource object
-     * @throws LdapServiceException if an error occurs during context source creation
-     */
-    protected DefaultSpringSecurityContextSource getContextSource() throws LdapServiceException
-	{
+    private DefaultSpringSecurityContextSource getContextSource(AuthenticationMethod authenticationMethod) throws LdapServiceException {
         Hashtable env = new Hashtable();
         env.put(LDAP_READ_TIMEOUT, String.valueOf(this.ldapReadTimeoutMilliseconds));
         env.put(LDAP_CONNECT_TIMEOUT, String.valueOf(this.ldapConnectTimeoutMilliseconds));
 
-		DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(
-					authenticationMethod.getLdapServerUrl());
-		contextSource.setUserDn(authenticationMethod.getLdapBindUserDn());
-		contextSource.setPassword(authenticationMethod.getLdapBindUserPassword());
+        DefaultSpringSecurityContextSource contextSource = new DefaultSpringSecurityContextSource(
+            authenticationMethod.getLdapServerUrl());
+        contextSource.setUserDn(authenticationMethod.getLdapBindUserDn());
+        contextSource.setPassword(authenticationMethod.getLdapBindUserPassword());
         contextSource.setBaseEnvironmentProperties(env);
-		
-		try
-		{
-			contextSource.afterPropertiesSet();
-		} 
-		catch (Exception e)
-		{
-			throw new LdapServiceException("An error has occurred setting the properties on the LDAP context!");
-		}
 
-		return contextSource;
+        try {
+            contextSource.afterPropertiesSet();
+        } catch (Exception e) {
+            throw new LdapServiceException("An error has occurred setting the properties on the LDAP context!");
+        }
+
+        return contextSource;
 	}
 	
 	/**
      * Protected inner class that implements the AttributesMapper interface.
      */
-    protected class ApplicationSecurityGroupAttributeMapper implements AttributesMapper
+    private class ApplicationSecurityGroupAttributeMapper implements AttributesMapper
 	{
-		@Override
+        private AuthenticationMethod authenticationMethod;
+
+        /**
+         * Constructor for ApplicationSecurityGroupAttributeMapper class.
+         *
+         * @param authenticationMethod the authentication method used to map attributes
+         */
+        public ApplicationSecurityGroupAttributeMapper(AuthenticationMethod authenticationMethod) {
+            this.authenticationMethod = authenticationMethod;
+        }
+
+        @Override
 		public Object mapFromAttributes(Attributes attributes)
 				throws NamingException
 		{
-            if(attributes.get(authenticationMethod.getApplicationSecurityGroupAttributeName()) == null) {
+            if(authenticationMethod.getApplicationSecurityGroupAttributeName() == null ||
+                attributes.get(authenticationMethod.getApplicationSecurityGroupAttributeName()) == null) {
                 return null;
             }
             else {
@@ -652,13 +608,30 @@ public class LdapServiceImpl implements LdapService
 	/**
      * This class is responsible for mapping user attributes from LDAP to the desired format.
      */
-    protected class ApplicationUserAttributeMapper implements AttributesMapper
+    private class ApplicationUserAttributeMapper implements AttributesMapper
 	{
-		@Override
+        private AuthenticationMethod authenticationMethod;
+
+        /**
+         * Constructs a new ApplicationUserAttributeMapper with the specified AuthenticationMethod.
+         *
+         * @param authenticationMethod the AuthenticationMethod object to be used for mapping user attributes
+         */
+        public ApplicationUserAttributeMapper(AuthenticationMethod authenticationMethod) {
+            this.authenticationMethod = authenticationMethod;
+        }
+
+        @Override
 		public Object mapFromAttributes(Attributes attributes)
 				throws NamingException
-		{			
-			return attributes.get("name").get();
+		{
+            if(this.authenticationMethod.getUserAccountMappingAttributeName() == null
+                || attributes.get(this.authenticationMethod.getUserAccountMappingAttributeName()) == null) {
+                return null;
+            }
+            else {
+                return attributes.get(this.authenticationMethod.getUserAccountMappingAttributeName()).get();
+            }
 		}
 	}
 
