@@ -7,6 +7,7 @@
     <!-- 4.1.x table creation -->
 
     <!-- 4.1.x table alterations -->
+    <include file="db/alter/db-changeLog-alterAuthenticationMethodAddUserAccMappingAttributeName.xml" relativeToChangelogFile="true" />
 
     <!-- 4.1.x cardinality creation -->
 
