@@ -94,7 +94,7 @@ public class ModuleConfig
                 .build();
 
         Flow flow = fb
-                .withDescription("Flow demonstrates usage of JMS Concumer and JMS Producer")
+                .withDescription("Flow demonstrates usage of Kafka Consumer and JMS Producer")
                 .withExceptionResolver(builderFactory.getExceptionResolverBuilder()
                         .addExceptionToAction(SampleGeneratedException.class, OnException.excludeEvent())
                         .addExceptionToAction(EndpointException.class, OnException.retryIndefinitely(1000)).build())

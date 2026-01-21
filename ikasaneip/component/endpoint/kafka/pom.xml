@@ -43,31 +43,18 @@
 
     <parent>
         <groupId>org.ikasan</groupId>
-        <artifactId>ikasan-component</artifactId>
+        <artifactId>ikasan-endpoint-parent</artifactId>
         <version>4.1.2-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.ikasan</groupId>
-    <artifactId>ikasan-endpoint-parent</artifactId>
-    <version>4.1.2-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Ikasan Enterprise Integration Off the Shelf Endpoints</name>
+
+    <artifactId>ikasan-kafka</artifactId>
 
     <modules>
-        <module>amazon-s3-endpoint</module>
-        <module>utility-endpoint</module>
-        <module>big-queue</module>
-        <module>jms-client</module>
-        <module>jms-spring</module>
-        <module>jms-spring-arjuna</module>
-        <module>quartz-schedule</module>
-        <module>mongo-endpoint</module>
-        <module>mongo4-endpoint</module>
-        <module>mongo-endpoint-test</module>
-        <module>email-endpoint</module>
-        <module>filetransfer</module>
-        <module>test-endpoint</module>
-        <module>kafka</module>
+        <module>kafka-client-common</module>
+        <module>kafka-client</module>
+        <module>kafka-client-reactive</module>
     </modules>
 
 </project>
