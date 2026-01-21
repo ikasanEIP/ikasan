@@ -176,7 +176,7 @@ public class KafkaSampleFlowTest
 
         flowTestRule = new IkasanFlowTestRule();
 
-        flowTestRule.withFlow(moduleUnderTest.getFlow("Jms Sample Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow("Kafka Sample Flow"));
 
         errorReportingService = errorReportingServiceFactory.getErrorReportingService();
         messageListenerVerifier = new MessageListenerVerifier(brokerUrl, "target", registry);
@@ -186,8 +186,6 @@ public class KafkaSampleFlowTest
 
     @After
     public void teardown(){
-
-
         // consume messages from source queue if any were left
         MessageListenerVerifier mlv = new MessageListenerVerifier(brokerUrl, "source", registry);
         mlv.start();
@@ -201,7 +199,7 @@ public class KafkaSampleFlowTest
 
     @DirtiesContext
     @Test
-    public void test_Jms_Sample_Flow() throws Exception
+    public void test_kafka_sample_flow() throws Exception
     {
         KafkaConsumerConfiguration kafkaConsumerConfiguration = this.flowTestRule
             .getComponentConfig("Kafka Consumer", KafkaConsumerConfiguration.class);
@@ -241,7 +239,7 @@ public class KafkaSampleFlowTest
 
     @DirtiesContext
     @Test
-    public void test_Jms_Sample_Flow_1000_messages() throws Exception
+    public void test_kafka_sample_flow_1000_messages() throws Exception
     {
         KafkaConsumerConfiguration kafkaConsumerConfiguration = this.flowTestRule
             .getComponentConfig("Kafka Consumer", KafkaConsumerConfiguration.class);
@@ -321,7 +319,6 @@ public class KafkaSampleFlowTest
     @Test
     public void test_exclusion()
     {
-
         KafkaConsumerConfiguration kafkaConsumerConfiguration = this.flowTestRule
             .getComponentConfig("Kafka Consumer", KafkaConsumerConfiguration.class);
 
@@ -497,7 +494,5 @@ public class KafkaSampleFlowTest
         // Verify the exclusion was not stored to DB
         List<Object> exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
-
-
     }
 }
