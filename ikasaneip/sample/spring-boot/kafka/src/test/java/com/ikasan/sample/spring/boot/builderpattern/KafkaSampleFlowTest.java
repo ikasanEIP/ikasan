@@ -85,7 +85,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.IntegerSerializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.awaitility.Awaitility;
-import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumerConfiguration;
+import org.ikasan.component.endpoint.kafka.client.reactive.consumer.KafkaConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;

@@ -38,8 +38,9 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.kafka.producer;
+package org.ikasan.component.endpoint.kafka.client.producer;
 
+import org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
