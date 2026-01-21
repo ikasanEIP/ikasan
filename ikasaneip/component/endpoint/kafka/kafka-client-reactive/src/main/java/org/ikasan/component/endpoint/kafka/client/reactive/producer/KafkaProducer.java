@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.kafka.producer;
+package org.ikasan.component.endpoint.kafka.client.reactive.producer;
 
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -61,21 +61,21 @@ import java.util.concurrent.atomic.AtomicReference;
  */
 public class KafkaProducer<VALUE>
         implements Producer<VALUE>, ManagedIdentifierService<ManagedEventIdentifierService>,
-        ManagedResource, ConfiguredResource<KafkaProducerConfiguration>
+        ManagedResource, ConfiguredResource<org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration>
 {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(KafkaProducer.class);
 
     private KafkaSender<Object, VALUE> sender;
 
-    private KafkaKeyProvider keyProvider;
+    private org.ikasan.component.endpoint.kafka.producer.KafkaKeyProvider keyProvider;
 
     private org.apache.kafka.clients.producer.Producer<Object, VALUE> producer;
 
-    private KafkaProducerConfiguration configuration;
+    private org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration configuration;
     private String configurationId;
 
-    public KafkaProducer(KafkaKeyProvider keyProvider) {
+    public KafkaProducer(org.ikasan.component.endpoint.kafka.producer.KafkaKeyProvider keyProvider) {
         this.keyProvider = keyProvider;
         if(this.keyProvider == null) {
             throw new IllegalArgumentException("keyProvider cannot be null!");
@@ -118,12 +118,12 @@ public class KafkaProducer<VALUE>
     }
 
     @Override
-    public KafkaProducerConfiguration getConfiguration() {
+    public org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration getConfiguration() {
         return this.configuration;
     }
 
     @Override
-    public void setConfiguration(KafkaProducerConfiguration configuration) {
+    public void setConfiguration(org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration configuration) {
         this.configuration = configuration;
     }
 

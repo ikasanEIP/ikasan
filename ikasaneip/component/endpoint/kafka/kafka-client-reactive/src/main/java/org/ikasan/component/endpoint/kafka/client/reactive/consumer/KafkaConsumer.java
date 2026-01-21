@@ -38,9 +38,10 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.kafka.consumer;
+package org.ikasan.component.endpoint.kafka.client.reactive.consumer;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumerConfiguration;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
