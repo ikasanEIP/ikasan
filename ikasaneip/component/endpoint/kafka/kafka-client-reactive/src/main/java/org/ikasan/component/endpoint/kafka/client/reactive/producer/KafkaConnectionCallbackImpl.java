@@ -1,15 +1,13 @@
-package org.ikasan.component.endpoint.kafka.producer;
+package org.ikasan.component.endpoint.kafka.client.reactive.producer;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.serialiser.Serialiser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class KafkaConnectionCallbackImpl<IDENTIFIER, PAYLOAD> implements KafkaConnectionCallback {
+public class KafkaConnectionCallbackImpl<IDENTIFIER, PAYLOAD> implements org.ikasan.component.endpoint.kafka.producer.KafkaConnectionCallback {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(KafkaConnectionCallbackImpl.class);
 

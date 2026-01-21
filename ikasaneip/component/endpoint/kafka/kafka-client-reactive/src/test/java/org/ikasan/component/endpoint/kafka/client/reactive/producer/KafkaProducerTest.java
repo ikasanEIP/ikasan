@@ -1,4 +1,4 @@
-package org.ikasan.component.endpoint.kafka.producer;
+package org.ikasan.component.endpoint.kafka.client.reactive.producer;
 
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.ikasan.spec.component.endpoint.EndpointException;
@@ -46,11 +46,11 @@ public class KafkaProducerTest {
         }
     };
 
-    private KafkaProducerConfiguration producerConfiguration;
+    private org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration producerConfiguration;
 
     @Before
     public void setup() {
-        this.producerConfiguration = new KafkaProducerConfiguration();
+        this.producerConfiguration = new org.ikasan.component.endpoint.kafka.producer.KafkaProducerConfiguration();
         this.producerConfiguration.setBootstrapServers(List.of(this.embeddedKafka.getBrokersAsString()));
         this.producerConfiguration.setAcks("all");
         this.producerConfiguration.setKeySerializer("org.apache.kafka.common.serialization.StringSerializer");
@@ -126,7 +126,7 @@ public class KafkaProducerTest {
         IntStream.range(0, 1).forEach(i ->kafkaProducer.invoke("test message"));
     }
 
-    private class StringKeyProvider implements KafkaKeyProvider<String> {
+    private class StringKeyProvider implements org.ikasan.component.endpoint.kafka.producer.KafkaKeyProvider<String> {
         @Override
         public String getKey() {
             return "key";

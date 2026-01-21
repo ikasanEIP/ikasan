@@ -1,4 +1,4 @@
-package org.ikasan.component.endpoint.kafka.producer;
+package org.ikasan.component.endpoint.kafka.client.reactive.producer;
 
 import com.arjuna.ats.jta.resources.LastResourceCommitOptimisation;
 import org.slf4j.Logger;
@@ -7,14 +7,13 @@ import org.slf4j.LoggerFactory;
 import javax.transaction.xa.XAException;
 import javax.transaction.xa.XAResource;
 import javax.transaction.xa.Xid;
-import java.io.IOException;
 
 public class KafkaConnection implements LastResourceCommitOptimisation {
     private static Logger logger = LoggerFactory.getLogger(KafkaConnection.class);
 
-    private KafkaConnectionCallback kafkaConnectionCallback;
+    private org.ikasan.component.endpoint.kafka.producer.KafkaConnectionCallback kafkaConnectionCallback;
 
-    public KafkaConnection(KafkaConnectionCallback kafkaConnectionCallback) {
+    public KafkaConnection(org.ikasan.component.endpoint.kafka.producer.KafkaConnectionCallback kafkaConnectionCallback) {
         this.kafkaConnectionCallback = kafkaConnectionCallback;
     }
 

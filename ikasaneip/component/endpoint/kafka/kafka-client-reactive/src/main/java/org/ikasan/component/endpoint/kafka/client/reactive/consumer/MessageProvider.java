@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * =============================================================================
  */
-package org.ikasan.component.endpoint.kafka.consumer;
+package org.ikasan.component.endpoint.kafka.client.reactive.consumer;
 
 /**
  * Contract for all underlying technical message providers to ensure minimum services
