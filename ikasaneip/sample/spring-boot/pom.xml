@@ -58,7 +58,7 @@
         <module>file</module>
         <module>sftp-jms</module>
         <module>ftp-jms</module>
-        <module>kafka</module>
+        <module>kafka-reactive-jms</module>
         <module>scheduled</module>
     </modules>
 

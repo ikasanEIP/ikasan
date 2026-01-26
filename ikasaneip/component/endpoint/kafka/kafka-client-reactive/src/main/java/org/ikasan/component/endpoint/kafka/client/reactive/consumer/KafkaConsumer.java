@@ -40,12 +40,11 @@
  */
 package org.ikasan.component.endpoint.kafka.client.reactive.consumer;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.ikasan.component.endpoint.kafka.consumer.KafkaConsumerConfiguration;
+import org.apache.kafka.common.TopicPartition;
 import org.ikasan.exceptionResolver.action.ExcludeEventAction;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
-import org.ikasan.spec.component.endpoint.MultiThreadedCapable;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.event.*;
 import org.ikasan.spec.flow.FlowEvent;
@@ -61,26 +60,37 @@ import reactor.kafka.receiver.ReceiverOffset;
 import reactor.kafka.receiver.ReceiverOptions;
 import reactor.kafka.receiver.ReceiverRecord;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Implementation of a Kafka client consumer.
  *
  * @author Ikasan Development Team
  */
-public class KafkaConsumer<KEY, VALUE>
-    implements Consumer<EventListener<?>,EventFactory>,
-        ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<ConsumerRecord<KEY, VALUE>,Throwable>,
-        ConfiguredResource<KafkaConsumerConfiguration>, ResubmissionService<ConsumerRecord<KEY, VALUE>>,
-        MultiThreadedCapable, MessageProcessor<ConsumerRecord<KEY, VALUE>>
+public class KafkaConsumer
+    implements Consumer<EventListener<?>, EventFactory>,
+        ManagedIdentifierService<ManagedRelatedEventIdentifierService>, MessageListener<ReceiverRecord>,
+        ConfiguredResource<KafkaConsumerConfiguration>, ResubmissionService<Object>,
+        EndpointListener<ReceiverRecord, Throwable>
 {
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
 
+    /**
+     * Represents the identifier of a configuration, typically used for
+     * uniquely identifying a specific configuration setting or setup.
+     */
     private String configurationId;
 
+    /**
+     * Class representing the configuration for the Kafka Consumer module.
+     */
     private KafkaConsumerConfiguration kafkaConsumerConfiguration;
 
+    /**
+     * Represents a disposable resource that needs to be cleaned up after its use.
+     */
     private Disposable disposable;
 
     /** consumer event factory */
@@ -92,34 +102,51 @@ public class KafkaConsumer<KEY, VALUE>
     /** consumer event listener */
     protected EventListener eventListener;
 
-    protected  MessageProcessor<ConsumerRecord<KEY, VALUE>> messageProcessor;
+    /**
+     * Protected variable storing an instance of ManagedRelatedEventIdentifierService.
+     * This service provides the contract for adding a related business event identifier
+     * on the creation of a business event. It allows for tying a main business event
+     * to an immutable business identifier for the duration of the business event's life.
+     *
+     * This service is commonly utilized when the business event mutates during a flow,
+     * such as in a Splitter, and tracking of related business events is necessary.
+     */
+    protected ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService = null;
 
     /**
-     * Invoke the eventListener with the given flowEvent.
-     * @param flowEvent
+     * Variable to hold a MessageProcessor instance specialized to process ReceiverRecords.
      */
-    protected void invoke(FlowEvent flowEvent)
-    {
-        if(this.eventListener == null)
-        {
-            throw new RuntimeException("No active eventListeners registered for flowEvent!");
-        }
+    protected  MessageListener<ReceiverRecord> messageListener;
 
-        this.eventListener.invoke(flowEvent);
+    /**
+     * Represents a private variable configurationService of type ConfigurationService.
+     * ConfigurationService defines the operational contract of any configuration service in Ikasan.
+     * This variable is used to configure and update resources.
+     *
+     * @see ConfigurationService
+     */
+    private ConfigurationService configurationService;
+
+    /**
+     * Constructor for creating a KafkaConsumer instance using the provided ConfigurationService.
+     *
+     * @param configurationService the ConfigurationService to use for configuration
+     */
+    public KafkaConsumer(ConfigurationService configurationService) {
+        this.configurationService = configurationService;
+        if(this.configurationService == null) {
+            throw new IllegalArgumentException("configurationService cannot be null!");
+        }
     }
 
-    /**
-     * Invoke the eventListener with the given resubmission.
-     * @param resubmission
-     */
-    protected void invoke(Resubmission resubmission)
-    {
-        if(this.eventListener == null)
-        {
-            throw new RuntimeException("No active eventListeners registered for resubmission event!");
-        }
+    @Override
+    public void onException(Throwable throwable) {
+        this.eventListener.invoke(throwable);
+    }
 
-        this.eventListener.invoke(resubmission);
+    @Override
+    public boolean isActive() {
+        return this.isRunning();
     }
 
     @Override
@@ -139,6 +166,16 @@ public class KafkaConsumer<KEY, VALUE>
 
     @Override
     public void start() {
+        if(this.managedRelatedEventIdentifierService == null) {
+            throw new RuntimeException("The managedRelatedEventIdentifierService is null and there is no default" +
+                " implementation provided for the reactive KafkaConsumer. All reactive Kafka Consumers require" +
+                " a custom implementation of the ManagedRelatedEventIdentifierService that derives the identifier" +
+                " from the value associated with the Kafka ConsumerRecord, in a reliably reproducible and unique manner" +
+                " from the associated business data.");
+        }
+        if(this.messageListener == null) {
+            throw new RuntimeException("The messageListener is null. Please set a messageListener on this consumer!");
+        }
         this.subscribe();
     }
 
@@ -154,22 +191,22 @@ public class KafkaConsumer<KEY, VALUE>
         }
     }
 
-    @Override
-    public void onMessage(ConsumerRecord<KEY, VALUE> consumerRecord) {
-        logger.info("Received message " + consumerRecord.value());
+    /**
+     * Invokes a flow event with the provided value.
+     *
+     * @param value the value to create and process a flow event with
+     * @throws RuntimeException if flowEventFactory is null
+     */
+    private void invokeFlowEvent(Object value) {
+        logger.debug("Received message " + value);
 
-        FlowEvent<?, ?> flowEvent = flowEventFactory.newEvent(consumerRecord.value(), "", consumerRecord.value());
-        invoke(flowEvent);
-    }
+        if(this.flowEventFactory == null) {
+            throw new RuntimeException("flowEventFactory cannot be null!");
+        }
 
-    @Override
-    public void onException(Throwable throwable) {
-
-    }
-
-    @Override
-    public boolean isActive() {
-        return this.isRunning();
+        FlowEvent<?, ?> flowEvent = flowEventFactory.newEvent(this.managedRelatedEventIdentifierService.getEventIdentifier(value)
+            , this.managedRelatedEventIdentifierService.getRelatedEventIdentifier(value), value);
+        this.eventListener.invoke(flowEvent);
     }
 
     @Override
@@ -194,15 +231,29 @@ public class KafkaConsumer<KEY, VALUE>
 
     @Override
     public void setManagedIdentifierService(ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService) {
-
+        this.managedRelatedEventIdentifierService = managedRelatedEventIdentifierService;
     }
 
     @Override
-    public void onResubmission(ConsumerRecord consumerRecord) {
-        logger.info("Resubmission message " + consumerRecord.value());
+    public void onResubmission(Object resubmissionEvent) {
+        logger.debug("Resubmission message " + resubmissionEvent);
+        if(this.resubmissionEventFactory == null) {
+                throw new RuntimeException("resubmissionEventFactory cannot be null!");
+        }
 
-        Resubmission flowEvent = resubmissionEventFactory.newResubmissionEvent(consumerRecord.value());
-        invoke(flowEvent);
+        FlowEvent<?,?> flowEvent;
+
+        if(this.managedRelatedEventIdentifierService != null) {
+            flowEvent = flowEventFactory.newEvent(managedRelatedEventIdentifierService.getEventIdentifier(resubmissionEvent)
+                , managedRelatedEventIdentifierService.getRelatedEventIdentifier(resubmissionEvent), resubmissionEvent);
+        }
+        else {
+            flowEvent = flowEventFactory.newEvent(String.valueOf(resubmissionEvent.hashCode())
+                , String.valueOf(resubmissionEvent.hashCode()), resubmissionEvent);
+        }
+
+        Resubmission resubmission = this.resubmissionEventFactory.newResubmissionEvent(flowEvent);
+        this.eventListener.invoke(resubmission);
     }
 
     @Override
@@ -210,46 +261,86 @@ public class KafkaConsumer<KEY, VALUE>
         this.resubmissionEventFactory = resubmissionEventFactory;
     }
 
+    /**
+     * Subscribe to a Kafka topic and process received messages.
+     * Initializes a KafkaReceiver using the configured Kafka consumer properties,
+     * assigns partitions to seek the specified offset, subscribes to the configured topic,
+     * and subscribes to incoming Kafka records to process with the provided message processor.
+     * Any errors that occur during message processing are logged as errors.
+     * ClassNotFoundException is caught and rethrown as a RuntimeException.
+     */
     private void subscribe() {
         try {
-            ReceiverOptions<KEY, VALUE> receiverOptions = ReceiverOptions.create(this.kafkaConsumerConfiguration.getConsumerProps());
-            ReceiverOptions<KEY, VALUE> options = receiverOptions
-                .addAssignListener(partitions -> partitions.forEach(p -> p.seek(this.kafkaConsumerConfiguration.getOffset())))
-                .subscription(Collections.singleton(this.kafkaConsumerConfiguration.getTopicName()));
+            ReceiverOptions<Object, Object> receiverOptions = ReceiverOptions.create(this.kafkaConsumerConfiguration.getConsumerProps());
+            List<TopicPartition> topicPartitions = new ArrayList<>();
+            for(String partition: this.kafkaConsumerConfiguration.getPartitions()) {
+                if(!this.kafkaConsumerConfiguration.getPartitionOffsets()
+                    .containsKey(String.valueOf(partition))) {
+                    this.kafkaConsumerConfiguration.getPartitionOffsets()
+                        .put(String.valueOf(partition), "0");
+                }
 
-            Flux<ReceiverRecord<KEY, VALUE>> kafkaFlux = KafkaReceiver
+                TopicPartition topicPartition = new TopicPartition(this.kafkaConsumerConfiguration.getTopicName()
+                    , Integer.valueOf(partition));
+                topicPartitions.add(topicPartition);
+            }
+            ReceiverOptions<Object, Object> options = receiverOptions
+                .assignment(topicPartitions)
+                .addAssignListener(partitions -> partitions.forEach(p -> {
+                    if(!this.kafkaConsumerConfiguration.getPartitionOffsets()
+                        .containsKey(String.valueOf(p.topicPartition().partition()))) {
+                        this.kafkaConsumerConfiguration.getPartitionOffsets()
+                            .put(String.valueOf(p.topicPartition().partition()), "0");
+                    }
+
+                    String offsetString = this.kafkaConsumerConfiguration.getPartitionOffsets()
+                        .get(String.valueOf(p.topicPartition().partition()));
+                    p.seek(Long.valueOf(offsetString));
+                }));
+
+            Flux<ReceiverRecord<Object, Object>> kafkaFlux = KafkaReceiver
                 .create(options)
                 .receive();
 
             this.disposable = kafkaFlux.subscribe(record -> {
-                    ReceiverOffset offset = record.receiverOffset();
-                    this.messageProcessor.process(record);
-                    this.kafkaConsumerConfiguration.setOffset(offset.offset() + 1);
-                    offset.acknowledge();
+                    this.messageListener.onMessage(record);
                 }, e -> {
-//                    if(e.getMessage().startsWith("Retry")) {
-//                        this.kafkaConsumerConfiguration.setOffset(this.kafkaConsumerConfiguration.getOffset() - 1);
-//                    }
-                });
+                logger.error("An error has occurred processing Kafka message!", e);
+                this.onException(e);
+            });
         }
         catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public void setMessageProcessor(MessageProcessor<ConsumerRecord<KEY, VALUE>> messageProcessor) {
-        this.messageProcessor = messageProcessor;
+    /**
+     * Set the message listener to be invoked when a message is received.
+     *
+     * @param messageListener the MessageListener to be set
+     */
+    public void setMessageListener(MessageListener<ReceiverRecord> messageListener) {
+        this.messageListener = messageListener;
     }
 
     @Override
-    public void process(ConsumerRecord<KEY, VALUE> record) {
+    public void onMessage(ReceiverRecord record) {
+        ReceiverOffset offset = record.receiverOffset();
         try {
-            this.onMessage(record);
+            this.invokeFlowEvent(record.value());
+            this.kafkaConsumerConfiguration.getPartitionOffsets()
+                .put(String.valueOf(record.partition()), String.valueOf(offset.offset() + 1));
+            this.configurationService.update(this);
+            offset.acknowledge();
         }
         catch (ForceTransactionRollbackException e) {
             if(e.getMessage().equals(ExcludeEventAction.EXCLUDE_EVENT)) {
                 // We process the same record again so that the blacklisted record can be parked.
-                this.onMessage(record);
+                this.invokeFlowEvent(record.value());
+                this.kafkaConsumerConfiguration.getPartitionOffsets()
+                    .put(String.valueOf(record.partition()), String.valueOf(offset.offset() + 1));
+                this.configurationService.update(this);
+                offset.acknowledge();
 
                 // Dispose of of the reactive subscription and subscribe again.
                 this.disposable.dispose();

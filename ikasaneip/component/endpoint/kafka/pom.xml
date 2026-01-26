@@ -52,8 +52,6 @@
     <artifactId>ikasan-kafka</artifactId>
 
     <modules>
-        <module>kafka-client-common</module>
-        <module>kafka-client</module>
         <module>kafka-client-reactive</module>
     </modules>
 
