@@ -67,7 +67,7 @@
         <module>email-endpoint</module>
         <module>filetransfer</module>
         <module>test-endpoint</module>
-        <module>kafka</module>
+        <module>kafka-client-reactive</module>
     </modules>
 
 </project>
