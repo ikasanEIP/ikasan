@@ -63,6 +63,7 @@ import org.ikasan.filter.duplicate.service.DuplicateFilterService;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.component.splitting.Splitter;
+import org.ikasan.spec.configuration.ConfigurationService;
 import org.quartz.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -348,6 +349,31 @@ public class ComponentBuilder
                 <dependency>
                   <groupId>org.ikasan</groupId>
                   <artifactId>ikasan-big-queue</artifactId>
+                </dependency>
+                """, e);
+        }
+    }
+
+    /**
+     * This method creates a new instance of KafkaReactiveConsumerBuilder.
+     *
+     * @return a new instance of KafkaReactiveConsumerBuilder
+     * @throws RuntimeException if there is a NoClassDefFoundError and provides guidance on resolving the issue
+     */
+    public KafkaReactiveConsumerBuilder kafkaReactiveConsumer()
+    {
+        try
+        {
+            return new KafkaReactiveConsumerBuilderImpl(this.applicationContext.getBean(AopProxyProvider.class),
+                this.applicationContext.getBean(ConfigurationService.class));
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("""
+                Check your pom.xml dependencies to ensure you include
+                <dependency>
+                  <groupId>org.ikasan</groupId>
+                  <artifactId>ikasan-kafka-client-reactive</artifactId>
                 </dependency>
                 """, e);
         }
