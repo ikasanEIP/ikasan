@@ -4,12 +4,12 @@
 
     <groupId>org.ikasan</groupId>
     <artifactId>sample-spring-boot-kafka-reactive</artifactId>
-    <version>4.1.2-SNAPSHOT</version>
+    <version>4.1.4-SNAPSHOT</version>
 
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-spring-boot-parent</artifactId>
-        <version>4.1.2-SNAPSHOT</version>
+        <version>4.1.4-SNAPSHOT</version>
     </parent>
 
     <properties>
@@ -51,7 +51,6 @@
         <dependency>
             <groupId>io.projectreactor.kafka</groupId>
             <artifactId>reactor-kafka</artifactId>
-            <version>${version.kafka.reactor.core}</version>
         </dependency>
 
         <dependency>
@@ -69,7 +68,6 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
-            <version>${version.kafka.core}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.errorprone</groupId>
@@ -124,7 +122,6 @@
         <dependency>
             <groupId>org.springframework.kafka</groupId>
             <artifactId>spring-kafka-test</artifactId>
-            <version>${version.spring.kafka.test}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.junit.platform</groupId>
@@ -145,7 +142,6 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.13</artifactId>
-            <version>${version.kafka.core}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.google.errorprone</groupId>
@@ -163,7 +159,6 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka-clients</artifactId>
-            <version>${version.kafka.core}</version>
             <classifier>test</classifier>
             <scope>test</scope>
         </dependency>
@@ -171,7 +166,6 @@
         <dependency>
             <groupId>org.scala-lang</groupId>
             <artifactId>scala-library</artifactId>
-            <version>${version.scala.libs}</version>
             <scope>test</scope>
         </dependency>
 
