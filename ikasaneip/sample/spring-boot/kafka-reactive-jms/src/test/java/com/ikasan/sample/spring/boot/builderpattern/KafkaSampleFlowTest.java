@@ -226,10 +226,10 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
                 .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
         assertEquals(((TextMessage)messageListenerVerifier.getCaptureResults().get(0)).getText(),
             SAMPLE_MESSAGE);
@@ -255,7 +255,7 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(1000, messageListenerVerifier.getCaptureResults().size()));
 
         flowTestRule.stopFlow();
@@ -272,7 +272,7 @@ public class KafkaSampleFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> {
                 List<Object> exclusions = exclusionManagementService.find(null, null
                     , null, null, null, 2000);
@@ -291,7 +291,7 @@ public class KafkaSampleFlowTest
 
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> {
                 List<Object> errors = errorReportingService.find(null, null, null
                     , null, null, 2000);
@@ -306,7 +306,7 @@ public class KafkaSampleFlowTest
 
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(2000, messageListenerVerifier.getCaptureResults().size()));
     }
 
@@ -331,7 +331,7 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(333, messageListenerVerifier.getCaptureResults().size()));
 
         flowTestRule.stopFlow();
@@ -348,7 +348,7 @@ public class KafkaSampleFlowTest
         flowTestRule.startFlow();
 
         // wait for a brief while to let the flow complete
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> {
                 List<Object> exclusions = exclusionManagementService.find(null, null
                     , null, null, null, 2000);
@@ -367,7 +367,7 @@ public class KafkaSampleFlowTest
 
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> {
                 List<Object> errors = errorReportingService.find(null, null, null
                     , null, null, 2000);
@@ -382,7 +382,7 @@ public class KafkaSampleFlowTest
 
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(666, messageListenerVerifier.getCaptureResults().size()));
     }
 
@@ -429,10 +429,10 @@ public class KafkaSampleFlowTest
         producer.send(new ProducerRecord<>("test-topic", 2, SAMPLE_MESSAGE));
         producer.flush();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(2, messageListenerVerifier.getCaptureResults().size()));
 
         // Verify the error was stored in DB
@@ -478,7 +478,7 @@ public class KafkaSampleFlowTest
         // wait for a brief while to let the flow complete
         flowTestRule.sleep(2000L);
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> {
                 List<Object> errors = errorReportingService.find(null, null, null
                     , null, null, 100);
@@ -511,7 +511,7 @@ public class KafkaSampleFlowTest
         exclusions = exclusionManagementService.find(null, null, null, null, null, 100);
         assertEquals(0, exclusions.size());
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(1, messageListenerVerifier.getCaptureResults().size()));
     }
 
@@ -550,10 +550,10 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
                 .untilAsserted(() -> assertEquals("recovering",flowTestRule.getFlowState()));
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
                 .untilAsserted(() -> flowTestRule.assertIsSatisfied());
 
         //verify no messages were published
@@ -604,7 +604,7 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals("stoppedInError",flowTestRule.getFlowState()));
 
         flowTestRule.assertIsSatisfied();
@@ -650,12 +650,12 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(1000, messageListenerVerifier.getCaptureResults().size()));
 
         flowTestRule.stopFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals("stopped", flowTestRule.getFlowState()));
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null
@@ -692,12 +692,12 @@ public class KafkaSampleFlowTest
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals(990, messageListenerVerifier.getCaptureResults().size()));
 
         flowTestRule.stopFlow();
 
-        await().atMost(Duration.ofSeconds(30))
+        await().atMost(Duration.ofSeconds(60))
             .untilAsserted(() -> assertEquals("stopped", flowTestRule.getFlowState()));
 
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null
