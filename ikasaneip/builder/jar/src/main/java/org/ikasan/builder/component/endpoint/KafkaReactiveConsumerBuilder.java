@@ -10,7 +10,7 @@ import org.ikasan.spec.resubmission.ResubmissionEventFactory;
 import reactor.kafka.receiver.ReceiverRecord;
 
 /**
- * Contract for a BigQueue consumer builder.
+ * Contract for a Kafka Reactive consumer builder.
  *
  * @author Ikasan Development Team.
  */
@@ -34,7 +34,7 @@ public interface KafkaReactiveConsumerBuilder extends Builder<Consumer>
     KafkaReactiveConsumerBuilder setListener(MessageListener<ReceiverRecord> messageListener);
 
     /**
-     * Set the event factor on the consumer.
+     * Set the event factory on the consumer.
      *
      * @param eventFactory
      */
