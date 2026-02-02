@@ -1,4 +1,5 @@
-![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
+[<< Component Quick Start](../../Readme.md)
+![IKASAN](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # KafkaConsumerConfiguration
 The `KafkaConsumerConfiguration` class holds the configuration parameters for a Kafka consumer. It provides a centralized way to manage settings related to topic subscription
 , connection details, deserialization, security, and other consumer behaviors. See the offical [Kafka](https://kafka.apache.org/) website for further explantion.

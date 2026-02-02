@@ -1,5 +1,5 @@
-[<< Component Quick Start](../../../Readme.md)
-![IKASAN](../../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
+[<< Component Quick Start](../../Readme.md)
+![IKASAN](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # KafkaConsumer
 
 The `KafkaConsumer` is a reactive Kafka client consumer implementation within the Ikasan Enterprise Integration Platform. It is designed to consume messages from a Kafka topic in a non-blocking, back-pressure-ready manner, leveraging Project Reactor and its `reactor-kafka` library.

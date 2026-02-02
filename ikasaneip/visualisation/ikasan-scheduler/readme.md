@@ -13,6 +13,7 @@
   - [Core Data Model Builders](./job-orchestration/builder/readme.md)
   - [Scheduler Job Builders](./job-orchestration/builder/scheduler-job-builder.md)
   - [Job Plan Instance Lifecycle](./job-orchestration/core/context-lifecycle.md)
+  - [Job Lock Cache](./job-orchestration/core/job-lock-cache.md)
   - [Context Machine](./job-orchestration/core/context-machine.md)
 - [Scheduler Dashboard Guide](dashboard/scheduler-dashboard.md)
   - [Job Plans](./dashboard/job-plans/job-plan-templates.md)
