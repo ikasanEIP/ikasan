@@ -30,6 +30,13 @@ public interface JobLockCacheEvent {
     String getLockName();
 
     /**
+     * Get the environment associated with the event.
+     *
+     * @return the environment of the event
+     */
+    String getEnvironment();
+
+    /**
      * Get the event type associated with the event.
      *
      * @return
