@@ -40,7 +40,10 @@
  */
 package org.ikasan.component.endpoint.kafka.client.reactive.consumer;
 
+import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.common.config.SaslConfigs;
+import org.apache.kafka.common.config.SslConfigs;
 import org.ikasan.spec.configuration.Masked;
 
 import java.util.HashMap;
@@ -1467,6 +1470,103 @@ public class KafkaConsumerConfiguration
 
         if(this.getValueDeserializer() != null && !this.getValueDeserializer().isEmpty()) {
             props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, Class.forName(this.getValueDeserializer()));
+        }
+
+        // Sasl Configs
+        if (this.getSaslMechanism() != null && !this.getSaslMechanism().isEmpty()) {
+            props.put(SaslConfigs.SASL_MECHANISM, this.getSaslMechanism());
+        }
+        if (this.getSaslKerberosKinitCmd() != null && !this.getSaslKerberosKinitCmd().isEmpty()) {
+            props.put(SaslConfigs.SASL_KERBEROS_KINIT_CMD, this.getSaslKerberosKinitCmd());
+        }
+        if (this.getSaslKerberosMinTimeBeforeRelogin() != null) {
+            props.put(SaslConfigs.SASL_KERBEROS_MIN_TIME_BEFORE_RELOGIN, this.getSaslKerberosMinTimeBeforeRelogin());
+        }
+        if (this.getSaslKerberosTicketRenewJitter() != null) {
+            props.put(SaslConfigs.SASL_KERBEROS_TICKET_RENEW_JITTER, this.getSaslKerberosTicketRenewJitter());
+        }
+        if (this.getSaslKerberosTicketRenewWindowFactor() != null) {
+            props.put(SaslConfigs.SASL_KERBEROS_TICKET_RENEW_WINDOW_FACTOR, this.getSaslKerberosTicketRenewWindowFactor());
+        }
+        if (this.getSaslLoginRefreshBufferSeconds() != null) {
+            props.put(SaslConfigs.SASL_LOGIN_REFRESH_BUFFER_SECONDS, this.getSaslLoginRefreshBufferSeconds());
+        }
+        if (this.getSaslLoginRefreshMinPeriodSeconds() != null) {
+            props.put(SaslConfigs.SASL_LOGIN_REFRESH_MIN_PERIOD_SECONDS, this.getSaslLoginRefreshMinPeriodSeconds());
+        }
+        if (this.getSaslLoginRefreshWindowFactor() != null && !this.getSaslLoginRefreshWindowFactor().isEmpty()) {
+            props.put(SaslConfigs.SASL_LOGIN_REFRESH_WINDOW_FACTOR, this.getSaslLoginRefreshWindowFactor());
+        }
+        if (this.getSaslLoginRefreshWindowJitter() != null && !this.getSaslLoginRefreshWindowJitter().isEmpty()) {
+            props.put(SaslConfigs.SASL_LOGIN_REFRESH_WINDOW_JITTER, this.getSaslLoginRefreshWindowJitter());
+        }
+        if(this.getSaslJaasConfig() != null && !this.saslJaasConfig.isEmpty()) {
+            props.put(SaslConfigs.SASL_JAAS_CONFIG, this.getSaslJaasConfig());
+        }
+        if(this.getSaslClientCallbackHandlerClass() != null && !this.getSaslClientCallbackHandlerClass().isEmpty()) {
+            props.put(SaslConfigs.SASL_CLIENT_CALLBACK_HANDLER_CLASS, this.getSaslClientCallbackHandlerClass());
+        }
+        if(this.getSaslKerberosServiceName() != null && !this.getSaslKerberosServiceName().isEmpty()) {
+            props.put(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, this.getSaslKerberosServiceName());
+        }
+        if(this.getSaslLoginCallbackHandlerClass() != null && !this.getSaslLoginCallbackHandlerClass().isEmpty()) {
+            props.put(SaslConfigs.SASL_LOGIN_CALLBACK_HANDLER_CLASS, this.getSaslLoginCallbackHandlerClass());
+        }
+        if(this.getSaslLoginClass() != null && !this.getSaslLoginClass().isEmpty()) {
+            props.put(SaslConfigs.SASL_LOGIN_CLASS, this.getSaslLoginClass());
+        }
+
+        // SSL Configurations
+        if(this.getSecurityProtocol() != null && !this.getSecurityProtocol().isEmpty()) {
+            props.put(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, this.getSecurityProtocol());
+        }
+        if(this.getSslEndpointIdentificationAlgorithm() != null && !this.getSslEndpointIdentificationAlgorithm().isEmpty()) {
+            props.put(SslConfigs.SSL_ENDPOINT_IDENTIFICATION_ALGORITHM_CONFIG, this.getSslEndpointIdentificationAlgorithm());
+        }
+        if(this.getSslTrustmanagerAlgorithm() != null && !this.getSslTrustmanagerAlgorithm().isEmpty()) {
+            props.put(SslConfigs.SSL_TRUSTMANAGER_ALGORITHM_CONFIG, this.getSslTrustmanagerAlgorithm());
+        }
+        if(this.getSslSecureRandomImplementation() != null && !this.getSslSecureRandomImplementation().isEmpty()) {
+            props.put(SslConfigs.SSL_SECURE_RANDOM_IMPLEMENTATION_CONFIG, this.getSslSecureRandomImplementation());
+        }
+        if(this.getSslKeymanagerAlgorithm() != null && !this.getSslKeymanagerAlgorithm().isEmpty()) {
+            props.put(SslConfigs.SSL_KEYMANAGER_ALGORITHM_CONFIG, this.getSslKeymanagerAlgorithm());
+        }
+        if(this.getSslEngineFactoryClass() != null && !this.getSslEngineFactoryClass().isEmpty()) {
+            props.put(SslConfigs.SSL_ENGINE_FACTORY_CLASS_CONFIG, this.getSslEngineFactoryClass());
+        }
+        if(this.getSslTruststoreType() != null && !this.getSslTruststoreType().isEmpty()) {
+            props.put(SslConfigs.SSL_TRUSTSTORE_TYPE_CONFIG, this.getSslTruststoreType());
+        }
+        if(this.getSslProvider() != null && !this.getSslProvider().isEmpty()) {
+            props.put(SslConfigs.SSL_PROVIDER_CONFIG, this.getSslProvider());
+        }
+        if(this.getSslProtocol() != null && !this.getSslProtocol().isEmpty()) {
+            props.put(SslConfigs.SSL_PROTOCOL_CONFIG, this.getSslProtocol());
+        }
+        if(this.getSslKeystoreType() != null && !this.getSslKeystoreType().isEmpty()) {
+            props.put(SslConfigs.SSL_KEYSTORE_TYPE_CONFIG, this.getSslKeystoreType());
+        }
+        if(this.getSslEnabledProtocols() != null && !this.getSslEnabledProtocols().isEmpty()) {
+            props.put(SslConfigs.SSL_ENABLED_PROTOCOLS_CONFIG, this.getSslEnabledProtocols());
+        }
+        if(this.getSslTruststorePassword() != null && !this.getSslTruststorePassword().isEmpty()) {
+            props.put(SslConfigs.SSL_TRUSTSTORE_PASSWORD_CONFIG, this.getSslTruststorePassword());
+        }
+        if(this.getSslTruststoreLocation() != null && !this.getSslTruststoreLocation().isEmpty()) {
+            props.put(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, this.getSslTruststoreLocation());
+        }
+        if(this.getSslKeystorePassword() != null && !this.getSslKeystorePassword().isEmpty()) {
+            props.put(SslConfigs.SSL_KEYSTORE_PASSWORD_CONFIG, this.getSslKeystorePassword());
+        }
+        if(this.getSslKeystoreLocation() != null && !this.getSslKeystoreLocation().isEmpty()) {
+            props.put(SslConfigs.SSL_KEYSTORE_LOCATION_CONFIG, this.getSslKeystoreLocation());
+        }
+        if(this.getSslKeyPassword() != null && !this.getSslKeyPassword().isEmpty()) {
+            props.put(SslConfigs.SSL_KEY_PASSWORD_CONFIG, this.getSslKeyPassword());
+        }
+        if(this.getSslCipherSuites() != null && !this.getSslCipherSuites().isEmpty()) {
+            props.put(SslConfigs.SSL_CIPHER_SUITES_CONFIG, this.getSslCipherSuites());
         }
 
         return props;
