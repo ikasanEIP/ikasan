@@ -3,6 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ikasan</groupId>
+    <name>Kafka Reactive Sample Spring Boot Module</name>
     <artifactId>sample-spring-boot-kafka-reactive</artifactId>
     <version>4.1.4</version>
 
