@@ -10,6 +10,7 @@
 - [Security](./security.md)
 - [Notifications](./notifications.md)
 - [Business Stream Designer](./business-stream-designer.md)
+- [SOLR Automated Backups](./solr-automated-backup.md)
 
 ## Getting started
 
