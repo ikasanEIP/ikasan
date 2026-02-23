@@ -23,7 +23,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param sortOrder
      * @return
      */
-    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
+    RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
         , long endTime, int resultSize, boolean negateQuery, String sortField, String sortOrder) throws IOException;
 
     /**
@@ -41,7 +41,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param sortOrder
      * @return
      */
-    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
+    RESULTS search(Set<String> moduleNames, Set<String> flowNames, String searchString, long startTime
         , long endTime, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
@@ -57,7 +57,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param sortOrder
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
+    RESULTS search(String searchString, long startTime, long endTime, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Perform general search against ikasan solr index.
@@ -73,7 +73,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param sortOrder
      * @return RESULTS
      */
-    public RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
+    RESULTS search(String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Perform general search against ikasan solr index.
@@ -90,7 +90,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param sortOrder
      * @return RESULTS
      */
-    public RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize
+    RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset, int resultSize
         , List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
@@ -111,7 +111,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param sortOrder
      * @return
      */
-    public RESULTS search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId
+    RESULTS search(Set<String> moduleNames, Set<String> flowNames, Set<String> componentNames, String eventId
         , String searchString, long startTime, long endTime, int offset, int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
     /**
@@ -120,7 +120,7 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param type
      * @param id
      */
-    public ENTITY findById(String type, String id);
+    ENTITY findById(String type, String id);
 
     /**
      * Method to find a document in the solr index by type and error uri.
@@ -128,28 +128,36 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      * @param type
      * @param uri
      */
-    public ENTITY findByErrorUri(String type, String uri);
+    ENTITY findByErrorUri(String type, String uri);
 
     /**
      * Save or update an ENTITY
      *
      * @param entity
      */
-    public void saveOrUpdate(ENTITY entity);
+    void saveOrUpdate(ENTITY entity);
 
     /**
      * Save or update a list of ENTITY
      *
      * @param entity
      */
-    public void saveOrUpdate(List<ENTITY> entity);
+    void saveOrUpdate(List<ENTITY> entity);
+
+    /**
+     * Backs up the Solr index to a specified location with a specified number of backups to keep.
+     *
+     * @param backupLocationPath The path where the backup of the index should be stored
+     * @param numberOfBackupsToKeep The number of backup copies of the index to keep
+     */
+    void backupIndex(String backupLocationPath, int numberOfBackupsToKeep);
 
     /**
      * Set the solr username
      *
      * @param solrUsername
      */
-    public void setSolrUsername(String solrUsername);
+    void setSolrUsername(String solrUsername);
 
 
     /**
@@ -157,5 +165,5 @@ public interface SolrGeneralService<ENTITY, RESULTS>
      *
      * @param solrPassword
      */
-    public void setSolrPassword(String solrPassword);
+    void setSolrPassword(String solrPassword);
 }
