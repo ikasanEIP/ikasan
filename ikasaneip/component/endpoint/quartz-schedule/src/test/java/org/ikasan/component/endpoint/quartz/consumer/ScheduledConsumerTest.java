@@ -1011,6 +1011,51 @@ public class ScheduledConsumerTest
         mockery.assertIsSatisfied();
     }
 
+    @Test
+    public void test_execute_when_messageProvider_message_is_null_and_consumer_is_eager_existing_eagerTrigger() throws SchedulerException
+    {
+        final JobDetail jobDetail = mockery.mock(JobDetail.class);
+        final TriggerKey triggerKey = new TriggerKey("flowName","moduleName");
+        final JobDataMap jobDataMap = new JobDataMap();
+        jobDataMap.put(ScheduledConsumer.EAGER_CALLBACK_COUNT, Integer.valueOf(1));
+
+        // expectations
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
+                will(returnValue(false));
+
+                exactly(1).of(consumerConfiguration).isEager();
+                will(returnValue(true));
+
+                exactly(2).of(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+
+                exactly(2).of(trigger).getJobDataMap();
+                will(returnValue(jobDataMap));
+
+                // check if persistent recovery
+                exactly(1).of(consumerConfiguration).isPersistentRecovery();
+                will(returnValue(false));
+            }
+        });
+
+        ScheduledConsumer scheduledConsumer = new StubbedScheduledConsumer(scheduler);
+        scheduledConsumer.setConfiguration(consumerConfiguration);
+        scheduledConsumer.setEventFactory(flowEventFactory);
+        scheduledConsumer.setEventListener(eventListener);
+        scheduledConsumer.setMessageProvider(new NullMessageProvider());
+        scheduledConsumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+        scheduledConsumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+        scheduledConsumer.setJobDetail(jobDetail);
+
+        // test
+        scheduledConsumer.execute(jobExecutionContext);
+        // assert
+        mockery.assertIsSatisfied();
+    }
+
     /**
      * Extended ScheduledRecoveryManagerJobFactory for testing with replacement mocks.
      * @author Ikasan Development Team
@@ -1047,6 +1092,14 @@ public class ScheduledConsumerTest
         public boolean isReplace()
         {
             return replace;
+        }
+    }
+
+    private class NullMessageProvider implements MessageProvider<JobExecutionContext> {
+
+        @Override
+        public JobExecutionContext invoke(JobExecutionContext context) {
+            return null;
         }
     }
 

@@ -652,6 +652,7 @@ public class ScheduledConsumer<T>
         try
         {
             String cronExpression = (String)oldTrigger.getJobDataMap().get(CRON_EXPRESSION);
+            if(cronExpression == null) return;
             Trigger newTrigger = getBusinessTrigger(oldTrigger.getTriggerBuilder(), cronExpression);
             newTrigger.getJobDataMap().clear();     // clear any passed state from the trigger
             newTrigger.getJobDataMap().put(CRON_EXPRESSION, cronExpression);  // think we need to keep cron expression value
