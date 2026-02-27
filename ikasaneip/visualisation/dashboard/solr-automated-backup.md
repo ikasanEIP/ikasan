@@ -101,7 +101,19 @@ The following properties can be configured, typically in an `application.propert
     *   Type: `String`
     *   Default: `0 0/30 * * * ? *` (every 30 minutes)
     *   Description: A Quartz cron expression that defines the schedule for when the `SolrIndexBackupJob` should run.
-
+*   **`solr.backup.number.index.validity.retries`**
+    *   Type: `int`
+    *   Default: `5`
+    *   Description: Prior to running a Solr index backup, the system checks the validity of the index. This configuration value provides the number of times the validity check is performed.
+*   **`solr.backup.number.index.validity.retry.interval`**
+    *   Type: `int`
+    *   Default: `2000`
+    *   Description: The Solr index validity retry interval in milliseconds.
+*   **`solr.backup.terminate.application.if.index.corrupted`**
+    *   Type: `boolean`
+    *   Default: `true`
+    *   Description: A flag to indicate if the Ikasan Dashboard application should shut down if an invalid Solr index is detected.
+    
 ### Example Configuration
 
 ```properties
