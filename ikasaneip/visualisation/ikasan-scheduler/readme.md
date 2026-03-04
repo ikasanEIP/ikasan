@@ -16,6 +16,7 @@
   - [Job Lock Cache](./job-orchestration/core/job-lock-cache.md)
   - [Context Machine](./job-orchestration/core/context-machine.md)
     - [Context Machine Error Handling](./job-orchestration/core/error-retries-and-dead-letter-queue.md)
+  - [Context Instance Register Job](./job-orchestration/core/context-instance-register-job.md)
 - [Scheduler Dashboard Guide](dashboard/scheduler-dashboard.md)
   - [Job Plans](./dashboard/job-plans/job-plan-templates.md)
     - [Job Plan Parameters](./job-orchestration/core/job-plan-parameters.md) 
