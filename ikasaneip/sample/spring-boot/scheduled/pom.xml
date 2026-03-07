@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-spring-boot-parent</artifactId>
-        <version>4.1.5-SNAPSHOT</version>
+        <version>4.1.5</version>
     </parent>
 
     <name>Ikasan Sample Scheduled</name>
     <groupId>org.ikasan</groupId>
     <artifactId>sample-spring-boot-scheduled</artifactId>
-    <version>4.1.5-SNAPSHOT</version>
+    <version>4.1.5</version>
 
 
     <properties>
