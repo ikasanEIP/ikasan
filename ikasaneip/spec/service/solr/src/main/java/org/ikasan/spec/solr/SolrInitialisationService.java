@@ -50,22 +50,26 @@ import java.util.List;
  */
 public interface SolrInitialisationService
 {
-    /**
-     * Initialise any solr cloud related services.
-     *
-     * @param solrCloudUrls
-     * @param daysToKeep
-     */
-    public void initCloud(List<String> solrCloudUrls, int daysToKeep);
 
     /**
-     * Initialise any solr standalone related services.
+     * Initializes a Solr Cloud configuration by specifying the cluster URLs,
+     * data retention policy, and connection timeout parameters.
      *
-     * @param solrUrl
-     * @param daysToKeep
-     * @param socketTimeoutMilli
-     * @param connectionTimeoutMilli
+     * @param solrCloudUrls the list of URLs for connecting to the Solr Cloud cluster
+     * @param daysToKeep the number of days for which records should be retained in the Solr index
+     * @param connectionTimeoutMilli the timeout value in milliseconds for establishing connections to the Solr Cloud cluster
      */
-    public void initStandalone(String solrUrl, int daysToKeep,
-                               int socketTimeoutMilli, int connectionTimeoutMilli);
+    void initCloud(List<String> solrCloudUrls, int daysToKeep,
+                          int connectionTimeoutMilli);
+
+    /**
+     * Initializes a standalone Solr service by setting up the connection details
+     * and specifying the data retention policy.
+     *
+     * @param solrUrl the URL of the Solr instance to connect to
+     * @param daysToKeep specifies the number of days for which records should be retained
+     * @param connectionTimeoutMilli the timeout value in milliseconds for establishing Solr connections
+     */
+    void initStandalone(String solrUrl, int daysToKeep,
+                               int connectionTimeoutMilli);
 }
