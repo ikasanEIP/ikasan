@@ -343,7 +343,7 @@
         <version.jakarta.servlet>6.1.0-M1</version.jakarta.servlet>
         <version.jakarta.servlet.jsp.jstl>3.0.0</version.jakarta.servlet.jsp.jstl>
         <version.glassfish.jakarta.servlet.jsp.jstl>3.0.0</version.glassfish.jakarta.servlet.jsp.jstl>
-        <version.activemq>6.1.6</version.activemq>
+        <version.activemq>6.2.1</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.jakarta.jms-api>3.1.0</version.jakarta.jms-api>
