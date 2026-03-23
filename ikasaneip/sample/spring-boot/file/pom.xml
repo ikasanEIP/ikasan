@@ -6,13 +6,13 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>sample-spring-boot-parent</artifactId>
-        <version>4.2.0-SNAPSHOT</version>
+        <version>5.0.0-SNAPSHOT</version>
     </parent>
 
     <name>Sample Spring Boot File</name>
     <groupId>org.ikasan</groupId>
     <artifactId>sample-spring-boot-file</artifactId>
-    <version>4.2.0-SNAPSHOT</version>
+    <version>5.0.0-SNAPSHOT</version>
 
 
     <properties>
