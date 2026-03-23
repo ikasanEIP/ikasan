@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.service;
 
-import org.ikasan.security.model.AuthenticationMethod;
+import org.ikasan.spec.security.model.AuthenticationMethod;
 
 
 

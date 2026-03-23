@@ -40,12 +40,15 @@
  */
 package org.ikasan.security.service;
 
-import org.ikasan.security.dao.SecurityDao;
+import org.ikasan.spec.security.model.*;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.dao.SecurityDao;
 import org.ikasan.security.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Set;
 
 
 /**
@@ -82,7 +85,7 @@ public class SecurityServiceImpl implements SecurityService
     @Override
     public IkasanPrincipal createNewPrincipal(String name, String type)
     {
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setName(name);
         principal.setType(type);
         principal.setDescription("description");
@@ -109,7 +112,7 @@ public class SecurityServiceImpl implements SecurityService
     @Override
     public Role createNewRole(String name, String description)
     {
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName(name);
         role.setDescription(description);        
         this.securityDao.saveOrUpdateRole(role);
@@ -124,7 +127,7 @@ public class SecurityServiceImpl implements SecurityService
     @Override
     public Policy createNewPolicy(String name, String description)
     {
-        Policy policy = new Policy();
+        Policy policy = new HibernatePolicyImpl();
         policy.setName(name);
         policy.setDescription(description);
  
@@ -465,7 +468,9 @@ public class SecurityServiceImpl implements SecurityService
         this.securityDao.getRoleJobPlansByJobPlanName(jobPlanName)
             .forEach(roleJobPlan -> {
                 Role role = this.getRoleById(roleJobPlan.getRole().getId());
-                role.getRoleJobPlans().remove(roleJobPlan);
+                Set<RoleJobPlan> roleJobPlanSet = role.getRoleJobPlans();
+                roleJobPlanSet.remove(roleJobPlan);
+                role.setRoleJobPlans(roleJobPlanSet);
                 this.saveRole(role);
                 this.securityDao.deleteRoleJobPlan(roleJobPlan);
             });
@@ -474,7 +479,7 @@ public class SecurityServiceImpl implements SecurityService
             Role role = this.securityDao.getRoleByName(roleName);
 
             if(role != null) {
-                RoleJobPlan roleJobPlan = new RoleJobPlan();
+                RoleJobPlan roleJobPlan = new HibernateRoleJobPlanImpl();
                 roleJobPlan.setRole(role);
                 roleJobPlan.setJobPlanName(jobPlanName);
                 this.securityDao.saveRoleJobPlan(roleJobPlan);

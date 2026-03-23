@@ -74,5 +74,6 @@
         <module>metrics</module>
         <module>scheduled</module>
         <module>big-queue</module>
+        <module>security</module>
     </modules>
 </project>

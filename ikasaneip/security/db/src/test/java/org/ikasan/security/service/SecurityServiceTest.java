@@ -45,8 +45,10 @@ import org.hibernate.PropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.model.*;
+import org.ikasan.spec.security.dao.SecurityDao;
+import org.ikasan.spec.security.model.*;
+import org.ikasan.spec.security.service.SecurityService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -61,6 +63,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -92,12 +95,12 @@ public class SecurityServiceTest
 
         for(int i=0; i<10; i++)
         {
-            Role role = new Role();
+            Role role = new HibernateRoleImpl();
             role.setName("role" + i);
 
             for(int j=0; j<10; j++)
             {
-                Policy policy = new Policy();
+                Policy policy = new HibernatePolicyImpl();
                 policy.setName("policy" + j + i);
                 policy.setDescription("description");
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
@@ -111,7 +114,7 @@ public class SecurityServiceTest
             policies = new HashSet<Policy>();
         }
 
-    	IkasanPrincipal principal = new IkasanPrincipal();
+    	IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
     	principal.setName("stewmi");
     	principal.setType("type");
     	principal.setRoles(roles);
@@ -119,71 +122,71 @@ public class SecurityServiceTest
 
     	this.xaSecurityDao.saveOrUpdatePrincipal(principal);
 
-    	principal = new IkasanPrincipal();
+    	principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal1");
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        principal = new IkasanPrincipal();
+
+        principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal2");
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        principal = new IkasanPrincipal();
+
+        principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal3");
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        principal = new IkasanPrincipal();
+
+        principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal4");
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        principal = new IkasanPrincipal();
+
+        principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal5");
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        principal = new IkasanPrincipal();
+
+        principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal6");
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        principal = new IkasanPrincipal();
+
+        principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal7");
         principal.setType("type");
         principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        PolicyLinkType policyLinkType = new PolicyLinkType("name1", "table1");
-        
+
+        PolicyLinkType policyLinkType = new HibernatePolicyLinkTypeImpl("name1", "table1");
+
         this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
-        
-        policyLinkType = new PolicyLinkType("name2", "table2");
-        
+
+        policyLinkType = new HibernatePolicyLinkTypeImpl("name2", "table2");
+
         this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
-        
-        policyLinkType = new PolicyLinkType("name3", "table3");
-        
+
+        policyLinkType = new HibernatePolicyLinkTypeImpl("name3", "table3");
+
         this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
     }
 
@@ -240,7 +243,7 @@ public class SecurityServiceTest
 
         Assert.assertEquals(principal.getRoles().size(), 10);
 
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName("role_new");
         role.setDescription("description");
 
@@ -248,7 +251,7 @@ public class SecurityServiceTest
 
         for(int j=0; j<10; j++)
         {
-            Policy policy = new Policy();
+            Policy policy = new HibernatePolicyImpl();
             policy.setName("policy" + j);
             policy.setDescription("description");
             this.xaSecurityDao.saveOrUpdatePolicy(policy);
@@ -258,7 +261,9 @@ public class SecurityServiceTest
         role.setPolicies(policies);
         this.xaSecurityService.saveRole(role);
 
-        principal.getRoles().add(role);
+        Set<Role> roles = principal.getRoles();
+        roles.add(role);
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
 
@@ -302,10 +307,10 @@ public class SecurityServiceTest
 
         Assert.assertEquals(principal.getRoles().size(), 10);
 
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName("role_new");
 
-        principal.getRoles().clear();
+        principal.setRoles(new HashSet<>());
 
         this.xaSecurityService.savePrincipal(principal);
 
@@ -325,13 +330,13 @@ public class SecurityServiceTest
 
         for(int i=0; i<10; i++)
         {
-            Role role = new Role();
+            Role role = new HibernateRoleImpl();
             role.setName("role-" + i);
             role.setDescription("description");
 
             for(int j=0; j<10; j++)
             {
-                Policy policy = new Policy();
+                Policy policy = new HibernatePolicyImpl();
                 policy.setName("policy-" + j + i);
                 policy.setDescription("description");
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
@@ -344,7 +349,7 @@ public class SecurityServiceTest
             policies = new HashSet<Policy>();
         }
 
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setType("type");
         principal.setDescription("description");
         principal.setRoles(roles);
@@ -356,7 +361,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_exception_principal_duplicate_name() 
     {
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal7");
         principal.setDescription("description");
         principal.setType("type");
@@ -397,11 +402,11 @@ public class SecurityServiceTest
 
         for(int i=0; i<10; i++)
         {
-            Role role = new Role();
+            Role role = new HibernateRoleImpl();
 
             for(int j=0; j<10; j++)
             {
-                Policy policy = new Policy();
+                Policy policy = new HibernatePolicyImpl();
                 policy.setName("policy-" + j + i);
                 policy.setDescription("description");
                 this.xaSecurityDao.saveOrUpdatePolicy(policy);
@@ -414,7 +419,7 @@ public class SecurityServiceTest
             policies = new HashSet<>();
         }
 
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setType("type");
         principal.setRoles(roles);
 
@@ -434,7 +439,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_delete_role()
     {
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName("role_new");
         role.setDescription("description");
 
@@ -442,7 +447,7 @@ public class SecurityServiceTest
 
         for(int j=0; j<10; j++)
         {
-            Policy policy = new Policy();
+            Policy policy = new HibernatePolicyImpl();
             policy.setName("policy" + j);
             policy.setDescription("description");
             this.xaSecurityDao.saveOrUpdatePolicy(policy);
@@ -473,7 +478,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_exception_principal_policy_name() 
     {
-        Policy policy = new Policy();
+        Policy policy = new HibernatePolicyImpl();
         policy.setName("policy11");
         policy.setDescription("description");
         this.xaSecurityService.savePolicy(policy);
@@ -488,12 +493,12 @@ public class SecurityServiceTest
 
         for(int i=0; i<10; i++)
         {
-            Role role = new Role();
+            Role role = new HibernateRoleImpl();
             role.setName("name");
 
             for(int j=0; j<10; j++)
             {
-                Policy policy = new Policy();
+                Policy policy = new HibernatePolicyImpl();
                 this.xaSecurityService.savePolicy(policy);
                 policies.add(policy);
             }
@@ -504,7 +509,7 @@ public class SecurityServiceTest
             policies = new HashSet<Policy>();
         }
 
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setType("type");
         principal.setRoles(roles);
 
@@ -538,7 +543,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_exception_role_name() 
     {
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName("role1");
 
         this.xaSecurityService.saveRole(role);
@@ -557,7 +562,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_delete_policy() 
     {
-        Policy policy = new Policy();
+        Policy policy = new HibernatePolicyImpl();
         policy.setName("blah");
         policy.setDescription("description");
         this.xaSecurityService.savePolicy(policy);
@@ -641,7 +646,7 @@ public class SecurityServiceTest
     public void test_success_save_policy_link()
     {    	
     	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
-    	PolicyLink policyLink = new PolicyLink(plts.get(0),Long.valueOf(1), "name");
+    	PolicyLink policyLink = new HibernatePolicyLinkImpl(plts.get(0),Long.valueOf(1), "name");
     	
     	this.xaSecurityService.savePolicyLink(policyLink);
     	
@@ -757,7 +762,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_complex_add_policy_to_role()
     {
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName("role_new");
         role.setDescription("description");
 
@@ -765,7 +770,7 @@ public class SecurityServiceTest
 
         for(int j=0; j<10; j++)
         {
-            Policy policy = new Policy();
+            Policy policy = new HibernatePolicyImpl();
             policy.setName("policy" + j);
             policy.setDescription("description");
             this.xaSecurityService.savePolicy(policy);
@@ -820,7 +825,9 @@ public class SecurityServiceTest
 
         // now we'll remove a policy from a role
         Policy policy = role.getPolicies().stream().findFirst().get();
-        role.getPolicies().remove(policy);
+        Set p = role.getPolicies();
+        p.remove(policy);
+        role.setPolicies(p);
 
         // save the role
         this.xaSecurityService.saveRole(role);
@@ -846,7 +853,7 @@ public class SecurityServiceTest
 
         Assert.assertEquals(principal.getRoles().size(), 10);
 
-        Role role = new Role();
+        Role role = new HibernateRoleImpl();
         role.setName("role_new");
         role.setDescription("description");
 
@@ -854,7 +861,7 @@ public class SecurityServiceTest
 
         for(int j=0; j<10; j++)
         {
-            Policy policy = new Policy();
+            Policy policy = new HibernatePolicyImpl();
             policy.setName("policy" + j);
             policy.setDescription("description");
             this.xaSecurityDao.saveOrUpdatePolicy(policy);
@@ -865,7 +872,7 @@ public class SecurityServiceTest
         role.setPolicies(policies);
         this.xaSecurityDao.saveOrUpdateRole(role);
 
-        RoleJobPlan roleJobPlan = new RoleJobPlan();
+        RoleJobPlan roleJobPlan = new HibernateRoleJobPlanImpl();
         roleJobPlan.setJobPlanName("jobPlan");
         roleJobPlan.setRole(role);
         this.xaSecurityDao.saveRoleJobPlan(roleJobPlan);
@@ -873,7 +880,9 @@ public class SecurityServiceTest
         role.addRoleJobPlan(roleJobPlan);
         this.xaSecurityDao.saveOrUpdateRole(role);
 
-        principal.getRoles().add(role);
+        Set<Role> roles = principal.getRoles();
+        roles.add(role);
+        principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
 
@@ -903,7 +912,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_get_principal_count_with_filter()
     {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         int count = this.xaSecurityService.getPrincipalCount(filter);
         Assert.assertEquals(count, 8);
@@ -914,19 +923,19 @@ public class SecurityServiceTest
         Assert.assertEquals(count, 1);
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         count = this.xaSecurityService.getPrincipalCount(filter);
         Assert.assertEquals(count, 8);
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         count = this.xaSecurityService.getPrincipalCount(filter);
         Assert.assertEquals(count, 8);
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -934,7 +943,7 @@ public class SecurityServiceTest
         Assert.assertEquals(count, 1);
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         count = this.xaSecurityService.getPrincipalCount(filter);
@@ -949,7 +958,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_get_principal_lites_with_filter_limit_and_offset()
     {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         List<IkasanPrincipalLite> principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
@@ -975,19 +984,19 @@ public class SecurityServiceTest
         Assert.assertEquals("stewmi", principals.get(0).getName());
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -996,7 +1005,7 @@ public class SecurityServiceTest
         Assert.assertEquals("stewmi", principals.get(0).getName());
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         principals = this.xaSecurityService.getPrincipalLites(filter, 100, 0);
@@ -1027,7 +1036,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_get_principals_with_filter_limit_and_offset()
     {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
@@ -1053,19 +1062,19 @@ public class SecurityServiceTest
         Assert.assertEquals("stewmi", principals.get(0).getName());
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
         Assert.assertTrue(principals.size() == 8);
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -1074,7 +1083,7 @@ public class SecurityServiceTest
         Assert.assertEquals("stewmi", principals.get(0).getName());
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         principals = this.xaSecurityService.getPrincipals(filter, 100, 0);
@@ -1105,7 +1114,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_get_principals_with_role_with_filter_limit_and_offset()
     {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         List<IkasanPrincipalLite> principals = this.xaSecurityService.getAllPrincipalsWithRole
             ("role1", filter, 100, 0);
@@ -1135,21 +1144,21 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals.size());
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         principals = this.xaSecurityService.getAllPrincipalsWithRole
             ("role1", filter, 100, 0);
         Assert.assertEquals(7, principals.size());
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         principals = this.xaSecurityService.getAllPrincipalsWithRole
             ("role1", filter, 100, 0);
         Assert.assertEquals(7, principals.size());
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -1158,7 +1167,7 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals.size());
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         principals = this.xaSecurityService.getAllPrincipalsWithRole
@@ -1189,7 +1198,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_get_principals_with_role_count_with_filter_limit_and_offset()
     {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         int principals = this.xaSecurityService.getPrincipalsWithRoleCount
             ("role1", filter);
@@ -1202,21 +1211,21 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals);
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         principals = this.xaSecurityService.getPrincipalsWithRoleCount
             ("role1", filter);
         Assert.assertEquals(7, principals);
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         principals = this.xaSecurityService.getPrincipalsWithRoleCount
             ("role1", filter);
         Assert.assertEquals(7, principals);
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("ewm");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -1225,7 +1234,7 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals);
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         principals = this.xaSecurityService.getPrincipalsWithRoleCount
@@ -1242,7 +1251,7 @@ public class SecurityServiceTest
     @DirtiesContext
     public void test_get_principals_without_role_with_filter_limit_and_offset()
     {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         List<IkasanPrincipalLite> principals = this.xaSecurityService.getAllPrincipalsWithoutRole
             ("role1", filter, 100, 0);
@@ -1276,21 +1285,21 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals.size());
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         principals = this.xaSecurityService.getAllPrincipalsWithoutRole
             ("role1", filter, 100, 0);
         Assert.assertEquals(1, principals.size());
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         principals = this.xaSecurityService.getAllPrincipalsWithoutRole
             ("role1", filter, 100, 0);
         Assert.assertEquals(1, principals.size());
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("other");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -1299,7 +1308,7 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals.size());
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         principals = this.xaSecurityService.getAllPrincipalsWithoutRole
@@ -1317,7 +1326,7 @@ public class SecurityServiceTest
     @Test
     @DirtiesContext
     public void test_get_principals_without_role_count_with_filter_limit_and_offset() {
-        IkasanPrincipalFilter filter = new IkasanPrincipalFilter();
+        HibernateIkasanPrincipalFilterImpl filter = new HibernateIkasanPrincipalFilterImpl();
 
         int principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
             ("role1", filter);
@@ -1335,21 +1344,21 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals);
 
         // test type filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setTypeFilter("type");
         principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
             ("role1", filter);
         Assert.assertEquals(1, principals);
 
         // test description filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setDescriptionFilter("desc");
         principals = this.xaSecurityService.getPrincipalsWithoutRoleCount
             ("role1", filter);
         Assert.assertEquals(1, principals);
 
         // test aggregate filter
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setNameFilter("other");
         filter.setTypeFilter("type");
         filter.setDescriptionFilter("ript");
@@ -1358,7 +1367,7 @@ public class SecurityServiceTest
         Assert.assertEquals(1, principals);
 
         // set sorting
-        filter = new IkasanPrincipalFilter();
+        filter = new HibernateIkasanPrincipalFilterImpl();
         filter.setSortColumn("name");
         filter.setSortOrder("ASCENDING");
         principals = this.xaSecurityService.getPrincipalsWithoutRoleCount

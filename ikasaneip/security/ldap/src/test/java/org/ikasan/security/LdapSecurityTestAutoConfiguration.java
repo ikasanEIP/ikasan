@@ -1,14 +1,17 @@
 package org.ikasan.security;
 
 import jakarta.persistence.EntityManagerFactory;
-import org.ikasan.security.dao.HibernateSecurityDao;
-import org.ikasan.security.dao.HibernateUserDao;
-import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.UserDao;
+import org.ikasan.security.dao.HibernateSecurityDaoImpl;
+import org.ikasan.security.dao.HibernateUserDaoImpl;
 import org.ikasan.security.service.*;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactoryImpl;
 import org.ikasan.security.service.authentication.CustomAuthenticationProvider;
+import org.ikasan.spec.security.dao.SecurityDao;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.service.AuthenticationService;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.service.UserService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -68,13 +71,13 @@ public class LdapSecurityTestAutoConfiguration {
 
     @Bean
     public SecurityDao securityDao(){
-        HibernateSecurityDao securityDao = new HibernateSecurityDao();
+        HibernateSecurityDaoImpl securityDao = new HibernateSecurityDaoImpl();
         return securityDao;
     }
 
     @Bean
     public UserDao userDao(){
-        HibernateUserDao userDao = new HibernateUserDao();
+        HibernateUserDaoImpl userDao = new HibernateUserDaoImpl();
         return userDao;
     }
 

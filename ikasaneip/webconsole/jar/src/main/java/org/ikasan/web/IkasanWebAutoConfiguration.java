@@ -46,6 +46,12 @@ import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.CustomAuthenticationProvider;
 import org.ikasan.security.service.authentication.ModuleAuthenticationProviderFactoryImpl;
 import org.ikasan.spec.module.ModuleService;
+import org.ikasan.spec.security.dao.AuthorityDao;
+import org.ikasan.spec.security.dao.SecurityDao;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.service.AuthenticationService;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.service.UserService;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.ikasan.spec.wiretap.WiretapService;
 import org.ikasan.web.controller.*;
@@ -130,8 +136,8 @@ public class IkasanWebAutoConfiguration implements WebMvcConfigurer
         return new SystemEventLogController(systemEventService);
     }
 
-    @Bean public UsersController usersController(Environment environment, @Qualifier("userService")UserService userService
-        , @Qualifier("dashboardUserService")UserService dashboardUserService)
+    @Bean public UsersController usersController(Environment environment, @Qualifier("userService") UserService userService
+        , @Qualifier("dashboardUserService") UserService dashboardUserService)
     {
         return new UsersController(userService,dashboardUserService,environment);
     }
@@ -169,21 +175,21 @@ public class IkasanWebAutoConfiguration implements WebMvcConfigurer
     @Bean
     @DependsOn("entityManagerFactory")
     public SecurityDao securityDao(){
-        HibernateSecurityDao securityDao = new HibernateSecurityDao();
+        HibernateSecurityDaoImpl securityDao = new HibernateSecurityDaoImpl();
         return securityDao;
     }
 
     @Bean
     @DependsOn("entityManagerFactory")
     public UserDao userDao(){
-        HibernateUserDao userDao = new HibernateUserDao();
+        HibernateUserDaoImpl userDao = new HibernateUserDaoImpl();
         return userDao;
     }
 
     @Bean
     @DependsOn("entityManagerFactory")
     public AuthorityDao authorityDao(){
-        HibernateAuthorityDao hibernateAuthorityDao = new HibernateAuthorityDao();
+        HibernateAuthorityDaoImpl hibernateAuthorityDao = new HibernateAuthorityDaoImpl();
         return hibernateAuthorityDao;
     }
 
