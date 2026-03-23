@@ -40,29 +40,20 @@
  */
 package org.ikasan.security.service.authentication;
 
-import java.util.*;
-
 import org.ikasan.security.util.AuthoritiesHelper;
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.Role;
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.UserService;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-//import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
-import org.springframework.security.crypto.password.MessageDigestPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.crypto.password.StandardPasswordEncoder;
-import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
+
+import java.util.List;
 
 /**
  *

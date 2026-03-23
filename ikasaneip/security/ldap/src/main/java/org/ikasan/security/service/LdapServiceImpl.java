@@ -41,11 +41,11 @@
 package org.ikasan.security.service;
 
 import org.apache.commons.lang.CharEncoding;
-import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.User;
+import org.ikasan.spec.security.dao.SecurityDao;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.model.AuthenticationMethod;
+import org.ikasan.spec.security.model.IkasanPrincipal;
+import org.ikasan.spec.security.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ldap.control.PagedResult;
@@ -346,7 +346,7 @@ public class LdapServiceImpl implements LdapService
 
 		if (accountName != null && accountName.length() > 0)
 		{
-			principal = new IkasanPrincipal();
+			principal = this.securityDao.createPrincipal();
 			principal.setName(accountName);
 			principal.setType("application");
 			
@@ -419,7 +419,7 @@ public class LdapServiceImpl implements LdapService
                     // Setting a default password. Need to think about forcing the user to change it,
                     String encodedPassword = passwordEncoder.encode("pa55word");
 
-                    user = new User(ldapUser.accountName, encodedPassword, ldapUser.email, true);
+                    user = this.userDao.createUser(ldapUser.accountName, encodedPassword, ldapUser.email, true);
                     user.setDepartment(ldapUser.department);
                     user.setFirstName(ldapUser.firstName);
                     user.setSurname(ldapUser.surname);
@@ -434,7 +434,7 @@ public class LdapServiceImpl implements LdapService
                     .getPrincipalByName(ldapUser.accountName);
                 if (principal == null)
                 {
-                    principal = new IkasanPrincipal();
+                    principal = this.securityDao.createPrincipal();
                     principal.setName(ldapUser.accountName);
                     principal.setType("user");
                     if (ldapUser.description == null)

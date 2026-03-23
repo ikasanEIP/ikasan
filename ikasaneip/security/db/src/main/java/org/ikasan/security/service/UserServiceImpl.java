@@ -40,8 +40,12 @@
  */
 package org.ikasan.security.service;
 
-import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.model.*;
+import org.ikasan.security.model.HibernateIkasanPrincipalImpl;
+import org.ikasan.security.model.HibernateUserImpl;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.model.*;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.service.UserService;
 import org.springframework.dao.DataAccessException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -96,6 +100,11 @@ public class UserServiceImpl implements UserService
         this.securityService = securityService;
         this.passwordEncoder = passwordEncoder;
         this.preventLocalAuthentication = preventLocalAuthentication;
+    }
+
+    @Override
+    public User createUser(String username, String password, String email, boolean enabled) {
+        return this.userDao.createUser(username, password, email, enabled);
     }
 
     @Override
@@ -209,14 +218,14 @@ public class UserServiceImpl implements UserService
             throw new IllegalArgumentException("userDetails must contain a unique username");
         }
 
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setName(username);
         principal.setType("user");
         principal.setDescription(username + " user principal.");
         this.securityService.savePrincipal(principal);
 
         String encodedPassword = passwordEncoder.encode(password);
-        User userToCreate = new User(username, encodedPassword, email, true);
+        User userToCreate = new HibernateUserImpl(username, encodedPassword, email, true);
         userToCreate.setFirstName(firstName);
         userToCreate.setSurname(surname);
         userToCreate.setDepartment(department);

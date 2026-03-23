@@ -1,8 +1,8 @@
 package org.ikasan.security.util;
 
-import org.ikasan.security.model.IkasanPrincipal;
-import org.ikasan.security.model.JobPlanGrantedAuthority;
-import org.ikasan.security.model.ModuleGrantedAuthority;
+import org.ikasan.security.model.HibernateJobPlanGrantedAuthorityImpl;
+import org.ikasan.security.model.HibernateModuleGrantedAuthorityImpl;
+import org.ikasan.spec.security.model.*;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
@@ -27,13 +27,13 @@ public class AuthoritiesHelper {
         authorities.addAll(ikasanPrincipals.stream()
             .flatMap(ikasanPrincipal -> ikasanPrincipal.getRoles().stream())
             .flatMap(role -> role.getRoleModules().stream())
-            .map(roleModule -> new ModuleGrantedAuthority(roleModule.getModuleName()))
+            .map(roleModule -> new HibernateModuleGrantedAuthorityImpl(roleModule.getModuleName()))
             .collect(Collectors.toList()));
 
         authorities.addAll(ikasanPrincipals.stream()
             .flatMap(ikasanPrincipal -> ikasanPrincipal.getRoles().stream())
             .flatMap(role -> role.getRoleJobPlans().stream())
-            .map(roleJobPlan -> new JobPlanGrantedAuthority(roleJobPlan.getJobPlanName()))
+            .map(roleJobPlan -> new HibernateJobPlanGrantedAuthorityImpl(roleJobPlan.getJobPlanName()))
             .collect(Collectors.toList()));
 
         return authorities;

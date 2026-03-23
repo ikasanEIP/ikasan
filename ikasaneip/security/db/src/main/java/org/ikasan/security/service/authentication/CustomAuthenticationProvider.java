@@ -1,7 +1,7 @@
 package org.ikasan.security.service.authentication;
 
-import org.ikasan.security.service.AuthenticationService;
-import org.ikasan.security.service.AuthenticationServiceException;
+import org.ikasan.spec.security.service.AuthenticationService;
+import org.ikasan.spec.security.service.AuthenticationServiceException;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

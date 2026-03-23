@@ -40,9 +40,9 @@
  */
 package org.ikasan.security.service.authentication;
 
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.UserService;
 import org.ikasan.security.util.AuthoritiesHelper;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;

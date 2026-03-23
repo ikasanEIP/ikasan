@@ -8,11 +8,13 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
 import org.ikasan.security.LdapSecurityTestAutoConfiguration;
 import org.ikasan.security.SecurityAutoConfiguration;
-import org.ikasan.security.dao.SecurityDao;
-import org.ikasan.security.dao.UserDao;
 import org.ikasan.security.dao.constants.SecurityConstants;
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.AuthenticationMethodImpl;
+import org.ikasan.security.model.IkasanPrincipalImpl;
+import org.ikasan.spec.security.dao.SecurityDao;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.model.AuthenticationMethod;
+import org.ikasan.spec.security.model.User;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -95,7 +97,7 @@ public class LdapServiceImplTest {
 
     @Test(expected = CommunicationException.class)
     public void test_connect_timeout_exception() throws LdapServiceException {
-        AuthenticationMethod authMethod = new AuthenticationMethod();
+        AuthenticationMethod authMethod = new AuthenticationMethodImpl();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setLdapServerUrl("ldap://server.ldap.com:389");
         authMethod.setOrder(1L);
@@ -122,7 +124,7 @@ public class LdapServiceImplTest {
 
     @Test(expected = UncategorizedLdapException.class)
     public void test_read_timeout_exception() throws LdapServiceException {
-        AuthenticationMethod authMethod = new AuthenticationMethod();
+        AuthenticationMethod authMethod = new AuthenticationMethodImpl();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setLdapServerUrl(this.ldapServerUrl);
         authMethod.setOrder(1L);
@@ -152,7 +154,8 @@ public class LdapServiceImplTest {
     @Test
     public void test_synchronise_success() throws LdapServiceException {
         when(this.userDao.getUser(anyString())).thenReturn(this.user);
-        AuthenticationMethod authMethod = new AuthenticationMethod();
+        when(this.securityDao.createPrincipal()).thenReturn(new IkasanPrincipalImpl());
+        AuthenticationMethod authMethod = new AuthenticationMethodImpl();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setLdapServerUrl(this.ldapServerUrl);
         authMethod.setOrder(1L);
@@ -180,6 +183,7 @@ public class LdapServiceImplTest {
 
         ldapService.synchronize(authMethod);
 
+        verify(securityDao, times(38)).createPrincipal();
         verify(securityDao, times(38)).getPrincipalByName(anyString());
         verify(securityDao, times(38)).saveOrUpdatePrincipal(any());
         verify(userDao, times(34)).getUser(anyString());
