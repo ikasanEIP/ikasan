@@ -40,9 +40,10 @@
  */
 package org.ikasan.web.controller;
 
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.UserService;
+import org.ikasan.security.model.HibernateUserImpl;
+import org.ikasan.spec.security.model.Policy;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -120,7 +121,7 @@ public class UsersController {
     @RequestMapping("list.htm")
     public String listUsers(ModelMap model) {
         if (model.get("user") == null) {
-            model.addAttribute("user", new User(null, null, null, true));
+            model.addAttribute("user", new HibernateUserImpl(null, null, null, true));
         }
         model.addAttribute("users", this.userService.getUsers());
         return "admin/users/users";
@@ -135,7 +136,7 @@ public class UsersController {
      * @return view the user
      */
     @RequestMapping(value = "createUser.htm", method = RequestMethod.POST)
-    public String createUser(ModelMap model, @ModelAttribute("user") User user, BindingResult result) {
+    public String createUser(ModelMap model, @ModelAttribute("user") HibernateUserImpl user, BindingResult result) {
         // check that user doesn't already exist, and the password has been supplied
         ValidationUtils.rejectIfEmpty(result, "username", "field.required", "Username cannot be empty");
         ValidationUtils.rejectIfEmpty(result, "password", "field.required", "Password cannot be empty");

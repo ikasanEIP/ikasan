@@ -42,11 +42,11 @@ package org.ikasan.security.dao;
 
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.model.Authority;
+import org.ikasan.security.model.HibernateAuthorityImpl;
+import org.ikasan.spec.security.dao.AuthorityDao;
+import org.ikasan.spec.security.model.Authority;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,23 +69,28 @@ public class HibernateAuthorityDaoTest
 	@Autowired
 	private AuthorityDao xaAuthorityDao;
 	
-	/**
-     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
-     * being tested
-     * @throws SecurityDaoException 
+
+    /**
+     * Sets up the testing environment by initializing and saving a set of mock
+     * {@link Authority} objects into persistent storage for use in test cases.
+     *
+     * This method is annotated with {@code @Before}, ensuring it is executed
+     * before each test method in the test class. It creates 10 {@link Authority}
+     * instances with unique names (e.g., "authority0", "authority1", etc.)
+     * and saves them using the {@link AuthorityDao#save(Authority)} method.
      */
     @Before public void setup()
     {
     	for(int i=0; i<10; i++)
     	{
-    		Authority authority = new Authority("authority" + i);
+    		Authority authority = new HibernateAuthorityImpl("authority" + i);
     		this.xaAuthorityDao.save(authority);
     	}
 
     }
     
 	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthorities()}.
+	 * Test method for {@link HibernateAuthorityDaoImpl#getAuthorities()}.
 	 */
 	@Test
 	@DirtiesContext
@@ -97,7 +102,7 @@ public class HibernateAuthorityDaoTest
 	}
 
 	/**
-	 * Test method for {@link org.ikasan.security.dao.HibernateAuthorityDao#getAuthority(java.lang.String)}.
+	 * Test method for {@link HibernateAuthorityDaoImpl#getAuthority(java.lang.String)}.
 	 */
 	@Test
 	@DirtiesContext

@@ -2,6 +2,8 @@ package org.ikasan.security.service;
 
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.authentication.DashboardAuthenticationProvider;
+import org.ikasan.security.service.model.*;
+import org.ikasan.spec.security.model.*;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -160,7 +162,7 @@ public class DashboardAuthenticationProviderTest
     {
         IkasanPrincipal userPrinciple = setupIkasanPrincipal("User");
         IkasanPrincipal adminPrinciple = setupIkasanPrincipal("ADMIN");
-        User expected = new User(username, null, "test@test.com", true);
+        User expected = new UserImpl();
         expected.setDepartment("department");
         expected.setFirstName("TestName");
         expected.setSurname(username);
@@ -171,26 +173,26 @@ public class DashboardAuthenticationProviderTest
 
     private IkasanPrincipal setupIkasanPrincipal(String principleName)
     {
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = new IkasanPrincipalImpl();
         principal.setName(principleName);
         principal.setType("type");
         for (int i = 0; i < 5; i++)
         {
-            Role role = new Role();
+            Role role = new RoleImpl();
             role.setName("role" + i);
             for (int j = 0; j < 5; j++)
             {
-                Policy policy = new Policy();
+                Policy policy = new PolicyImpl();
                 policy.setName("policy" + j + i);
                 policy.setDescription("description");
                 role.addPolicy(policy);
 
-                RoleModule roleModule = new RoleModule();
+                RoleModule roleModule = new RoleModuleImpl();
                 roleModule.setModuleName("role" + i + "moduleName");
                 roleModule.setRole(role);
                 role.setRoleModules(Set.of(roleModule));
 
-                RoleJobPlan roleJobPlan = new RoleJobPlan();
+                RoleJobPlan roleJobPlan = new RoleJobPlanImpl();
                 roleJobPlan.setJobPlanName("role" + i + "jobPlanName");
                 roleJobPlan.setRole(role);
                 role.setRoleJobPlans(Set.of(roleJobPlan));

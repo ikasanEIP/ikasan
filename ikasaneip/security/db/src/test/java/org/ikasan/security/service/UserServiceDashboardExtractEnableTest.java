@@ -2,9 +2,10 @@ package org.ikasan.security.service;
 
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.model.User;
+import org.ikasan.security.model.HibernateUserImpl;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,7 +31,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 public class UserServiceDashboardExtractEnableTest {
 
     private User admin;
-    private  User disabledUser;
+    private User disabledUser;
 
     @Autowired
     private UserDao xaUserDao;
@@ -43,8 +44,8 @@ public class UserServiceDashboardExtractEnableTest {
     @Before
     public void setup()
     {
-        admin = new User("admin", "admin", "admin@admin.com",true);
-        disabledUser = new User("disabledUser", "disabledUser", "disabledUser@admin.com",false);
+        admin = new HibernateUserImpl("admin", "admin", "admin@admin.com",true);
+        disabledUser = new HibernateUserImpl("disabledUser", "disabledUser", "disabledUser@admin.com",false);
 
         xaUserDao.save(admin);
         xaUserDao.save(disabledUser);

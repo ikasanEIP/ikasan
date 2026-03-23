@@ -40,11 +40,12 @@
  */
 package org.ikasan.security.util;
 
+import org.ikasan.security.model.HibernateAuthorityImpl;
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.dao.UserDao;
-import org.ikasan.security.model.Authority;
-import org.ikasan.security.model.User;
-import org.ikasan.security.service.UserService;
+import org.ikasan.spec.security.dao.UserDao;
+import org.ikasan.spec.security.model.Authority;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.service.UserService;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
@@ -70,10 +71,10 @@ public class InitialisePermission implements InitializingBean
     private static String ROLE_ADMIN_DESC = "Users who may perform administration functions on the system";
 
     /** default Admin authority */
-    private static Authority ADMIN_AUTHORITY = new Authority(ROLE_ADMIN, ROLE_ADMIN_DESC);
+    private static Authority ADMIN_AUTHORITY = new HibernateAuthorityImpl(ROLE_ADMIN, ROLE_ADMIN_DESC);
 
     /** default User authority */
-    private static Authority USER_AUTHORITY = new Authority(ROLE_USER, ROLE_USER_DESC);
+    private static Authority USER_AUTHORITY = new HibernateAuthorityImpl(ROLE_USER, ROLE_USER_DESC);
 
     /** user service against which to permission */
     private UserService userService;

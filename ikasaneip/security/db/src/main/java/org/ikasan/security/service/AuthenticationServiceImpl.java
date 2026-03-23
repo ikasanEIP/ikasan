@@ -40,16 +40,18 @@
  */
 package org.ikasan.security.service;
 
-import java.util.List;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.dao.constants.SecurityConstants;
-import org.ikasan.security.model.AuthenticationMethod;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
+import org.ikasan.spec.security.model.AuthenticationMethod;
+import org.ikasan.spec.security.service.AuthenticationService;
+import org.ikasan.spec.security.service.AuthenticationServiceException;
+import org.ikasan.spec.security.service.SecurityService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
+
+import java.util.List;
 
 /**
  * 

@@ -42,9 +42,11 @@ package org.ikasan.security.service;
 
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.dao.UserDao;
+import org.ikasan.security.dao.HibernateUserDaoImpl;
 import org.ikasan.security.model.*;
+import org.ikasan.spec.security.model.*;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.service.UserService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -86,7 +88,7 @@ public class UserServiceTest
     }
 
     /**
-     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     * Test method for {@link HibernateUserDaoImpl#getUser(java.lang.String)}.
      */
     @Test
     @DirtiesContext
@@ -111,17 +113,17 @@ public class UserServiceTest
     @DirtiesContext
     public void testGetUsersWithRole()
     {
-        List<UserLite> users = this.xaUserService.getUsersWithRole("admin", new UserFilter(), 100, 0);
+        List<UserLite> users = this.xaUserService.getUsersWithRole("admin", new HibernateUserFilterImpl(), 100, 0);
         Assert.assertEquals(1, users.size());
         Assert.assertEquals("username", users.get(0).getUsername());
 
-        users = this.xaUserService.getUsersWithRole("admin", new UserFilter(), 0, 0);
+        users = this.xaUserService.getUsersWithRole("admin", new HibernateUserFilterImpl(), 0, 0);
         Assert.assertEquals(0, users.size());
 
-        users = this.xaUserService.getUsersWithRole("admin", new UserFilter(), 100, 1);
+        users = this.xaUserService.getUsersWithRole("admin", new HibernateUserFilterImpl(), 100, 1);
         Assert.assertEquals(0, users.size());
 
-        UserFilter userFilter = new UserFilter();
+        UserFilter userFilter = new HibernateUserFilterImpl();
         userFilter.setUsernameFilter("name");
 
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
@@ -133,7 +135,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setDepartmentFilter("dep");
 
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
@@ -145,7 +147,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setNameFilter("fir");
 
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
@@ -157,7 +159,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setLastNameFilter("sur");
 
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
@@ -169,7 +171,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
 
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
@@ -181,7 +183,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -203,16 +205,16 @@ public class UserServiceTest
     @DirtiesContext
     public void testGetUsersWithoutRole()
     {
-        List<UserLite> users = this.xaUserService.getUsersWithoutRole("admin", new UserFilter(), 100, 0);
+        List<UserLite> users = this.xaUserService.getUsersWithoutRole("admin", new HibernateUserFilterImpl(), 100, 0);
         Assert.assertEquals(9, users.size());
 
-        users = this.xaUserService.getUsersWithoutRole("admin", new UserFilter(), 0, 0);
+        users = this.xaUserService.getUsersWithoutRole("admin", new HibernateUserFilterImpl(), 0, 0);
         Assert.assertEquals(0, users.size());
 
-        users = this.xaUserService.getUsersWithoutRole("admin", new UserFilter(), 100, 3);
+        users = this.xaUserService.getUsersWithoutRole("admin", new HibernateUserFilterImpl(), 100, 3);
         Assert.assertEquals(6, users.size());
 
-        UserFilter userFilter = new UserFilter();
+        UserFilter userFilter = new HibernateUserFilterImpl();
         userFilter.setUsernameFilter("name");
 
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
@@ -223,7 +225,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setDepartmentFilter("dep");
 
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
@@ -234,7 +236,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setNameFilter("fir");
 
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
@@ -245,7 +247,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setLastNameFilter("sur");
 
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
@@ -256,7 +258,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
 
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
@@ -267,7 +269,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -283,7 +285,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRole("admin", userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -325,10 +327,10 @@ public class UserServiceTest
     @DirtiesContext
     public void testGetUsersWithoutRoleCount()
     {
-        int users = this.xaUserService.getUsersWithoutRoleCount("admin", new UserFilter());
+        int users = this.xaUserService.getUsersWithoutRoleCount("admin", new HibernateUserFilterImpl());
         Assert.assertEquals(9, users);
 
-        UserFilter userFilter = new UserFilter();
+        UserFilter userFilter = new HibernateUserFilterImpl();
         userFilter.setUsernameFilter("name");
 
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
@@ -339,7 +341,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setDepartmentFilter("dep");
 
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
@@ -350,7 +352,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setNameFilter("fir");
 
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
@@ -361,7 +363,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setLastNameFilter("sur");
 
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
@@ -372,7 +374,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
 
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
@@ -383,7 +385,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -399,7 +401,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithoutRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -422,10 +424,10 @@ public class UserServiceTest
     @DirtiesContext
     public void testGetUsersWithRoleCount()
     {
-        int users = this.xaUserService.getUsersWithRoleCount("admin", new UserFilter());
+        int users = this.xaUserService.getUsersWithRoleCount("admin", new HibernateUserFilterImpl());
         Assert.assertEquals(1, users);
 
-        UserFilter userFilter = new UserFilter();
+        UserFilter userFilter = new HibernateUserFilterImpl();
         userFilter.setUsernameFilter("name");
 
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
@@ -436,7 +438,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setDepartmentFilter("dep");
 
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
@@ -447,7 +449,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setNameFilter("fir");
 
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
@@ -458,7 +460,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setLastNameFilter("sur");
 
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
@@ -469,7 +471,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
 
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
@@ -480,7 +482,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsersWithRoleCount("admin", userFilter);
         Assert.assertEquals(0, users);
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -499,7 +501,7 @@ public class UserServiceTest
 
 
     /**
-     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     * Test method for {@link HibernateUserDaoImpl#getUser(java.lang.String)}.
      */
     @Test
     @DirtiesContext
@@ -510,7 +512,7 @@ public class UserServiceTest
     }
 
     /**
-     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     * Test method for {@link HibernateUserDaoImpl#getUser(java.lang.String)}.
      */
     @Test
     @DirtiesContext
@@ -521,7 +523,7 @@ public class UserServiceTest
     }
 
     /**
-     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUser(java.lang.String)}.
+     * Test method for {@link HibernateUserDaoImpl#getUser(java.lang.String)}.
      */
     @Test
     @DirtiesContext
@@ -533,7 +535,7 @@ public class UserServiceTest
     }
 
     /**
-     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
+     * Test method for {@link HibernateUserDaoImpl#getUsers()}.
      */
     @Test
     @DirtiesContext
@@ -548,7 +550,7 @@ public class UserServiceTest
     @DirtiesContext
     public void testGetUsersLimitOffset()
     {
-        UserFilter userFilter = new UserFilter();
+        UserFilter userFilter = new HibernateUserFilterImpl();
 
         List<User> users = this.xaUserService.getUsers(userFilter, 1, 0);
 
@@ -576,7 +578,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsers(userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setDepartmentFilter("dep");
 
         users = this.xaUserService.getUsers(userFilter, 100, 0);
@@ -587,7 +589,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsers(userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setNameFilter("fir");
 
         users = this.xaUserService.getUsers(userFilter, 100, 0);
@@ -598,7 +600,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsers(userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setLastNameFilter("sur");
 
         users = this.xaUserService.getUsers(userFilter, 100, 0);
@@ -609,7 +611,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsers(userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
 
         users = this.xaUserService.getUsers(userFilter, 100, 0);
@@ -620,7 +622,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsers(userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -636,7 +638,7 @@ public class UserServiceTest
         users = this.xaUserService.getUsers(userFilter, 100, 0);
         Assert.assertEquals(0, users.size());
 
-        userFilter = new UserFilter();
+        userFilter = new HibernateUserFilterImpl();
         userFilter.setEmailFilter("@lastname");
         userFilter.setUsernameFilter("name");
         userFilter.setNameFilter("fir");
@@ -698,7 +700,7 @@ public class UserServiceTest
     }
 
     /**
-     * Test method for {@link org.ikasan.security.dao.HibernateUserDao#getUsers()}.
+     * Test method for {@link HibernateUserDaoImpl#getUsers()}.
      */
     @Test
     @DirtiesContext

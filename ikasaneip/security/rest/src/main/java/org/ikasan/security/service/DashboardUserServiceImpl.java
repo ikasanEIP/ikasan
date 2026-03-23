@@ -43,12 +43,14 @@ package org.ikasan.security.service;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.User;
-import org.ikasan.security.model.UserFilter;
-import org.ikasan.security.model.UserLite;
 import org.ikasan.security.service.dto.JwtRequest;
 import org.ikasan.security.service.dto.JwtResponse;
+import org.ikasan.security.service.model.UserImpl;
+import org.ikasan.spec.security.model.Policy;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.model.UserFilter;
+import org.ikasan.spec.security.model.UserLite;
+import org.ikasan.spec.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.ParameterizedTypeReference;
@@ -130,6 +132,11 @@ public class DashboardUserServiceImpl implements UserService
                 .expireAfterWrite(userCredentialCacheTimeoutSeconds,TimeUnit.SECONDS)
                 .build();
         }
+    }
+
+    @Override
+    public User createUser(String username, String password, String email, boolean enabled) {
+        throw new UnsupportedOperationException("User creation is not supported in this implementation");
     }
 
     /*
@@ -288,8 +295,8 @@ public class DashboardUserServiceImpl implements UserService
         params.put("username", username);
         try
         {
-            ResponseEntity<User> user = restTemplate
-                .exchange(baseUrl + SERVICE_USER_PATH, HttpMethod.GET, entity, User.class, params);
+            ResponseEntity<UserImpl> user = restTemplate
+                .exchange(baseUrl + SERVICE_USER_PATH, HttpMethod.GET, entity, UserImpl.class, params);
             if (user.getBody() == null)
             {
                 throw new UsernameNotFoundException("Unknown username : " + username);

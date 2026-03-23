@@ -41,9 +41,9 @@
 package org.ikasan.security.service.authentication;
 
 import org.ikasan.security.dao.constants.SecurityConstants;
-import org.ikasan.security.model.AuthenticationMethod;
-import org.ikasan.security.service.SecurityService;
-import org.ikasan.security.service.UserService;
+import org.ikasan.spec.security.model.AuthenticationMethod;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -71,7 +71,7 @@ public class AuthenticationProviderFactoryImpl implements AuthenticationProvider
 	 * @param securityService
 	 */
 	public AuthenticationProviderFactoryImpl(UserService userService,
-			SecurityService securityService)
+                                             SecurityService securityService)
 	{
 		super();
 		this.userService = userService;

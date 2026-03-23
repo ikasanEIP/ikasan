@@ -55,24 +55,24 @@ public interface SecurityConstants
 	
 	public static final String PRINCIPAL_ID = "principalId";
 	
-	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from UserPrincipal as up," +
+	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from HibernateUserPrincipalImpl as up," +
             " User as u " +
             " where  u.id = up.id.userId" +
             " and up.id.ikasanPrincipalId = :" + PRINCIPAL_ID;
 
     public static final String GET_POLICY_WITH_ROLE_QUERY = """
-        select p from Policy as p, RolePolicy as rp, Role as r \
+        select p from HibernatePolicyImpl as p, HibernateRolePolicyImpl as rp, HibernateRoleImpl as r \
         where  r.name = :name and rp.id.roleId = r.id and rp.id.policyId = p.id \
         """ ;
 
     public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY = """
-        select p from IkasanPrincipal as p \
+        select p from HibernateIkasanPrincipalImpl as p \
          LEFT JOIN FETCH p.roles r \
          where  r.name = :name\
         """ ;
 
     public static final String GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY = """
-        select p from IkasanPrincipalLite as p, Role r, PrincipalRole pr \
+        select p from HibernateIkasanPrincipalLiteImpl as p, HibernateRoleImpl r, HibernatePrincipalRoleImpl pr \
         where
             p.id = pr.id.ikasanPrincipalId
         and
@@ -82,7 +82,7 @@ public interface SecurityConstants
         """;
 
     public static final String GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY = """
-        select p.id from IkasanPrincipalLite as p, Role r, PrincipalRole pr \
+        select p.id from HibernateIkasanPrincipalLiteImpl as p, HibernateRoleImpl r, HibernatePrincipalRoleImpl pr \
         where
             p.id = pr.id.ikasanPrincipalId
         and
@@ -92,7 +92,7 @@ public interface SecurityConstants
         """;
 
     public static final String GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY_COUNT = """
-        select count(distinct p) from IkasanPrincipalLite as p, Role r, PrincipalRole pr \
+        select count(distinct p) from HibernateIkasanPrincipalLiteImpl as p, HibernateRoleImpl r, HibernatePrincipalRoleImpl pr \
         where
             p.id = pr.id.ikasanPrincipalId
         and
@@ -102,7 +102,7 @@ public interface SecurityConstants
         """;
 
     public static final String GET_USERS_WITH_ROLE_QUERY = """
-        select u from UserLite u, IkasanPrincipal as p, UserPrincipal up, Role r, PrincipalRole pr \
+        select u from HibernateUserLiteImpl u, HibernateIkasanPrincipalImpl as p, HibernateUserPrincipalImpl up, HibernateRoleImpl r, HibernatePrincipalRoleImpl pr \
         where  
             u.id = up.id.userId
         and
@@ -118,7 +118,7 @@ public interface SecurityConstants
         """;
 
     public static final String GET_USER_IDS_WITH_ROLE_QUERY = """
-        select u.id from UserLite u, IkasanPrincipal as p, UserPrincipal up, Role r, PrincipalRole pr \
+        select u.id from HibernateUserLiteImpl u, HibernateIkasanPrincipalImpl as p, HibernateUserPrincipalImpl up, HibernateRoleImpl r, HibernatePrincipalRoleImpl pr \
         where  
             u.id = up.id.userId
         and
@@ -134,7 +134,7 @@ public interface SecurityConstants
         """;
 
     public static final String GET_USERS_WITH_ROLE_COUNT_QUERY = """
-        select count(distinct u) from UserLite u, IkasanPrincipal as p, UserPrincipal up, Role r, PrincipalRole pr \
+        select count(distinct u) from HibernateUserLiteImpl u, HibernateIkasanPrincipalImpl as p, HibernateUserPrincipalImpl up, HibernateRoleImpl r, HibernatePrincipalRoleImpl pr \
         where  
             u.id = up.id.userId
         and
@@ -150,13 +150,13 @@ public interface SecurityConstants
         """;
 
     public static final String GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY = """
-        select distinct(p) from IkasanPrincipal as p \
+        select distinct(p) from HibernateIkasanPrincipalImpl as p \
          LEFT JOIN FETCH p.roles r \
          where  r.name in (:name)\
         """ ;
 
     public static final String GET_ROLE_JOB_PLANS_BY_ROLE_QUERY = """
-        select rjp from RoleJobPlan as rjp \
+        select rjp from HibernateRoleJobPlanImpl as rjp \
          where  rjp.jobPlanName = :name\
         """ ;
 }

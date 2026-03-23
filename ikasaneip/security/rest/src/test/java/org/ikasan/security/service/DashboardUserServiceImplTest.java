@@ -4,7 +4,8 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.cache.Cache;
 import org.apache.commons.io.FileUtils;
-import org.ikasan.security.model.User;
+import org.ikasan.spec.security.model.User;
+import org.ikasan.security.service.model.UserImpl;
 import org.ikasan.security.service.dto.JwtRequest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -148,7 +149,7 @@ public class DashboardUserServiceImplTest
                 .withStatus(200)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
             ));
-        User expected = new User("testUser",null,"test@test.com",true);
+        User expected = new UserImpl("testUser",null,"test@test.com",true);
         expected.setDepartment("department");
         expected.setFirstName("TestName");
         expected.setSurname("TestSurname");

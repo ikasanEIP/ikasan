@@ -1,9 +1,10 @@
 package org.ikasan.security;
 
 import org.ikasan.security.dao.*;
-import org.ikasan.security.service.SecurityService;
+import org.ikasan.spec.security.dao.*;
+import org.ikasan.spec.security.service.SecurityService;
 import org.ikasan.security.service.SecurityServiceImpl;
-import org.ikasan.security.service.UserService;
+import org.ikasan.spec.security.service.UserService;
 import org.ikasan.security.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -38,19 +39,19 @@ public class SecurityAutoConfiguration
 
     @Bean
     public SecurityDao securityDao(){
-        HibernateSecurityDao securityDao = new HibernateSecurityDao();
+        HibernateSecurityDaoImpl securityDao = new HibernateSecurityDaoImpl();
         return securityDao;
     }
 
     @Bean
     public UserDao userDao(){
-        HibernateUserDao userDao = new HibernateUserDao();
+        HibernateUserDaoImpl userDao = new HibernateUserDaoImpl();
         return userDao;
     }
 
     @Bean
     public AuthorityDao authorityDao(){
-        HibernateAuthorityDao hibernateAuthorityDao = new HibernateAuthorityDao();
+        HibernateAuthorityDaoImpl hibernateAuthorityDao = new HibernateAuthorityDaoImpl();
         return hibernateAuthorityDao;
     }
 

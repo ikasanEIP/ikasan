@@ -66,6 +66,11 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
             <artifactId>ikasan-transaction-arjuna</artifactId>
         </dependency>
 
@@ -112,6 +117,11 @@
         <dependency>
             <groupId>jakarta.xml.bind</groupId>
             <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
         </dependency>
 
         <!-- Test Dependencies -->

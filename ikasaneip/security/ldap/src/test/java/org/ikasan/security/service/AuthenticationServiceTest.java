@@ -48,11 +48,15 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
 import org.ikasan.security.LdapSecurityTestAutoConfiguration;
 import org.ikasan.security.SecurityAutoConfiguration;
-import org.ikasan.security.TestImportConfig;
-import org.ikasan.security.dao.SecurityDao;
 import org.ikasan.security.dao.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
+import org.ikasan.spec.security.dao.SecurityDao;
+import org.ikasan.spec.security.model.*;
+import org.ikasan.spec.security.service.AuthenticationService;
+import org.ikasan.spec.security.service.AuthenticationServiceException;
+import org.ikasan.spec.security.service.SecurityService;
+import org.ikasan.spec.security.service.UserService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -112,12 +116,12 @@ public class AuthenticationServiceTest
 
         for(int i=0; i<10; i++)
         {
-            Role role = new Role();
+            Role role = this.securityDao.createRole();
             role.setName("role" + i);
 
             for(int j=0; j<10; j++)
             {
-                Policy policy = new Policy();
+                Policy policy = this.securityDao.createPolicy();
                 policy.setName("role" + i + "policy" + j + i);
                 policy.setDescription("description");
                 this.securityDao.saveOrUpdatePolicy(policy);
@@ -131,20 +135,20 @@ public class AuthenticationServiceTest
             roles.add(role);
             policies = new HashSet<>();
 
-            RoleModule roleModule = new RoleModule();
+            RoleModule roleModule = this.securityDao.createRoleModule();
             roleModule.setModuleName("role" + i + "moduleName");
             roleModule.setRole(role);
             this.securityDao.saveRoleModule(roleModule);
             role.setRoleModules(Set.of(roleModule));
 
-            RoleJobPlan roleJobPlan = new RoleJobPlan();
+            RoleJobPlan roleJobPlan = this.securityDao.createRoleJobPlan();
             roleJobPlan.setJobPlanName("role" + i + "jobPlanName");
             roleJobPlan.setRole(role);
             this.securityDao.saveRoleJobPlan(roleJobPlan);
             role.setRoleJobPlans(Set.of(roleJobPlan));
         }
 
-        IkasanPrincipal principalGroup = new IkasanPrincipal();
+        IkasanPrincipal principalGroup = this.securityDao.createPrincipal();
         principalGroup.setName("ISD_Middleware");
         principalGroup.setType("group");
         principalGroup.setRoles(roles);
@@ -152,7 +156,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principalGroup);
 
-        IkasanPrincipal principal = new IkasanPrincipal();
+        IkasanPrincipal principal = this.securityDao.createPrincipal();
         principal.setName("svc-acc");
         principal.setType("application");
         principal.setRoles(roles);
@@ -160,7 +164,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        User user = new User("llogan", "password_local", "me@there.com", true);
+        User user = this.userService.createUser("llogan", "password_local", "me@there.com", true);
         this.userService.createUser(user);
         
         user = this.userService.loadUserByUsername("llogan");
@@ -172,7 +176,7 @@ public class AuthenticationServiceTest
         this.userService.updateUser(user);
         
 
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal1");
         principal.setType("type");
         principal.setRoles(roles);
@@ -180,7 +184,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal2");
         principal.setType("type");
         principal.setRoles(roles);
@@ -188,7 +192,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal3");
         principal.setType("type");
         principal.setRoles(roles);
@@ -196,7 +200,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal4");
         principal.setType("type");
         principal.setRoles(roles);
@@ -204,7 +208,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal5");
         principal.setType("type");
         principal.setRoles(roles);
@@ -212,7 +216,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal6");
         principal.setType("type");
         principal.setRoles(roles);
@@ -220,7 +224,7 @@ public class AuthenticationServiceTest
 
         this.securityDao.saveOrUpdatePrincipal(principal);
         
-        principal = new IkasanPrincipal();
+        principal = this.securityDao.createPrincipal();
         principal.setName("anotherPrincipal7");
         principal.setType("type");
         principal.setRoles(roles);
@@ -264,7 +268,7 @@ public class AuthenticationServiceTest
 	@DirtiesContext
 	public void testLocalLogin() throws AuthenticationServiceException
 	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
+		AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
 		
@@ -279,7 +283,7 @@ public class AuthenticationServiceTest
 	@DirtiesContext
 	public void testLocalLoginFailBadPassword() throws AuthenticationServiceException
 	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
+		AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LOCAL);
 		
@@ -296,7 +300,7 @@ public class AuthenticationServiceTest
 	@DirtiesContext
 	public void testLdapLoginFallingBackToLocal() throws AuthenticationServiceException
 	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
+		AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		
@@ -332,7 +336,7 @@ public class AuthenticationServiceTest
 	@DirtiesContext
 	public void testLdapLoginFallingBackToLocalFailBadPassword() throws AuthenticationServiceException
 	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
+		AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setOrder(1L);
 		
@@ -349,7 +353,7 @@ public class AuthenticationServiceTest
 	@DirtiesContext
 	public void testLdapLogin() throws AuthenticationServiceException
 	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
+		AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		authMethod.setLdapServerUrl(ldapServerUrl);
         authMethod.setOrder(1L);
@@ -391,21 +395,21 @@ public class AuthenticationServiceTest
     @DirtiesContext
     public void testLdapLoginMultipleAuthMethods() throws AuthenticationServiceException
     {
-        AuthenticationMethod authMethod = new AuthenticationMethod();
+        AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setEnabled(true);
         authMethod.setOrder(1L);
 
         this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 
-        authMethod = new AuthenticationMethod();
+        authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setEnabled(true);
         authMethod.setOrder(2L);
 
         this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 
-        authMethod = new AuthenticationMethod();
+        authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setLdapServerUrl(ldapServerUrl);
         authMethod.setOrder(3L);
@@ -448,21 +452,21 @@ public class AuthenticationServiceTest
     @DirtiesContext
     public void testLdapLoginMultipleAuthMethodsReverseOrderOfAuthMethods() throws AuthenticationServiceException
     {
-        AuthenticationMethod authMethod = new AuthenticationMethod();
+        AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setEnabled(true);
         authMethod.setOrder(3L);
 
         this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 
-        authMethod = new AuthenticationMethod();
+        authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setEnabled(true);
         authMethod.setOrder(2L);
 
         this.securityDao.saveOrUpdateAuthenticationMethod(authMethod);
 
-        authMethod = new AuthenticationMethod();
+        authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
         authMethod.setLdapServerUrl(ldapServerUrl);
         authMethod.setOrder(1L);
@@ -505,7 +509,7 @@ public class AuthenticationServiceTest
 	@DirtiesContext
 	public void testLdapLoginFailBadPassword() throws AuthenticationServiceException
 	{
-		AuthenticationMethod authMethod = new AuthenticationMethod();
+		AuthenticationMethod authMethod = this.securityDao.createAuthenticationMethod();
         authMethod.setOrder(1L);
 		authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
 		authMethod.setLdapServerUrl(ldapServerUrl);

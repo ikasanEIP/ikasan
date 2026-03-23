@@ -46,8 +46,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.security.model.Policy;
-import org.ikasan.security.model.PolicyLink;
+import org.ikasan.spec.security.model.Policy;
+import org.ikasan.spec.security.model.PolicyLink;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
