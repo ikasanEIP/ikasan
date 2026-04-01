@@ -45,7 +45,7 @@ import org.hibernate.PropertyValueException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.ikasan.security.SecurityAutoConfiguration;
 import org.ikasan.security.SecurityTestAutoConfiguration;
-import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.spec.security.model.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.ikasan.spec.security.dao.SecurityDao;
 import org.ikasan.spec.security.model.*;
@@ -128,7 +128,7 @@ public class HibernateSecurityDaoTest
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
+
         principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal2");
         principal.setType("type");
@@ -136,7 +136,7 @@ public class HibernateSecurityDaoTest
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
+
         principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal3");
         principal.setType("type");
@@ -144,7 +144,7 @@ public class HibernateSecurityDaoTest
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
+
         principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal4");
         principal.setType("type");
@@ -152,7 +152,7 @@ public class HibernateSecurityDaoTest
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
+
         principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal5");
         principal.setType("type");
@@ -160,7 +160,7 @@ public class HibernateSecurityDaoTest
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
+
         principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal6");
         principal.setType("type");
@@ -168,28 +168,16 @@ public class HibernateSecurityDaoTest
         principal.setRoles(roles);
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
+
         principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal7");
         principal.setType("type");
         principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-        
-        PolicyLinkType policyLinkType = new HibernatePolicyLinkTypeImpl("name1", "table1");
-        
-        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
-        
-        policyLinkType = new HibernatePolicyLinkTypeImpl("name2", "table2");
-        
-        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
-        
-        policyLinkType = new HibernatePolicyLinkTypeImpl("name3", "table3");
-        
-        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_get_principal_by_name()
     {
@@ -230,7 +218,7 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals(0, authenticationMethods.size());
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_get_policy_by_name()
     {
@@ -241,7 +229,7 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals(policy.getName(), "policy11");
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_get_role_by_name()
     {
@@ -252,7 +240,7 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals(role.getName(), "role1");
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_add_role()
     {
@@ -423,7 +411,7 @@ public class HibernateSecurityDaoTest
         Assert.assertEquals("found role module equals", roleJobPlans.get(0).getJobPlanName(), foundRoleJobPlan.getJobPlanName());
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_remove_role()
     {
@@ -1345,7 +1333,7 @@ public class HibernateSecurityDaoTest
     @Test
     @DirtiesContext
     public void test_success_get_principal_by_name_like()
-    {    	
+    {
     	List<IkasanPrincipal> principals = this.xaSecurityDao.getPrincipalByNameLike("anotherPrincipal");
 
     	Assert.assertTrue(principals.size() == 7);
@@ -1354,25 +1342,16 @@ public class HibernateSecurityDaoTest
     @Test
     @DirtiesContext
     public void test_success_get_principal_by_name_like_bad_name()
-    {    	
+    {
     	List<IkasanPrincipal> principals = this.xaSecurityDao.getPrincipalByNameLike("bad name");
 
     	Assert.assertTrue(principals.size() == 0);
-    }
-    
-    @Test
-    @DirtiesContext
-    public void test_success_get_all_policy_link_types()
-    {    	
-    	List<PolicyLinkType> plts = this.xaSecurityDao.getAllPolicyLinkTypes();
-
-    	Assert.assertTrue(plts.size() == 3);
     }
  
     @Test
     @DirtiesContext
     public void test_success_get_role_by_name_like()
-    {    	
+    {
     	List<Role> roles = this.xaSecurityDao.getRoleByNameLike("role");
 
     	Assert.assertTrue(roles.size() == 10);
@@ -1381,30 +1360,16 @@ public class HibernateSecurityDaoTest
     @Test
     @DirtiesContext
     public void test_success_get_policy_by_name_like()
-    {    	
+    {
     	List<Policy> policies = this.xaSecurityDao.getPolicyByNameLike("policy");
 
     	Assert.assertTrue(policies.size() == 100);
     }
-    
-    @Test
-    @DirtiesContext
-    public void test_success_save_policy_link()
-    {    	
-    	List<PolicyLinkType> plts = this.xaSecurityDao.getAllPolicyLinkTypes();
-    	PolicyLink policyLink = new HibernatePolicyLinkImpl(plts.get(0),Long.valueOf(1), "name");
-    	
-    	this.xaSecurityDao.saveOrUpdatePolicyLink(policyLink);
-    	
-    	Assert.assertNotNull(policyLink.getId());
-    	
-    	this.xaSecurityDao.deletePolicyLink(policyLink);
-    }
-    
+
     @Test
     @DirtiesContext
     public void test_success_get_policies_by_role()
-    {    	
+    {
     	List<Policy> policies = this.xaSecurityDao.getAllPoliciesWithRole("role1");
 
     	Assert.assertTrue(policies.size() == 10);

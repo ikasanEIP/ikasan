@@ -41,6 +41,8 @@
 package org.ikasan.security.model;
 
  import jakarta.persistence.*;
+ import org.hibernate.annotations.JavaType;
+ import org.hibernate.type.descriptor.java.LongJavaType;
  import org.ikasan.spec.security.model.IkasanPrincipal;
  import org.ikasan.spec.security.model.Role;
 
@@ -59,8 +61,9 @@ package org.ikasan.security.model;
 public class HibernateIkasanPrincipalImpl implements IkasanPrincipal
 {
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
     @Column(name = "Name", unique = true, nullable = false)
     private String name;
     @Column(name = "PrincipalType", nullable = false)
@@ -107,7 +110,7 @@ public class HibernateIkasanPrincipalImpl implements IkasanPrincipal
 	/**
      * @return the id
      */
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
@@ -115,7 +118,7 @@ public class HibernateIkasanPrincipalImpl implements IkasanPrincipal
     /**
      * @param id the id to set
      */
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

@@ -40,8 +40,6 @@
  */
 package org.ikasan.security.service;
 
-import org.ikasan.security.model.HibernateIkasanPrincipalImpl;
-import org.ikasan.security.model.HibernateUserImpl;
 import org.ikasan.spec.security.dao.UserDao;
 import org.ikasan.spec.security.model.*;
 import org.ikasan.spec.security.service.SecurityService;
@@ -69,31 +67,34 @@ public class UserServiceImpl implements UserService
     /**
      * Data access object for <code>User</code>
      */
-    private UserDao userDao;
+    private final UserDao userDao;
 
     /**
      * Data access object for <code>SecurityService</code>s
      */
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
     /**
      * <code>PasswordEncoder</code> for encoding user passwords
      */
-    private PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     /**
      * <code>Environment</code> for environment properties
      */
-    private boolean preventLocalAuthentication;
+    private final boolean preventLocalAuthentication;
+
 
     /**
-     * Constructor
+     * Constructs a new UserServiceImpl instance with the specified dependencies.
      *
-     * @param userDao
-     * @param securityService
-     * @param passwordEncoder
+     * @param userDao the user data access object used for user persistence operations
+     * @param securityService the security service for managing security-related tasks
+     * @param passwordEncoder the password encoder for encrypting user passwords
+     * @param preventLocalAuthentication a flag indicating whether local authentication should be prevented
      */
-    public UserServiceImpl(UserDao userDao, SecurityService securityService, PasswordEncoder passwordEncoder, boolean preventLocalAuthentication)
+    public UserServiceImpl(UserDao userDao, SecurityService securityService
+        , PasswordEncoder passwordEncoder, boolean preventLocalAuthentication)
     {
         super();
         this.userDao = userDao;
@@ -218,14 +219,14 @@ public class UserServiceImpl implements UserService
             throw new IllegalArgumentException("userDetails must contain a unique username");
         }
 
-        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
+        IkasanPrincipal principal = this.securityService.createPrincipal();
         principal.setName(username);
         principal.setType("user");
         principal.setDescription(username + " user principal.");
         this.securityService.savePrincipal(principal);
 
         String encodedPassword = passwordEncoder.encode(password);
-        User userToCreate = new HibernateUserImpl(username, encodedPassword, email, true);
+        User userToCreate = this.createUser(username, encodedPassword, email, true);
         userToCreate.setFirstName(firstName);
         userToCreate.setSurname(surname);
         userToCreate.setDepartment(department);
@@ -340,9 +341,7 @@ public class UserServiceImpl implements UserService
      */
     public List<Policy> getAuthorities()
     {
-        List<Policy> policies = securityService.getAllPolicies();
-
-        return policies;
+        return securityService.getAllPolicies();
 
     }
 

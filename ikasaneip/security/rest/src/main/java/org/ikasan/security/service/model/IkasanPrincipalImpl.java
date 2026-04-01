@@ -47,14 +47,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Test implementation of IkasanPrincipal for use in test scenarios.
- *
- * @author Ikasan Development Team
- */
 public class IkasanPrincipalImpl implements IkasanPrincipal
 {
-    private Long id;
+    private Object id;
     private String name;
     private String type;
     private Date createdDateTime;
@@ -64,13 +59,13 @@ public class IkasanPrincipalImpl implements IkasanPrincipal
     private String applicationSecurityBaseDn;
 
     @Override
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

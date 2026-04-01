@@ -83,6 +83,7 @@ public interface UserService extends UserDetailsManager
      * @return the created User instance
      */
     User createUser(String username, String password, String email, boolean enabled);
+
     /**
      * Retrieves a list of UserLite objects with a specified role, user filter, limit, and offset.
      *
@@ -93,7 +94,6 @@ public interface UserService extends UserDetailsManager
      * @return List of UserLite objects based on the provided role, filter, limit, and offset
      */
     List<UserLite> getUsersWithRole(String roleName, UserFilter userFilter, int limit, int offset);
-
 
     /**
      * Retrieves the count of users with a specific role and additional filter criteria.
@@ -116,7 +116,6 @@ public interface UserService extends UserDetailsManager
      */
     List<UserLite> getUsersWithoutRole(String roleName, UserFilter userFilter, int limit, int offset);
 
-
     /**
      * Retrieves the count of users who do not have the specified role and match the given filter criteria.
      *
@@ -135,11 +134,10 @@ public interface UserService extends UserDetailsManager
 
     /**
      * Gets all Users in the system
-     * 
+     *
      * @return all Users
      */
     public List<User> getUsers();
-
 
     /**
      * Retrieves a list of users based on the provided filter, limit, and offset.
@@ -158,7 +156,6 @@ public interface UserService extends UserDetailsManager
      */
     List<UserLite> getUserLites();
 
-
     /**
      * Retrieves a list of UserLite objects with a specified limit and offset.
      *
@@ -170,14 +167,14 @@ public interface UserService extends UserDetailsManager
 
     /**
      * Gets all Authorities in the system
-     * 
+     *
      * @return all Authorities
      */
     public List<Policy> getAuthorities();
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see org.springframework.security.userdetails.UserDetailsService#loadUserByUsername(java.lang.String)
      */
     public User loadUserByUsername(String username) throws UsernameNotFoundException, DataAccessException;
@@ -241,23 +238,23 @@ public interface UserService extends UserDetailsManager
 
     /**
      * Retrieves a List of <code>User</code> whose username like username%
-     * 
+     *
      * @param username
      * @return specified <code>User</code> or null if does not exist
      */
     public List<User> getUserByUsernameLike(String username);
-    
+
     /**
      * Retrieves a List of <code>User</code> whose firstname like firstname%
-     * 
+     *
      * @param firstname
      * @return specified <code>User</code> or null if does not exist
      */
     public List<User> getUserByFirstnameLike(String firstname);
-    
+
     /**
      * Retrieves a List of <code>User</code> whose surname like surname%
-     * 
+     *
      * @param surname
      * @return specified <code>User</code> or null if does not exist
      */

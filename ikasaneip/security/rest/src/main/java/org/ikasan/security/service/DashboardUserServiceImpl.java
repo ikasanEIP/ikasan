@@ -152,7 +152,8 @@ public class DashboardUserServiceImpl implements UserService
         {
             ResponseEntity<List<User>> users = restTemplate
                 .exchange(baseUrl + SERVICE_USERS_PATH, HttpMethod.GET, entity,
-                    new ParameterizedTypeReference<List<User>>(){});
+                    new ParameterizedTypeReference<>() {
+                    });
             return users.getBody();
         }
         catch (RestClientException e)

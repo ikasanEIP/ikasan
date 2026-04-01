@@ -61,7 +61,17 @@
 
         <dependency>
             <groupId>org.ikasan</groupId>
-            <artifactId>ikasan-security-db</artifactId>
+            <artifactId>ikasan-spec-security</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security-common</artifactId>
         </dependency>
 
         <dependency>
@@ -139,9 +149,22 @@
 
 
         <!-- Test Dependencies -->
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-security-db</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
             <scope>test</scope>
         </dependency>
 

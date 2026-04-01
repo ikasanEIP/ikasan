@@ -41,6 +41,8 @@
 package org.ikasan.security.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.ikasan.spec.security.model.Authority;
 
@@ -66,8 +68,9 @@ public class HibernateAuthorityImpl implements Authority
      * Identitiy field required for ORM
      */
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
 
     /**
      * Name of the authority
@@ -194,7 +197,7 @@ public class HibernateAuthorityImpl implements Authority
      *
      * @return id
      */
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
@@ -205,7 +208,7 @@ public class HibernateAuthorityImpl implements Authority
      * @param id
      */
     @SuppressWarnings("unused")
-    private void setId(Long id)
+    private void setId(Object id)
     {
         this.id = id;
     }

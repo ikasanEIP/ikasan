@@ -44,16 +44,9 @@ package org.ikasan.security.dao.constants;
  * @author CMI2 Development Team
  *
  */
-public interface SecurityConstants
+public interface SecurityQueries
 {
-	public static final String AUTH_METHOD_LOCAL = "AUTH_METHOD_LOCAL";
-	public static final String AUTH_METHOD_DASHBOARD = "AUTH_METHOD_DASHBOARD";
-	public static final String AUTH_METHOD_LDAP_LOCAL = "AUTH_METHOD_LDAP_LOCAL";
-	public static final String AUTH_METHOD_LDAP = "AUTH_METHOD_LDAP";
-    
-	public static final Long AUTH_METHOD_ID = Long.valueOf(1);
-	
-	public static final String PRINCIPAL_ID = "principalId";
+    public static final String PRINCIPAL_ID = "principalId";
 	
 	public static final String GET_USERS_BY_PRINCIPAL_QUERY = "select u from HibernateUserPrincipalImpl as up," +
             " User as u " +

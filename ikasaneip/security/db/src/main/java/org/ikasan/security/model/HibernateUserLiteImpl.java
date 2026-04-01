@@ -41,6 +41,8 @@
 package org.ikasan.security.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.security.Principal;
@@ -64,8 +66,9 @@ public class HibernateUserLiteImpl implements UserLite
 
     /** Id field utilised by ORM */
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
 
     @Column(name = "Username", unique = true, nullable = false)
     private String username;
@@ -217,21 +220,21 @@ public class HibernateUserLiteImpl implements UserLite
 
     /**
      * Accessor for id
-     * 
+     *
      * @return id or null if non persisted
      */
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     /**
      * Setter for id, used by ORM
-     * 
+     *
      * @param id
      */
     @SuppressWarnings("unused")
-    private void setId(Long id)
+    private void setId(Object id)
     {
         this.id = id;
     }

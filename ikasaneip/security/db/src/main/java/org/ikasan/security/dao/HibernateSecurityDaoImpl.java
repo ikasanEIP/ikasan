@@ -48,7 +48,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.security.dao.constants.SecurityQueries;
 import org.ikasan.security.model.*;
 import org.ikasan.spec.security.model.*;
 import org.ikasan.spec.security.dao.SecurityDao;
@@ -148,7 +148,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
      * @see org.ikasan.security.dao.SecurityDao#getPrincipalByName(java.lang.String)
      */
     @SuppressWarnings("unchecked")
-	@Override 
+	@Override
     public IkasanPrincipal getPrincipalByName(String name)
     {
         CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
@@ -388,10 +388,9 @@ public class HibernateSecurityDaoImpl implements SecurityDao
      */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Role getRoleById(Long id)
+	public Role getRoleById(Object id)
 	{
-		Role role = this.entityManager.find(HibernateRoleImpl.class, id);
-		return role;
+        return this.entityManager.find(HibernateRoleImpl.class, id);
 	}
 
 	/*
@@ -400,10 +399,9 @@ public class HibernateSecurityDaoImpl implements SecurityDao
      */
 	@SuppressWarnings("unchecked")
 	@Override
-	public Policy getPolicyById(Long id)
+	public Policy getPolicyById(Object id)
 	{
-        Policy policy = this.entityManager.find(HibernatePolicyImpl.class,id);
-		return policy;
+        return this.entityManager.find(HibernatePolicyImpl.class,id);
 	}
 
     /*
@@ -478,12 +476,11 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethod(java.lang.Long)
 	 */
 	@Override
-	public AuthenticationMethod getAuthenticationMethod(Long id)
+	public AuthenticationMethod getAuthenticationMethod(Object id)
 	{
-		AuthenticationMethod authenticationMethod = this.entityManager.find(HibernateAuthenticationMethodImpl.class,id);
-        return authenticationMethod;
+        return this.entityManager.find(HibernateAuthenticationMethodImpl.class,id);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.ikasan.security.dao.SecurityDao#getAuthenticationMethod(java.lang.Long)
 	 */
@@ -513,7 +510,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 	@Override
 	public List<IkasanPrincipal> getAllPrincipalsWithRole(String roleName)
 	{
-        Query query = this.entityManager.createQuery(SecurityConstants.GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY);
+        Query query = this.entityManager.createQuery(SecurityQueries.GET_IKASAN_PRINCIPLE_WITH_ROLE_QUERY);
         query.setParameter("name", roleName);
         return query.getResultList();
     }
@@ -521,7 +518,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
     @Override
     public List<IkasanPrincipalLite> getAllPrincipalsWithRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset) {
         StringBuffer queryBuffer = this.createPrincipalByRoleFilterPredicateString(
-                SecurityConstants.GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY, filter);
+                SecurityQueries.GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY, filter);
 
         if(filter.getSortOrder() != null && filter.getSortColumn() != null) {
             if (filter.getSortOrder().equals("ASCENDING")) {
@@ -543,7 +540,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
     @Override
     public List<IkasanPrincipalLite> getAllPrincipalsWithoutRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset) {
         StringBuffer queryBuffer = new StringBuffer("select principal from HibernateIkasanPrincipalLiteImpl principal where  principal.id NOT IN (");
-        queryBuffer.append(SecurityConstants.GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY);
+        queryBuffer.append(SecurityQueries.GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY);
         if(filter.getTypeFilter() != null && !filter.getTypeFilter().isEmpty()) {
             queryBuffer.append(" AND p.type LIKE '%").append(filter.getTypeFilter()).append("%'");
         }
@@ -572,7 +569,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
     @Override
     public int getPrincipalsWithRoleCount(String roleName, IkasanPrincipalFilter filter) {
         StringBuffer queryBuffer = this.createPrincipalByRoleFilterPredicateString(
-            SecurityConstants.GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY_COUNT, filter);
+            SecurityQueries.GET_IKASAN_PRINCIPLE_LITE_WITH_ROLE_QUERY_COUNT, filter);
 
         Query query = this.entityManager.createQuery(queryBuffer.toString());
         query.setParameter("name", roleName);
@@ -582,7 +579,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
     @Override
     public int getPrincipalsWithoutRoleCount(String roleName, IkasanPrincipalFilter filter) {
         StringBuffer queryBuffer = new StringBuffer("select count(principal) from HibernateIkasanPrincipalLiteImpl principal where  principal.id NOT IN (");
-        queryBuffer.append(SecurityConstants.GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY);
+        queryBuffer.append(SecurityQueries.GET_IKASAN_PRINCIPAL_LITE_IDS_WITH_ROLE_QUERY);
         if(filter.getTypeFilter() != null && !filter.getTypeFilter().isEmpty()) {
             queryBuffer.append(" AND p.type LIKE '%").append(filter.getTypeFilter()).append("%'");
         }
@@ -603,7 +600,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 	@Override
 	public List<IkasanPrincipal> getPrincipalsByRoleNames(List<String> names)
 	{
-        Query query = this.entityManager.createQuery(SecurityConstants.GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY);
+        Query query = this.entityManager.createQuery(SecurityQueries.GET_IKASAN_PRINCIPLE_WITH_ROLE_IN_QUERY);
         query.setParameter("name", names);
         return (List<IkasanPrincipal>) query.getResultList();
 	}
@@ -622,27 +619,6 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#getAllPolicyLinkTypes()
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<PolicyLinkType> getAllPolicyLinkTypes()
-	{
-        CriteriaBuilder builder = this.entityManager.getCriteriaBuilder();
-
-        CriteriaQuery<HibernatePolicyLinkTypeImpl> criteriaQuery = builder.createQuery(HibernatePolicyLinkTypeImpl.class);
-
-        Root<HibernatePolicyLinkTypeImpl> root = criteriaQuery.from(HibernatePolicyLinkTypeImpl.class);
-
-        criteriaQuery.select(root);
-
-        TypedQuery<HibernatePolicyLinkTypeImpl> query = this.entityManager.createQuery(criteriaQuery);
-        return query.getResultList().stream()
-            .map(p -> (PolicyLinkType)p)
-            .collect(Collectors.toList());
-	}
-
-	/* (non-Javadoc)
 	 * @see org.ikasan.security.dao.SecurityDao#getPolicyByNameLike(java.lang.String)
 	 */
 	@Override
@@ -654,7 +630,7 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 
         return query.getResultList();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see org.ikasan.security.dao.SecurityDao#getRoleByNameLike(java.lang.String)
 	 */
@@ -668,45 +644,12 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLink(org.ikasan.security.window.PolicyLink)
-	 */
-	@Override
-	public void saveOrUpdatePolicyLink(PolicyLink policyLink)
-	{
-        if(!this.entityManager.contains(policyLink)) {
-            policyLink = entityManager.merge(policyLink);
-        }
-		this.entityManager.persist(policyLink);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#saveOrUpdatePolicyLinkType(org.ikasan.security.window.PolicyLinkType)
-	 */
-	@Override
-	public void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType)
-	{
-        if(!this.entityManager.contains(policyLinkType)) {
-            policyLinkType = entityManager.merge(policyLinkType);
-        }
-		this.entityManager.persist(policyLinkType);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.security.dao.SecurityDao#deletePolicyLink(org.ikasan.security.window.PolicyLink)
-	 */
-	@Override
-	public void deletePolicyLink(PolicyLink policyLink)
-	{
-		this.entityManager.remove(this.entityManager.contains(policyLink) ? policyLink : entityManager.merge(policyLink));
-	}
-
-	/* (non-Javadoc)
 	 * @see org.ikasan.security.dao.SecurityDao#getAllPoliciessWithRole(java.lang.String)
 	 */
 	@Override
 	public List<Policy> getAllPoliciesWithRole(String roleName)
 	{
-        Query query = this.entityManager.createQuery(SecurityConstants.GET_POLICY_WITH_ROLE_QUERY);
+        Query query = this.entityManager.createQuery(SecurityQueries.GET_POLICY_WITH_ROLE_QUERY);
         query.setParameter("name", roleName);
         return query.getResultList();
     }
@@ -759,17 +702,17 @@ public class HibernateSecurityDaoImpl implements SecurityDao
 	 * @see org.ikasan.security.dao.SecurityDao#getUsersAssociatedWithPrincipal(long)
 	 */
 	@Override
-	public List<User> getUsersAssociatedWithPrincipal(final long principalId)
+	public List<User> getUsersAssociatedWithPrincipal(final Object principalId)
 	{
-        Query query = this.entityManager.createQuery(SecurityConstants.GET_USERS_BY_PRINCIPAL_QUERY);
-        query.setParameter(SecurityConstants.PRINCIPAL_ID, principalId);
+        Query query = this.entityManager.createQuery(SecurityQueries.GET_USERS_BY_PRINCIPAL_QUERY);
+        query.setParameter(SecurityQueries.PRINCIPAL_ID, principalId);
         return query.getResultList();
 	}
 
 
     @Override
     public List<RoleJobPlan> getRoleJobPlansByJobPlanName(String jonPlanName) {
-        Query query = this.entityManager.createQuery(SecurityConstants.GET_ROLE_JOB_PLANS_BY_ROLE_QUERY);
+        Query query = this.entityManager.createQuery(SecurityQueries.GET_ROLE_JOB_PLANS_BY_ROLE_QUERY);
         query.setParameter("name", jonPlanName);
         return query.getResultList();
     }

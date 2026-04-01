@@ -1,6 +1,8 @@
 package org.ikasan.security.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.ikasan.spec.security.model.RoleJobPlan;
 import org.ikasan.spec.security.model.Role;
 
@@ -12,8 +14,9 @@ import java.util.Objects;
 public class HibernateRoleJobPlanImpl implements RoleJobPlan
 {
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
     @Column(name = "JobPlanName", nullable = false)
     private String jobPlanName;
     @ManyToOne
@@ -35,11 +38,11 @@ public class HibernateRoleJobPlanImpl implements RoleJobPlan
         this.updatedDateTime = new Date(now);
     }
 
-    public Long getId() {
+    public Object getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Object id) {
         this.id = id;
     }
 

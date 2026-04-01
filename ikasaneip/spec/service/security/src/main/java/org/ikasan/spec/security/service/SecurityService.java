@@ -69,6 +69,53 @@ import org.ikasan.spec.security.model.*;
 public interface SecurityService
 {
     /**
+     * Creates and returns a new instance of {@link IkasanPrincipal}.
+     *
+     * @return a new, unpersisted {@link IkasanPrincipal} instance with default values
+     */
+    IkasanPrincipal createPrincipal();
+
+    /**
+     * Creates and returns a new instance of {@link Role}.
+     *
+     * @return a new, unpersisted {@link Role} instance with default values
+     */
+    Role createRole();
+
+    /**
+     * Creates and returns a new security policy instance.
+     * The created policy will contain default or uninitialized values for its attributes,
+     * and additional configuration or assignment of values may be required.
+     *
+     * @return a new instance of the {@link Policy} object
+     */
+    Policy createPolicy();
+
+    /**
+     * Creates and returns a new instance of {@link RoleModule}.
+     *
+     * @return a new, unpersisted {@link RoleModule} instance representing a role-to-module association
+     */
+    RoleModule createRoleModule();
+
+    /**
+     * Creates and returns a new instance of {@link RoleJobPlan}.
+     *
+     * <p>A {@link RoleJobPlan} encapsulates the association between a role and a specific job plan,
+     * defining which roles have access to particular job plan functions or responsibilities.
+     *
+     * @return a new, unpersisted {@link RoleJobPlan} instance
+     */
+    RoleJobPlan createRoleJobPlan();
+
+    /**
+     * Creates and returns a new instance of {@link AuthenticationMethod}.
+     *
+     * @return a new, unpersisted {@link AuthenticationMethod} instance with default values
+     */
+    AuthenticationMethod createAuthenticationMethod();
+
+    /**
      * Retrieves an IkasanPrincipal object based on the provided name.
      *
      * @param name The name of the principal.
@@ -307,7 +354,7 @@ public interface SecurityService
      * @param id The ID of the AuthenticationMethod to retrieve.
      * @return The AuthenticationMethod object associated with the provided ID, or null if no AuthenticationMethod was found.
      */
-    AuthenticationMethod getAuthenticationMethod(Long id);
+    AuthenticationMethod getAuthenticationMethod(Object id);
 
     /**
      * Deletes an AuthenticationMethod from the SecurityService.
@@ -323,14 +370,7 @@ public interface SecurityService
      * @return A list of IkasanPrincipal objects that match the given pattern.
      */
     List<IkasanPrincipal> getPrincipalByNameLike(String name);
-    
-    /**
-     * Retrieves a list of all PolicyLinkType objects.
-     *
-     * @return A list of PolicyLinkType objects representing all policy link types.
-     */
-    List<PolicyLinkType> getAllPolicyLinkTypes();
-    
+
     /**
      * Retrieves a list of Policy objects whose name contains the specified pattern.
      *
@@ -338,13 +378,6 @@ public interface SecurityService
      * @return A list of Policy objects whose name contains the specified pattern.
      */
     List<Policy> getPolicyByNameLike(String name);
-    
-    /**
-     * Saves a PolicyLink object to the database.
-     *
-     * @param policyLink The PolicyLink object to be saved.
-     */
-    void savePolicyLink(PolicyLink policyLink);
 
     /**
      * Saves a RoleModule object to the database.
@@ -359,14 +392,7 @@ public interface SecurityService
      * @param roleJobPlan The RoleJobPlan object to be saved.
      */
     void saveRoleJobPlan(RoleJobPlan roleJobPlan);
-    
-    /**
-     * Deletes a PolicyLink from the SecurityService.
-     *
-     * @param policyLink The PolicyLink to be deleted.
-     */
-    void deletePolicyLink(PolicyLink policyLink);
-    
+
     /**
      * Retrieves a list of Policy objects that have the specified role.
      *
@@ -404,7 +430,7 @@ public interface SecurityService
      * @param principalId The ID of the principal.
      * @return A list of users associated with the principal.
      */
-    List<User> getUsersAssociatedWithPrincipal(long principalId);
+    List<User> getUsersAssociatedWithPrincipal(Object principalId);
 
     /**
      * Retrieves a Role object based on the provided id.
@@ -412,7 +438,7 @@ public interface SecurityService
      * @param id The id of the role to retrieve.
      * @return The Role object associated with the provided id, or null if no role was found.
      */
-    Role getRoleById(Long id);
+    Role getRoleById(Object id);
 
     /**
      * Retrieves a Policy object based on the provided id.
@@ -420,7 +446,7 @@ public interface SecurityService
      * @param id The id of the policy to retrieve.
      * @return The Policy object associated with the provided id, or null if no policy was found.
      */
-    Policy getPolicyById(Long id);
+    Policy getPolicyById(Object id);
 
     /**
      * Sets the roles associated with a job plan.

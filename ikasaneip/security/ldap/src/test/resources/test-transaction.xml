@@ -57,13 +57,10 @@
         <aop:pointcut id="daoMethods"
                 expression="execution(* org.ikasan.spec.security.dao.SecurityDao.deleteAuthenticationMethod(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.deletePolicy(..))
-                   || execution(* org.ikasan.spec.security.dao.SecurityDao.deletePolicyLink(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.deleteRole(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.deletePrincipal(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.saveOrUpdateAuthenticationMethod(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.saveOrUpdatePolicy(..))
-                   || execution(* org.ikasan.spec.security.dao.SecurityDao.saveOrUpdatePolicyLink(..))
-                   || execution(* org.ikasan.spec.security.dao.SecurityDao.saveOrUpdatePolicyLinkType(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.saveOrUpdatePrincipal(..))
                    || execution(* org.ikasan.spec.security.dao.SecurityDao.saveOrUpdateRole(..))
                    || execution(* org.ikasan.spec.security.dao.UserDao.delete(..))

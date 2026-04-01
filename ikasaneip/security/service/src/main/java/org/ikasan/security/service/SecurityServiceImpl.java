@@ -40,10 +40,9 @@
  */
 package org.ikasan.security.service;
 
+import org.ikasan.spec.security.dao.SecurityDao;
 import org.ikasan.spec.security.model.*;
 import org.ikasan.spec.security.service.SecurityService;
-import org.ikasan.spec.security.dao.SecurityDao;
-import org.ikasan.security.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,7 +61,6 @@ public class SecurityServiceImpl implements SecurityService
     
     private SecurityDao securityDao;
 
-
     /**
      * Constructor
      * 
@@ -78,18 +76,25 @@ public class SecurityServiceImpl implements SecurityService
         }
     }
 
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#createNewPrincipal(java.lang.String, java.lang.String)
      */
     @Override
+    public IkasanPrincipal createPrincipal()
+    {
+        return this.securityDao.createPrincipal();
+    }
+
+    @Override
     public IkasanPrincipal createNewPrincipal(String name, String type)
     {
-        IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
+        IkasanPrincipal principal = this.securityDao.createPrincipal();
         principal.setName(name);
         principal.setType(type);
         principal.setDescription("description");
-        
+
         this.securityDao.saveOrUpdatePrincipal(principal);
 
         return principal;
@@ -110,11 +115,17 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#createNewRole(java.lang.String, java.lang.String)
      */
     @Override
+    public Role createRole()
+    {
+        return this.securityDao.createRole();
+    }
+
+    @Override
     public Role createNewRole(String name, String description)
     {
-        Role role = new HibernateRoleImpl();
+        Role role = this.securityDao.createRole();
         role.setName(name);
-        role.setDescription(description);        
+        role.setDescription(description);
         this.securityDao.saveOrUpdateRole(role);
 
         return role;
@@ -125,12 +136,18 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#createNewPolicy(java.lang.String, java.lang.String)
      */
     @Override
+    public Policy createPolicy()
+    {
+        return this.securityDao.createPolicy();
+    }
+
+    @Override
     public Policy createNewPolicy(String name, String description)
     {
-        Policy policy = new HibernatePolicyImpl();
+        Policy policy = this.securityDao.createPolicy();
         policy.setName(name);
         policy.setDescription(description);
- 
+
         this.securityDao.saveOrUpdatePolicy(policy);
 
         return policy;
@@ -141,7 +158,7 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#saveRole(org.ikasan.security.window.Role)
      */
     @Override
-    public void saveRole(Role role) 
+    public void saveRole(Role role)
     {
     	this.securityDao.saveOrUpdateRole(role);
     }
@@ -151,7 +168,7 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#savePolicy(org.ikasan.security.window.Policy)
      */
     @Override
-    public void savePolicy(Policy policy) 
+    public void savePolicy(Policy policy)
     {
     	this.securityDao.saveOrUpdatePolicy(policy);
     }
@@ -161,7 +178,7 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#findPrincipalByName(java.lang.String)
      */
     @Override
-    public IkasanPrincipal findPrincipalByName(String name) 
+    public IkasanPrincipal findPrincipalByName(String name)
     {
         return this.securityDao.getPrincipalByName(name);
     }
@@ -171,7 +188,7 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#deletePrincipal(org.ikasan.security.window.IkasanPrincipal)
      */
     @Override
-    public void deletePrincipal(IkasanPrincipal principal) 
+    public void deletePrincipal(IkasanPrincipal principal)
     {
     	this.securityDao.deletePrincipal(principal);
     }
@@ -181,7 +198,7 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#deleteRole(org.ikasan.security.window.Role)
      */
     @Override
-    public void deleteRole(Role role) 
+    public void deleteRole(Role role)
     {
     	this.securityDao.deleteRole(role);
     }
@@ -191,9 +208,15 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#deletePolicy(org.ikasan.security.window.Policy)
      */
     @Override
-    public void deletePolicy(Policy policy) 
+    public void deletePolicy(Policy policy)
     {
     	this.securityDao.deletePolicy(policy);
+    }
+
+    @Override
+    public RoleModule createRoleModule()
+    {
+        return this.securityDao.createRoleModule();
     }
 
     @Override
@@ -208,6 +231,12 @@ public class SecurityServiceImpl implements SecurityService
     }
 
     @Override
+    public RoleJobPlan createRoleJobPlan()
+    {
+        return this.securityDao.createRoleJobPlan();
+    }
+
+    @Override
     public void deleteRoleJobPlan(RoleJobPlan roleJobPlan) {
         this.securityDao.deleteRoleJobPlan(roleJobPlan);
     }
@@ -217,12 +246,18 @@ public class SecurityServiceImpl implements SecurityService
         this.securityDao.saveRoleJobPlan(roleJobPlan);
     }
 
+    @Override
+    public AuthenticationMethod createAuthenticationMethod()
+    {
+        return this.securityDao.createAuthenticationMethod();
+    }
+
     /*
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAllPrincipals()
      */
     @Override
-    public List<IkasanPrincipal> getAllPrincipals() 
+    public List<IkasanPrincipal> getAllPrincipals()
     {
         return this.securityDao.getAllPrincipals();
     }
@@ -282,7 +317,7 @@ public class SecurityServiceImpl implements SecurityService
 	 * @see org.ikasan.security.service.SecurityService#getAllRoles()
 	 */
     @Override
-    public List<Role> getAllRoles() 
+    public List<Role> getAllRoles()
     {
         return this.securityDao.getAllRoles();
     }
@@ -292,7 +327,7 @@ public class SecurityServiceImpl implements SecurityService
      * @see org.ikasan.security.service.SecurityService#getAllPolicies()
      */
     @Override
-    public List<Policy> getAllPolicies() 
+    public List<Policy> getAllPolicies()
     {
         return this.securityDao.getAllPolicies();
     }
@@ -301,7 +336,8 @@ public class SecurityServiceImpl implements SecurityService
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#saveOrUpdateAuthenticationMethod(org.ikasan.security.window.AuthenticationMethod)
      */
-    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod) 
+    @Override
+    public void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod)
     {
 		this.securityDao.saveOrUpdateAuthenticationMethod(authenticationMethod);
     }
@@ -310,7 +346,8 @@ public class SecurityServiceImpl implements SecurityService
      * (non-Javadoc)
      * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
      */
-    public List<AuthenticationMethod> getAuthenticationMethods() 
+    @Override
+    public List<AuthenticationMethod> getAuthenticationMethods()
     {
 		return this.securityDao.getAuthenticationMethods();
     }
@@ -352,39 +389,12 @@ public class SecurityServiceImpl implements SecurityService
 	}
 
 	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#getAllPolicyLinkTypes()
-	 */
-	@Override
-	public List<PolicyLinkType> getAllPolicyLinkTypes()
-	{
-		return this.securityDao.getAllPolicyLinkTypes();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.ikasan.security.service.SecurityService#getPolicyByNameLike(java.lang.String)
 	 */
 	@Override
 	public List<Policy> getPolicyByNameLike(String name)
 	{
 		return this.securityDao.getPolicyByNameLike(name);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#savePolicyLink(org.ikasan.security.window.PolicyLink)
-	 */
-	@Override
-	public void savePolicyLink(PolicyLink policyLink)
-	{
-		this.securityDao.saveOrUpdatePolicyLink(policyLink);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.ikasan.security.service.SecurityService#deletePolicyLink(org.ikasan.security.window.PolicyLink)
-	 */
-	@Override
-	public void deletePolicyLink(PolicyLink policyLink)
-	{
-		this.securityDao.deletePolicyLink(policyLink);
 	}
 
 	/* (non-Javadoc)
@@ -409,7 +419,7 @@ public class SecurityServiceImpl implements SecurityService
 	 * @see org.ikasan.security.service.SecurityService#getAuthenticationMethod(java.lang.Long)
 	 */
 	@Override
-	public AuthenticationMethod getAuthenticationMethod(Long id)
+	public AuthenticationMethod getAuthenticationMethod(Object id)
 	{
 		return this.securityDao.getAuthenticationMethod(id);
 	}
@@ -445,19 +455,19 @@ public class SecurityServiceImpl implements SecurityService
 	 * @see org.ikasan.security.service.SecurityService#getUsersAssociatedWithPrincipal(long)
 	 */
 	@Override
-	public List<User> getUsersAssociatedWithPrincipal(long principalId)
+	public List<User> getUsersAssociatedWithPrincipal(Object principalId)
 	{
 		return this.securityDao.getUsersAssociatedWithPrincipal(principalId);
 	}
 
     @Override
-    public Role getRoleById(Long id)
+    public Role getRoleById(Object id)
     {
         return this.securityDao.getRoleById(id);
     }
 
     @Override
-    public Policy getPolicyById(Long id)
+    public Policy getPolicyById(Object id)
     {
         return this.securityDao.getPolicyById(id);
     }
@@ -479,7 +489,7 @@ public class SecurityServiceImpl implements SecurityService
             Role role = this.securityDao.getRoleByName(roleName);
 
             if(role != null) {
-                RoleJobPlan roleJobPlan = new HibernateRoleJobPlanImpl();
+                RoleJobPlan roleJobPlan = this.securityDao.createRoleJobPlan();
                 roleJobPlan.setRole(role);
                 roleJobPlan.setJobPlanName(jobPlanName);
                 this.securityDao.saveRoleJobPlan(roleJobPlan);

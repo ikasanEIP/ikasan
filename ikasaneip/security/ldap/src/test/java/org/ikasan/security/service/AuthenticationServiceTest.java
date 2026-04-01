@@ -48,7 +48,7 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
 import org.ikasan.security.LdapSecurityTestAutoConfiguration;
 import org.ikasan.security.SecurityAutoConfiguration;
-import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.spec.security.model.constants.SecurityConstants;
 import org.ikasan.security.model.*;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.spec.security.dao.SecurityDao;

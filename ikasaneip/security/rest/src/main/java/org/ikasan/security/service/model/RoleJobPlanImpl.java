@@ -45,27 +45,22 @@ import org.ikasan.spec.security.model.RoleJobPlan;
 
 import java.util.Date;
 
-/**
- * Test implementation of RoleJobPlan for use in test scenarios.
- *
- * @author Ikasan Development Team
- */
 public class RoleJobPlanImpl implements RoleJobPlan
 {
-    private Long id;
+    private Object id;
     private String jobPlanName;
     private Role role;
     private Date createdDateTime;
     private Date updatedDateTime;
 
     @Override
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

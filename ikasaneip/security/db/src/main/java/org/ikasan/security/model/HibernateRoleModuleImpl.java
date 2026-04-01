@@ -1,6 +1,8 @@
 package org.ikasan.security.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.ikasan.spec.security.model.Role;
 import org.ikasan.spec.security.model.RoleModule;
 
@@ -12,8 +14,9 @@ import java.util.Objects;
 public class HibernateRoleModuleImpl implements RoleModule
 {
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
     @Column(name = "ModuleName", nullable = false)
     private String moduleName;
     @ManyToOne()
@@ -35,11 +38,11 @@ public class HibernateRoleModuleImpl implements RoleModule
         this.updatedDateTime = new Date(now);
     }
 
-    public Long getId() {
+    public Object getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Object id) {
         this.id = id;
     }
 
