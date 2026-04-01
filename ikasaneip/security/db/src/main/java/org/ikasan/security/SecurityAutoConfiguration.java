@@ -32,7 +32,8 @@ public class SecurityAutoConfiguration
     @Value("${ikasan.dashboard.extract.enabled:false}")
     boolean preventLocalAuthentication;
 
-    @Bean public PasswordEncoder passwordEncoder()
+    @Bean
+    public PasswordEncoder passwordEncoder()
     {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }

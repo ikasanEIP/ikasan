@@ -41,12 +41,11 @@
 package org.ikasan.security.model;
 
 import jakarta.persistence.*;
-import org.springframework.security.core.GrantedAuthority;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
+import org.ikasan.spec.security.model.Policy;
 
 import java.util.Date;
-import java.util.Set;
-import org.ikasan.spec.security.model.Policy;
-import org.ikasan.spec.security.model.PolicyLink;
 
 /**
  * @author Ikasan Development Team
@@ -58,15 +57,13 @@ public class HibernatePolicyImpl implements Policy
     private static final long serialVersionUID = -3421453948503155354L;
 
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
     @Column(name = "Name", nullable = false, unique = true)
     private String name;
     @Column(name = "Description", nullable = false)
     private String description;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "PolicyLinkId")
-    private HibernatePolicyLinkImpl policyLink;
 
     /**
      * The data time stamp when an instance was first created
@@ -101,7 +98,7 @@ public class HibernatePolicyImpl implements Policy
     /**
      * @return the id
      */
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
@@ -109,7 +106,7 @@ public class HibernatePolicyImpl implements Policy
     /**
      * @param id the id to set
      */
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }
@@ -184,22 +181,6 @@ public class HibernatePolicyImpl implements Policy
         return this.name;
     }
 
-    /**
-     * @return the policyLink
-     */
-    public PolicyLink getPolicyLink()
-    {
-        return policyLink;
-    }
-
-    /**
-     * @param policyLink the policyLink to set
-     */
-    public void setPolicyLink(PolicyLink policyLink)
-    {
-        this.policyLink = (HibernatePolicyLinkImpl) policyLink;
-    }
-
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -251,7 +232,7 @@ public class HibernatePolicyImpl implements Policy
     public String toString()
     {
         return "Policy [id=" + id + ", name=" + name + ", description="
-                + description + ", policyLink=" + policyLink + ", createdDateTime=" + createdDateTime
+                + description + ", createdDateTime=" + createdDateTime
                 + ", updatedDateTime=" + updatedDateTime + "]";
     }
 

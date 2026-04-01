@@ -40,20 +40,23 @@
  */
 package org.ikasan.security.model;
 
-import java.security.Principal;
-import java.util.*;
-import java.util.stream.Collectors;
-
 import jakarta.persistence.*;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.ikasan.security.util.AuthoritiesHelper;
 import org.ikasan.spec.security.model.IkasanPrincipal;
 import org.ikasan.spec.security.model.Policy;
 import org.ikasan.spec.security.model.Role;
 import org.ikasan.spec.security.model.User;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of <code>UserDetails</code> suitable for ORM
@@ -70,8 +73,9 @@ public class HibernateUserImpl implements User
 
     /** Id field utilised by ORM */
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
 
     /** Users username for the system */
     @Column(name = "Username", unique = true, nullable = false)
@@ -122,7 +126,6 @@ public class HibernateUserImpl implements User
 	 */
     @Column(name = "RequiresPasswordChange", nullable = false)
     private boolean requiresPasswordChange;
-    private Policy policy;
 
     /**
      * Constructor
@@ -285,12 +288,11 @@ public class HibernateUserImpl implements User
 
     /**
      * Removes an Policy from a user's granted authorities
-     * 
+     *
      * @param policy
      */
     public void revokePolicy(Policy policy)
     {
-        this.policy = policy;
         for(IkasanPrincipal principal: principals)
 		{
 			Set<Role> roles = principal.getRoles();
@@ -298,7 +300,6 @@ public class HibernateUserImpl implements User
 			for(Role role: roles)
 			{
 				Set<Policy> policies = role.getPolicies();
-
 
 				if(policies.contains(policy)){
 					policies.remove(policy);
@@ -328,21 +329,21 @@ public class HibernateUserImpl implements User
 	}
     /**
      * Accessor for id
-     * 
+     *
      * @return id or null if non persisted
      */
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     /**
      * Setter for id, used by ORM
-     * 
+     *
      * @param id
      */
     @SuppressWarnings("unused")
-    private void setId(Long id)
+    private void setId(Object id)
     {
         this.id = id;
     }

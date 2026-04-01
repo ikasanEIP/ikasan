@@ -40,7 +40,6 @@
  */
 package org.ikasan.security.service.model;
 
-
 import org.ikasan.spec.security.model.Policy;
 import org.ikasan.spec.security.model.Role;
 import org.ikasan.spec.security.model.RoleJobPlan;
@@ -50,14 +49,9 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * Test implementation of Role for use in test scenarios.
- *
- * @author Ikasan Development Team
- */
 public class RoleImpl implements Role
 {
-    private Long id;
+    private Object id;
     private String name;
     private String description;
     private Date createdDateTime;
@@ -97,13 +91,13 @@ public class RoleImpl implements Role
     }
 
     @Override
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

@@ -47,7 +47,7 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.security.dao.constants.SecurityQueries;
 import org.ikasan.security.model.HibernateUserImpl;
 import org.ikasan.spec.security.model.User;
 import org.ikasan.spec.security.model.UserFilter;
@@ -76,7 +76,7 @@ public class HibernateUserDaoImpl implements UserDao
     @Override
     public List<UserLite> getUsersWithRole(String roleName, UserFilter userFilter, int limit, int offset) {
         StringBuffer queryBuffer = this.getUserFilterPredicateString(
-            SecurityConstants.GET_USERS_WITH_ROLE_QUERY, userFilter);
+            SecurityQueries.GET_USERS_WITH_ROLE_QUERY, userFilter);
 
         if(userFilter.getSortOrder() != null && userFilter.getSortColumn() != null) {
             if (userFilter.getSortOrder().equals("ASCENDING")) {
@@ -98,7 +98,7 @@ public class HibernateUserDaoImpl implements UserDao
     @Override
     public int getUsersWithRoleCount(String roleName, UserFilter userFilter) {
         StringBuffer queryBuffer = this.getUserFilterPredicateString(
-            SecurityConstants.GET_USERS_WITH_ROLE_COUNT_QUERY, userFilter);
+            SecurityQueries.GET_USERS_WITH_ROLE_COUNT_QUERY, userFilter);
 
         Query query = this.entityManager.createQuery(queryBuffer.toString());
         query.setParameter("name", roleName);
@@ -108,7 +108,7 @@ public class HibernateUserDaoImpl implements UserDao
     @Override
     public List<UserLite> getUsersWithoutRole(String roleName, UserFilter userFilter, int limit, int offset) {
         StringBuffer queryBuffer = new StringBuffer("select user from HibernateUserLiteImpl user where  user.id NOT IN (");
-        queryBuffer.append(SecurityConstants.GET_USER_IDS_WITH_ROLE_QUERY);
+        queryBuffer.append(SecurityQueries.GET_USER_IDS_WITH_ROLE_QUERY);
         queryBuffer.append(")");
 
         queryBuffer.append(this.getUserFilterPredicateString("user",
@@ -134,7 +134,7 @@ public class HibernateUserDaoImpl implements UserDao
     @Override
     public int getUsersWithoutRoleCount(String roleName, UserFilter userFilter) {
         StringBuffer queryBuffer = new StringBuffer("select count(user) from HibernateUserLiteImpl user where  user.id NOT IN (");
-        queryBuffer.append(SecurityConstants.GET_USER_IDS_WITH_ROLE_QUERY);
+        queryBuffer.append(SecurityQueries.GET_USER_IDS_WITH_ROLE_QUERY);
         queryBuffer.append(")");
 
         queryBuffer.append(this.getUserFilterPredicateString("user",
@@ -173,7 +173,7 @@ public class HibernateUserDaoImpl implements UserDao
         if (!results.isEmpty()){
             result = results.get(0);
         }
-        
+
         return result;
     }
 
@@ -243,7 +243,7 @@ public class HibernateUserDaoImpl implements UserDao
     public void delete(User user)
     {
         this.entityManager.remove(this.entityManager.contains(user) ? user : entityManager.merge(user));
-        
+
     }
 
 	/* (non-Javadoc)

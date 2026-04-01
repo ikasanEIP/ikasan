@@ -40,7 +40,7 @@
  */
 package org.ikasan.security.service.authentication;
 
-import org.ikasan.security.dao.constants.SecurityConstants;
+import org.ikasan.spec.security.model.constants.SecurityConstants;
 import org.ikasan.spec.security.model.AuthenticationMethod;
 import org.ikasan.spec.security.service.SecurityService;
 import org.ikasan.spec.security.service.UserService;

@@ -1,5 +1,5 @@
 [../](../../Readme.md)
-![IKASAN](../developer/docs/quickstart-images/Ikasan-title-transparent.png)
+![IKASAN](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # REST Module Client
  
 The REST Module Client is able to interact with Module REST endpoints.

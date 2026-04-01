@@ -781,9 +781,6 @@ public class HibernateUserDaoTest
         });
     }
 
-	/**
-	 * Test method for {@link HibernateUserDaoImpl#delete(org.ikasan.security.model.User)}.
-	 */
 	@Test
 	@DirtiesContext
 	public void testDelete()

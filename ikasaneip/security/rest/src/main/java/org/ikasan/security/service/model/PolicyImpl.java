@@ -41,33 +41,26 @@
 package org.ikasan.security.service.model;
 
 import org.ikasan.spec.security.model.Policy;
-import org.ikasan.spec.security.model.PolicyLink;
 
 import java.util.Date;
 import java.util.Objects;
 
-/**
- * Test implementation of Policy for use in test scenarios.
- *
- * @author Ikasan Development Team
- */
 public class PolicyImpl implements Policy
 {
-    private Long id;
+    private Object id;
     private String name;
     private Date createdDateTime;
     private Date updatedDateTime;
     private String description;
-    private PolicyLink policyLink;
 
     @Override
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }
@@ -124,18 +117,6 @@ public class PolicyImpl implements Policy
     public String getAuthority()
     {
         return name;
-    }
-
-    @Override
-    public PolicyLink getPolicyLink()
-    {
-        return policyLink;
-    }
-
-    @Override
-    public void setPolicyLink(PolicyLink policyLink)
-    {
-        this.policyLink = policyLink;
     }
 
     @Override

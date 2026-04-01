@@ -44,6 +44,9 @@ import jakarta.persistence.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.ikasan.spec.security.model.Role;
 import org.ikasan.spec.security.model.Policy;
 import org.ikasan.spec.security.model.RoleJobPlan;
@@ -58,8 +61,9 @@ import org.ikasan.spec.security.model.RoleModule;
 public class HibernateRoleImpl implements Role
 {
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
     @Column(name = "Name", nullable = false, unique = true)
     private String name = "";
     @Column(name = "Description", nullable = false)
@@ -157,7 +161,7 @@ public class HibernateRoleImpl implements Role
     /**
      * @return the id
      */
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
@@ -165,7 +169,7 @@ public class HibernateRoleImpl implements Role
     /**
      * @param id the id to set
      */
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

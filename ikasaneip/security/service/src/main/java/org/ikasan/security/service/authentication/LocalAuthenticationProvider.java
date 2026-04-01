@@ -115,6 +115,7 @@ public class LocalAuthenticationProvider implements AuthenticationProvider
     @Override
     public boolean supports(Class<?> clazz)
     {
+        if(clazz == null) return false;
         return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(clazz));
     }
 

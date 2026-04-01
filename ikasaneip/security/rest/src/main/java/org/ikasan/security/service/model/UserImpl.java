@@ -47,14 +47,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.*;
 
-/**
- * Test implementation of User for use in test scenarios.
- *
- * @author Ikasan Development Team
- */
 public class UserImpl implements User
 {
-    private Long id;
+    private Object id;
     private String username;
     private String password;
     private String email;
@@ -233,12 +228,12 @@ public class UserImpl implements User
     }
 
     @Override
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

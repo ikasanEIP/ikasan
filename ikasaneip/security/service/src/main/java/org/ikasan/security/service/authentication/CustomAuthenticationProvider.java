@@ -18,6 +18,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider
     public CustomAuthenticationProvider(AuthenticationService authenticationService)
     {
         this.authenticationService = authenticationService;
+        if(this.authenticationService == null) {
+            throw new IllegalArgumentException("authenticationService cannot be null!");
+        }
     }
 
     @Override
@@ -26,7 +29,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider
     {
 
         String username = auth.getName();
-        String password = auth.getCredentials()
+        String password = auth.getCredentials() == null ? "null" : auth.getCredentials()
             .toString();
         try
         {
@@ -42,6 +45,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider
 
     @Override
     public boolean supports(Class<?> auth) {
+        if(auth == null) return false;
         return auth.equals(UsernamePasswordAuthenticationToken.class);
     }
 }

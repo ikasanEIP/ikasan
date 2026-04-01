@@ -74,7 +74,7 @@ public interface Authority extends GrantedAuthority
      *
      * @return the unique identifier, or {@code null} if not yet persisted
      */
-    Long getId();
+    Object getId();
 
     /**
      * Sets the authority string that defines the permission.
@@ -82,13 +82,4 @@ public interface Authority extends GrantedAuthority
      * @param authority the authority string to set, must not be {@code null}
      */
     void setAuthority(String authority);
-
-    /**
-     * Compares this authority to another object for ordering purposes.
-     *
-     * @param o the object to compare to
-     * @return a negative integer, zero, or a positive integer as this authority
-     *         is less than, equal to, or greater than the specified object
-     */
-    int compareTo(Object o);
 }

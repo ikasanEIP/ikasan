@@ -51,7 +51,7 @@ import java.util.Date;
  */
 public class AuthenticationMethodImpl implements AuthenticationMethod
 {
-    private Long id;
+    private Object id;
     private String method;
     private String ldapServerUrl;
     private String ldapBindUserDn;
@@ -80,13 +80,13 @@ public class AuthenticationMethodImpl implements AuthenticationMethod
     private String synchronisationCronExpression;
 
     @Override
-    public Long getId()
+    public Object getId()
     {
         return id;
     }
 
     @Override
-    public void setId(Long id)
+    public void setId(Object id)
     {
         this.id = id;
     }

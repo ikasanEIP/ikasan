@@ -64,6 +64,8 @@ public class BCryptPasswordGeneratorTest
     {
         PasswordEncoder passwordEncoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         String hashedPassword = passwordEncoder.encode("admin");
+        boolean matches = passwordEncoder.matches("admin", hashedPassword);
+        Assert.assertTrue(matches);
     }
 
 

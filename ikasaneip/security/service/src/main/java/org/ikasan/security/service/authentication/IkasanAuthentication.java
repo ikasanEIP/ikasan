@@ -40,16 +40,14 @@
  */
 package org.ikasan.security.service.authentication;
 
-import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.slf4j.Logger; import org.slf4j.LoggerFactory;
-import org.ikasan.spec.security.model.Policy;
-import org.ikasan.spec.security.model.PolicyLink;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+
+import java.security.Principal;
+import java.util.Collection;
+import java.util.List;
 
 
 /**
@@ -188,98 +186,4 @@ public class IkasanAuthentication implements Authentication
     	
     	return false;
     }
-    
-    /**
-     * 
-     * @param linkedItemType
-     * @param linkedItemId
-     * @return
-     */
-    public boolean canAccessLinkedItem(String linkedItemType, Long linkedItemId)
-    {
-    	for(GrantedAuthority grantedAuthority: this.getAuthorities())
-    	{
-    		logger.debug("Policy: " + (Policy)grantedAuthority);
-    		
-    		PolicyLink policyLink = ((Policy)grantedAuthority).getPolicyLink();
-    		
-    		logger.debug("PolicyLink: " + policyLink);
-    		if(policyLink != null)
-    		{
-    			if(policyLink.getPolicyLinkType().getName().equals(linkedItemType)
-    					&& policyLink.getTargetId().equals(linkedItemId))
-    			{
-    				return true;
-    			}
-    		}
-    	}
-    	
-    	return false;
-    }
-
-	/**
-	 * Get linked module ids.
-	 *
-	 * @return
-     */
-    public List<Long> getLinkedModuleIds()
-	{
-		return this.getLinkedIds(MODULE);
-	}
-
-	/**
-	 * Get linked flow ids.
-	 *
-	 * @return
-     */
-	public List<Long> getLinkedFlowIds()
-	{
-		return this.getLinkedIds(FLOW);
-	}
-
-	/**
-	 * Get linked business stream ids.
-	 *
-	 * @return
-     */
-	public List<Long> getLinkedBusinessStreamIds()
-	{
-		return this.getLinkedIds(BUSINESS_STREAM);
-	}
-
-	/**
-	 * get linked mapping configuration ids.
-	 *
-	 * @return
-     */
-	public List<Long> getLinkedMappingConfigurationIds()
-	{
-		return this.getLinkedIds(MAPPING_CONFIGURATION);
-	}
-
-	/**
-	 * Helper method to get liked ids.
-	 *
-	 * @param type
-	 * @return
-     */
-	private List<Long> getLinkedIds(String type)
-	{
-		ArrayList<Long> id = new ArrayList<>();
-
-		for(GrantedAuthority grantedAuthority: this.getAuthorities())
-		{
-			PolicyLink policyLink = ((Policy)grantedAuthority).getPolicyLink();
-
-			if(policyLink != null)
-			{
-				if(policyLink.getPolicyLinkType().getName().equals(type))
-				{
-					id.add(policyLink.getTargetId());
-				}
-			}
-		}
-
-		return id;
-	}
 }

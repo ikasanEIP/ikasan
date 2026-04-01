@@ -61,14 +61,14 @@ import java.util.Date;
       *
       * @return the unique identifier, or {@code null} if not yet persisted
       */
-     Long getId();
+     Object getId();
 
      /**
       * Sets the unique identifier of this principal.
       *
       * @param id the unique identifier to set
       */
-     void setId(Long id);
+     void setId(Object id);
 
      /**
       * Retrieves the name of this principal.

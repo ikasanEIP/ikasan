@@ -55,43 +55,140 @@ import java.util.*;
  */
 public interface Role extends Comparable<Role>
 {
+    /**
+     * Adds a policy to this role's collection of policies.
+     *
+     * @param policy the {@link Policy} to add, must not be {@code null}
+     */
     void addPolicy(Policy policy);
 
+    /**
+     * Adds a role-module association to this role.
+     *
+     * <p>This grants the role access to the specified integration module.
+     *
+     * @param roleModule the {@link RoleModule} association to add, must not be {@code null}
+     */
     void addRoleModule(RoleModule roleModule);
 
+    /**
+     * Adds a role-job plan association to this role.
+     *
+     * <p>This grants the role access to the specified job plan.
+     *
+     * @param roleJobPlan the {@link RoleJobPlan} association to add, must not be {@code null}
+     */
     void addRoleJobPlan(RoleJobPlan roleJobPlan);
 
-    Long getId();
+    /**
+     * Retrieves the unique identifier of this role.
+     *
+     * @return the unique identifier, or {@code null} if not yet persisted
+     */
+    Object getId();
 
-    void setId(Long id);
+    /**
+     * Sets the unique identifier of this role.
+     *
+     * @param id the unique identifier to set
+     */
+    void setId(Object id);
 
+    /**
+     * Retrieves the name of this role.
+     *
+     * @return the role name, never {@code null}
+     */
     String getName();
 
+    /**
+     * Sets the name of this role.
+     *
+     * @param name the name to set, must not be {@code null}
+     */
     void setName(String name);
 
+    /**
+     * Retrieves the human-readable description of this role.
+     *
+     * @return the description, or {@code null} if not set
+     */
     String getDescription();
 
+    /**
+     * Sets the human-readable description of this role.
+     *
+     * @param description the description to set, may be {@code null}
+     */
     void setDescription(String description);
 
+    /**
+     * Retrieves the date and time when this role was created.
+     *
+     * @return the creation timestamp, or {@code null} if not set
+     */
     Date getCreatedDateTime();
 
+    /**
+     * Sets the date and time when this role was created.
+     *
+     * @param createdDateTime the creation timestamp to set
+     */
     void setCreatedDateTime(Date createdDateTime);
 
+    /**
+     * Retrieves the date and time when this role was last updated.
+     *
+     * @return the last update timestamp, or {@code null} if not set
+     */
     Date getUpdatedDateTime();
 
+    /**
+     * Sets the date and time when this role was last updated.
+     *
+     * @param updatedDateTime the last update timestamp to set
+     */
     void setUpdatedDateTime(Date updatedDateTime);
 
+    /**
+     * Retrieves the set of policies assigned to this role.
+     *
+     * @return a set of {@link Policy} instances, never {@code null}
+     */
     Set<Policy> getPolicies();
 
+    /**
+     * Sets the policies assigned to this role.
+     *
+     * @param policies the set of {@link Policy} instances to assign, must not be {@code null}
+     */
     void setPolicies(Set<Policy> policies);
 
+    /**
+     * Retrieves the set of module associations for this role.
+     *
+     * @return a set of {@link RoleModule} associations defining which modules this role can access, never {@code null}
+     */
     Set<RoleModule> getRoleModules();
 
+    /**
+     * Sets the module associations for this role.
+     *
+     * @param roleModules the set of {@link RoleModule} associations to assign, must not be {@code null}
+     */
     void setRoleModules(Set<RoleModule> roleModules);
 
+    /**
+     * Retrieves the set of job plan associations for this role.
+     *
+     * @return a set of {@link RoleJobPlan} associations defining which job plans this role can access, never {@code null}
+     */
     Set<RoleJobPlan> getRoleJobPlans();
 
+    /**
+     * Sets the job plan associations for this role.
+     *
+     * @param roleJobPlans the set of {@link RoleJobPlan} associations to assign, must not be {@code null}
+     */
     void setRoleJobPlans(Set<RoleJobPlan> roleJobPlans);
-
-    int compareTo(Role role);
 }

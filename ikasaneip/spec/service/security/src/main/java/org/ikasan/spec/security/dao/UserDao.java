@@ -121,7 +121,7 @@ public interface UserDao
 
     /**
      * Retrieves all <code>User</code>s known to the system
-     * 
+     *
      * @return List of all <code>Users</code>
      */
     List<User> getUsers();
@@ -132,8 +132,8 @@ public interface UserDao
      * Retrieves a paginated list of users based on the specified filter criteria.
      *
      * @param userFilter the filter criteria to apply when retrieving users, may be {@code null} for no filtering
-     * @param limit the maximum number of users to retrieve, must be greater than 0
-     * @param offset the number of results to skip from the beginning (0-based), must be greater than or equal to 0
+     * @param limit the maximum number of users to retrieve must be greater than 0
+     * @param offset the number of results to skip from the beginning (0-based) must be greater than or equal to 0
      * @return a list of {@link User} instances matching the criteria, or an empty list if none exist
      */
     List<User> getUsers(UserFilter userFilter, int limit, int offset);

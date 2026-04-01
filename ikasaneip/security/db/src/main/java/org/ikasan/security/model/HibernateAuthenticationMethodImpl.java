@@ -41,6 +41,8 @@
 package org.ikasan.security.model;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JavaType;
+import org.hibernate.type.descriptor.java.LongJavaType;
 import org.ikasan.spec.security.model.AuthenticationMethod;
 
 import java.util.Date;
@@ -55,8 +57,9 @@ import java.util.Date;
 public class HibernateAuthenticationMethodImpl implements AuthenticationMethod
 {
     @Id
+    @JavaType(LongJavaType.class)
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private Object id;
     @Column(name = "Name", nullable = false)
     private String name = "";
 	@Column(name = "Method", nullable = false)
@@ -118,7 +121,7 @@ public class HibernateAuthenticationMethodImpl implements AuthenticationMethod
 	/**
 	 * @return the id
 	 */
-	public Long getId()
+	public Object getId()
 	{
 		return id;
 	}
@@ -126,7 +129,7 @@ public class HibernateAuthenticationMethodImpl implements AuthenticationMethod
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Long id)
+	public void setId(Object id)
 	{
 		this.id = id;
 	}

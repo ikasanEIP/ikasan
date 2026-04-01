@@ -48,9 +48,7 @@ import java.util.Date;
  * Represents a security policy in the Ikasan security framework.
  *
  * <p>A policy defines a specific permission or set of permissions that can be granted to a {@link Role}.
- * Policies extend Spring Security's {@link GrantedAuthority} interface and can be linked to specific
- * resources (modules, flows, job plans) through {@link PolicyLink} associations to provide fine-grained
- * access control.
+ * Policies extend Spring Security's {@link GrantedAuthority} interface.
  *
  * @author Ikasan Development Team
  * @since 1.0
@@ -62,14 +60,14 @@ public interface Policy extends GrantedAuthority, Comparable<Policy>
      *
      * @return the unique identifier, or {@code null} if not yet persisted
      */
-    Long getId();
+    Object getId();
 
     /**
      * Sets the unique identifier of this policy.
      *
      * @param id the unique identifier to set
      */
-    void setId(Long id);
+    void setId(Object id);
 
     /**
      * Retrieves the name of this policy.
@@ -137,39 +135,4 @@ public interface Policy extends GrantedAuthority, Comparable<Policy>
      */
     @Override
     String getAuthority();
-
-    /**
-     * Retrieves the policy link that associates this policy with a specific resource.
-     *
-     * @return the {@link PolicyLink} for this policy, or {@code null} if not linked to a specific resource
-     */
-    PolicyLink getPolicyLink();
-
-    /**
-     * Sets the policy link that associates this policy with a specific resource.
-     *
-     * @param policyLink the {@link PolicyLink} to set, may be {@code null} for general policies
-     */
-    void setPolicyLink(PolicyLink policyLink);
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    int hashCode();
-
-    @Override
-    boolean equals(Object obj);
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
-    @Override
-    String toString();
-
-    /* (non-Javadoc)
-     * @see java.lang.Comparable#compareTo(java.lang.Object)
-     */
-    @Override
-    int compareTo(Policy policy);
 }

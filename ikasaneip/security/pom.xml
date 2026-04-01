@@ -55,6 +55,8 @@
         <module>db</module>
         <module>ldap</module>
         <module>rest</module>
+        <module>service</module>
+        <module>common</module>
     </modules>
 
 </project>

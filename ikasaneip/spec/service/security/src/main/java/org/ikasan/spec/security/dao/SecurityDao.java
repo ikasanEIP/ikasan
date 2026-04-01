@@ -131,20 +131,6 @@ public interface SecurityDao
      * @param policy the Policy to be deleted
      */
     void deletePolicy(Policy policy);
-    
-    /**
-     * Saves or updates the given PolicyLink.
-     *
-     * @param policyLink the PolicyLink to be saved or updated
-     */
-    void saveOrUpdatePolicyLink(PolicyLink policyLink);
-
-    /**
-     * Delete the provided PolicyLink.
-     *
-     * @param policyLink the PolicyLink to be deleted
-     */
-    void deletePolicyLink(PolicyLink policyLink);
 
     /**
      * Deletes the given RoleModule from the system.
@@ -313,7 +299,7 @@ public interface SecurityDao
      * @return a list of IkasanPrincipalLite objects without the specified role
      */
     List<IkasanPrincipalLite> getAllPrincipalsWithoutRole(String roleName, IkasanPrincipalFilter filter, int limit, int offset);
-    
+
     /**
      * Retrieves all policies that are associated with the specified role.
      *
@@ -344,108 +330,119 @@ public interface SecurityDao
      * @param id the unique identifier of the role to retrieve, must not be {@code null}
      * @return the {@link Role} instance with the specified ID, or {@code null} if no such role exists
      */
-    Role getRoleById(Long id);
+    Role getRoleById(Object id);
 
     /**
-     * Save a given AuthenticationMethod
-     * @param authenticationMethod     
+     * Saves or updates the specified authentication method in the persistence layer.
+     *
+     * <p>If the authentication method already exists (determined by its identifier), it will be updated
+     * with the new values. If it does not exist, a new record will be created.
+     *
+     * @param authenticationMethod the {@link AuthenticationMethod} to be saved or updated, must not be {@code null}
      */
     void saveOrUpdateAuthenticationMethod(AuthenticationMethod authenticationMethod);
 
     /**
-     * Get an AuthenticationMethod by its id
-     * @param id
-     * @return
+     * Retrieves an authentication method by its unique identifier.
+     *
+     * @param id the unique identifier of the authentication method to retrieve, must not be {@code null}
+     * @return the {@link AuthenticationMethod} instance with the specified ID, or {@code null} if no such method exists
      */
-    AuthenticationMethod getAuthenticationMethod(Long id);
-    
+    AuthenticationMethod getAuthenticationMethod(Object id);
+
     /**
-     * Get all AuthenticationMethods
-     * @return
+     * Retrieves all authentication methods configured in the system.
+     *
+     * @return a list of all {@link AuthenticationMethod} instances, or an empty list if none exist
      */
     List<AuthenticationMethod> getAuthenticationMethods();
-    
+
     /**
-     * Get IkasanPrincipals whose name is like
+     * Retrieves all principals whose name matches the specified pattern using a wildcard search.
      *
-     * @param name
-     * @return
+     * <p>This method performs a "like" query, allowing partial name matching. The exact matching behavior
+     * (case sensitivity, wildcard characters) depends on the underlying implementation and database.
+     *
+     * @param name the name pattern to search for, may contain wildcard characters depending on implementation
+     * @return a list of {@link IkasanPrincipal} instances with names matching the pattern, or an empty list if none exist
      */
     List<IkasanPrincipal> getPrincipalByNameLike(String name);
-    
+
     /**
-     * Delete the given AuthenticationMethod
+     * Deletes the specified authentication method from the system.
      *
-     * @param authenticationMethod
+     * @param authenticationMethod the {@link AuthenticationMethod} to be deleted, must not be {@code null}
      */
     void deleteAuthenticationMethod(AuthenticationMethod authenticationMethod);
- 
-    /**
-     * Get all PolicyLinkTypes
-     * @return
-     */
-    List<PolicyLinkType> getAllPolicyLinkTypes();
 
     
     /**
-     * Save a given PolicyLinkType
+     * Retrieves all policies whose name matches the specified pattern using a wildcard search.
      *
-     * @param policyLinkType
-     */
-    void saveOrUpdatePolicyLinkType(PolicyLinkType policyLinkType);
-    
-    /**
-     * Get Policies whose name is like
+     * <p>This method performs a "like" query, allowing partial name matching. The exact matching behavior
+     * (case sensitivity, wildcard characters) depends on the underlying implementation and database.
      *
-     * @param name
-     * @return
+     * @param name the name pattern to search for, may contain wildcard characters depending on implementation
+     * @return a list of {@link Policy} instances with names matching the pattern, or an empty list if none exist
      */
     List<Policy> getPolicyByNameLike(String name);
 
     /**
-     * Get Roles whose name is like
+     * Retrieves all roles whose name matches the specified pattern using a wildcard search.
      *
-     * @param name
-     * @return
+     * <p>This method performs a "like" query, allowing partial name matching. The exact matching behavior
+     * (case sensitivity, wildcard characters) depends on the underlying implementation and database.
+     *
+     * @param name the name pattern to search for, may contain wildcard characters depending on implementation
+     * @return a list of {@link Role} instances with names matching the pattern, or an empty list if none exist
      */
     List<Role> getRoleByNameLike(String name);
-    
+
     /**
-     * Get the number of AuthenticationMethod
+     * Retrieves the total count of authentication methods configured in the system.
      *
-     * @return
+     * @return the total number of {@link AuthenticationMethod} instances
      */
     long getNumberOfAuthenticationMethods();
-    
+
     /**
-     * Get the AuthenticationMethod by order
+     * Retrieves an authentication method by its configured order sequence.
      *
-     * @param order
-     * @return
+     * <p>Authentication methods can be executed in a specific order during the authentication process.
+     * This method allows retrieval of a method based on its position in that sequence.
+     *
+     * @param order the order position of the authentication method to retrieve
+     * @return the {@link AuthenticationMethod} at the specified order position, or {@code null} if none exists at that position
      */
     AuthenticationMethod getAuthenticationMethodByOrder(long order);
-    
-    /**
-     * Get all Users associated with a principal id
-     *
-     * @param principalId
-     * @return
-     */
-    List<User> getUsersAssociatedWithPrincipal(long principalId);
 
     /**
-     * Get a Policy by id
+     * Retrieves all users associated with a specific principal.
      *
-     * @param id
-     * @return
+     * <p>In the Ikasan security framework, a principal can be associated with multiple user accounts.
+     * This method returns all user entities linked to the specified principal identifier.
+     *
+     * @param principalId the unique identifier of the principal whose associated users are to be retrieved
+     * @return a list of {@link User} instances associated with the specified principal, or an empty list if none exist
      */
-    Policy getPolicyById(Long id);
+    List<User> getUsersAssociatedWithPrincipal(Object principalId);
 
     /**
-     * Get all RoleJobPlans by job plan name.
+     * Retrieves a policy by its unique identifier.
      *
-     * @param jonPlanName
-     * @return
+     * @param id the unique identifier of the policy to retrieve, must not be {@code null}
+     * @return the {@link Policy} instance with the specified ID, or {@code null} if no such policy exists
+     */
+    Policy getPolicyById(Object id);
+
+    /**
+     * Retrieves all role-to-job plan associations for a specific job plan.
+     *
+     * <p>This method returns all {@link RoleJobPlan} associations that link roles to the specified job plan,
+     * allowing determination of which roles have access to a particular job plan.
+     *
+     * @param jonPlanName the name of the job plan to retrieve role associations for, must not be {@code null}
+     * @return a list of {@link RoleJobPlan} instances associated with the specified job plan name, or an empty list if none exist
      */
     List<RoleJobPlan> getRoleJobPlansByJobPlanName(String jonPlanName);
 }

@@ -90,8 +90,8 @@ public class SecurityServiceTest
      */
     @Before public void setup()
     {
-        HashSet<Role> roles = new HashSet<Role>();
-        HashSet<Policy> policies = new HashSet<Policy>();
+        HashSet<Role> roles = new HashSet<>();
+        HashSet<Policy> policies = new HashSet<>();
 
         for(int i=0; i<10; i++)
         {
@@ -176,18 +176,6 @@ public class SecurityServiceTest
         principal.setDescription("description");
 
         this.xaSecurityDao.saveOrUpdatePrincipal(principal);
-
-        PolicyLinkType policyLinkType = new HibernatePolicyLinkTypeImpl("name1", "table1");
-
-        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
-
-        policyLinkType = new HibernatePolicyLinkTypeImpl("name2", "table2");
-
-        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
-
-        policyLinkType = new HibernatePolicyLinkTypeImpl("name3", "table3");
-
-        this.xaSecurityDao.saveOrUpdatePolicyLinkType(policyLinkType);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -197,9 +185,9 @@ public class SecurityServiceTest
         new SecurityServiceImpl(null);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
-    public void test_success_get_principal_by_name() 
+    public void test_success_get_principal_by_name()
     {
         IkasanPrincipal principal = this.xaSecurityService.findPrincipalByName("stewmi");
 
@@ -208,9 +196,9 @@ public class SecurityServiceTest
         Assert.assertEquals(principal.getRoles().size(), 10);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
-    public void test_success_create_new_principal() 
+    public void test_success_create_new_principal()
     {
         IkasanPrincipal principal = this.xaSecurityService.createNewPrincipal("stewmi2", "type");
 
@@ -233,7 +221,7 @@ public class SecurityServiceTest
         this.xaSecurityService.createNewPrincipal("name", null);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_add_role()
     {
@@ -274,9 +262,9 @@ public class SecurityServiceTest
         Assert.assertEquals(principal.getRoles().size(), 11);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
-    public void test_success_create_new_role() 
+    public void test_success_create_new_role()
     {
         Role role = this.xaSecurityService.createNewRole("testRole", "description");
 
@@ -297,7 +285,7 @@ public class SecurityServiceTest
         this.xaSecurityService.createNewRole("role", null);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_remove_role()
     {
@@ -359,7 +347,7 @@ public class SecurityServiceTest
 
     @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
-    public void test_exception_principal_duplicate_name() 
+    public void test_exception_principal_duplicate_name()
     {
         IkasanPrincipal principal = new HibernateIkasanPrincipalImpl();
         principal.setName("anotherPrincipal7");
@@ -371,7 +359,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_get_all_principals() 
+    public void test_get_all_principals()
     {
         List<IkasanPrincipal> principals = this.xaSecurityService.getAllPrincipals();
 
@@ -428,7 +416,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_get_all_roles() 
+    public void test_get_all_roles()
     {
         List<Role> roles = this.xaSecurityService.getAllRoles();
 
@@ -476,7 +464,7 @@ public class SecurityServiceTest
 
     @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
-    public void test_exception_principal_policy_name() 
+    public void test_exception_principal_policy_name()
     {
         Policy policy = new HibernatePolicyImpl();
         policy.setName("policy11");
@@ -516,9 +504,9 @@ public class SecurityServiceTest
         this.xaSecurityService.savePrincipal(principal);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
-    public void test_success_create_new_policy() 
+    public void test_success_create_new_policy()
     {
         Policy policy = this.xaSecurityService.createNewPolicy("testPolicy", "description");
 
@@ -541,7 +529,7 @@ public class SecurityServiceTest
 
     @Test(expected = ConstraintViolationException.class)
     @DirtiesContext
-    public void test_exception_role_name() 
+    public void test_exception_role_name()
     {
         Role role = new HibernateRoleImpl();
         role.setName("role1");
@@ -551,7 +539,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_get_all_policies() 
+    public void test_get_all_policies()
     {
         List<Policy> policies = this.xaSecurityService.getAllPolicies();
 
@@ -560,7 +548,7 @@ public class SecurityServiceTest
 
     @Test
     @DirtiesContext
-    public void test_delete_policy() 
+    public void test_delete_policy()
     {
         Policy policy = new HibernatePolicyImpl();
         policy.setName("blah");
@@ -599,7 +587,7 @@ public class SecurityServiceTest
     @Test
     @DirtiesContext
     public void test_success_get_principal_by_name_like()
-    {    	
+    {
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalByNameLike("anotherPrincipal");
 
     	Assert.assertTrue(principals.size() == 7);
@@ -608,25 +596,17 @@ public class SecurityServiceTest
     @Test
     @DirtiesContext
     public void test_success_get_principal_by_name_like_bad_bname()
-    {    	
+    {
     	List<IkasanPrincipal> principals = this.xaSecurityService.getPrincipalByNameLike("bad name");
 
     	Assert.assertTrue(principals.size() == 0);
     }
-    
-    @Test
-    @DirtiesContext
-    public void test_success_get_all_policy_link_types()
-    {    	
-    	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
 
-    	Assert.assertTrue(plts.size() == 3);
-    }
  
     @Test
     @DirtiesContext
     public void test_success_get_role_by_name_like()
-    {    	
+    {
     	List<Role> roles = this.xaSecurityService.getRoleByNameLike("role");
 
     	Assert.assertTrue(roles.size() == 10);
@@ -635,7 +615,7 @@ public class SecurityServiceTest
     @Test
     @DirtiesContext
     public void test_success_get_policy_by_name_like()
-    {    	
+    {
     	List<Policy> policies = this.xaSecurityService.getPolicyByNameLike("policy");
 
     	Assert.assertTrue(policies.size() == 100);
@@ -643,22 +623,8 @@ public class SecurityServiceTest
     
     @Test
     @DirtiesContext
-    public void test_success_save_policy_link()
-    {    	
-    	List<PolicyLinkType> plts = this.xaSecurityService.getAllPolicyLinkTypes();
-    	PolicyLink policyLink = new HibernatePolicyLinkImpl(plts.get(0),Long.valueOf(1), "name");
-    	
-    	this.xaSecurityService.savePolicyLink(policyLink);
-    	
-    	Assert.assertNotNull(policyLink.getId());
-    	
-    	this.xaSecurityService.deletePolicyLink(policyLink);
-    }
-    
-    @Test
-    @DirtiesContext
     public void test_success_get_policies_by_role()
-    {    	
+    {
     	List<Policy> policies = this.xaSecurityService.getAllPoliciesWithRole("role1");
 
     	Assert.assertEquals(10,policies.size());
@@ -687,7 +653,7 @@ public class SecurityServiceTest
     	Assert.assertTrue(principals.size() == 0);
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_get_policy_by_name()
     {
@@ -698,7 +664,7 @@ public class SecurityServiceTest
         Assert.assertEquals(policy.getName(), "policy11");
     }
 
-    @Test 
+    @Test
     @DirtiesContext
     public void test_success_get_role_by_name()
     {
