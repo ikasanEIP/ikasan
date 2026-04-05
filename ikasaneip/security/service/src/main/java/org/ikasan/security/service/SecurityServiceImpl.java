@@ -500,4 +500,9 @@ public class SecurityServiceImpl implements SecurityService
             }
         });
     }
+
+    @Override
+    public List<Role> getRolesAssociatedWithPolicy(Object policyId) {
+        return this.securityDao.getRolesAssociatedWithPolicy(policyId);
+    }
 }
