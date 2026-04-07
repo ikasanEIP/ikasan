@@ -455,13 +455,5 @@ public interface SecurityService
      * @param roleNames   The list of role names to be associated with the job plan.
      */
     void setJobPlanRoles(String jobPlanName, List<String> roleNames);
-
-    /**
-     * Retrieves a list of roles associated with the specified policy.
-     *
-     * @param policyId the identifier of the policy for which roles are to be fetched
-     * @return a list of roles associated with the given policy
-     */
-    List<Role> getRolesAssociatedWithPolicy(Object policyId);
 }
 

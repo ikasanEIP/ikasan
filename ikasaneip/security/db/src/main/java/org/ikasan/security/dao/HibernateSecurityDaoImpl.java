@@ -717,15 +717,6 @@ public class HibernateSecurityDaoImpl implements SecurityDao
         return query.getResultList();
     }
 
-    @Override
-    public List<Role> getRolesAssociatedWithPolicy(Object policyId) {
-//        Query query = this.entityManager.createQuery(SecurityQueries.GET_ROLES_BY_POLICY_QUERY);
-//        query.setParameter(SecurityQueries.POLICY_ID, policyId);
-//        return query.getResultList();
-
-        return null;
-    }
-
     /**
      * Generates a Predicate for filtering IkasanPrincipals based on the given criteria.
      *
