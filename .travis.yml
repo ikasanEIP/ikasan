@@ -51,6 +51,12 @@ deploy:
     script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
     on:
       branch: 4.2.x
+  # deploy develop 5.0.x to oss
+  - provider: script
+    skip_cleanup: true
+    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+    on:
+      branch: 5.0.x
   # Push release to oss
   - provider: script
     skip_cleanup: true
