@@ -445,12 +445,4 @@ public interface SecurityDao
      * @return a list of {@link RoleJobPlan} instances associated with the specified job plan name, or an empty list if none exist
      */
     List<RoleJobPlan> getRoleJobPlansByJobPlanName(String jonPlanName);
-
-    /**
-     * Retrieves a list of roles associated with the specified policy.
-     *
-     * @param policyId the identifier of the policy for which roles are to be fetched
-     * @return a list of roles associated with the given policy
-     */
-    List<Role> getRolesAssociatedWithPolicy(Object policyId);
 }
