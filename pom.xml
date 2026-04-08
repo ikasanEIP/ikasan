@@ -69,7 +69,6 @@
  
     <modules>
         <module>ikasaneip</module>
-        <module>ikasaneip/security/common</module>
     </modules>
 
     <!--
