@@ -1,8 +1,8 @@
 package org.ikasan.topology.metadata.model;
 
-import org.ikasan.spec.metadata.FlowElementMetaData;
-import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.spec.metadata.Transition;
+import org.ikasan.spec.metadata.model.FlowElementMetaData;
+import org.ikasan.spec.metadata.model.FlowMetaData;
+import org.ikasan.spec.metadata.model.Transition;
 
 import java.util.ArrayList;
 import java.util.List;

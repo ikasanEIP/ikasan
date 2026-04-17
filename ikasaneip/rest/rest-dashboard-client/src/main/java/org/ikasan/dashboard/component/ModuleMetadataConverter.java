@@ -3,7 +3,7 @@ package org.ikasan.dashboard.component;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.ModuleMetaDataProvider;
+import org.ikasan.spec.metadata.model.ModuleMetaDataProvider;
 import org.ikasan.spec.module.ModuleService;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.Module;

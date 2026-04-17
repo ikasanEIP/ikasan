@@ -1,7 +1,7 @@
 package org.ikasan.configurationService.metadata;
 
-import org.ikasan.spec.metadata.ConfigurationMetaData;
-import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
+import org.ikasan.spec.metadata.model.ConfigurationMetaData;
+import org.ikasan.spec.metadata.model.ConfigurationParameterMetaData;
 
 import java.util.List;
 import java.util.StringJoiner;

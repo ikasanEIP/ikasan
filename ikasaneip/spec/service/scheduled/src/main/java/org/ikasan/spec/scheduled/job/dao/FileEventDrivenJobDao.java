@@ -14,7 +14,7 @@ public interface FileEventDrivenJobDao<T extends FileEventDrivenJobRecord> {
      * @param offset The starting index of the results to retrieve.
      * @return A list of search results with a total count and query response time.
      */
-    SearchResults<? extends T> findAll(int limit, int offset);
+    SearchResults<T> findAll(int limit, int offset);
 
     /**
      * Retrieves a list of search results for a specified limit and offset within a given context.
@@ -24,7 +24,7 @@ public interface FileEventDrivenJobDao<T extends FileEventDrivenJobRecord> {
      * @param offset The starting index of the results to retrieve.
      * @return A {@link SearchResults} object containing the search results within the specified context.
      */
-    SearchResults<? extends T> findByContext(String contextId, int limit, int offset);
+    SearchResults<T> findByContext(String contextId, int limit, int offset);
 
     /**
      * Retrieves the object with the specified ID.

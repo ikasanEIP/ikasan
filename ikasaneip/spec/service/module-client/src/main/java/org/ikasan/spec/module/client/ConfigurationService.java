@@ -1,6 +1,6 @@
 package org.ikasan.spec.module.client;
 
-import org.ikasan.spec.metadata.ConfigurationMetaData;
+import org.ikasan.spec.metadata.model.ConfigurationMetaData;
 
 import java.util.List;
 

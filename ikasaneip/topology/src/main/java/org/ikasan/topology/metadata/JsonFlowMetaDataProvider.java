@@ -16,7 +16,7 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.flow.FlowConfiguration;
 import org.ikasan.spec.flow.FlowElement;
-import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.metadata.model.*;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.trigger.Trigger;

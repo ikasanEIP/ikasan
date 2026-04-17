@@ -1,6 +1,6 @@
 package org.ikasan.spec.metadata;
 
-import org.ikasan.spec.metadata.BusinessStreamMetaData;
+import org.ikasan.spec.metadata.model.BusinessStreamMetaData;
 
 import java.util.List;
 
