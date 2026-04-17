@@ -14,7 +14,7 @@ public interface GlobalEventJobDao <T extends GlobalEventJobRecord> {
      * @param offset The number of records to skip from the beginning of the result set.
      * @return A {@link SearchResults} object containing a list of records and additional information about the query.
      */
-    SearchResults<? extends T> findAll(int limit, int offset);
+    SearchResults<T> findAll(int limit, int offset);
 
     /**
      * Finds all records of type T within the specified limit and offset based on the given contextId.
@@ -24,7 +24,7 @@ public interface GlobalEventJobDao <T extends GlobalEventJobRecord> {
      * @param offset The number of records to skip from the beginning of the result set.
      * @return A {@link SearchResults} object containing a list of records and additional information about the query.
      */
-    SearchResults<? extends T> findByContext(String contextId, int limit, int offset);
+    SearchResults<T> findByContext(String contextId, int limit, int offset);
 
     /**
      * Finds a record of type T by its ID.

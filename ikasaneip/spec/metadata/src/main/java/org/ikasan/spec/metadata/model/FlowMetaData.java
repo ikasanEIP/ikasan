@@ -1,4 +1,4 @@
-package org.ikasan.spec.metadata;
+package org.ikasan.spec.metadata.model;
 
 import java.util.List;
 

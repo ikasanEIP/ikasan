@@ -1,6 +1,5 @@
 package org.ikasan.spec.scheduled.profile.service;
 
-import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.profile.model.ContextProfileRecord;
 import org.ikasan.spec.scheduled.profile.model.ContextProfileSearchFilter;
 import org.ikasan.spec.search.SearchResults;

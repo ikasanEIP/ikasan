@@ -1,6 +1,6 @@
 package org.ikasan.topology.metadata.model;
 
-import org.ikasan.spec.metadata.Transition;
+import org.ikasan.spec.metadata.model.Transition;
 
 public class TransitionImpl implements Transition
 {

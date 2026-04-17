@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.IkasanVersion;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.*;
+import org.ikasan.spec.metadata.model.*;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.topology.metadata.model.*;

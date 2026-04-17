@@ -14,7 +14,7 @@ public interface QuartzScheduleDrivenJobDao<T extends QuartzScheduleDrivenJobRec
      * @param offset The number of results to skip before retrieving the list.
      * @return A SearchResults object containing a list of search results.
      */
-    SearchResults<? extends T> findAll(int limit, int offset);
+    SearchResults<T> findAll(int limit, int offset);
 
     /**
      * Retrieves a list of search results with a specified limit and offset based on the given context ID.
@@ -24,7 +24,7 @@ public interface QuartzScheduleDrivenJobDao<T extends QuartzScheduleDrivenJobRec
      * @param offset The number of search results to skip before beginning to retrieve results.
      * @return A {@link SearchResults} object containing the search results.
      */
-    SearchResults<? extends T> findByContext(String contextId, int limit, int offset);
+    SearchResults<T> findByContext(String contextId, int limit, int offset);
 
     /**
      * Retrieves an object of type T by its ID.

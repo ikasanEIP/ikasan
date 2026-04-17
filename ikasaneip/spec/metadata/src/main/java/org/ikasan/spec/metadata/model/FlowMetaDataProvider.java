@@ -1,4 +1,4 @@
-package org.ikasan.spec.metadata;
+package org.ikasan.spec.metadata.model;
 
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.StartupControl;

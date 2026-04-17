@@ -14,7 +14,7 @@ public interface InternalEventDrivenJobDao<T extends InternalEventDrivenJobRecor
      * @param offset
      * @return
      */
-    SearchResults<? extends T> findAll(int limit, int offset);
+    SearchResults<T> findAll(int limit, int offset);
 
     /**
      * Find by context name with limit and offset for paging.
@@ -24,7 +24,7 @@ public interface InternalEventDrivenJobDao<T extends InternalEventDrivenJobRecor
      * @param offset
      * @return
      */
-    SearchResults<? extends T> findByContext(String contextName, int limit, int offset);
+    SearchResults<T> findByContext(String contextName, int limit, int offset);
 
     /**
      * Find InternalEventDrivenJobRecord by its id.

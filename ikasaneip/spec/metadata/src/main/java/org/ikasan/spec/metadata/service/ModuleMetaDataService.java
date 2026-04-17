@@ -1,5 +1,7 @@
-package org.ikasan.spec.metadata;
+package org.ikasan.spec.metadata.service;
 
+import org.ikasan.spec.metadata.model.ModuleMetaData;
+import org.ikasan.spec.metadata.ModuleMetadataSearchResults;
 import org.ikasan.spec.module.ModuleType;
 
 import java.util.List;

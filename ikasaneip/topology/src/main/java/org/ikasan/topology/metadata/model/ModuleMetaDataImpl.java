@@ -1,7 +1,7 @@
 package org.ikasan.topology.metadata.model;
 
-import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.model.FlowMetaData;
+import org.ikasan.spec.metadata.model.ModuleMetaData;
 import org.ikasan.spec.module.ModuleType;
 
 import java.util.ArrayList;
