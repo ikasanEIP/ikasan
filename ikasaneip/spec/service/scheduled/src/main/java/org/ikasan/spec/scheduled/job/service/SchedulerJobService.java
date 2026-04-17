@@ -17,7 +17,7 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param offset
      * @return
      */
-    SearchResults<? extends T> findByAgent(String agent, int limit, int offset);
+    SearchResults<T> findByAgent(String agent, int limit, int offset);
 
     /**
      *  Find a job by its ID.
@@ -44,7 +44,7 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param offset
      * @return
      */
-    SearchResults<? extends T> findByContext(String contextId, int limit, int offset);
+    SearchResults<T> findByContext(String contextId, int limit, int offset);
 
     /**
      * Find jobs by filter.
@@ -56,7 +56,7 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param sortDirection
      * @return
      */
-    SearchResults<? extends T> findByFilter(SchedulerJobSearchFilter filter, int limit, int offset, String sortColumn, String sortDirection);
+    SearchResults<T> findByFilter(SchedulerJobSearchFilter filter, int limit, int offset, String sortColumn, String sortDirection);
 
     /**
      * Delete an individual job record.

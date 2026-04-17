@@ -1,7 +1,7 @@
 package org.ikasan.spec.module.client;
 
-import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.spec.metadata.ModuleMetaData;
+import org.ikasan.spec.metadata.model.FlowMetaData;
+import org.ikasan.spec.metadata.model.ModuleMetaData;
 
 import java.util.Optional;
 

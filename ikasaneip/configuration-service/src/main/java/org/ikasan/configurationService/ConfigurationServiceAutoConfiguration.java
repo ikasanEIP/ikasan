@@ -9,8 +9,8 @@ import org.ikasan.configurationService.service.ConfiguredResourceConfigurationSe
 import org.ikasan.configurationService.service.PlatformConfigurationServiceImpl;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.PlatformConfigurationService;
-import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
-import org.ikasan.spec.metadata.ConfigurationMetaDataProvider;
+import org.ikasan.spec.metadata.model.ConfigurationMetaDataExtractor;
+import org.ikasan.spec.metadata.model.ConfigurationMetaDataProvider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

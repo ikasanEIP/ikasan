@@ -38,7 +38,7 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.spec.metadata;
+package org.ikasan.spec.metadata.model;
 
 /**
  * Configuration Metadata describing runtime attributes

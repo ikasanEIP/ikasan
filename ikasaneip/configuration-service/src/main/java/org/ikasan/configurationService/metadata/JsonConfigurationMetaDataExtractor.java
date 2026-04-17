@@ -5,9 +5,9 @@ import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.ConfigurationMetaData;
-import org.ikasan.spec.metadata.ConfigurationMetaDataExtractor;
-import org.ikasan.spec.metadata.ConfigurationParameterMetaData;
+import org.ikasan.spec.metadata.model.ConfigurationMetaData;
+import org.ikasan.spec.metadata.model.ConfigurationMetaDataExtractor;
+import org.ikasan.spec.metadata.model.ConfigurationParameterMetaData;
 import org.ikasan.spec.module.Module;
 
 import java.util.Collection;

@@ -46,6 +46,11 @@ package org.ikasan.spec.scheduled.notification.model;
 public interface Notifier<NOTIFICATION>
 {
 
-    public void invoke(NOTIFICATION notification);
+    /**
+     * Invokes the notifier with the specified notification.
+     *
+     * @param notification the notification to process, must not be null
+     */
+    void invoke(NOTIFICATION notification);
 
 }

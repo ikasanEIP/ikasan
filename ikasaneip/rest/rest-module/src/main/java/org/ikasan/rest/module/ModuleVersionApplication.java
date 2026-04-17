@@ -4,27 +4,15 @@ import org.ikasan.IkasanVersion;
 import org.ikasan.module.ApplicationContextProvider;
 import org.ikasan.rest.module.dto.BuildPropertiesDto;
 import org.ikasan.rest.module.dto.ErrorDto;
-import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.FlowMetaDataProvider;
-import org.ikasan.spec.metadata.ModuleMetaDataProvider;
-import org.ikasan.spec.module.Module;
-import org.ikasan.spec.module.ModuleContainer;
-import org.ikasan.spec.module.ModuleService;
-import org.ikasan.spec.module.StartupControl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**

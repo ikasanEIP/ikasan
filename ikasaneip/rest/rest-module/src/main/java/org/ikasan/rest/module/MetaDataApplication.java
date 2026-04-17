@@ -1,9 +1,8 @@
 package org.ikasan.rest.module;
 
 import org.ikasan.spec.flow.Flow;
-import org.ikasan.spec.metadata.FlowMetaData;
-import org.ikasan.spec.metadata.FlowMetaDataProvider;
-import org.ikasan.spec.metadata.ModuleMetaDataProvider;
+import org.ikasan.spec.metadata.model.FlowMetaDataProvider;
+import org.ikasan.spec.metadata.model.ModuleMetaDataProvider;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleContainer;
 import org.ikasan.spec.module.ModuleService;

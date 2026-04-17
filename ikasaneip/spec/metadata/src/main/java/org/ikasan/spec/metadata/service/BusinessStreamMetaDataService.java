@@ -1,4 +1,8 @@
-package org.ikasan.spec.metadata;
+package org.ikasan.spec.metadata.service;
+
+import org.ikasan.spec.metadata.model.BusinessStreamMetaData;
+import org.ikasan.spec.metadata.BusinessStreamMetadataSearchResults;
+import org.ikasan.spec.metadata.model.ModuleMetaData;
 
 import java.util.List;
 
@@ -67,5 +71,5 @@ public interface  BusinessStreamMetaDataService<T>
      * @param limit
      * @return
      */
-    public BusinessStreamMetadataSearchResults findBusinessStreamsForModules(String filter,  List<ModuleMetaData> modules, int offset, int limit);
+    public BusinessStreamMetadataSearchResults findBusinessStreamsForModules(String filter, List<ModuleMetaData> modules, int offset, int limit);
 }
