@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.Optional;
 
 @RequestMapping("/rest/jobUtils")
@@ -41,6 +40,7 @@ public class JobUtilsApplication
                 return new ResponseEntity("pid not found!", HttpStatus.BAD_REQUEST);
             }
             else {
+                logger.warn("Requested to kill pid " + pid + " that had process handle " + processHandleOptional.get());
                 boolean result = destroy ? processHandleOptional.get().destroyForcibly() : processHandleOptional.get().destroy();
                 if (result) {
                     this.schedulerPersistenceService.removeAll(pid);
