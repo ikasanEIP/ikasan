@@ -14,7 +14,7 @@ public class JavaUtilsTestHelper {
     public static final String SPAWN_CHILD_ARGUMENT = "spawn-child";
     public static final String CHILD_ARGUMENT = "child";
 
-    private static Logger logger = LoggerFactory.getLogger(JavaUtilsTestHelper.class);
+    private static final Logger logger = LoggerFactory.getLogger(JavaUtilsTestHelper.class);
 
     public static void main(String[] args) throws InterruptedException {
 
