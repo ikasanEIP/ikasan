@@ -24,7 +24,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.Duration;
+import java.util.Optional;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { JobUtilsApplication.class, MockedUserServiceTestConfigWithConverter.class })
@@ -120,6 +125,59 @@ public class JobUtilsApplicationTest
 
         Mockito.verify(schedulerPersistenceService).removeAll(process.pid());
         Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
+    }
+
+    /**
+     * This test deliberately creates sub-processes which would be typical of a Job started by the scheduler.
+     * As a result, this test will catch the issue experienced previously when sub-processes were not dealt with.
+     */
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void killPidKillsChildProcessesExplicitly() throws Exception
+    {
+        Process parentProcess = JavaUtilsTestHelper.exec(JavaUtilsTestHelper.class, JavaUtilsTestHelper.SPAWN_CHILD_ARGUMENT);
+        ProcessHandle childProcessHandle = waitForChildProcess(parentProcess, Duration.ofSeconds(10));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/jobUtils/kill/"+parentProcess.pid()+"?destroy=true")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        awaitTermination(parentProcess.toHandle(), Duration.ofSeconds(10));
+        awaitTermination(childProcessHandle, Duration.ofSeconds(10));
+
+        assertFalse(parentProcess.toHandle().isAlive());
+        assertFalse(childProcessHandle.isAlive());
+
+        Mockito.verify(schedulerPersistenceService).removeAll(parentProcess.pid());
+        Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
+    }
+
+    private ProcessHandle waitForChildProcess(Process process, Duration timeout) throws InterruptedException
+    {
+        long timeoutAt = System.nanoTime() + timeout.toNanos();
+        Optional<ProcessHandle> childProcess = Optional.empty();
+
+        while (System.nanoTime() < timeoutAt) {
+            childProcess = process.toHandle().children().findFirst();
+            if (childProcess.isPresent()) {
+                return childProcess.get();
+            }
+
+            Thread.sleep(100);
+        }
+
+        assertTrue("Expected child process for pid " + process.pid(), childProcess.isPresent());
+        return childProcess.orElseThrow(IllegalStateException::new);
+    }
+
+    private void awaitTermination(ProcessHandle processHandle, Duration timeout) throws InterruptedException
+    {
+        long timeoutAt = System.nanoTime() + timeout.toNanos();
+
+        while (processHandle.isAlive() && System.nanoTime() < timeoutAt) {
+            Thread.sleep(100);
+        }
     }
 
 }
