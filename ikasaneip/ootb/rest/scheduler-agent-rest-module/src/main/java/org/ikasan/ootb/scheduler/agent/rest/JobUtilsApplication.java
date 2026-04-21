@@ -93,10 +93,10 @@ public class JobUtilsApplication
     }
 
     /**
-     * Destroys a process tree by discovering descendant processes, which are 
-     * sorted in reverse order (newest PIDs first) to ensure newer processes
-     * terminated before older ones, finally the parent process is terminated, 
-     * reducing the risk of orphaned processes.
+     * Destroys a process tree by discovering descendant processes first, note that
+     * getDescendantProcesses returns descendant nodes depth-first (leaves first) so they must not
+     * be sorted which could introduce an out-of-order kill. Finally, the parent process is terminated.
+     * This will reduce the risk of orphaned processes.
      *
      * @param processHandle the parent process handle
      * @param destroy if true, uses forceful termination; if false, sends graceful signal
@@ -110,15 +110,12 @@ public class JobUtilsApplication
         // Log the operation with discovered descendant PIDs
         logger.warn("About to kill pid {} with process handle {} and descendant pids {}",
             processHandle.pid(), processHandle, descendantProcesses.stream().map(ProcessHandle::pid).collect(Collectors.toList()));
-        
-        // Sort descendants in reverse order (newest PIDs first)
-        List<ProcessHandle> sortedDescendants = new ArrayList<>(descendantProcesses);
-        sortedDescendants.sort((p1, p2) -> Long.compare(p2.pid(), p1.pid()));
 
-        boolean descendantsDestroyed = sortedDescendants.stream()
+        boolean descendantsDestroyed = descendantProcesses.stream()
             .map(childProcess -> destroyProcess(childProcess, destroy))
             .reduce(true, Boolean::logicalAnd);
 
+        // If the child destruction fails, we deliberately keep the parent so we can attempt a second time.
         return descendantsDestroyed && destroyProcess(processHandle, destroy);
     }
 

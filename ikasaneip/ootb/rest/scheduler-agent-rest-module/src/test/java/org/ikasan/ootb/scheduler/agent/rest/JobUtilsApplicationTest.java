@@ -29,7 +29,6 @@ import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { JobUtilsApplication.class, MockedUserServiceTestConfigWithConverter.class })
@@ -156,19 +155,16 @@ public class JobUtilsApplicationTest
     private ProcessHandle waitForChildProcess(Process process, Duration timeout) throws InterruptedException
     {
         long timeoutAt = System.nanoTime() + timeout.toNanos();
-        Optional<ProcessHandle> childProcess = Optional.empty();
+        Optional<ProcessHandle> childProcess;
 
         while (System.nanoTime() < timeoutAt) {
             childProcess = process.toHandle().children().findFirst();
             if (childProcess.isPresent()) {
                 return childProcess.get();
             }
-
             Thread.sleep(100);
         }
-
-        assertTrue("Expected child process for pid " + process.pid(), childProcess.isPresent());
-        return childProcess.orElseThrow(IllegalStateException::new);
+        throw new AssertionError("Expected child process for pid " + process.pid() + " within timeout");
     }
 
     private void awaitTermination(ProcessHandle processHandle, Duration timeout) throws InterruptedException
@@ -179,5 +175,4 @@ public class JobUtilsApplicationTest
             Thread.sleep(100);
         }
     }
-
 }
