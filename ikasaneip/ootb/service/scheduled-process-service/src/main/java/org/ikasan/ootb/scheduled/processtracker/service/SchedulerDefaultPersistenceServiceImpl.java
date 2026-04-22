@@ -59,6 +59,11 @@ public class SchedulerDefaultPersistenceServiceImpl extends DefaultPersistenceSe
     }
 
     @Override
+    public SchedulerIkasanProcess findByPid(long pid) {
+        return this.schedulerProcessPersistenceDao.find(pid);
+    }
+
+    @Override
     public void removeAll(long pid) throws IOException {
         SchedulerIkasanProcess schedulerIkasanProcess = this.schedulerProcessPersistenceDao.find(pid);
         if(schedulerIkasanProcess != null) {
