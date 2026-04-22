@@ -2,6 +2,8 @@ package org.ikasan.ootb.scheduler.agent.rest;
 
 import org.ikasan.ootb.scheduled.processtracker.ProcessKillUtils;
 import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -15,6 +17,8 @@ import java.util.Optional;
 @RestController
 public class JobUtilsApplication
 {
+    private static final Logger logger = LoggerFactory.getLogger(JobUtilsApplication.class);
+
     @Autowired
     private SchedulerPersistenceService schedulerPersistenceService;
 
@@ -40,6 +44,11 @@ public class JobUtilsApplication
     {
         try
         {
+            if (this.schedulerPersistenceService.findByPid(pid) == null) {
+                logger.warn("Kill request rejected: pid {} is not managed by this agent", pid);
+                return new ResponseEntity<>("The requested PID is not managed by this agent", HttpStatus.FORBIDDEN);
+            }
+
             Optional<ProcessHandle> processHandleOptional = ProcessHandle.of(pid);
 
             if (processHandleOptional.isEmpty()) {
