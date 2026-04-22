@@ -41,6 +41,7 @@
 package org.ikasan.ootb.scheduler.agent.module.component.broker;
 
 import org.apache.commons.lang3.math.NumberUtils;
+import org.ikasan.ootb.scheduled.processtracker.ProcessKillUtils;
 import org.ikasan.ootb.scheduler.agent.module.component.broker.configuration.JobMonitoringBrokerConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.model.EnrichedContextualisedScheduledProcessEvent;
 import org.ikasan.spec.component.endpoint.Broker;
@@ -131,10 +132,10 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                             "Job Name [" + scheduledProcessEvent.getJobName() + "]" +
                             "ContextInstanceId [" + scheduledProcessEvent.getContextInstanceId() + "] " +
                             "Timeout settings in minutes [" + configuration.getTimeout() + "]";
-                        if (processHandle.destroy()) {
-                            LOGGER.error(errorMessage + ". The process was zombied and may need to be manually terminated.", ex);
-                        } else {
+                        if (ProcessKillUtils.destroyProcessTree(processHandle, false)) {
                             LOGGER.error(errorMessage, ex);
+                        } else {
+                            LOGGER.error(errorMessage + ". The process tree could not be fully terminated and may need to be manually cleaned up.", ex);
                         }
                         // Add to the execution details.
                         executionDetails = scheduledProcessEvent.getExecutionDetails();
@@ -156,7 +157,7 @@ public class JobMonitoringBroker implements Broker<EnrichedContextualisedSchedul
                 LOGGER.info("Waiting for new process " + process.pid() + " to complete");
                 boolean completedWithinTimeout = process.waitFor(configuration.getTimeout(), TimeUnit.MINUTES);
                 if (!completedWithinTimeout) {
-                    process.destroy();
+                    ProcessKillUtils.destroyProcessTree(process.toHandle(), false);
                     LOGGER.error("Process was killed due to not finishing in the allowed time [{}]. Job Name [{}], " +
                         "ContextInstanceId [{}], Timeout settings in minutes [{}] ", process,
                         scheduledProcessEvent.getJobName(), scheduledProcessEvent.getContextInstanceId(), configuration.getTimeout());
