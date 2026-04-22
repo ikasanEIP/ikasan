@@ -1,31 +1,20 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
+import org.ikasan.ootb.scheduled.processtracker.ProcessKillUtils;
 import org.ikasan.ootb.scheduled.processtracker.service.SchedulerPersistenceService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RequestMapping("/rest/jobUtils")
 @RestController
 public class JobUtilsApplication
 {
-    /** logger */
-    private static final Logger logger = LoggerFactory.getLogger(JobUtilsApplication.class);
-
     @Autowired
     private SchedulerPersistenceService schedulerPersistenceService;
 
@@ -58,7 +47,7 @@ public class JobUtilsApplication
             }
             else {
                 ProcessHandle processHandle = processHandleOptional.get();
-                boolean result = destroyProcessTree(processHandle, destroy);
+                boolean result = ProcessKillUtils.destroyProcessTree(processHandle, destroy);
                 if (result) {
                     this.schedulerPersistenceService.removeAll(pid);
                     return new ResponseEntity<>(HttpStatus.OK);
@@ -74,69 +63,4 @@ public class JobUtilsApplication
         }
     }
 
-    /**
-     * Recursively retrieves all descendant processes of the given process handle.
-     *
-     * @param processHandle the process handle to query for children
-     * @return a list of all direct and indirect child processes
-     */
-    private List<ProcessHandle> getDescendantProcesses(ProcessHandle processHandle)
-    {
-        List<ProcessHandle> descendantProcesses = new ArrayList<>();
-
-        processHandle.children().forEach(childProcess -> {
-            descendantProcesses.addAll(getDescendantProcesses(childProcess));
-            descendantProcesses.add(childProcess);
-        });
-
-        return descendantProcesses;
-    }
-
-    /**
-     * Destroys a process tree by discovering descendant processes first, note that
-     * getDescendantProcesses returns descendant nodes depth-first (leaves first) so they must not
-     * be sorted which could introduce an out-of-order kill. Finally, the parent process is terminated.
-     * This will reduce the risk of orphaned processes.
-     *
-     * @param processHandle the parent process handle
-     * @param destroy if true, uses forceful termination; if false, sends graceful signal
-     * @return true if all processes in the tree were successfully destroyed, false otherwise
-     */
-    private boolean destroyProcessTree(ProcessHandle processHandle, boolean destroy)
-    {
-        // Discover descendants immediately before termination to minimize race condition window
-        List<ProcessHandle> descendantProcesses = getDescendantProcesses(processHandle);
-        
-        // Log the operation with discovered descendant PIDs
-        logger.warn("About to kill pid {} with process handle {} and descendant pids {}",
-            processHandle.pid(), processHandle, descendantProcesses.stream().map(ProcessHandle::pid).collect(Collectors.toList()));
-
-        boolean descendantsDestroyed = descendantProcesses.stream()
-            .map(childProcess -> destroyProcess(childProcess, destroy))
-            .reduce(true, Boolean::logicalAnd);
-
-        // If the child destruction fails, we deliberately keep the parent so we can attempt a second time.
-        return descendantsDestroyed && destroyProcess(processHandle, destroy);
-    }
-
-    /**
-     * Destroys a single process by sending a termination signal or forcibly killing it.
-     *
-     * @param processHandle the process to terminate
-     * @param destroy if true, uses destroyForcibly(); if false, uses destroy() for graceful shutdown
-     * @return true if the process was successfully terminated or is already not alive, false otherwise
-     */
-    private boolean destroyProcess(ProcessHandle processHandle, boolean destroy)
-    {
-        if (!processHandle.isAlive()) {
-            logger.info("Pid {} is already terminated", processHandle.pid());
-            return true;
-        }
-
-        boolean result = destroy ? processHandle.destroyForcibly() : processHandle.destroy();
-        logger.info("Termination request for pid {} returned {} using destroyForcibly={}",
-            processHandle.pid(), result, destroy);
-
-        return result || !processHandle.isAlive();
-    }
 }
