@@ -147,6 +147,8 @@ public class DetachableProcessBuilderTest {
 
         when(processStatusDaoMock.createCommandScript(IDENTITY, CommandProcessor.UNIX_BASH.getScriptFilePostfix(), COMMAND)).thenReturn("XX");
         when(processStatusDaoMock.getResultAbsoluteFilePath(IDENTITY)).thenReturn(STARDARD_OUTPUT_FILE);
+        String expectedWrapperContent = "sleep 1 \nchmod +x XX\nsleep 1 \nXX\nRET=$?\necho $RET > " + STARDARD_OUTPUT_FILE + "\nexit $RET";
+        when(processStatusDaoMock.createCommandWrapperScript(IDENTITY, CommandProcessor.UNIX_BASH.getScriptFilePostfix(), expectedWrapperContent)).thenReturn("XX_wrapper");
 
         detachableProcessBuilder = new DetachableProcessBuilder(schedulerPersistenceService, new ProcessBuilder(), inputCommands, IDENTITY);
         detachableProcessBuilder.setInitialErrorOutput("errorfile");
@@ -156,18 +158,9 @@ public class DetachableProcessBuilderTest {
 
         List<String> commands = detachableProcessBuilder.getProcessBuilder().command();
 
-        assertThat(commands.size()).isEqualTo(3);
-        assertThat(commands.get(0)).isEqualTo(cp.getCommandArgs()[0]);
-        assertThat(commands.get(1)).isEqualTo(cp.getCommandArgs()[1]);
-
-        assertThat(commands.get(2)).isEqualTo(
-            "sleep 1 \n" +
-            "chmod +x XX\n" +
-            "sleep 1 \n" +
-            "XX\n" +
-            "RET=$?\n" +
-            "echo $RET > OutputFileName\n" +
-            "exit $RET");
+        assertThat(commands.size()).isEqualTo(2);
+        assertThat(commands.get(0)).isEqualTo(cp.getName());
+        assertThat(commands.get(1)).isEqualTo("XX_wrapper");
     }
 
     @Test

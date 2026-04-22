@@ -98,7 +98,6 @@ public class DetachableProcessBuilder {
         }
         String processExitStatusFile = schedulerPersistenceService.getResultAbsoluteFilePath(detachableProcess.getIdentity());
 
-        // For Windows, we need to wrap the command in another Powershell script because start-process doesn't support script blocks.
         if (detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_CMD) || detachableProcess.getCommandProcessor().equals(CommandProcessor.WINDOWS_POWSHELL)) {
             String wrapperScriptCommands = getWindowsWrapperCommands(commandScriptPath, processExitStatusFile);
             try {
@@ -107,6 +106,18 @@ public class DetachableProcessBuilder {
                 throw new EndpointException(e);
             }
             LOGGER.info("Windows detachable process wrapper script[" + commandScriptPath + "] set to[" + wrapperScriptCommands + "]");
+        } else {
+            // For Unix, create a wrapper script file that executes the command script as a subprocess.
+            // This preserves full encapsulation: the command script's shebang is honoured by the OS, any traps
+            // or explicit exits within it cannot interfere with the wrapper's exit-code capture, and ps shows
+            // the wrapper script path rather than the previous opaque inline bash -c string.
+            String wrapperScriptCommands = getUnixWrapperCommands(commandScriptPath, processExitStatusFile);
+            try {
+                commandScriptPath = schedulerPersistenceService.createCommandWrapperScript(detachableProcess.getIdentity(), detachableProcess.getCommandProcessor().getScriptFilePostfix(), wrapperScriptCommands);
+            } catch (IOException e) {
+                throw new EndpointException(e);
+            }
+            LOGGER.info("Unix detachable process wrapper script[" + commandScriptPath + "] set to[" + wrapperScriptCommands + "]");
         }
 
         List<String> commands = getCommandString(commandScriptPath, processExitStatusFile);
@@ -142,11 +153,26 @@ public class DetachableProcessBuilder {
                 "Start-Process -FilePath Powershell -WindowStyle Hidden -RedirectStandardError $errorLogPath -RedirectStandardOutput $initialResultsPath -PassThru -ArgumentList \"/c\", " +
                 "\"" + commandLineScriptName + "\"");
         } else {
-            commands.addAll(Arrays.asList(detachableProcess.getCommandProcessor().getCommandArgs()));
-            commands.add("sleep 1 \nchmod +x " + commandLineScriptName + "\nsleep 1 \n" + commandLineScriptName+ "\nRET=$?\necho $RET > " + processExitStatusFile + "\nexit $RET");
+            // Execute the wrapper script as a file (not inline -c). The wrapper script path is visible in ps,
+            // and the command script it calls is a fully isolated subprocess with its own interpreter.
+            commands.add(detachableProcess.getCommandProcessor().getName());
+            commands.add(commandLineScriptName);
         }
         LOGGER.info("About to execute command files [" + commandLineScriptName + "] return value going to [" + processExitStatusFile + "] with command string [" + commands + "]");
         return commands;
+    }
+
+    /**
+     * Builds the content of a Unix wrapper script that executes the command script as an isolated subprocess.
+     * Running the command script as a subprocess means its shebang is honoured by the OS, and any traps or
+     * explicit exits within it cannot interfere with the wrapper's exit-code capture.
+     * @param commandScript path to the script containing the user's commands
+     * @param processExitStatusFile that will be populated with the exit status
+     * @return the wrapper script content as a string
+     */
+    private String getUnixWrapperCommands(String commandScript, String processExitStatusFile) {
+        return "sleep 1 \nchmod +x " + commandScript + "\nsleep 1 \n" + commandScript
+            + "\nRET=$?\necho $RET > " + processExitStatusFile + "\nexit $RET";
     }
 
     /**
