@@ -7,14 +7,13 @@ import org.springframework.retry.support.RetrySynchronizationManager;
 import org.springframework.retry.support.RetryTemplate;
 
 import java.io.File;
-import java.io.IOError;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.util.Arrays;
 import java.util.stream.Stream;
 
 public class ProcessStatusDaoFSImp implements ProcessStatusDao {
@@ -22,11 +21,10 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
     protected static final String RESULTS_FILE_POSTFIX = "_results";
     protected static final String SCRIPT_FILE_POSTFIX = "_script";
     protected static final String WRAPPER_FILE_POSTFIX = "_wrapper";
-    private String persistenceDir;
-    private int maxGetStatusRetries;
-    private long retryInterval;
-    private File persistenceDirFile;
-    private RetryTemplate retryTemplate;
+    private final String persistenceDir;
+    private final int maxGetStatusRetries;
+    private final long retryInterval;
+    private final RetryTemplate retryTemplate;
 
     /**
      * Constructor
@@ -44,7 +42,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
             throw new IllegalArgumentException("persistence directory cannot be 'null");
         }
 
-        this.persistenceDirFile = new File(persistenceDir);
+        File persistenceDirFile = new File(persistenceDir);
         if(!persistenceDirFile.exists())
         {
             if (!persistenceDirFile.mkdirs())
@@ -129,9 +127,9 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
      */
     private String getPersistedReturnCodeData(Path fileResultsPath) throws IOException {
         RetryContext retryContext = RetrySynchronizationManager.getContext();
-        if (retryContext.getRetryCount() > 1) {
+        if (retryContext != null && retryContext.getRetryCount() > 1) {
             LOGGER.info("Attempting to get persisted return code from path " +
-                fileResultsPath + "Retry Number: " + retryContext.getRetryCount() + ", interval " + retryInterval);
+                fileResultsPath + " Retry Number: " + retryContext.getRetryCount() + ", interval " + retryInterval);
         }
         return Files.readString(fileResultsPath).trim();
     }
@@ -161,6 +159,11 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
         }
     }
 
+
+    public void writeKilledResult(String processIdentity) throws IOException {
+        Path resultsPath = Path.of(getResultAbsoluteFilePath(processIdentity));
+        Files.writeString(resultsPath, "1", StandardCharsets.UTF_8);
+    }
 
     private String getResultFile(String processIdentity) {
         return processIdentity + RESULTS_FILE_POSTFIX;
