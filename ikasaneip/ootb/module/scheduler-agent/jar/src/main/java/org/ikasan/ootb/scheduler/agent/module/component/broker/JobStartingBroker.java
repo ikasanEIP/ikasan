@@ -227,11 +227,12 @@ public class JobStartingBroker implements Broker<EnrichedContextualisedScheduled
                 .append("]").append("\n");
 
             StringBuffer commandString = new StringBuffer("Process Command -> ").append("\n");
-            detachableProcessBuilder.command().stream().forEach(command -> commandString.append(command).append("\n\n"));
+            detachableProcessBuilder.command().forEach(command -> commandString.append(command).append("\n\n"));
             commandString.append("\n");
 
             commandString.append(detachableProcessBuilder.getScriptFilePath()).append(" ->").append("\n");
             commandString.append(scheduledProcessEvent.getInternalEventDrivenJob().getCommandLine()).append("\n");
+            commandString.append(schedulerPersistenceService.getResultAbsoluteFilePath(scheduledProcessEvent.generateProcessIdentity())).append(" (exit status file)\n");
 
             processStartString.append(commandString);
 

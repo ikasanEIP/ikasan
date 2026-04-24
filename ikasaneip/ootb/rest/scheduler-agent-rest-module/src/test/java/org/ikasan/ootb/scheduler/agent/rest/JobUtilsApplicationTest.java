@@ -127,7 +127,7 @@ public class JobUtilsApplicationTest
         assertEquals(200, result.getResponse().getStatus());
 
         Mockito.verify(schedulerPersistenceService).findByPid(process.pid());
-        Mockito.verify(schedulerPersistenceService).removeAll(process.pid());
+        Mockito.verify(schedulerPersistenceService).persistKilledReturnCode(process.pid());
         Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
@@ -145,7 +145,7 @@ public class JobUtilsApplicationTest
         assertEquals(200, result.getResponse().getStatus());
 
         Mockito.verify(schedulerPersistenceService).findByPid(process.pid());
-        Mockito.verify(schedulerPersistenceService).removeAll(process.pid());
+        Mockito.verify(schedulerPersistenceService).persistKilledReturnCode(process.pid());
         Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 
@@ -173,7 +173,7 @@ public class JobUtilsApplicationTest
         assertFalse(childProcessHandle.isAlive());
 
         Mockito.verify(schedulerPersistenceService).findByPid(parentProcess.pid());
-        Mockito.verify(schedulerPersistenceService).removeAll(parentProcess.pid());
+        Mockito.verify(schedulerPersistenceService).persistKilledReturnCode(parentProcess.pid());
         Mockito.verifyNoMoreInteractions(schedulerPersistenceService);
     }
 

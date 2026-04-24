@@ -73,6 +73,15 @@ public class SchedulerDefaultPersistenceServiceImpl extends DefaultPersistenceSe
     }
 
     @Override
+    public void persistKilledReturnCode(long pid) throws IOException {
+        SchedulerIkasanProcess schedulerIkasanProcess = this.schedulerProcessPersistenceDao.find(pid);
+        if(schedulerIkasanProcess != null) {
+            processStatusDao.writeKilledResult(schedulerIkasanProcess.getName());
+            remove(SCHEDULER_PROCESS_TYPE, schedulerIkasanProcess.getName());
+        }
+    }
+
+    @Override
     public String getResultAbsoluteFilePath(String processIdentity) {
         return processStatusDao.getResultAbsoluteFilePath(processIdentity);
     }
