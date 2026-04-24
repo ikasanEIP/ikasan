@@ -12,6 +12,8 @@ public interface ProcessStatusDao {
 
     void removeScriptAndResult(String processIdentity) throws IOException ;
 
+    void writeKilledResult(String processIdentity) throws IOException;
+
     String getResultAbsoluteFilePath(String processIdentity);
 
     String getScriptFilePath(String processIdentity, String scriptPostfix);

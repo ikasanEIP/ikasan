@@ -58,7 +58,7 @@ public class JobUtilsApplication
                 ProcessHandle processHandle = processHandleOptional.get();
                 boolean result = ProcessKillUtils.destroyProcessTree(processHandle, destroy);
                 if (result) {
-                    this.schedulerPersistenceService.removeAll(pid);
+                    this.schedulerPersistenceService.persistKilledReturnCode(pid);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
                 else {

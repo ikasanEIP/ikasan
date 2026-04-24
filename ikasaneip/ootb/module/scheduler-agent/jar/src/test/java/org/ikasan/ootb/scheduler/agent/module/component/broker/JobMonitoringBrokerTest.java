@@ -245,6 +245,10 @@ public class JobMonitoringBrokerTest {
         CommandProcessor cp = CommandProcessor.getCommandProcessor(null);
         long timeout = 1L;
         when(processMock.waitFor(timeout, TimeUnit.MINUTES)).thenReturn(false);
+        when(processMock.toHandle()).thenReturn(processHandleMock);
+        when(processHandleMock.children()).thenReturn(java.util.stream.Stream.empty());
+        when(processHandleMock.isAlive()).thenReturn(true);
+        when(processHandleMock.destroy()).thenReturn(true);
         configuration.setTimeout(timeout);
 
         EnrichedContextualisedScheduledProcessEvent event = this.createEnrichedContextualisedScheduledProcessEvent(false, false);
@@ -346,6 +350,7 @@ public class JobMonitoringBrokerTest {
 
         when(processHandleMock.onExit()).thenReturn(completableFutureMock);
         when(completableFutureMock.get(DEFAULT_TIMEOUT, TimeUnit.MINUTES)).thenThrow(new TimeoutException());
+        when(processHandleMock.isAlive()).thenReturn(true);
         when(processHandleMock.destroy()).thenReturn(true);
 
         EnrichedContextualisedScheduledProcessEvent event = this.createEnrichedContextualisedScheduledProcessEvent(false, false);
