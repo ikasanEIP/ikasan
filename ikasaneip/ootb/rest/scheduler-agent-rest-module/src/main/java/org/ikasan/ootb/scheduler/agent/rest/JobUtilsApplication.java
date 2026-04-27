@@ -30,7 +30,7 @@ public class JobUtilsApplication
      * destroyProcessTree() to minimize the race condition window where new child processes
      * could be created and escape the kill.
      * </p>
-     * After successful termination, removes all associated records from persistence service.
+     * After successful termination, removes all associated records from kryo persistence service.
      *
      * @param pid the process ID to terminate
      * @param destroy if true, forcibly destroys the process on Unix systems; if false, sends graceful termination signal
@@ -58,7 +58,7 @@ public class JobUtilsApplication
                 ProcessHandle processHandle = processHandleOptional.get();
                 boolean result = ProcessKillUtils.destroyProcessTree(processHandle, destroy);
                 if (result) {
-                    this.schedulerPersistenceService.persistKilledReturnCode(pid);
+                    this.schedulerPersistenceService.persistReturnCodeForKilledProcess(pid);
                     return new ResponseEntity<>(HttpStatus.OK);
                 }
                 else {
