@@ -17,7 +17,7 @@ public interface SchedulerPersistenceService extends PersistenceService {
 
     void removeAll(String processIdentity) throws IOException;
 
-    void persistKilledReturnCode(long pid) throws IOException;
+    void persistReturnCodeForKilledProcess(long pid) throws IOException;
 
     void removeAll(long pid) throws IOException;
 
