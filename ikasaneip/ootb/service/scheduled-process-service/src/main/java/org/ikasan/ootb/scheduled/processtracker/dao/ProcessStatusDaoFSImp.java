@@ -159,8 +159,7 @@ public class ProcessStatusDaoFSImp implements ProcessStatusDao {
         }
     }
 
-
-    public void writeKilledResult(String processIdentity) throws IOException {
+    public void writeStatusForKilledProcess(String processIdentity) throws IOException {
         Path resultsPath = Path.of(getResultAbsoluteFilePath(processIdentity));
         Files.writeString(resultsPath, "1", StandardCharsets.UTF_8);
     }
