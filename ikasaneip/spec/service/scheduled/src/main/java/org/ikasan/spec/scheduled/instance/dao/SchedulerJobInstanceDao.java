@@ -15,6 +15,14 @@ public interface SchedulerJobInstanceDao {
      */
     SchedulerJobInstanceRecord findById(String id);
 
+
+    /**
+     * Saves a list of scheduler job instance records.
+     *
+     * @param scheduledContextInstanceRecord the list of {@link SchedulerJobInstanceRecord} objects to be saved
+     */
+    void save(List<SchedulerJobInstanceRecord> scheduledContextInstanceRecord);
+
     /**
      * Save a scheduled job instance record.
      *

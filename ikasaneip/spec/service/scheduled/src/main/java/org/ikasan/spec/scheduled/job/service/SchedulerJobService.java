@@ -376,4 +376,11 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * keyed on their identifier.
      */
     Map<String, InternalEventDrivenJob> getCommandExecutionJobsForContext(String contextName);
+
+    /**
+     * Retrieves a list of all agent names.
+     *
+     * @return A list of agent names as strings.
+     */
+    List<String> getAllAgentNames();
 }
