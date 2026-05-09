@@ -3,6 +3,8 @@ package org.ikasan.spec.scheduled.job.dao;
 import org.ikasan.spec.scheduled.job.model.ContextStartJobRecord;
 import org.ikasan.spec.search.SearchResults;
 
+import java.util.List;
+
 public interface ContextStartJobDao<T extends ContextStartJobRecord> {
 
     /**
@@ -38,4 +40,11 @@ public interface ContextStartJobDao<T extends ContextStartJobRecord> {
      * @param record The record to be saved.
      */
     void save(T record);
+
+    /**
+     * Persists the given list of records.
+     *
+     * @param records The list of records to be saved.
+     */
+    void save(List<T> records);
 }

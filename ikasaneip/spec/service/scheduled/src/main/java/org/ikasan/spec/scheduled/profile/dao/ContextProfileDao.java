@@ -4,6 +4,8 @@ import org.ikasan.spec.scheduled.profile.model.ContextProfileRecord;
 import org.ikasan.spec.scheduled.profile.model.ContextProfileSearchFilter;
 import org.ikasan.spec.search.SearchResults;
 
+import java.util.List;
+
 public interface ContextProfileDao {
 
     /**
@@ -12,6 +14,13 @@ public interface ContextProfileDao {
      * @param contextProfileRecord
      */
     void save(ContextProfileRecord contextProfileRecord);
+
+    /**
+     * Save a list of context profiles
+     *
+     * @param records
+     */
+    void save(List<ContextProfileRecord> records);
 
     /**
      * Delete context profiles by context names.

@@ -75,5 +75,6 @@
         <module>scheduled</module>
         <module>big-queue</module>
         <module>security</module>
+        <module>entity</module>
     </modules>
 </project>
