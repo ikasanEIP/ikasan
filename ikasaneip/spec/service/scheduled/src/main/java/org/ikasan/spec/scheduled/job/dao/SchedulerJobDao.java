@@ -4,6 +4,8 @@ import org.ikasan.spec.scheduled.job.model.SchedulerJobRecord;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobSearchFilter;
 import org.ikasan.spec.search.SearchResults;
 
+import java.util.List;
+
 public interface SchedulerJobDao<T extends SchedulerJobRecord> {
 
     /**
@@ -91,4 +93,18 @@ public interface SchedulerJobDao<T extends SchedulerJobRecord> {
      * @param record The record to be saved.
      */
     void save(T record);
+
+    /**
+     * Persists the given list of records.
+     *
+     * @param records The list of records to be saved.
+     */
+    void save(List<T> records);
+
+    /**
+     * Retrieves a list of all agent names.
+     *
+     * @return A list of agent names as strings.
+     */
+    List<String> getAllAgentNames();
 }

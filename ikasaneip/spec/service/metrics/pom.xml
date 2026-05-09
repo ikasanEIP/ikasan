@@ -63,6 +63,11 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-spec-metadata</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-history</artifactId>
+        </dependency>
     </dependencies>
 
 

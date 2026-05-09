@@ -40,4 +40,11 @@ public interface QuartzScheduleDrivenJobDao<T extends QuartzScheduleDrivenJobRec
      * @param record The record to be saved.
      */
     void save(T record);
+
+    /**
+     * Persists the given list of records.
+     *
+     * @param records The list of records to be saved.
+     */
+    void save(List<T> records);
 }

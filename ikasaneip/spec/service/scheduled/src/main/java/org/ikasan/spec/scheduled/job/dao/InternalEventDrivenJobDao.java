@@ -41,6 +41,13 @@ public interface InternalEventDrivenJobDao<T extends InternalEventDrivenJobRecor
     void save(T record);
 
     /**
+     * Persists the given list of records.
+     *
+     * @param records The list of records to be saved.
+     */
+    void save(List<T> records);
+
+    /**
      * Set a InternalEventDrivenJobRecord to skip. If targetResidingContextOnly is set
      * on the InternalEventDrivenJob the childContextNames contain the specific child
      * contexts that the job will be skipped in.
