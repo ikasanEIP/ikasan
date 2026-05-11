@@ -20,8 +20,12 @@ public interface EmailNotificationDetails extends Serializable {
      */
     void setJobName(String jobName);
 
+
+
     /**
+     * Retrieves the context name associated with this instance.
      *
+     * @return the name of the context as a String
      */
     String getContextName();
 
@@ -76,8 +80,11 @@ public interface EmailNotificationDetails extends Serializable {
      */
     void setEmailNotificationTemplateParameters(Map<String,String> emailNotificationTemplateParameters);
 
+
     /**
+     * Retrieves the list of email addresses to which the notification will be sent.
      *
+     * @return a List of Strings representing the email addresses of the primary recipients.
      */
     List<String> getEmailSendTo();
 
@@ -105,25 +112,35 @@ public interface EmailNotificationDetails extends Serializable {
      * @return a list of email addresses to be included*/
     List<String> getEmailSendBcc();
 
-    /**
-     * Sets a list of email addresses to be included as BCC (Blind Carbon Copy)
-     * recipients in email notifications.
-     *
-     * @param emailSend*/
-    void setEmailSendBcc(List<String> emailSendBcc);
 
     /**
+     * Sets the list of email addresses to be included as blind carbon copy (BCC) recipients
+     * when sending an email notification.
      *
+     * @param emailSendBcc a list of email addresses that will receive the email as BCC recipients.
+     *                     The list must not be null and should contain valid email addresses.
+     */
+    void setEmailSendBcc(List<String> emailSendBcc);
+
+
+    /**
+     * Retrieves the subject of the email notification.
+     *
+     * @return the email subject as a String
      */
     String getEmailSubject();
 
     /**
+     * Sets the subject of the email notification.
      *
+     * @param emailSubject the subject to be assigned to the email. Must not be null or empty.
      */
     void setEmailSubject(String emailSubject);
 
     /**
+     * Retrieves the body content of the email notification.
      *
+     * @return the body of the email as a String
      */
     String getEmailBody();
 
@@ -132,8 +149,11 @@ public interface EmailNotificationDetails extends Serializable {
      */
     void setEmailBody(String emailBody);
 
+
     /**
+     * Retrieves the template for the email subject.
      *
+     * @return a String representing the template used for constructing email subjects.
      */
     String getEmailSubjectTemplate();
 
@@ -155,8 +175,11 @@ public interface EmailNotificationDetails extends Serializable {
      */
     void setEmailBodyTemplate(String emailBodyTemplate);
 
-    /**
+        /**
+     * Retrieves the attachment associated with the email notification.
      *
+     * @return the attachment as a String, which represents the file path
+     *         or identifier of the attachment included with the email.
      */
     String getAttachment();
 
