@@ -9,7 +9,7 @@ import org.ikasan.spec.component.endpoint.Producer;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * File scheduler job event flow component factory.
@@ -25,10 +25,10 @@ public class HousekeepLogFilesFlowComponentFactory
     @Value( "${housekeep.scheduled.consumer.cron}" )
     String cron;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     HousekeepLogFilesProcessConfiguration housekeepLogFilesProcessConfiguration;
 
 

@@ -40,21 +40,20 @@
  */
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.jms.DeliveryMode;
+import jakarta.jms.Session;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.apache.activemq.RedeliveryPolicy;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
-import jakarta.jms.DeliveryMode;
-import jakarta.jms.Session;
-
-import static org.springframework.jms.listener.DefaultMessageListenerContainer.*;
+import static org.springframework.jms.listener.DefaultMessageListenerContainer.CACHE_AUTO;
 
 /**
  * Sample component factory.
@@ -69,7 +68,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.*
 } )
 public class ComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${jms.producer.configuredResourceId}")

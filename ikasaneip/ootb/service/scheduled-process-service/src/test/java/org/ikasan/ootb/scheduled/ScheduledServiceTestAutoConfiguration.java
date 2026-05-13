@@ -2,17 +2,14 @@ package org.ikasan.ootb.scheduled;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.jta.UserTransaction;
-import jakarta.persistence.EntityManagerFactory;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.jmock.auto.Mock;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.jta.JtaTransactionManager;
@@ -25,7 +22,7 @@ import java.util.Properties;
 @ImportResource("/test-transaction.xml")
 public class ScheduledServiceTestAutoConfiguration
 {
-    @MockBean
+    @MockitoBean
     DashboardRestService scheduleProcessEventsDashboardRestService;
 
     @Bean(name = {"ikasan.xads", "ikasan.ds"})

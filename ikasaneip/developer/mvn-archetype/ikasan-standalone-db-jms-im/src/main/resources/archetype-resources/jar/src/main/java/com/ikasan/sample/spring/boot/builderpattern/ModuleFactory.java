@@ -48,15 +48,15 @@ import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 public class ModuleFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     private ComponentFactory componentFactory;
 
     @Bean

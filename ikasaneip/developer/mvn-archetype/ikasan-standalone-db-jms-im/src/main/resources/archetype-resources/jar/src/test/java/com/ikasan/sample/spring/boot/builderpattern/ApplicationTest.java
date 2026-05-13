@@ -59,7 +59,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.TextMessage;
 import java.io.IOException;
 import java.util.List;
@@ -83,16 +83,16 @@ import static org.junit.Assert.assertTrue;
 })
 public class ApplicationTest
 {
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private JmsListenerEndpointRegistry registry;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Resource
+    @Autowired
     private PersonDao personDao;
 
     @Value("${jms.provider.url}")

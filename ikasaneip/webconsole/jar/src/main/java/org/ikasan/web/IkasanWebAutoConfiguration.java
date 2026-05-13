@@ -40,8 +40,13 @@
  */
 package org.ikasan.web;
 
-import org.ikasan.security.dao.*;
-import org.ikasan.security.service.*;
+import org.ikasan.security.dao.HibernateAuthorityDaoImpl;
+import org.ikasan.security.dao.HibernateSecurityDaoImpl;
+import org.ikasan.security.dao.HibernateUserDaoImpl;
+import org.ikasan.security.service.AuthenticationServiceImpl;
+import org.ikasan.security.service.DashboardUserServiceImpl;
+import org.ikasan.security.service.SecurityServiceImpl;
+import org.ikasan.security.service.UserServiceImpl;
 import org.ikasan.security.service.authentication.AuthenticationProviderFactory;
 import org.ikasan.security.service.authentication.CustomAuthenticationProvider;
 import org.ikasan.security.service.authentication.ModuleAuthenticationProviderFactoryImpl;
@@ -69,7 +74,6 @@ import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -79,7 +83,6 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@EnableWebMvc
 public class IkasanWebAutoConfiguration implements WebMvcConfigurer
 {
     @Autowired
@@ -215,6 +218,7 @@ public class IkasanWebAutoConfiguration implements WebMvcConfigurer
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("security");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:security-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

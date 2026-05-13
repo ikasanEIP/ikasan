@@ -5,11 +5,6 @@ import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.IkasanVersion;
 import org.ikasan.module.ApplicationContextProvider;
 import org.ikasan.rest.module.dto.BuildPropertiesDto;
-import org.ikasan.rest.module.util.DateTimeConverter;
-import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.flow.FlowFactory;
-import org.ikasan.spec.module.ModuleActivator;
-import org.ikasan.spec.module.ModuleService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,12 +16,12 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -53,14 +48,10 @@ public class ModuleVersionApplicationTest
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
-
-    @Autowired
-    protected ModuleVersionApplication moduleVersionApplication;
-
-    @MockBean
+    @MockitoBean
     protected ApplicationContext applicationContext;
 
-    @MockBean
+    @MockitoBean
     protected BuildProperties buildProperties;
 
     private ObjectMapper mapper = new ObjectMapper();

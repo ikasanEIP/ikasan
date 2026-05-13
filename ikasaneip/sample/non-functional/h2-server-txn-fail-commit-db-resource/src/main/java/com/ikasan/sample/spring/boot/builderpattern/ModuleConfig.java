@@ -45,9 +45,8 @@ import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.OnException;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-
-import javax.annotation.Resource;
 
 /**
  *
@@ -56,9 +55,9 @@ import javax.annotation.Resource;
 @org.springframework.context.annotation.Configuration
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
-    @Resource
+    @Autowired
     private ComponentFactory componentFactory;
 
     @Bean

@@ -86,15 +86,14 @@ public class SftpToJmsFlowTest {
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
     @Autowired
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;
 
-    @Resource
+    @Autowired
     public JmsListenerEndpointRegistry registry;
 
     @Value("${jms.provider.url}")

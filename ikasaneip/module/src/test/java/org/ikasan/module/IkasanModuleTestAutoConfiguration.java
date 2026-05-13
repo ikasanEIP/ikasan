@@ -2,18 +2,14 @@ package org.ikasan.module;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.jta.UserTransaction;
-import jakarta.persistence.EntityManagerFactory;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.jmock.Mockery;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;

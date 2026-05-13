@@ -4,12 +4,11 @@ import org.ikasan.builder.BuilderFactory;
 import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
-
-import javax.annotation.Resource;
 
 @Configuration
 @ImportResource({ "classpath:ikasan-transaction-pointcut-jms.xml",
@@ -17,18 +16,18 @@ import javax.annotation.Resource;
 @Import(BaseFileTransferAutoConfiguration.class)
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     private Flow sftpToJmsFlow;
 
-    @Resource
+    @Autowired
     private Flow jmsToSftpFlow;
 
-    @Resource
+    @Autowired
     private Flow sftpChunkingToJmsFlow;
-    @Resource
+    @Autowired
     private Flow jmsToSftpChunkingFlow;
 
     @Bean

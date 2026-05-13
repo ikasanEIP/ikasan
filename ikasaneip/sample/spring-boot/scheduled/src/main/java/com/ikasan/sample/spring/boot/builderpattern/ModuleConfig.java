@@ -1,22 +1,23 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
-import org.ikasan.builder.*;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.FlowBuilder;
+import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.connector.basefiletransfer.BaseFileTransferAutoConfiguration;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.jta.JtaTransactionManager;
-
-import javax.annotation.Resource;
-import jakarta.jms.ConnectionFactory;
 
 @Configuration
 @ImportResource( {
@@ -27,13 +28,13 @@ import jakarta.jms.ConnectionFactory;
 @Import(BaseFileTransferAutoConfiguration.class)
 public class ModuleConfig {
 
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Resource
+    @Autowired
     private JtaTransactionManager transactionManager;
 
     @Bean

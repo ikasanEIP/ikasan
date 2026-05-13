@@ -41,15 +41,12 @@
 package org.ikasan.ootb.scheduler.agent.module.boot;
 
 import org.ikasan.builder.BuilderFactory;
-import org.ikasan.builder.OnException;
 import org.ikasan.ootb.scheduler.agent.module.boot.components.QuartzSchedulerJobEventFlowComponentFactory;
-import org.ikasan.ootb.scheduler.agent.module.component.router.AgentRecoveryNotCompleteException;
 import org.ikasan.ootb.scheduler.agent.module.component.router.BlackoutRouter;
 import org.ikasan.spec.flow.Flow;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
-
-import javax.annotation.Resource;
 
 /**
  * Quartz scheduler job event flow factory.
@@ -62,10 +59,10 @@ public class QuartzSchedulerJobEventFlowFactory
     @Value( "${module.name}" )
     private String moduleName;
 
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     QuartzSchedulerJobEventFlowComponentFactory componentFactory;
 
     public Flow create(String jobName)

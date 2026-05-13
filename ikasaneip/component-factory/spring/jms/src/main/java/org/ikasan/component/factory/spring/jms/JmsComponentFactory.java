@@ -46,7 +46,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 
-import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ import java.util.Map;
  * Where type is the prefix you provide to differentiate between different brokers
  */
 public class JmsComponentFactory {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
     @Value("${module.name}")
     private String moduleName;

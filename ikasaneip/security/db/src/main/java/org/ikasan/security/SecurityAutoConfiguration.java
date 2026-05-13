@@ -78,6 +78,7 @@ public class SecurityAutoConfiguration
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("security");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:security-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

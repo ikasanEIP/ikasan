@@ -48,12 +48,13 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.ConnectionFactory;
 
 @Configuration
@@ -63,7 +64,7 @@ import jakarta.jms.ConnectionFactory;
 } )
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${jms.provider.url}")

@@ -63,12 +63,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
@@ -96,35 +94,31 @@ public class JmsSampleFlowTest {
     @Rule
     public TestName name = new TestName();
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Resource
+    @Autowired
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
-    @Resource
+    @Autowired
     private HospitalService hospitalService;
 
     private ErrorReportingService errorReportingService;
 
-    @Resource
+    @Autowired
     private ExclusionManagementService exclusionManagementService;
 
     private IkasanFlowTestRule flowTestRule;
 
-    @Resource
     @Autowired
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;
-
-    @LocalServerPort
-    private int randomServerPort;
 
     private BrowseMessagesOnQueueVerifier browseMessagesOnQueueVerifier;
 

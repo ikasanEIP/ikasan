@@ -60,12 +60,12 @@ import org.junit.*;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.io.File;
 import java.net.URI;
 import java.sql.SQLException;
@@ -93,13 +93,13 @@ public class ApplicationTest
 {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private WiretapService<WiretapEvent,PagedSearchResult, Long> wiretapService;
 
-    @Resource
+    @Autowired
     private JobAwareFlowEventListener jobAwareFlowEventListener;
 
     @Value("${jms.provider.url}")

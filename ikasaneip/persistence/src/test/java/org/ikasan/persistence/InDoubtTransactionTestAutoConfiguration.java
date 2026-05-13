@@ -22,7 +22,7 @@ public class InDoubtTransactionTestAutoConfiguration {
     public DataSource ikasanDataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("org.h2.Driver");
-        dataSource.setUrl("jdbc:h2:tcp://localhost:18082/./target/persistence/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE");
+        dataSource.setUrl("jdbc:h2:tcp://localhost:19082/./target/persistence/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE");
         dataSource.setUsername("sa");
         dataSource.setPassword("sa");
         return dataSource;

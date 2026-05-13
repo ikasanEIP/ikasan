@@ -9,21 +9,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration("JmsToSftpFlowFactory")
 public class JmsToSftpFlow
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${module.name}")
     private String moduleName;
 
-    @Resource
+    @Autowired
     private Consumer jmsSftpConsumer;
 
-    @Resource
+    @Autowired
     private Producer sftpProducer;
 
     @Bean

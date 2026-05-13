@@ -50,12 +50,11 @@ import org.ikasan.spec.serialiser.SerialiserFactory;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TEST_METHOD;
 
@@ -71,10 +70,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @Sql(scripts = {"/modifyErrorOccurrenceTable.sql"}, executionPhase = BEFORE_TEST_METHOD)
 public class ErrorReportingServiceDefaultImplTest
 {
-    @Resource
+    @Autowired
     SerialiserFactory serialiserFactory;
 
-    @Resource
+    @Autowired
     ErrorReportingServiceDao errorReportingServiceDao;
 
     @Test(expected = IllegalArgumentException.class)

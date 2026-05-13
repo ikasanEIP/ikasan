@@ -109,7 +109,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -147,13 +147,13 @@ public class JobProcessingFlowComponentFactory {
     @Value("${big.queue.page.size:"+ BigArrayImpl.DEFAULT_DATA_PAGE_SIZE + "}")
     private int bigQueuePageSize;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     SchedulerPersistenceService schedulerPersistenceService;
 
     /**

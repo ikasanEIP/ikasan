@@ -58,6 +58,7 @@ public class ExclusionAutoConfiguration
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("exclusion");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:exclusion-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

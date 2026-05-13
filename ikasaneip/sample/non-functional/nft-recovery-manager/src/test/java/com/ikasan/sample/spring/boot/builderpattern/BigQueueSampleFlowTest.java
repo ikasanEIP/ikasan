@@ -69,7 +69,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
@@ -108,13 +108,13 @@ public class BigQueueSampleFlowTest extends BaseRecoveryManagerFlowTest {
     @Rule
     public TestName name = new TestName();
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     private IBigQueue inboundQueue;
 
     private final Notifier notifier = mockery.mock(Notifier.class, "mockNotifier");

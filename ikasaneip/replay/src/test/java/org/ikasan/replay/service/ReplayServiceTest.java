@@ -66,6 +66,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -86,19 +87,20 @@ public class ReplayServiceTest
 	/**
      * Mockery for mocking concrete classes
      */
-	@Resource Mockery mockery;
+	@Autowired
+    Mockery mockery;
 
-	@Resource ReplayDao replayDao;
+	@Autowired ReplayDao replayDao;
 
-	@Resource ReplayService<ReplayEvent, ReplayAuditEventImpl, ReplayResponse, BulkReplayResponse> replayService;
+	@Autowired ReplayService<ReplayEvent, ReplayAuditEventImpl, ReplayResponse, BulkReplayResponse> replayService;
 
-    @Resource ReplayManagementServiceImpl replayManagementService;
+    @Autowired ReplayManagementServiceImpl replayManagementService;
 
-    @Resource ReplayManagementServiceImpl deleteOnceHarvestedReplayManagementService;
+    @Autowired ReplayManagementServiceImpl deleteOnceHarvestedReplayManagementService;
 	
-	@Resource SerialiserFactory ikasanSerialiserFactory;
+	@Autowired SerialiserFactory ikasanSerialiserFactory;
 	
-	@Resource Serialiser<byte[], byte[]> serialiser;
+	@Autowired Serialiser<byte[], byte[]> serialiser;
 
 	@Rule
 	public WireMockRule wireMockRule = new WireMockRule(WireMockConfiguration.options().dynamicPort()); // No-args constructor defaults to port 8080

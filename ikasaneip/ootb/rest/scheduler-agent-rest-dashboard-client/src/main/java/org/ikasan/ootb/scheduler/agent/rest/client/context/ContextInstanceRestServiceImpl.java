@@ -64,7 +64,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
         HttpHeaders headers = super.createHttpHeaders(moduleName);
         HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
         try {
-            String urlTemplate = UriComponentsBuilder.fromHttpUrl(url + "/jobContext/getByAgentName")
+            String urlTemplate = UriComponentsBuilder.fromUriString(url + "/jobContext/getByAgentName")
                 .queryParam("agentName", "{agentName}")
                 .encode()
                 .toUriString();
@@ -92,7 +92,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
         HttpHeaders headers = super.createHttpHeaders(moduleName);
         HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
         try {
-            String urlTemplate = UriComponentsBuilder.fromHttpUrl(url + "/job")
+            String urlTemplate = UriComponentsBuilder.fromUriString(url + "/job")
                 .path("/")
                 .path(contextName)
                 .path("/")

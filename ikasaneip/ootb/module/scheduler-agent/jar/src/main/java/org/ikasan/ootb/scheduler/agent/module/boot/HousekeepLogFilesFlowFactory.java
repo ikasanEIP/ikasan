@@ -50,7 +50,7 @@ import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * File event scheduler job flow factory.
@@ -63,13 +63,13 @@ public class HousekeepLogFilesFlowFactory
     @Value( "${module.name}" )
     private String moduleName;
 
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     HousekeepLogFilesFlowComponentFactory componentFactory;
 
-    @Resource
+    @Autowired
     StartupControlDao startupControlDao;
 
     public Flow create() {

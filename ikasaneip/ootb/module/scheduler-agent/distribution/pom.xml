@@ -29,6 +29,12 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-shell-distribution</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-http-converter</artifactId>
+                </exclusion>
+            </exclusions>
             <type>zip</type>
         </dependency>
     </dependencies>

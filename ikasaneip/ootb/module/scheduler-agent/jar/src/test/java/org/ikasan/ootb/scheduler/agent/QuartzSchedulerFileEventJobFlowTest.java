@@ -70,7 +70,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -90,10 +90,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.BEFORE_TE
 @ContextConfiguration(classes = {TestConfiguration.class})
 @Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = BEFORE_TEST_METHOD)
 public class QuartzSchedulerFileEventJobFlowTest {
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();
@@ -103,7 +103,7 @@ public class QuartzSchedulerFileEventJobFlowTest {
     @MockitoBean
     AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
-    @Resource
+    @Autowired
     ErrorReportingService errorReportingService;
 
     @BeforeClass

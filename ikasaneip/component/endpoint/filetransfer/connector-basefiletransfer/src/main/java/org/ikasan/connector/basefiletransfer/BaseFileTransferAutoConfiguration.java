@@ -50,6 +50,7 @@ public class BaseFileTransferAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("file-transfer");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:file-transfer-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }
@@ -64,6 +65,7 @@ public class BaseFileTransferAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("file-chunk");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:file-chunk-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }
@@ -78,6 +80,7 @@ public class BaseFileTransferAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("transactional-resource-command");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:transactional-resource-command-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

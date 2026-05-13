@@ -46,7 +46,6 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.awaitility.Awaitility;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
-import org.ikasan.component.endpoint.quartz.consumer.CorrelatedScheduledConsumerConfiguration;
 import org.ikasan.job.orchestration.model.context.ContextInstanceImpl;
 import org.ikasan.ootb.scheduled.model.ContextualisedScheduledProcessEventImpl;
 import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
@@ -66,6 +65,7 @@ import org.ikasan.spec.scheduled.event.model.DryRunParameters;
 import org.ikasan.spec.scheduled.instance.model.InternalEventDrivenJobInstance;
 import org.junit.*;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
@@ -73,12 +73,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.ikasan.component.endpoint.quartz.consumer.CorrelatingScheduledConsumer.EMPTY_CORRELATION_ID;
 import static org.junit.Assert.assertEquals;
 import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
@@ -94,10 +95,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 @ContextConfiguration(classes = {TestConfiguration.class})
 @Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class QuartzSchedulerJobEventFlowTest {
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
     private static final ObjectMapper objectMapper = new ObjectMapper();

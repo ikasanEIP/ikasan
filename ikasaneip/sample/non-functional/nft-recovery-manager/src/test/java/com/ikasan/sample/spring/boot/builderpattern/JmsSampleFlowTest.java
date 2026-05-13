@@ -74,7 +74,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.time.Duration;
@@ -103,10 +103,10 @@ public class JmsSampleFlowTest extends BaseRecoveryManagerFlowTest {
     @Rule
     public TestName name = new TestName();
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")
