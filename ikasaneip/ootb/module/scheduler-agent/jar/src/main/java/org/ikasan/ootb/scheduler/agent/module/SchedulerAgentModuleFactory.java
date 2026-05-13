@@ -40,24 +40,21 @@
  */
 package org.ikasan.ootb.scheduler.agent.module;
 
-import javax.annotation.Resource;
-
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.ootb.scheduler.agent.module.boot.FileEventSchedulerJobFlowFactory;
 import org.ikasan.ootb.scheduler.agent.module.boot.HousekeepLogFilesFlowFactory;
 import org.ikasan.ootb.scheduler.agent.module.boot.ScheduledProcessEventOutboundFlowFactory;
 import org.ikasan.ootb.scheduler.agent.module.configuration.SchedulerAgentConfiguredModuleConfiguration;
-import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.ModuleType;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
 import java.io.IOException;
-import java.util.List;
 
 /**
  * Module implementation.
@@ -77,19 +74,19 @@ public class SchedulerAgentModuleFactory
     @Value("${number.of.file.watcher.event.processing.flows:10}")
     private int numberOfFileWatcherJobEventProcessingFlows;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     SchedulerAgentFlowFactory schedulerAgentFlowFactory;
 
-    @Resource
+    @Autowired
     FileEventSchedulerJobFlowFactory fileEventSchedulerJobFlowFactory;
 
-    @Resource
+    @Autowired
     ScheduledProcessEventOutboundFlowFactory scheduledProcessEventOutboundFlowFactory;
 
-    @Resource
+    @Autowired
     HousekeepLogFilesFlowFactory housekeepLogFilesFlowFactory;
 
     @Bean

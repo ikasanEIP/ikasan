@@ -2,10 +2,10 @@ package org.ikasan.filter.duplicate.service;
 
 import org.ikasan.filter.FilterAutoConfiguration;
 import org.ikasan.filter.FilterTestAutoConfiguration;
-import org.junit.Assert;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
 import org.ikasan.filter.duplicate.model.FilterEntry;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +14,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
-
 /**
  * Created by Ikasan Development Team on 10/07/2016.
  */
@@ -23,8 +21,8 @@ import javax.annotation.Resource;
 @ContextConfiguration(classes = {FilterAutoConfiguration.class, FilterTestAutoConfiguration.class})
 public class DefaultEntityAgeFilterServiceTest
 {
-    @Resource private FilteredMessageDao duplicateFilterDao;
-    @Resource private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
+    @Autowired private FilteredMessageDao duplicateFilterDao;
+    @Autowired private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
 
     @Before
     public void setup()

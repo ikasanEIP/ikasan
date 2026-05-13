@@ -17,7 +17,6 @@ import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.quartz.Scheduler;
 import org.quartz.Trigger;
@@ -29,10 +28,10 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -60,31 +59,31 @@ public class SchedulerApplicationTest
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
-    @MockBean
+    @MockitoBean
     protected Scheduler platformScheduler;
 
     @Autowired
     protected SchedulerApplication schedulerApplication;
 
-    @MockBean
+    @MockitoBean
     protected ModuleContainer moduleContainer;
 
-    @Mock
+    @MockitoBean
     protected FlowConfiguration flowConfiguration;
 
-    @Mock
+    @MockitoBean
     protected SerialiserFactory serialiserFactory;
 
-    @Mock
+    @MockitoBean
     protected Serialiser serialiser;
 
-    @Mock
+    @MockitoBean
     protected ScheduledConsumer scheduledConsumer;
 
-    @Mock
+    @MockitoBean
     protected ScheduledConsumerConfiguration scheduledConsumerConfiguration;
 
-    @Mock
+    @MockitoBean
     protected FlowElement scheduledConsumerElement ;
 
 

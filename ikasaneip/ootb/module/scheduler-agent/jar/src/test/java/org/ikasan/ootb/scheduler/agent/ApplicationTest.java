@@ -67,7 +67,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.*;
 
@@ -84,10 +84,10 @@ import static org.junit.Assert.assertEquals;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = {TestConfiguration.class})
 public class ApplicationTest {
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
     private static ObjectMapper objectMapper = new ObjectMapper();

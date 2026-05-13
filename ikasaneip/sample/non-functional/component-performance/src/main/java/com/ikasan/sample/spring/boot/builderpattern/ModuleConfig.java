@@ -42,16 +42,13 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.builder.ModuleBuilder;
-import org.ikasan.builder.OnException;
 import org.ikasan.builder.invoker.Configuration;
 import org.ikasan.component.endpoint.consumer.api.spec.EndpointEventProvider;
-import org.ikasan.spec.component.endpoint.EndpointException;
-import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -62,9 +59,9 @@ import java.util.List;
 @org.springframework.context.annotation.Configuration
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
-    @Resource
+    @Autowired
     private ComponentFactory componentFactory;
 
     public static int  EVENT_GENERATOR_COUNT = 10000;

@@ -1,25 +1,23 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
+import jakarta.jms.ConnectionFactory;
 import org.apache.activemq.ActiveMQXAConnectionFactory;
 import org.ikasan.builder.BuilderFactory;
 import org.ikasan.component.endpoint.jms.spring.producer.SpringMessageProducerConfiguration;
 import org.ikasan.endpoint.sftp.consumer.SftpConsumerConfiguration;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
-import jakarta.jms.ConnectionFactory;
-import org.springframework.stereotype.Component;
-
 @Configuration
 public class SftpChunkingToJmsFlowComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${jms.provider.url}")

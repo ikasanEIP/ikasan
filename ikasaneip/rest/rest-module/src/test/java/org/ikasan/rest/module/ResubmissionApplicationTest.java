@@ -3,14 +3,8 @@ package org.ikasan.rest.module;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.IsInstanceOf;
-import org.ikasan.module.SimpleModule;
-import org.ikasan.rest.module.dto.ChangeFlowStartupModeDto;
-import org.ikasan.rest.module.dto.ChangeFlowStateDto;
 import org.ikasan.rest.module.dto.ResubmissionRequestDto;
-import org.ikasan.rest.module.model.TestFlow;
-import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.hospital.service.HospitalService;
-import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.junit.Before;
 import org.junit.Rule;
@@ -18,16 +12,13 @@ import org.junit.Test;
 import org.junit.internal.matchers.ThrowableCauseMatcher;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -36,9 +27,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
-
-import java.security.Principal;
-import java.util.Arrays;
 
 import static org.junit.Assert.assertEquals;
 
@@ -55,10 +43,10 @@ public class ResubmissionApplicationTest
     @Autowired
     protected WebApplicationContext webApplicationContext;
 
-    @MockBean
+    @MockitoBean
     protected HospitalService hospitalService;
 
-    @MockBean
+    @MockitoBean
     protected SystemEventService systemEventService;
 
     @Autowired

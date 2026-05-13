@@ -192,7 +192,7 @@ public class ReplayServiceImpl implements ReplayService<ReplayEvent, ReplayAudit
 		}
 		catch(final HttpClientErrorException e)
 		{
-			responseBody = "An error has occurred attempting to replay event: HTTP Status Code[%s], Response[%s]".formatted(e.getRawStatusCode(),
+			responseBody = "An error has occurred attempting to replay event: HTTP Status Code[%s], Response[%s]".formatted(e.getStatusText(),
                 e.getResponseBodyAsString());
 
 			exception = new RuntimeException(responseBody, e);

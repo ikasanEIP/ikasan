@@ -4,7 +4,7 @@ os: linux            # optional, this is default
 dist: noble          # or jammy | focal | bionic | xenial | trusty | precise with xenial as default
 language: java
 jdk:
-   - openjdk17
+   - openjdk25
 cache:
   directories:
   - $HOME/.m2

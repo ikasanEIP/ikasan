@@ -14,7 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ import java.util.List;
 })
 public class PersonMessageProviderTest
 {
-    @Resource
+    @Autowired
     PersonMessageProvider personMessageProvider;
 
     /**
@@ -45,7 +45,7 @@ public class PersonMessageProviderTest
 
     private JobExecutionContext jobExecutionContext = mockery.mock(JobExecutionContext.class);
 
-    @Resource
+    @Autowired
     PersonDao personDao;
 
     @Before

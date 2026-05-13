@@ -58,7 +58,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.TextMessage;
 import java.io.File;
 import java.io.IOException;
@@ -85,16 +85,16 @@ public class ApplicationTest
 
     private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private ConfigurationManagement configurationManagement;
 
-    @Resource
+    @Autowired
     private JmsListenerEndpointRegistry registry;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")

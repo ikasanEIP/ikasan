@@ -104,7 +104,7 @@ import org.quartz.Scheduler;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Quartz scheduler job event flow component factory.
@@ -117,25 +117,25 @@ public class QuartzSchedulerJobEventFlowComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     DryRunModeService dryRunModeService;
 
     @Value("${context.instance.recovery.active:true}")
     boolean agentRecoveryActive;
 
-    @Resource
+    @Autowired
     Scheduler scheduler;
 
-    @Resource
+    @Autowired
     ScheduledJobFactory scheduledJobFactory;
 
-    @Resource
+    @Autowired
     AopProxyProvider aopProxyProvider;
 
     public Consumer getScheduledConsumer() {

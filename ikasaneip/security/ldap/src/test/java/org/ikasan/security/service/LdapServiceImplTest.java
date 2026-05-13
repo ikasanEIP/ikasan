@@ -8,13 +8,13 @@ import com.unboundid.ldap.sdk.LDAPException;
 import com.unboundid.ldif.LDIFReader;
 import org.ikasan.security.LdapSecurityTestAutoConfiguration;
 import org.ikasan.security.SecurityAutoConfiguration;
-import org.ikasan.spec.security.model.constants.SecurityConstants;
 import org.ikasan.security.model.AuthenticationMethodImpl;
 import org.ikasan.security.model.IkasanPrincipalImpl;
 import org.ikasan.spec.security.dao.SecurityDao;
 import org.ikasan.spec.security.dao.UserDao;
 import org.ikasan.spec.security.model.AuthenticationMethod;
 import org.ikasan.spec.security.model.User;
+import org.ikasan.spec.security.model.constants.SecurityConstants;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -24,12 +24,10 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.CommunicationException;
-import org.springframework.ldap.UncategorizedLdapException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.naming.NamingException;
 import java.io.File;
 import java.io.IOException;
 import java.net.SocketTimeoutException;
@@ -122,7 +120,7 @@ public class LdapServiceImplTest {
         }
     }
 
-    @Test(expected = UncategorizedLdapException.class)
+    @Test(expected = CommunicationException.class)
     public void test_read_timeout_exception() throws LdapServiceException {
         AuthenticationMethod authMethod = new AuthenticationMethodImpl();
         authMethod.setMethod(SecurityConstants.AUTH_METHOD_LDAP);
@@ -145,7 +143,7 @@ public class LdapServiceImplTest {
             Optional<Throwable> rootCause = Stream.iterate(exception, Throwable::getCause)
                 .filter(element -> element.getCause() == null)
                 .findFirst();
-            Assert.assertEquals(NamingException.class, rootCause.get().getClass());
+            Assert.assertEquals(IOException.class, rootCause.get().getClass());
             Assert.assertEquals("LDAP response read timed out, timeout used: 1 ms.", rootCause.get().getMessage());
             throw exception;
         }

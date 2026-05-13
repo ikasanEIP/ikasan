@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -66,22 +66,22 @@ public class SchedulerAgentFlowFactory implements FlowFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Resource
+    @Autowired
     JobProcessingFlowFactory schedulerJobProcessingFlowFactory;
 
-    @Resource
+    @Autowired
     QuartzSchedulerJobEventFlowFactory quartzSchedulerJobEventFlowFactory;
 
-    @Resource
+    @Autowired
     QuartzSchedulerFileEventJobFlowFactory quartzSchedulerFileEventJobFlowFactory;
 
-    @Resource
+    @Autowired
     FileEventSchedulerJobFlowFactory fileEventSchedulerJobFlowFactory;
 
-    @Resource
+    @Autowired
     ScheduledProcessEventOutboundFlowFactory scheduledProcessEventOutboundFlowFactory;
 
-    @Resource
+    @Autowired
     HousekeepLogFilesFlowFactory housekeepLogFilesFlowFactory;
 
     @Override

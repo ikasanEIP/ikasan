@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.ConnectionFactory;
 
 @Configuration
@@ -28,7 +28,7 @@ import jakarta.jms.ConnectionFactory;
 @Import(BaseFileTransferAutoConfiguration.class)
 public class ModuleConfig {
 
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${sftp.consumer.cronExpression}")

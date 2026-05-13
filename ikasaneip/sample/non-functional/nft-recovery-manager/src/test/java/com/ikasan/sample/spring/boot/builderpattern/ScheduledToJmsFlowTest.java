@@ -66,7 +66,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.time.Duration;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -94,10 +94,10 @@ public class ScheduledToJmsFlowTest extends BaseRecoveryManagerFlowTest
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     public JmsListenerEndpointRegistry registry;
 
     @Value("${jms.provider.url}")

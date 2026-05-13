@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
@@ -29,13 +28,12 @@ import static org.junit.Assert.assertTrue;
 public abstract class BaseRecoveryManagerFlowTest {
     private Logger logger = LoggerFactory.getLogger(BaseRecoveryManagerFlowTest.class);
 
-    @Resource
+    @Autowired
     protected ErrorReportingService errorReportingService;
     protected IkasanFlowTestRule flowTestRule;
-    @Resource
+    @Autowired
     protected ExclusionManagementService exclusionManagementService;
 
-    @Resource
     @Autowired
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;

@@ -106,6 +106,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
@@ -115,7 +116,6 @@ import org.springframework.kafka.test.utils.KafkaTestUtils;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
@@ -138,6 +138,7 @@ import static org.junit.Assert.assertEquals;
 @EmbeddedKafka(partitions = 3,
     topics = {
         "test-topic" }  )
+@EnableJms
 public class KafkaSampleFlowTest
 {
 
@@ -148,27 +149,27 @@ public class KafkaSampleFlowTest
     @Autowired
     private EmbeddedKafkaBroker embeddedKafka;
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Resource
+    @Autowired
     private JmsListenerEndpointRegistry registry;
 
-    @Resource
+    @Autowired
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
     private ErrorReportingService errorReportingService;
 
-    @Resource
+    @Autowired
     private ExclusionManagementService exclusionManagementService;
 
-    @Resource
+    @Autowired
     private HospitalService hospitalService;
 
     private IkasanFlowTestRule flowTestRule;

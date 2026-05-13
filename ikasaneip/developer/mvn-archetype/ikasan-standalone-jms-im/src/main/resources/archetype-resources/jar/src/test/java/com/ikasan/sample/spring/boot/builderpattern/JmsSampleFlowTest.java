@@ -103,7 +103,7 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.TextMessage;
 import java.util.List;
 
@@ -124,24 +124,24 @@ public class JmsSampleFlowTest
     private static String SAMPLE_MESSAGE = "Hello world!";
 
     private Logger logger = LoggerFactory.getLogger(JmsSampleFlowTest.class);
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;
 
-    @Resource
+    @Autowired
     private JmsListenerEndpointRegistry registry;
 
-    @Resource
+    @Autowired
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
     private ErrorReportingService errorReportingService;
 
-    @Resource
+    @Autowired
     private ExclusionManagementService exclusionManagementService;
 
     public IkasanFlowTestRule flowTestRule;

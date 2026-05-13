@@ -166,6 +166,7 @@ public class IkasanModuleAutoConfiguration implements ApplicationContextAware
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("module");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:module-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

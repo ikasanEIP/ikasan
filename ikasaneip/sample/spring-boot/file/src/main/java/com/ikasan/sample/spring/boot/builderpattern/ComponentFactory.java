@@ -55,7 +55,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.Session;
 import java.io.File;
@@ -75,7 +75,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
 } )
 public class ComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("#{'${file.consumer.filenames}'.split(',')}")

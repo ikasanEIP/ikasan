@@ -50,11 +50,11 @@ import org.jmock.Mockery;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,12 +71,12 @@ public class HibernateReplayDaoTest
 	/**
      * Mockery for mocking concrete classes
      */
-	@Resource Mockery mockery;
+	@Autowired Mockery mockery;
 	
-	@Resource
+	@Autowired
     ReplayDao replayDao;
 	
-	@Resource SerialiserFactory ikasanSerialiserFactory;
+	@Autowired SerialiserFactory ikasanSerialiserFactory;
 	
 	@Test
 	@DirtiesContext

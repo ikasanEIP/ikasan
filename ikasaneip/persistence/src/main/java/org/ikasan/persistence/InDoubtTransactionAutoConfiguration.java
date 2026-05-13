@@ -37,6 +37,7 @@ public class InDoubtTransactionAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("persistence");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:persistence-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

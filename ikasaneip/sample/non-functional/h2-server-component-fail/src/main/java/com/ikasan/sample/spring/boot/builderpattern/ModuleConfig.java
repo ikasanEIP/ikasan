@@ -49,7 +49,7 @@ import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
 import org.springframework.context.annotation.Bean;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  *
@@ -58,9 +58,9 @@ import javax.annotation.Resource;
 @org.springframework.context.annotation.Configuration
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
-    @Resource
+    @Autowired
     private ComponentFactory componentFactory;
 
     public static int REPEAT = 2;  // Change this to up the number of events

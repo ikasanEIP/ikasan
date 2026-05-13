@@ -1,20 +1,18 @@
 package org.ikasan.filter;
 
-import org.junit.Assert;
 import org.ikasan.filter.configuration.EntityAgeFilterConfiguration;
 import org.ikasan.filter.duplicate.dao.FilteredMessageDao;
 import org.ikasan.filter.duplicate.model.DefaultFilterEntry;
-import org.ikasan.filter.duplicate.model.EntityAgeFilterEntryConverter;
 import org.ikasan.filter.duplicate.model.FilterEntry;
 import org.ikasan.filter.duplicate.service.DefaultEntityAgeFilterService;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * Created by Ikasan Development Team on 10/07/2016.
@@ -31,8 +29,9 @@ public class EntityAgeFilterTest
 
     String xmlEquals = "<message><businessIdentifier>business-id-1</businessIdentifier><lastUpdated>1980-03-02T00:00:00.000Z</lastUpdated></message>";
 
-    @Resource private FilteredMessageDao duplicateFilterDao;
-    @Resource private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
+    @Autowired
+    private FilteredMessageDao duplicateFilterDao;
+    @Autowired private DefaultEntityAgeFilterService defaultEntityAgeFilterService;
 
     @Before
     public void setup()

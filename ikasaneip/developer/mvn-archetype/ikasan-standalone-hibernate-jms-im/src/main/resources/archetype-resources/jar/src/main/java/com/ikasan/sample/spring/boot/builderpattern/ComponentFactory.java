@@ -62,7 +62,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.Session;
 import java.util.ArrayList;
@@ -83,7 +83,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
 } )
 public class ComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${db.consumer.cronExpression}")
@@ -98,10 +98,10 @@ public class ComponentFactory
     @Value("${jms.provider.url}")
     private String jmsProviderUrl;
 
-    @Resource
+    @Autowired
     PersonMessageProvider personMessageProvider;
 
-    @Resource
+    @Autowired
     PersonService personService;
 
     /**

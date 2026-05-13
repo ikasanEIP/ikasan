@@ -63,7 +63,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.TestSocketUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.concurrent.TimeUnit;
 
@@ -85,10 +85,10 @@ public class JmsToSftpFlowTest
 
     private Logger logger = LoggerFactory.getLogger(JmsToSftpFlowTest.class);
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     public JmsTemplate jmsTemplate;
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );

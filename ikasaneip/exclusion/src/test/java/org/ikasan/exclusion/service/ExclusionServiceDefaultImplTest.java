@@ -55,11 +55,10 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * Test class for ExclusionServiceDefaultImpl based on
@@ -82,13 +81,13 @@ public class ExclusionServiceDefaultImplTest
 
     FlowEvent flowEvent = mockery.mock(FlowEvent.class, "mockFlowEvent");
 
-    @Resource
+    @Autowired
     BlackListDaoFactory exclusionServiceBlacklistDaoFactory;
 
-    @Resource
+    @Autowired
     ExclusionEventDao<String,ExclusionEvent> exclusionServiceExclusionEventDao;
 
-    @Resource
+    @Autowired
     SerialiserFactory serialiserFactory;
 
     @Test(expected = IllegalArgumentException.class)

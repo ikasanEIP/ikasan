@@ -53,7 +53,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +70,7 @@ import java.util.List;
 })
 public class ComponentTest
 {
-    @Resource
+    @Autowired
     ComponentFactory componentFactory;
 
     final String personXml = "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><person><id>1</id><name>ikasan</name><dobDayOfMonth>6</dobDayOfMonth><dobMonthOfYear>7</dobMonthOfYear><dobYear>2005</dobYear></person>";

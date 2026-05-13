@@ -40,23 +40,21 @@
  */
 package org.ikasan.exclusion.dao;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
 import org.ikasan.exclusion.ExclusionAutoConfiguration;
 import org.ikasan.exclusion.ExclusionTestAutoConfiguration;
 import org.ikasan.exclusion.model.ExclusionEventImpl;
-import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
 import org.ikasan.spec.exclusion.ExclusionEventDao;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Test class for HibernateExclusionServiceDao.
@@ -67,7 +65,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 @ContextConfiguration(classes = {ExclusionAutoConfiguration.class, ExclusionTestAutoConfiguration.class})
 public class HibernateExclusionEventDaoTest
 {
-    @Resource
+    @Autowired
     ExclusionEventDao<String,ExclusionEvent> exclusionEventDao;
 
     /**

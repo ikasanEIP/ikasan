@@ -99,7 +99,6 @@ import java.io.IOException;
  * @author Ikasan Development Team
  */
 @Configuration
-//@EnableSwagger2
 public class GeneralComponentFactory
 {
     @Value( "${module.name}" )
@@ -132,7 +131,7 @@ public class GeneralComponentFactory
     }
 
     @Bean
-    public JobProvisionService jobProvisionService() {
+    public JobProvisionServiceImpl jobProvisionService() {
         return new JobProvisionServiceImpl();
     }
 

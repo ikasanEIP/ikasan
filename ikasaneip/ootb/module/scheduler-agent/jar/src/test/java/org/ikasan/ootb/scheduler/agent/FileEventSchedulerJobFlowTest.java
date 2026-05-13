@@ -79,7 +79,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -102,16 +102,16 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 @ContextConfiguration(classes = {TestConfiguration.class})
 @Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class FileEventSchedulerJobFlowTest {
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     private DryRunModeService dryRunModeService;
 
-    @Resource
+    @Autowired
     private ErrorReportingService errorReportingService;
 
     @MockitoBean

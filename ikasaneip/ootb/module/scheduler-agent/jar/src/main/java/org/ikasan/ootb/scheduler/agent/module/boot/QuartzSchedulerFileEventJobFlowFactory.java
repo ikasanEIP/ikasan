@@ -8,7 +8,7 @@ import org.ikasan.spec.flow.Flow;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Configuration
 public class QuartzSchedulerFileEventJobFlowFactory {
@@ -16,10 +16,10 @@ public class QuartzSchedulerFileEventJobFlowFactory {
     @Value( "${module.name}" )
     private String moduleName;
 
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     private QuartzSchedulerFileEventJobFlowComponentFactory componentFactory;
 
     public Flow create(String jobName)

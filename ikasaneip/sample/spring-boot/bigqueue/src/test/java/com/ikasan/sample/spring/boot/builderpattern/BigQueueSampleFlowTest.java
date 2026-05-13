@@ -69,7 +69,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.env.MockEnvironment;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.List;
@@ -96,29 +95,28 @@ public class BigQueueSampleFlowTest {
     @Rule
     public TestName name = new TestName();
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
-    @Resource
+    @Autowired
     private HospitalService hospitalService;
 
     private ErrorReportingService errorReportingService;
 
-    @Resource
+    @Autowired
     private ExclusionManagementService exclusionManagementService;
 
-    @Resource
+    @Autowired
     private IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     private IBigQueue inboundQueue;
 
     private IkasanFlowTestRule flowTestRule;
 
-    @Resource
     @Autowired
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;

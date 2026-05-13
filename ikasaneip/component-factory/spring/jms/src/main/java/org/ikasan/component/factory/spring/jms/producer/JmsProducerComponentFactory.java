@@ -45,7 +45,7 @@ import org.ikasan.component.factory.spring.common.NonConfiguredResourceBaseCompo
 import org.ikasan.component.factory.spring.jms.JmsComponentFactory;
 import org.ikasan.component.factory.spring.jms.consumer.JmsConsumerComponentFactory;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Easily create JmsProducer components.
@@ -55,7 +55,7 @@ import javax.annotation.Resource;
 public class JmsProducerComponentFactory extends NonConfiguredResourceBaseComponentFactory<JmsTemplateProducer,
         JmsProducerConfiguration> {
 
-    @Resource
+    @Autowired
     private JmsComponentFactory jmsComponentFactory;
 
     @Override

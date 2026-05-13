@@ -75,7 +75,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
 } )
 public class ComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("#{'${file.consumer.filenames}'.split(',')}")

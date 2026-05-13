@@ -49,11 +49,11 @@ import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
 import java.io.IOException;
@@ -65,11 +65,11 @@ import java.io.IOException;
 } )
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
-    @Resource
+    @Autowired
     public IBigQueue outboundQueue;
-    @Resource
+    @Autowired
     public IBigQueue inboundQueue;
 
     public Consumer bigQueueConsumer(IBigQueue inboundQueue)  {

@@ -51,7 +51,7 @@ import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
 /**
@@ -72,13 +72,13 @@ public class FileEventSchedulerJobFlowFactory
     @Value("${agent.recovery.instance.exception.max.retries:-1}")
     private int agentRecoveryMaxRetries;
 
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     FileEventSchedulerJobFlowComponentFactory componentFactory;
 
-    @Resource
+    @Autowired
     StartupControlDao startupControlDao;
 
 

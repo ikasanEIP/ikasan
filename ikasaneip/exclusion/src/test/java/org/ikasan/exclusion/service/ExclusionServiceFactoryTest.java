@@ -50,10 +50,9 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-
-import javax.annotation.Resource;
 
 /**
  * Test class for ExclusionServiceFactory.
@@ -73,13 +72,13 @@ public class ExclusionServiceFactoryTest
         setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
 
-    @Resource
+    @Autowired
     BlackListDaoFactory blackListDaoFactory;
 
-    @Resource
+    @Autowired
     ExclusionEventDao exclusionEventDao;
 
-    @Resource
+    @Autowired
     SerialiserFactory serialiserFactory;
 
     @Test(expected = IllegalArgumentException.class)

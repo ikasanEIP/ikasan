@@ -55,7 +55,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.hibernate5.HibernateTemplate;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -84,9 +83,22 @@ public class SecurityServiceTest
     private SecurityService xaSecurityService;
 
 
+
     /**
-     * Before each test case, inject a mock {@link HibernateTemplate} to dao implementation
-     * being tested
+     * Initializes mock data for testing the security service operations.
+     *
+     * This method is annotated with {@code @Before}, indicating that it is executed
+     * prior to each test in the test suite. It prepares a test environment by creating
+     * and persisting sample roles, policies, and principals using the {@code xaSecurityDao}.
+     *
+     * Within this setup:
+     * - Ten roles are created, each associated with ten unique policies.
+     * - Each policy has a name and description, and is saved in the data store.
+     * - Each role contains the created policies, a name, and a description, and is saved in the data store.
+     * - A series of principals are created, each associated with the created roles, and are saved in the data store.
+     *
+     * The purpose of this setup is to provide consistent and reusable test data for the
+     * security service-related test cases.
      */
     @Before public void setup()
     {

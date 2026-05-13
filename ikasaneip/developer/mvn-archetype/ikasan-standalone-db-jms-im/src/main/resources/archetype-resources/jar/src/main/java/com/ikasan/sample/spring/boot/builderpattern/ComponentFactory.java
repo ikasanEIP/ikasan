@@ -83,7 +83,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.C
 } )
 public class ComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${db.consumer.cronExpression}")
@@ -98,10 +98,10 @@ public class ComponentFactory
     @Value("${jms.provider.url}")
     private String jmsProviderUrl;
 
-    @Resource
+    @Autowired
     PersonMessageProvider personMessageProvider;
 
-    @Resource
+    @Autowired
     PersonService personService;
 
     /**

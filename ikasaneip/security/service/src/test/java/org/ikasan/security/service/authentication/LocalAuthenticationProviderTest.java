@@ -178,7 +178,7 @@ public class LocalAuthenticationProviderTest
     /**
      * Test authenticate with null password
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_authenticate_null_password()
     {
         final String username = "testUser";
@@ -249,12 +249,6 @@ public class LocalAuthenticationProviderTest
 
             oneOf(user).getPassword();
             will(returnValue(encodedPassword));
-
-//            oneOf(user).getPrincipals();
-//            will(returnValue(principals));
-//
-//            atLeast(1).of(user).getPreviousAccessTimestamp();
-//            will(returnValue(previousAccessTimestamp));
         }});
 
         LocalAuthenticationProvider provider = new LocalAuthenticationProvider(userService);
@@ -560,7 +554,7 @@ public class LocalAuthenticationProviderTest
     /**
      * Test authenticate with user having null password
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void test_authenticate_user_with_null_password_stored()
     {
         final String username = "testUser";

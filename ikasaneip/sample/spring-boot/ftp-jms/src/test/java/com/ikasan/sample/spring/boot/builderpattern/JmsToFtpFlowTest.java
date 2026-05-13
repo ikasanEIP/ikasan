@@ -62,7 +62,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.TestSocketUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import static org.junit.Assert.assertNotNull;
 
@@ -79,10 +79,10 @@ public class JmsToFtpFlowTest
 {
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     public JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")

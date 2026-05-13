@@ -31,7 +31,7 @@ import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
@@ -68,19 +68,19 @@ public class ConfigurationApplicationTest
     @Autowired
     protected ConfigurationApplication configurationApplication;
 
-    @MockBean
+    @MockitoBean
     protected ModuleService moduleService;
 
-    @MockBean
+    @MockitoBean
     protected SystemEventService systemEventService;
 
-    @MockBean
+    @MockitoBean
     protected FlowFactory flowFactory;
 
-    @MockBean
+    @MockitoBean
     protected ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
-    @MockBean
+    @MockitoBean
     private ConfigurationMetaDataExtractor<ConfigurationMetaData> configurationMetaDataExtractor;
 
     @Before

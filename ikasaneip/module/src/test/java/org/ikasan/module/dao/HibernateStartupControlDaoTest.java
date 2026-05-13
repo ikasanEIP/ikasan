@@ -47,8 +47,6 @@ import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.harvest.HarvestingSchedulerService;
-import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.systemevent.SystemEventService;
@@ -56,11 +54,10 @@ import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
@@ -79,22 +76,22 @@ public class HibernateStartupControlDaoTest
 	@Autowired
 	private StartupControlDao startupControlDao;
 
-    @MockBean(name = "configurationService")
+    @MockitoBean(name = "configurationService")
     private ConfigurationService configurationService;
 
-    @MockBean(name = "liquibase")
+    @MockitoBean(name = "liquibase")
     private Liquibase liquibase;
 
-    @MockBean(name = "moduleMetadataDashboardRestService")
+    @MockitoBean(name = "moduleMetadataDashboardRestService")
     private DashboardRestService moduleMetadataDashboardRestService;
 
-    @MockBean(name = "configurationMetadataDashboardRestService")
+    @MockitoBean(name = "configurationMetadataDashboardRestService")
     private DashboardRestService configurationMetadataDashboardRestService;
 
-    @MockBean(name = "wiretapFlowEventListener")
+    @MockitoBean(name = "wiretapFlowEventListener")
     private JobAwareFlowEventListener wiretapFlowEventListener;
 
-    @MockBean(name = "systemEventService")
+    @MockitoBean(name = "systemEventService")
     private SystemEventService systemEventService;
 
     @Test

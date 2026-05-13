@@ -49,8 +49,6 @@ import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.ikasan.model.ArrayListPagedSearchResult;
 import org.ikasan.spec.search.PagedSearchResult;
 import org.ikasan.spec.wiretap.WiretapDao;
@@ -58,9 +56,6 @@ import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.hibernate5.HibernateCallback;
-import org.springframework.orm.hibernate5.support.HibernateDaoSupport;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
