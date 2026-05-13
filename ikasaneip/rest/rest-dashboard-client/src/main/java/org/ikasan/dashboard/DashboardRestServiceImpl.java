@@ -90,18 +90,18 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
         }
         catch (HttpClientErrorException e)
         {
-            if ( e.getRawStatusCode() == 401 && isFirst )
+            if ( e.getStatusCode().equals(HttpStatusCode.valueOf(401)) && isFirst )
             {
                 this.token = null;
                 if ( authenticate(this.moduleName) )
                 { return callHttp(events, false); }
             }
             logger.warn("Issue while publishing events to dashboard [{}] with response [{}] [{}]", url,
-                e.getRawStatusCode(), e.getResponseBodyAsString());
+                e.getStatusText(), e.getResponseBodyAsString());
 
             if(bubbleExceptionsUpToCaller) {
                 throw new RuntimeException("Issue while publishing events to dashboard [%s] with response [%s] [%s]".formatted(url,
-                    e.getRawStatusCode(), e.getResponseBodyAsString()), e);
+                    e.getStatusText(), e.getResponseBodyAsString()), e);
             }
 
             return false;

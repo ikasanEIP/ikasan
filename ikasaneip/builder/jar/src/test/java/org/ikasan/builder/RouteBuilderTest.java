@@ -75,7 +75,6 @@ import java.util.List;
  * @author Ikasan Development Team
  */
 @SuppressWarnings("unchecked")
-
 public class RouteBuilderTest
 {
     /**
@@ -161,6 +160,7 @@ public class RouteBuilderTest
     {
 
         String[] args = { "--server.port=" + TestSocketUtils.findAvailableTcpPort(),
+            "--spring.liquibase.enabled=true",
             "--spring.liquibase.change-log=classpath:db-changelog.xml",
             "--server.tomcat.additional-tld-skip-patterns=xercesImpl.jar,xml-apis.jar,serializer.jar",
             """
@@ -171,14 +171,11 @@ public class RouteBuilderTest
             ,org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration\
             ,org.ikasan.backup.IkasanBackupAutoConfiguration\
             """
-
         };
 
 
 
         ikasanApplication = IkasanApplicationFactory.getIkasanApplication(args);
-
-
     }
 
     private void setupMockExpectations(){

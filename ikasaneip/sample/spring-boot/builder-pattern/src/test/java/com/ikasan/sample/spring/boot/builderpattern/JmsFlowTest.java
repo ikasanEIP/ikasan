@@ -50,13 +50,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jms.config.JmsListenerEndpointRegistry;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.with;
@@ -75,13 +75,13 @@ public class JmsFlowTest
     /** logger */
     private static Logger logger = LoggerFactory.getLogger(JmsFlowTest.class);
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
-    @Resource
+    @Autowired
     private JmsListenerEndpointRegistry registry;
 
     @Value("${jms.provider.url}")

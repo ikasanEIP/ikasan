@@ -51,7 +51,7 @@ public class DashboardClientAutoConfiguration
             = new HttpComponentsClientHttpRequestFactory();
 
         // all of the properties can be overwritten using spring properties.
-        httpComponentsClientHttpRequestFactory.setConnectTimeout(5000);
+        httpComponentsClientHttpRequestFactory.setReadTimeout(5000);
         httpComponentsClientHttpRequestFactory.setConnectionRequestTimeout(5000);
 
         return httpComponentsClientHttpRequestFactory;

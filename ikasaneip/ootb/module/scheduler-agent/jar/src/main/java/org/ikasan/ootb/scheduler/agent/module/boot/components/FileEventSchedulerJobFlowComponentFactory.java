@@ -111,7 +111,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
 /**
@@ -132,16 +132,16 @@ public class FileEventSchedulerJobFlowComponentFactory  {
     @Value( "${big.queue.consumer.queueDir}" )
     private String queueDir;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     DuplicateFilterService duplicateFilterService;
 
-    @Resource
+    @Autowired
     DryRunModeService dryRunModeService;
 
     @Value("${context.instance.recovery.active:true}")

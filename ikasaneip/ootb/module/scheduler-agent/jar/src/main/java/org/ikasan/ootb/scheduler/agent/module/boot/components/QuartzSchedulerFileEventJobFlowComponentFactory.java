@@ -61,7 +61,7 @@ import org.ikasan.spec.scheduled.dryrun.DryRunModeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Quartz scheduler job event flow component factory.
@@ -74,10 +74,10 @@ public class QuartzSchedulerFileEventJobFlowComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     DryRunModeService dryRunModeService;
 
     @Value("${context.instance.recovery.active:true}")

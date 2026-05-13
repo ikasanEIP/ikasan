@@ -40,17 +40,13 @@
  */
 package org.ikasan.setup.persistence.service;
 
-import javax.annotation.Resource;
-
-import liquibase.configuration.LiquibaseConfiguration;
-import liquibase.logging.core.DefaultLoggerConfiguration;
 import org.jmock.Mockery;
 import org.jmock.lib.legacy.ClassImposteriser;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -78,7 +74,7 @@ public class PersistenceServiceImplTest
         }
     };
 
-    @Resource
+    @Autowired
     PersistenceService persistenceService;
 
     @Before

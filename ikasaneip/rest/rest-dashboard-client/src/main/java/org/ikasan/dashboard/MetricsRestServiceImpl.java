@@ -8,17 +8,13 @@ import org.ikasan.dashboard.dto.FlowInvocationMetricImpl;
 import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.metrics.MetricsService;
 import org.springframework.core.env.Environment;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -198,7 +194,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
         }
         catch (HttpClientErrorException e)
         {
-            if ( e.getRawStatusCode() == 401 && isFirst )
+            if ( e.getStatusCode().equals(HttpStatusCode.valueOf(401)) && isFirst )
             {
                 this.token = null;
                 if ( authenticate(this.userAgent) )
@@ -231,7 +227,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
         }
         catch (HttpClientErrorException e)
         {
-            if ( e.getRawStatusCode() == 401 && isFirst )
+            if ( e.getStatusCode().equals(HttpStatusCode.valueOf(401)) && isFirst )
             {
                 this.token = null;
                 if ( authenticate(this.userAgent) )

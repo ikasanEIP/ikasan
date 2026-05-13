@@ -49,7 +49,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Agent context instances recovery component factory.
@@ -68,10 +68,10 @@ public class AgentContextInstanceRecoveryComponentFactory {
     @Value("${module.name}")
     private String moduleName;
 
-    @Resource
+    @Autowired
     private ContextInstanceRestService contextInstanceRestService;
 
-    @Resource
+    @Autowired
     private ContextInstanceIdentifierProvisionService contextInstanceIdentifierProvisionService;
 
     @Bean

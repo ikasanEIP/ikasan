@@ -40,8 +40,7 @@
  */
 package org.ikasan.builder;
 
-import java.util.List;
-
+import jakarta.annotation.PostConstruct;
 import org.ikasan.flow.configuration.FlowComponentInvokerConfiguration;
 import org.ikasan.flow.configuration.FlowComponentInvokerSetupServiceConfiguration;
 import org.ikasan.flow.visitorPattern.invoker.InvokerConfiguration;
@@ -52,7 +51,7 @@ import org.springframework.beans.factory.FactoryBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-import javax.annotation.PostConstruct;
+import java.util.List;
 
 /**
  * Spring based FactoryBean for the creation of Ikasan Modules.

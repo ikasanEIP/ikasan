@@ -90,16 +90,16 @@ public class ApplicationTest
 
     private static String FILE_CONSUMER_FILE_NAME = "testConsumer.txt";
 
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     private ConfigurationManagement configurationManagement;
 
-    @Resource
+    @Autowired
     private JmsListenerEndpointRegistry registry;
 
-    @Resource
+    @Autowired
     private JmsTemplate jmsTemplate;
 
     @Value("${jms.provider.url}")

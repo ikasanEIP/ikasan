@@ -1,17 +1,18 @@
 package com.ikasan.sample.spring.boot.builderpattern;
 
-import org.ikasan.builder.*;
+import org.ikasan.builder.BuilderFactory;
+import org.ikasan.builder.FlowBuilder;
+import org.ikasan.builder.ModuleBuilder;
 import org.ikasan.builder.component.ComponentBuilder;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
 import org.ikasan.spec.flow.Flow;
 import org.ikasan.spec.module.Module;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
-
-import javax.annotation.Resource;
 
 @Configuration
 @ImportResource( {
@@ -20,7 +21,8 @@ import javax.annotation.Resource;
 } )
 public class ModuleConfig
 {
-    @Resource BuilderFactory builderFactory;
+    @Autowired
+    BuilderFactory builderFactory;
 
     @Value("${jms.provider.url}")
     private String brokerUrl;

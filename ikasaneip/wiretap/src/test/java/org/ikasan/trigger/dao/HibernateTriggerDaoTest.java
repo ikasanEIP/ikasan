@@ -57,12 +57,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import javax.sql.DataSource;
 import java.sql.Types;
-import java.util.*;
-
-import static org.junit.Assert.assertEquals;
+import java.util.List;
 
 /**
  * Test cases for the HibernateMessageHistoryDao
@@ -75,7 +72,7 @@ import static org.junit.Assert.assertEquals;
 @Sql(scripts = "/alter-flow-event-trigger-remove-hibernate-auto-create-enum-constraint.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS)
 public class HibernateTriggerDaoTest
 {
-    @Resource
+    @Autowired
     private TriggerDao triggerDao;
 
     @Autowired

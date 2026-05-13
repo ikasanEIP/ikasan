@@ -119,6 +119,7 @@ public class WiretapAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("wiretap");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:wiretap-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

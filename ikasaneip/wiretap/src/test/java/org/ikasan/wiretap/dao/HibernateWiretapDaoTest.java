@@ -40,8 +40,6 @@
  */
 package org.ikasan.wiretap.dao;
 
-import javax.annotation.Resource;
-
 import org.ikasan.WiretapAutoConfiguration;
 import org.ikasan.WiretapTestAutoConfiguration;
 import org.ikasan.spec.search.PagedSearchResult;
@@ -52,6 +50,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -73,10 +72,10 @@ import java.util.List;
 public class HibernateWiretapDaoTest
 {
 	/** Object being tested */
-	@Resource
+    @Autowired
     private WiretapDao wiretapDao;
 
-    @Resource
+    @Autowired
     private WiretapDao wiretapDaoDeleteOnceHarvested;
 
 	@Before

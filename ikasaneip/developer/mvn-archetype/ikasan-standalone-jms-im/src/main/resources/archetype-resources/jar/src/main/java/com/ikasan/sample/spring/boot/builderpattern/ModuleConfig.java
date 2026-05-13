@@ -56,7 +56,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.ConnectionFactory;
 
 @Configuration
@@ -66,10 +66,10 @@ import jakarta.jms.ConnectionFactory;
 } )
 public class ModuleConfig
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
     @Value("${jms.provider.url}")

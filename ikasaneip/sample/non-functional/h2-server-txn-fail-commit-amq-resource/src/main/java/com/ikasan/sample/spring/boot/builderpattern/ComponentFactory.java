@@ -50,7 +50,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.DeliveryMode;
 import jakarta.jms.Session;
 
@@ -69,7 +69,7 @@ import static org.springframework.jms.listener.DefaultMessageListenerContainer.*
 } )
 public class ComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${jms.producer.configuredResourceId}")

@@ -56,6 +56,7 @@ public class SystemEventAutoConfiguration {
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("system-event");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:systemevent-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

@@ -70,6 +70,7 @@ public class ErrorReportingAutoConfiguration
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("error-reporting");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:error-reporting-persistence.xml");
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
 
         return localContainerEntityManagerFactoryBean;
     }

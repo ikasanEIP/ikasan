@@ -44,7 +44,7 @@ import org.ikasan.component.endpoint.jms.spring.consumer.JmsContainerConsumer;
 import org.ikasan.component.factory.spring.common.NonConfiguredResourceBaseComponentFactory;
 import org.ikasan.component.factory.spring.jms.JmsComponentFactory;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Easily create Jms Consumer passing the configuration prefix. Will handle all different types of jms consumer
@@ -76,7 +76,7 @@ import javax.annotation.Resource;
 public class JmsConsumerComponentFactory extends NonConfiguredResourceBaseComponentFactory<JmsContainerConsumer,
         JmsConsumerConfiguration> {
 
-    @Resource
+    @Autowired
     private JmsComponentFactory jmsComponentFactory;
 
 

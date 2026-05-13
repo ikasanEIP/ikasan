@@ -91,18 +91,17 @@ public class SftpChunkingToJmsFlowTest
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
     @Autowired
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;
 
-    @Resource
+    @Autowired
     public JmsListenerEndpointRegistry registry;
 
-    @Resource
+    @Autowired
     public FileChunkDao fileChunkDao;
 
     @Value("${jms.provider.url}")

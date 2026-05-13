@@ -12,13 +12,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.jms.ConnectionFactory;
 
 @Configuration
 public class JmsToSftpChunkingFlowComponentFactory
 {
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
 
     @Value("${jms.provider.url}")

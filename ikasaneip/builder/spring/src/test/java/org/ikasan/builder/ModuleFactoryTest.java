@@ -48,6 +48,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
@@ -55,10 +56,8 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.annotation.Resource;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
+import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TEST_METHOD;
 
 /**
  * This test class supports the <code>ModuleFactory</code> class.
@@ -70,10 +69,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.*;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(scripts = {"/cleanDbTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class ModuleFactoryTest {
-    @Resource
+    @Autowired
     private Module<Flow> module;
 
-    @Resource
+    @Autowired
     private ApplicationContext applicationContext;
 
     public static final String IKASAN_XA_DATASOURCE = "ikasan.xads";

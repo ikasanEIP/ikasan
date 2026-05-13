@@ -90,7 +90,7 @@ import org.ikasan.spec.dashboard.DashboardRestService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Scheduled process event outbound flow component factory.
@@ -103,13 +103,13 @@ public class ScheduledProcessEventOutboundFlowComponentFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Resource
+    @Autowired
     IBigQueue outboundQueue;
 
-    @Resource
+    @Autowired
     DashboardRestService scheduleProcessEventDashboardRestService;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
     public Consumer getOutboundBigQueueConsumer() {

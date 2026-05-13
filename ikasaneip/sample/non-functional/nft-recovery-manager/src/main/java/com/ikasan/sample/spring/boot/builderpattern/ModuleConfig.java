@@ -67,7 +67,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.transaction.jta.JtaTransactionManager;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 
 @Configuration
@@ -80,16 +80,16 @@ public class ModuleConfig
 {
     @Value("${jms.provider.url}")
     private String brokerUrl;
-    @Resource
+    @Autowired
     private BuilderFactory builderFactory;
-    @Resource
+    @Autowired
     public IBigQueue outboundQueue;
-    @Resource
+    @Autowired
     public IBigQueue inboundQueue;
-    @Resource
+    @Autowired
     public ApplicationContext applicationContext;
 
-    @Resource
+    @Autowired
     private JtaTransactionManager transactionManager;
 
     /**

@@ -21,7 +21,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.test.context.support.WithMockUser;
@@ -43,7 +43,7 @@ public class DryRunSchedulerApplicationTest {
     @Rule
     public ExpectedException exceptionRule = ExpectedException.none();
 
-    @MockBean
+    @MockitoBean
     protected DryRunModeService dryRunModeService;
 
     protected MockMvc mockMvc;

@@ -50,7 +50,7 @@ import org.ikasan.spec.module.StartupType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Scheduled process event outbound flow factory. Consumes events from the outbound BigQueue
@@ -64,13 +64,13 @@ public class ScheduledProcessEventOutboundFlowFactory
     @Value( "${module.name}" )
     String moduleName;
 
-    @Resource
+    @Autowired
     BuilderFactory builderFactory;
 
-    @Resource
+    @Autowired
     ScheduledProcessEventOutboundFlowComponentFactory componentFactory;
 
-    @Resource
+    @Autowired
     StartupControlDao startupControlDao;
 
     public Flow create() {

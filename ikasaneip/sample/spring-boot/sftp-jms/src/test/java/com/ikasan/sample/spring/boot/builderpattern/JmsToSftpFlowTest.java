@@ -96,15 +96,14 @@ public class JmsToSftpFlowTest
 
     String objectStoreDir = "./transaction-logs";
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
     @Autowired
     @Qualifier("ikasan.xads")
     private DataSource ikasanxads;
 
-    @Resource
+    @Autowired
     public JmsTemplate jmsTemplate;
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule( );

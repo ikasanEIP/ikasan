@@ -55,12 +55,12 @@ import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
@@ -88,9 +88,8 @@ public class JobAwareFlowListenerTest
     ModuleService moduleService = mockery.mock(ModuleService.class);
     DashboardRestService dashboardRestService = mockery.mock(DashboardRestService.class);
 
-    @Resource
+    @Autowired
     private TriggerDao triggerDao;
-
 
 	private JobAwareFlowEventListener uut;
 

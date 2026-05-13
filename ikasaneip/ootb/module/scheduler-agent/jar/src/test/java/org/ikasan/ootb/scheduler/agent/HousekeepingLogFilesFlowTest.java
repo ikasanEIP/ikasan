@@ -56,7 +56,7 @@ import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.util.FileSystemUtils;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -78,7 +78,7 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 @ContextConfiguration(classes = {TestConfiguration.class})
 @Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class HousekeepingLogFilesFlowTest {
-    @Resource
+    @Autowired
     private Module<Flow> moduleUnderTest;
 
     private static ObjectMapper objectMapper = new ObjectMapper();

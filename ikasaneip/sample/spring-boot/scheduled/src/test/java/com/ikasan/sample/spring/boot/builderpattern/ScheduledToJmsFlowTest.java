@@ -58,7 +58,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.Resource;
+import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -83,10 +83,10 @@ public class ScheduledToJmsFlowTest
 
     private static String SAMPLE_MESSAGE = "Hello world!";
 
-    @Resource
+    @Autowired
     public Module<Flow> moduleUnderTest;
 
-    @Resource
+    @Autowired
     public JmsListenerEndpointRegistry registry;
 
     @Value("${jms.provider.url}")
@@ -97,10 +97,10 @@ public class ScheduledToJmsFlowTest
 
     public MessageListenerVerifier messageListenerVerifier;
 
-    @Resource
+    @Autowired
     private ErrorReportingServiceFactory errorReportingServiceFactory;
 
-    @Resource
+    @Autowired
     private ExclusionManagementService exclusionManagementService;
 
     private ErrorReportingService errorReportingService;
