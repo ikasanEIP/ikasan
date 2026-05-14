@@ -39,6 +39,7 @@
  * ====================================================================
  */
 package org.ikasan.security.service.model;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.ikasan.spec.security.model.IkasanPrincipal;
 import org.ikasan.spec.security.model.Policy;
 import org.ikasan.spec.security.model.Role;
@@ -62,6 +63,7 @@ public class UserImpl implements User
     private boolean credentialsNonExpired = true;
     private boolean requiresPasswordChange = false;
     private long previousAccessTimestamp;
+    @JsonDeserialize(contentAs=IkasanPrincipalImpl.class)
     private Set<IkasanPrincipal> principals = new HashSet<>();
 
     /**
