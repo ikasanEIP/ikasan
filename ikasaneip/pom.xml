@@ -368,7 +368,7 @@
         <version.org.apache.httpcomponents>5.4.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
-        <version.org.junit.jupiter>5.7.2</version.org.junit.jupiter>
+        <version.org.junit.jupiter>6.0.3</version.org.junit.jupiter>
         <version.jacoco>0.8.7</version.jacoco>
         <version.junit.platform.commons>1.7.0</version.junit.platform.commons>
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
@@ -446,10 +446,10 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
                     <configuration>
-                        <source>17</source>
-                        <target>17</target>
-                        <testSource>17</testSource>
-                        <testTarget>17</testTarget>
+                        <source>26</source>
+                        <target>26</target>
+                        <testSource>26</testSource>
+                        <testTarget>26</testTarget>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -566,6 +566,7 @@
                             --add-opens java.xml/javax.xml.parsers=ALL-UNNAMED
                             --add-exports java.base/sun.nio.ch=ALL-UNNAMED
                             --add-exports java.base/sun.nio.fs=ALL-UNNAMED
+                            --enable-native-access=ALL-UNNAMED
                         </argLine>
                     </configuration>
                 </plugin>
@@ -1594,6 +1595,10 @@
                     <exclusion>
                         <groupId>xml-apis</groupId>
                         <artifactId>xml-apis</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>jakarta.persistence</groupId>
+                        <artifactId>jakarta.persistence-api</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
