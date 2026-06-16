@@ -12,21 +12,22 @@ A job plan is a JSON document that decribes how a group of jobs and nested job p
 orchestration of a complex set of business processes. A job plan is module as [ContextTemplate](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/ContextTemplate.java)
 object with parent [Context](../../../../spec/service/scheduled/src/main/java/org/ikasan/spec/scheduled/context/model/Context.java) whose attributes are as follows.
 
-| Field                         | Type            | Description                                                                                           |
-|-------------------------------|-----------------|-------------------------------------------------------------------------------------------------------|
-| name                          | String          | The job plan name.	                                                                                   |
-| description                   | String          | The job plan description.                                                                             |
-| timeWindowStart               | String          | A Quartz cron expression used to define the time that a new instance of the job plan will be created. |
-| contextTtlMilliseconds        | long            | The length of time that the job plan instance will be active for.                                     |
-| timezone                      |                 | The timezone that the job plan operated within.                                                       |
-| blackoutWindowCronExpressions | List<String>    | A list of cron expressions that define blackout windows within which the job plan will not run.       |
-| blackoutWindowDateTimeRanges  | Map<Long, Long> | A list of ranges in milliseconds since epoch within which the job plan will not run.                  |
-| environmentGroup                              | String          | A label to indicate which environment group the job plan is part of.                                  |
-| isQuartzScheduleDrivenJobsDisabledForContext                              | boolean         | Flag to indicate if all quartz jobs are to be disabled when instances of the job plan are created.    |
-| treeViewExpandLevel                              | int             | Defines the job plan instance tree view is expanded by default.                                       |
-| disabled                      | boolean         | Flag to indicate if the job plan is disabled.                                                         |
-| ableToRunConcurrently                              | boolean         | Boolean flag to indicate if the job should run concurrently.                                          |
-
+| Field                                        | Type            | Description                                                                                                     |
+|----------------------------------------------|-----------------|-----------------------------------------------------------------------------------------------------------------|
+| name                                         | String          | The job plan name.	                                                                                             |
+| description                                  | String          | The job plan description.                                                                                       |
+| timeWindowStart                              | String          | A Quartz cron expression used to define the time that a new instance of the job plan will be created.           |
+| contextTtlMilliseconds                       | long            | The length of time that the job plan instance will be active for.                                               |
+| timezone                                     |                 | The timezone that the job plan operated within.                                                                 |
+| blackoutWindowCronExpressions                | List<String>    | A list of cron expressions that define blackout windows within which the job plan will not run.                 |
+| blackoutWindowDateTimeRanges                 | Map<Long, Long> | A list of ranges in milliseconds since epoch within which the job plan will not run.                            |
+| environmentGroup                             | String          | A label to indicate which environment group the job plan is part of.                                            |
+| isQuartzScheduleDrivenJobsDisabledForContext | boolean         | Flag to indicate if all quartz jobs are to be disabled when instances of the job plan are created.              |
+| treeViewExpandLevel                          | int             | Defines the job plan instance tree view is expanded by default.                                                 |
+| disabled                                     | boolean         | Flag to indicate if the job plan is disabled.                                                                   |
+| ableToRunConcurrently                        | boolean         | Boolean flag to indicate if the job should run concurrently.                                                    |
+| renderLogicalBoundaries                      | boolean         | Boolean flag to determine if logical boundaries should be rendered on job plan diagrams. Default true.          |
+| renderOrLogicalBoundariesOnly                | boolean         | Boolean flag to determine if only OR logical boundaries should be rendered on job plan diagrams. Default false. |
 
 ## Context Parameters
 The context parameters represents the template that describes any values that are passed to a scheduler context instantiation. 
