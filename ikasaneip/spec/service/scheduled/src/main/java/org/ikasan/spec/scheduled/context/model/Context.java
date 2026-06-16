@@ -404,6 +404,20 @@ public interface Context<CONTEXT extends Context, CONTEXT_PARAM, JOB extends Sch
      */
     void setRenderLogicalBoundaries(Boolean renderLogicalBoundaries);
 
+    /**
+     * Check if OR logical boundaries should be rendered.
+     *
+     * @return true if OR logical boundaries should be rendered, false otherwise
+     */
+    Boolean isRenderOrLogicalBoundariesOnly();
+
+
+    /**
+     * Set whether OR logical boundaries should be rendered within the context visualization.
+     *
+     * @param renderOrLogicalBoundariesOnly true if only OR logical boundaries should be rendered, false otherwise
+     */
+    void setRenderOrLogicalBoundariesOnly(Boolean renderOrLogicalBoundariesOnly);
 
     /**
      * Check if auto layout is used for visualizations within the context.
