@@ -343,7 +343,7 @@
         <version.jakarta.servlet>6.1.0-M1</version.jakarta.servlet>
         <version.jakarta.servlet.jsp.jstl>3.0.0</version.jakarta.servlet.jsp.jstl>
         <version.glassfish.jakarta.servlet.jsp.jstl>3.0.0</version.glassfish.jakarta.servlet.jsp.jstl>
-        <version.activemq>6.2.1</version.activemq>
+        <version.activemq>6.2.3</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.jakarta.jms-api>3.1.0</version.jakarta.jms-api>
@@ -363,7 +363,7 @@
         <version.com.fasterxml.jackson.core.databind>2.16.0</version.com.fasterxml.jackson.core.databind>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>33.0.0-jre</version.com.google.guava>
-        <version.tomcat>10.1.52</version.tomcat>
+        <version.tomcat>10.1.55</version.tomcat>
         <version.wiremock>3.0.3</version.wiremock>
         <version.org.apache.httpcomponents>5.4.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
@@ -374,13 +374,13 @@
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.aws.java.sdk>1.11.837</version.aws.java.sdk>
-        <version.bouncycastle>1.78</version.bouncycastle>
+        <version.bouncycastle>1.84</version.bouncycastle>
         <version.jakarta.validation.api>3.1.0-M1</version.jakarta.validation.api>
         <version.jakarta.el>6.0.0-M1</version.jakarta.el>
         <version.commons-io>2.14.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.spring.retry>2.0.12</version.spring.retry>
-        <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
+        <version.thymeleaf>3.1.5.RELEASE</version.thymeleaf>
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
         <version.big.queue>1.0.0</version.big.queue>
@@ -394,9 +394,9 @@
         <version.jakarta.transaction-api>2.0.1</version.jakarta.transaction-api>
         <version.jboss-transaction-spi>8.0.0.Final</version.jboss-transaction-spi>
         <version.commons-text>1.13.0</version.commons-text>
-        <version.kafka.core>4.1.1</version.kafka.core>
+        <version.kafka.core>4.1.2</version.kafka.core>
         <version.kafka.reactor.core>1.3.25</version.kafka.reactor.core>
-        <version.spring.kafka>4.0.2</version.spring.kafka>
+        <version.spring.kafka>4.0.6</version.spring.kafka>
         <version.scala.libs>2.13.15</version.scala.libs>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
