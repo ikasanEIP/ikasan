@@ -1,5 +1,6 @@
 package org.ikasan.rest.module;
 
+import org.apache.commons.text.StringEscapeUtils;
 import org.ikasan.rest.module.dto.ErrorDto;
 import org.ikasan.rest.module.dto.InDoubtTransactionDto;
 import org.ikasan.rest.module.dto.TableRowCountDto;
@@ -89,7 +90,7 @@ public class InDoubtTransactionsApplication
         }
         catch (Exception e) {
             return new ResponseEntity(new ErrorDto(String.format("An error has occurred requesting in doubt transaction " +
-                "for transaction name [%s]. Error[%s]", transactionName, e.getMessage())), HttpStatus.BAD_REQUEST);
+                "for transaction name [%s]. Error[%s]", StringEscapeUtils.escapeHtml4(transactionName), e.getMessage())), HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -112,7 +113,7 @@ public class InDoubtTransactionsApplication
             return new ResponseEntity(new ErrorDto(String.format("An error has occurred committing in doubt transaction" +
                 "[%s]. Error[%s]", transactionName, e.getMessage())), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity(String.format("Transaction[%s] successfully committed!", transactionName), HttpStatus.OK);
+        return new ResponseEntity(String.format("Transaction[%s] successfully committed!", StringEscapeUtils.escapeHtml4(transactionName)), HttpStatus.OK);
     }
 
     /**
@@ -162,7 +163,7 @@ public class InDoubtTransactionsApplication
             return new ResponseEntity(new ErrorDto(String.format("An error has occurred rolling back in doubt transaction" +
                 "[%s]. Error[%s]", transactionName, e.getMessage())), HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity("Transaction[%s] successfully rolled back!".formatted(transactionName), HttpStatus.OK);
+        return new ResponseEntity("Transaction[%s] successfully rolled back!".formatted(StringEscapeUtils.escapeHtml4(transactionName)), HttpStatus.OK);
     }
 
     /**

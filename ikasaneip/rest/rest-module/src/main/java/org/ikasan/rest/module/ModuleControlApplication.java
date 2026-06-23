@@ -117,7 +117,8 @@ public class ModuleControlApplication
             return new ResponseEntity(HttpStatus.OK);
         }
         else{
-            return new ResponseEntity(new ErrorDto("Invalid startupType["+startupType+"]."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorDto("Invalid startupType["
+                + StringEscapeUtils.escapeHtml4(startupType) +"]."), HttpStatus.BAD_REQUEST);
 
         }
     }
@@ -160,7 +161,8 @@ public class ModuleControlApplication
             return new ResponseEntity(HttpStatus.OK);
         }
         else{
-            return new ResponseEntity(new ErrorDto("Invalid startupType["+startupType+"]."), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(new ErrorDto("Invalid startupType["
+                + StringEscapeUtils.escapeHtml4(startupType) +"]."), HttpStatus.BAD_REQUEST);
 
         }
     }
@@ -208,7 +210,8 @@ public class ModuleControlApplication
             return new ResponseEntity(new FlowDto(flow.getName(), flow.getState()), HttpStatus.OK);
         else
         {
-            return new ResponseEntity(new ErrorDto("Module [" + moduleName + "] Flow [" + flowName + "] not found."),
+            return new ResponseEntity(new ErrorDto("Module [" + StringEscapeUtils.escapeHtml4(moduleName)
+                + "] Flow [" + StringEscapeUtils.escapeHtml4(flowName) + "] not found."),
                 HttpStatus.NOT_FOUND);
         }
     }
@@ -235,7 +238,7 @@ public class ModuleControlApplication
         }
         else
         {
-            return new ResponseEntity(new ErrorDto("Module [" + moduleName + "] not found."),
+            return new ResponseEntity(new ErrorDto("Module [" + StringEscapeUtils.escapeHtml4(moduleName) + "] not found."),
                 HttpStatus.NOT_FOUND);
         }
     }
@@ -290,7 +293,8 @@ public class ModuleControlApplication
             }
             else
             {
-                return new ResponseEntity("Unknown context listener action [" + action + "].", HttpStatus.FORBIDDEN);
+                return new ResponseEntity("Unknown context listener action ["
+                    + StringEscapeUtils.escapeHtml4(action) + "].", HttpStatus.FORBIDDEN);
             }
         }
         catch (Exception e)
@@ -338,7 +342,8 @@ public class ModuleControlApplication
         {
             return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
         }
-        return new ResponseEntity("Module action[%s] successfully applied!".formatted(moduleActivationDto.getAction()), HttpStatus.OK);
+        return new ResponseEntity("Module action[%s] successfully applied!"
+            .formatted(StringEscapeUtils.escapeHtml4(moduleActivationDto.getAction())), HttpStatus.OK);
     }
 
     /**
