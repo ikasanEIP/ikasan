@@ -115,9 +115,44 @@ public class HibernateInDoubtTransactionDaoImplTest {
             , 100, this.getNumLobRecords());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test_commit_in_doubt_transaction_exception_bad_transaction_name() {
-        inDoubtTransactionDao.commitInDoubtTransaction("BAD TRANSACTION NAME!");
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_null_transaction_name() {
+        inDoubtTransactionDao.commitInDoubtTransaction(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_empty_transaction_name() {
+        inDoubtTransactionDao.commitInDoubtTransaction("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_blank_transaction_name() {
+        inDoubtTransactionDao.commitInDoubtTransaction("   ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_transaction_name_with_spaces() {
+        inDoubtTransactionDao.commitInDoubtTransaction("BAD TRANSACTION NAME");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_transaction_name_with_special_chars() {
+        inDoubtTransactionDao.commitInDoubtTransaction("lobtx'; DROP TABLE dataTable; --");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_transaction_name_with_semicolon() {
+        inDoubtTransactionDao.commitInDoubtTransaction("lobtx;");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_transaction_name_with_hyphen() {
+        inDoubtTransactionDao.commitInDoubtTransaction("lob-tx");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_commit_in_doubt_transaction_exception_transaction_name_with_quotes() {
+        inDoubtTransactionDao.commitInDoubtTransaction("'lobtx'");
     }
 
     @Test
@@ -132,9 +167,44 @@ public class HibernateInDoubtTransactionDaoImplTest {
             , 0, this.getNumLobRecords());
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test_rollback_in_doubt_transaction_exception_bad_transaction_name() {
-        inDoubtTransactionDao.rollbackInDoubtTransaction("BAD TRANSACTION NAME!");
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_null_transaction_name() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction(null);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_empty_transaction_name() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_blank_transaction_name() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("   ");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_transaction_name_with_spaces() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("BAD TRANSACTION NAME");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_transaction_name_with_special_chars() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("lobtx'; DROP TABLE dataTable; --");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_transaction_name_with_semicolon() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("lobtx;");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_transaction_name_with_hyphen() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("lob-tx");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_rollback_in_doubt_transaction_exception_transaction_name_with_quotes() {
+        inDoubtTransactionDao.rollbackInDoubtTransaction("'lobtx'");
     }
 
     private int getNumLobRecords() throws SQLException {
