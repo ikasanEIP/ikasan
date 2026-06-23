@@ -510,4 +510,158 @@ public class ModuleControlApplicationTest
             }
         };
     }
+
+    // XSS Security Tests
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testXSS_changeFlowStartupMode_invalidStartupTypeWithScript() throws Exception
+    {
+        String xssPayload = "<script>alert('XSS')</script>";
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode")
+            .content(createChangeFlowStartupModeDto(xssPayload, "comment"))
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        String responseContent = result.getResponse().getContentAsString();
+        // Verify that the script tags are escaped
+        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+            responseContent.contains("&lt;script&gt;") && responseContent.contains("&lt;/script&gt;"));
+        // Verify that the raw script tags are NOT present
+        org.junit.Assert.assertFalse("Response should not contain unescaped script tags",
+            responseContent.contains("<script>"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testXSS_changeAllFlowStartupMode_invalidStartupTypeWithScript() throws Exception
+    {
+        String xssPayload = "<script>alert('XSS')</script>";
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/startupMode/allFlows")
+            .content(createChangeFlowStartupModeDto(xssPayload, "comment"))
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(400, result.getResponse().getStatus());
+        String responseContent = result.getResponse().getContentAsString();
+        // Verify that the script tags are escaped
+        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+            responseContent.contains("&lt;script&gt;") && responseContent.contains("&lt;/script&gt;"));
+        // Verify that the raw script tags are NOT present
+        org.junit.Assert.assertFalse("Response should not contain unescaped script tags",
+            responseContent.contains("<script>"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testXSS_getFlow_withMaliciousModuleName() throws Exception
+    {
+        String xssModuleName = "<img src=x onerror=alert('XSS')>";
+        String flowName = "testFlow";
+
+        SimpleModule module = new SimpleModule(xssModuleName, null, Arrays.asList());
+        Mockito
+            .when(moduleService.getModule(xssModuleName))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/rest/moduleControl/" + xssModuleName + "/" + flowName)
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(404, result.getResponse().getStatus());
+        String responseContent = result.getResponse().getContentAsString();
+        // Verify that the malicious content is escaped
+        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+            responseContent.contains("&lt;img") && responseContent.contains("onerror"));
+        // Verify that the raw img tag is NOT present
+        org.junit.Assert.assertFalse("Response should not contain unescaped img tag",
+            responseContent.contains("<img src="));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testXSS_getFlow_withMaliciousFlowName() throws Exception
+    {
+        String moduleName = "testModule";
+        String xssFlowName = "<iframe src='javascript:alert(1)'>";
+
+        SimpleModule module = new SimpleModule(moduleName, null, Arrays.asList());
+        Mockito
+            .when(moduleService.getModule(moduleName))
+            .thenReturn(module);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders
+            .get("/rest/moduleControl/" + moduleName + "/" + xssFlowName)
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(404, result.getResponse().getStatus());
+        String responseContent = result.getResponse().getContentAsString();
+        // Verify that the malicious content is escaped
+        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+            responseContent.contains("&lt;iframe") && responseContent.contains("&gt;"));
+        // Verify that the raw iframe tag is NOT present
+        org.junit.Assert.assertFalse("Response should not contain unescaped iframe tag",
+            responseContent.contains("<iframe"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testXSS_moduleActivator_withMaliciousAction() throws Exception
+    {
+        String xssAction = "<body onload=alert('XSS')>";
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModules())
+            .thenReturn(List.of(module));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(createModuleActivationDto(xssAction))
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+        String responseContent = result.getResponse().getContentAsString();
+        // Verify that the malicious content is escaped
+        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+            responseContent.contains("&lt;body") && responseContent.contains("onload"));
+        // Verify that the raw body tag is NOT present
+        org.junit.Assert.assertFalse("Response should not contain unescaped body tag",
+            responseContent.contains("<body"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void testXSS_moduleActivatorSuccessResponse_withMaliciousAction() throws Exception
+    {
+        String xssAction = "activate<script>alert(1)</script>";
+        ConfiguredModuleImpl module = new ConfiguredModuleImpl("testModule", flowFactory);
+        Mockito
+            .when(moduleService.getModules())
+            .thenReturn(List.of(module));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl/activator")
+            .accept(MediaType.APPLICATION_JSON_VALUE)
+            .content(createModuleActivationDto(xssAction))
+            .contentType(MediaType.APPLICATION_JSON_VALUE);
+
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        // This should return FORBIDDEN since the action is invalid
+        assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
+        String responseContent = result.getResponse().getContentAsString();
+        // Verify the response contains escaped content
+        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+            responseContent.contains("&lt;script&gt;"));
+    }
 }
