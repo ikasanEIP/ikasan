@@ -7,6 +7,7 @@ import java.sql.*;
 
 public class GeneralDatabaseDaoImpl implements GeneralDatabaseDao {
     public static final String TABLE_COUNT_QUERY = "SELECT COUNT(*) AS COUNT FROM %s";
+    private static final String SAFE_TABLE_IDENTIFIER_PATTERN = "^[A-Za-z0-9_]+(\\.[A-Za-z0-9_]+)?$";
     private DataSource dataSource;
 
     /**
@@ -24,48 +25,50 @@ public class GeneralDatabaseDaoImpl implements GeneralDatabaseDao {
 
     @Override
     public int getRecordCountForDatabaseTable(String tableName) {
-        Connection connection = null;
         int count = 0;
-        try {
-            connection = dataSource.getConnection();
+        try (Connection connection = dataSource.getConnection()) {
             DatabaseMetaData databaseMetaData = connection.getMetaData();
 
             ResultSet resultSet = databaseMetaData.getTables(null, null
                 , null, new String[] {"TABLE"});
 
             boolean tableNameExists = false;
+            String resolvedTableName = null;
             while (resultSet.next()) {
                 String name = resultSet.getString("TABLE_NAME");
                 String schema = resultSet.getString("TABLE_SCHEM");
                 String fullyQualifiedName = schema + "." + name;
-                if(name.equalsIgnoreCase(tableName) || fullyQualifiedName.equalsIgnoreCase(tableName)) {
+                if(name.equalsIgnoreCase(tableName)) {
                     tableNameExists=true;
+                    resolvedTableName = name;
+                    break;
+                }
+
+                if(fullyQualifiedName.equalsIgnoreCase(tableName)) {
+                    tableNameExists=true;
+                    resolvedTableName = fullyQualifiedName;
                     break;
                 }
             }
 
-            if(!tableNameExists) {
+            if(!tableNameExists || resolvedTableName == null)  {
                 throw new RuntimeException(String.format("An exception has occurred querying count for table[%s]! The " +
                     "table does not exist in the database", tableName));
             }
 
+            if(!resolvedTableName.matches(SAFE_TABLE_IDENTIFIER_PATTERN)) {
+                throw new RuntimeException(String.format("An exception has occurred querying count for table[%s]! Invalid table identifier.", tableName));
+            }
+
             Statement statement = connection.createStatement();
 
-            resultSet = statement.executeQuery(String.format(TABLE_COUNT_QUERY, tableName));
+            resultSet = statement.executeQuery(String.format(TABLE_COUNT_QUERY, resolvedTableName));
 
             resultSet.next();
             count = resultSet.getInt("COUNT");
         }
         catch (SQLException e) {
             throw new RuntimeException(String.format("An exception has occurred querying count for table[%s]!", tableName), e);
-        }
-        finally {
-            try {
-                connection.close();
-            }
-            catch (SQLException e) {
-                throw new RuntimeException("An exception has occurred closing database connection!", e);
-            }
         }
 
         return count;
