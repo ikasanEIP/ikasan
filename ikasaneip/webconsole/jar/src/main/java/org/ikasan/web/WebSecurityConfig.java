@@ -9,14 +9,12 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Configuration
 @EnableWebSecurity
-@EnableWebMvc
 @EnableMethodSecurity
 public class WebSecurityConfig {
 
@@ -53,6 +51,8 @@ public class WebSecurityConfig {
                 .logoutSuccessUrl("/")
                 .logoutUrl("/j_spring_security_logout")
                 .deleteCookies("JSESSIONID"))
+            .csrf(httpSecurityCsrfConfigurer
+                -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/rest/**"))
             .headers(httpSecurityHeadersConfigurer
                 -> {httpSecurityHeadersConfigurer.frameOptions(frameOptionsConfig
                     -> frameOptionsConfig.sameOrigin());
