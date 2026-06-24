@@ -39,13 +39,13 @@ public class HibernateInDoubtTransactionDaoImplTest {
 
     @Before
     public void setup() throws IOException, SQLException {
-        server = Server.createTcpServer("-tcpPort", Integer.toString(18082), "-tcpAllowOthers", "-ifNotExists");
+        server = Server.createTcpServer("-tcpPort", Integer.toString(19082), "-tcpAllowOthers", "-ifNotExists");
         server.start();
 
         org.h2.Driver.load();
 
         try (Connection conn = DriverManager.getConnection
-            ("jdbc:h2:tcp://localhost:18082/./target/persistence/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE"
+            ("jdbc:h2:tcp://localhost:19082/./target/persistence/esb;IFEXISTS=FALSE;NON_KEYWORDS=VALUE"
             , "sa", "sa")) {
             try (Statement st = conn.createStatement()) {
                 st.executeUpdate("CREATE TABLE IF NOT EXISTS dataTable("
