@@ -31,6 +31,78 @@ to define how a `Job Plan` and its jobs are to be executed. Once the 'Job Plan' 
 and provides jobs configurations to the agent, before re-activating the modules. Upon activation, a flow is created for each job and the
 agent is ready to perform the jobs on behalf of any future `Job Plan Instances` that are created.
 
+## Log File Monitoring Service Configuration
+
+The Ikasan Enterprise Scheduler Agent includes a real-time log file monitoring service that streams log file content to authorized users via Server-Sent Events (SSE). This service allows monitoring of job execution logs and system logs in real-time through the Ikasan Enterprise Scheduler Dashboard.
+
+### Security and Path Configuration
+
+For security reasons, the monitoring service restricts file access to only those files located within configured base directories. This prevents unauthorized access to sensitive system files and ensures that only designated log directories can be monitored.
+
+### Configuration Properties
+
+The following properties can be configured in the agent's application properties file to control the behavior of the log file monitoring service:
+
+| Property Name                    | Data Type | Default Value | Description                                                                                                                                                                                                                                                                       |
+|----------------------------------|-----------|---------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `sse.log.base.paths`             | String    | `.`           | Comma-separated list of base directory paths from which log files can be monitored. Files can only be accessed if they exist within one of these configured directories. Multiple paths provide flexibility to monitor logs from different locations while maintaining security. |
+| `sse.max.stream.threads`         | int       | `100`         | Maximum number of concurrent log file streaming threads allowed. This limit prevents resource exhaustion by capping the number of simultaneous log file monitors.                                                                                                                |
+| `sse.thread.wait.time`           | int       | `500`         | Wait time in milliseconds between log file read operations. Lower values provide more real-time updates but consume more resources. Higher values reduce resource usage but may introduce slight delays in log updates.                                                          |
+| `sse.inactive.time.millis`       | long      | `300000`      | Time in milliseconds (default: 5 minutes) that a log file can be inactive (no new content) before the monitoring stream is automatically closed. This prevents resource waste on idle connections.                                                                               |
+
+### Configuration Examples
+
+#### Single Base Path (Backward Compatible)
+```properties
+# Monitor logs only from a single directory
+sse.log.base.paths=/var/log/ikasan-agent
+```
+
+#### Multiple Base Paths
+```properties
+# Monitor logs from multiple directories
+sse.log.base.paths=/var/log/ikasan-agent,/opt/ikasan/process-logs,/var/log/scheduler-jobs
+
+# Alternative format with whitespace (automatically trimmed)
+sse.log.base.paths = /var/log/ikasan-agent , /opt/ikasan/process-logs , /var/log/scheduler-jobs
+```
+
+#### Performance Tuning
+```properties
+# Increase concurrent streams for high-traffic environments
+sse.max.stream.threads=200
+
+# More frequent updates (more resource intensive)
+sse.thread.wait.time=250
+
+# Longer timeout for slower-updating logs
+sse.inactive.time.millis=600000
+```
+
+### Path Traversal Protection
+
+The monitoring service implements comprehensive security measures to prevent path traversal attacks:
+
+- All requested file paths are validated against the configured base directories
+- Relative paths (e.g., `../../etc/passwd`) are blocked
+- Absolute paths outside configured directories are rejected
+- URL-encoded path traversal attempts are detected and blocked
+- Files can only be accessed if they reside within at least one of the configured base paths
+
+This ensures that even if an attacker attempts to manipulate file paths, they cannot access files outside the designated log directories.
+
+### Best Practices
+
+1. **Restrict Base Paths**: Only configure base paths that contain logs intended for monitoring. Do not use system-wide paths like `/` or `/var`.
+
+2. **Use Absolute Paths**: While relative paths are supported, using absolute paths in configuration eliminates ambiguity.
+
+3. **Monitor Resource Usage**: Adjust `sse.max.stream.threads` based on expected concurrent users and system resources.
+
+4. **Balance Real-time vs Resources**: The `sse.thread.wait.time` setting trades off between update frequency and resource consumption. The default (500ms) provides a good balance for most use cases.
+
+5. **Configure Appropriate Timeouts**: Set `sse.inactive.time.millis` based on your typical log update patterns. Logs that update infrequently may need longer timeouts.
+
 ## Ikasan Enterprise Scheduler Agent Job Flows
 The following flow descriptions outline each of the flows that are created for each job type.
 
