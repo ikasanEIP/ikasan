@@ -2,15 +2,10 @@ package org.ikasan.persistence.dao;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
 import org.ikasan.persistence.model.InDoubtTransactionImpl;
 import org.ikasan.spec.persistence.dao.InDoubtTransactionDao;
 import org.ikasan.spec.persistence.model.InDoubtTransaction;
 
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -45,23 +40,29 @@ public class HibernateInDoubtTransactionDaoImpl implements InDoubtTransactionDao
     public void commitInDoubtTransaction(String transactionName) {
         String validatedTransactionName = validateTransactionName(transactionName);
 
-        if(this.getInDoubtTransaction(validatedTransactionName) == null) {
+        InDoubtTransaction inDoubtTransaction = this.getInDoubtTransaction(validatedTransactionName);
+        if(inDoubtTransaction == null) {
             throw new RuntimeException(String.format("An in doubt transaction with name[%s] does not exist in the database!" +
                 " Unable to commit the in doubt transaction!", validatedTransactionName));
         }
-        entityManager.createNativeQuery("COMMIT TRANSACTION " + validatedTransactionName).executeUpdate();
+
+        String canonicalTransactionName = inDoubtTransaction.getTransactionName();
+        entityManager.createNativeQuery("COMMIT TRANSACTION " + canonicalTransactionName).executeUpdate();
     }
 
     @Override
     public void rollbackInDoubtTransaction(String transactionName) {
         String validatedTransactionName = validateTransactionName(transactionName);
 
-        if(this.getInDoubtTransaction(validatedTransactionName) == null) {
+        InDoubtTransaction inDoubtTransaction = this.getInDoubtTransaction(validatedTransactionName);
+
+        if(inDoubtTransaction == null) {
             throw new RuntimeException(String.format("An in doubt transaction with name[%s] does not exist in the database!" +
                 " Unable to rollback the in doubt transaction!", transactionName));
         }
 
-        entityManager.createNativeQuery("ROLLBACK TRANSACTION " + validatedTransactionName).executeUpdate();
+        String canonicalTransactionName = inDoubtTransaction.getTransactionName();
+        entityManager.createNativeQuery("ROLLBACK TRANSACTION " + canonicalTransactionName).executeUpdate();
     }
 
     /**
