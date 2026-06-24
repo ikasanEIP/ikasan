@@ -32,7 +32,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(classes = { InDoubtTransactionsApplication.class, MockedUserServiceTestConfig.class })
@@ -364,10 +364,10 @@ public class InDoubtTransactionsApplicationTest
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         String responseContent = result.getResponse().getContentAsString();
         // Verify that the malicious content is escaped
-        org.junit.Assert.assertTrue("Response should contain escaped HTML",
+        assertTrue("Response should contain escaped HTML",
             responseContent.contains("&lt;img") && responseContent.contains("onerror"));
         // Verify that the raw img tag is NOT present
-        org.junit.Assert.assertFalse("Response should not contain unescaped img tag",
+        assertFalse("Response should not contain unescaped img tag",
             responseContent.contains("<img src="));
 
         Mockito.verify(this.inDoubtTransactionService).commitInDoubtTransaction(xssTransactionName);
@@ -393,7 +393,7 @@ public class InDoubtTransactionsApplicationTest
         String responseContent = result.getResponse().getContentAsString();
         // Error messages contain the unescaped transaction name in error path (line 114)
         // Verify the response contains the transaction name (may not be escaped in error path)
-        org.junit.Assert.assertTrue("Response should contain transaction name reference",
+        assertTrue("Response should contain transaction name reference",
             responseContent.contains("An error has occurred committing in doubt transaction"));
 
         Mockito.verify(this.inDoubtTransactionService).commitInDoubtTransaction(xssTransactionName);
@@ -436,7 +436,7 @@ public class InDoubtTransactionsApplicationTest
         String responseContent = result.getResponse().getContentAsString();
         // Error messages contain the unescaped transaction name in error path (line 164)
         // Verify the response contains the transaction name reference
-        org.junit.Assert.assertTrue("Response should contain transaction name reference",
+        assertTrue("Response should contain transaction name reference",
             responseContent.contains("An error has occurred rolling back in doubt transaction"));
 
         Mockito.verify(this.inDoubtTransactionService).rollbackInDoubtTransaction(xssTransactionName);
@@ -477,7 +477,7 @@ public class InDoubtTransactionsApplicationTest
         assertEquals(HttpStatus.OK.value(), result.getResponse().getStatus());
         String responseContent = result.getResponse().getContentAsString();
         // The javascript protocol should be present but safely escaped in the response
-        org.junit.Assert.assertTrue("Response should contain the transaction name",
+        assertTrue("Response should contain the transaction name",
             responseContent.contains("javascript") || responseContent.contains("Transaction"));
 
         Mockito.verify(this.inDoubtTransactionService).rollbackInDoubtTransaction(xssTransactionName);
