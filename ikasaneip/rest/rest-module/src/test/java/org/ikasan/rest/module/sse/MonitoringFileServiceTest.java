@@ -55,13 +55,13 @@ public class MonitoringFileServiceTest {
         try {
             FileUtils.forceDelete(new File(sampleLogFileStr));
         } catch (Exception e) {
-            // Ignore
+            System.out.println(String.format("An error has occurred file[%s], error[%s]!", sampleLogFileStr, e.getMessage()));
         }
 
         try {
             FileUtils.forceDelete(new File(testBaseDir));
         } catch (Exception e) {
-            // Ignore
+            System.out.println(String.format("An error has occurred dir[%s], error[%s]!", testBaseDir, e.getMessage()));
         }
 
         ThreadPoolExecutor tpe = (ThreadPoolExecutor) ReflectionTestUtils.getField(service, "executorService");
