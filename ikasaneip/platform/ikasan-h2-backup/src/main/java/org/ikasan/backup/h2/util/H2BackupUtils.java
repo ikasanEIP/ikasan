@@ -32,12 +32,19 @@ public class H2BackupUtils {
 
         if(unzipDir.exists()) unzipDir.delete();
 
+        File canonicalUnzipDir = unzipDir.getCanonicalFile();
+        String canonicalUnzipDirPath = canonicalUnzipDir.getPath() + File.separator;
+
         try (java.util.zip.ZipFile zipFile = new ZipFile(new File(backupFileName))) {
             if(zipFile.size() != 1) throw new IOException("Zip file cannot be empty!");
             Enumeration<? extends ZipEntry> entries = zipFile.entries();
             while (entries.hasMoreElements()) {
                 ZipEntry entry = entries.nextElement();
-                File entryDestination = new File(unzipDir, entry.getName());
+                File entryDestination = new File(canonicalUnzipDir, entry.getName()).getCanonicalFile();
+                String entryDestinationPath = entryDestination.getPath();
+                if (!entryDestinationPath.startsWith(canonicalUnzipDirPath)) {
+                    throw new IOException("Bad zip entry: " + entry.getName());
+                }
                 if (entry.isDirectory()) {
                     entryDestination.mkdirs();
                 } else {
