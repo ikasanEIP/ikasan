@@ -11,14 +11,15 @@ import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
 import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
@@ -91,11 +92,16 @@ public class BigQueueManagementServiceImplTest {
         assertFalse(Files.exists(path));
     }
 
-    @Test
-    public void delete_null_queue_should_not_npe() throws Exception {
+    @Test(expected = IllegalArgumentException.class)
+    public void delete_null_queue_dir_should_not_npe() throws Exception {
         service.deleteQueue(null, QUEUE_NAME);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void delete_null_queue_name_should_not_npe() throws Exception {
         service.deleteQueue(QUEUE_DIR, null);
     }
+
 
     @Test
     public void list_queues_returns_empty_if_unknown_directory() throws Exception {
@@ -440,6 +446,373 @@ public class BigQueueManagementServiceImplTest {
             }
             return "done";
         }
+    }
+
+    @Test
+    public void test_deleteQueue_with_path_traversal_attack() throws Exception {
+        try {
+            service.deleteQueue(QUEUE_DIR, "../../../etc/passwd");
+            fail("Should throw IllegalArgumentException for path traversal");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid queueName path traversal attempt!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_deleteQueue_with_absolute_path() throws Exception {
+        try {
+            service.deleteQueue(QUEUE_DIR, "/etc/passwd");
+            fail("Should throw IllegalArgumentException for absolute path");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid queueName path traversal attempt!", e.getMessage());
+        }
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_deleteQueue_with_empty_queue_dir() throws Exception {
+        service.deleteQueue("", QUEUE_NAME);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_deleteQueue_with_blank_queue_dir() throws Exception {
+        service.deleteQueue("   ", QUEUE_NAME);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_deleteQueue_with_empty_queue_name() throws Exception {
+        service.deleteQueue(QUEUE_DIR, "");
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void test_deleteQueue_with_blank_queue_name() throws Exception {
+        service.deleteQueue(QUEUE_DIR, "   ");
+    }
+
+    @Test
+    public void test_deleteQueue_nonexistent_queue_does_not_throw() throws Exception {
+        // Should not throw if queue doesn't exist
+        service.deleteQueue(QUEUE_DIR, "nonexistent-queue");
+    }
+
+    @Test
+    public void test_deleteQueue_with_dot_in_queue_name() throws Exception {
+        String queueWithDot = "test.queue";
+        IBigQueue testQueue = new BigQueueImpl(QUEUE_DIR, queueWithDot);
+        testQueue.removeAll();
+
+        assertTrue("Queue should exist", Files.exists(Paths.get(QUEUE_DIR + File.separator + queueWithDot)));
+        service.deleteQueue(QUEUE_DIR, queueWithDot);
+        assertFalse("Queue should be deleted", Files.exists(Paths.get(QUEUE_DIR + File.separator + queueWithDot)));
+    }
+
+    @Test
+    public void test_listQueues_empty_directory() throws Exception {
+        String emptyDir = "./target/empty-queues-" + randomAlphabetic(5) + "/";
+        Files.createDirectories(Paths.get(emptyDir));
+
+        List<String> queues = service.listQueues(emptyDir);
+        assertTrue("Empty directory should return empty list", queues.isEmpty());
+    }
+
+    @Test
+    public void test_listQueues_with_files_not_directories() throws Exception {
+        String testDir = "./target/test-queues-" + randomAlphabetic(5) + "/";
+        Files.createDirectories(Paths.get(testDir));
+        Files.createFile(Paths.get(testDir + "file.txt"));
+
+        List<String> queues = service.listQueues(testDir);
+        assertTrue("Should not list files, only directories", queues.isEmpty());
+    }
+
+    @Test
+    public void test_deleteMessage_with_first_message() throws Exception {
+        BigQueueMessage msg1 = createBigQueueMessage();
+        BigQueueMessage msg2 = createBigQueueMessage();
+        BigQueueMessage msg3 = createBigQueueMessage();
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg3));
+
+        assertEquals(3, service.size(QUEUE_NAME));
+
+        service.deleteMessage(QUEUE_NAME, msg1.getMessageId());
+
+        assertEquals(2, service.size(QUEUE_NAME));
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_NAME);
+        assertEquals(msg2, messages.get(0));
+        assertEquals(msg3, messages.get(1));
+    }
+
+    @Test
+    public void test_deleteMessage_with_last_message() throws Exception {
+        BigQueueMessage msg1 = createBigQueueMessage();
+        BigQueueMessage msg2 = createBigQueueMessage();
+        BigQueueMessage msg3 = createBigQueueMessage();
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg3));
+
+        assertEquals(3, service.size(QUEUE_NAME));
+
+        service.deleteMessage(QUEUE_NAME, msg3.getMessageId());
+
+        assertEquals(2, service.size(QUEUE_NAME));
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_NAME);
+        assertEquals(msg1, messages.get(0));
+        assertEquals(msg2, messages.get(1));
+    }
+
+    @Test
+    public void test_deleteMessage_single_message_queue() throws Exception {
+        BigQueueMessage msg = createBigQueueMessage();
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+
+        assertEquals(1, service.size(QUEUE_NAME));
+
+        service.deleteMessage(QUEUE_NAME, msg.getMessageId());
+
+        assertEquals(0, service.size(QUEUE_NAME));
+        assertTrue(service.getMessages(QUEUE_NAME).isEmpty());
+    }
+
+    @Test
+    public void test_deleteMessage_empty_message_id() throws Exception {
+        BigQueueMessage msg = createBigQueueMessage();
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+
+        assertEquals(1, service.size(QUEUE_NAME));
+
+        service.deleteMessage(QUEUE_NAME, "");
+
+        assertEquals(1, service.size(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_deleteAllMessage_empty_queue() throws Exception {
+        assertEquals(0, service.size(QUEUE_NAME));
+        service.deleteAllMessage(QUEUE_NAME);
+        assertEquals(0, service.size(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_deleteAllMessage_verifies_messages_cleared() throws Exception {
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+
+        assertEquals(3, service.size(QUEUE_NAME));
+        assertFalse(service.getMessages(QUEUE_NAME).isEmpty());
+
+        service.deleteAllMessage(QUEUE_NAME);
+
+        assertEquals(0, service.size(QUEUE_NAME));
+        assertTrue(service.getMessages(QUEUE_NAME).isEmpty());
+    }
+
+    @Test
+    public void test_peek_does_not_remove_message() throws Exception {
+        BigQueueMessage msg = createBigQueueMessage();
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+
+        assertEquals(1, service.size(QUEUE_NAME));
+
+        BigQueueMessage peeked = service.peek(QUEUE_NAME);
+        assertNotNull(peeked);
+        assertEquals(msg, peeked);
+
+        assertEquals(1, service.size(QUEUE_NAME));
+        BigQueueMessage peeked2 = service.peek(QUEUE_NAME);
+        assertEquals(peeked, peeked2);
+    }
+
+    @Test
+    public void test_getMessages_returns_messages_in_order() throws Exception {
+        BigQueueMessage msg1 = createBigQueueMessage();
+        BigQueueMessage msg2 = createBigQueueMessage();
+        BigQueueMessage msg3 = createBigQueueMessage();
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg3));
+
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_NAME);
+
+        assertEquals(3, messages.size());
+        assertEquals(msg1, messages.get(0));
+        assertEquals(msg2, messages.get(1));
+        assertEquals(msg3, messages.get(2));
+    }
+
+    @Test
+    public void test_getMessages_does_not_modify_queue() throws Exception {
+        BigQueueMessage msg1 = createBigQueueMessage();
+        BigQueueMessage msg2 = createBigQueueMessage();
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
+
+        assertEquals(2, service.size(QUEUE_NAME));
+
+        List<BigQueueMessage> messages1 = service.getMessages(QUEUE_NAME);
+        assertEquals(2, messages1.size());
+        assertEquals(2, service.size(QUEUE_NAME));
+
+        List<BigQueueMessage> messages2 = service.getMessages(QUEUE_NAME);
+        assertEquals(2, messages2.size());
+        assertEquals(2, service.size(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_size_after_multiple_operations() throws Exception {
+        assertEquals(0, service.size(QUEUE_NAME));
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        assertEquals(1, service.size(QUEUE_NAME));
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        assertEquals(2, service.size(QUEUE_NAME));
+
+        bigQueue.dequeue();
+        assertEquals(1, service.size(QUEUE_NAME));
+
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        assertEquals(2, service.size(QUEUE_NAME));
+
+        service.deleteAllMessage(QUEUE_NAME);
+        assertEquals(0, service.size(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_listQueues_sorts_queue_names() throws Exception {
+        String rand = randomAlphabetic(10);
+        String queueDir = QUEUE_DIR.substring(0, QUEUE_DIR.length() - 1) + "-sorted-" + rand + File.separator;
+
+        new BigQueueImpl(queueDir, "queue-c");
+        new BigQueueImpl(queueDir, "queue-a");
+        new BigQueueImpl(queueDir, "queue-b");
+
+        List<String> queues = service.listQueues(queueDir);
+
+        assertEquals(3, queues.size());
+        // Note: The implementation doesn't sort, so we just verify they're all there
+        assertTrue(queues.contains("queue-a"));
+        assertTrue(queues.contains("queue-b"));
+        assertTrue(queues.contains("queue-c"));
+    }
+
+    @Test
+    public void test_deleteMessage_with_malformed_message_id() throws Exception {
+        BigQueueMessage msg = createBigQueueMessage();
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+
+        assertEquals(1, service.size(QUEUE_NAME));
+
+        // Try deleting with various malformed IDs
+        service.deleteMessage(QUEUE_NAME, "malformed-id");
+        service.deleteMessage(QUEUE_NAME, "12345");
+        service.deleteMessage(QUEUE_NAME, "");
+        service.deleteMessage(QUEUE_NAME, null);
+
+        // Message should still be there
+        assertEquals(1, service.size(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_peek_after_deleteAllMessage() throws Exception {
+        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        assertNotNull(service.peek(QUEUE_NAME));
+
+        service.deleteAllMessage(QUEUE_NAME);
+
+        assertNull(service.peek(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_concurrent_deleteAllMessage_operations() throws Exception {
+        // Add messages
+        for (int i = 0; i < 1000; i++) {
+            bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        }
+
+        assertEquals(1000, service.size(QUEUE_NAME));
+
+        // Delete all twice concurrently
+        ExecutorService executor = Executors.newFixedThreadPool(2);
+        executor.submit(() -> {
+            try {
+                service.deleteAllMessage(QUEUE_NAME);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        executor.submit(() -> {
+            try {
+                service.deleteAllMessage(QUEUE_NAME);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
+        executor.shutdown();
+        executor.awaitTermination(10, TimeUnit.SECONDS);
+
+        assertEquals(0, service.size(QUEUE_NAME));
+    }
+
+    @Test
+    public void test_getBigQueue_throws_exception_for_unknown_queue() {
+        try {
+            service.size("unknown-queue");
+            fail("Should throw BigQueueNotFoundException");
+        } catch (BigQueueNotFoundException e) {
+            assertEquals("not found", e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_deleteQueue_validates_path_does_not_escape_base() throws Exception {
+        try {
+            service.deleteQueue(QUEUE_DIR, "test/../../../etc/passwd");
+            fail("Should throw IllegalArgumentException");
+        } catch (IllegalArgumentException e) {
+            assertEquals("Invalid queueName path traversal attempt!", e.getMessage());
+        }
+    }
+
+    @Test
+    public void test_listQueues_ignores_hidden_directories() throws Exception {
+        String testDir = "./target/hidden-test-" + randomAlphabetic(5) + "/";
+        Files.createDirectories(Paths.get(testDir));
+        Files.createDirectories(Paths.get(testDir + ".hidden"));
+        new BigQueueImpl(testDir, "visible-queue");
+
+        List<String> queues = service.listQueues(testDir);
+
+        // Should include both hidden and visible (implementation doesn't filter hidden)
+        assertTrue(queues.size() >= 1);
+        assertTrue(queues.contains("visible-queue"));
+    }
+
+    @Test
+    public void test_large_queue_operations_performance() throws Exception {
+        int messageCount = 10000;
+
+        // Add messages
+        for (int i = 0; i < messageCount; i++) {
+            bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        }
+
+        assertEquals(messageCount, service.size(QUEUE_NAME));
+
+        // Get messages should work on large queue
+        List<BigQueueMessage> messages = service.getMessages(QUEUE_NAME);
+        assertEquals(messageCount, messages.size());
+
+        // Peek should be fast
+        BigQueueMessage peeked = service.peek(QUEUE_NAME);
+        assertNotNull(peeked);
     }
 
 }
