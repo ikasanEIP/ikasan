@@ -299,7 +299,9 @@ public class ModuleControlApplication
         }
         catch (Exception e)
         {
-            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+            logger.error("Error changing context listeners state for module [{}], flow [{}], user [{}]."
+                , moduleName, flowName, user, e);
+            return new ResponseEntity("Unable to change Context Listeners state.", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity("Context Listeners state changed successfully!", HttpStatus.OK);
     }
@@ -340,7 +342,8 @@ public class ModuleControlApplication
         }
         catch (Exception e)
         {
-            return new ResponseEntity(e.getMessage(), HttpStatus.FORBIDDEN);
+            logger.error("Error applying module action [{}].", moduleActivationDto.getAction(), e);
+            return new ResponseEntity("Unable to apply module activation / deactivation!", HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity("Module action[%s] successfully applied!"
             .formatted(StringEscapeUtils.escapeHtml4(moduleActivationDto.getAction())), HttpStatus.OK);
