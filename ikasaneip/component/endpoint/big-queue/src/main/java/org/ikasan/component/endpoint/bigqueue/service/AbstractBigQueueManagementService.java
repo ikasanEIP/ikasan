@@ -60,7 +60,13 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      * @return true if the file path of the queue exist.
      */
     private boolean queueExists(String queueDir, String queueName) {
-        return Files.exists(Paths.get(queueDir + File.separator + queueName));
+        try {
+            return Files.exists(resolveQueuePath(queueDir, queueName));
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Invalid queue path requested for existence check. queueDir [{}], queueName [{}]"
+                , queueDir, queueName);
+            return false;
+        }
     }
 
     /**
@@ -170,9 +176,39 @@ public abstract class AbstractBigQueueManagementService implements BigQueueManag
      */
     @Override
     public void deleteQueue(String queueDir, String queueName) throws IOException {
-        if (queueExists(queueDir, queueName)) {
-            FileUtils.forceDelete(new File(queueDir + File.separator + queueName));
+        Path queuePath = resolveQueuePath(queueDir, queueName);
+
+        if (Files.exists(queuePath)) {
+            FileUtils.forceDelete(queuePath.toFile());
         }
+    }
+
+    /**
+     * Resolves the absolute normalized file system path for a specified queue directory and queue name.
+     * Validates the inputs and ensures that the resolved path does not escape the base directory hierarchy.
+     *
+     * @param queueDir the base directory where the queues are located
+     * @param queueName the name of the queue for which the path is being resolved
+     * @return the absolute normalized {@link Path} for the specified queue directory and queue name
+     * @throws IllegalArgumentException if either queueDir or queueName is null, empty, or invalid
+     */
+    private Path resolveQueuePath(String queueDir, String queueName) {
+        if(queueDir == null || queueDir.isBlank()) {
+            throw new IllegalArgumentException("Invalid queue dir!");
+        }
+
+        if(queueName == null || queueName.isBlank()) {
+            throw new IllegalArgumentException("Invalid queue name!");
+        }
+
+        Path basePath = Path.of(queueDir).toAbsolutePath().normalize();
+        Path resolvedPath = basePath.resolve(queueName).normalize();
+
+        if (!resolvedPath.startsWith(basePath)) {
+            throw new IllegalArgumentException("Invalid queueName path traversal attempt!");
+        }
+
+        return resolvedPath;
     }
 
     /**
