@@ -173,6 +173,12 @@
         <dependency>
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-access</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.micrometer</groupId>
+                    <artifactId>micrometer-observation</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
