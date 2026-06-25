@@ -18,10 +18,12 @@ import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBo
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 @RequestMapping("/rest/logs")
 @RestController
@@ -90,11 +92,17 @@ public class DownloadLogFileApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true, name = "fullFilePath") String fullFilePath,
                                                                  @RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
+        Path normalizedPath = Path.of(fullFilePath).normalize().toAbsolutePath();
+        File file = normalizedPath.toFile();
+
         try {
-            File file = new File(fullFilePath);
             String filename = file.getName();
-            if (StringUtils.containsAny(filename, "application.log", "h2.log", "h2-server.log")
-                        && file.length() < maxFileSizeInBytes) {
+            Set<String> allowedLogFiles = Set.of("application.log", "h2.log", "h2-server.log");
+
+            if(allowedLogFiles.contains(filename)
+                && file.exists()
+                && file.isFile()
+                && file.length() < maxFileSizeInBytes) {
                 InputStream inputStream = new FileInputStream(file);
                 StreamingResponseBody body = outputStream -> FileCopyUtils.copy(inputStream, outputStream);
 
@@ -104,19 +112,38 @@ public class DownloadLogFileApplication {
                     .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                     .body(body);
             } else {
+                String errorMsg = "Not able to download the file for [" + file.getAbsolutePath() + "]. ";
+                if(!allowedLogFiles.contains(filename)) {
+                    errorMsg = errorMsg +
+                        "Log file name must be one of the following[application.log, h2.log, h2-server.log]";
+                }
+                else if(!file.exists()) {
+                    errorMsg = errorMsg +
+                        "The file does not exist!";
+                }
+                else if(!file.isFile()) {
+                    errorMsg = errorMsg +
+                        "The file is in fact not a file!";
+                }
+                else {
+                    errorMsg = errorMsg +
+                        "Log file is too big to download. Maximum size allowed is " + maxFileSizeInBytes + " bytes.";
+                }
+
+                String finalErrorMsg = errorMsg;
+                LOG.error("Something has gone wrong when trying to download the file [{}], error[{}]!"
+                    , fullFilePath, errorMsg);
                 return ResponseEntity
                     .internalServerError()
                     .header("Content-Disposition", "attachment;filename=" + filename)
                     .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
                     .body(outputStream -> {
-                        String errorMsg = "Not able to download the file for [" + filename + "]. " +
-                            "Log file maybe too big to download. Maximum size allowed is " + maxFileSizeInBytes + " bytes.";
-                        outputStream.write(errorMsg.getBytes());
+                        outputStream.write(finalErrorMsg.getBytes());
                         outputStream.close();
                     });
             }
         } catch (Exception e) {
-            LOG.error("Something has gone wrong when trying to download the file [{}]", fullFilePath);
+            LOG.error("Something has gone wrong when trying to download the file [{}]", fullFilePath, e);
             return ResponseEntity
                 .internalServerError()
                 .header("Content-Disposition", "attachment;filename=error.txt")
