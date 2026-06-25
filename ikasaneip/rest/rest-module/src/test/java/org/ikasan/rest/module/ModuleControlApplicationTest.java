@@ -256,7 +256,7 @@ public class ModuleControlApplicationTest
         MvcResult result = mockMvc.perform(requestBuilder).andReturn();
         Mockito.verifyNoMoreInteractions(moduleActivator);
         assertEquals(HttpStatus.FORBIDDEN.value(), result.getResponse().getStatus());
-        assertEquals("\"Could not load module!\"", result.getResponse().getContentAsString());
+        assertEquals("\"Unable to apply module activation / deactivation!\"", result.getResponse().getContentAsString());
     }
 
     @Test
