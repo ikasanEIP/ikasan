@@ -710,4 +710,328 @@ public class DownloadLogFileApplicationTest {
         Assert.assertTrue(results.getResponse().getContentAsString().contains("application.log"));
         Assert.assertTrue(results.getResponse().getContentAsString().contains("h2.log"));
     }
+
+    // ==================== Path Traversal & Security Tests ====================
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_path_traversal_with_dot_dot_blocked() throws Exception {
+        // Attempt to access file outside working directory using ../
+        String maliciousPath = System.getProperty("user.dir") + "/../../../etc/passwd";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + maliciousPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block path traversal",
+            errorMessage.contains("You are not permitted to download from this location") ||
+            errorMessage.contains("Log file name must be one of the following"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_absolute_path_outside_working_dir_blocked() throws Exception {
+        // Attempt to access absolute path outside working directory
+        String absolutePath = "/etc/passwd";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + absolutePath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block access outside working directory",
+            errorMessage.contains("You are not permitted to download from this location"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_path_within_working_directory_allowed() throws Exception {
+        Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
+
+        File[] filesList = new File(path.toUri()).listFiles();
+        String fullPathName = "";
+        for (File file : filesList) {
+            if (file.getAbsoluteFile().isFile()) {
+                if (file.getName().equals("application.log")) {
+                    fullPathName = String.valueOf(file.getAbsoluteFile());
+                }
+            }
+        }
+
+        // Verify the path is within working directory
+        Assert.assertTrue("Test setup: file should be in working directory",
+            Path.of(fullPathName).startsWith(Path.of(System.getProperty("user.dir"))));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + fullPathName)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andReturn();
+
+        Assert.assertEquals("Some application logging", results.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_path_traversal_encoded_blocked() throws Exception {
+        // URL encoded path traversal attempt: ..%2F..%2F..%2Fetc%2Fpasswd
+        String encodedPath = System.getProperty("user.dir") + "/..%2F..%2F..%2Fetc%2Fpasswd";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + encodedPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block encoded path traversal",
+            errorMessage.contains("You are not permitted to download from this location") ||
+            errorMessage.contains("Log file name must be one of the following"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_path_with_symbolic_reference() throws Exception {
+        // Attempt with path containing . and .. references
+        Path validPath = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs", "application.log");
+        String pathWithDots = validPath.getParent().toString() + "/./subdir/../application.log";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + pathWithDots)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andReturn();
+
+        // Should succeed because after normalization, it's within working directory
+        Assert.assertEquals("Some application logging", results.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_temp_directory_access_blocked() throws Exception {
+        // Attempt to access /tmp or system temp directory
+        String tempPath = "/tmp/application.log";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + tempPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block access to temp directory",
+            errorMessage.contains("You are not permitted to download from this location"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_home_directory_access_blocked() throws Exception {
+        // Attempt to access home directory
+        String homePath = System.getProperty("user.home") + "/application.log";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + homePath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block access to home directory",
+            errorMessage.contains("You are not permitted to download from this location"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_windows_path_traversal_blocked() throws Exception {
+        // Windows-style path traversal
+        String windowsPath = System.getProperty("user.dir") + "\\..\\..\\..\\windows\\system32\\config\\sam";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + windowsPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block Windows-style path traversal",
+            errorMessage.contains("You are not permitted to download from this location") ||
+            errorMessage.contains("Log file name must be one of the following"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_null_byte_injection() throws Exception {
+        // Null byte injection attempt
+        Path validPath = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
+        String nullBytePath = validPath + "/application.log\0.txt";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + nullBytePath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        // Should fail due to invalid filename or file not found
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should handle null byte injection",
+            errorMessage.contains("Something has gone wrong when trying to download the file"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_double_encoded_path_traversal() throws Exception {
+        // Double encoded path traversal: %252E%252E%252F (which is ../)
+        String doubleEncodedPath = System.getProperty("user.dir") + "/%252E%252E%252F%252E%252E%252Fetc%252Fpasswd";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + doubleEncodedPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should block double encoded path traversal",
+            errorMessage.contains("You are not permitted to download from this location") ||
+            errorMessage.contains("Log file name must be one of the following"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_path_normalization_prevents_escape() throws Exception {
+        // Complex path that tries to escape but should be normalized
+        String complexPath = System.getProperty("user.dir") + "/src/test/../../../../../../etc/passwd";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + complexPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should prevent escape after normalization",
+            errorMessage.contains("You are not permitted to download from this location"));
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_validates_file_is_within_working_dir() throws Exception {
+        Path workingDir = Path.of(System.getProperty("user.dir"));
+        Path validLogPath = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs", "application.log");
+
+        // Verify test assumption
+        Assert.assertTrue("Test file should be within working directory",
+            validLogPath.toAbsolutePath().normalize().startsWith(workingDir.toAbsolutePath().normalize()));
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + validLogPath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.OK.value()))
+            .andReturn();
+
+        Assert.assertEquals("Some application logging", results.getResponse().getContentAsString());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_security_error_message_format() throws Exception {
+        String outsidePath = "/etc/passwd";
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + outsidePath)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Error message should be clear about permission",
+            errorMessage.contains("You are not permitted to download from this location"));
+        Assert.assertEquals("Content type should still be octet stream",
+            MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void test_downloadLogFile_case_sensitive_filename_validation() throws Exception {
+        // Attempt with different case (should fail if case-sensitive)
+        Path path = Path.of(System.getProperty("user.dir"), "src", "test", "resources", "data", "logs");
+        File[] filesList = new File(path.toUri()).listFiles();
+        String fullPathName = "";
+        for (File file : filesList) {
+            if (file.getAbsoluteFile().isFile() && file.getName().equals("application.log")) {
+                // Change the filename case in the path
+                fullPathName = file.getAbsolutePath().replace("application.log", "APPLICATION.LOG");
+            }
+        }
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/logs/downloadLogFile?maxFileSize=20971520&fullFilePath=" + fullPathName)
+            .accept(MediaType.APPLICATION_OCTET_STREAM_VALUE)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        MvcResult results = mockMvc.perform(requestBuilder)
+            .andExpect(request().asyncStarted())
+            .andDo(MvcResult::getAsyncResult)
+            .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
+            .andReturn();
+
+        String errorMessage = results.getResponse().getContentAsString();
+        Assert.assertTrue("Should validate filename case-sensitively",
+            errorMessage.contains("Log file name must be one of the following"));
+    }
 }

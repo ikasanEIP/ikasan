@@ -92,12 +92,26 @@ public class DownloadLogFileApplication {
     @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
     public ResponseEntity<StreamingResponseBody> downloadLogFile(@RequestParam(required = true, name = "fullFilePath") String fullFilePath,
                                                                  @RequestParam(required = true, name = "maxFileSize") long maxFileSizeInBytes) {
-        Path normalizedPath = Path.of(fullFilePath).normalize().toAbsolutePath();
-        File file = normalizedPath.toFile();
-
         try {
+            Path normalizedPath = Path.of(fullFilePath).normalize().toAbsolutePath();
+            File file = normalizedPath.toFile();
+            Path path = Path.of(System.getProperty("user.dir"));
+
             String filename = file.getName();
             Set<String> allowedLogFiles = Set.of("application.log", "h2.log", "h2-server.log");
+
+            if(!file.toPath().startsWith(path)) {
+                return ResponseEntity
+                    .internalServerError()
+                    .header("Content-Disposition", "attachment;filename=" + filename)
+                    .contentType(MediaType.valueOf(MediaType.APPLICATION_OCTET_STREAM_VALUE))
+                    .body(outputStream -> {
+                        String errorMessage = "An invalid file path has been provided. You are not permitted to " +
+                            "download from this location!";
+                        outputStream.write(errorMessage.getBytes());
+                        outputStream.close();
+                    });
+            }
 
             if(allowedLogFiles.contains(filename)
                 && file.exists()
