@@ -311,7 +311,6 @@
         <version.xmlunit>1.5</version.xmlunit>
         <version.net.sf.json-lib>2.4</version.net.sf.json-lib>
         <version.org.json>20231013</version.org.json>
-        <version.xerces>2.12.2</version.xerces>
         <version.com.io7m.xom>1.2.10</version.com.io7m.xom>
         <version.commons-codec>1.13</version.commons-codec>
         <version.commons-collections>3.2.2</version.commons-collections>
@@ -2014,12 +2013,6 @@
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
                 <version>${version.org.json}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>xerces</groupId>
-                <artifactId>xercesImpl</artifactId>
-                <version>${version.xerces}</version>
             </dependency>
 
             <dependency>
