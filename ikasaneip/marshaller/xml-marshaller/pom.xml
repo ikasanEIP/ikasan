@@ -70,11 +70,6 @@
         </dependency>
 
         <dependency>
-            <groupId>xerces</groupId>
-            <artifactId>xercesImpl</artifactId>
-        </dependency>
-
-        <dependency>
             <groupId>com.io7m.xom</groupId>
             <artifactId>xom</artifactId>
         </dependency>
