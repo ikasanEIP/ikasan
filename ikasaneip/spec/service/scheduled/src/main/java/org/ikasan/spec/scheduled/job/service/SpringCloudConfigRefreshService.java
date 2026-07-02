@@ -32,7 +32,13 @@ public interface SpringCloudConfigRefreshService {
     String encrypt(String valueToEncrypt);
 
     /**
-     * Service to run the Spring Actuator Refresh
+     * Service to run the Spring Actuator Refresh on this node.
      */
     void actuatorRefresh();
+
+    /**
+     * Service to run the Spring Actuator Refresh on a specific peer node URL.
+     * @param baseUrl base URL of the peer dashboard node (e.g. http://peer-host:9090)
+     */
+    void actuatorRefreshAtUrl(String baseUrl);
 }

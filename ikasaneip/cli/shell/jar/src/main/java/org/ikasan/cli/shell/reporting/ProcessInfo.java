@@ -43,8 +43,6 @@ package org.ikasan.cli.shell.reporting;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.json.JSONObject;
 
-import java.util.Optional;
-
 /**
  * ProcessInfo model.
  *
@@ -160,25 +158,30 @@ public class ProcessInfo
     public ProcessInfo setProcess(Process process)
     {
         this.process = process;
-        if(process != null && process.info() != null)
+        if(process != null)
         {
             this.running = process.isAlive();
             this.pid = process.pid();
 
-            if (process.info().command().isPresent())
+            // process.info() re-queries the live OS process table on every call, so it can return a
+            // different snapshot each time - for a short-lived process (e.g. the "kill -9" used to stop
+            // Solr) it can go from present to empty between two calls if the process exits in between.
+            // Take a single snapshot here and reuse it so the isPresent()/get() pairs below stay consistent.
+            ProcessHandle.Info info = process.info();
+
+            if (info.command().isPresent())
             {
-                this.command = process.info().command().get();
+                this.command = info.command().get();
             }
 
-            if (process.info().user().isPresent())
+            if (info.user().isPresent())
             {
-                this.username = process.info().user().get();
+                this.username = info.user().get();
             }
 
-            Optional<String> commandLine = process.info().commandLine();
-            if (commandLine.isPresent())
+            if (info.commandLine().isPresent())
             {
-                this.commandLine = process.info().commandLine().get();
+                this.commandLine = info.commandLine().get();
             }
         }
 

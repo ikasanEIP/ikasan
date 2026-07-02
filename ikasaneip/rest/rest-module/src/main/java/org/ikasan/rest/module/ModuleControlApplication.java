@@ -193,6 +193,9 @@ public class ModuleControlApplication
     /**
      * Retrieves a specific flow within a module based on the provided module name and flow name.
      *
+     * The module is explicitly null-checked before accessing its flows to return a clean 404
+     * rather than leaking a NullPointerException stack trace to the caller (IKASAN-2738).
+     *
      * @param moduleName The name of the module containing the flow.
      * @param flowName The name of the specific flow to retrieve.
      * @return ResponseEntity representing the retrieved FlowDto containing flow information.
@@ -205,6 +208,12 @@ public class ModuleControlApplication
         @PathVariable("flowName") String flowName)
     {
         Module<Flow> module = moduleService.getModule(moduleName);
+        if (module == null)
+        {
+            return new ResponseEntity(new ErrorDto("Module [" + moduleName + "] not found."),
+                HttpStatus.NOT_FOUND);
+        }
+
         Flow flow = module.getFlow(flowName);
         if (flow != null)
             return new ResponseEntity(new FlowDto(flow.getName(), flow.getState()), HttpStatus.OK);

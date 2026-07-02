@@ -59,6 +59,16 @@
         <dependency>
             <groupId>me.snowdrop</groupId>
             <artifactId>narayana-spring-boot-starter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.jboss.narayana.jta</groupId>
+                    <artifactId>narayana-jta</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-pool2</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
