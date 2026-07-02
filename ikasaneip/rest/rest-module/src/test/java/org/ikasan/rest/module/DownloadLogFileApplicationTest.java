@@ -158,9 +158,9 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .andReturn();
 
-        Assert.assertTrue(results.getResponse().getContentAsString().endsWith("/ikasan/ikasaneip/rest" +
-            "/rest-module/src/test/resources/data/logs/application.log]. Log file is too big to download. Maximum size " +
-            "allowed is 20 bytes."));
+        Assert.assertEquals("Not able to download the file for [" + fullPathName +
+            "]. Log file is too big to download. Maximum size allowed is 20 bytes.",
+            results.getResponse().getContentAsString());
         Assert.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
         Assert.assertEquals("attachment;filename=application.log", results.getResponse().getHeader("Content-Disposition"));
     }
@@ -190,9 +190,9 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .andReturn();
 
-        Assert.assertTrue(results.getResponse().getContentAsString().endsWith("/ikasan/ikasaneip/rest" +
-            "/rest-module/src/test/resources/data/logs/some-random-file.txt]. Log file name must be one of the " +
-            "following[application.log, h2.log, h2-server.log]"));
+        Assert.assertEquals("Not able to download the file for [" + fullPathName +
+            "]. Log file name must be one of the following[application.log, h2.log, h2-server.log]",
+            results.getResponse().getContentAsString());
         Assert.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
         Assert.assertEquals("attachment;filename=some-random-file.txt", results.getResponse().getHeader("Content-Disposition"));
     }
@@ -224,9 +224,9 @@ public class DownloadLogFileApplicationTest {
             .andExpect(status().is(HttpStatus.INTERNAL_SERVER_ERROR.value()))
             .andReturn();
 
-        Assert.assertTrue(results.getResponse().getContentAsString().endsWith("/ikasan/ikasaneip/rest/rest-module" +
-            "/src/test/resources/data/logs/application.log.doesNotExist.log]. Log file name must be one of the " +
-            "following[application.log, h2.log, h2-server.log]"));
+        Assert.assertEquals("Not able to download the file for [" + fullPathName +
+            "]. Log file name must be one of the following[application.log, h2.log, h2-server.log]",
+            results.getResponse().getContentAsString());
         Assert.assertEquals(MediaType.APPLICATION_OCTET_STREAM_VALUE, results.getResponse().getContentType());
         Assert.assertEquals("attachment;filename=application.log.doesNotExist.log", results.getResponse().getHeader("Content-Disposition"));
     }

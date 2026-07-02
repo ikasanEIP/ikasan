@@ -164,6 +164,26 @@ public class ModuleControlApplicationTest
 
     @Test
     @WithMockUser(authorities = "WebServiceAdmin")
+    public void getFlowStateWhenModuleDoesntExist() throws Exception
+    {
+        Mockito
+            .when(moduleService.getModule("nonExistingModule"))
+            .thenReturn(null);
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/rest/moduleControl/nonExistingModule/test Flow")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+        Mockito
+            .verify(moduleService).getModule("nonExistingModule");
+        Mockito.verifyNoMoreInteractions(moduleService);
+        assertEquals(404, result.getResponse().getStatus());
+        JSONAssert.assertEquals("JSON Result must equal!",
+            "{\"errorMessage\":\"Module [nonExistingModule] not found.\"}",
+            result.getResponse().getContentAsString(),
+            JSONCompareMode.LENIENT);
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
     public void moduleControl() throws Exception
     {
         RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/rest/moduleControl")
