@@ -4,6 +4,6 @@
   "firstName": "TestName",
   "surname": "TestSurname",
   "department": "department",
-  "enabled": true
-
+  "enabled": true,
+  "principals": [{"name": "name"}]
 }

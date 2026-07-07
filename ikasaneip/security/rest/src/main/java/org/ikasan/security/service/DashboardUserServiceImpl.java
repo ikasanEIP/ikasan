@@ -40,16 +40,12 @@
  */
 package org.ikasan.security.service;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import org.ikasan.security.service.dto.JwtRequest;
 import org.ikasan.security.service.dto.JwtResponse;
-import org.ikasan.security.service.model.UserImpl;
-import org.ikasan.spec.security.model.Policy;
-import org.ikasan.spec.security.model.User;
-import org.ikasan.spec.security.model.UserFilter;
-import org.ikasan.spec.security.model.UserLite;
+import org.ikasan.security.service.model.*;
+import org.ikasan.spec.security.model.*;
 import org.ikasan.spec.security.service.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,12 +53,16 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.*;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -114,8 +114,26 @@ public class DashboardUserServiceImpl implements UserService
     {
         super();
         this.restTemplate = new RestTemplate();
-        MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
-        jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+
+        final var simpleModule = new SimpleModule()
+            .addAbstractTypeMapping(AuthenticationMethod.class, AuthenticationMethodImpl.class)
+            .addAbstractTypeMapping(IkasanPrincipal.class, IkasanPrincipalImpl.class)
+            .addAbstractTypeMapping(Policy.class, PolicyImpl.class)
+            .addAbstractTypeMapping(Role.class, RoleImpl.class)
+            .addAbstractTypeMapping(RoleJobPlan.class, RoleJobPlanImpl.class)
+            .addAbstractTypeMapping(RoleModule.class, RoleModuleImpl.class)
+            .addAbstractTypeMapping(User.class, UserImpl.class);
+
+        JsonMapper mapper = JsonMapper.builder()
+            .addModules(simpleModule)
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
+
+        JacksonJsonHttpMessageConverter jsonHttpMessageConverter = new JacksonJsonHttpMessageConverter(mapper);
+
+        // Clear default converters and add our configured converter first
+        restTemplate.getMessageConverters().clear();
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
         isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
         if (isEnabled)
@@ -292,12 +310,13 @@ public class DashboardUserServiceImpl implements UserService
     {
         HttpHeaders headers = createHttpHeaders(true);
         HttpEntity entity = new HttpEntity(headers);
-        Map<String, String> params = new HashMap<String, String>();
+        Map<String, String> params = new HashMap<>();
         params.put("username", username);
         try
         {
-            ResponseEntity<UserImpl> user = restTemplate
-                .exchange(baseUrl + SERVICE_USER_PATH, HttpMethod.GET, entity, UserImpl.class, params);
+            ResponseEntity<User> user = restTemplate
+                .exchange(baseUrl + SERVICE_USER_PATH, HttpMethod.GET, entity,
+                    new ParameterizedTypeReference<>() {}, params);
             if (user.getBody() == null)
             {
                 throw new UsernameNotFoundException("Unknown username : " + username);
@@ -334,7 +353,6 @@ public class DashboardUserServiceImpl implements UserService
      */
     public List<Policy> getAuthorities()
     {
-        //        throw new UnsupportedOperationException("Not Supported operation.");
         return new ArrayList<>();
     }
 

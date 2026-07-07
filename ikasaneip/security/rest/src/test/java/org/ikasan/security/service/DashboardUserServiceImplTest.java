@@ -4,6 +4,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import com.google.common.cache.Cache;
 import org.apache.commons.io.FileUtils;
+import org.ikasan.security.service.model.IkasanPrincipalImpl;
 import org.ikasan.spec.security.model.User;
 import org.ikasan.security.service.model.UserImpl;
 import org.ikasan.security.service.dto.JwtRequest;
@@ -153,6 +154,11 @@ public class DashboardUserServiceImplTest
         expected.setDepartment("department");
         expected.setFirstName("TestName");
         expected.setSurname("TestSurname");
+
+        IkasanPrincipalImpl ikasanPrincipal = new IkasanPrincipalImpl();
+        ikasanPrincipal.setName("name");
+
+        expected.addPrincipal(ikasanPrincipal);
 
         User result = uut.loadUserByUsername("admin");
         assertEquals(expected, result);
