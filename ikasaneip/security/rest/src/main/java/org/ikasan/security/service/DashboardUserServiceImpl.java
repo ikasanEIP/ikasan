@@ -132,9 +132,7 @@ public class DashboardUserServiceImpl implements UserService
 
         JacksonJsonHttpMessageConverter jsonHttpMessageConverter = new JacksonJsonHttpMessageConverter(mapper);
 
-        // Clear default converters and add our configured converter first
-        restTemplate.getMessageConverters().clear();
-        restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
+        restTemplate.getMessageConverters().addFirst(jsonHttpMessageConverter);
         isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
         if (isEnabled)
         {
