@@ -70,6 +70,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -173,7 +174,16 @@ public class XMLValidator<SOURCE, TARGET>
             byte[] xmlBytes = sourceAsInputStream.readAllBytes();
             sourceAsInputStream = new ByteArrayInputStream(xmlBytes);
 
-            List<String> schemaLocations = extractSchemaLocations(new ByteArrayInputStream(xmlBytes));
+            List<String> schemaLocations;
+
+            // Use schema locations from configuration if provided, otherwise extract from XML
+            if(this.configuration.getSchemaLocations() != null &&
+                !this.configuration.getSchemaLocations().isEmpty()) {
+                schemaLocations = this.configuration.getSchemaLocations();
+            }
+            else {
+                schemaLocations = extractSchemaLocations(new ByteArrayInputStream(xmlBytes));
+            }
 
             // Get or compile schema
             Schema schema = getOrCompileSchema(schemaLocations);
@@ -281,8 +291,12 @@ public class XMLValidator<SOURCE, TARGET>
             throw new SAXException("No schema location found in XML document");
         }
 
-        // Create a cache key from all schema locations
-        String cacheKey = String.join("|", schemaLocations);
+        // Sort schema locations to create a consistent cache key regardless of order
+        List<String> sortedLocations = new ArrayList<>(schemaLocations);
+        Collections.sort(sortedLocations);
+
+        // Create a cache key from all sorted schema locations
+        String cacheKey = String.join("|", sortedLocations);
 
         // Check cache first
         Schema schema = schemaCache.get(cacheKey);

@@ -40,6 +40,8 @@
  */
 package org.ikasan.component.validator.xml;
 
+import java.util.List;
+
 /**
  * Configuration bean for the SchematronValidator
  */
@@ -48,7 +50,7 @@ public class XMLValidatorConfiguration
     /**
      * Option to skip the validation, defaults to false
      */
-    public boolean skipValidation = false;
+    private boolean skipValidation = false;
 
     /**
      * Option to throw an exception on any validation failure, defaults to false
@@ -58,47 +60,132 @@ public class XMLValidatorConfiguration
     /**
      * Option to return ValidationResult object as result of validation, defaults to false
      */
-    public boolean returnValidationResult = false;
+    private boolean returnValidationResult = false;
 
+    /**
+     * Represents the URL of the catalog used for configuring schema validation.
+     * This field is used to specify the location of the catalog file, which can
+     * contain mappings for XML schemas and other related resources to facilitate
+     * validation processes.
+     */
     private String catalogUrl;
 
+    /**
+     * A collection of schema locations used for validation purposes.
+     * Each location in the list represents a URI or path pointing to
+     * an XML Schema definition (XSD). These schemas define the structure
+     * and constraints for XML documents to be validated.
+     *
+     * This field is typically used as part of a configuration for XML validation
+     * and can accommodate multiple schema definitions to support validation
+     * of documents against multiple namespaces or schemas.
+     */
+    private List<String> schemaLocations;
+
+    /**
+     * Returns whether validation should be skipped.
+     *
+     * @return true if validation is set to be skipped, false otherwise
+     */
     public boolean isSkipValidation()
     {
         return skipValidation;
     }
 
+    /**
+     * Sets the skipValidation flag, which determines whether validation should be skipped.
+     *
+     * @param skipValidation a boolean value indicating whether validation should be skipped.
+     *                        If true, validation will be bypassed; if false, validation will occur.
+     */
     public void setSkipValidation(boolean skipValidation)
     {
         this.skipValidation = skipValidation;
     }
 
+    /**
+     * Returns whether an exception should be thrown on validation failure.
+     *
+     * @return {@code true} if exceptions are to be thrown on validation failures,
+     *         {@code false} otherwise.
+     */
     public boolean isThrowExceptionOnValidationFailure()
     {
         return throwExceptionOnValidationFailure;
     }
 
+    /**
+     * Sets whether an exception should be thrown on a validation failure.
+     *
+     * @param throwExceptionOnValidationFailure if true, an exception will be thrown
+     *        when a validation failure occurs; if false, validation failures will
+     *        not throw exceptions.
+     */
     public void setThrowExceptionOnValidationFailure(boolean throwExceptionOnValidationFailure)
     {
         this.throwExceptionOnValidationFailure = throwExceptionOnValidationFailure;
     }
 
+    /**
+     * Determines whether the validation process will return a ValidationResult object.
+     *
+     * @return true if the validation process is configured to return a ValidationResult object,
+     *         false otherwise.
+     */
     public boolean isReturnValidationResult()
     {
         return returnValidationResult;
     }
 
+    /**
+     * Sets the flag indicating whether the validation process should return a
+     * {@code ValidationResult} object as its result.
+     *
+     * @param returnValidationResult a boolean value where {@code true} indicates
+     *                               that a {@code ValidationResult} object should
+     *                               be returned, and {@code false} indicates it should not.
+     */
     public void setReturnValidationResult(boolean returnValidationResult)
     {
         this.returnValidationResult = returnValidationResult;
     }
 
+    /**
+     * Retrieves the catalog URL used for validation configurations.
+     *
+     * @return the catalog URL as a String, or null if not set.
+     */
     public String getCatalogUrl()
     {
         return catalogUrl;
     }
 
+    /**
+     * Sets the catalog URL to be used for schema validation configuration.
+     *
+     * @param catalogUrl the URL of the catalog to be set
+     */
     public void setCatalogUrl(String catalogUrl)
     {
         this.catalogUrl = catalogUrl;
+    }
+
+    /**
+     * Retrieves the list of schema locations configured for validation.
+     *
+     * @return a List of Strings representing the schema locations.
+     */
+    public List<String> getSchemaLocations() {
+        return schemaLocations;
+    }
+
+    /**
+     * Sets the schema locations to be used for XML validation.
+     *
+     * @param schemaLocations a list of schema location strings, where each string represents
+     *                        the location of an XML schema to be used for validation.
+     */
+    public void setSchemaLocations(List<String> schemaLocations) {
+        this.schemaLocations = schemaLocations;
     }
 }
