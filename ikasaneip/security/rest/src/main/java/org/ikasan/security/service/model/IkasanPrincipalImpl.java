@@ -45,6 +45,7 @@ import org.ikasan.spec.security.model.Role;
 
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 public class IkasanPrincipalImpl implements IkasanPrincipal
@@ -162,5 +163,24 @@ public class IkasanPrincipalImpl implements IkasanPrincipal
             this.roles = new HashSet<>();
         }
         this.roles.add(role);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        IkasanPrincipalImpl that = (IkasanPrincipalImpl) o;
+        return Objects.equals(id, that.id)
+            && Objects.equals(name, that.name)
+            && Objects.equals(type, that.type)
+            && Objects.equals(createdDateTime, that.createdDateTime)
+            && Objects.equals(updatedDateTime, that.updatedDateTime)
+            && Objects.equals(roles, that.roles)
+            && Objects.equals(description, that.description)
+            && Objects.equals(applicationSecurityBaseDn, that.applicationSecurityBaseDn);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, type, createdDateTime, updatedDateTime, roles, description, applicationSecurityBaseDn);
     }
 }

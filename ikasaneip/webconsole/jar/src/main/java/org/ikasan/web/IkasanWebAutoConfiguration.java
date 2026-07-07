@@ -166,7 +166,6 @@ public class IkasanWebAutoConfiguration implements WebMvcConfigurer
             ,dashboardUserService,securityService, environment);
         AuthenticationService authenticationService = new AuthenticationServiceImpl(authenticationProviderFactory, securityService);
         return new CustomAuthenticationProvider(authenticationService);
-
     }
 
     @Bean
