@@ -82,8 +82,10 @@
 
     </ul>
 	<span id="sessioninfo">
-		logged in as
-		<!--security:authentication property="principal.username"/> --> - <a href="${logoutUrl}">Logout</a>
+        <form action="${logoutUrl}" method="post">
+            <input type="submit" value="Logout"/>
+            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+        </form>
 	</span>
 </div>
 
