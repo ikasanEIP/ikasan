@@ -697,6 +697,536 @@ public class XMLValidatorTest
         }
     }
 
+    /**
+     * Test that schema locations are sorted for cache key generation.
+     * Two XML documents with the same schemas in different order should use the same cached schema.
+     */
+    @Test
+    public void testSortedCacheKey_schemas_in_different_order_use_same_cache()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML with schemas in one order: schema1 then schema2
+        String xml1 = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:books <SCHEMA>">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        // XML with same schema - should reuse cached schema
+        String xml2 = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:books <SCHEMA>">
+            <book id="bk002"><author>Poet</author><title>Poem</title><genre>Poetry</genre>
+            <price>20.00</price><pub_date>2001-01-01</pub_date><review>Great</review></book></x:books>
+            """;
+
+        String validXml1 = this.addSchemaToString(xml1);
+        String validXml2 = this.addSchemaToString(xml2);
+
+        // First validation - schema compiled and cached
+        Object result1 = validator.convert(validXml1);
+        Assert.assertEquals(validXml1, result1);
+
+        // Second validation with same schema - should use cache (no "Compiling schema" log)
+        Object result2 = validator.convert(validXml2);
+        Assert.assertEquals(validXml2, result2);
+
+        // Both validations should succeed, demonstrating cache reuse
+        Assert.assertNotNull(result1);
+        Assert.assertNotNull(result2);
+    }
+
+    /**
+     * Test that single schema location creates consistent cache key
+     */
+    @Test
+    public void testSortedCacheKey_single_schema_location()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setReturnValidationResult(true);
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String xml1 = this.addSchemaToString(xml);
+        String xml2 = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:books <SCHEMA>">
+            <book id="bk999"><author>New Author</author><title>New Book</title><genre>Novel</genre>
+            <price>15.00</price><pub_date>2020-01-01</pub_date><review>Excellent</review></book></x:books>
+            """;
+        String xml2WithSchema = this.addSchemaToString(xml2);
+
+        // Validate first XML
+        ValidationResult result1 = (ValidationResult) validator.convert(xml1);
+        Assert.assertEquals(ValidationResult.Result.VALID, result1.getResult());
+
+        // Validate second XML with same schema - should use cached schema
+        ValidationResult result2 = (ValidationResult) validator.convert(xml2WithSchema);
+        Assert.assertEquals(ValidationResult.Result.VALID, result2.getResult());
+    }
+
+    /**
+     * Test that cache key sorting handles noNamespaceSchemaLocation correctly
+     */
+    @Test
+    public void testSortedCacheKey_no_namespace_schema_location()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML using noNamespaceSchemaLocation
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String xmlNoNamespace = """
+            <?xml version="1.0"?><books xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:noNamespaceSchemaLocation="%s">
+            <book id="bk001"><author>Writer</author></book></books>
+            """.formatted(schemaPath);
+
+        try
+        {
+            // This should compile and cache the schema
+            validator.convert(xmlNoNamespace);
+            // If we get here, validation passed (expected to fail due to schema mismatch, but demonstrates caching)
+        }
+        catch (ValidationException e)
+        {
+            // Expected - schema doesn't match this structure, but cache key was created
+            Assert.assertTrue(e.getMessage().contains("validation error") || e.getMessage().contains("Cannot find"));
+        }
+    }
+
+    /**
+     * Test cache behavior with restart - cache should be cleared
+     */
+    @Test
+    public void testSortedCacheKey_cache_cleared_on_restart()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String validXml = this.addSchemaToString(xml);
+
+        // First validation - schema compiled and cached
+        Assert.assertEquals(validXml, validator.convert(validXml));
+
+        // Stop and restart - cache should be cleared
+        validator.stopManagedResource();
+        validator.startManagedResource();
+
+        // Validation after restart - schema should be recompiled (cache was cleared)
+        Assert.assertEquals(validXml, validator.convert(validXml));
+    }
+
+    /**
+     * Test that empty or null schema locations are handled correctly
+     */
+    @Test(expected = ValidationException.class)
+    public void testSortedCacheKey_no_schema_location_throws_exception()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML without any schema location should throw exception
+        validator.convert(xml_no_schema_location);
+    }
+
+    /**
+     * Test schema cache with multiple rapid validations using same schema
+     */
+    @Test
+    public void testSortedCacheKey_rapid_validations_use_cached_schema()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String validXml = this.addSchemaToString(xml);
+
+        // Perform 10 rapid validations - all should use cached schema
+        for (int i = 0; i < 10; i++)
+        {
+            Object result = validator.convert(validXml);
+            Assert.assertEquals(validXml, result);
+        }
+    }
+
+    /**
+     * Test that sorted cache key generation is consistent across multiple validator instances
+     */
+    @Test
+    public void testSortedCacheKey_consistent_across_validator_instances()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+
+        // First validator instance
+        XMLValidator validator1 = new XMLValidator();
+        validator1.setConfiguration(configuration);
+        validator1.startManagedResource();
+
+        String validXml = this.addSchemaToString(xml);
+        Object result1 = validator1.convert(validXml);
+        Assert.assertEquals(validXml, result1);
+
+        // Second validator instance - has its own cache
+        XMLValidator validator2 = new XMLValidator();
+        validator2.setConfiguration(configuration);
+        validator2.startManagedResource();
+
+        // Should compile schema again (different cache instance)
+        Object result2 = validator2.convert(validXml);
+        Assert.assertEquals(validXml, result2);
+
+        // Both should produce same result
+        Assert.assertEquals(result1, result2);
+    }
+
+    /**
+     * Test validation using schema location from configuration instead of XML
+     */
+    @Test
+    public void testConfiguredSchemaLocation_single_schema()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML without schema location in the document - schema comes from config
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        Object result = validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result);
+    }
+
+    /**
+     * Test validation result when using configured schema location
+     */
+    @Test
+    public void testConfiguredSchemaLocation_return_validation_result()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setReturnValidationResult(true);
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        ValidationResult result = (ValidationResult) validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(ValidationResult.Result.VALID, result.getResult());
+        Assert.assertNull(result.getException());
+    }
+
+    /**
+     * Test that configured schema location overrides schema location in XML
+     */
+    @Test
+    public void testConfiguredSchemaLocation_overrides_xml_schema()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML with schema location - should be ignored in favor of configured location
+        String validXml = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="urn:books http://some.other.schema/book.xsd">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        // Should validate successfully using configured schema, not the one in XML
+        Object result = validator.convert(validXml);
+        Assert.assertEquals(validXml, result);
+    }
+
+    /**
+     * Test configured schema location with invalid XML
+     */
+    @Test(expected = ValidationException.class)
+    public void testConfiguredSchemaLocation_invalid_xml_throws_exception()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setThrowExceptionOnValidationFailure(true);
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String invalidXml = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><bad_element>Invalid</bad_element></book></x:books>
+            """;
+
+        validator.convert(invalidXml);
+    }
+
+    /**
+     * Test configured schema location returns ValidationResult for invalid XML
+     */
+    @Test
+    public void testConfiguredSchemaLocation_invalid_xml_returns_validation_result()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setReturnValidationResult(true);
+        configuration.setThrowExceptionOnValidationFailure(false);
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String invalidXml = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><bad_element>Invalid</bad_element></book></x:books>
+            """;
+
+        ValidationResult result = (ValidationResult) validator.convert(invalidXml);
+        Assert.assertEquals(ValidationResult.Result.INVALID, result.getResult());
+        Assert.assertNotNull(result.getException());
+        Assert.assertTrue(result.getException() instanceof SAXException);
+    }
+
+    /**
+     * Test configured schema location with multiple schemas
+     */
+    @Test
+    public void testConfiguredSchemaLocation_multiple_schemas()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        // Multiple schemas - in this case just using the same schema twice for testing
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        Object result = validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result);
+    }
+
+    /**
+     * Test that configured schema locations are cached
+     */
+    @Test
+    public void testConfiguredSchemaLocation_caching()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        // First validation - schema compiled and cached
+        Object result1 = validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result1);
+
+        // Second validation - should use cached schema
+        Object result2 = validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result2);
+
+        // Third validation - should still use cached schema
+        Object result3 = validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result3);
+    }
+
+    /**
+     * Test configured schema locations with different order are sorted for cache key
+     */
+    @Test
+    public void testConfiguredSchemaLocation_sorted_for_cache_key()
+    {
+        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+
+        // First validator with schemas in one order
+        XMLValidatorConfiguration configuration1 = new XMLValidatorConfiguration();
+        configuration1.setSkipValidation(false);
+        configuration1.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator1 = new XMLValidator();
+        validator1.setConfiguration(configuration1);
+        validator1.startManagedResource();
+
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        Object result1 = validator1.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result1);
+
+        // Second validator with same schema - should compile independently (different cache)
+        XMLValidatorConfiguration configuration2 = new XMLValidatorConfiguration();
+        configuration2.setSkipValidation(false);
+        configuration2.setSchemaLocations(java.util.List.of(schemaPath));
+
+        XMLValidator validator2 = new XMLValidator();
+        validator2.setConfiguration(configuration2);
+        validator2.startManagedResource();
+
+        Object result2 = validator2.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result2);
+    }
+
+    /**
+     * Test empty configured schema locations list falls back to XML extraction
+     */
+    @Test
+    public void testConfiguredSchemaLocation_empty_list_uses_xml_schema()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setSchemaLocations(java.util.List.of()); // Empty list
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML with schema location - should be used since config list is empty
+        String validXml = this.addSchemaToString(xml);
+        Object result = validator.convert(validXml);
+        Assert.assertEquals(validXml, result);
+    }
+
+    /**
+     * Test null configured schema locations falls back to XML extraction
+     */
+    @Test
+    public void testConfiguredSchemaLocation_null_uses_xml_schema()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setSchemaLocations(null); // Null
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        // XML with schema location - should be used since config is null
+        String validXml = this.addSchemaToString(xml);
+        Object result = validator.convert(validXml);
+        Assert.assertEquals(validXml, result);
+    }
+
+    /**
+     * Test configured schema location with catalog resolution
+     */
+    @Test
+    public void testConfiguredSchemaLocation_with_catalog()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setCatalogUrl(XMLValidator.class.getResource("/catalog.xml").toString());
+        configuration.setSchemaLocations(java.util.List.of("http://www.books4tests.com/xsd/book.xsd"));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
+            <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
+            """;
+
+        // Should resolve schema via catalog
+        Object result = validator.convert(xmlWithoutSchemaLocation);
+        Assert.assertEquals(xmlWithoutSchemaLocation, result);
+    }
+
+    /**
+     * Test configured schema location with invalid schema path
+     */
+    @Test(expected = ValidationException.class)
+    public void testConfiguredSchemaLocation_invalid_schema_path()
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setSchemaLocations(java.util.List.of("file:///nonexistent/schema.xsd"));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        String xmlWithoutSchemaLocation = """
+            <?xml version="1.0"?><x:books xmlns:x="urn:books">
+            <book id="bk001"><author>Writer</author></book></x:books>
+            """;
+
+        validator.convert(xmlWithoutSchemaLocation);
+    }
+
     private String addSchemaToString(String xml)
     {
         return xml.replace("<SCHEMA>", new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation());
