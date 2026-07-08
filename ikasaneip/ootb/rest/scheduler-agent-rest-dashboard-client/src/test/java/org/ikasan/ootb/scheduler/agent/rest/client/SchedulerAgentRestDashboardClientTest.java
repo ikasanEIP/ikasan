@@ -63,7 +63,7 @@ public class SchedulerAgentRestDashboardClientTest
     }
 
     @Test
-    public void puush_events_returns_201() {
+    public void push_events_returns_201() {
         uut = new DashboardRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory(), "/rest/harvest/scheduled");
         ContextualisedScheduledProcessEvent event = new ContextualisedScheduledProcessEventImpl();
         event.setAgentName("blah");
@@ -116,7 +116,8 @@ public class SchedulerAgentRestDashboardClientTest
         stubFor(post(urlEqualTo("/authenticate"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
-            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .withRequestBody(containing("\"username\":\"admin\""))
+            .withRequestBody(containing("\"password\":\"admin\""))
             .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
                 .withStatus(200)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
