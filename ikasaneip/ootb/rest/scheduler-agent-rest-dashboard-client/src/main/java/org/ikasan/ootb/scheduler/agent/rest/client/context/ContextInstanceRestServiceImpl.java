@@ -1,10 +1,8 @@
 package org.ikasan.ootb.scheduler.agent.rest.client.context;
 
-import static org.ikasan.spec.dashboard.DashboardRestService.*;
-
-import java.util.HashMap;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.dashboard.AbstractRestServiceImpl;
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
@@ -20,15 +18,16 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.databind.json.JsonMapper;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.ikasan.spec.dashboard.DashboardRestService.*;
 
 public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl implements ContextInstanceRestService<ContextInstance> {
     Logger logger = LoggerFactory.getLogger(ContextInstanceRestServiceImpl.class);
@@ -41,8 +40,11 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
                                           HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
                                           String path) {
         restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
-        MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
-        jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        JsonMapper mapper = JsonMapper.builder()
+            .configure(tools.jackson.databind.SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .build();
+
+        JacksonJsonHttpMessageConverter jsonHttpMessageConverter = new JacksonJsonHttpMessageConverter(mapper);
         restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
 
         super.url = environment.getProperty(DASHBOARD_BASE_URL_PROPERTY) + path;

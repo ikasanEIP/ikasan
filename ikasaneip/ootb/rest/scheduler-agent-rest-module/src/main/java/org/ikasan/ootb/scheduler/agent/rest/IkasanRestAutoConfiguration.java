@@ -41,19 +41,32 @@
 package org.ikasan.ootb.scheduler.agent.rest;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import org.ikasan.component.endpoint.bigqueue.service.BigQueueDirectoryManagementServiceImpl;
-import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
+import org.ikasan.job.orchestration.model.context.*;
+import org.ikasan.job.orchestration.model.job.*;
+import org.ikasan.ootb.scheduled.model.InternalEventDrivenJobInstanceImpl;
 import org.ikasan.ootb.scheduler.agent.rest.service.BigQueueManagementAppServiceImpl;
 import org.ikasan.spec.bigqueue.service.BigQueueDirectoryManagementService;
+import org.ikasan.spec.scheduled.context.model.*;
+import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.ScheduledProcessEvent;
+import org.ikasan.spec.scheduled.event.model.SchedulerJobInitiationEvent;
+import org.ikasan.spec.scheduled.instance.model.*;
+import org.ikasan.spec.scheduled.job.model.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverters;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration
 public class IkasanRestAutoConfiguration implements WebMvcConfigurer
@@ -98,14 +111,47 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Override
-    public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
-        converters.forEach(converter -> {
-            if(converter instanceof MappingJackson2HttpMessageConverter messageConverter) {
-                messageConverter.getObjectMapper().registerModule(ObjectMapperFactory.newSimpleModule());
-                messageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                messageConverter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            }
-        });
+    public void configureMessageConverters(HttpMessageConverters.ServerBuilder builder) {
+        JsonMapper jsonMapper = JsonMapper.builder()
+            .addModule(newSimpleModule())
+            .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL)
+                .withValueInclusion(JsonInclude.Include.NON_NULL))
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .build();
+
+        builder.disableDefaults();
+        builder.withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper));
     }
 
+    public static SimpleModule newSimpleModule() {
+        return new SimpleModule()
+            .addAbstractTypeMapping(And.class, AndImpl.class)
+            .addAbstractTypeMapping(Or.class, OrImpl.class)
+            .addAbstractTypeMapping(Not.class, NotImpl.class)
+            .addAbstractTypeMapping(ContextTemplate.class, ContextTemplateImpl.class)
+            .addAbstractTypeMapping(Context.class, ContextImpl.class)
+            .addAbstractTypeMapping(ContextParameter.class, ContextParameterImpl.class)
+            .addAbstractTypeMapping(SchedulerJob.class, SchedulerJobImpl.class)
+            .addAbstractTypeMapping(QuartzScheduleDrivenJob.class, QuartzScheduleDrivenJobImpl.class)
+            .addAbstractTypeMapping(FileEventDrivenJob.class, FileEventDrivenJobImpl.class)
+            .addAbstractTypeMapping(InternalEventDrivenJob.class, InternalEventDrivenJobImpl.class)
+            .addAbstractTypeMapping(SchedulerJobWrapper.class, SchedulerJobWrapperImpl.class)
+            .addAbstractTypeMapping(JobDependency.class, JobDependencyImpl.class)
+            .addAbstractTypeMapping(ContextDependency.class, ContextDependencyImpl.class)
+            .addAbstractTypeMapping(LogicalGrouping.class, LogicalGroupingImpl.class)
+            .addAbstractTypeMapping(LogicalOperator.class, LogicalOperatorImpl.class)
+            .addAbstractTypeMapping(ContextInstance.class, ContextInstanceImpl.class)
+            .addAbstractTypeMapping(SchedulerJobInstance.class, SchedulerJobInstanceImpl.class)
+            .addAbstractTypeMapping(InternalEventDrivenJobInstance.class, InternalEventDrivenJobInstanceImpl.class)
+            .addAbstractTypeMapping(SchedulerJobLockParticipant.class, SchedulerJobLockParticipantImpl.class)
+            .addAbstractTypeMapping(ContextParameterInstance.class, ContextParameterInstanceImpl.class)
+            .addAbstractTypeMapping(JobLock.class, JobLockImpl.class)
+            .addAbstractTypeMapping(JobLockInstance.class, JobLockInstanceImpl.class)
+            .addAbstractTypeMapping(ScheduledProcessEvent.class, ContextualisedScheduledProcessEventImpl.class)
+            .addAbstractTypeMapping(ContextualisedScheduledProcessEvent.class, ContextualisedScheduledProcessEventImpl.class)
+            .addAbstractTypeMapping(SchedulerJobInitiationEvent.class, SchedulerJobInitiationEventImpl.class)
+            .addAbstractTypeMapping(ReplacementPair.class, ReplacementPairImpl.class)
+            .addAbstractTypeMapping(List.class, ArrayList.class)
+            .addAbstractTypeMapping(Map.class, HashMap.class);
+    }
 }

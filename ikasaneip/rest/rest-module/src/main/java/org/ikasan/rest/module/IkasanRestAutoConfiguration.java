@@ -41,8 +41,6 @@
 package org.ikasan.rest.module;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
 import org.ikasan.rest.module.sse.MonitoringFileService;
@@ -53,11 +51,12 @@ import org.ikasan.spec.persistence.service.InDoubtTransactionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverters;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-
-import java.util.List;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 @Configuration
 public class IkasanRestAutoConfiguration implements WebMvcConfigurer
@@ -144,21 +143,20 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Override
-    public void extendMessageConverters(List<HttpMessageConverter<?>> converters){
+    public void configureMessageConverters(HttpMessageConverters.ServerBuilder builder) {
+        SimpleModule m = new SimpleModule();
+        m.addAbstractTypeMapping(
+            ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
+        m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
 
-        converters.stream()
-                  .filter(c -> c instanceof MappingJackson2HttpMessageConverter)
-                  .forEach(converter-> {
-                      SimpleModule m = new SimpleModule();
-                      m.addAbstractTypeMapping(
-                          ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
-                      m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
-                      ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().registerModule(m);
+        JsonMapper jsonMapper = JsonMapper.builder()
+            .addModule(m)
+            .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL)
+                .withValueInclusion(JsonInclude.Include.NON_NULL))
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .build();
 
-                      ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-                      ((MappingJackson2HttpMessageConverter)converter).getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
-                  } );
+        builder.disableDefaults();
+        builder.withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper));
     }
-
 }
