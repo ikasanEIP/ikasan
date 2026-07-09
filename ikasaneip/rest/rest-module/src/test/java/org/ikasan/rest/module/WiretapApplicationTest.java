@@ -235,9 +235,9 @@ public class WiretapApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("""
-            [{"moduleName":"testModule","flowName":"testFlow","relationship":"AFTER",\
-            "jobType":"Wiretap","timeToLive":"200"}]\
-            """, result.getResponse().getContentAsString());
+            [{"flowName":"testFlow","jobType":"Wiretap","moduleName":\
+            "testModule","relationship":"AFTER","timeToLive":"200"}]"""
+            , result.getResponse().getContentAsString());
 
     }
 

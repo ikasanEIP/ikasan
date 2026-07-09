@@ -1,8 +1,6 @@
 package org.ikasan.rest.module;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.metadata.ConfigurationMetaDataImpl;
 import org.ikasan.configurationService.metadata.ConfigurationParameterMetaDataImpl;
 import org.ikasan.spec.metadata.model.ConfigurationMetaData;
@@ -10,8 +8,8 @@ import org.ikasan.spec.metadata.model.ConfigurationParameterMetaData;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverters;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
@@ -19,9 +17,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.Arrays;
-import java.util.List;
 
 @TestConfiguration
 @EnableWebSecurity
@@ -47,19 +47,20 @@ public class MockedUserServiceTestConfig implements WebMvcConfigurer
 
 
     @Override
-    public void configureMessageConverters(
-        List<HttpMessageConverter<?>> converters) {
-
-        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-
+    public void configureMessageConverters(HttpMessageConverters.ServerBuilder builder) {
         SimpleModule m = new SimpleModule();
         m.addAbstractTypeMapping(
             ConfigurationParameterMetaData.class, ConfigurationParameterMetaDataImpl.class);
         m.addAbstractTypeMapping(ConfigurationMetaData.class, ConfigurationMetaDataImpl.class);
-        converter.getObjectMapper().registerModule(m);
-        converter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        converter.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL);
-        converters.add(converter);
-    }
 
+        JsonMapper jsonMapper = JsonMapper.builder()
+            .addModule(m)
+            .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL)
+                .withValueInclusion(JsonInclude.Include.NON_NULL))
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .build();
+
+        builder.disableDefaults();
+        builder.withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper));
+    }
 }

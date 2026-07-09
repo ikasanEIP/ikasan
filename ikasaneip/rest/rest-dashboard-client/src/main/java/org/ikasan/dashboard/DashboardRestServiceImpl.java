@@ -1,8 +1,5 @@
 package org.ikasan.dashboard;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-import org.ikasan.dashboard.model.JwtRequest;
-import org.ikasan.dashboard.model.JwtResponse;
 import org.ikasan.harvest.HarvestEvent;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.dashboard.DashboardRestService;
@@ -11,10 +8,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.SerializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 
@@ -43,9 +42,14 @@ public class DashboardRestServiceImpl<T> extends AbstractRestServiceImpl impleme
                                     String path)
     {
         this.restTemplate = new RestTemplate(httpComponentsClientHttpRequestFactory);
-        MappingJackson2HttpMessageConverter jsonHttpMessageConverter = new MappingJackson2HttpMessageConverter();
-        jsonHttpMessageConverter.getObjectMapper().configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
-        this.restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
+
+        JsonMapper mapper = JsonMapper.builder()
+            .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
+            .build();
+
+        JacksonJsonHttpMessageConverter jsonHttpMessageConverter = new JacksonJsonHttpMessageConverter(mapper);
+        restTemplate.getMessageConverters().add(jsonHttpMessageConverter);
+
         this.isEnabled = Boolean.valueOf(environment.getProperty(DASHBOARD_EXTRACT_ENABLED_PROPERTY, "false"));
         if ( isEnabled )
         {
