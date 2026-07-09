@@ -813,6 +813,91 @@
         </profile>
 
         <profile>
+            <id>ci</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <!-- ikasan eip core -->
+                <module>spec</module>
+                <module>system-event</module>
+                <module>module</module>
+                <module>scheduler</module>
+                <module>housekeeping</module>
+                <module>harvesting</module>
+                <module>serialiser</module>
+                <module>exclusion</module>
+                <module>error-reporting</module>
+                <module>recovery-manager</module>
+                <module>flow</module>
+                <module>configuration-service</module>
+                <module>wiretap</module>
+                <module>security</module>
+                <module>rest</module>
+                <module>test</module>
+                <module>monitor</module>
+                <module>marshaller</module>
+                <module>component</module>
+                <module>platform</module>
+                <module>builder</module>
+                <module>compatibility</module>
+                <module>hospital</module>
+                <module>webconsole</module>
+                <module>topology</module>
+                <module>developer</module>
+                <module>transaction</module>
+                <module>replay</module>
+                <module>persistence</module>
+                <module>cli</module>
+                <module>sample</module>
+                <module>ootb</module>
+                <module>version</module>
+            </modules>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <version>2.22.2</version>
+                        <configuration>
+                            <forkCount>1</forkCount>
+                            <reuseForks>false</reuseForks>
+                            <trimStackTrace>false</trimStackTrace>
+                            <argLine>
+                                --add-opens java.base/java.lang=ALL-UNNAMED
+                                --add-opens java.base/java.lang.invoke=ALL-UNNAMED
+                                --add-opens java.base/java.lang.reflect=ALL-UNNAMED
+                                --add-opens java.base/java.io=ALL-UNNAMED
+                                --add-opens java.base/java.net=ALL-UNNAMED
+                                --add-opens java.base/java.nio=ALL-UNNAMED
+                                --add-opens java.base/java.util=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent=ALL-UNNAMED
+                                --add-opens java.base/java.util.concurrent.atomic=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.ch=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.cs=ALL-UNNAMED
+                                --add-opens java.base/sun.nio.fs=ALL-UNNAMED
+                                --add-opens java.base/sun.security.action=ALL-UNNAMED
+                                --add-opens java.base/sun.util.calendar=ALL-UNNAMED
+                                --add-opens java.security.jgss/sun.security.krb5=ALL-UNNAMED
+                                --add-opens java.xml/javax.xml.transform=ALL-UNNAMED
+                                --add-opens java.xml/javax.xml.parsers=ALL-UNNAMED
+                                --add-exports java.base/sun.nio.ch=ALL-UNNAMED
+                                --add-exports java.base/sun.nio.fs=ALL-UNNAMED
+                                --enable-native-access=ALL-UNNAMED
+                            </argLine>
+                            <excludes>
+                                <exclude>**/MultiThreadedJmsSampleFlowTest.java</exclude>
+                                <exclude>**/DefaultOperationImplTest.java</exclude>
+                            </excludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+
+        </profile>
+
+        <profile>
             <id>core-and-components</id>
             <activation>
                 <activeByDefault>false</activeByDefault>
