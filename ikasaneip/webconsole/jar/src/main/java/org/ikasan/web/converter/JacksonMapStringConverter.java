@@ -40,9 +40,9 @@
  */
 package org.ikasan.web.converter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.binding.convert.converters.TwoWayConverter;
 import org.springframework.util.Assert;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -55,39 +55,32 @@ import java.util.Map;
  */
 public class JacksonMapStringConverter implements TwoWayConverter
 {
-    private ObjectMapper objectMapper;
+    private JsonMapper jsonMapper;
 
     public JacksonMapStringConverter()
     {
-        this.objectMapper = new ObjectMapper();
-    }
-
-    public JacksonMapStringConverter(ObjectMapper objectMapper)
-    {
-        Assert.notNull(objectMapper, "ObjectMapper cannot be null");
-        this.objectMapper = objectMapper;
+        this.jsonMapper = JsonMapper.builder().build();
     }
 
     @Override
-    public Object convertSourceToTargetClass(Object source, Class<?> aClass) throws Exception
+    public Object convertSourceToTargetClass(Object source, Class<?> aClass)
     {
         if (source == null)
         {
             return null;
         }
-        return objectMapper.writeValueAsString(source);
+        return jsonMapper.writeValueAsString(source);
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public Object convertTargetToSourceClass(Object target, Class<?> aClass)
-        throws Exception
     {
         if (target == null)
         {
             return null;
         }
-        Map map = objectMapper.readValue((String) target, Map.class);
+        Map map = jsonMapper.readValue((String) target, Map.class);
         Map<String, String> checkedMap = Collections.checkedMap(new HashMap<>(map.size()), String.class, String.class);
         checkedMap.putAll(map);
         return checkedMap;
@@ -105,9 +98,9 @@ public class JacksonMapStringConverter implements TwoWayConverter
         return String.class;
     }
 
-    public void setObjectMapper(ObjectMapper objectMapper)
+    public void setJsonMapper(JsonMapper jsonMapper)
     {
-        Assert.notNull(objectMapper, "ObjectMapper cannot be null");
-        this.objectMapper = objectMapper;
+        Assert.notNull(jsonMapper, "ObjectMapper cannot be null");
+        this.jsonMapper = jsonMapper;
     }
 }

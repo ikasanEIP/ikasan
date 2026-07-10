@@ -1,9 +1,5 @@
 package org.ikasan.rest.module;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.connector.basefiletransfer.outbound.persistence.BaseFileTransferDao;
 import org.ikasan.connector.basefiletransfer.persistence.FileFilter;
 import org.ikasan.rest.module.util.UserUtil;
@@ -17,6 +13,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * File Filter controller exposing CRUD to Message Filter entity
@@ -33,14 +32,12 @@ public class FileFilterApplication
     @Autowired
     private SystemEventService systemEventService;
 
-    private ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     public FileFilterApplication() {
-        this.mapper = new ObjectMapper();
-        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        SimpleModule m = new SimpleModule();
-        this.mapper.registerModule(m);
+        this.mapper = JsonMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
     }
 
     /**
@@ -109,7 +106,7 @@ public class FileFilterApplication
                     "File Filter deleted [%s]".formatted(fileFilterJson), UserUtil.getUser()
                                                       );
             }
-            catch (JsonProcessingException e)
+            catch (JacksonException e)
             {
                 logger.warn("Issue converting file filter to json." + fileFilter, e);
             }
@@ -142,7 +139,7 @@ public class FileFilterApplication
             this.systemEventService.logSystemEvent(fileFilter.getClientId() +"_"+ fileFilter.getCriteria(),
                 "File Filter created [%s]".formatted(fileFilterJson), UserUtil.getUser());
         }
-        catch (JsonProcessingException e)
+        catch (JacksonException e)
         {
             logger.warn("Issue converting file filter to json." + fileFilter, e);
         }

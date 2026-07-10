@@ -1,12 +1,12 @@
 package org.ikasan.replay.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.replay.model.ReplayEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.replay.ReplayEvent;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,14 +15,14 @@ import java.util.List;
  */
 public class ReplayEventConverter implements Converter<List<ReplayEvent>, List<ReplayEvent>>
 {
-    private ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     /**
      * Constructor
      */
     public ReplayEventConverter()
     {
-        objectMapper = new ObjectMapper();
+        jsonMapper = JsonMapper.builder().build();
     }
 
     @Override
@@ -32,11 +32,11 @@ public class ReplayEventConverter implements Converter<List<ReplayEvent>, List<R
 
         try
         {
-            String json = objectMapper.writeValueAsString(payload);
-            results = objectMapper.readValue(json, objectMapper.getTypeFactory()
+            String json = jsonMapper.writeValueAsString(payload);
+            results = jsonMapper.readValue(json, jsonMapper.getTypeFactory()
                 .constructCollectionType(List.class, ReplayEventImpl.class));
         }
-        catch (IOException e)
+        catch (JacksonException e)
         {
             throw new TransformationException("Cannot transform a list of replay events to a list of hibernate wiretap events!", e);
         }

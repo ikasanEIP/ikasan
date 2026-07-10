@@ -1,10 +1,10 @@
 package org.ikasan.component.endpoint.bigqueue.serialiser;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.junit.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 public class BigQueueMessageJsonSerialiserTest {
 
     @Test
-    public void should_serialise_and_deserialise() throws JsonProcessingException {
+    public void should_serialise_and_deserialise() throws JacksonException {
         String messageId = UUID.randomUUID().toString();
         long createdTime = System.currentTimeMillis();
         TestEvent testEvent = createTestEvent();
@@ -42,7 +42,7 @@ public class BigQueueMessageJsonSerialiserTest {
 
         String message = (String) (Object) deserialisedMessage.getMessage();
         assertNotNull(message);
-        ObjectMapper mapper = new ObjectMapper();
+        JsonMapper mapper = JsonMapper.builder().build();
         TestEvent actual = mapper.readValue(message, TestEvent.class);
         assertNotNull(actual);
 

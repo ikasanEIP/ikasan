@@ -1,7 +1,7 @@
 package org.ikasan.spec.scheduled.context.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ikasan.spec.scheduled.instance.model.InstanceStatus;
+import tools.jackson.core.JacksonException;
 
 import java.util.Map;
 
@@ -18,9 +18,9 @@ public interface ContextStatusService<ContextMachine> {
      * 		"instanceStatus" : "WAITING"
      *    } ]
      * }
-     * @throws JsonProcessingException if issue transforming to Json
+     * @throws JacksonException if issue transforming to Json
      */
-    String getJsonContextMachineStatus(boolean includePrepared) throws JsonProcessingException;
+    String getJsonContextMachineStatus(boolean includePrepared) throws JacksonException;
 
     /**
      * Get the status of all jobs in the Context Machine
@@ -42,9 +42,9 @@ public interface ContextStatusService<ContextMachine> {
      *     } ]
      *   } ]
      * }
-     * @throws JsonProcessingException if issue transforming to Json
+     * @throws JacksonException if issue transforming to Json
      */
-    String getJsonContextJobStatus(InstanceStatus instanceStatus, Map<String, ContextMachine> mapAllContextMachine) throws JsonProcessingException;
+    String getJsonContextJobStatus(InstanceStatus instanceStatus, Map<String, ContextMachine> mapAllContextMachine) throws JacksonException;
 
     /**
      * Get the status of a Context
@@ -72,7 +72,7 @@ public interface ContextStatusService<ContextMachine> {
      * @param contextName the context to get the status for
      * @return Mapped json representation of the context status
      */
-    String getJsonContextStatus(String instanceName, String contextName) throws JsonProcessingException;
+    String getJsonContextStatus(String instanceName, String contextName) throws JacksonException;
 
     /**
      * Get the status of the Scheduler Job in Json
@@ -82,6 +82,6 @@ public interface ContextStatusService<ContextMachine> {
      * @param jobIdentifier the scheduler job identifier
      * @return Mapped json representation of the job status
      */
-    String getJsonContextStatusForJob(String instanceName, String contextName, String jobIdentifier) throws JsonProcessingException;
+    String getJsonContextStatusForJob(String instanceName, String contextName, String jobIdentifier) throws JacksonException;
 
 }

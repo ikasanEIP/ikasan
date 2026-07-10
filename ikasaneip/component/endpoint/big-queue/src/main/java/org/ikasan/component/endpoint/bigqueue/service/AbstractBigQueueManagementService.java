@@ -1,21 +1,20 @@
 package org.ikasan.component.endpoint.bigqueue.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FileUtils;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.bigqueue.IBigQueue.ItemIterator;
-import org.apache.commons.io.FileUtils;
 import org.ikasan.component.endpoint.bigqueue.message.BigQueueMessageImpl;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
 import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,7 +27,7 @@ import java.util.List;
  */
 public abstract class AbstractBigQueueManagementService implements BigQueueManagementService {
 
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final JsonMapper MAPPER = JsonMapper.builder().build();
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBigQueueManagementService.class);
 
     /**

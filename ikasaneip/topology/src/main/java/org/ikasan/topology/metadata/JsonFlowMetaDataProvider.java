@@ -1,8 +1,6 @@
 package org.ikasan.topology.metadata;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -27,6 +25,8 @@ import org.ikasan.topology.metadata.model.FlowMetaDataImpl;
 import org.ikasan.topology.metadata.model.TransitionImpl;
 import org.springframework.aop.framework.AopProxyUtils;
 import org.springframework.aop.support.AopUtils;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,24 +39,23 @@ import java.util.Map;
  */
 public class JsonFlowMetaDataProvider implements FlowMetaDataProvider<String>
 {
-    private ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     /**
      * Constructor
      */
     public JsonFlowMetaDataProvider()
     {
-        mapper = new ObjectMapper();
-
         SimpleModule m = new SimpleModule();
         m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
         m.addAbstractTypeMapping(FlowElementMetaData.class, FlowElementMetaDataImpl.class);
         m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
         m.addAbstractTypeMapping(DecoratorMetaData.class, DecoratorMetaDataImpl.class);
 
-        this.mapper.registerModule(m);
-
-        this.mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+        this.mapper = JsonMapper.builder().addModule(m)
+            .changeDefaultPropertyInclusion(incl -> incl.withContentInclusion(JsonInclude.Include.NON_NULL)
+        .withValueInclusion(JsonInclude.Include.NON_NULL))
+        .build();
     }
 
     @Override

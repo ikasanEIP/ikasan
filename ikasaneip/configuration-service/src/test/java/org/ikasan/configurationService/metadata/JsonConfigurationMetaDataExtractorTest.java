@@ -1,7 +1,5 @@
 package org.ikasan.configurationService.metadata;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.configurationService.metadata.components.ConfiguredConsumer;
 import org.ikasan.configurationService.metadata.components.ConfiguredProducer;
@@ -27,6 +25,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,7 +42,7 @@ public class JsonConfigurationMetaDataExtractorTest
     {{
         setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
     }};
-    private ObjectMapper mapper;
+    private JsonMapper mapper;
 
     ConfigurationManagement configurationManagement = mockery.mock(ConfigurationManagement.class);
 
@@ -53,12 +53,10 @@ public class JsonConfigurationMetaDataExtractorTest
 
         uut = new JsonConfigurationMetaDataExtractor(configurationManagement);
 
-        mapper = new ObjectMapper();
-
         SimpleModule m = new SimpleModule();
         m.addAbstractTypeMapping(ConfigurationParameterMetaData.class,ConfigurationParameterMetaDataImpl.class);
         m.addAbstractTypeMapping(ConfigurationMetaData.class,ConfigurationMetaDataImpl.class);
-        this.mapper.registerModule(m);
+        this.mapper = JsonMapper.builder().addModule(m).build();
     }
 
     @Test

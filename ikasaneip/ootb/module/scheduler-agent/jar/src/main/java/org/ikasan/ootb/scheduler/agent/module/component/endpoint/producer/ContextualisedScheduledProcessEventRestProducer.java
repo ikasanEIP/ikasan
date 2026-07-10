@@ -40,7 +40,6 @@
  */
 package org.ikasan.ootb.scheduler.agent.module.component.endpoint.producer;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -48,6 +47,7 @@ import org.ikasan.spec.dashboard.DashboardRestService;
 import org.ikasan.spec.scheduled.event.model.ContextualisedScheduledProcessEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Scheduled process event rest publisher.
@@ -60,7 +60,7 @@ public class ContextualisedScheduledProcessEventRestProducer implements Producer
     private static Logger logger = LoggerFactory.getLogger(ContextualisedScheduledProcessEventRestProducer.class);
 
     private DashboardRestService scheduleProcessEventDashboardRestService;
-    private ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     public ContextualisedScheduledProcessEventRestProducer(DashboardRestService scheduleProcessEventDashboardRestService)
     {
@@ -69,7 +69,7 @@ public class ContextualisedScheduledProcessEventRestProducer implements Producer
             throw new IllegalArgumentException("ScheduledProcessService cannot be 'null");
         }
 
-        this.objectMapper = ObjectMapperFactory.newInstance();
+        this.jsonMapper = ObjectMapperFactory.newInstance();
     }
 
     @Override
@@ -77,7 +77,7 @@ public class ContextualisedScheduledProcessEventRestProducer implements Producer
     {
         try {
             boolean success = this.scheduleProcessEventDashboardRestService
-                .publish(this.objectMapper.writeValueAsString(scheduledStatusEvent));
+                .publish(this.jsonMapper.writeValueAsString(scheduledStatusEvent));
 
             if(!success) {
                 throw new EndpointException("Could not publish an event to the dashboard. Please confirm that dashboard extract is enabled!");

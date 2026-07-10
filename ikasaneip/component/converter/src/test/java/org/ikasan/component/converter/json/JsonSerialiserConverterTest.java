@@ -1,9 +1,9 @@
 package org.ikasan.component.converter.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import net.sf.json.test.JSONAssert;
 import org.junit.Before;
 import org.junit.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 public class JsonSerialiserConverterTest
 {
@@ -28,7 +28,7 @@ public class JsonSerialiserConverterTest
 
     @Test public void test_serialise_with_non_default_mapper()
     {
-        uut = new JsonSerialiserConverter<>(new ObjectMapper());
+        uut = new JsonSerialiserConverter<>(JsonMapper.builder().build());
         String result = uut.convert(testPojo);
         JSONAssert.assertEquals(serialisedPojo, result);
     }

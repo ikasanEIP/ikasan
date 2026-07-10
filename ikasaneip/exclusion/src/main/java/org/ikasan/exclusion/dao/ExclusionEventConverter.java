@@ -1,12 +1,12 @@
 package org.ikasan.exclusion.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.exclusion.model.ExclusionEventImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,14 +15,14 @@ import java.util.List;
  */
 public class ExclusionEventConverter implements Converter<List<ExclusionEvent>, List<ExclusionEvent>>
 {
-    private ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     /**
      * Constructor
      */
     public ExclusionEventConverter()
     {
-        objectMapper = new ObjectMapper();
+        jsonMapper = JsonMapper.builder().build();
     }
 
     @Override
@@ -32,11 +32,11 @@ public class ExclusionEventConverter implements Converter<List<ExclusionEvent>, 
 
         try
         {
-            String json = objectMapper.writeValueAsString(payload);
-            results = objectMapper.readValue(json, objectMapper.getTypeFactory()
+            String json = jsonMapper.writeValueAsString(payload);
+            results = jsonMapper.readValue(json, jsonMapper.getTypeFactory()
                 .constructCollectionType(List.class, ExclusionEventImpl.class));
         }
-        catch (IOException e)
+        catch (JacksonException e)
         {
             throw new TransformationException("Cannot transform a list of exclusion events to a list of hibernate wiretap events!", e);
         }

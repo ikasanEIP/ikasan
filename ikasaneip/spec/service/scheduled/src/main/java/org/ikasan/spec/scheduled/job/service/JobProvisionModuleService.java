@@ -1,6 +1,5 @@
 package org.ikasan.spec.scheduled.job.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobWrapper;
 
 public interface JobProvisionModuleService {
@@ -10,7 +9,6 @@ public interface JobProvisionModuleService {
      *
      * @param contextUrl
      * @param jobs
-     * @throws JsonProcessingException
      */
     void provisionJobs(String contextUrl, SchedulerJobWrapper jobs);
 

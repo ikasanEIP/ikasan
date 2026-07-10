@@ -1,9 +1,9 @@
 package org.ikasan.component.converter.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.junit.Before;
 import org.junit.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -25,7 +25,7 @@ public class JsonDeserialiserConverterTest
 
     @Test public void test_deserialise_with_non_default_mapper()
     {
-        uut = new JsonDeserialiserConverter<>(TestPojo.class, new ObjectMapper());
+        uut = new JsonDeserialiserConverter<>(TestPojo.class, JsonMapper.builder().build());
         TestPojo result = uut.convert(serialisedPojo);
         assertThat(result.id).isEqualTo(ID_FIELD);
         assertThat(result.value).isEqualTo(VALUE_FIELD);

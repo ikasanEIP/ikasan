@@ -1,9 +1,5 @@
 package org.ikasan.rest.module;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.configurationService.model.*;
 import org.ikasan.rest.module.util.UserUtil;
 import org.ikasan.spec.configuration.Configuration;
@@ -25,6 +21,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Map;
@@ -51,18 +49,16 @@ public class ConfigurationApplication
     @Autowired
     private SystemEventService systemEventService;
 
-    private ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     /**
      * Constructor for ConfigurationApplication class.
      * Initializes the ObjectMapper with custom configuration settings.
      */
     public ConfigurationApplication() {
-        this.mapper = new ObjectMapper();
-        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        SimpleModule m = new SimpleModule();
-        this.mapper.registerModule(m);
+        this.mapper = JsonMapper.builder()
+            .configure(tools.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
     }
 
     /**
@@ -292,7 +288,7 @@ public class ConfigurationApplication
                 "Configuration Updated OldConfig [%s] NewConfig [%s]".formatted(oldConfigJson, newConfigJson),
                 username != null ? username : UserUtil.getUser());
         }
-        catch (JsonProcessingException e)
+        catch (JacksonException e)
         {
             logger.warn("Issue converting configuration to json.", e);
         }
@@ -329,7 +325,7 @@ public class ConfigurationApplication
                     "Configuration Deleted OldConfig [%s]".formatted(deletedConfigJson),
                     username != null ? username : UserUtil.getUser());
             }
-            catch (JsonProcessingException e)
+            catch (JacksonException e)
             {
                 logger.warn("Issue converting configuration to json.", e);
             }

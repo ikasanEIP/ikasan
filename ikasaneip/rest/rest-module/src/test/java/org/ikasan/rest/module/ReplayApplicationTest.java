@@ -1,7 +1,5 @@
 package org.ikasan.rest.module;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.module.SimpleModule;
 import org.ikasan.rest.module.dto.ReplayRequestDto;
@@ -34,6 +32,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.Arrays;
 
@@ -73,7 +72,7 @@ public class ReplayApplicationTest
     @Autowired
     protected ReplayApplication replayApplication;
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final JsonMapper mapper = JsonMapper.builder().build();
 
     @Before
     public void setUp()
@@ -294,7 +293,7 @@ public class ReplayApplicationTest
         assertEquals(404, result.getResponse().getStatus());
 
     }
-    private String createReplayRequestDto(String event) throws JsonProcessingException
+    private String createReplayRequestDto(String event)
     {
         ReplayRequestDto dto = new ReplayRequestDto("testModule", "testFlow", event.getBytes());
         return mapper.writeValueAsString(dto);
