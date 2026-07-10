@@ -1,8 +1,5 @@
 package org.ikasan.ootb.scheduler.agent.rest.client.context;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.dashboard.AbstractRestServiceImpl;
 import org.ikasan.job.orchestration.model.job.FileEventDrivenJobImpl;
 import org.ikasan.ootb.scheduler.agent.rest.converters.ObjectMapperFactory;
@@ -22,8 +19,11 @@ import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import tools.jackson.core.JacksonException;
+import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.json.JsonMapper;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,7 +34,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
 
     private final String moduleName;
 
-    private final ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     public ContextInstanceRestServiceImpl(Environment environment,
                                           HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory,
@@ -70,16 +70,16 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
                 .queryParam("agentName", "{agentName}")
                 .encode()
                 .toUriString();
-            Map<String, String> parameters = new HashMap<>() {{
+            Map<String, String> parameters = Collections.unmodifiableMap(new HashMap<>() {{
                 put("agentName", agentName);
-            }};
+            }});
 
             ResponseEntity<String> response = restTemplate.exchange(urlTemplate, HttpMethod.GET, entity, String.class, parameters);
 
             return this.mapper.readValue(response.getBody(), new TypeReference<>() {
             });
 
-        } catch (RestClientException | JsonProcessingException e) {
+        } catch (RestClientException | JacksonException e) {
             String message = "Issue getting context instance for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
             logger.error(message);
             throw new EndpointException(e);
@@ -106,7 +106,7 @@ public class ContextInstanceRestServiceImpl extends AbstractRestServiceImpl impl
 
             return this.mapper.readValue(response.getBody(), FileEventDrivenJobImpl.class);
 
-        } catch (RestClientException | JsonProcessingException e) {
+        } catch (RestClientException | JacksonException e) {
             String message = "Issue getting context instance for url [" + url + "]  with response [{" + e.getLocalizedMessage() + "}]";
             logger.error(message);
             throw new EndpointException(e);

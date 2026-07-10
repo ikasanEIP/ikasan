@@ -1,12 +1,12 @@
 package org.ikasan.error.reporting.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.error.reporting.model.ErrorOccurrenceImpl;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,14 +15,14 @@ import java.util.List;
  */
 public class ErrorOccurrenceConverter implements Converter<List<ErrorOccurrence>, List<ErrorOccurrence>>
 {
-    private ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     /**
      * Constructor
      */
     public ErrorOccurrenceConverter()
     {
-        objectMapper = new ObjectMapper();
+        jsonMapper = JsonMapper.builder().build();
     }
 
     @Override
@@ -32,11 +32,11 @@ public class ErrorOccurrenceConverter implements Converter<List<ErrorOccurrence>
 
         try
         {
-            String json = objectMapper.writeValueAsString(payload);
-            results = objectMapper.readValue(json, objectMapper.getTypeFactory()
+            String json = jsonMapper.writeValueAsString(payload);
+            results = jsonMapper.readValue(json, jsonMapper.getTypeFactory()
                 .constructCollectionType(List.class, ErrorOccurrenceImpl.class));
         }
-        catch (IOException e)
+        catch (JacksonException e)
         {
             throw new TransformationException("Cannot transform a list of error occurrences to a list of hibernate wiretap events!", e);
         }

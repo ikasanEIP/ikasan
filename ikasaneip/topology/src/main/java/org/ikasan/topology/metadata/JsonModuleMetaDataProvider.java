@@ -1,7 +1,5 @@
 package org.ikasan.topology.metadata;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.IkasanVersion;
 import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.flow.Flow;
@@ -9,13 +7,15 @@ import org.ikasan.spec.metadata.model.*;
 import org.ikasan.spec.module.Module;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.topology.metadata.model.*;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.Map;
 
 public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String>
 {
-    private JsonFlowMetaDataProvider flowMetaDataProvider;
-    private ObjectMapper mapper;
+    private final JsonFlowMetaDataProvider flowMetaDataProvider;
+    private final JsonMapper mapper;
 
     public JsonModuleMetaDataProvider(JsonFlowMetaDataProvider flowMetaDataProvider)
     {
@@ -25,8 +25,6 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
             throw new IllegalArgumentException("flowMetaDataProvider cannot be null!");
         }
 
-        this.mapper = new ObjectMapper();
-
         SimpleModule m = new SimpleModule();
         m.addAbstractTypeMapping(ModuleMetaData.class, ModuleMetaDataImpl.class);
         m.addAbstractTypeMapping(FlowMetaData.class, FlowMetaDataImpl.class);
@@ -34,7 +32,8 @@ public class JsonModuleMetaDataProvider implements ModuleMetaDataProvider<String
         m.addAbstractTypeMapping(Transition.class, TransitionImpl.class);
         m.addAbstractTypeMapping(DecoratorMetaData.class, DecoratorMetaDataImpl.class);
 
-        this.mapper.registerModule(m);
+        this.mapper = JsonMapper.builder().addModule(m)
+            .build();
     }
 
     @Override

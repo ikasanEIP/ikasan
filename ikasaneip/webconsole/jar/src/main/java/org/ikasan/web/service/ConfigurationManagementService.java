@@ -40,10 +40,6 @@
  */
 package org.ikasan.web.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -58,6 +54,9 @@ import org.springframework.binding.message.MessageBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.webflow.execution.RequestContext;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 /**
  * Configuration Management Service for maintenance of runtime component configurations.
@@ -73,15 +72,15 @@ public class ConfigurationManagementService
     private final static Logger logger = LoggerFactory.getLogger(ConfigurationManagementService.class);
 
     /** configuration service */
-    private ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement;
+    private final ConfigurationManagement<ConfiguredResource,Configuration> configurationManagement;
     
     /** system event service records all changes to configurations */
-    private SystemEventService systemEventService;
+    private final SystemEventService systemEventService;
     
     /** module service */
-    private ModuleService moduleService;
+    private final ModuleService moduleService;
 
-    private ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     /**
      * Constructor
@@ -110,12 +109,9 @@ public class ConfigurationManagementService
             throw new IllegalArgumentException("moduleService cannot be 'null'");
         }
 
-        this.mapper = new ObjectMapper();
-        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        SimpleModule m = new SimpleModule();
-        this.mapper.registerModule(m);
-
+        this.mapper = JsonMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
     }
 
     /**
@@ -320,7 +316,7 @@ public class ConfigurationManagementService
                 getAuthentication().getName());
 
         }
-        catch (JsonProcessingException e)
+        catch (JacksonException e)
         {
             logger.warn("Issue converting configuration to json.", e);
         }
@@ -348,7 +344,7 @@ public class ConfigurationManagementService
                 getAuthentication().getName());
 
         }
-        catch (JsonProcessingException e)
+        catch (JacksonException e)
         {
             logger.warn("Issue converting configuration to json.", e);
         }
@@ -372,7 +368,7 @@ public class ConfigurationManagementService
                 getAuthentication().getName());
 
         }
-        catch (JsonProcessingException e)
+        catch (JacksonException e)
         {
             logger.warn("Issue converting configuration to json.", e);
         }

@@ -1,12 +1,12 @@
 package org.ikasan.wiretap.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.spec.component.transformation.Converter;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.wiretap.WiretapEvent;
 import org.ikasan.wiretap.model.WiretapFlowEvent;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
-import java.io.IOException;
 import java.util.List;
 
 /**
@@ -15,14 +15,14 @@ import java.util.List;
  */
 public class WiretapEventConverter implements Converter<List<WiretapEvent>, List<WiretapEvent>>
 {
-    ObjectMapper objectMapper;
+    JsonMapper jsonMapper;
 
     /**
      * Constructor
      */
     public WiretapEventConverter()
     {
-        objectMapper = new ObjectMapper();
+        jsonMapper = JsonMapper.builder().build();
     }
 
     @Override
@@ -32,11 +32,11 @@ public class WiretapEventConverter implements Converter<List<WiretapEvent>, List
 
         try
         {
-            String json = objectMapper.writeValueAsString(payload);
-            results = objectMapper.readValue(json, objectMapper.getTypeFactory()
+            String json = jsonMapper.writeValueAsString(payload);
+            results = jsonMapper.readValue(json, jsonMapper.getTypeFactory()
                 .constructCollectionType(List.class, WiretapFlowEvent.class));
         }
-        catch (IOException e)
+        catch (JacksonException e)
         {
             throw new TransformationException("Cannot transform a list of wiretap events to a list of hibernate wiretap events!", e);
         }

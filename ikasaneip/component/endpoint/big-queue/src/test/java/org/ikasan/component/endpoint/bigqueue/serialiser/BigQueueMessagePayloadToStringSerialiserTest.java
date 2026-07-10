@@ -1,15 +1,16 @@
 package org.ikasan.component.endpoint.bigqueue.serialiser;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
 import org.ikasan.spec.bigqueue.message.BigQueueMessage;
 import org.junit.Test;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 public class BigQueueMessagePayloadToStringSerialiserTest {
 
@@ -27,7 +28,7 @@ public class BigQueueMessagePayloadToStringSerialiserTest {
             .withMessageProperties(Map.of("property1", "value1", "property2", "value2"))
             .build();
 
-        ObjectMapper objectMapper = new ObjectMapper();
+        JsonMapper objectMapper = new JsonMapper();
         String message = objectMapper.writeValueAsString(bigQueueMessage);
 
         BigQueueMessagePayloadToStringSerialiser serialiser = new BigQueueMessagePayloadToStringSerialiser();

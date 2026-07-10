@@ -42,10 +42,11 @@ package org.ikasan.cli.shell.migration.dao;
 
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.cli.shell.migration.model.IkasanMigration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,14 +64,12 @@ import java.nio.file.Path;
 public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
 {
     /** logger instance */
-    private static Logger logger = LoggerFactory.getLogger(MigrationPersistenceDaoImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(MigrationPersistenceDaoImpl.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper jsonMapper = JsonMapper.builder().build();
 
     /** persistence directory */
-    private String persistenceDir;
-
-    private File persistenceDirFile;
+    private final String persistenceDir;
 
 
     /**
@@ -83,7 +82,7 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
             throw new IllegalArgumentException("persistence directory cannot be 'null");
         }
 
-        this.persistenceDirFile = new File(persistenceDir);
+        File persistenceDirFile = new File(persistenceDir);
         if(!persistenceDirFile.exists()) {
             persistenceDirFile.mkdirs();
             File directorySafeGuardFile = new File(this.persistenceDir + "/DO_NOT_DELETE_ANY_FILES_IN_THIS_DIRECTORY");
@@ -105,9 +104,9 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
             , ikasanMigration.getSourceVersion(), ikasanMigration.getTargetVersion(), ikasanMigration.getLabel());
 
         try(Output output = new Output(new FileOutputStream(path))) {
-            objectMapper.writeValue(output, ikasanMigration);
+            jsonMapper.writeValue(output, ikasanMigration);
         }
-        catch(IOException e) {
+        catch(IOException | JacksonException e) {
             throw new RuntimeException("Failed to save the IkasanProcess", e);
         }
     }
@@ -116,9 +115,9 @@ public class MigrationPersistenceDaoImpl implements MigrationPersistenceDao
     public IkasanMigration find(String type, String sourceVersion, String targetVersion, String label) {
         String path = getMigrationManifestFilePath(type, sourceVersion, targetVersion, label);
         try (Input input = new Input(new FileInputStream(path))) {
-            return this.objectMapper.readValue(input, IkasanMigration.class);
+            return this.jsonMapper.readValue(input, IkasanMigration.class);
         }
-        catch(IOException e) {
+        catch(IOException | JacksonException e) {
             logger.debug("File [" + path + "] not found", e);
             return null;
         }

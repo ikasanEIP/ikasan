@@ -1,7 +1,6 @@
 package org.ikasan.ootb.scheduler.agent.module.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
 import org.ikasan.module.ConfiguredModuleConfiguration;
 import org.ikasan.ootb.scheduler.agent.module.AgentFlowProfiles;
@@ -32,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,13 +60,13 @@ public class JobProvisionServiceImpl implements JobProvisionService {
     private AgentInstanceRecoveryManager agentInstanceRecoveryManager;
 
     private final ReentrantLock lock = new ReentrantLock();
-    private ObjectMapper objectMapper;
+    private final JsonMapper jsonMapper;
 
     /**
      * Constructor
      */
     public JobProvisionServiceImpl() {
-        this.objectMapper = ObjectMapperFactory.newInstance();
+        this.jsonMapper = ObjectMapperFactory.newInstance();
     }
 
     @Override
@@ -226,7 +226,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
                 if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
                     ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
-                            .getFileWatcherJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
+                            .getFileWatcherJobMap().put(job.getAggregateJobName(), jsonMapper.writeValueAsString(job));
                 }
             } else if (job instanceof QuartzScheduleDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");
@@ -234,7 +234,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
 
                 if (configuredModuleConfiguration instanceof SchedulerAgentConfiguredModuleConfiguration) {
                     ((SchedulerAgentConfiguredModuleConfiguration) configuredModuleConfiguration)
-                        .getScheduledJobMap().put(job.getAggregateJobName(), objectMapper.writeValueAsString(job));
+                        .getScheduledJobMap().put(job.getAggregateJobName(), jsonMapper.writeValueAsString(job));
                 }
             } else if (job instanceof InternalEventDrivenJob) {
                 configuredModuleConfiguration.getFlowDefinitions().put(job.getAggregateJobName(), "MANUAL");

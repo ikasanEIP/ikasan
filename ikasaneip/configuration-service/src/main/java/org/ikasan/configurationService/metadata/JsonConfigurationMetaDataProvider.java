@@ -1,7 +1,5 @@
 package org.ikasan.configurationService.metadata;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.ikasan.spec.configuration.Configuration;
 import org.ikasan.spec.configuration.ConfigurationManagement;
 import org.ikasan.spec.configuration.ConfigurationParameter;
@@ -9,6 +7,8 @@ import org.ikasan.spec.configuration.ConfiguredResource;
 import org.ikasan.spec.metadata.model.ConfigurationMetaData;
 import org.ikasan.spec.metadata.model.ConfigurationMetaDataProvider;
 import org.ikasan.spec.metadata.model.ConfigurationParameterMetaData;
+import tools.jackson.databind.json.JsonMapper;
+import tools.jackson.databind.module.SimpleModule;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 public class JsonConfigurationMetaDataProvider implements ConfigurationMetaDataProvider<String>
 {
 
-    private ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     private ConfigurationManagement<ConfiguredResource, Configuration> configurationManagement;
 
@@ -35,12 +35,11 @@ public class JsonConfigurationMetaDataProvider implements ConfigurationMetaDataP
     public JsonConfigurationMetaDataProvider(ConfigurationManagement configurationManagement)
     {
         this.configurationManagement = configurationManagement;
-        mapper = new ObjectMapper();
 
         SimpleModule m = new SimpleModule();
         m.addAbstractTypeMapping(ConfigurationParameterMetaData.class,ConfigurationParameterMetaDataImpl.class);
         m.addAbstractTypeMapping(ConfigurationMetaData.class,ConfigurationMetaDataImpl.class);
-        this.mapper.registerModule(m);
+        this.mapper = JsonMapper.builder().addModule(m).build();
     }
 
 

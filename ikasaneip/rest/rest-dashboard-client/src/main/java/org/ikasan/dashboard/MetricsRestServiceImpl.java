@@ -1,8 +1,5 @@
 package org.ikasan.dashboard;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.dashboard.dto.FlowInvocationMetricImpl;
 import org.ikasan.spec.history.FlowInvocationMetric;
 import org.ikasan.spec.metrics.MetricsService;
@@ -13,6 +10,8 @@ import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
 import tools.jackson.databind.SerializationFeature;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -39,9 +38,9 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
     public static final String COUNT_METRICS_BY_MODULE_AND_TIME = COUNT_METRICS_PATH + "/{moduleName}/{startTime}/{endTime}";
     public static final String COUNT_METRICS_BY_MODULE_FLOW_AND_TIME = COUNT_METRICS_PATH + "/{moduleName}/{flowName}/{startTime}/{endTime}";
 
-    private String userAgent;
+    private final String userAgent;
 
-    private ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     public MetricsRestServiceImpl(Environment environment, HttpComponentsClientHttpRequestFactory httpComponentsClientHttpRequestFactory)
     {
@@ -60,8 +59,9 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
         super.password = environment.getProperty(DASHBOARD_PASSWORD_PROPERTY);
         this.userAgent = environment.getProperty(DASHBOARD_REST_USERAGENT);
 
-        this.mapper = new ObjectMapper();
-        this.mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        this.mapper = JsonMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
     }
 
     @Override
@@ -187,6 +187,19 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
         );
     }
 
+    /**
+     * Retrieves a list of flow invocation metrics by executing an HTTP request to a specified path
+     * with the provided parameters.
+     *
+     * @param parameters a map of query parameters to be included in the HTTP request
+     * @param path the specific API endpoint path to fetch the metrics data
+     * @param isFirst a boolean flag indicating if this is the first attempt to fetch metrics
+     *                (used for re-authentication logic in case of an authentication failure)
+     * @return a list of {@code FlowInvocationMetric} objects representing the metrics data retrieved
+     *         from the specified endpoint
+     * @throws RuntimeException if there are issues with the HTTP request, response parsing, or
+     *                          authentication
+     */
     private List<FlowInvocationMetric> getMetricsBase(Map<String, String> parameters, String path, boolean isFirst){
         HttpHeaders headers = super.createHttpHeaders(userAgent);
         HttpEntity entity = new HttpEntity(headers);
@@ -212,7 +225,7 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
             throw new RuntimeException("Issue getting metrics for url [" + url+path + "]  with response [{" + e
                 .getLocalizedMessage() + "}]", e);
         }
-        catch (RestClientException | JsonProcessingException e)
+        catch (RestClientException | JacksonException e)
         {
             logger.warn("Issue getting metrics for url [" + url+path + "]  with response [{" + e
                 .getLocalizedMessage() + "}]");
@@ -221,6 +234,18 @@ public class MetricsRestServiceImpl extends AbstractRestServiceImpl implements M
         }
     }
 
+    /**
+     * Retrieves the count of metrics by executing an HTTP request to a specified path
+     * with the provided parameters. Handles authentication retries if necessary.
+     *
+     * @param parameters a map of query parameters to be included in the HTTP request
+     * @param path the specific API endpoint path to fetch the metrics count
+     * @param isFirst a boolean flag indicating if this is the first attempt to fetch the metrics count
+     *                (used for re-authentication logic in case of an authentication failure)
+     * @return the count of metrics as a long value retrieved from the specified endpoint
+     * @throws RuntimeException if there are issues with the HTTP request, response parsing, or
+     *                          authentication
+     */
     private long getCountBase(Map<String, String> parameters, String path, boolean isFirst) {
         HttpHeaders headers = super.createHttpHeaders(userAgent);
         HttpEntity entity = new HttpEntity(headers);

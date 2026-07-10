@@ -1,7 +1,5 @@
 package org.ikasan.rest.module;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,10 +13,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.HashMap;
@@ -30,6 +30,19 @@ import java.util.Set;
 public class DownloadLogFileApplication {
 
     private static final Logger LOG = LoggerFactory.getLogger(DownloadLogFileApplication.class);
+
+    private final JsonMapper mapper;
+
+    /**
+     * Constructor for the DownloadLogFileApplication class.
+     * Initializes the JSON mapper to parse and deserialize JSON data.
+     * The configured JSON mapper is set to ignore unknown properties during deserialization.
+     */
+    public DownloadLogFileApplication() {
+        this.mapper = JsonMapper.builder()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
+            .build();
+    }
 
     /**
      * Retrieves a list of log files filtered by maximum file size.
@@ -67,11 +80,10 @@ public class DownloadLogFileApplication {
             }
 
             try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                String jsonResponse = objectMapper.writeValueAsString(files);
+                String jsonResponse = this.mapper.writeValueAsString(files);
                 return new ResponseEntity(jsonResponse, HttpStatus.OK);
 
-            } catch (JsonProcessingException e) {
+            } catch (JacksonException e) {
                 LOG.error("Unable to convert the list of files to JSON", e);
                 return new ResponseEntity("Unable to convert the list of files to JSON", HttpStatus.BAD_REQUEST);
             }

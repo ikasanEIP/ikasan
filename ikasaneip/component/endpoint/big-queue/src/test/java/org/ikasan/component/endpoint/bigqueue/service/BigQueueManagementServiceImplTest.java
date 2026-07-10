@@ -1,7 +1,5 @@
 package org.ikasan.component.endpoint.bigqueue.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.bigqueue.BigQueueImpl;
 import org.ikasan.bigqueue.IBigQueue;
 import org.ikasan.component.endpoint.bigqueue.builder.BigQueueMessageBuilder;
@@ -12,6 +10,8 @@ import org.ikasan.spec.bigqueue.service.BigQueueManagementService;
 import org.ikasan.spec.bigqueue.service.exception.BigQueueNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -27,7 +27,7 @@ import static org.junit.Assert.*;
 
 public class BigQueueManagementServiceImplTest {
 
-    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    private static final JsonMapper JSON_MAPPER = new JsonMapper();
     private static final String QUEUE_DIR = "./target/queues/";
     private static final String QUEUE_NAME = "test-queue";
 
@@ -119,7 +119,7 @@ public class BigQueueManagementServiceImplTest {
         int numberOfMessages = 1_000_000;
         for (int i = 0; i < numberOfMessages; i++) {
             BigQueueMessage bigQueueMessage = createBigQueueMessage();
-            bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
+            bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage));
             if (i == 500_000) {
                 messageId = bigQueueMessage.getMessageId();
             }
@@ -163,7 +163,7 @@ public class BigQueueManagementServiceImplTest {
         int numberOfMessages = 100_000;
         for (int i = 0; i < numberOfMessages; i++) {
             bigQueueMessage = createBigQueueMessage();
-            bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
+            bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage));
             if (i == 50_000) {
                 messageId = bigQueueMessage.getMessageId();
             }
@@ -179,9 +179,9 @@ public class BigQueueManagementServiceImplTest {
     @Test
     public void delete_existing_queue_existing_message_id_same_id() throws Exception {
         BigQueueMessage bigQueueMessage = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage));
         assertEquals(3, service.size(QUEUE_NAME));
 
         service.deleteMessage(QUEUE_NAME, bigQueueMessage.getMessageId());
@@ -193,9 +193,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage3));
         assertEquals(3, service.size(QUEUE_NAME));
 
         service.deleteMessage(QUEUE_NAME, bigQueueMessage2.getMessageId());
@@ -222,9 +222,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage3));
 
         // make sure we do not blow up
         service.deleteMessage(QUEUE_NAME, null);
@@ -251,9 +251,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage3));
 
         // make sure we do not blow up
         assertEquals(3, service.size(QUEUE_NAME));
@@ -266,9 +266,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
         BigQueueMessage bigQueueMessage3 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage3));
 
         // make sure we do not blow up
         assertEquals(3, service.size(QUEUE_NAME));
@@ -294,19 +294,19 @@ public class BigQueueManagementServiceImplTest {
         assertTrue(messages.isEmpty());
 
         BigQueueMessage queueMessage1 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(queueMessage1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(queueMessage1));
 
         messages = service.getMessages(QUEUE_NAME);
         assertEquals(1, messages.size());
 
         BigQueueMessage queueMessage2 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(queueMessage2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(queueMessage2));
 
         messages = service.getMessages(QUEUE_NAME);
         assertEquals(2, messages.size());
 
         BigQueueMessage queueMessage3 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(queueMessage3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(queueMessage3));
 
         messages = service.getMessages(QUEUE_NAME);
         assertEquals(3, messages.size());
@@ -353,14 +353,14 @@ public class BigQueueManagementServiceImplTest {
         assertNull(service.peek(QUEUE_NAME));
 
         BigQueueMessage bigQueueMessage1 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage1));
 
         BigQueueMessage message = service.peek(QUEUE_NAME);
         assertNotNull(message);
         assertEquals(bigQueueMessage1, message);
 
         BigQueueMessage bigQueueMessage2 = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(bigQueueMessage2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(bigQueueMessage2));
 
         message = service.peek(QUEUE_NAME);
         assertNotNull(message);
@@ -388,10 +388,10 @@ public class BigQueueManagementServiceImplTest {
     public void size_non_empty_queue() throws Exception {
         assertEquals(0, service.size(QUEUE_NAME));
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         assertEquals(1, service.size(QUEUE_NAME));
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         assertEquals(2, service.size(QUEUE_NAME));
 
         bigQueue.dequeue();
@@ -407,9 +407,9 @@ public class BigQueueManagementServiceImplTest {
         assertFalse(Files.exists(Paths.get(QUEUE_DIR + File.separator + randomString)));
     }
 
-    private BigQueueMessage createBigQueueMessage() throws JsonProcessingException {
+    private BigQueueMessage createBigQueueMessage() throws JacksonException {
         return new BigQueueMessageBuilder<>()
-            .withMessage(OBJECT_MAPPER.writeValueAsString(createTestEvent()))
+            .withMessage(JSON_MAPPER.writeValueAsString(createTestEvent()))
             .withMessageProperties(Map.of("property1", "value1", "property2", "value2"))
             .build();
     }
@@ -530,9 +530,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage msg2 = createBigQueueMessage();
         BigQueueMessage msg3 = createBigQueueMessage();
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg3));
 
         assertEquals(3, service.size(QUEUE_NAME));
 
@@ -550,9 +550,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage msg2 = createBigQueueMessage();
         BigQueueMessage msg3 = createBigQueueMessage();
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg3));
 
         assertEquals(3, service.size(QUEUE_NAME));
 
@@ -567,7 +567,7 @@ public class BigQueueManagementServiceImplTest {
     @Test
     public void test_deleteMessage_single_message_queue() throws Exception {
         BigQueueMessage msg = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg));
 
         assertEquals(1, service.size(QUEUE_NAME));
 
@@ -580,7 +580,7 @@ public class BigQueueManagementServiceImplTest {
     @Test
     public void test_deleteMessage_empty_message_id() throws Exception {
         BigQueueMessage msg = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg));
 
         assertEquals(1, service.size(QUEUE_NAME));
 
@@ -598,9 +598,9 @@ public class BigQueueManagementServiceImplTest {
 
     @Test
     public void test_deleteAllMessage_verifies_messages_cleared() throws Exception {
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
 
         assertEquals(3, service.size(QUEUE_NAME));
         assertFalse(service.getMessages(QUEUE_NAME).isEmpty());
@@ -614,7 +614,7 @@ public class BigQueueManagementServiceImplTest {
     @Test
     public void test_peek_does_not_remove_message() throws Exception {
         BigQueueMessage msg = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg));
 
         assertEquals(1, service.size(QUEUE_NAME));
 
@@ -633,9 +633,9 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage msg2 = createBigQueueMessage();
         BigQueueMessage msg3 = createBigQueueMessage();
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg3));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg3));
 
         List<BigQueueMessage> messages = service.getMessages(QUEUE_NAME);
 
@@ -650,8 +650,8 @@ public class BigQueueManagementServiceImplTest {
         BigQueueMessage msg1 = createBigQueueMessage();
         BigQueueMessage msg2 = createBigQueueMessage();
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg1));
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg2));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg1));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg2));
 
         assertEquals(2, service.size(QUEUE_NAME));
 
@@ -668,16 +668,16 @@ public class BigQueueManagementServiceImplTest {
     public void test_size_after_multiple_operations() throws Exception {
         assertEquals(0, service.size(QUEUE_NAME));
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         assertEquals(1, service.size(QUEUE_NAME));
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         assertEquals(2, service.size(QUEUE_NAME));
 
         bigQueue.dequeue();
         assertEquals(1, service.size(QUEUE_NAME));
 
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         assertEquals(2, service.size(QUEUE_NAME));
 
         service.deleteAllMessage(QUEUE_NAME);
@@ -705,7 +705,7 @@ public class BigQueueManagementServiceImplTest {
     @Test
     public void test_deleteMessage_with_malformed_message_id() throws Exception {
         BigQueueMessage msg = createBigQueueMessage();
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(msg));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(msg));
 
         assertEquals(1, service.size(QUEUE_NAME));
 
@@ -721,7 +721,7 @@ public class BigQueueManagementServiceImplTest {
 
     @Test
     public void test_peek_after_deleteAllMessage() throws Exception {
-        bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+        bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         assertNotNull(service.peek(QUEUE_NAME));
 
         service.deleteAllMessage(QUEUE_NAME);
@@ -733,7 +733,7 @@ public class BigQueueManagementServiceImplTest {
     public void test_concurrent_deleteAllMessage_operations() throws Exception {
         // Add messages
         for (int i = 0; i < 1000; i++) {
-            bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+            bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         }
 
         assertEquals(1000, service.size(QUEUE_NAME));
@@ -801,7 +801,7 @@ public class BigQueueManagementServiceImplTest {
 
         // Add messages
         for (int i = 0; i < messageCount; i++) {
-            bigQueue.enqueue(OBJECT_MAPPER.writeValueAsBytes(createBigQueueMessage()));
+            bigQueue.enqueue(JSON_MAPPER.writeValueAsBytes(createBigQueueMessage()));
         }
 
         assertEquals(messageCount, service.size(QUEUE_NAME));

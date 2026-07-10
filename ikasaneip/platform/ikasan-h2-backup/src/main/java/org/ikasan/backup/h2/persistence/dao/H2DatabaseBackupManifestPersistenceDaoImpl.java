@@ -40,10 +40,10 @@
  */
 package org.ikasan.backup.h2.persistence.dao;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.backup.h2.persistence.model.H2DatabaseBackupManifest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -63,14 +63,14 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
     /** logger instance */
     private static Logger logger = LoggerFactory.getLogger(H2DatabaseBackupManifestPersistenceDaoImpl.class);
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final JsonMapper objectMapper = JsonMapper.builder().build();
 
     /** persistence directory */
-    private String persistenceDir;
+    private final String persistenceDir;
 
-    private File persistenceDirFile;
+    private final File persistenceDirFile;
 
-    private String manifestFileName;
+    private final String manifestFileName;
 
 
     /**
@@ -131,10 +131,29 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
         }
     }
 
+    /**
+     * Constructs the file path for the version file by combining the persistence directory
+     * with the manifest file name, separated by the default file system separator.
+     *
+     * @return the absolute path to the version file as a String
+     */
     protected String getVersionFilePath() {
         return persistenceDir + FileSystems.getDefault().getSeparator() + this.manifestFileName;
     }
 
+    /**
+     * Ensures the existence of the persistence directory and creates a safeguard file to prevent accidental deletion of its contents.
+     *
+     * This method performs the following steps:
+     * 1. Checks if the directory represented by `persistenceDirFile` exists.
+     * 2. Creates the directory and required parent directories if it does not exist.
+     * 3. Verifies the presence of a safeguard file named "DO_NOT_DELETE_ANY_FILES_IN_THIS_DIRECTORY"
+     *    within the persistence directory; creates it if missing.
+     * 4. Logs a warning if an {@link IOException} is encountered during the creation of the safeguard file.
+     *
+     * This method is used to ensure the persistence directory is properly set up before other operations
+     * that rely on its existence (e.g., saving or retrieving data).
+     */
     private void createPersistenceDir() {
         if(!persistenceDirFile.exists()) {
             persistenceDirFile.mkdirs();

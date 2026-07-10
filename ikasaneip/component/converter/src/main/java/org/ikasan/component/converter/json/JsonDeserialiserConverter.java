@@ -1,8 +1,9 @@
 package org.ikasan.component.converter.json;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.ikasan.spec.component.transformation.TransformationException;
 import org.ikasan.spec.serialiser.Converter;
+import tools.jackson.core.JacksonException;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.io.IOException;
 
@@ -15,12 +16,12 @@ public class JsonDeserialiserConverter<T> implements Converter<String, T>
 {
     private final Class<T> target;
 
-    private final ObjectMapper mapper;
+    private final JsonMapper mapper;
 
     /**
      * Construct instance with using the provided Jackson ObjectMapper
      */
-    public JsonDeserialiserConverter(Class<T> target, ObjectMapper mapper)
+    public JsonDeserialiserConverter(Class<T> target, JsonMapper mapper)
     {
         this.target = target;
         this.mapper = mapper;
@@ -32,7 +33,7 @@ public class JsonDeserialiserConverter<T> implements Converter<String, T>
     public JsonDeserialiserConverter(Class<T> target)
     {
         this.target = target;
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.builder().build();
     }
 
     /**
@@ -48,7 +49,7 @@ public class JsonDeserialiserConverter<T> implements Converter<String, T>
         {
             return mapper.readValue(payload, target);
         }
-        catch (IOException e)
+        catch (JacksonException e)
         {
             throw new TransformationException(e);
         }
