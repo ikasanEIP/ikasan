@@ -103,16 +103,17 @@ public class SystemEventLogController
      * @return - key to next view
      */
     @RequestMapping(value="search.htm", method = RequestMethod.GET)
-    public String search(HttpServletRequest request, @RequestParam(required = false) Boolean newSearch,
-                         @RequestParam(required = false) Integer page, @RequestParam(required = false) String orderBy,
-                         @RequestParam(required = false) Boolean orderAsc,
-                         @RequestParam(required = false)String subject,
-                         @RequestParam(required = false)String action,
-                         @RequestParam(required = false)String actor,
-                         @RequestParam(required = false)String timestampFromDate,
-                         @RequestParam(required = false)String timestampFromTime,
-                         @RequestParam(required = false)String timestampToDate,
-                         @RequestParam(required = false)String timestampToTime,
+    public String search(HttpServletRequest request, @RequestParam(required = false, name = "newSearch") Boolean newSearch,
+                         @RequestParam(required = false, name = "page") Integer page,
+                         @RequestParam(required = false, name = "newSearch") String orderBy,
+                         @RequestParam(required = false, name = "orderBy") Boolean orderAsc,
+                         @RequestParam(required = false, name = "subject")String subject,
+                         @RequestParam(required = false, name = "action")String action,
+                         @RequestParam(required = false, name = "actor")String actor,
+                         @RequestParam(required = false, name = "timestampFromDate")String timestampFromDate,
+                         @RequestParam(required = false, name = "timestampFromTime")String timestampFromTime,
+                         @RequestParam(required = false, name = "timestampToDate")String timestampToDate,
+                         @RequestParam(required = false, name = "newSearch")String timestampToTime,
 
                          ModelMap model)
     {
