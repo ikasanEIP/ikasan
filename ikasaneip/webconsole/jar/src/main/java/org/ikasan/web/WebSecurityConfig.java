@@ -54,7 +54,7 @@ public class WebSecurityConfig {
                 .logoutUrl("/j_spring_security_logout")
                 .deleteCookies("JSESSIONID"))
             .csrf(httpSecurityCsrfConfigurer
-                -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/rest/**", "/j_spring_security_check"))
+                -> httpSecurityCsrfConfigurer.ignoringRequestMatchers("/rest/**", "/modules/**", "/j_spring_security_check"))
             .headers(httpSecurityHeadersConfigurer
                 -> {httpSecurityHeadersConfigurer.frameOptions(frameOptionsConfig
                     -> frameOptionsConfig.sameOrigin());

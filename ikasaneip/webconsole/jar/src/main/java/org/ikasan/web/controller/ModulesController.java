@@ -168,11 +168,12 @@ public class ModulesController
      * @throws Exception - Exception if we cannot control the initiator
      */
     @RequestMapping(value = "flowStartupControl.htm", method = RequestMethod.POST)
+    @PreAuthorize("hasAnyAuthority('ALL','WriteBlueConsole')")
     public String controlInitiator(
             @RequestParam(MODULE_NAME_PARAMETER_NAME) String moduleName,
             @RequestParam(FLOW_NAME_PARAMETER_NAME) String flowName,
-            @RequestParam(value=STARTUP_TYPE_PARAMETER_NAME,required=false) String startupType,
-            @RequestParam(value=STARTUP_COMMENT_PARAMETER_NAME, required=false) String startupComment)
+            @RequestParam(name=STARTUP_TYPE_PARAMETER_NAME,required=false) String startupType,
+            @RequestParam(name=STARTUP_COMMENT_PARAMETER_NAME, required=false) String startupComment)
     {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         if (startupType!=null)

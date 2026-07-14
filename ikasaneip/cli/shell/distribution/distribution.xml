@@ -39,7 +39,7 @@
             <outputDirectory>lib/migration</outputDirectory>
         </file>
         <file>
-            <source>target/h2-2.2.224.jar</source>
+            <source>target/h2-${version.com.h2database}.jar</source>
             <outputDirectory>lib/migration</outputDirectory>
         </file>
     </files>
