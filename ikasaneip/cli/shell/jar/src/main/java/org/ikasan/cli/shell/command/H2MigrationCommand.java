@@ -124,7 +124,7 @@ public class H2MigrationCommand
      */
     @Command(description = "Migrate H2 persistence", group = "Ikasan Commands", command = "migrate-h2")
     public String migrateH2(@Option(description = "The version of the H2 database we are migrating from.", longNames = "source-h2-version", defaultValue = "1.4.200")  String sourceH2Version,
-                            @Option(description = "The version of the H2 database we are migrating to.", longNames = "target-h2-version",defaultValue = "2.2.224")  String targetH2Version,
+                            @Option(description = "The version of the H2 database we are migrating to.", longNames = "target-h2-version",defaultValue = "2.4.240")  String targetH2Version,
                             @Option(description = "The username of the H2 database to use for the migration. " +
                                 " The 'datasource.username' property provided in the properties file will be used as the default" +
                                 " unless one is provided on the command line.", longNames = "h2-user", defaultValue = "")  String h2User,
