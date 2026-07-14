@@ -40,27 +40,25 @@
  */
 package org.ikasan.module.dao;
 
-import liquibase.Liquibase;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.module.IkasanModuleTestAutoConfiguration;
 import org.ikasan.module.startup.StartupControlImpl;
 import org.ikasan.module.startup.dao.StartupControlDao;
 import org.ikasan.spec.configuration.ConfigurationService;
 import org.ikasan.spec.dashboard.DashboardRestService;
-import org.ikasan.spec.harvest.HarvestingSchedulerService;
-import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
@@ -82,8 +80,6 @@ public class HibernateStartupControlDaoTest
     @MockBean(name = "configurationService")
     private ConfigurationService configurationService;
 
-    @MockBean(name = "liquibase")
-    private Liquibase liquibase;
 
     @MockBean(name = "moduleMetadataDashboardRestService")
     private DashboardRestService moduleMetadataDashboardRestService;
@@ -96,6 +92,12 @@ public class HibernateStartupControlDaoTest
 
     @MockBean(name = "systemEventService")
     private SystemEventService systemEventService;
+
+    @After
+    public void teardown() {
+        this.startupControlDao.getStartupControls("moduleName")
+            .forEach(startupControl -> this.startupControlDao.delete(startupControl));
+    }
 
     @Test
     @DirtiesContext

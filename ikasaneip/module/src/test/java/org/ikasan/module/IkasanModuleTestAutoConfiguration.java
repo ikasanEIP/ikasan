@@ -2,8 +2,7 @@ package org.ikasan.module;
 
 import com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple;
 import com.arjuna.ats.jta.UserTransaction;
-import jakarta.persistence.EntityManagerFactory;
-import org.ikasan.spec.exclusion.ExclusionManagementService;
+import liquibase.integration.spring.SpringLiquibase;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.housekeeping.HousekeepingSchedulerService;
 import org.jmock.Mockery;
@@ -72,11 +71,19 @@ public class IkasanModuleTestAutoConfiguration
     Properties platformJpaProperties() {
         Properties platformJpaProperties = new Properties();
         platformJpaProperties.put("hibernate.show_sql", false);
-        platformJpaProperties.put("hibernate.hbm2ddl.auto", "create-drop");
+        platformJpaProperties.put("hibernate.hbm2ddl.auto", "none");
         platformJpaProperties.put("hibernate.transaction.jta.platform",
             "org.hibernate.engine.transaction.jta.platform.internal.JBossStandAloneJtaPlatform");
 
         return platformJpaProperties;
+    }
+
+    @Bean
+    public SpringLiquibase liquibase() {
+        SpringLiquibase liquibase = new SpringLiquibase();
+        liquibase.setChangeLog("classpath:db-changelog-master.xml");
+        liquibase.setDataSource(ikasanDataSource());
+        return liquibase;
     }
 
     @Bean
