@@ -40,7 +40,6 @@
  */
 package org.ikasan.module.dao;
 
-import liquibase.Liquibase;
 import org.ikasan.module.IkasanModuleAutoConfiguration;
 import org.ikasan.module.IkasanModuleTestAutoConfiguration;
 import org.ikasan.module.startup.StartupControlImpl;
@@ -51,6 +50,7 @@ import org.ikasan.spec.module.StartupControl;
 import org.ikasan.spec.module.StartupType;
 import org.ikasan.spec.systemevent.SystemEventService;
 import org.ikasan.wiretap.listener.JobAwareFlowEventListener;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,9 +79,6 @@ public class HibernateStartupControlDaoTest
     @MockitoBean(name = "configurationService")
     private ConfigurationService configurationService;
 
-    @MockitoBean(name = "liquibase")
-    private Liquibase liquibase;
-
     @MockitoBean(name = "moduleMetadataDashboardRestService")
     private DashboardRestService moduleMetadataDashboardRestService;
 
@@ -93,6 +90,12 @@ public class HibernateStartupControlDaoTest
 
     @MockitoBean(name = "systemEventService")
     private SystemEventService systemEventService;
+
+    @After
+    public void teardown() {
+        this.startupControlDao.getStartupControls("moduleName")
+            .forEach(startupControl -> this.startupControlDao.delete(startupControl));
+    }
 
     @Test
     @DirtiesContext
