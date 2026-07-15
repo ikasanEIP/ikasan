@@ -24,7 +24,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ImportResource("/transactions.xml")
+@ImportResource("classpath:transactions.xml")
 public class SystemEventTestAutoConfiguration {
 
     @Bean(name = "deleteOnceHarvestedSystemEventDao")

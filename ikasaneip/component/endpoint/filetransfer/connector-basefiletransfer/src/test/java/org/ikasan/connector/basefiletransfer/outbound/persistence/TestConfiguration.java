@@ -7,7 +7,7 @@ import org.springframework.context.annotation.ImportResource;
 
 @Configuration
 @ImportResource(locations = {
-    "/substitute-beans.xml"
+    "classpath:substitute-beans.xml"
 })
 @Import({ IkasanTransactionConfiguration.class})
 public class TestConfiguration

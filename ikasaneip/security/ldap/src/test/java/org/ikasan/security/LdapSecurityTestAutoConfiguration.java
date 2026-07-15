@@ -27,9 +27,9 @@ import java.util.Properties;
 @Configuration
 @EnableTransactionManagement
 @ImportResource( locations={
-    "/mock-components.xml",
-    "/test-transaction.xml",
-    "/substitute-components.xml",
+    "classpath:mock-components.xml",
+    "classpath:test-transaction.xml",
+    "classpath:substitute-components.xml",
 })
 public class LdapSecurityTestAutoConfiguration {
     @Value("${ikasan.dashboard.extract.enabled:false}")

@@ -21,7 +21,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ImportResource({"/test-transaction.xml"})
+@ImportResource({"classpath:test-transaction.xml"})
 public class HospitalTestAutoConfiguration
 {
     private Mockery mockery = new Mockery()
