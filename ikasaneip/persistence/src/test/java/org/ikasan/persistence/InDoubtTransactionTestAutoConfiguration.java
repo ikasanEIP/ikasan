@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ImportResource("/test-persistence-transaction.xml")
+@ImportResource("classpath:test-persistence-transaction.xml")
 public class InDoubtTransactionTestAutoConfiguration {
 
     @Bean(name = {"ikasan.xads", "ikasan.ds"})
