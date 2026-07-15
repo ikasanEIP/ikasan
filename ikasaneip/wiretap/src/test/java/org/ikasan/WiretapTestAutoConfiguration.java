@@ -25,7 +25,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ImportResource("/transactions.xml")
+@ImportResource("classpath:transactions.xml")
 public class WiretapTestAutoConfiguration {
 
     @Mock

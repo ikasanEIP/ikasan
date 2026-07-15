@@ -34,7 +34,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ImportResource({"/test-transaction.xml"})
+@ImportResource({"classpath:test-transaction.xml"})
 public class ReplayTestAutoConfiguration
 {
     private Mockery mockery = new Mockery()

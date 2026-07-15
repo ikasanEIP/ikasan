@@ -15,7 +15,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ImportResource("/persistence-transaction.xml")
+@ImportResource("classpath:persistence-transaction.xml")
 public class InDoubtTransactionAutoConfiguration {
 
     @Bean

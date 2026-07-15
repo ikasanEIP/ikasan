@@ -26,7 +26,7 @@ import javax.sql.DataSource;
 import java.util.Properties;
 
 @Configuration
-@ImportResource("/error-reporting-transaction.xml")
+@ImportResource("classpath:error-reporting-transaction.xml")
 public class ErrorReportingAutoConfiguration
 {
     @Value("${errorReportingHousekeepingJob-deleteOnceHarvested:false}")
