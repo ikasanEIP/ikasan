@@ -14,7 +14,7 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@ImportResource("/test-transaction.xml")
+@ImportResource("classpath:test-transaction.xml")
 public class SecurityTestAutoConfiguration
 {
     @Bean(name = {"ikasan.xads", "ikasan.ds"})
