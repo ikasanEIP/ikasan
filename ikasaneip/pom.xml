@@ -275,7 +275,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.kryo>4.0.2</version.kryo>
-        <version.logback.core>1.5.25</version.logback.core>
+        <version.logback.core>1.5.38</version.logback.core>
         <version.kryo.cli>5.0.3</version.kryo.cli>  <!-- currently only using latest version for CLI/shell -->
         <version.ow2.asm>7.1</version.ow2.asm>
         <version.org.hibernate>6.4.1.Final</version.org.hibernate>
@@ -290,7 +290,7 @@
         <version.org.springframework.shell>3.2.1</version.org.springframework.shell>
         <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
-        <version.net.bytebuddy.byte-buddy>1.12.19</version.net.bytebuddy.byte-buddy>
+        <version.net.bytebuddy.byte-buddy>1.17.5</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>2.0.12</version.org.slf4j>
         <version.junit>4.13.1</version.junit>
         <version.org.awaitility>4.0.2</version.org.awaitility>
@@ -343,7 +343,7 @@
         <version.jakarta.servlet>6.1.0-M1</version.jakarta.servlet>
         <version.jakarta.servlet.jsp.jstl>3.0.0</version.jakarta.servlet.jsp.jstl>
         <version.glassfish.jakarta.servlet.jsp.jstl>3.0.0</version.glassfish.jakarta.servlet.jsp.jstl>
-        <version.activemq>6.2.1</version.activemq>
+        <version.activemq>6.2.6</version.activemq>
         <version.geronimo.spec>1.4-rc3</version.geronimo.spec>
         <version.geronimo.jms.spec>1.1.1</version.geronimo.jms.spec>
         <version.jakarta.jms-api>3.1.0</version.jakarta.jms-api>
@@ -358,13 +358,13 @@
         <version.org.mockftpserver>2.6</version.org.mockftpserver>
         <version.org.apache.sshd>2.11.0</version.org.apache.sshd>
         <version.com.github.stefanbirkner.sftp>2.0.0</version.com.github.stefanbirkner.sftp>
-        <version.com.fasterxml.jackson.core>2.22.0</version.com.fasterxml.jackson.core>
+        <version.com.fasterxml.jackson.core>2.22.1</version.com.fasterxml.jackson.core>
         <version.com.fasterxml.jackson.annotations>2.22</version.com.fasterxml.jackson.annotations>
-        <version.com.fasterxml.jackson.core.databind>2.22.0</version.com.fasterxml.jackson.core.databind>
+        <version.com.fasterxml.jackson.core.databind>2.22.1</version.com.fasterxml.jackson.core.databind>
         <version.finbugs>1.3.9</version.finbugs>
         <version.com.google.guava>33.0.0-jre</version.com.google.guava>
-        <version.tomcat>10.1.56</version.tomcat>
-        <version.wiremock>3.0.3</version.wiremock>
+        <version.tomcat>10.1.57</version.tomcat>
+        <version.wiremock>3.13.2</version.wiremock>
         <version.org.apache.httpcomponents>5.4.3</version.org.apache.httpcomponents>
         <version.vtd.xml>2.13.4</version.vtd.xml>
         <version.json.assert>1.5.0</version.json.assert>
@@ -374,13 +374,13 @@
         <version.apiguardian.api>1.1.0</version.apiguardian.api>
         <version.opentest4j>1.2.0</version.opentest4j>
         <version.aws.java.sdk>1.11.837</version.aws.java.sdk>
-        <version.bouncycastle>1.78</version.bouncycastle>
+        <version.bouncycastle>1.84</version.bouncycastle>
         <version.jakarta.validation.api>3.1.0-M1</version.jakarta.validation.api>
         <version.jakarta.el>6.0.0-M1</version.jakarta.el>
         <version.commons-io>2.14.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.spring.retry>2.0.12</version.spring.retry>
-        <version.thymeleaf>3.0.14.RELEASE</version.thymeleaf>
+        <version.thymeleaf>3.1.5.RELEASE</version.thymeleaf>
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
         <version.big.queue>1.0.0</version.big.queue>
@@ -389,14 +389,14 @@
         <version.jaxb-runtime>4.0.4</version.jaxb-runtime>
         <version.org.springframework.data>3.4.1</version.org.springframework.data>
         <version.jakarta.xml.bind>4.0.1</version.jakarta.xml.bind>
-        <version.jakarta.persistence>3.1.0</version.jakarta.persistence>
+        <version.jakarta.persistence>3.2.0</version.jakarta.persistence>
         <version.jakarta.resource-api>2.0.0</version.jakarta.resource-api>
         <version.jakarta.transaction-api>2.0.1</version.jakarta.transaction-api>
         <version.jboss-transaction-spi>8.0.0.Final</version.jboss-transaction-spi>
         <version.commons-text>1.13.0</version.commons-text>
-        <version.kafka.core>4.1.1</version.kafka.core>
+        <version.kafka.core>4.1.2</version.kafka.core>
         <version.kafka.reactor.core>1.3.25</version.kafka.reactor.core>
-        <version.spring.kafka>4.0.2</version.spring.kafka>
+        <version.spring.kafka>4.0.6</version.spring.kafka>
         <version.scala.libs>2.13.15</version.scala.libs>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -566,6 +566,7 @@
                             --add-opens java.xml/javax.xml.parsers=ALL-UNNAMED
                             --add-exports java.base/sun.nio.ch=ALL-UNNAMED
                             --add-exports java.base/sun.nio.fs=ALL-UNNAMED
+                            --enable-native-access=ALL-UNNAMED
                         </argLine>
                     </configuration>
                 </plugin>
@@ -1102,6 +1103,18 @@
             <dependency>
                 <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-security-db</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-security-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-security-common</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -1893,7 +1906,25 @@
 
             <dependency>
                 <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-jdbc</artifactId>
+                <version>${version.org.springboot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-jms</artifactId>
+                <version>${version.org.springboot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-autoconfigure-processor</artifactId>
+                <version>${version.org.springboot}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-liquibase</artifactId>
                 <version>${version.org.springboot}</version>
             </dependency>
 
@@ -1962,6 +1993,10 @@
                     <exclusion>
                         <groupId>org.springframework.security</groupId>
                         <artifactId>spring-security-crypto</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents.core5</groupId>
+                        <artifactId>httpcore5</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -3040,8 +3075,25 @@
                 <groupId>org.apache.httpcomponents.client5</groupId>
                 <artifactId>httpclient5</artifactId>
                 <version>${version.org.apache.httpcomponents}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.apache.httpcomponents.core5</groupId>
+                        <artifactId>httpcore5</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>${version.org.apache.httpcomponents}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>${version.org.apache.httpcomponents}</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.wiremock</groupId>
