@@ -7,6 +7,10 @@ import org.ikasan.spec.component.endpoint.Broker;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -17,6 +21,9 @@ public class MoveFileBroker implements Broker<FileWatcherJobEvent, FileWatcherJo
     private static Logger logger = LoggerFactory.getLogger(MoveFileBroker.class);
     public static SimpleDateFormat ARCHIVE_FILE_DATE_FORMATTER = new SimpleDateFormat("YYYYddMM_hhmmss");
 
+    public static final String MOVE_DIRECTORY_PATTERN = "moveDirectoryPattern";
+    public static final String CORRELATING_IDENTIFIER = "correlatingIdentifier";
+
     @Override
     public FileWatcherJobEvent invoke(FileWatcherJobEvent fileWatcherJobEvent) throws EndpointException {
         if(fileWatcherJobEvent.isDryRun()) {
@@ -25,15 +32,17 @@ public class MoveFileBroker implements Broker<FileWatcherJobEvent, FileWatcherJo
 
         if(fileWatcherJobEvent.getCorrelatedFileList() != null && fileWatcherJobEvent.getCorrelatedFileList().getFileList() != null) {
             try {
+                String moveDirectory = this.resolveMoveDirectory(fileWatcherJobEvent);
+
                 for (File file : fileWatcherJobEvent.getCorrelatedFileList().getFileList()) {
-                    if (fileWatcherJobEvent.getMoveDirectory() != null && !fileWatcherJobEvent.getMoveDirectory().isEmpty()
-                        && !fileWatcherJobEvent.getMoveDirectory().equals(".")) {
-                        logger.info(String.format("Moving file[%s] to directory[%s]", file.getAbsolutePath(), fileWatcherJobEvent.getMoveDirectory()));
-                        File destDir = new File(fileWatcherJobEvent.getMoveDirectory());
+                    if (moveDirectory != null && !moveDirectory.isEmpty()
+                        && !moveDirectory.equals(".")) {
+                        logger.info(String.format("Moving file[%s] to directory[%s]", file.getAbsolutePath(), moveDirectory));
+                        File destDir = new File(moveDirectory);
 
                         if (file.getParentFile().equals(destDir)) {
                             logger.info(String.format("Not moving file[%s] to directory[%s], as the source and destination directories are the same!"
-                                , file.getAbsolutePath(), fileWatcherJobEvent.getMoveDirectory()));
+                                , file.getAbsolutePath(), moveDirectory));
                         } else {
                             File destFile = new File(destDir, file.getName());
                             if (destFile.exists()) {
@@ -50,6 +59,32 @@ public class MoveFileBroker implements Broker<FileWatcherJobEvent, FileWatcherJo
         }
 
         return fileWatcherJobEvent;
+    }
+
+    /**
+     * Resolve the actual move (archive) directory to use, evaluating the configured SpEL expression
+     * against the raw moveDirectory pattern when one has been configured. Falls back to the raw
+     * moveDirectory value unchanged when no SpEL expression is configured, for backward compatibility
+     * with existing jobs.
+     *
+     * @param fileWatcherJobEvent the event carrying the raw moveDirectory and optional SpEL expression
+     * @return the resolved move directory
+     */
+    private String resolveMoveDirectory(FileWatcherJobEvent fileWatcherJobEvent) {
+        String moveDirectory = fileWatcherJobEvent.getMoveDirectory();
+
+        if (fileWatcherJobEvent.getMoveDirectorySpelExpression() != null) {
+            StandardEvaluationContext evaluationContext = new StandardEvaluationContext();
+            evaluationContext.setVariable(MOVE_DIRECTORY_PATTERN, fileWatcherJobEvent.getMoveDirectory());
+            evaluationContext.setVariable(CORRELATING_IDENTIFIER, fileWatcherJobEvent.getCorrelationIdentifier());
+
+            ExpressionParser parser = new SpelExpressionParser();
+            Expression exp = parser.parseExpression(fileWatcherJobEvent.getMoveDirectorySpelExpression());
+
+            moveDirectory = exp.getValue(evaluationContext, String.class);
+        }
+
+        return moveDirectory;
     }
 
     /**

@@ -13,6 +13,7 @@ public class FileWatcherJobConverterConfiguration {
     private String fileNameSpelExpression;
     private String filePathSpelExpression;
     private String moveDirectory;
+    private String moveDirectorySpelExpression;
     private int minFileAgeSeconds;
     /** cron expression on expected time of file availability */
     private String slaCronExpression;
@@ -90,6 +91,14 @@ public class FileWatcherJobConverterConfiguration {
 
     public void setMoveDirectory(String moveDirectory) {
         this.moveDirectory = moveDirectory;
+    }
+
+    public String getMoveDirectorySpelExpression() {
+        return moveDirectorySpelExpression;
+    }
+
+    public void setMoveDirectorySpelExpression(String moveDirectorySpelExpression) {
+        this.moveDirectorySpelExpression = moveDirectorySpelExpression;
     }
 
     public int getMinFileAgeSeconds() {

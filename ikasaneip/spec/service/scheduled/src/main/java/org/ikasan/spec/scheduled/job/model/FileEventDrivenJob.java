@@ -254,4 +254,34 @@ public interface FileEventDrivenJob extends QuartzScheduleDrivenJob {
      * @param filePathReplacementPairs The list of ReplacementPair objects containing the replacement token and job plan parameter name.
      */
     void setFilePathReplacementPairs(Set<ReplacementPair> filePathReplacementPairs);
+
+    /**
+     * Get the SpEL expression for determining the move (archive) directory.
+     *
+     * @return the SpEL expression for determining the move directory
+     */
+    String getMoveDirectorySpel();
+
+    /**
+     * Set the Spring Expression Language (SpEL) for determining the move (archive) directory.
+     * This SpEL expression will be evaluated to fetch the move directory at runtime.
+     *
+     * @param moveDirectorySpel the SpEL expression for move directory
+     */
+    void setMoveDirectorySpel(String moveDirectorySpel);
+
+    /**
+     * Retrieves the list of ReplacementPair objects representing the move directory replacement pairs for the job.
+     *
+     * @return Set of ReplacementPair objects containing the replacement token and job plan parameter name.
+     */
+    Set<ReplacementPair> getMoveDirectoryReplacementPairs();
+
+    /**
+     * Set the list of ReplacementPair objects representing the move directory replacement pairs for the job.
+     * These ReplacementPair objects contain the replacement token and job plan parameter name
+     *
+     * @param moveDirectoryReplacementPairs The set of ReplacementPair objects containing the replacement token and job plan parameter name.
+     */
+    void setMoveDirectoryReplacementPairs(Set<ReplacementPair> moveDirectoryReplacementPairs);
 }
