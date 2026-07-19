@@ -551,6 +551,7 @@ public class JobProvisionServiceImpl implements JobProvisionService {
         fileConsumerConfiguration.setContextName(job.getContextName());
         fileConsumerConfiguration.setJobName(job.getJobName());
         fileConsumerConfiguration.setMoveDirectory(job.getMoveDirectory());
+        fileConsumerConfiguration.setMoveDirectorySpelExpression(job.getMoveDirectorySpel());
         if(job.getFilenames() != null && job.getFilenames().size() > 0) {
             fileConsumerConfiguration.setFilename(job.getFilenames().get(0));
         }

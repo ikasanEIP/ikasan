@@ -34,6 +34,7 @@ public class JobExecutionContextToFileWatcherJobConverter implements Converter<J
         fileWatcherJobEvent.setContextName(this.configuration.getContextName());
         fileWatcherJobEvent.setJobName(this.configuration.getJobName());
         fileWatcherJobEvent.setMoveDirectory(this.configuration.getMoveDirectory());
+        fileWatcherJobEvent.setMoveDirectorySpelExpression(this.configuration.getMoveDirectorySpelExpression());
         fileWatcherJobEvent.setFilename(this.configuration.getFilename());
         fileWatcherJobEvent.setFilePath(this.configuration.getFilePath());
         fileWatcherJobEvent.setMinFileAgeSeconds(this.configuration.getMinFileAgeSeconds());
