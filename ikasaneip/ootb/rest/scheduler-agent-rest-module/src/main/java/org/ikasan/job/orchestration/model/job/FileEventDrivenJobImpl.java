@@ -49,6 +49,8 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
 
     private Set<ReplacementPair> filenameReplacementPairs;
     private Set<ReplacementPair> filePathReplacementPairs;
+    private String moveDirectorySpel;
+    private Set<ReplacementPair> moveDirectoryReplacementPairs;
 
     @Override
     public String getFilePath() {
@@ -231,6 +233,26 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
     }
 
     @Override
+    public String getMoveDirectorySpel() {
+        return moveDirectorySpel;
+    }
+
+    @Override
+    public void setMoveDirectorySpel(String moveDirectorySpel) {
+        this.moveDirectorySpel = moveDirectorySpel;
+    }
+
+    @Override
+    public Set<ReplacementPair> getMoveDirectoryReplacementPairs() {
+        return moveDirectoryReplacementPairs;
+    }
+
+    @Override
+    public void setMoveDirectoryReplacementPairs(Set<ReplacementPair> moveDirectoryReplacementPairs) {
+        this.moveDirectoryReplacementPairs = moveDirectoryReplacementPairs;
+    }
+
+    @Override
     public String toString() {
         final StringBuffer sb = new StringBuffer("FileEventDrivenJobImpl{");
         sb.append("filePath='").append(filePath).append('\'');
@@ -247,6 +269,7 @@ public class FileEventDrivenJobImpl extends QuartzScheduleDrivenJobImpl implemen
         sb.append(", isDynamic=").append(isDynamic);
         sb.append(", filePathSpel=").append(filePathSpel);
         sb.append(", filenameSpel=").append(filenameSpel);
+        sb.append(", moveDirectorySpel=").append(moveDirectorySpel);
         sb.append('}');
         return sb.toString();
     }
