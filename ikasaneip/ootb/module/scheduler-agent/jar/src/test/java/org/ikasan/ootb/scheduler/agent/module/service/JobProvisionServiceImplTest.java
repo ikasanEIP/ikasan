@@ -202,6 +202,7 @@ public class JobProvisionServiceImplTest {
         verify(fileWatcherJobConverterConfiguration, times(1)).setFilePathSpelExpression(anyString());
         verify(fileWatcherJobConverterConfiguration, times(1)).setContextName(anyString());
         verify(fileWatcherJobConverterConfiguration, times(1)).setMoveDirectory(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setMoveDirectorySpelExpression(anyString());
         verify(fileWatcherJobConverterConfiguration, times(1)).setMinFileAgeSeconds(anyInt());
         verify(fileWatcherJobConverterConfiguration, times(1)).setChildContextNames(any());
         verify(fileWatcherJobConverterConfiguration, times(1)).setBlackoutWindowCronExpressions(any());
@@ -402,6 +403,7 @@ public class JobProvisionServiceImplTest {
         verify(fileWatcherJobConverterConfiguration, times(1)).setFilePathSpelExpression(anyString());
         verify(fileWatcherJobConverterConfiguration, times(1)).setContextName(anyString());
         verify(fileWatcherJobConverterConfiguration, times(1)).setMoveDirectory(anyString());
+        verify(fileWatcherJobConverterConfiguration, times(1)).setMoveDirectorySpelExpression(anyString());
         verify(fileWatcherJobConverterConfiguration, times(1)).setMinFileAgeSeconds(anyInt());
         verify(fileWatcherJobConverterConfiguration, times(1)).setChildContextNames(any());
         verify(fileWatcherJobConverterConfiguration, times(1)).setBlackoutWindowCronExpressions(any());
@@ -623,6 +625,7 @@ public class JobProvisionServiceImplTest {
         fileEventDrivenJob.setDynamic(true);
         fileEventDrivenJob.setFilenameSpel("filename spel");
         fileEventDrivenJob.setFilePathSpel("file path spel");
+        fileEventDrivenJob.setMoveDirectorySpel("move directory spel");
         fileEventDrivenJob.setSlaCronExpression("sla cron expression");
 
         QuartzScheduleDrivenJobImpl quartzScheduleDrivenJob = new QuartzScheduleDrivenJobImpl();

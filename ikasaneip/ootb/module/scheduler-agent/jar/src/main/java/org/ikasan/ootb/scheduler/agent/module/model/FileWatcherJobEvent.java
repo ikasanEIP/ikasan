@@ -19,6 +19,7 @@ public class FileWatcherJobEvent implements Serializable {
     private String fileNameSpelExpression;
     private String filePathSpelExpression;
     private String moveDirectory;
+    private String moveDirectorySpelExpression;
     private int minFileAgeSeconds = 0;
     /** cron expression on expected time of file availability */
     private String slaCronExpression;
@@ -103,6 +104,14 @@ public class FileWatcherJobEvent implements Serializable {
 
     public void setMoveDirectory(String moveDirectory) {
         this.moveDirectory = moveDirectory;
+    }
+
+    public String getMoveDirectorySpelExpression() {
+        return moveDirectorySpelExpression;
+    }
+
+    public void setMoveDirectorySpelExpression(String moveDirectorySpelExpression) {
+        this.moveDirectorySpelExpression = moveDirectorySpelExpression;
     }
 
     public int getMinFileAgeSeconds() {
@@ -213,6 +222,7 @@ public class FileWatcherJobEvent implements Serializable {
             .add("fileNameSpelExpression='" + fileNameSpelExpression + "'")
             .add("filePathSpelExpression='" + filePathSpelExpression + "'")
             .add("moveDirectory='" + moveDirectory + "'")
+            .add("moveDirectorySpelExpression='" + moveDirectorySpelExpression + "'")
             .add("minFileAgeSeconds=" + minFileAgeSeconds)
             .add("slaCronExpression='" + slaCronExpression + "'")
             .add("timeZone='" + timeZone + "'")
@@ -242,6 +252,7 @@ public class FileWatcherJobEvent implements Serializable {
             && Objects.equals(fileNameSpelExpression, that.fileNameSpelExpression)
             && Objects.equals(filePathSpelExpression, that.filePathSpelExpression)
             && Objects.equals(moveDirectory, that.moveDirectory)
+            && Objects.equals(moveDirectorySpelExpression, that.moveDirectorySpelExpression)
             && Objects.equals(slaCronExpression, that.slaCronExpression)
             && Objects.equals(timeZone, that.timeZone)
             && Objects.equals(blackoutWindowCronExpressions, that.blackoutWindowCronExpressions)
@@ -255,7 +266,7 @@ public class FileWatcherJobEvent implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(contextName, jobName, childContextNames, correlationIdentifier, filePath
-            , filename, fileNameSpelExpression, filePathSpelExpression, moveDirectory, minFileAgeSeconds
+            , filename, fileNameSpelExpression, filePathSpelExpression, moveDirectory, moveDirectorySpelExpression, minFileAgeSeconds
             , slaCronExpression, timeZone, blackoutWindowCronExpressions, blackoutWindowDateTimeRanges
             , correlatedFileList, fireTime, nextFireTime, jobGroup, jobDescription, dryRun, outcome);
     }
