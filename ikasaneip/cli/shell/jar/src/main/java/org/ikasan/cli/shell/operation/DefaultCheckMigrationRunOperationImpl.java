@@ -2,19 +2,22 @@ package org.ikasan.cli.shell.operation;
 
 import org.ikasan.cli.shell.migration.service.MigrationService;
 
+import java.util.List;
+
 public class DefaultCheckMigrationRunOperationImpl implements ExecutableOperation {
     protected MigrationService migrationService;
     protected String type;
     protected String sourceVersion;
     protected String targetVersion;
     protected String label;
+    protected List<String> previouslySupportedMigrationTargetVersions;
 
     /**
      * CheckMigrationRunOperation class represents an executable operation that checks if a migration run
      * can be performed based on the given type, source version, and target version.
      */
     public DefaultCheckMigrationRunOperationImpl(MigrationService migrationService, String type
-        , String sourceVersion, String targetVersion, String label) {
+        , String sourceVersion, String targetVersion, String label, List<String> previouslySupportedMigrationTargetVersions) {
         this.migrationService = migrationService;
         if(this.migrationService == null) {
             throw new IllegalArgumentException("migrationService cannot be 'null'");
@@ -35,12 +38,22 @@ public class DefaultCheckMigrationRunOperationImpl implements ExecutableOperatio
         if(this.label == null) {
             throw new IllegalArgumentException("label cannot be 'null'");
         }
+        this.previouslySupportedMigrationTargetVersions = previouslySupportedMigrationTargetVersions;
+        if(this.previouslySupportedMigrationTargetVersions == null) {
+            throw new IllegalArgumentException("previouslySupportedMigrationTargetVersions cannot be 'null'");
+        }
     }
 
     @Override
     public String execute() throws RuntimeException {
         if(this.migrationService.find(this.type, this.sourceVersion, this.targetVersion, this.label) != null) {
             return MigrationOperation.RUN_PREVIOUSLY;
+        }
+
+        for (String version : this.previouslySupportedMigrationTargetVersions) {
+            if (this.migrationService.find(this.type, this.sourceVersion, version, this.label) != null) {
+                return MigrationOperation.RUN_PREVIOUSLY;
+            }
         }
 
         return MigrationOperation.NOT_YET_RUN;
