@@ -36,7 +36,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300));
+            "-script ./db-migration/test.sql"), 300, List.of()));
     }
 
     @Test
@@ -46,7 +46,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300));
+            "-script ./db-migration/test.sql"), 300, List.of()));
     }
 
     @Test
@@ -56,7 +56,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300));
+            "-script ./db-migration/test.sql"), 300, List.of()));
     }
 
     @Test
@@ -66,7 +66,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , null, "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300));
+            "-script ./db-migration/test.sql"), 300, List.of()));
     }
 
     @Test
@@ -76,7 +76,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", null, "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300));
+            "-script ./db-migration/test.sql"), 300, List.of()));
     }
 
     @Test
@@ -84,7 +84,7 @@ public class H2CheckMigrationRunOperationImplTest {
         assertThrows(IllegalArgumentException.class,
             () -> new H2CheckMigrationRunOperationImpl(migrationService, MigrationType.H2_MIGRATION, "1.4.200"
             , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
-            , null, 300));
+            , null, 300, List.of()));
     }
 
     @Test
@@ -103,7 +103,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300);
+            "-script ./db-migration/test.sql"), 300, List.of());
 
         String result = h2CheckMigrationRunOperation.execute();
 
@@ -126,11 +126,39 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300);
+            "-script ./db-migration/test.sql"), 300, List.of());
 
         String result = h2CheckMigrationRunOperation.execute();
 
         Assert.assertEquals(MigrationOperation.RUN_PREVIOUSLY, result);
+    }
+
+    @Test
+    public void test_migration_not_required_as_already_run_to_previous_version() {
+        mockery.checking(new Expectations()
+        {
+            {
+                exactly(1).of(migrationService).find(with(MigrationType.H2_MIGRATION)
+                    , with("1.4.200"), with("2.4.240"), with("ESB"));
+                will(returnValue(null));
+
+                exactly(1).of(migrationService).find(with(MigrationType.H2_MIGRATION)
+                    , with("1.4.200"), with("2.2.224"), with("ESB"));
+                will(returnValue(ikasanMigration));
+            }
+        });
+
+        H2CheckMigrationRunOperationImpl h2CheckMigrationRunOperation
+            = new H2CheckMigrationRunOperationImpl(migrationService, MigrationType.H2_MIGRATION, "1.4.200"
+            , "2.4.240", "./src/test/resources/migration/h2_1_4_200_sample_db/esb", "ESB"
+            , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
+            "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_1_4_200_sample_db/esb -user sa -password sa " +
+            "-script ./db-migration/test.sql"), 300, List.of("2.2.224"));
+
+        String result = h2CheckMigrationRunOperation.execute();
+
+        Assert.assertEquals(MigrationOperation.RUN_PREVIOUSLY, result);
+        mockery.assertIsSatisfied();
     }
 
     @Test
@@ -149,7 +177,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_2_4_240_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_2_4_240_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300);
+            "-script ./db-migration/test.sql"), 300, List.of());
 
         String result = h2CheckMigrationRunOperation.execute();
 
@@ -172,7 +200,7 @@ public class H2CheckMigrationRunOperationImplTest {
             , "2.4.240", "./src/test/resources/migration/h2_2_4_240_sample_db/esb", "ESB"
             , List.of("java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
             "org.h2.tools.Script -url jdbc:h2:./src/test/resources/migration/h2_2_4_240_sample_db/esb -user sa -password sa " +
-            "-script ./db-migration/test.sql"), 300);
+            "-script ./db-migration/test.sql"), 300, List.of());
 
         String result = h2CheckMigrationRunOperation.execute();
 
