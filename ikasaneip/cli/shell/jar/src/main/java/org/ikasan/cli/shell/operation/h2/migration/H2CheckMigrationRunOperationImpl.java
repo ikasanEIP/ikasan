@@ -27,12 +27,13 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
      * @param targetVersion             the target version of the migration
      * @param databaseLocation          the location of the H2 database
      * @param checkDbVersionCommands    the list of commands to check the database version
+     * @param previouslySupportedMigrationTargetVersions previous target versions migrated to.
      * @throws IllegalArgumentException if any of the parameters are null or empty
      */
     public H2CheckMigrationRunOperationImpl(MigrationService migrationService, String type
         , String sourceVersion, String targetVersion, String databaseLocation, String databaseName
-        , List<String> checkDbVersionCommands, long forkedProcessTimeout) {
-        super(migrationService, type, sourceVersion, targetVersion, databaseName);
+        , List<String> checkDbVersionCommands, long forkedProcessTimeout, List<String> previouslySupportedMigrationTargetVersions) {
+        super(migrationService, type, sourceVersion, targetVersion, databaseName, previouslySupportedMigrationTargetVersions);
         this.databaseLocation = databaseLocation;
         if(this.databaseLocation == null || this.databaseLocation.isEmpty()) {
             throw new IllegalArgumentException("databaseLocation cannot be null or empty!");
@@ -58,11 +59,11 @@ public class H2CheckMigrationRunOperationImpl extends DefaultCheckMigrationRunOp
             return MigrationOperation.MIGRATION_FILE_NOT_FOUND;
         }
         else {
-            DefaultForkedExecutableOperationImpl testDbNoAlreadyOnLatestVersion = new DefaultForkedExecutableOperationImpl(ProcessType.getH2Instance(),
+            DefaultForkedExecutableOperationImpl testDbNotAlreadyOnLatestVersion = new DefaultForkedExecutableOperationImpl(ProcessType.getH2Instance(),
                 this.checkDbVersionCommands, "check-h2", forkedProcessTimeout);
 
             try {
-                testDbNoAlreadyOnLatestVersion.execute();
+                testDbNotAlreadyOnLatestVersion.execute();
                 IkasanMigration ikasanMigration = new IkasanMigration
                     (type, sourceVersion, targetVersion, this.databaseLocation.substring(this.databaseLocation.lastIndexOf("/")+1)
                         , System.currentTimeMillis());
