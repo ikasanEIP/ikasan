@@ -83,6 +83,9 @@ public class H2MigrationCommand
     @Value("${supported.h2.migration.target.versions}")
     private List<String> supportedH2MigrationTargetVersions;
 
+    @Value("${previously.supported.h2.migration.target.versions}")
+    private List<String> previouslySupportedH2MigrationTargetVersions;
+
     @Value("${persistence.dir}")
     private String persistenceDir;
 
@@ -155,7 +158,8 @@ public class H2MigrationCommand
                 , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
                 , targetH2Version, h2User != null ? h2User : this.dbMigrationDatabaseUsername, h2Password != null ? h2Password : this.dbMigrationDatabasePassword
                 , databaseLocation == null || databaseLocation.isEmpty() ? this.modulePersistenceDatabasePath: databaseLocation, this.dbMigrationWorkingDirectory
-                , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase, this.forkedProcessTimeout);
+                , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase, this.forkedProcessTimeout
+                , this.previouslySupportedH2MigrationTargetVersions);
 
         return h2DatabaseMigrationAggregateOperation.execute();
     }
