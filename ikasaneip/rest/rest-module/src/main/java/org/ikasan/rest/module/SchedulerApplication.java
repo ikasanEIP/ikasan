@@ -189,4 +189,60 @@ public class SchedulerApplication
 
         return component;
     }
+
+    /**
+     * Puts the platform scheduler in standby mode.
+     * When in standby mode, the scheduler will not execute any jobs until resumed.
+     *
+     * @return ResponseEntity with HTTP 200 if successful, or an ErrorDto with error message if an exception occurs
+     */
+    @RequestMapping(method = RequestMethod.POST,
+                    value = "/standby",
+                    produces = { MediaType.APPLICATION_JSON_VALUE })
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity stopScheduler()
+    {
+        try
+        {
+            if (!platformScheduler.isInStandbyMode())
+            {
+                platformScheduler.standby();
+                LOG.info("Platform scheduler put in standby mode");
+            }
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        catch (SchedulerException e)
+        {
+            LOG.error("Error putting scheduler in standby mode", e);
+            return new ResponseEntity(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    /**
+     * Resumes the platform scheduler from standby mode.
+     * The scheduler will start executing scheduled jobs again.
+     *
+     * @return ResponseEntity with HTTP 200 if successful, or an ErrorDto with error message if an exception occurs
+     */
+    @RequestMapping(method = RequestMethod.POST,
+                    value = "/resume",
+                    produces = { MediaType.APPLICATION_JSON_VALUE })
+    @PreAuthorize("hasAnyAuthority('ALL','WebServiceAdmin')")
+    public ResponseEntity resumeScheduler()
+    {
+        try
+        {
+            if (platformScheduler.isInStandbyMode())
+            {
+                platformScheduler.start();
+                LOG.info("Platform scheduler resumed from standby mode");
+            }
+            return new ResponseEntity(HttpStatus.OK);
+        }
+        catch (SchedulerException e)
+        {
+            LOG.error("Error resuming scheduler from standby mode", e);
+            return new ResponseEntity(new ErrorDto(e.getMessage()), HttpStatus.BAD_REQUEST);
+        }
+    }
 }

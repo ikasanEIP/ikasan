@@ -125,6 +125,11 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Bean
+    public SystemEventApplication systemEventApplication() {
+        return new SystemEventApplication();
+    }
+
+    @Bean
     public SchedulerApplication schedulerApplication() {
         return new SchedulerApplication();
     }
