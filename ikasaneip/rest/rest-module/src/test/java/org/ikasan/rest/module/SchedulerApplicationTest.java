@@ -477,4 +477,134 @@ public class SchedulerApplicationTest
 
         assertEquals(200, result.getResponse().getStatus());
     }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
+    public void stopSchedulerWithReadOnlyUser() throws Exception
+    {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/standby")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        mockMvc.perform(requestBuilder).andReturn();
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void stopSchedulerWhenNotInStandby() throws Exception
+    {
+        Mockito
+            .when(platformScheduler.isInStandbyMode())
+            .thenReturn(false);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/standby")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        Mockito
+            .verify(platformScheduler).isInStandbyMode();
+        Mockito
+            .verify(platformScheduler).standby();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void stopSchedulerWhenAlreadyInStandby() throws Exception
+    {
+        Mockito
+            .when(platformScheduler.isInStandbyMode())
+            .thenReturn(true);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/standby")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        Mockito
+            .verify(platformScheduler).isInStandbyMode();
+        Mockito
+            .verify(platformScheduler, Mockito.never()).standby();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "readonly")
+    public void resumeSchedulerWithReadOnlyUser() throws Exception
+    {
+        exceptionRule.expect(new ThrowableCauseMatcher(new IsInstanceOf(AccessDeniedException.class)));
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/resume")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        mockMvc.perform(requestBuilder).andReturn();
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void resumeSchedulerWhenInStandby() throws Exception
+    {
+        Mockito
+            .when(platformScheduler.isInStandbyMode())
+            .thenReturn(true);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/resume")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        Mockito
+            .verify(platformScheduler).isInStandbyMode();
+        Mockito
+            .verify(platformScheduler).start();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "WebServiceAdmin")
+    public void resumeSchedulerWhenNotInStandby() throws Exception
+    {
+        Mockito
+            .when(platformScheduler.isInStandbyMode())
+            .thenReturn(false);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/resume")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        Mockito
+            .verify(platformScheduler).isInStandbyMode();
+        Mockito
+            .verify(platformScheduler, Mockito.never()).start();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ALL")
+    public void stopSchedulerWithAllAuthority() throws Exception
+    {
+        Mockito
+            .when(platformScheduler.isInStandbyMode())
+            .thenReturn(false);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/standby")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
+
+    @Test
+    @WithMockUser(authorities = "ALL")
+    public void resumeSchedulerWithAllAuthority() throws Exception
+    {
+        Mockito
+            .when(platformScheduler.isInStandbyMode())
+            .thenReturn(true);
+
+        RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/rest/scheduler/resume")
+            .accept(MediaType.APPLICATION_JSON_VALUE);
+        MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+    }
 }
