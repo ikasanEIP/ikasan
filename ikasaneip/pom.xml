@@ -380,7 +380,7 @@
         <version.jakarta.el>6.0.0-M1</version.jakarta.el>
         <version.commons-io>2.14.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
-        <version.spring.retry>2.0.12</version.spring.retry>
+        <version.spring.retry>2.0.13</version.spring.retry>
         <version.thymeleaf>3.1.5.RELEASE</version.thymeleaf>
         <version.maven-invoker>3.1.0</version.maven-invoker>
         <version.maven-model>3.3.9</version.maven-model>
