@@ -51,6 +51,7 @@ import org.ikasan.spec.persistence.service.InDoubtTransactionService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -124,6 +125,11 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
     }
 
     @Bean
+    public SystemEventApplication systemEventApplication() {
+        return new SystemEventApplication();
+    }
+
+    @Bean
     public SchedulerApplication schedulerApplication() {
         return new SchedulerApplication();
     }
@@ -157,6 +163,7 @@ public class IkasanRestAutoConfiguration implements WebMvcConfigurer
             .build();
 
         builder.disableDefaults();
+        builder.addCustomConverter(new ByteArrayHttpMessageConverter());
         builder.withJsonConverter(new JacksonJsonHttpMessageConverter(jsonMapper));
     }
 }

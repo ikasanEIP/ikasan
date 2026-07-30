@@ -288,7 +288,6 @@
         <version.spring.cloud.config.client>5.0.4</version.spring.cloud.config.client>
         <version.org.springboot>4.1.0</version.org.springboot>
         <version.org.springframework.shell>3.2.1</version.org.springframework.shell>
-        <version.io.spingfox.swagger>3.0.0</version.io.spingfox.swagger>
         <version.com.fasterxml.classmate>1.5.1</version.com.fasterxml.classmate>
         <version.net.bytebuddy.byte-buddy>1.17.5</version.net.bytebuddy.byte-buddy>
         <version.org.slf4j>2.0.12</version.org.slf4j>

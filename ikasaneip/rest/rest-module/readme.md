@@ -297,6 +297,146 @@ REST endpoints which allow for the discovery and management of IN_DOUBT database
 | Requires 'Authorization' HTTP Header    | Basic {TOKEN}                                                             |
 | Returns                                 | HTTP 200 status                                                           |
 
+## System Event Service
+REST endpoints which allow users to search and query system events.
+
+### GET System Events
+
+| Parameter                            | Value                                                                                               |
+|--------------------------------------|-----------------------------------------------------------------------------------------------------|
+| Request Method                       | GET                                                                                                 |
+| Service Context                      | {module-root-context}/rest/systemEvent/                                                             |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                       |
+| Query Parameters (all optional)      | pageNumber (default: 0), pageSize (default: 25), orderBy (default: timestamp), orderAscending (default: false), subject, action, actor, fromDateTime (epoch milliseconds), untilDateTime (epoch milliseconds) |
+| Returns                              | HTTP 200 status with paginated list of system events                                                 |
+
+<details>
+    <summary>Click to view the sample JSON payload provided by the service.</summary>
+<p>
+
+````json
+{
+  "pagedResults": [
+    {
+      "subject": "moduleA-flowA",
+      "action": "Start Flow",
+      "actor": "admin",
+      "timestamp": "2024-01-15T10:30:00.000Z",
+      "expiry": "2024-02-15T10:30:00.000Z"
+    }
+  ],
+  "firstResultIndex": 0,
+  "resultSize": 1,
+  "lastResultIndex": 1,
+  "lastPage": true
+}
+````
+
+</p>
+</details>
+
+**Example Usage:**
+```bash
+# Get all system events with default pagination
+GET /rest/systemEvent/
+
+# Filter by subject and action
+GET /rest/systemEvent/?subject=moduleA-flowA&action=Start%20Flow
+
+# Filter by date range (using epoch milliseconds)
+# fromDateTime=1704067200000 (2024-01-01T00:00:00 UTC)
+# untilDateTime=1706745599000 (2024-01-31T23:59:59 UTC)
+GET /rest/systemEvent/?fromDateTime=1704067200000&untilDateTime=1706745599000
+
+# Custom pagination and sorting
+GET /rest/systemEvent/?pageNumber=1&pageSize=50&orderBy=action&orderAscending=true
+```
+
+## Scheduler Service
+REST endpoints which allow users to manage the platform scheduler and trigger scheduled flows.
+
+### GET Scheduler Triggers
+
+| Parameter                            | Value                                                   |
+|--------------------------------------|---------------------------------------------------------|
+| Request Method                       | GET                                                     |
+| Service Context                      | {module-root-context}/rest/scheduler/                   |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                           |
+| Returns                              | HTTP 200 status with list of all scheduler triggers     |
+
+<details>
+    <summary>Click to view the sample JSON payload provided by the service.</summary>
+<p>
+
+````json
+[
+  {
+    "group": "Group",
+    "jobName": "scheduledJob",
+    "jobGroup": "DEFAULT",
+    "priority": 5,
+    "jobKey": {
+      "name": "scheduledJob",
+      "group": "DEFAULT"
+    }
+  }
+]
+````
+
+</p>
+</details>
+
+### POST Stop Scheduler (Standby Mode)
+
+| Parameter                            | Value                                                                                |
+|--------------------------------------|--------------------------------------------------------------------------------------|
+| Request Method                       | POST                                                                                 |
+| Service Context                      | {module-root-context}/rest/scheduler/standby                                         |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                        |
+| Returns                              | HTTP 200 status if scheduler was put in standby mode successfully                    |
+
+Puts the platform scheduler in standby mode. When in standby mode, the scheduler will not execute any scheduled jobs until resumed.
+
+### POST Resume Scheduler
+
+| Parameter                            | Value                                                                              |
+|--------------------------------------|------------------------------------------------------------------------------------|
+| Request Method                       | POST                                                                               |
+| Service Context                      | {module-root-context}/rest/scheduler/resume                                        |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                      |
+| Returns                              | HTTP 200 status if scheduler was resumed successfully                              |
+
+Resumes the platform scheduler from standby mode. The scheduler will start executing scheduled jobs again.
+
+### GET Trigger Flow Now
+
+| Parameter                            | Value                                                                                        |
+|--------------------------------------|----------------------------------------------------------------------------------------------|
+| Request Method                       | GET                                                                                          |
+| Service Context                      | {module-root-context}/rest/scheduler/{moduleName}/{flowName}/{correlationId}                 |
+| Requires Path parameter moduleName   | Module Name                                                                                  |
+| Requires Path parameter flowName     | Flow Name                                                                                    |
+| Requires Path parameter correlationId| Correlation ID for dashboard instance                                                        |
+| Requires 'Authorization' HTTP Header | Basic {TOKEN}                                                                                |
+| Returns                              | HTTP 200 status if flow was triggered successfully                                           |
+
+Triggers a scheduled flow immediately rather than waiting for the next scheduled execution.
+
+**Example Usage:**
+```bash
+# Get all scheduler triggers
+GET /rest/scheduler/
+
+# Stop the scheduler
+POST /rest/scheduler/standby
+
+# Resume the scheduler
+POST /rest/scheduler/resume
+
+# Trigger a flow immediately
+GET /rest/scheduler/myModule/myScheduledFlow/dashboard-12345
+```
+
 ## Module Version Service
 REST endpoints which allows users to obtain the row count for database tables.
 
