@@ -27,6 +27,8 @@ The following consumers are off-the-shelf scheduled driven consumers.
 - [MongoDB Client Consumer](endpoint/mongo-endpoint/Readme.md)
 - [FTP Consumer](endpoint/filetransfer/ftp/consumer.md)
 - [SFTP Consumer](endpoint/filetransfer/sftp/consumer.md)
+- [BigQueue Consumer](endpoint/big-queue/README.md)
+- [Apache Pulsar Consumer](endpoint/pulsar/README.md)
 
 #### Data Driven Consumers
 Invoked by the underlying source system API which pushes one or more data events to the consumer.

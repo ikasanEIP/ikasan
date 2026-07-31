@@ -60,6 +60,7 @@
         <module>ftp-jms</module>
         <module>kafka-reactive-jms</module>
         <module>scheduled</module>
+        <module>pulsar</module>
     </modules>
 
 </project>
