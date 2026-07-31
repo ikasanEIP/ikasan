@@ -380,9 +380,9 @@ public class ComponentBuilder
     }
 
     /**
-     * Get an instance of an Ikasan BigQueueConsumerBuilder
+     * Get an instance of an Ikasan BigQueueProducerLRCOBuilder
      *
-     * @return BigQueueConsumerBuilder
+     * @return BigQueueProducerLRCOBuilder
      */
     public BigQueueProducerLRCOBuilder bigQueueProducer()
     {
@@ -397,6 +397,53 @@ public class ComponentBuilder
                 <dependency>
                   <groupId>org.ikasan</groupId>
                   <artifactId>ikasan-big-queue</artifactId>
+                </dependency>
+                """, e);
+        }
+    }
+
+    /**
+     * Get an instance of an Ikasan PulsarConsumerBuilder
+     *
+     * @return PulsarConsumerBuilder
+     */
+    public PulsarConsumerBuilder pulsarConsumer()
+    {
+        try
+        {
+            return new PulsarConsumerBuilderImpl(this.applicationContext.getBean(AopProxyProvider.class),
+                this.applicationContext.getBean(JtaTransactionManager.class).getTransactionManager());
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("""
+                Check your pom.xml dependencies to ensure you include
+                <dependency>
+                  <groupId>org.ikasan</groupId>
+                  <artifactId>ikasan-component-endpoint-pulsar</artifactId>
+                </dependency>
+                """, e);
+        }
+    }
+
+    /**
+     * Get an instance of an Ikasan PulsarProducerLRCOBuilder
+     *
+     * @return PulsarProducerLRCOBuilder
+     */
+    public PulsarProducerLRCOBuilder pulsarProducer()
+    {
+        try
+        {
+            return new PulsarProducerLRCOBuilderImpl(this.applicationContext.getBean(JtaTransactionManager.class).getTransactionManager());
+        }
+        catch(NoClassDefFoundError e)
+        {
+            throw new RuntimeException("""
+                Check your pom.xml dependencies to ensure you include
+                <dependency>
+                  <groupId>org.ikasan</groupId>
+                  <artifactId>ikasan-component-endpoint-pulsar</artifactId>
                 </dependency>
                 """, e);
         }
