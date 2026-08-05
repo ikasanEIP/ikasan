@@ -142,6 +142,8 @@ public Consumer pulsarConsumer(TransactionManager transactionManager) {
 
 Pulsar supports multiple schema types for message serialization and deserialization. The consumer can be configured to use different schemas based on your message format.
 
+For more details on Pulsar schemas, see the [official Pulsar Schema documentation](https://pulsar.apache.org/docs/next/schema-get-started/).
+
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
 | `schemaType` | String | `BYTES` | Schema type: `BYTES`, `STRING`, `JSON`, `AVRO`, `PROTOBUF`, `PROTOBUF_NATIVE`, `KEY_VALUE`, `AUTO_CONSUME`, `AUTO_PRODUCE_BYTES`, or primitive types (`INT8`, `INT16`, `INT32`, `INT64`, `BOOL`, `FLOAT`, `DOUBLE`) and temporal types (`DATE`, `TIME`, `TIMESTAMP`, `INSTANT`, `LOCAL_DATE`, `LOCAL_TIME`, `LOCAL_DATE_TIME`) |
@@ -348,6 +350,8 @@ public Producer pulsarProducer(TransactionManager transactionManager) {
 #### Schema Configuration
 
 **Note:** The producer configuration aggregates all schema-related settings directly within the `PulsarProducerConfiguration` class, supporting the same schema types as the consumer.
+
+For more details on Pulsar schemas, see the [official Pulsar Schema documentation](https://pulsar.apache.org/docs/next/schema-get-started/).
 
 | Property | Type | Default | Description |
 |----------|------|---------|-------------|
