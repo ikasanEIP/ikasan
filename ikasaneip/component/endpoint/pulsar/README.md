@@ -172,11 +172,7 @@ PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
 config.setServiceUrl("pulsar://localhost:6650");
 config.setTopics(new String[]{"my-topic"});
 config.setSubscriptionName("my-subscription");
-
-// Configure schema
-PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
-schemaConfig.setSchemaType("STRING");
-config.setSchemaConfiguration(schemaConfig);
+config.setSchemaType("STRING");
 ```
 
 **JSON Schema**
@@ -185,12 +181,8 @@ PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
 config.setServiceUrl("pulsar://localhost:6650");
 config.setTopics(new String[]{"my-topic"});
 config.setSubscriptionName("my-subscription");
-
-// Configure JSON schema
-PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
-schemaConfig.setSchemaType("JSON");
-schemaConfig.setMessageClassName("com.example.MyMessage");
-config.setSchemaConfiguration(schemaConfig);
+config.setSchemaType("JSON");
+config.setMessageClassName("com.example.MyMessage");
 ```
 
 **AVRO Schema**
@@ -199,12 +191,8 @@ PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
 config.setServiceUrl("pulsar://localhost:6650");
 config.setTopics(new String[]{"my-topic"});
 config.setSubscriptionName("my-subscription");
-
-// Configure AVRO schema
-PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
-schemaConfig.setSchemaType("AVRO");
-schemaConfig.setMessageClassName("com.example.AvroMessage");
-config.setSchemaConfiguration(schemaConfig);
+config.setSchemaType("AVRO");
+config.setMessageClassName("com.example.AvroMessage");
 ```
 
 **KEY_VALUE Schema**
@@ -213,15 +201,11 @@ PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
 config.setServiceUrl("pulsar://localhost:6650");
 config.setTopics(new String[]{"my-topic"});
 config.setSubscriptionName("my-subscription");
-
-// Configure KEY_VALUE schema
-PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
-schemaConfig.setSchemaType("KEY_VALUE");
-schemaConfig.setKeySchemaType("STRING");
-schemaConfig.setValueSchemaType("JSON");
-schemaConfig.setValueClassName("com.example.ValueMessage");
-schemaConfig.setKeyValueEncodingType("INLINE");
-config.setSchemaConfiguration(schemaConfig);
+config.setSchemaType("KEY_VALUE");
+config.setKeySchemaType("STRING");
+config.setValueSchemaType("JSON");
+config.setValueClassName("com.example.ValueMessage");
+config.setKeyValueEncodingType("INLINE");
 ```
 
 **Using Builder Pattern for Schema Configuration**
@@ -361,6 +345,61 @@ public Producer pulsarProducer(TransactionManager transactionManager) {
 | `autoUpdatePartitionsIntervalSeconds` | int | `60` | Interval to check for partition updates (seconds) |
 | `lazyStartPartitionedProducers` | boolean | `false` | Lazily start partition producers (only when needed) |
 
+#### Schema Configuration
+
+**Note:** The producer configuration aggregates all schema-related settings directly within the `PulsarProducerConfiguration` class, supporting the same schema types as the consumer.
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `schemaType` | String | `BYTES` | Schema type: `BYTES`, `STRING`, `JSON`, `AVRO`, `PROTOBUF`, `PROTOBUF_NATIVE`, `KEY_VALUE`, `AUTO_CONSUME`, `AUTO_PRODUCE_BYTES`, or primitive types (`INT8`, `INT16`, `INT32`, `INT64`, `BOOL`, `FLOAT`, `DOUBLE`) and temporal types (`DATE`, `TIME`, `TIMESTAMP`, `INSTANT`, `LOCAL_DATE`, `LOCAL_TIME`, `LOCAL_DATE_TIME`) |
+| `schemaMessageClassName` | String | `null` | Fully qualified class name for JSON, AVRO, or PROTOBUF schemas |
+| `schemaAvroDefinition` | String | `null` | AVRO schema definition (JSON string) |
+| `schemaKeyType` | String | `null` | Schema type for keys in KEY_VALUE schema |
+| `schemaValueType` | String | `null` | Schema type for values in KEY_VALUE schema |
+| `schemaKeyClassName` | String | `null` | Class name for keys in KEY_VALUE schema |
+| `schemaValueClassName` | String | `null` | Class name for values in KEY_VALUE schema |
+| `schemaKeyValueEncodingType` | String | `INLINE` | KEY_VALUE encoding: `INLINE` or `SEPARATED` |
+| `schemaProperties` | Map<String, String> | `{}` | Additional schema metadata |
+
+##### Schema Examples
+
+**STRING Schema**
+```java
+PulsarProducerConfiguration config = new PulsarProducerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopic("my-topic");
+config.setSchemaType("STRING");
+```
+
+**JSON Schema**
+```java
+PulsarProducerConfiguration config = new PulsarProducerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopic("my-topic");
+config.setSchemaType("JSON");
+config.setSchemaMessageClassName("com.example.MyMessage");
+```
+
+**AVRO Schema**
+```java
+PulsarProducerConfiguration config = new PulsarProducerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopic("my-topic");
+config.setSchemaType("AVRO");
+config.setSchemaMessageClassName("com.example.AvroMessage");
+```
+
+**Using Builder Pattern for Schema Configuration**
+```java
+Producer producer = builderFactory.getComponentBuilder().pulsarProducer()
+    .setServiceUrl("pulsar://localhost:6650")
+    .setTopic("my-topic")
+    .setSchemaType("JSON")
+    .setMessageClassName("com.example.MyMessage")
+    .setConfigurationId("myProducer")
+    .build();
+```
+
 #### Advanced Settings
 
 | Property | Type | Default | Description |
@@ -410,6 +449,10 @@ config.setRoundRobinRouterBatchingPartitionSwitchFrequency(5);
 config.setAutoUpdatePartitions(true);
 config.setAutoUpdatePartitionsIntervalSeconds(30);
 config.setLazyStartPartitionedProducers(true);
+
+// Schema Configuration
+config.setSchemaType("JSON");
+config.setSchemaMessageClassName("com.example.MyMessage");
 ```
 
 ## XA Transaction Support
