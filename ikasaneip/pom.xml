@@ -377,7 +377,6 @@
         <version.bouncycastle>1.84</version.bouncycastle>
         <version.jakarta.validation.api>3.1.0-M1</version.jakarta.validation.api>
         <version.jakarta.el>6.0.0-M1</version.jakarta.el>
-        <version.commons-io>2.14.0</version.commons-io>
         <version.org.jasypt.springboot.starter>3.0.3</version.org.jasypt.springboot.starter>
         <version.spring.retry>2.0.13</version.spring.retry>
         <version.thymeleaf>3.1.5.RELEASE</version.thymeleaf>
@@ -401,6 +400,9 @@
         <version.springdoc.openapi.starter.webmvc.ui>3.0.3</version.springdoc.openapi.starter.webmvc.ui>
         <version.pulsar.test.container>1.19.3</version.pulsar.test.container>
         <version.pulsar>4.2.3</version.pulsar>
+        <version.protobuf>4.35.1</version.protobuf>
+        <version.avro>1.12.1</version.avro>
+        <version.commons.compress>1.28.0</version.commons.compress>
         <maven.compiler.source>26</maven.compiler.source>
         <maven.compiler.target>26</maven.compiler.target>
     </properties>
@@ -3256,14 +3258,6 @@
                         <groupId>jakarta.activation</groupId>
                         <artifactId>jakarta.activation-api</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>com.google.protobuf</groupId>
-                        <artifactId>protobuf-java</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.apache.avro</groupId>
-                        <artifactId>avro</artifactId>
-                    </exclusion>
                 </exclusions>
             </dependency>
 
@@ -3271,6 +3265,18 @@
                 <groupId>org.apache.pulsar</groupId>
                 <artifactId>pulsar-client</artifactId>
                 <version>${version.pulsar}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.protobuf</groupId>
+                <artifactId>protobuf-java</artifactId>
+                <version>${version.protobuf}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.avro</groupId>
+                <artifactId>avro</artifactId>
+                <version>${version.avro}</version>
             </dependency>
 
         </dependencies>

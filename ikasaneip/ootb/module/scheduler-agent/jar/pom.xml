@@ -16,6 +16,7 @@
     <description>Describe the purpose of this Integration Module</description>
 
     <dependencies>
+
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>

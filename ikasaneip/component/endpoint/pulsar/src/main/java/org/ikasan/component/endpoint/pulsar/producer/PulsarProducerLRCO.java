@@ -42,6 +42,8 @@ package org.ikasan.component.endpoint.pulsar.producer;
 
 import jakarta.transaction.TransactionManager;
 import org.apache.pulsar.client.api.*;
+import org.ikasan.component.endpoint.pulsar.consumer.configuration.PulsarConsumerConfiguration;
+import org.ikasan.component.endpoint.pulsar.schema.PulsarSchemaFactory;
 import org.ikasan.component.endpoint.pulsar.producer.configuration.PulsarProducerConfiguration;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.component.endpoint.Producer;
@@ -68,10 +70,11 @@ public class PulsarProducerLRCO implements Producer<FlowEvent>,
 
     private TransactionManager transactionManager;
     private PulsarClient pulsarClient;
-    private org.apache.pulsar.client.api.Producer<byte[]> producer;
+    private org.apache.pulsar.client.api.Producer<?> producer;
     private PulsarProducerConfiguration configuration;
     private String configuredResourceId;
     private PulsarConnection connection = null;
+    private Schema<?> schema;
 
     private boolean isRecovering = false;
     private String criticalFailure = null;
@@ -103,7 +106,10 @@ public class PulsarProducerLRCO implements Producer<FlowEvent>,
                 throw new EndpointException("Pulsar producer is not started. Call startManagedResource() first.");
             }
 
-            PulsarConnectionCallback callback = new PulsarConnectionCallbackImpl<>(payload, producer);
+            // Determine if BYTES schema is being used
+            boolean isBytesSchema = "BYTES".equalsIgnoreCase(configuration.getSchemaType());
+
+            PulsarConnectionCallback callback = new PulsarConnectionCallbackImpl<>(payload, producer, isBytesSchema);
             connection = new PulsarConnection(callback);
             this.transactionManager.getTransaction().enlistResource(connection);
         } catch (Exception e) {
@@ -134,8 +140,12 @@ public class PulsarProducerLRCO implements Producer<FlowEvent>,
 
             this.pulsarClient = clientBuilder.build();
 
-            // Create producer builder
-            ProducerBuilder<byte[]> producerBuilder = pulsarClient.newProducer(Schema.BYTES)
+            // Create schema from configuration
+            this.schema = createSchemaFromConfiguration(configuration);
+            logger.info("Using Pulsar schema type: {}", configuration.getSchemaType());
+
+            // Create producer builder with configured schema
+            ProducerBuilder<?> producerBuilder = pulsarClient.newProducer(schema)
                 .topic(configuration.getTopic());
 
             // Set producer name if provided
@@ -316,7 +326,7 @@ public class PulsarProducerLRCO implements Producer<FlowEvent>,
      *
      * @return the Pulsar producer
      */
-    public org.apache.pulsar.client.api.Producer<byte[]> getProducer() {
+    public org.apache.pulsar.client.api.Producer<?> getProducer() {
         return this.producer;
     }
 
@@ -336,5 +346,29 @@ public class PulsarProducerLRCO implements Producer<FlowEvent>,
      */
     public String getCriticalFailure() {
         return this.criticalFailure;
+    }
+
+    /**
+     * Create a Pulsar schema from producer configuration.
+     * Converts PulsarProducerConfiguration to PulsarConsumerConfiguration format for schema factory.
+     *
+     * @param config the producer configuration
+     * @return the Pulsar schema
+     */
+    private Schema<?> createSchemaFromConfiguration(PulsarProducerConfiguration config) {
+        // Create a temporary consumer configuration to use with the schema factory
+        // This is a workaround since the schema factory expects consumer configuration
+        PulsarConsumerConfiguration consumerConfig = new PulsarConsumerConfiguration();
+        consumerConfig.setSchemaType(config.getSchemaType());
+        consumerConfig.setSchemaMessageClassName(config.getSchemaMessageClassName());
+        consumerConfig.setSchemaAvroDefinition(config.getSchemaAvroDefinition());
+        consumerConfig.setSchemaKeyType(config.getSchemaKeyType());
+        consumerConfig.setSchemaValueType(config.getSchemaValueType());
+        consumerConfig.setSchemaKeyClassName(config.getSchemaKeyClassName());
+        consumerConfig.setSchemaValueClassName(config.getSchemaValueClassName());
+        consumerConfig.setSchemaKeyValueEncodingType(config.getSchemaKeyValueEncodingType());
+        consumerConfig.setSchemaProperties(config.getSchemaProperties());
+
+        return PulsarSchemaFactory.createSchema(consumerConfig);
     }
 }

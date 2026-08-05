@@ -150,4 +150,76 @@ public interface PulsarConsumerBuilder extends Builder<Consumer>
      * @return this builder
      */
     PulsarConsumerBuilder setConfigurationId(String configurationId);
+
+    /**
+     * Set the schema type (BYTES, STRING, JSON, AVRO, PROTOBUF, etc.).
+     *
+     * @param schemaType
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaType(String schemaType);
+
+    /**
+     * Set the message class name for JSON, AVRO, or PROTOBUF schemas.
+     *
+     * @param messageClassName
+     * @return this builder
+     */
+    PulsarConsumerBuilder setMessageClassName(String messageClassName);
+
+    /**
+     * Set the AVRO schema definition string.
+     *
+     * @param avroDefinition
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaAvroDefinition(String avroDefinition);
+
+    /**
+     * Set the schema type for keys in KEY_VALUE schemas.
+     *
+     * @param keyType
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaKeyType(String keyType);
+
+    /**
+     * Set the schema type for values in KEY_VALUE schemas.
+     *
+     * @param valueType
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaValueType(String valueType);
+
+    /**
+     * Set the key class name for KEY_VALUE schemas.
+     *
+     * @param keyClassName
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaKeyClassName(String keyClassName);
+
+    /**
+     * Set the value class name for KEY_VALUE schemas.
+     *
+     * @param valueClassName
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaValueClassName(String valueClassName);
+
+    /**
+     * Set the encoding type for KEY_VALUE schemas (INLINE or SEPARATED).
+     *
+     * @param encodingType
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaKeyValueEncodingType(String encodingType);
+
+    /**
+     * Set additional schema properties.
+     *
+     * @param schemaProperties
+     * @return this builder
+     */
+    PulsarConsumerBuilder setSchemaProperties(java.util.Map<String, String> schemaProperties);
 }

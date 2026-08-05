@@ -138,6 +138,104 @@ public Consumer pulsarConsumer(TransactionManager transactionManager) {
 | `properties` | String | `null` | Consumer properties as JSON string |
 | `cryptoKeyReaderClassName` | String | `null` | Crypto key reader class name for message decryption |
 
+#### Schema Configuration
+
+Pulsar supports multiple schema types for message serialization and deserialization. The consumer can be configured to use different schemas based on your message format.
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `schemaType` | String | `BYTES` | Schema type: `BYTES`, `STRING`, `JSON`, `AVRO`, `PROTOBUF`, `PROTOBUF_NATIVE`, `KEY_VALUE`, `AUTO_CONSUME`, `AUTO_PRODUCE_BYTES`, or primitive types (`INT8`, `INT16`, `INT32`, `INT64`, `BOOL`, `FLOAT`, `DOUBLE`) and temporal types (`DATE`, `TIME`, `TIMESTAMP`, `INSTANT`, `LOCAL_DATE`, `LOCAL_TIME`, `LOCAL_DATE_TIME`) |
+| `messageClassName` | String | `null` | Fully qualified class name for JSON, AVRO, or PROTOBUF schemas |
+| `avroSchemaDefinition` | String | `null` | AVRO schema definition (JSON string) |
+| `keySchemaType` | String | `null` | Schema type for keys in KEY_VALUE schema |
+| `valueSchemaType` | String | `null` | Schema type for values in KEY_VALUE schema |
+| `keyClassName` | String | `null` | Class name for keys in KEY_VALUE schema |
+| `valueClassName` | String | `null` | Class name for values in KEY_VALUE schema |
+| `keyValueEncodingType` | String | `INLINE` | KEY_VALUE encoding: `INLINE` or `SEPARATED` |
+| `schemaVersion` | byte[] | `null` | Schema version for schema registry |
+| `schemaProperties` | String | `null` | Additional schema metadata as JSON string |
+
+##### Schema Examples
+
+**BYTES Schema (Default)**
+```java
+// No configuration needed - BYTES is the default
+PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopics(new String[]{"my-topic"});
+config.setSubscriptionName("my-subscription");
+```
+
+**STRING Schema**
+```java
+PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopics(new String[]{"my-topic"});
+config.setSubscriptionName("my-subscription");
+
+// Configure schema
+PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
+schemaConfig.setSchemaType("STRING");
+config.setSchemaConfiguration(schemaConfig);
+```
+
+**JSON Schema**
+```java
+PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopics(new String[]{"my-topic"});
+config.setSubscriptionName("my-subscription");
+
+// Configure JSON schema
+PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
+schemaConfig.setSchemaType("JSON");
+schemaConfig.setMessageClassName("com.example.MyMessage");
+config.setSchemaConfiguration(schemaConfig);
+```
+
+**AVRO Schema**
+```java
+PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopics(new String[]{"my-topic"});
+config.setSubscriptionName("my-subscription");
+
+// Configure AVRO schema
+PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
+schemaConfig.setSchemaType("AVRO");
+schemaConfig.setMessageClassName("com.example.AvroMessage");
+config.setSchemaConfiguration(schemaConfig);
+```
+
+**KEY_VALUE Schema**
+```java
+PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
+config.setServiceUrl("pulsar://localhost:6650");
+config.setTopics(new String[]{"my-topic"});
+config.setSubscriptionName("my-subscription");
+
+// Configure KEY_VALUE schema
+PulsarSchemaConfiguration schemaConfig = new PulsarSchemaConfiguration();
+schemaConfig.setSchemaType("KEY_VALUE");
+schemaConfig.setKeySchemaType("STRING");
+schemaConfig.setValueSchemaType("JSON");
+schemaConfig.setValueClassName("com.example.ValueMessage");
+schemaConfig.setKeyValueEncodingType("INLINE");
+config.setSchemaConfiguration(schemaConfig);
+```
+
+**Using Builder Pattern for Schema Configuration**
+```java
+Consumer consumer = builderFactory.getComponentBuilder().pulsarConsumer()
+    .setServiceUrl("pulsar://localhost:6650")
+    .setTopics("my-topic")
+    .setSubscriptionName("my-subscription")
+    .setSchemaType("JSON")
+    .setMessageClassName("com.example.MyMessage")
+    .setConfigurationId("myConsumer")
+    .build();
+```
+
 ### Example: Full Configuration
 
 ```java

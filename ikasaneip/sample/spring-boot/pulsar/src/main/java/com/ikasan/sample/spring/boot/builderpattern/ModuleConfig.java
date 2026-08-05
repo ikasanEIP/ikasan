@@ -56,12 +56,101 @@ public class ModuleConfig
             .build();
     }
 
+    // Schema-specific consumer/producer builders
+    public Consumer pulsarStringConsumer()  {
+        return builderFactory.getComponentBuilder().pulsarConsumer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopics("test-string-inbound-topic")
+            .setSubscriptionName("string-schema-subscription")
+            .setSubscriptionType("Shared")
+            .setSchemaType("STRING")
+            .setConfigurationId("stringConsumer")
+            .build();
+    }
+
+    public Producer pulsarStringProducer() {
+        return builderFactory.getComponentBuilder().pulsarProducer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopic("test-string-outbound-topic")
+            .setProducerName("string-producer")
+            .setSchemaType("STRING")
+            .setConfigurationId("stringProducer")
+            .build();
+    }
+
+    public Consumer pulsarInt32Consumer()  {
+        return builderFactory.getComponentBuilder().pulsarConsumer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopics("test-int32-inbound-topic")
+            .setSubscriptionName("int32-schema-subscription")
+            .setSubscriptionType("Shared")
+            .setSchemaType("INT32")
+            .setConfigurationId("int32Consumer")
+            .build();
+    }
+
+    public Producer pulsarInt32Producer() {
+        return builderFactory.getComponentBuilder().pulsarProducer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopic("test-int32-outbound-topic")
+            .setProducerName("int32-producer")
+            .setSchemaType("INT32")
+            .setConfigurationId("int32Producer")
+            .build();
+    }
+
+    public Consumer pulsarJsonConsumer()  {
+        return builderFactory.getComponentBuilder().pulsarConsumer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopics("test-json-inbound-topic")
+            .setSubscriptionName("json-schema-subscription")
+            .setSubscriptionType("Shared")
+            .setSchemaType("JSON")
+            .setMessageClassName("com.ikasan.sample.spring.boot.builderpattern.TestMessage")
+            .setConfigurationId("jsonConsumer")
+            .build();
+    }
+
+    public Producer pulsarJsonProducer() {
+        return builderFactory.getComponentBuilder().pulsarProducer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopic("test-json-outbound-topic")
+            .setProducerName("json-producer")
+            .setSchemaType("JSON")
+            .setMessageClassName("com.ikasan.sample.spring.boot.builderpattern.TestMessage")
+            .setConfigurationId("jsonProducer")
+            .build();
+    }
+
+    public Consumer pulsarAvroConsumer()  {
+        return builderFactory.getComponentBuilder().pulsarConsumer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopics("test-avro-inbound-topic")
+            .setSubscriptionName("avro-schema-subscription")
+            .setSubscriptionType("Shared")
+            .setSchemaType("AVRO")
+            .setMessageClassName("com.ikasan.sample.spring.boot.builderpattern.TestMessage")
+            .setConfigurationId("avroConsumer")
+            .build();
+    }
+
+    public Producer pulsarAvroProducer() {
+        return builderFactory.getComponentBuilder().pulsarProducer()
+            .setServiceUrl(pulsarServiceUrl)
+            .setTopic("test-avro-outbound-topic")
+            .setProducerName("avro-producer")
+            .setSchemaType("AVRO")
+            .setMessageClassName("com.ikasan.sample.spring.boot.builderpattern.TestMessage")
+            .setConfigurationId("avroProducer")
+            .build();
+    }
+
     @Bean
     public Module getModule() {
         ModuleBuilder mb = builderFactory.getModuleBuilder("sample-boot-pulsar");
 
+        // Original BYTES schema flow
         FlowBuilder fb = mb.getFlowBuilder("Pulsar Sample Flow");
-
         Flow flow = fb
                 .withDescription("Flow demonstrates usage of Pulsar Consumer and Pulsar Producer")
                 .consumer("Pulsar Consumer", this.pulsarConsumer())
@@ -70,8 +159,52 @@ public class ModuleConfig
                 .producer("Pulsar Producer", this.pulsarProducer())
                 .build();
 
+        // STRING schema flow
+        FlowBuilder stringFb = mb.getFlowBuilder("String Schema Flow");
+        Flow stringFlow = stringFb
+                .withDescription("Flow with STRING schema")
+                .consumer("String Consumer", this.pulsarStringConsumer())
+                .broker("Exception Generating Broker", new ExceptionGeneratingBroker())
+                .broker("Delay Generating Broker", new DelayGenerationBroker())
+                .producer("String Producer", this.pulsarStringProducer())
+                .build();
+
+        // INT32 schema flow
+        FlowBuilder int32Fb = mb.getFlowBuilder("INT32 Schema Flow");
+        Flow int32Flow = int32Fb
+                .withDescription("Flow with INT32 schema")
+                .consumer("INT32 Consumer", this.pulsarInt32Consumer())
+                .broker("Exception Generating Broker", new ExceptionGeneratingBroker())
+                .broker("Delay Generating Broker", new DelayGenerationBroker())
+                .producer("INT32 Producer", this.pulsarInt32Producer())
+                .build();
+
+        // JSON schema flow
+        FlowBuilder jsonFb = mb.getFlowBuilder("JSON Schema Flow");
+        Flow jsonFlow = jsonFb
+                .withDescription("Flow with JSON schema")
+                .consumer("JSON Consumer", this.pulsarJsonConsumer())
+                .broker("Exception Generating Broker", new ExceptionGeneratingBroker())
+                .broker("Delay Generating Broker", new DelayGenerationBroker())
+                .producer("JSON Producer", this.pulsarJsonProducer())
+                .build();
+
+        // AVRO schema flow
+        FlowBuilder avroFb = mb.getFlowBuilder("AVRO Schema Flow");
+        Flow avroFlow = avroFb
+                .withDescription("Flow with AVRO schema")
+                .consumer("AVRO Consumer", this.pulsarAvroConsumer())
+                .broker("Exception Generating Broker", new ExceptionGeneratingBroker())
+                .broker("Delay Generating Broker", new DelayGenerationBroker())
+                .producer("AVRO Producer", this.pulsarAvroProducer())
+                .build();
+
         Module module = mb.withDescription("Sample Pulsar Module")
             .addFlow(flow)
+            .addFlow(stringFlow)
+            .addFlow(int32Flow)
+            .addFlow(jsonFlow)
+            .addFlow(avroFlow)
             .build();
         return module;
     }
