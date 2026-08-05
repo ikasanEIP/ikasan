@@ -463,6 +463,181 @@ public class PulsarProducerLRCOBuilderTest {
         assertFalse("Batching should be disabled", config.isBatchingEnabled());
     }
 
+    // Schema Configuration Tests
+
+    @Test
+    public void test_set_schema_type_string() {
+        PulsarProducerLRCOBuilder result = builder.setSchemaType("STRING");
+
+        assertSame("Should return builder for chaining", builder, result);
+        Producer producer = builder.setTopic("test-topic").build();
+        assertEquals("Schema type should be STRING", "STRING",
+            ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+    }
+
+    @Test
+    public void test_set_schema_type_json() {
+        PulsarProducerLRCOBuilder result = builder.setSchemaType("JSON");
+
+        assertSame("Should return builder for chaining", builder, result);
+        Producer producer = builder.setTopic("test-topic").build();
+        assertEquals("Schema type should be JSON", "JSON",
+            ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+    }
+
+    @Test
+    public void test_set_schema_type_avro() {
+        PulsarProducerLRCOBuilder result = builder.setSchemaType("AVRO");
+
+        assertSame("Should return builder for chaining", builder, result);
+        Producer producer = builder.setTopic("test-topic").build();
+        assertEquals("Schema type should be AVRO", "AVRO",
+            ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+    }
+
+    @Test
+    public void test_set_schema_type_int32() {
+        PulsarProducerLRCOBuilder result = builder.setSchemaType("INT32");
+
+        assertSame("Should return builder for chaining", builder, result);
+        Producer producer = builder.setTopic("test-topic").build();
+        assertEquals("Schema type should be INT32", "INT32",
+            ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+    }
+
+    @Test
+    public void test_set_message_class_name() {
+        String className = "com.example.TestMessage";
+
+        PulsarProducerLRCOBuilder result = builder.setMessageClassName(className);
+
+        assertSame("Should return builder for chaining", builder, result);
+        Producer producer = builder.setTopic("test-topic").build();
+        assertEquals("Message class name should match", className,
+            ((PulsarProducerLRCO) producer).getConfiguration().getSchemaMessageClassName());
+    }
+
+    @Test
+    public void test_json_schema_with_class_name() {
+        Producer producer = builder
+            .setTopic("test-topic")
+            .setSchemaType("JSON")
+            .setMessageClassName("com.example.JsonMessage")
+            .build();
+
+        PulsarProducerConfiguration config = ((PulsarProducerLRCO) producer).getConfiguration();
+
+        assertEquals("Schema type should be JSON", "JSON", config.getSchemaType());
+        assertEquals("Message class name should match", "com.example.JsonMessage",
+            config.getSchemaMessageClassName());
+    }
+
+    @Test
+    public void test_avro_schema_with_class_name() {
+        Producer producer = builder
+            .setTopic("test-topic")
+            .setSchemaType("AVRO")
+            .setMessageClassName("com.example.AvroMessage")
+            .build();
+
+        PulsarProducerConfiguration config = ((PulsarProducerLRCO) producer).getConfiguration();
+
+        assertEquals("Schema type should be AVRO", "AVRO", config.getSchemaType());
+        assertEquals("Message class name should match", "com.example.AvroMessage",
+            config.getSchemaMessageClassName());
+    }
+
+    @Test
+    public void test_all_primitive_schema_types() {
+        String[] primitiveSchemas = {"BYTES", "STRING", "INT8", "INT16", "INT32", "INT64",
+            "BOOL", "FLOAT", "DOUBLE"};
+
+        for (String schemaType : primitiveSchemas) {
+            PulsarProducerLRCOBuilder testBuilder = new PulsarProducerLRCOBuilderImpl(transactionManager);
+            Producer producer = testBuilder
+                .setTopic("test-topic")
+                .setSchemaType(schemaType)
+                .build();
+
+            assertEquals("Schema type should match for " + schemaType,
+                schemaType,
+                ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+        }
+    }
+
+    @Test
+    public void test_all_temporal_schema_types() {
+        String[] temporalSchemas = {"DATE", "TIME", "TIMESTAMP", "INSTANT",
+            "LOCAL_DATE", "LOCAL_TIME", "LOCAL_DATE_TIME"};
+
+        for (String schemaType : temporalSchemas) {
+            PulsarProducerLRCOBuilder testBuilder = new PulsarProducerLRCOBuilderImpl(transactionManager);
+            Producer producer = testBuilder
+                .setTopic("test-topic")
+                .setSchemaType(schemaType)
+                .build();
+
+            assertEquals("Schema type should match for " + schemaType,
+                schemaType,
+                ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+        }
+    }
+
+    @Test
+    public void test_complex_schema_types() {
+        String[] complexSchemas = {"JSON", "AVRO", "PROTOBUF", "PROTOBUF_NATIVE", "KEY_VALUE"};
+
+        for (String schemaType : complexSchemas) {
+            PulsarProducerLRCOBuilder testBuilder = new PulsarProducerLRCOBuilderImpl(transactionManager);
+            Producer producer = testBuilder
+                .setTopic("test-topic")
+                .setSchemaType(schemaType)
+                .build();
+
+            assertEquals("Schema type should match for " + schemaType,
+                schemaType,
+                ((PulsarProducerLRCO) producer).getConfiguration().getSchemaType());
+        }
+    }
+
+    @Test
+    public void test_schema_with_full_configuration() {
+        Producer producer = builder
+            .setServiceUrl("pulsar://localhost:6650")
+            .setTopic("test-topic")
+            .setProducerName("schema-test-producer")
+            .setSchemaType("JSON")
+            .setMessageClassName("com.ikasan.sample.TestMessage")
+            .setCompressionType("ZSTD")
+            .setBatchingEnabled(true)
+            .setConfigurationId("schema-config")
+            .build();
+
+        PulsarProducerConfiguration config = ((PulsarProducerLRCO) producer).getConfiguration();
+
+        assertEquals("Service URL should match", "pulsar://localhost:6650", config.getServiceUrl());
+        assertEquals("Topic should match", "test-topic", config.getTopic());
+        assertEquals("Producer name should match", "schema-test-producer", config.getProducerName());
+        assertEquals("Schema type should be JSON", "JSON", config.getSchemaType());
+        assertEquals("Message class name should match", "com.ikasan.sample.TestMessage",
+            config.getSchemaMessageClassName());
+        assertEquals("Compression type should be ZSTD", "ZSTD", config.getCompressionType());
+        assertTrue("Batching should be enabled", config.isBatchingEnabled());
+        assertEquals("Configuration ID should match", "schema-config",
+            ((PulsarProducerLRCO) producer).getConfiguredResourceId());
+    }
+
+    @Test
+    public void test_default_schema_type_is_bytes() {
+        Producer producer = builder
+            .setTopic("test-topic")
+            .build();
+
+        PulsarProducerConfiguration config = ((PulsarProducerLRCO) producer).getConfiguration();
+
+        assertEquals("Default schema type should be BYTES", "BYTES", config.getSchemaType());
+    }
+
     @Test
     public void test_complex_configuration_scenario() {
         // Simulate a production-like configuration
@@ -477,6 +652,8 @@ public class PulsarProducerLRCOBuilderTest {
             .setTlsTrustCertsFilePath("/etc/pulsar/certs/ca-cert.pem")
             .setBatchingEnabled(true)
             .setCompressionType("ZSTD")
+            .setSchemaType("JSON")
+            .setMessageClassName("com.example.ProductionMessage")
             .setConfigurationId("prod-pulsar-producer")
             .build();
 
@@ -485,5 +662,9 @@ public class PulsarProducerLRCOBuilderTest {
         assertNotNull("Configuration should be set", pulsarProducer.getConfiguration());
         assertEquals("Configuration ID should match", "prod-pulsar-producer",
             pulsarProducer.getConfiguredResourceId());
+        assertEquals("Schema type should be JSON", "JSON",
+            pulsarProducer.getConfiguration().getSchemaType());
+        assertEquals("Message class name should match", "com.example.ProductionMessage",
+            pulsarProducer.getConfiguration().getSchemaMessageClassName());
     }
 }

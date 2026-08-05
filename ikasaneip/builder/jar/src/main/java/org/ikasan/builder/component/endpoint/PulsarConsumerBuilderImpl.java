@@ -150,8 +150,62 @@ public class PulsarConsumerBuilderImpl implements PulsarConsumerBuilder {
     }
 
     @Override
+    public PulsarConsumerBuilder setSchemaType(String schemaType) {
+        this.configuration.setSchemaType(schemaType);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setMessageClassName(String messageClassName) {
+        this.configuration.setSchemaMessageClassName(messageClassName);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaAvroDefinition(String avroDefinition) {
+        this.configuration.setSchemaAvroDefinition(avroDefinition);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaKeyType(String keyType) {
+        this.configuration.setSchemaKeyType(keyType);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaValueType(String valueType) {
+        this.configuration.setSchemaValueType(valueType);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaKeyClassName(String keyClassName) {
+        this.configuration.setSchemaKeyClassName(keyClassName);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaValueClassName(String valueClassName) {
+        this.configuration.setSchemaValueClassName(valueClassName);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaKeyValueEncodingType(String encodingType) {
+        this.configuration.setSchemaKeyValueEncodingType(encodingType);
+        return this;
+    }
+
+    @Override
+    public PulsarConsumerBuilder setSchemaProperties(java.util.Map<String, String> schemaProperties) {
+        this.configuration.setSchemaProperties(schemaProperties);
+        return this;
+    }
+
+    @Override
     public Consumer build() {
-        InboundQueueMessageListener inboundQueueMessageListener = new InboundQueueMessageListener();
+        InboundQueueMessageListener<?> inboundQueueMessageListener = new InboundQueueMessageListener<>();
 
         PulsarConsumer consumer = new PulsarConsumer(transactionManager, inboundQueueMessageListener);
         consumer.setConfiguration(configuration);

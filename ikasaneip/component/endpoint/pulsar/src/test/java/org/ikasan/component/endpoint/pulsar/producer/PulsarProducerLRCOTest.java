@@ -870,6 +870,457 @@ public class PulsarProducerLRCOTest {
             producer.getCriticalFailure().contains("Failed to start Pulsar Producer"));
     }
 
+    // ========================================
+    // Schema Configuration Tests
+    // ========================================
+
+    @Test
+    public void test_default_bytes_schema() throws Exception {
+        // Given - default schema is BYTES
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // Then
+        assertEquals("Default schema type should be BYTES", "BYTES", configuration.getSchemaType());
+
+        // When
+        FlowEvent flowEvent = createFlowEvent("bytes schema test".getBytes(StandardCharsets.UTF_8));
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<byte[]> receivedMessage = testConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive message with BYTES schema", receivedMessage);
+        testConsumer.acknowledge(receivedMessage);
+    }
+
+    @Test
+    public void test_string_schema() throws Exception {
+        // Given
+        String topic = "test-string-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("STRING");
+
+        // Create consumer with STRING schema
+        Consumer<String> stringConsumer = testClient.newConsumer(Schema.STRING)
+            .topic(topic)
+            .subscriptionName("string-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        String testString = "test string message";
+        FlowEvent flowEvent = createFlowEvent(testString);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<String> receivedMessage = stringConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive STRING message", receivedMessage);
+        assertEquals("Message should match", testString, receivedMessage.getValue());
+        stringConsumer.acknowledge(receivedMessage);
+        stringConsumer.close();
+    }
+
+    @Test
+    public void test_int32_schema() throws Exception {
+        // Given
+        String topic = "test-int32-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("INT32");
+
+        // Create consumer with INT32 schema
+        Consumer<Integer> int32Consumer = testClient.newConsumer(Schema.INT32)
+            .topic(topic)
+            .subscriptionName("int32-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        Integer testInt = 42;
+        FlowEvent flowEvent = createFlowEvent(testInt);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<Integer> receivedMessage = int32Consumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive INT32 message", receivedMessage);
+        assertEquals("Message should match", testInt, receivedMessage.getValue());
+        int32Consumer.acknowledge(receivedMessage);
+        int32Consumer.close();
+    }
+
+    @Test
+    public void test_int64_schema() throws Exception {
+        // Given
+        String topic = "test-int64-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("INT64");
+
+        // Create consumer with INT64 schema
+        Consumer<Long> int64Consumer = testClient.newConsumer(Schema.INT64)
+            .topic(topic)
+            .subscriptionName("int64-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        Long testLong = 123456789L;
+        FlowEvent flowEvent = createFlowEvent(testLong);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<Long> receivedMessage = int64Consumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive INT64 message", receivedMessage);
+        assertEquals("Message should match", testLong, receivedMessage.getValue());
+        int64Consumer.acknowledge(receivedMessage);
+        int64Consumer.close();
+    }
+
+    @Test
+    public void test_bool_schema() throws Exception {
+        // Given
+        String topic = "test-bool-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("BOOL");
+
+        // Create consumer with BOOL schema
+        Consumer<Boolean> boolConsumer = testClient.newConsumer(Schema.BOOL)
+            .topic(topic)
+            .subscriptionName("bool-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        Boolean testBool = true;
+        FlowEvent flowEvent = createFlowEvent(testBool);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<Boolean> receivedMessage = boolConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive BOOL message", receivedMessage);
+        assertEquals("Message should match", testBool, receivedMessage.getValue());
+        boolConsumer.acknowledge(receivedMessage);
+        boolConsumer.close();
+    }
+
+    @Test
+    public void test_float_schema() throws Exception {
+        // Given
+        String topic = "test-float-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("FLOAT");
+
+        // Create consumer with FLOAT schema
+        Consumer<Float> floatConsumer = testClient.newConsumer(Schema.FLOAT)
+            .topic(topic)
+            .subscriptionName("float-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        Float testFloat = 3.14159f;
+        FlowEvent flowEvent = createFlowEvent(testFloat);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<Float> receivedMessage = floatConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive FLOAT message", receivedMessage);
+        assertEquals("Message should match", testFloat, receivedMessage.getValue(), 0.0001f);
+        floatConsumer.acknowledge(receivedMessage);
+        floatConsumer.close();
+    }
+
+    @Test
+    public void test_double_schema() throws Exception {
+        // Given
+        String topic = "test-double-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("DOUBLE");
+
+        // Create consumer with DOUBLE schema
+        Consumer<Double> doubleConsumer = testClient.newConsumer(Schema.DOUBLE)
+            .topic(topic)
+            .subscriptionName("double-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        Double testDouble = 2.718281828;
+        FlowEvent flowEvent = createFlowEvent(testDouble);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<Double> receivedMessage = doubleConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive DOUBLE message", receivedMessage);
+        assertEquals("Message should match", testDouble, receivedMessage.getValue(), 0.000001);
+        doubleConsumer.acknowledge(receivedMessage);
+        doubleConsumer.close();
+    }
+
+    @Test
+    public void test_schema_configuration_properties() {
+        // Given
+        configuration.setSchemaType("JSON");
+        configuration.setSchemaMessageClassName("com.example.MyMessage");
+        configuration.setSchemaAvroDefinition("{\"type\":\"record\"}");
+        configuration.setSchemaKeyType("STRING");
+        configuration.setSchemaValueType("JSON");
+        configuration.setSchemaKeyClassName("java.lang.String");
+        configuration.setSchemaValueClassName("com.example.Value");
+        configuration.setSchemaKeyValueEncodingType("SEPARATED");
+
+        java.util.Map<String, String> props = new java.util.HashMap<>();
+        props.put("key1", "value1");
+        configuration.setSchemaProperties(props);
+
+        // When
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+
+        // Then
+        assertEquals("JSON", configuration.getSchemaType());
+        assertEquals("com.example.MyMessage", configuration.getSchemaMessageClassName());
+        assertEquals("{\"type\":\"record\"}", configuration.getSchemaAvroDefinition());
+        assertEquals("STRING", configuration.getSchemaKeyType());
+        assertEquals("JSON", configuration.getSchemaValueType());
+        assertEquals("java.lang.String", configuration.getSchemaKeyClassName());
+        assertEquals("com.example.Value", configuration.getSchemaValueClassName());
+        assertEquals("SEPARATED", configuration.getSchemaKeyValueEncodingType());
+        assertEquals("value1", configuration.getSchemaProperties().get("key1"));
+    }
+
+    @Test
+    public void test_schema_type_case_insensitive() throws Exception {
+        // Given
+        String topic = "test-lowercase-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("string"); // lowercase
+
+        // Create consumer with STRING schema
+        Consumer<String> stringConsumer = testClient.newConsumer(Schema.STRING)
+            .topic(topic)
+            .subscriptionName("lowercase-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        String testString = "lowercase schema test";
+        FlowEvent flowEvent = createFlowEvent(testString);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<String> receivedMessage = stringConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive STRING message", receivedMessage);
+        assertEquals("Message should match", testString, receivedMessage.getValue());
+        stringConsumer.acknowledge(receivedMessage);
+        stringConsumer.close();
+    }
+
+    @Test
+    public void test_unknown_schema_type_defaults_to_bytes() throws Exception {
+        // Given
+        configuration.setSchemaType("UNKNOWN_SCHEMA");
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When - Should fall back to BYTES schema
+        FlowEvent flowEvent = createFlowEvent("fallback test".getBytes(StandardCharsets.UTF_8));
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<byte[]> receivedMessage = testConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive message with fallback BYTES schema", receivedMessage);
+        testConsumer.acknowledge(receivedMessage);
+    }
+
+    @Test
+    public void test_all_primitive_schema_types() throws Exception {
+        String[] primitiveTypes = {"INT8", "INT16", "INT32", "INT64", "BOOL", "FLOAT", "DOUBLE"};
+
+        for (String schemaType : primitiveTypes) {
+            // Given
+            String topic = "test-" + schemaType.toLowerCase() + "-topic";
+            PulsarProducerConfiguration testConfig = new PulsarProducerConfiguration();
+            testConfig.setServiceUrl(pulsarContainer.getPulsarBrokerUrl());
+            testConfig.setTopic(topic);
+            testConfig.setSchemaType(schemaType);
+
+            PulsarProducerLRCO testProducer = new PulsarProducerLRCO(transactionManager, testConfig);
+
+            // When
+            testProducer.startManagedResource();
+
+            // Then
+            assertNotNull("Producer should be created for " + schemaType, testProducer.getProducer());
+            assertEquals("Schema type should match", schemaType, testConfig.getSchemaType());
+
+            testProducer.stopManagedResource();
+        }
+    }
+
+    @Test
+    public void test_all_temporal_schema_types() throws Exception {
+        String[] temporalTypes = {"DATE", "TIME", "TIMESTAMP", "INSTANT", "LOCAL_DATE", "LOCAL_TIME", "LOCAL_DATE_TIME"};
+
+        for (String schemaType : temporalTypes) {
+            // Given
+            String topic = "test-" + schemaType.toLowerCase() + "-topic";
+            PulsarProducerConfiguration testConfig = new PulsarProducerConfiguration();
+            testConfig.setServiceUrl(pulsarContainer.getPulsarBrokerUrl());
+            testConfig.setTopic(topic);
+            testConfig.setSchemaType(schemaType);
+
+            PulsarProducerLRCO testProducer = new PulsarProducerLRCO(transactionManager, testConfig);
+
+            // When
+            testProducer.startManagedResource();
+
+            // Then
+            assertNotNull("Producer should be created for " + schemaType, testProducer.getProducer());
+            assertEquals("Schema type should match", schemaType, testConfig.getSchemaType());
+
+            testProducer.stopManagedResource();
+        }
+    }
+
+    @Test
+    public void test_schema_properties_map() {
+        // Given
+        java.util.Map<String, String> schemaProps = new java.util.HashMap<>();
+        schemaProps.put("jsr310ConversionEnabled", "true");
+        schemaProps.put("__alwaysAllowNull", "false");
+        schemaProps.put("compression", "snappy");
+
+        // When
+        configuration.setSchemaProperties(schemaProps);
+
+        // Then
+        assertEquals(3, configuration.getSchemaProperties().size());
+        assertEquals("true", configuration.getSchemaProperties().get("jsr310ConversionEnabled"));
+        assertEquals("false", configuration.getSchemaProperties().get("__alwaysAllowNull"));
+        assertEquals("snappy", configuration.getSchemaProperties().get("compression"));
+    }
+
+    @Test
+    public void test_schema_properties_empty_map() {
+        // Given
+        java.util.Map<String, String> emptyProps = new java.util.HashMap<>();
+
+        // When
+        configuration.setSchemaProperties(emptyProps);
+
+        // Then
+        assertNotNull(configuration.getSchemaProperties());
+        assertEquals(0, configuration.getSchemaProperties().size());
+    }
+
+    @Test
+    public void test_key_value_encoding_type_inline() {
+        // Given/When
+        configuration.setSchemaKeyValueEncodingType("INLINE");
+
+        // Then
+        assertEquals("INLINE", configuration.getSchemaKeyValueEncodingType());
+    }
+
+    @Test
+    public void test_key_value_encoding_type_separated() {
+        // Given/When
+        configuration.setSchemaKeyValueEncodingType("SEPARATED");
+
+        // Then
+        assertEquals("SEPARATED", configuration.getSchemaKeyValueEncodingType());
+    }
+
+    @Test
+    public void test_schema_configuration_getters_setters() {
+        // Test all schema configuration getters and setters
+        configuration.setSchemaType("AVRO");
+        assertEquals("AVRO", configuration.getSchemaType());
+
+        configuration.setSchemaMessageClassName("com.example.AvroMessage");
+        assertEquals("com.example.AvroMessage", configuration.getSchemaMessageClassName());
+
+        configuration.setSchemaAvroDefinition("{\"type\":\"record\",\"name\":\"Test\"}");
+        assertEquals("{\"type\":\"record\",\"name\":\"Test\"}", configuration.getSchemaAvroDefinition());
+
+        configuration.setSchemaKeyType("INT64");
+        assertEquals("INT64", configuration.getSchemaKeyType());
+
+        configuration.setSchemaValueType("STRING");
+        assertEquals("STRING", configuration.getSchemaValueType());
+
+        configuration.setSchemaKeyClassName("java.lang.Long");
+        assertEquals("java.lang.Long", configuration.getSchemaKeyClassName());
+
+        configuration.setSchemaValueClassName("java.lang.String");
+        assertEquals("java.lang.String", configuration.getSchemaValueClassName());
+    }
+
+    @Test
+    public void test_comprehensive_schema_configuration() throws Exception {
+        // Given - Configure all schema properties
+        String topic = "test-comprehensive-schema-topic";
+        configuration.setTopic(topic);
+        configuration.setSchemaType("STRING");
+
+        java.util.Map<String, String> props = new java.util.HashMap<>();
+        props.put("schema.property.test", "value");
+        configuration.setSchemaProperties(props);
+
+        // Create consumer
+        Consumer<String> stringConsumer = testClient.newConsumer(Schema.STRING)
+            .topic(topic)
+            .subscriptionName("comprehensive-test-subscription")
+            .subscribe();
+
+        producer = new PulsarProducerLRCO(transactionManager, configuration);
+        producer.startManagedResource();
+
+        // When
+        String testMessage = "comprehensive schema test";
+        FlowEvent flowEvent = createFlowEvent(testMessage);
+        producer.invoke(flowEvent);
+        PulsarConnection connection = (PulsarConnection) ReflectionTestUtils.getField(producer, "connection");
+        connection.commit(xid, true);
+
+        // Then
+        Message<String> receivedMessage = stringConsumer.receive(5, TimeUnit.SECONDS);
+        assertNotNull("Should receive message", receivedMessage);
+        assertEquals("Message should match", testMessage, receivedMessage.getValue());
+        stringConsumer.acknowledge(receivedMessage);
+        stringConsumer.close();
+    }
+
     // Helper class for testing custom object payloads
     private static class CustomTestObject {
         private String value;

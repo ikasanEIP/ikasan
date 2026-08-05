@@ -106,4 +106,20 @@ public interface PulsarProducerLRCOBuilder extends Builder<Producer>
      * @return this builder
      */
     PulsarProducerLRCOBuilder setConfigurationId(String configurationId);
+
+    /**
+     * Set the schema type for the producer (e.g., BYTES, STRING, JSON, AVRO, etc.).
+     *
+     * @param schemaType
+     * @return this builder
+     */
+    PulsarProducerLRCOBuilder setSchemaType(String schemaType);
+
+    /**
+     * Set the message class name for JSON/AVRO schemas.
+     *
+     * @param messageClassName
+     * @return this builder
+     */
+    PulsarProducerLRCOBuilder setMessageClassName(String messageClassName);
 }

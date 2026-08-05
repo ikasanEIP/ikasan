@@ -76,9 +76,6 @@
     <properties>
         <version.ikasan>${project.version}</version.ikasan>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.commons.compress>1.20</version.commons.compress>
-        <maven.compiler.source>26</maven.compiler.source>
-        <maven.compiler.target>26</maven.compiler.target>
     </properties>
 
     <dependencyManagement>

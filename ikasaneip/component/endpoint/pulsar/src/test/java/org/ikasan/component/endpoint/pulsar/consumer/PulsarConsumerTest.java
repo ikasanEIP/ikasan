@@ -101,7 +101,7 @@ public class PulsarConsumerTest {
         configuration.setReceiverQueueSize(10);
 
         // Create consumer
-        InboundQueueMessageListener inboundQueueMessageListener = new InboundQueueMessageListener();
+        InboundQueueMessageListener<?> inboundQueueMessageListener = new InboundQueueMessageListener<>();
 
         consumer = new PulsarConsumer(transactionManager, inboundQueueMessageListener);
         consumer.setConfiguration(configuration);
@@ -502,7 +502,7 @@ public class PulsarConsumerTest {
     @Test(expected = IllegalArgumentException.class)
     public void test_constructor_with_null_transaction_manager() {
         // When
-        new PulsarConsumer(null, new InboundQueueMessageListener());
+        new PulsarConsumer(null, new InboundQueueMessageListener<>());
 
         // Then - exception should be thrown
     }
@@ -902,5 +902,654 @@ public class PulsarConsumerTest {
 
         config.setNegativeAckRedeliveryDelay(5000);
         assertEquals(5000, config.getNegativeAckRedeliveryDelay());
+    }
+
+    // ========================================
+    // Schema Configuration Tests
+    // ========================================
+
+    @Test
+    public void test_consumer_with_default_bytes_schema() throws Exception {
+        // Given - default schema is BYTES
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        testProducer.send("bytes schema test".getBytes(StandardCharsets.UTF_8));
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+    }
+
+    @Test
+    public void test_consumer_with_string_schema() throws Exception {
+        // Given - Use unique topic for STRING schema
+        String topic = "test-topic-string";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("STRING");
+        configuration.setSubscriptionName("test-subscription-string");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with STRING schema
+        Producer<String> stringProducer = testClient.newProducer(Schema.STRING)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-string");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        stringProducer.send("string schema test message");
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        stringProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_json_schema() throws Exception {
+        // Given - Use unique topic for JSON schema
+        String topic = "test-topic-json";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("JSON");
+        configuration.setSchemaMessageClassName("org.ikasan.component.endpoint.pulsar.consumer.TestMessage");
+        configuration.setSubscriptionName("test-subscription-json");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with JSON schema
+        Producer<TestMessage> jsonProducer = testClient.newProducer(Schema.JSON(TestMessage.class))
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-json");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        TestMessage testMsg = new TestMessage("id123", "test content", System.currentTimeMillis());
+        jsonProducer.send(testMsg);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        jsonProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_avro_schema() throws Exception {
+        // Given - Use unique topic for AVRO schema
+        String topic = "test-topic-avro";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("AVRO");
+        configuration.setSchemaMessageClassName("org.ikasan.component.endpoint.pulsar.consumer.TestMessage");
+        configuration.setSubscriptionName("test-subscription-avro");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with AVRO schema
+        Producer<TestMessage> avroProducer = testClient.newProducer(Schema.AVRO(TestMessage.class))
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-avro");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        TestMessage testMsg = new TestMessage("avro-id-456", "avro test content", System.currentTimeMillis());
+        avroProducer.send(testMsg);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        avroProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_auto_consume_schema() throws Exception {
+        // Given - Use unique topic for AUTO_CONSUME schema
+        String topic = "test-topic-auto";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("AUTO_CONSUME");
+        configuration.setSubscriptionName("test-subscription-auto");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer for this topic
+        Producer<byte[]> autoProducer = testClient.newProducer(Schema.BYTES)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-auto");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message with BYTES schema (AUTO_CONSUME should handle it)
+        autoProducer.send("auto consume test".getBytes(StandardCharsets.UTF_8));
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        autoProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_int8_schema() throws Exception {
+        // Given - Use unique topic for INT8 schema
+        String topic = "test-topic-int8";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("INT8");
+        configuration.setSubscriptionName("test-subscription-int8");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with INT8 schema
+        Producer<Byte> int8Producer = testClient.newProducer(Schema.INT8)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-int8");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        int8Producer.send((byte) 42);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        int8Producer.close();
+    }
+
+    @Test
+    public void test_consumer_with_int16_schema() throws Exception {
+        // Given - Use unique topic for INT16 schema
+        String topic = "test-topic-int16";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("INT16");
+        configuration.setSubscriptionName("test-subscription-int16");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with INT16 schema
+        Producer<Short> int16Producer = testClient.newProducer(Schema.INT16)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-int16");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        int16Producer.send((short) 12345);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        int16Producer.close();
+    }
+
+    @Test
+    public void test_consumer_with_int32_schema() throws Exception {
+        // Given - Use unique topic for INT32 schema
+        String topic = "test-topic-int32";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("INT32");
+        configuration.setSubscriptionName("test-subscription-int32");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with INT32 schema
+        Producer<Integer> int32Producer = testClient.newProducer(Schema.INT32)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-int32");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        int32Producer.send(123456789);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        int32Producer.close();
+    }
+
+    @Test
+    public void test_consumer_with_int64_schema() throws Exception {
+        // Given - Use unique topic for INT64 schema
+        String topic = "test-topic-int64";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("INT64");
+        configuration.setSubscriptionName("test-subscription-int64");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with INT64 schema
+        Producer<Long> int64Producer = testClient.newProducer(Schema.INT64)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-int64");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        int64Producer.send(9876543210L);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        int64Producer.close();
+    }
+
+    @Test
+    public void test_consumer_with_bool_schema() throws Exception {
+        // Given - Use unique topic for BOOL schema
+        String topic = "test-topic-bool";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("BOOL");
+        configuration.setSubscriptionName("test-subscription-bool");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with BOOL schema
+        Producer<Boolean> boolProducer = testClient.newProducer(Schema.BOOL)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-bool");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        boolProducer.send(true);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        boolProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_float_schema() throws Exception {
+        // Given - Use unique topic for FLOAT schema
+        String topic = "test-topic-float";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("FLOAT");
+        configuration.setSubscriptionName("test-subscription-float");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with FLOAT schema
+        Producer<Float> floatProducer = testClient.newProducer(Schema.FLOAT)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-float");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        floatProducer.send(3.14159f);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        floatProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_double_schema() throws Exception {
+        // Given - Use unique topic for DOUBLE schema
+        String topic = "test-topic-double";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("DOUBLE");
+        configuration.setSubscriptionName("test-subscription-double");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with DOUBLE schema
+        Producer<Double> doubleProducer = testClient.newProducer(Schema.DOUBLE)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-double");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        doubleProducer.send(2.718281828);
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        doubleProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_timestamp_schema() throws Exception {
+        // Given - Use unique topic for TIMESTAMP schema
+        String topic = "test-topic-timestamp";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("TIMESTAMP");
+        configuration.setSubscriptionName("test-subscription-timestamp");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with TIMESTAMP schema
+        Producer<java.sql.Timestamp> timestampProducer = testClient.newProducer(Schema.TIMESTAMP)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-timestamp");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        timestampProducer.send(new java.sql.Timestamp(System.currentTimeMillis()));
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        timestampProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_instant_schema() throws Exception {
+        // Given - Use unique topic for INSTANT schema
+        String topic = "test-topic-instant";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("INSTANT");
+        configuration.setSubscriptionName("test-subscription-instant");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with INSTANT schema
+        Producer<java.time.Instant> instantProducer = testClient.newProducer(Schema.INSTANT)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-instant");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        instantProducer.send(java.time.Instant.now());
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        instantProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_local_date_schema() throws Exception {
+        // Given - Use unique topic for LOCAL_DATE schema
+        String topic = "test-topic-local-date";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("LOCAL_DATE");
+        configuration.setSubscriptionName("test-subscription-local-date");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with LOCAL_DATE schema
+        Producer<java.time.LocalDate> localDateProducer = testClient.newProducer(Schema.LOCAL_DATE)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-local-date");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        localDateProducer.send(java.time.LocalDate.now());
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        localDateProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_local_time_schema() throws Exception {
+        // Given - Use unique topic for LOCAL_TIME schema
+        String topic = "test-topic-local-time";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("LOCAL_TIME");
+        configuration.setSubscriptionName("test-subscription-local-time");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with LOCAL_TIME schema
+        Producer<java.time.LocalTime> localTimeProducer = testClient.newProducer(Schema.LOCAL_TIME)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-local-time");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        localTimeProducer.send(java.time.LocalTime.now());
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        localTimeProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_local_date_time_schema() throws Exception {
+        // Given - Use unique topic for LOCAL_DATE_TIME schema
+        String topic = "test-topic-local-date-time";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("LOCAL_DATE_TIME");
+        configuration.setSubscriptionName("test-subscription-local-date-time");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with LOCAL_DATE_TIME schema
+        Producer<java.time.LocalDateTime> localDateTimeProducer = testClient.newProducer(Schema.LOCAL_DATE_TIME)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-local-date-time");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        localDateTimeProducer.send(java.time.LocalDateTime.now());
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        localDateTimeProducer.close();
+    }
+
+    @Test
+    public void test_schema_configuration_getters_and_setters() {
+        // Test all schema configuration getters and setters
+        PulsarConsumerConfiguration config = new PulsarConsumerConfiguration();
+
+        // Test schemaType
+        config.setSchemaType("JSON");
+        assertEquals("JSON", config.getSchemaType());
+
+        // Test schemaMessageClassName
+        config.setSchemaMessageClassName("com.example.Message");
+        assertEquals("com.example.Message", config.getSchemaMessageClassName());
+
+        // Test schemaAvroDefinition
+        config.setSchemaAvroDefinition("{\"type\":\"record\"}");
+        assertEquals("{\"type\":\"record\"}", config.getSchemaAvroDefinition());
+
+        // Test schemaKeyType
+        config.setSchemaKeyType("STRING");
+        assertEquals("STRING", config.getSchemaKeyType());
+
+        // Test schemaValueType
+        config.setSchemaValueType("AVRO");
+        assertEquals("AVRO", config.getSchemaValueType());
+
+        // Test schemaKeyClassName
+        config.setSchemaKeyClassName("java.lang.String");
+        assertEquals("java.lang.String", config.getSchemaKeyClassName());
+
+        // Test schemaValueClassName
+        config.setSchemaValueClassName("com.example.Value");
+        assertEquals("com.example.Value", config.getSchemaValueClassName());
+
+        // Test schemaKeyValueEncodingType
+        config.setSchemaKeyValueEncodingType("SEPARATED");
+        assertEquals("SEPARATED", config.getSchemaKeyValueEncodingType());
+
+        // Test schemaProperties
+        java.util.Map<String, String> props = new java.util.HashMap<>();
+        props.put("key1", "value1");
+        config.setSchemaProperties(props);
+        assertEquals(props, config.getSchemaProperties());
+        assertEquals("value1", config.getSchemaProperties().get("key1"));
+    }
+
+    @Test
+    public void test_consumer_with_multiple_json_messages() throws Exception {
+        // Given - Use unique topic for JSON multi-message test
+        String topic = "test-topic-json-multi";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("JSON");
+        configuration.setSchemaMessageClassName("org.ikasan.component.endpoint.pulsar.consumer.TestMessage");
+        configuration.setSubscriptionName("test-subscription-json-multi");
+
+        AtomicInteger messageCount = new AtomicInteger(0);
+        doAnswer(invocation -> {
+            messageCount.incrementAndGet();
+            return null;
+        }).when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with JSON schema
+        Producer<TestMessage> jsonProducer = testClient.newProducer(Schema.JSON(TestMessage.class))
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-json-multi");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send multiple test messages
+        for (int i = 0; i < 5; i++) {
+            TestMessage msg = new TestMessage("id-" + i, "content-" + i, System.currentTimeMillis());
+            jsonProducer.send(msg);
+        }
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals(5, messageCount.get()));
+
+        jsonProducer.close();
+    }
+
+    @Test
+    public void test_consumer_schema_type_case_insensitive() throws Exception {
+        // Given - Use unique topic for lowercase schema type test
+        String topic = "test-topic-string-lower";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("string"); // lowercase
+        configuration.setSubscriptionName("test-subscription-string-lower");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer with STRING schema
+        Producer<String> stringProducer = testClient.newProducer(Schema.STRING)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-string-lower");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message
+        stringProducer.send("lowercase schema test");
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        stringProducer.close();
+    }
+
+    @Test
+    public void test_consumer_with_unknown_schema_type_defaults_to_bytes() throws Exception {
+        // Given - Use unique topic for unknown schema type test
+        String topic = "test-topic-unknown";
+        configuration.setTopics(new String[]{topic});
+        configuration.setSchemaType("UNKNOWN_SCHEMA_TYPE");
+        configuration.setSubscriptionName("test-subscription-unknown");
+        doNothing().when(eventListener).invoke(any(FlowEvent.class));
+
+        // Create producer for this unique topic
+        Producer<byte[]> unknownProducer = testClient.newProducer(Schema.BYTES)
+            .topic(topic)
+            .create();
+
+        clearMessages(topic, "test-subscription-unknown");
+
+        // When
+        consumer.start();
+        assertTrue("Consumer should be running", consumer.isRunning());
+
+        // Send a test message with BYTES (should work since unknown defaults to BYTES)
+        unknownProducer.send("unknown schema test".getBytes(StandardCharsets.UTF_8));
+
+        // Then
+        await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> verify(eventListener, times(1)).invoke(any(FlowEvent.class)));
+
+        unknownProducer.close();
     }
 }

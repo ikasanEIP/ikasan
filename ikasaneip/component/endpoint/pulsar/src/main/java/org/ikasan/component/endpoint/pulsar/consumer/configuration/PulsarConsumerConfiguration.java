@@ -136,6 +136,59 @@ public class PulsarConsumerConfiguration {
     /** Enable auto scale receiver queue size */
     private boolean autoScaleReceiverQueueSizeEnabled = false;
 
+    // ========================================
+    // Schema Configuration Properties
+    // ========================================
+
+    /**
+     * Schema type - supported values:
+     * BYTES, STRING, JSON, AVRO, PROTOBUF, PROTOBUF_NATIVE, KEY_VALUE, AUTO_CONSUME, AUTO_PRODUCE_BYTES,
+     * INT8, INT16, INT32, INT64, BOOL, FLOAT, DOUBLE,
+     * DATE, TIME, TIMESTAMP, INSTANT, LOCAL_DATE, LOCAL_TIME, LOCAL_DATE_TIME
+     */
+    private String schemaType = "BYTES";
+
+    /**
+     * For JSON, AVRO, and PROTOBUF schemas - fully qualified class name of the message type
+     * Example: "com.example.MyMessage"
+     */
+    private String schemaMessageClassName;
+
+    /**
+     * For AVRO schemas - AVRO schema definition string
+     */
+    private String schemaAvroDefinition;
+
+    /**
+     * For KEY_VALUE schemas - schema type for keys
+     */
+    private String schemaKeyType;
+
+    /**
+     * For KEY_VALUE schemas - schema type for values
+     */
+    private String schemaValueType;
+
+    /**
+     * For KEY_VALUE schemas - key class name
+     */
+    private String schemaKeyClassName;
+
+    /**
+     * For KEY_VALUE schemas - value class name
+     */
+    private String schemaValueClassName;
+
+    /**
+     * For KEY_VALUE schemas - encoding type: INLINE or SEPARATED
+     */
+    private String schemaKeyValueEncodingType = "INLINE";
+
+    /**
+     * Schema properties - additional schema metadata as Map
+     */
+    private Map<String, String> schemaProperties = new HashMap<>();
+
     public String getServiceUrl() {
         return serviceUrl;
     }
@@ -470,5 +523,81 @@ public class PulsarConsumerConfiguration {
 
     public void setAutoScaleReceiverQueueSizeEnabled(boolean autoScaleReceiverQueueSizeEnabled) {
         this.autoScaleReceiverQueueSizeEnabled = autoScaleReceiverQueueSizeEnabled;
+    }
+
+    // ========================================
+    // Schema Configuration Getters/Setters
+    // ========================================
+
+    public String getSchemaType() {
+        return schemaType;
+    }
+
+    public void setSchemaType(String schemaType) {
+        this.schemaType = schemaType;
+    }
+
+    public String getSchemaMessageClassName() {
+        return schemaMessageClassName;
+    }
+
+    public void setSchemaMessageClassName(String schemaMessageClassName) {
+        this.schemaMessageClassName = schemaMessageClassName;
+    }
+
+    public String getSchemaAvroDefinition() {
+        return schemaAvroDefinition;
+    }
+
+    public void setSchemaAvroDefinition(String schemaAvroDefinition) {
+        this.schemaAvroDefinition = schemaAvroDefinition;
+    }
+
+    public String getSchemaKeyType() {
+        return schemaKeyType;
+    }
+
+    public void setSchemaKeyType(String schemaKeyType) {
+        this.schemaKeyType = schemaKeyType;
+    }
+
+    public String getSchemaValueType() {
+        return schemaValueType;
+    }
+
+    public void setSchemaValueType(String schemaValueType) {
+        this.schemaValueType = schemaValueType;
+    }
+
+    public String getSchemaKeyClassName() {
+        return schemaKeyClassName;
+    }
+
+    public void setSchemaKeyClassName(String schemaKeyClassName) {
+        this.schemaKeyClassName = schemaKeyClassName;
+    }
+
+    public String getSchemaValueClassName() {
+        return schemaValueClassName;
+    }
+
+    public void setSchemaValueClassName(String schemaValueClassName) {
+        this.schemaValueClassName = schemaValueClassName;
+    }
+
+    public String getSchemaKeyValueEncodingType() {
+        return schemaKeyValueEncodingType;
+    }
+
+    public void setSchemaKeyValueEncodingType(String schemaKeyValueEncodingType) {
+        this.schemaKeyValueEncodingType = schemaKeyValueEncodingType;
+    }
+
+    public Map<String, String> getSchemaProperties() {
+        return schemaProperties;
+    }
+
+    public void setSchemaProperties(Map<String, String> schemaProperties) {
+        this.schemaProperties = schemaProperties;
     }
 }

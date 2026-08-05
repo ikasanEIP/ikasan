@@ -45,6 +45,7 @@ import jakarta.transaction.SystemException;
 import jakarta.transaction.TransactionManager;
 import org.apache.pulsar.client.api.*;
 import org.ikasan.component.endpoint.pulsar.consumer.configuration.PulsarConsumerConfiguration;
+import org.ikasan.component.endpoint.pulsar.schema.PulsarSchemaFactory;
 import org.ikasan.spec.component.endpoint.Consumer;
 import org.ikasan.spec.component.endpoint.EndpointListener;
 import org.ikasan.spec.configuration.ConfiguredResource;
@@ -70,11 +71,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Ikasan Development Team
  */
-public class PulsarConsumer
-    implements Consumer<EventListener<?>, EventFactory>,
-    ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<byte[], Throwable>, MessageListener<byte[]>,
+public class PulsarConsumer<T>
+    implements Consumer<EventListener<T>, EventFactory>,
+    ManagedIdentifierService<ManagedRelatedEventIdentifierService>, EndpointListener<T, Throwable>, MessageListener<T>,
     ConfiguredResource<PulsarConsumerConfiguration>,
-    ResubmissionService<byte[]>, XAResource {
+    ResubmissionService<T>, XAResource {
 
     /** class logger */
     private static Logger logger = LoggerFactory.getLogger(PulsarConsumer.class);
@@ -94,30 +95,27 @@ public class PulsarConsumer
     protected PulsarClient pulsarClient;
 
     /** Pulsar consumer */
-    protected org.apache.pulsar.client.api.Consumer<byte[]> consumer;
+    protected org.apache.pulsar.client.api.Consumer<?> consumer;
 
     /** Executor service for message processing */
     protected ExecutorService messageListenerExecutor;
 
-    protected ManagedRelatedEventIdentifierService managedRelatedEventIdentifierService;
+    protected ManagedRelatedEventIdentifierService<?, T> managedRelatedEventIdentifierService;
 
-    private TransactionManager transactionManager;
+    private final TransactionManager transactionManager;
 
     private PulsarConsumerConfiguration configuration;
 
     private String configurationId;
 
-    private InboundQueueMessageListener inboundQueueMessageListener;
-
-//    /** Current message being processed */
-//    private Message<byte[]> currentMessage;
+    private final InboundQueueMessageListener<?> inboundQueueMessageListener;
 
     /**
      * Constructor
      *
      * @param transactionManager Transaction manager for XA support
      */
-    public PulsarConsumer(TransactionManager transactionManager, InboundQueueMessageListener inboundQueueMessageListener) {
+    public PulsarConsumer(TransactionManager transactionManager, InboundQueueMessageListener<?> inboundQueueMessageListener) {
         this.transactionManager = transactionManager;
         if (this.transactionManager == null) {
             throw new IllegalArgumentException("transactionManager cannot be null!");
@@ -146,7 +144,7 @@ public class PulsarConsumer
      *
      * @param resubmission Resubmission event
      */
-    protected void invoke(Resubmission resubmission) {
+    protected void invoke(Resubmission<T> resubmission) {
         if (this.eventListener == null) {
             throw new RuntimeException("No active eventListeners registered for resubmission event!");
         }
@@ -158,7 +156,14 @@ public class PulsarConsumer
                 managedRelatedEventIdentifierService.getEventIdentifier(resubmission.getEvent()),
                 managedRelatedEventIdentifierService.getRelatedEventIdentifier(resubmission.getEvent()),
                 resubmission);
-        } else {
+        }
+        else if(resubmission.getEvent() instanceof byte[]) {
+            flowEvent = flowEventFactory.newEvent(
+                String.valueOf(new String((byte[])resubmission.getEvent()).hashCode()),
+                String.valueOf(new String((byte[])resubmission.getEvent()).hashCode()),
+                resubmission.getEvent());
+        }
+        else {
             flowEvent = flowEventFactory.newEvent(
                 String.valueOf(resubmission.getEvent().hashCode()),
                 String.valueOf(resubmission.getEvent().hashCode()),
@@ -171,7 +176,7 @@ public class PulsarConsumer
     }
 
     @Override
-    public void setListener(EventListener<?> eventListener) {
+    public void setListener(EventListener<T> eventListener) {
         this.eventListener = eventListener;
     }
 
@@ -208,8 +213,12 @@ public class PulsarConsumer
 
             this.pulsarClient = clientBuilder.build();
 
+            // Create schema from configuration
+            Schema<?> schema = PulsarSchemaFactory.createSchema(configuration);
+            logger.info("Using Pulsar schema: {}", configuration.getSchemaType());
+
             // Create consumer builder
-            ConsumerBuilder<byte[]> consumerBuilder = pulsarClient.newConsumer(Schema.BYTES)
+            ConsumerBuilder consumerBuilder = pulsarClient.newConsumer(schema)
                 .topics(Arrays.asList(configuration.getTopics()))
                 .subscriptionName(configuration.getSubscriptionName())
                 .subscriptionType(SubscriptionType.valueOf(configuration.getSubscriptionType()))
@@ -385,7 +394,7 @@ public class PulsarConsumer
     }
 
     @Override
-    public void onMessage(byte[] event) {
+    public void onMessage(T event) {
         logger.debug("Received message " + event);
 
         try {
@@ -396,10 +405,17 @@ public class PulsarConsumer
                     managedRelatedEventIdentifierService.getEventIdentifier(event),
                     managedRelatedEventIdentifierService.getRelatedEventIdentifier(event),
                     event);
-            } else {
+            }
+            else if(event instanceof byte[]) {
                 flowEvent = flowEventFactory.newEvent(
-                    String.valueOf(new String(event).hashCode()),
-                    String.valueOf(new String(event).hashCode()),
+                    String.valueOf(new String((byte[])event).hashCode()),
+                    String.valueOf(new String((byte[])event).hashCode()),
+                    event);
+            }
+            else {
+                flowEvent = flowEventFactory.newEvent(
+                    String.valueOf(event.hashCode()),
+                    String.valueOf(event.hashCode()),
                     event);
             }
             invoke(flowEvent);
@@ -435,7 +451,7 @@ public class PulsarConsumer
     }
 
     @Override
-    public void onResubmission(byte[] event) {
+    public void onResubmission(T event) {
         logger.info("Resubmission message " + event);
 
         Resubmission flowEvent = resubmissionEventFactory.newResubmissionEvent(event);

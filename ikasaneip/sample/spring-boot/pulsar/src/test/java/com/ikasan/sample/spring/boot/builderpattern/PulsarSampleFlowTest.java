@@ -2,6 +2,8 @@ package com.ikasan.sample.spring.boot.builderpattern;
 
 import org.apache.pulsar.client.admin.PulsarAdmin;
 import org.apache.pulsar.client.api.*;
+import org.apache.pulsar.common.schema.KeyValue;
+import org.apache.pulsar.common.schema.KeyValueEncodingType;
 import org.ikasan.spec.component.endpoint.EndpointException;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.error.reporting.ErrorReportingService;
@@ -694,5 +696,216 @@ public class PulsarSampleFlowTest {
         DelayGenerationBroker delayGenerationBroker = (DelayGenerationBroker) flowTestRule
             .getComponent("Delay Generating Broker");
         delayGenerationBroker.reset();
+    }
+
+    // ========== Schema Variant Tests ==========
+    // These tests validate different Pulsar schema types through the Ikasan flow
+
+    @Test
+    public void test_string_schema_flow() throws Exception {
+        // Use the pre-configured flow from the module
+        Flow stringFlow = moduleUnderTest.getFlow("String Schema Flow");
+        IkasanFlowTestRule stringFlowTestRule = new IkasanFlowTestRule();
+        stringFlowTestRule.withFlow(stringFlow);
+
+        // Setup component expectations
+        stringFlowTestRule.consumer("String Consumer")
+            .broker("Exception Generating Broker")
+            .broker("Delay Generating Broker")
+            .producer("String Producer");
+
+        // Create test producer and consumer
+        Producer<String> testProducer = pulsarClient.newProducer(Schema.STRING)
+            .topic("test-string-inbound-topic")
+            .create();
+
+        Consumer<String> testConsumer = pulsarClient.newConsumer(Schema.STRING)
+            .topic("test-string-outbound-topic")
+            .subscriptionName("test-string-consumer")
+            .subscriptionType(SubscriptionType.Shared)
+            .subscribe();
+
+        try {
+            // Start the flow
+            stringFlowTestRule.startFlow();
+
+            String testMessage = "Test STRING Message";
+            logger.info("Sending STRING message: [" + testMessage + "]");
+
+            // Send message to inbound topic
+            testProducer.send(testMessage);
+
+            // Wait for message to be received on outbound topic
+            with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Message<String> receivedMessage = testConsumer.receive(1, TimeUnit.SECONDS);
+                    assertNotNull("Should receive STRING message", receivedMessage);
+                    assertEquals("Message content should match", testMessage, receivedMessage.getValue());
+                    testConsumer.acknowledge(receivedMessage);
+                });
+
+            stringFlowTestRule.assertIsSatisfied();
+        } finally {
+            testProducer.close();
+            testConsumer.close();
+            stringFlowTestRule.stopFlow();
+        }
+    }
+
+    @Test
+    public void test_int32_schema_flow() throws Exception {
+        // Use the pre-configured flow from the module
+        Flow int32Flow = moduleUnderTest.getFlow("INT32 Schema Flow");
+        IkasanFlowTestRule int32FlowTestRule = new IkasanFlowTestRule();
+        int32FlowTestRule.withFlow(int32Flow);
+
+        // Setup component expectations
+        int32FlowTestRule.consumer("INT32 Consumer")
+            .broker("Exception Generating Broker")
+            .broker("Delay Generating Broker")
+            .producer("INT32 Producer");
+
+        // Create test producer and consumer
+        Producer<Integer> testProducer = pulsarClient.newProducer(Schema.INT32)
+            .topic("test-int32-inbound-topic")
+            .create();
+
+        Consumer<Integer> testConsumer = pulsarClient.newConsumer(Schema.INT32)
+            .topic("test-int32-outbound-topic")
+            .subscriptionName("test-int32-consumer")
+            .subscriptionType(SubscriptionType.Shared)
+            .subscribe();
+
+        try {
+            // Start the flow
+            int32FlowTestRule.startFlow();
+
+            Integer testValue = 42;
+            logger.info("Sending INT32 message: [" + testValue + "]");
+
+            // Send message to inbound topic
+            testProducer.send(testValue);
+
+            // Wait for message to be received on outbound topic
+            with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Message<Integer> receivedMessage = testConsumer.receive(1, TimeUnit.SECONDS);
+                    assertNotNull("Should receive INT32 message", receivedMessage);
+                    assertEquals("Message value should match", testValue, receivedMessage.getValue());
+                    testConsumer.acknowledge(receivedMessage);
+                });
+
+            int32FlowTestRule.assertIsSatisfied();
+        } finally {
+            testProducer.close();
+            testConsumer.close();
+            int32FlowTestRule.stopFlow();
+        }
+    }
+
+    @Test
+    public void test_json_schema_flow() throws Exception {
+        // Use the pre-configured flow from the module
+        Flow jsonFlow = moduleUnderTest.getFlow("JSON Schema Flow");
+        IkasanFlowTestRule jsonFlowTestRule = new IkasanFlowTestRule();
+        jsonFlowTestRule.withFlow(jsonFlow);
+
+        // Setup component expectations
+        jsonFlowTestRule.consumer("JSON Consumer")
+            .broker("Exception Generating Broker")
+            .broker("Delay Generating Broker")
+            .producer("JSON Producer");
+
+        // Create test producer and consumer
+        Producer<TestMessage> testProducer = pulsarClient.newProducer(Schema.JSON(TestMessage.class))
+            .topic("test-json-inbound-topic")
+            .create();
+
+        Consumer<TestMessage> testConsumer = pulsarClient.newConsumer(Schema.JSON(TestMessage.class))
+            .topic("test-json-outbound-topic")
+            .subscriptionName("test-json-consumer")
+            .subscriptionType(SubscriptionType.Shared)
+            .subscribe();
+
+        try {
+            // Start the flow
+            jsonFlowTestRule.startFlow();
+
+            TestMessage testMessage = new TestMessage("test-1", "JSON Flow Test", System.currentTimeMillis());
+            logger.info("Sending JSON message: [" + testMessage + "]");
+
+            // Send message to inbound topic
+            testProducer.send(testMessage);
+
+            // Wait for message to be received on outbound topic
+            with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Message<TestMessage> receivedMessage = testConsumer.receive(1, TimeUnit.SECONDS);
+                    assertNotNull("Should receive JSON message", receivedMessage);
+                    TestMessage received = receivedMessage.getValue();
+                    assertEquals("Message ID should match", testMessage.getId(), received.getId());
+                    assertEquals("Message content should match", testMessage.getContent(), received.getContent());
+                    testConsumer.acknowledge(receivedMessage);
+                });
+
+            jsonFlowTestRule.assertIsSatisfied();
+        } finally {
+            testProducer.close();
+            testConsumer.close();
+            jsonFlowTestRule.stopFlow();
+        }
+    }
+
+    @Test
+    public void test_avro_schema_flow() throws Exception {
+        // Use the pre-configured flow from the module
+        Flow avroFlow = moduleUnderTest.getFlow("AVRO Schema Flow");
+        IkasanFlowTestRule avroFlowTestRule = new IkasanFlowTestRule();
+        avroFlowTestRule.withFlow(avroFlow);
+
+        // Setup component expectations
+        avroFlowTestRule.consumer("AVRO Consumer")
+            .broker("Exception Generating Broker")
+            .broker("Delay Generating Broker")
+            .producer("AVRO Producer");
+
+        // Create test producer and consumer
+        Producer<TestMessage> testProducer = pulsarClient.newProducer(Schema.AVRO(TestMessage.class))
+            .topic("test-avro-inbound-topic")
+            .create();
+
+        Consumer<TestMessage> testConsumer = pulsarClient.newConsumer(Schema.AVRO(TestMessage.class))
+            .topic("test-avro-outbound-topic")
+            .subscriptionName("test-avro-consumer")
+            .subscriptionType(SubscriptionType.Shared)
+            .subscribe();
+
+        try {
+            // Start the flow
+            avroFlowTestRule.startFlow();
+
+            TestMessage testMessage = new TestMessage("test-2", "AVRO Flow Test", System.currentTimeMillis());
+            logger.info("Sending AVRO message: [" + testMessage + "]");
+
+            // Send message to inbound topic
+            testProducer.send(testMessage);
+
+            // Wait for message to be received on outbound topic
+            with().pollInterval(100, TimeUnit.MILLISECONDS).and().await().atMost(60, TimeUnit.SECONDS)
+                .untilAsserted(() -> {
+                    Message<TestMessage> receivedMessage = testConsumer.receive(1, TimeUnit.SECONDS);
+                    assertNotNull("Should receive AVRO message", receivedMessage);
+                    TestMessage received = receivedMessage.getValue();
+                    assertEquals("Message ID should match", testMessage.getId(), received.getId());
+                    assertEquals("Message content should match", testMessage.getContent(), received.getContent());
+                    testConsumer.acknowledge(receivedMessage);
+                });
+
+            avroFlowTestRule.assertIsSatisfied();
+        } finally {
+            testProducer.close();
+            testConsumer.close();
+            avroFlowTestRule.stopFlow();
+        }
     }
 }

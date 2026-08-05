@@ -7,12 +7,12 @@ import org.ikasan.spec.event.MessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class InboundQueueMessageListener implements org.apache.pulsar.client.api.MessageListener<byte[]> {
+public class InboundQueueMessageListener<T> implements org.apache.pulsar.client.api.MessageListener<T> {
     private static Logger logger = LoggerFactory.getLogger(InboundQueueMessageListener.class);
 
     private MessageListener messageListener;
     private EndpointListener endpointListener;
-    private Message<byte[]> currentMessage;
+    private Message<T> currentMessage;
 
     /**
      * Sets the MessageListener instance to handle incoming messages.
@@ -35,10 +35,10 @@ public class InboundQueueMessageListener implements org.apache.pulsar.client.api
     }
 
     @Override
-    public void received(Consumer<byte[]> consumer, Message<byte[]> msg) {
+    public void received(Consumer consumer, Message msg) {
         try {
             this.currentMessage = msg;
-            byte[] payload = msg.getValue();
+            Object payload = msg.getValue();
             this.messageListener.onMessage(payload);
         } catch (Exception e) {
             logger.error("Error processing Pulsar message", e);
@@ -49,9 +49,9 @@ public class InboundQueueMessageListener implements org.apache.pulsar.client.api
     /**
      * Retrieves the current message being processed by the instance.
      *
-     * @return the current Pulsar message as a Message<byte[]> object, or null if no message is currently set.
+     * @return the current Pulsar message as a Message<T> object, or null if no message is currently set.
      */
-    public Message<byte[]> getCurrentMessage() {
+    public Message<T> getCurrentMessage() {
         return currentMessage;
     }
 

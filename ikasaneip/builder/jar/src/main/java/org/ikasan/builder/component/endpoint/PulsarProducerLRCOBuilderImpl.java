@@ -102,6 +102,18 @@ public class PulsarProducerLRCOBuilderImpl implements PulsarProducerLRCOBuilder 
     }
 
     @Override
+    public PulsarProducerLRCOBuilder setSchemaType(String schemaType) {
+        this.configuration.setSchemaType(schemaType);
+        return this;
+    }
+
+    @Override
+    public PulsarProducerLRCOBuilder setMessageClassName(String messageClassName) {
+        this.configuration.setSchemaMessageClassName(messageClassName);
+        return this;
+    }
+
+    @Override
     public Producer build() {
         PulsarProducerLRCO producer = new PulsarProducerLRCO(transactionManager, configuration);
 
