@@ -24,14 +24,11 @@ before_install:
 
 install: mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -DskipTests -Djava.security.egd=file:/dev/./urandom -Pall -B -V
 
-jobs:
-  include:
-    - stage: test
-      name: "Unit Tests"
-      script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pci -B -V
-    - stage: test
-      name: "Integration Tests"
-      script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pintegration -B -V
+env:
+  - TEST_PROFILE=ci
+  - TEST_PROFILE=integration
+
+script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean test -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -P$TEST_PROFILE -B -V
 
 deploy:
   # deploy develop 3.3.x to oss
