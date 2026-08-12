@@ -22,44 +22,49 @@ before_install:
   - if [ ! -d $M2_HOME/bin ]; then curl https://archive.apache.org/dist/maven/maven-3/3.9.16/binaries/apache-maven-3.9.16-bin.tar.gz | tar zxf - -C $HOME; fi
   - export PATH=$M2_HOME/bin:$PATH
 
-install: skip
-
-script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pci -B -V
-
-deploy:
-  # deploy develop 3.3.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 3.3.x
-  # deploy develop 4.0.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 4.0.x
-  # deploy develop 4.1.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 4.1.x
-  # deploy develop 4.2.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 4.2.x
-  # deploy develop 5.0.x to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
-    on:
-      branch: 5.0.x
-  # Push release to oss
-  - provider: script
-    skip_cleanup: true
-    script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
-    on:
-      tags: true
+jobs:
+  include:
+    - stage: build
+      name: "Build and CI Tests"
+      script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pci -B -V
+    - stage: deploy
+      name: "Deploy to OSS"
+      if: branch IN (3.3.x, 4.0.x, 4.1.x, 4.2.x, 5.0.x) OR tag IS present
+      script: skip
+      deploy:
+        # deploy develop 3.3.x to oss
+        - provider: script
+          skip_cleanup: true
+          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+          on:
+            branch: 3.3.x
+        # deploy develop 4.0.x to oss
+        - provider: script
+          skip_cleanup: true
+          script: mvn --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+          on:
+            branch: 4.0.x
+        # deploy develop 4.1.x to oss
+        - provider: script
+          skip_cleanup: true
+          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+          on:
+            branch: 4.1.x
+        # deploy develop 4.2.x to oss
+        - provider: script
+          skip_cleanup: true
+          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+          on:
+            branch: 4.2.x
+        # deploy develop 5.0.x to oss
+        - provider: script
+          skip_cleanup: true
+          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall -B  -V --settings .settings.xml
+          on:
+            branch: 5.0.x
+        # Push release to oss
+        - provider: script
+          skip_cleanup: true
+          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
+          on:
+            tags: true
