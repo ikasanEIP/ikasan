@@ -40,6 +40,7 @@
  */
 package org.ikasan.history.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import org.ikasan.spec.history.ComponentInvocationMetric;
 import org.ikasan.spec.history.FlowInvocationMetric;
@@ -74,6 +75,7 @@ public class ComponentInvocationMetricImpl implements ComponentInvocationMetric<
     @Column(name = "EndTime", nullable = true)
     private long endTimeMillis;
 
+    @JsonManagedReference
     @OneToMany(mappedBy="componentInvocationMetricImpl", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private Set<CustomMetric> metrics;
 

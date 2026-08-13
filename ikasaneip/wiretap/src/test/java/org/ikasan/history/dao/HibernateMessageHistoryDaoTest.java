@@ -40,6 +40,8 @@
  */
 package org.ikasan.history.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.ikasan.WiretapAutoConfiguration;
@@ -394,6 +396,66 @@ public class HibernateMessageHistoryDaoTest
                 Assert.assertEquals(6, componentInvocationMetric.getMetrics().size());
                 Assert.assertNotNull(componentInvocationMetric.getWiretapFlowEvent());
             });
+    }
+
+    @Test
+    @DirtiesContext
+    public void test_jackson_serialization_with_circular_reference_does_not_throw_exception() throws JsonProcessingException
+    {
+        // Create a FlowInvocationMetric with ComponentInvocationMetrics that have custom metrics
+        // Each custom metric has a reference back to its parent ComponentInvocationMetric
+        Set<ComponentInvocationMetricImpl> componentEvents = new HashSet<>();
+
+        ComponentInvocationMetricImpl componentInvocationMetric = new ComponentInvocationMetricImpl(
+            "testComponent",
+            "beforeLifeId",
+            "beforeRelatedLifeId",
+            "afterLifeId",
+            "afterRelatedLifeId",
+            1786637453089L,
+            1786637454089L
+        );
+
+        // Create custom metrics with circular reference back to parent
+        Set<CustomMetric> customMetrics = new HashSet<>();
+        CustomMetric metric1 = new CustomMetric("metricName1", "metricValue1");
+        metric1.setComponentInvocationMetricImpl(componentInvocationMetric); // Circular reference
+        customMetrics.add(metric1);
+
+        CustomMetric metric2 = new CustomMetric("metricName2", "metricValue2");
+        metric2.setComponentInvocationMetricImpl(componentInvocationMetric); // Circular reference
+        customMetrics.add(metric2);
+
+        componentInvocationMetric.setMetrics(customMetrics);
+        componentEvents.add(componentInvocationMetric);
+
+        FlowInvocationMetric<ComponentInvocationMetricImpl> flowInvocationMetric = new FlowInvocationMetricImpl(
+            "testModule",
+            "testFlow",
+            1786637453089L,
+            1786637454089L,
+            "TEST_ACTION",
+            componentEvents,
+            0L,
+            null
+        );
+
+        // Attempt to serialize with Jackson ObjectMapper
+        // This should throw a JsonProcessingException due to circular reference
+        ObjectMapper objectMapper = new ObjectMapper();
+        String value = objectMapper.writeValueAsString(flowInvocationMetric);
+
+        Assert.assertEquals("{\"id\":null,\"moduleName\":\"testModule\",\"flowName\":\"testFlow\"" +
+            ",\"invocationStartTime\":1786637453089,\"invocationEndTime\":1786637454089,\"finalAction\":\"TEST_ACTION\"" +
+            ",\"componentInvocationMetricImpls\":[{\"id\":0,\"componentName\":\"testComponent\",\"beforeEventIdentifier\":" +
+            "\"beforeLifeId\",\"beforeRelatedEventIdentifier\":\"beforeRelatedLifeId\",\"afterEventIdentifier\":\"afterLifeId\"" +
+            ",\"afterRelatedEventIdentifier\":\"afterRelatedLifeId\",\"startTimeMillis\":1786637453089,\"endTimeMillis\":1786637454089" +
+            ",\"metrics\":[{\"id\":null,\"name\":\"metricName2\",\"value\":\"metricValue2\"},{\"id\":null,\"name\":\"metricName1\"" +
+            ",\"value\":\"metricValue1\"}],\"wiretapFlowEvent\":null}],\"harvested\":false,\"expiry\":0,\"errorUri\":null,\"harvestedDateTime\":0" +
+            ",\"flowInvocationEvents\":[{\"id\":0,\"componentName\":\"testComponent\",\"beforeEventIdentifier\":\"beforeLifeId\"" +
+            ",\"beforeRelatedEventIdentifier\":\"beforeRelatedLifeId\",\"afterEventIdentifier\":\"afterLifeId\",\"afterRelatedEventIdentifier\"" +
+            ":\"afterRelatedLifeId\",\"startTimeMillis\":1786637453089,\"endTimeMillis\":1786637454089,\"metrics\":[{\"id\":null,\"name\":" +
+            "\"metricName2\",\"value\":\"metricValue2\"},{\"id\":null,\"name\":\"metricName1\",\"value\":\"metricValue1\"}],\"wiretapFlowEvent\":null}]}", value);
     }
 
     @After
