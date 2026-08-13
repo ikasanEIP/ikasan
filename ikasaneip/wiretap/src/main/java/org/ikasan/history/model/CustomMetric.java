@@ -1,5 +1,6 @@
 package org.ikasan.history.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ public class CustomMetric implements Serializable
 	private Long id;
     @ManyToOne
     @JoinColumn(name="CompInvocationMetricId", nullable=false, updatable = false)
+    @JsonBackReference
     private ComponentInvocationMetricImpl componentInvocationMetricImpl;
 
     @Column(name="Name", nullable = false)
