@@ -40,6 +40,8 @@
  */
 package org.ikasan.history.dao;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.Query;
 import org.ikasan.WiretapAutoConfiguration;
@@ -60,8 +62,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.util.ReflectionTestUtils;
-import tools.jackson.core.JacksonException;
-import tools.jackson.databind.json.JsonMapper;
 
 import javax.annotation.Resource;
 import java.util.*;
@@ -400,7 +400,7 @@ public class HibernateMessageHistoryDaoTest
 
     @Test
     @DirtiesContext
-    public void test_jackson_serialization_with_circular_reference_does_not_throw_exception() throws JacksonException {
+    public void test_jackson_serialization_with_circular_reference_does_not_throw_exception() throws JsonProcessingException {
         // Create a FlowInvocationMetric with ComponentInvocationMetrics that have custom metrics
         // Each custom metric has a reference back to its parent ComponentInvocationMetric
         Set<ComponentInvocationMetricImpl> componentEvents = new HashSet<>();
@@ -441,7 +441,7 @@ public class HibernateMessageHistoryDaoTest
 
         // Attempt to serialize with Jackson ObjectMapper
         // This should throw a JsonProcessingException due to circular reference
-        JsonMapper objectMapper = JsonMapper.builder().build();
+        ObjectMapper objectMapper = new ObjectMapper();
         String value = objectMapper.writeValueAsString(flowInvocationMetric);
 
         Assert.assertNotNull(value);
