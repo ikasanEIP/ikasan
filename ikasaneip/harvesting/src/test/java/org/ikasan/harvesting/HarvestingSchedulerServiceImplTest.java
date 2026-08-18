@@ -53,7 +53,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
 
         mockery.assertIsSatisfied();
     }
@@ -96,7 +96,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.registerJobs();
 
@@ -114,7 +114,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.registerJobs();
 
@@ -150,7 +150,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.registerJobs();
 
@@ -196,7 +196,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         try
         {
@@ -237,7 +237,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.removeJob("test");
 
@@ -268,7 +268,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.removeJob("test");
 
@@ -305,7 +305,7 @@ public class HarvestingSchedulerServiceImplTest
 
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.addJob("test");
 
@@ -342,7 +342,7 @@ public class HarvestingSchedulerServiceImplTest
             oneOf(scheduler).start();
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.startScheduler();
 
@@ -372,7 +372,7 @@ public class HarvestingSchedulerServiceImplTest
             oneOf(scheduler).shutdown();
         }});
 
-        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs);
+        HarvestingSchedulerServiceImpl uut = new HarvestingSchedulerServiceImpl(scheduler,scheduledJobFactory,harvestingJobs, "moduleName");
         // test
         uut.shutdownScheduler();
 

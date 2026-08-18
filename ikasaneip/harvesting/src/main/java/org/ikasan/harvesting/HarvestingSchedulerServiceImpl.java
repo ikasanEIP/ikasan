@@ -19,23 +19,25 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class HarvestingSchedulerServiceImpl implements HarvestingSchedulerService
 {
     /** Logger for this class */
-    private static Logger logger = LoggerFactory.getLogger(HarvestingSchedulerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(HarvestingSchedulerServiceImpl.class);
 
     /**
      * Scheduler
      */
-    private Scheduler scheduler;
+    private final Scheduler scheduler;
 
-    private ScheduledJobFactory scheduledJobFactory;
+    private final ScheduledJobFactory scheduledJobFactory;
 
-    private List<JobDetail> harvestingJobDetails;
+    private final List<JobDetail> harvestingJobDetails;
 
-    private Map<String, HarvestingJob> harvestingJobs;
+    private final Map<String, HarvestingJob> harvestingJobs;
 
-    private Map<String, JobDetail> harvestingJobDetailsMap;
+    private final Map<String, JobDetail> harvestingJobDetailsMap;
+
+    private final String moduleName;
 
     public HarvestingSchedulerServiceImpl(Scheduler scheduler, ScheduledJobFactory scheduledJobFactory,
-                                      List<HarvestingJob> harvestingJobs)
+                                      List<HarvestingJob> harvestingJobs, String moduleName)
     {
         this.scheduler = scheduler;
         if(this.scheduler == null)
@@ -46,6 +48,11 @@ public class HarvestingSchedulerServiceImpl implements HarvestingSchedulerServic
         if(this.scheduledJobFactory == null)
         {
             throw new IllegalArgumentException("scheduledJobFactory cannot be null!");
+        }
+        this.moduleName = moduleName;
+        if(this.moduleName == null)
+        {
+            throw new IllegalArgumentException("moduleName cannot be null!");
         }
 
         this.harvestingJobs = new HashMap<String, HarvestingJob>();
@@ -78,7 +85,11 @@ public class HarvestingSchedulerServiceImpl implements HarvestingSchedulerServic
                 if(harvestingJob.isInitialised() && harvestingJob.isEnabled()
                         && !this.scheduler.checkExists(jobkey))
                 {
-                    Trigger trigger = getCronTrigger(jobkey, this.harvestingJobs.get(jobkey.toString()).getCronExpression());
+                    // We randomise the harvesting
+                    String randomisedCron = CronExpressionRandomizer
+                        .randomize(harvestingJob.getCronExpression(), this.moduleName+harvestingJob.getJobName());
+
+                    Trigger trigger = getCronTrigger(jobkey, randomisedCron);
                     Date scheduledDate = scheduler.scheduleJob(jobDetail, trigger);
                     logger.debug("Scheduled harvesting job ["
                             + jobkey.toString()

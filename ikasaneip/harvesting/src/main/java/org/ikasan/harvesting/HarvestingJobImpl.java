@@ -171,7 +171,11 @@ public class HarvestingJobImpl implements HarvestingJob, MonitorSubject
 
     public String getCronExpression()
     {
-        cronExpression = this.environment.getProperty(this.getJobName() + CRON_EXPRESSION);
+        String propertySetCronExpression = this.environment.getProperty(this.getJobName() + CRON_EXPRESSION);
+
+        if(propertySetCronExpression != null && !propertySetCronExpression.isEmpty()) {
+            cronExpression = propertySetCronExpression;
+        }
 
         if(cronExpression == null || cronExpression.isEmpty())
         {
