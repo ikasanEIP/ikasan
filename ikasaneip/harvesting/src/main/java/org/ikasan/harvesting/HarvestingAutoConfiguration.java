@@ -8,6 +8,7 @@ import org.ikasan.spec.harvest.HarvestingJob;
 import org.ikasan.spec.harvest.HarvestingSchedulerService;
 import org.ikasan.spec.monitor.JobMonitor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.core.env.Environment;
@@ -22,11 +23,16 @@ import java.util.List;
     , "messageHistoryService", "systemEventService", "moduleService"})
 public class HarvestingAutoConfiguration
 {
+    private static final String EVERY_FIVE_MINUTE_DEFAULT_CRON = "0 0/5 * * * ?";
+
+    @Value("${module.name:null}")
+    String moduleName;
+
     @Bean(name = "harvestingSchedulerService")
     public HarvestingSchedulerService harvestingSchedulerService(List<HarvestingJob> harvestingJobs)
     {
         return new HarvestingSchedulerServiceImpl(SchedulerFactory.getInstance().getScheduler(),
-                CachingScheduledJobFactory.getInstance(), harvestingJobs);
+                CachingScheduledJobFactory.getInstance(), harvestingJobs, this.moduleName);
     }
 
     @Bean
@@ -127,6 +133,8 @@ public class HarvestingAutoConfiguration
         jobMonitor.setJobName(harvestingJob.getJobName());
 
         harvestingJob.setMonitor(jobMonitor);
+        harvestingJob.setCronExpression(EVERY_FIVE_MINUTE_DEFAULT_CRON);
+
         return harvestingJob;
     }
 
@@ -140,6 +148,8 @@ public class HarvestingAutoConfiguration
         jobMonitor.setJobName(harvestingJob.getJobName());
 
         harvestingJob.setMonitor(jobMonitor);
+        harvestingJob.setCronExpression(EVERY_FIVE_MINUTE_DEFAULT_CRON);
+
         return harvestingJob;
     }
 }
