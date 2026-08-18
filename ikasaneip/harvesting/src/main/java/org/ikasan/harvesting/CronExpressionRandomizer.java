@@ -17,10 +17,11 @@ public class CronExpressionRandomizer {
 
     /**
      * Randomizes a cron expression based on the job name seed.
+     * If a specific time is set (all time fields are fixed numeric values), the expression is returned unchanged.
      *
      * @param cronExpression the original cron expression
      * @param seed the job name to use as a seed for randomization
-     * @return the randomized cron expression
+     * @return the randomized cron expression, or the original if a specific time is set
      */
     public static String randomize(String cronExpression, String seed) {
         if (cronExpression == null || cronExpression.trim().isEmpty()) {
@@ -35,11 +36,17 @@ public class CronExpressionRandomizer {
             throw new IllegalArgumentException("Invalid cron expression format: " + cronExpression);
         }
 
-        Random random = new Random(seed.hashCode());
-
         String seconds = parts[0];
         String minutes = parts[1];
         String hours = parts[2];
+
+        // Check if this is a specific time (all three time fields are fixed numeric values)
+        if (isSpecificTime(seconds, minutes, hours)) {
+            // Don't randomize specific times - return as is
+            return cronExpression;
+        }
+
+        Random random = new Random(seed.hashCode());
 
         // Process seconds field
         String newSeconds = randomizeField(seconds, 60, random);
@@ -62,6 +69,28 @@ public class CronExpressionRandomizer {
         }
 
         return result.toString();
+    }
+
+    /**
+     * Checks if the time fields represent a specific time (all are fixed numeric values).
+     *
+     * @param seconds the seconds field
+     * @param minutes the minutes field
+     * @param hours the hours field
+     * @return true if all three fields are fixed numeric values
+     */
+    private static boolean isSpecificTime(String seconds, String minutes, String hours) {
+        return isFixedNumericValue(seconds) && isFixedNumericValue(minutes) && isFixedNumericValue(hours);
+    }
+
+    /**
+     * Checks if a field is a fixed numeric value (not a wildcard, range, or increment).
+     *
+     * @param field the field to check
+     * @return true if the field is a simple numeric value
+     */
+    private static boolean isFixedNumericValue(String field) {
+        return field.matches("\\d+");
     }
 
     /**
@@ -94,8 +123,8 @@ public class CronExpressionRandomizer {
         }
 
         if (field.matches("\\d+")) {
-            // Single numeric value - randomize it within the max range
-            return String.valueOf(random.nextInt(maxValue));
+            // Single numeric value - keep as is (specific time should not be randomized)
+            return field;
         }
 
         // For any other pattern, return as is

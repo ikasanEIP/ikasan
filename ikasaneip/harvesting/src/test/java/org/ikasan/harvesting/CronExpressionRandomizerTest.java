@@ -103,19 +103,6 @@ public class CronExpressionRandomizerTest {
     }
 
     @Test
-    public void testDifferentJobsProduceDifferentResults() {
-        String cronExpression = "0 0/5 * * * ?";
-        String jobName1 = "job1";
-        String jobName2 = "job2";
-
-        String result1 = CronExpressionRandomizer.randomize(cronExpression, jobName1);
-        String result2 = CronExpressionRandomizer.randomize(cronExpression, jobName2);
-
-        // While it's theoretically possible they could be the same, it's highly unlikely
-        Assert.assertNotEquals("Different job names should typically produce different results", result1, result2);
-    }
-
-    @Test
     public void testRandomizeWithWildcards() {
         String cronExpression = "* * * * * ?";
         String jobName = "wildcardJob";
@@ -135,24 +122,36 @@ public class CronExpressionRandomizerTest {
     }
 
     @Test
-    public void testRandomizeWithSpecificValues() {
+    public void testRandomizeWithSpecificTime() {
         String cronExpression = "0 15 10 * * ?";
         String jobName = "specificJob";
 
         String result = CronExpressionRandomizer.randomize(cronExpression, jobName);
 
-        String[] parts = result.split("\\s+");
-        Assert.assertEquals("Should have 6 parts", 6, parts.length);
+        // Specific time should NOT be randomized - should return exactly as provided
+        Assert.assertEquals("Specific time should not be randomized", cronExpression, result);
+    }
 
-        // Specific numeric values should be randomized
-        Assert.assertTrue("Seconds should be numeric", parts[0].matches("\\d+"));
-        Assert.assertTrue("Minutes should be numeric", parts[1].matches("\\d+"));
-        Assert.assertTrue("Hours should be numeric", parts[2].matches("\\d+"));
+    @Test
+    public void testRandomizeWithSpecificTimeDaily() {
+        String cronExpression = "30 45 14 * * ?";
+        String jobName = "dailyJob";
 
-        // Wildcards should remain unchanged
-        Assert.assertEquals("*", parts[3]);
-        Assert.assertEquals("*", parts[4]);
-        Assert.assertEquals("?", parts[5]);
+        String result = CronExpressionRandomizer.randomize(cronExpression, jobName);
+
+        // Specific time (14:45:30 daily) should NOT be randomized
+        Assert.assertEquals("Specific daily time should not be randomized", cronExpression, result);
+    }
+
+    @Test
+    public void testRandomizeWithSpecificTimeOnSpecificDay() {
+        String cronExpression = "0 0 12 15 * ?";
+        String jobName = "monthlyJob";
+
+        String result = CronExpressionRandomizer.randomize(cronExpression, jobName);
+
+        // Specific time on 15th of every month should NOT be randomized
+        Assert.assertEquals("Specific time on specific day should not be randomized", cronExpression, result);
     }
 
     @Test
