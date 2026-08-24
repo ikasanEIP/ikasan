@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface PolicyDao {
 
+    String POLICY_TYPE = "securityPolicy";
+
     /**
      * Creates a new empty Policy instance.
      *

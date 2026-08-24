@@ -10,6 +10,7 @@ import java.util.List;
  */
 public interface MetricsDao
 {
+    String METRIC_ENTITY_TYPE = "metric";
 
     /**
      * Save an individual FlowInvocationMetric entity

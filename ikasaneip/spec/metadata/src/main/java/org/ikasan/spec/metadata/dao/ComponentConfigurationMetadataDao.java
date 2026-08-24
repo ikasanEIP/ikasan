@@ -9,6 +9,8 @@ import java.util.List;
  */
 public interface ComponentConfigurationMetadataDao {
 
+    String COMPONENT_CONFIGURATION = "componentConfiguration";
+
     /**
      * Save a list of configuration metadata.
      *

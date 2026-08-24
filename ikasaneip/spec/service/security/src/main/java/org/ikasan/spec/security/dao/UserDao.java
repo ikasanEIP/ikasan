@@ -57,6 +57,8 @@ import org.ikasan.spec.security.model.UserLite;
  */
 public interface UserDao
 {
+    String USER_TYPE = "securityUser";
+
     /**
      * Creates a new user with the specified details.
      *
