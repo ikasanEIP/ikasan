@@ -6,8 +6,14 @@ import java.util.List;
  * Interface for ESB Entity DAO operations.
  * Created by Ikasan Development Team on 02/05/2026.
  */
-public interface EsbEntityDao<T>
+public interface EntityDao<T>
 {
+    String ERROR = "error";
+    String EXCLUSION = "exclusion";
+    String EXCLUSION_EVENT_ACTION = "exclusionEventAction";
+    String REPLAY = "replay";
+    String REPLAY_AUDIT = "replay_audit";
+
     /**
      * Save an individual ErrorOccurrence entity
      *

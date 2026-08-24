@@ -15,6 +15,8 @@ import java.util.List;
  */
 public interface AuthenticationMethodDao {
 
+    String AUTHENTICATION_METHOD_TYPE = "securityAuthenticationMethod";
+
     /**
      * Creates a new empty AuthenticationMethod instance.
      *

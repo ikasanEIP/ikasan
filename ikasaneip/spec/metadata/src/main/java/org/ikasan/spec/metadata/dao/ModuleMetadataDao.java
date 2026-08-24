@@ -14,6 +14,8 @@ import java.util.List;
  */
 public interface ModuleMetadataDao {
 
+    String MODULE_METADATA = "moduleMetaData";
+
     /**
      * Save a list of module metadata records.
      *

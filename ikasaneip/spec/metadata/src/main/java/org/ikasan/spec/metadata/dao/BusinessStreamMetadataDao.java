@@ -12,6 +12,11 @@ import java.util.List;
 public interface BusinessStreamMetadataDao {
 
     /**
+     * We need to give this dao it's context.
+     */
+    String BUSINESS_STREAM_METADATA = "businessStreamMetaData";
+
+    /**
      * Find a business stream metadata by its ID.
      *
      * @param id the business stream ID

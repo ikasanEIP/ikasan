@@ -6,7 +6,7 @@ import java.util.List;
  * Interface for ESB Entity operations.
  * Created by Ikasan Development Team on 02/05/2026.
  */
-public interface EsbEntityService<T>
+public interface EntityService<T>
 {
     /**
      * Save an individual ErrorOccurrence entity

@@ -17,6 +17,8 @@ import java.util.List;
  */
 public interface RoleDao {
 
+    String ROLE_TYPE = "securityRole";
+
     /**
      * Creates a new empty Role instance.
      *

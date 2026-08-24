@@ -18,6 +18,8 @@ import java.util.List;
  */
 public interface IkasanPrincipalDao {
 
+    String PRINCIPAL_TYPE = "securityPrincipal";
+
     /**
      * Creates a new empty IkasanPrincipal instance.
      *
