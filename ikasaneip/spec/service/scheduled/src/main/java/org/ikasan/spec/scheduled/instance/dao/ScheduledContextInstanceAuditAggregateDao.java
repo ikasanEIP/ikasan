@@ -9,6 +9,9 @@ import java.util.Map;
 
 public interface ScheduledContextInstanceAuditAggregateDao {
 
+    String SCHEDULED_CONTEXT_INSTANCE_AUDIT_AGGREGATE_TYPE = "scheduledContextInstanceAuditAggregate";
+    String SCHEDULED_CONTEXT_INSTANCE_AUDIT_AGGREGATE_ID = "scheduledContextInstanceAuditAggregateId";
+
 
     /**
      * Saves the given ScheduledContextInstanceAuditAggregateRecord.

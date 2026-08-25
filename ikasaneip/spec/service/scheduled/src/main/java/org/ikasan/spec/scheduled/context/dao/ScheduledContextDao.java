@@ -8,6 +8,9 @@ import java.util.List;
 
 public interface ScheduledContextDao {
 
+    String SCHEDULED_CONTEXT_TYPE = "scheduledContext";
+    long DO_NOT_EXPIRE = -1L;
+
     /**
      * Find all ScheduledContextRecords
      *

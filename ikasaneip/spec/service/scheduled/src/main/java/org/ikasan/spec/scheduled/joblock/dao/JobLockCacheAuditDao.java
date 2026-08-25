@@ -5,6 +5,9 @@ import org.ikasan.spec.search.SearchResults;
 
 public interface JobLockCacheAuditDao {
 
+    String JOB_LOCK_AUDIT_CACHE_TYPE = "jockLockCacheRecordAudit";
+    String JOB_LOCK_AUDIT_CACHE_TYPE_ID = "jockLockCacheRecordAuditID";
+
     /**
      * Saves a JobLockCacheAuditRecord to the database.
      *

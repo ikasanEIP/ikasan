@@ -13,6 +13,8 @@ public interface EntityDao<T>
     String EXCLUSION_EVENT_ACTION = "exclusionEventAction";
     String REPLAY = "replay";
     String REPLAY_AUDIT = "replay_audit";
+    String SYSTEM_EVENT_TYPE = "systemEvent";
+    String WIRETAP_TYPE = "wiretap";
 
     /**
      * Save an individual ErrorOccurrence entity

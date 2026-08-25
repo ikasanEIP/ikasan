@@ -4,6 +4,9 @@ import org.ikasan.spec.scheduled.context.model.ScheduledContextViewRecord;
 
 public interface ScheduledContextViewDao {
 
+    String SCHEDULED_CONTEXT_VIEW_TYPE = "scheduledContextView";
+    long DO_NOT_EXPIRE = -1L;
+
     /**
      * Save a ScheduledContextViewRecord
      *

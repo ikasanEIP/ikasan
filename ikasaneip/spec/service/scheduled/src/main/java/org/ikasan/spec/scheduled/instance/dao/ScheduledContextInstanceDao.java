@@ -9,6 +9,8 @@ import java.util.List;
 
 public interface ScheduledContextInstanceDao {
 
+    String SCHEDULED_CONTEXT_INSTANCE_TYPE = "scheduledContextInstance";
+
     /**
      * Get a scheduled context instance record by id.
      *

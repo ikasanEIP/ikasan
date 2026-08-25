@@ -5,6 +5,8 @@ import org.ikasan.spec.search.SearchResults;
 
 public interface EmailNotificationContextDao {
 
+    String EMAIL_NOTIFICATION_CONTEXT = "emailNotificationContext";
+
     /**
      * Retrieves all {@link EmailNotificationContextRecord} entries, with pagination support.
      *
