@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface EmailNotificationDetailsDao {
 
+    String EMAIL_NOTIFICATION_DETAILS = "emailNotificationDetails";
+
     /**
      * Retrieves all {@link EmailNotificationDetailsRecord} entries, with pagination support.
      *

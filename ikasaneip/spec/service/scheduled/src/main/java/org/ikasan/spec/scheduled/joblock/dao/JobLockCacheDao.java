@@ -4,6 +4,9 @@ import org.ikasan.spec.scheduled.joblock.model.JobLockCacheRecord;
 
 public interface JobLockCacheDao {
 
+    String JOB_LOCK_CACHE_TYPE = "jobLockCache";
+    String JOB_LOCK_CACHE_ID = "jobLockCacheIdentifier";
+
     /**
      * Saves the JobLockCacheRecord to the database.
      *

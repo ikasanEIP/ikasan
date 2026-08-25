@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface ContextProfileDao {
 
+    String CONTEXT_PROFILE_TYPE = "contextProfile";
+
     /**
      * Save a context profile record.
      *

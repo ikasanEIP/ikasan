@@ -5,6 +5,9 @@ import org.ikasan.spec.search.SearchResults;
 
 public interface ScheduledContextInstanceAuditDao {
 
+    String SCHEDULED_CONTEXT_INSTANCE_AUDIT_TYPE = "scheduledContextInstanceAudit";
+    String SCHEDULED_CONTEXT_INSTANCE_AUDIT_ID = "scheduledContextInstanceAuditId";
+
     /**
      * Save a scheduled context instance audit record.
      *

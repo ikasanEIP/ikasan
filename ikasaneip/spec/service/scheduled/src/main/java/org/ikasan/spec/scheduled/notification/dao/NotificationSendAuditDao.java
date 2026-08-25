@@ -2,6 +2,8 @@ package org.ikasan.spec.scheduled.notification.dao;
 
 public interface NotificationSendAuditDao<T> {
 
+    String NOTIFICATION_SEND_AUDIT = "notificationSendAudit";
+
     /**
      * Finds a record based on the specified contextual information.
      *
