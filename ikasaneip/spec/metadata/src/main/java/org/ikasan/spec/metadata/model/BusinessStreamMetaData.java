@@ -7,60 +7,60 @@ public interface BusinessStreamMetaData<BUSINESS_STREAM>
      *
      * @return
      */
-    public String getId();
+    String getId();
 
     /**
      * Set the id.
      * @param id
      */
-    public void setId(String id);
+    void setId(String id);
 
     /**
      * Get the business stream name.
      *
      * @return
      */
-    public String getName();
+    String getName();
 
     /**
      * Set the business stream name.
      *
      * @param name
      */
-    public void setName(String name);
+    void setName(String name);
 
     /**
      * Get the business description.
      *
      * @return
      */
-    public String getDescription();
+    String getDescription();
 
     /**
      * Set the business stream description.
      *
      * @param name
      */
-    public void setDescription(String name);
+    void setDescription(String name);
 
     /**
      * Get the business stream json.
      *
      * @return
      */
-    public String getJson();
+    String getJson();
 
     /**
      * Set the business stream json.
      *
      * @param json
      */
-    public void setJson(String json);
+    void setJson(String json);
 
     /**
      * Get the business stream.
      *
      * @return
      */
-    public BUSINESS_STREAM getBusinessStream();
+    BUSINESS_STREAM getBusinessStream();
 }
