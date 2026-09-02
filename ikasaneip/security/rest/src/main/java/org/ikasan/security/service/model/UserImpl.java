@@ -336,4 +336,9 @@ public class UserImpl implements User
             , department, enabled, accountNonExpired, accountNonLocked, credentialsNonExpired
             , requiresPasswordChange, previousAccessTimestamp, principals);
     }
+
+    @Override
+    public String toString() {
+        return this.username;
+    }
 }
