@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.service.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.ikasan.spec.security.model.Policy;
 import org.ikasan.spec.security.model.Role;
 import org.ikasan.spec.security.model.RoleJobPlan;
@@ -56,8 +57,11 @@ public class RoleImpl implements Role
     private String description;
     private Date createdDateTime;
     private Date updatedDateTime;
+    @JsonDeserialize(contentAs=PolicyImpl.class)
     private Set<Policy> policies = new HashSet<>();
+    @JsonDeserialize(contentAs=RoleModuleImpl.class)
     private Set<RoleModule> roleModules = new HashSet<>();
+    @JsonDeserialize(contentAs=RoleJobPlanImpl.class)
     private Set<RoleJobPlan> roleJobPlans = new HashSet<>();
 
     @Override

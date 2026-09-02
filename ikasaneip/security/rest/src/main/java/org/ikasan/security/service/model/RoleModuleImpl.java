@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.service.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.ikasan.spec.security.model.Role;
 import org.ikasan.spec.security.model.RoleModule;
 
@@ -49,6 +50,7 @@ public class RoleModuleImpl implements RoleModule
 {
     private Object id;
     private String moduleName;
+    @JsonDeserialize(as=RoleImpl.class)
     private Role role;
     private Date createdDateTime;
     private Date updatedDateTime;
