@@ -335,6 +335,7 @@
         <version.net.sf.saxon>9.6.0-10</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.12.14</version.org.mongodb.mongo-java-driver>
         <version.org.mongodb4.mongo-java-driver>4.11.5</version.org.mongodb4.mongo-java-driver>
+        <version.org.mongodb5.mongo-java-driver>5.11.0</version.org.mongodb5.mongo-java-driver>
         <version.de.flapdoodle.embed.mongo>4.18.1</version.de.flapdoodle.embed.mongo>
         <version.de.flapdoodle.embed.process>4.15.1</version.de.flapdoodle.embed.process>
         <version.org.aspectj>1.9.21</version.org.aspectj>
