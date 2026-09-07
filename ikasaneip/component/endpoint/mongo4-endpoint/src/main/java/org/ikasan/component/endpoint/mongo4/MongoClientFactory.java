@@ -4,6 +4,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Factory for creating MongoClients, useful when creating and injecting objects through Spring
@@ -25,6 +26,8 @@ public class MongoClientFactory
      */
     public static MongoClient getMongoClient(MongoClientConfiguration configuration)
     {
+        if(configuration == null) throw new RuntimeException("Configuration is null!");
+
         configuration.validate();
 
         return MongoClients.create(buildUrl(configuration));
@@ -64,6 +67,15 @@ public class MongoClientFactory
         if (configuration.getApplicationName() != null)
         {
             url += "&appName=" + configuration.getApplicationName();
+        }
+
+        // Append optional connection parameters
+        if (configuration.getOptionalConnectionParameters() != null)
+        {
+            for (Map.Entry<String, String> entry : configuration.getOptionalConnectionParameters().entrySet())
+            {
+                url += "&" + entry.getKey() + "=" + entry.getValue();
+            }
         }
 
         return url;

@@ -159,6 +159,9 @@ public class MongoClientConfiguration
     /** Does it use '+srv' to connect to the mongo endpoint **/
     protected Boolean srvRecord = false;
 
+    /** Optional connection parameters that are not explicitly set but supported by MongoClient **/
+    protected Map<String, String> optionalConnectionParameters = new HashMap<>();
+
     public List<String> getConnectionUrls() {
         return connectionUrls;
     }
@@ -401,6 +404,11 @@ public class MongoClientConfiguration
         for(String connectionUrl:connectionUrls)
         {
             String[] properties = connectionUrl.split(":");
+            if(properties.length !=2) {
+                logger.warn("connectionUrl is not valid as done not contain ':' [" + connectionUrl + "]");
+                continue;
+            }
+
             try
             {
                 serverAddresses.add( new ServerAddress(properties[0], Integer.valueOf(properties[1])) );
@@ -444,6 +452,14 @@ public class MongoClientConfiguration
 
     public void setSrvRecord(Boolean srvRecord) {
         this.srvRecord = srvRecord;
+    }
+
+    public Map<String, String> getOptionalConnectionParameters() {
+        return optionalConnectionParameters;
+    }
+
+    public void setOptionalConnectionParameters(Map<String, String> optionalConnectionParameters) {
+        this.optionalConnectionParameters = optionalConnectionParameters;
     }
 
     /**
@@ -490,6 +506,7 @@ public class MongoClientConfiguration
             + requiredReplicaSetName + ", socketKeepAlive=" + socketKeepAlive + ", socketTimeout=" + socketTimeout
             + ", threadsAllowedToBlockForConnectionMultiplier=" + threadsAllowedToBlockForConnectionMultiplier
             + ", authDatabaseName=" +authDatabaseName + ", sslEnabled="+sslEnabled+", sslInvalidHostNameAllowed="
-            +sslInvalidHostNameAllowed+", srvRecord="+srvRecord+"]";
+            +sslInvalidHostNameAllowed+", srvRecord="+srvRecord+", optionalConnectionParameters="
+            +optionalConnectionParameters+"]";
     }
 }
