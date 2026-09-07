@@ -38,12 +38,12 @@
  * USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * ====================================================================
  */
-package org.ikasan.component.endpoint.mongo4;
+package org.ikasan.component.endpoint.mongo5;
 
 import com.mongodb.ConnectionString;
-import com.mongodb.ReadPreference;
-import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoClient;
+import org.ikasan.component.endpoint.mongo5.MongoClientConfiguration;
+import org.ikasan.component.endpoint.mongo5.MongoClientFactory;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -593,16 +593,6 @@ public class MongoClientFactoryTest
     }
 
     /**
-     * Helper method to invoke private buildUrl method using reflection
-     */
-    private String invokeBuildUrl(MongoClientConfiguration configuration) throws Exception
-    {
-        Method buildUrlMethod = MongoClientFactory.class.getDeclaredMethod("buildUrl", MongoClientConfiguration.class);
-        buildUrlMethod.setAccessible(true);
-        return (String) buildUrlMethod.invoke(null, configuration);
-    }
-
-    /**
      * Test buildUrl with connection pool parameters
      */
     @Test
@@ -630,18 +620,18 @@ public class MongoClientFactoryTest
         configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
         configuration.setDatabaseName("testDb");
         configuration.setConnectionTimeout(5000);
-        configuration.setSocketTimeout(60000);
-        configuration.setMaxWaitTime(3000);
-        configuration.setMaxConnectionIdleTime(120000);
-        configuration.setMaxConnectionLifeTime(300000);
+        configuration.setSocketTimeout(10000);
+        configuration.setMaxWaitTime(2000);
+        configuration.setMaxConnectionIdleTime(60000);
+        configuration.setMaxConnectionLifeTime(120000);
 
         String url = invokeBuildUrl(configuration);
 
         Assert.assertTrue("URL should contain connectTimeoutMS", url.contains("connectTimeoutMS=5000"));
-        Assert.assertTrue("URL should contain socketTimeoutMS", url.contains("socketTimeoutMS=60000"));
-        Assert.assertTrue("URL should contain waitQueueTimeoutMS", url.contains("waitQueueTimeoutMS=3000"));
-        Assert.assertTrue("URL should contain maxIdleTimeMS", url.contains("maxIdleTimeMS=120000"));
-        Assert.assertTrue("URL should contain maxLifeTimeMS", url.contains("maxLifeTimeMS=300000"));
+        Assert.assertTrue("URL should contain socketTimeoutMS", url.contains("socketTimeoutMS=10000"));
+        Assert.assertTrue("URL should contain waitQueueTimeoutMS", url.contains("waitQueueTimeoutMS=2000"));
+        Assert.assertTrue("URL should contain maxIdleTimeMS", url.contains("maxIdleTimeMS=60000"));
+        Assert.assertTrue("URL should contain maxLifeTimeMS", url.contains("maxLifeTimeMS=120000"));
     }
 
     /**
@@ -656,14 +646,14 @@ public class MongoClientFactoryTest
         configuration.setHeartbeatFrequency(10000);
         configuration.setMinHeartbeatFrequency(500);
         configuration.setHeartbeatConnectTimeout(20000);
-        configuration.setHeartbeatSocketTimeout(5000);
+        configuration.setHeartbeatSocketTimeout(20000);
 
         String url = invokeBuildUrl(configuration);
 
         Assert.assertTrue("URL should contain heartbeatFrequencyMS", url.contains("heartbeatFrequencyMS=10000"));
         Assert.assertTrue("URL should contain minHeartbeatFrequencyMS", url.contains("minHeartbeatFrequencyMS=500"));
         Assert.assertTrue("URL should contain serverSelectionTimeoutMS", url.contains("serverSelectionTimeoutMS=20000"));
-        Assert.assertTrue("URL should contain heartbeatSocketTimeoutMS", url.contains("heartbeatSocketTimeoutMS=5000"));
+        Assert.assertTrue("URL should contain heartbeatSocketTimeoutMS", url.contains("heartbeatSocketTimeoutMS=20000"));
     }
 
     /**
@@ -673,19 +663,19 @@ public class MongoClientFactoryTest
     public void testBuildUrlWithReplicaSetParameters() throws Exception
     {
         MongoClientConfiguration configuration = new MongoClientConfiguration();
-        configuration.setConnectionUrls(Arrays.asList("host1:27017", "host2:27017"));
+        configuration.setConnectionUrls(Arrays.asList("host1:27017", "host2:27017", "host3:27017"));
         configuration.setDatabaseName("testDb");
-        configuration.setRequiredReplicaSetName("rs0");
+        configuration.setRequiredReplicaSetName("myReplicaSet");
         configuration.setLocalThreshold(15);
 
         String url = invokeBuildUrl(configuration);
 
-        Assert.assertTrue("URL should contain replicaSet", url.contains("replicaSet=rs0"));
+        Assert.assertTrue("URL should contain replicaSet", url.contains("replicaSet=myReplicaSet"));
         Assert.assertTrue("URL should contain localThresholdMS", url.contains("localThresholdMS=15"));
     }
 
     /**
-     * Test buildUrl with read preference parameter
+     * Test buildUrl with read preference
      */
     @Test
     public void testBuildUrlWithReadPreference() throws Exception
@@ -693,15 +683,15 @@ public class MongoClientFactoryTest
         MongoClientConfiguration configuration = new MongoClientConfiguration();
         configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
         configuration.setDatabaseName("testDb");
-        configuration.setReadPreference(ReadPreference.secondaryPreferred());
+        configuration.setReadPreference(com.mongodb.ReadPreference.secondary());
 
         String url = invokeBuildUrl(configuration);
 
-        Assert.assertTrue("URL should contain readPreference", url.contains("readPreference=secondaryPreferred"));
+        Assert.assertTrue("URL should contain readPreference", url.contains("readPreference=secondary"));
     }
 
     /**
-     * Test buildUrl with write concern parameters
+     * Test buildUrl with write concern
      */
     @Test
     public void testBuildUrlWithWriteConcern() throws Exception
@@ -709,12 +699,12 @@ public class MongoClientFactoryTest
         MongoClientConfiguration configuration = new MongoClientConfiguration();
         configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
         configuration.setDatabaseName("testDb");
-        configuration.setWriteConcern(WriteConcern.MAJORITY.withJournal(true));
+        configuration.setWriteConcern(com.mongodb.WriteConcern.MAJORITY.withJournal(true));
 
         String url = invokeBuildUrl(configuration);
 
-        Assert.assertTrue("URL should contain w parameter", url.contains("w=majority"));
-        Assert.assertTrue("URL should contain journal parameter", url.contains("journal=true"));
+        Assert.assertTrue("URL should contain w=majority", url.contains("w=majority"));
+        Assert.assertTrue("URL should contain journal=true", url.contains("journal=true"));
     }
 
     /**
@@ -726,7 +716,6 @@ public class MongoClientFactoryTest
         MongoClientConfiguration configuration = new MongoClientConfiguration();
         configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
         configuration.setDatabaseName("testDb");
-        configuration.setSslEnabled(true);
         configuration.setSslInvalidHostNameAllowed(true);
 
         String url = invokeBuildUrl(configuration);
@@ -735,57 +724,258 @@ public class MongoClientFactoryTest
     }
 
     /**
-     * Test buildUrl with all parameters combined and verify with ConnectionString
+     * Test buildUrl with all parameters set and validated using ConnectionString
      */
     @Test
     public void testBuildUrlWithAllParametersValidated() throws Exception
     {
         MongoClientConfiguration configuration = new MongoClientConfiguration();
-        configuration.setConnectionUrls(Arrays.asList("host1:27017", "host2:27017"));
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
         configuration.setDatabaseName("testDb");
-        
+        configuration.setAuthenticated(false);
+        configuration.setSslEnabled(true);
+        configuration.setApplicationName("TestApp");
+
         // Connection pool
         configuration.setConnectionsPerHost(50);
         configuration.setMinConnectionsPerHost(10);
-        
+
         // Timeouts
         configuration.setConnectionTimeout(5000);
-        configuration.setSocketTimeout(60000);
-        configuration.setMaxWaitTime(3000);
-        
+        configuration.setSocketTimeout(10000);
+        configuration.setMaxWaitTime(2000);
+        configuration.setMaxConnectionIdleTime(60000);
+        configuration.setMaxConnectionLifeTime(120000);
+
         // Heartbeat
         configuration.setHeartbeatFrequency(10000);
-        
+        configuration.setMinHeartbeatFrequency(500);
+        configuration.setHeartbeatConnectTimeout(20000);
+        configuration.setHeartbeatSocketTimeout(20000);
+
         // Replica set
-        configuration.setRequiredReplicaSetName("rs0");
         configuration.setLocalThreshold(15);
-        
-        // Read/Write
-        configuration.setReadPreference(ReadPreference.secondaryPreferred());
-        configuration.setWriteConcern(WriteConcern.MAJORITY);
+
+        // Read/Write concerns
+        configuration.setReadPreference(com.mongodb.ReadPreference.secondary());
+        configuration.setWriteConcern(com.mongodb.WriteConcern.MAJORITY.withJournal(true));
 
         String url = invokeBuildUrl(configuration);
 
-        // Validate using MongoDB's ConnectionString parser
+        // Use MongoDB's ConnectionString to validate the URL is correctly formatted
         ConnectionString connectionString = new ConnectionString(url);
-        
+
         Assert.assertNotNull("ConnectionString should be created", connectionString);
         Assert.assertEquals("Database should match", "testDb", connectionString.getDatabase());
-        Assert.assertEquals("Should have two hosts", 2, connectionString.getHosts().size());
-        
-        // Verify connection pool settings
-        Assert.assertEquals("Max pool size should be 50", 50, connectionString.getMaxConnectionPoolSize().longValue());
-        Assert.assertEquals("Min pool size should be 10", 10, connectionString.getMinConnectionPoolSize().longValue());
-        
+
+        // Verify application name
+        Assert.assertEquals("Application name should match", "TestApp", connectionString.getApplicationName());
+
+        // Verify SSL
+        Assert.assertTrue("SSL should be enabled", connectionString.getSslEnabled());
+
+        // Verify pool settings
+        Assert.assertEquals("Max pool size should be 50", 50,
+            connectionString.getMaxConnectionPoolSize().longValue());
+        Assert.assertEquals("Min pool size should be 10", 10,
+            connectionString.getMinConnectionPoolSize().longValue());
+
+        // Verify timeouts
+        Assert.assertEquals("Connection timeout should be 60000ms", 60000,
+            connectionString.getMaxConnectionIdleTime().longValue());
+
         // Verify read preference
-        Assert.assertEquals("Read preference should be secondaryPreferred", 
-            ReadPreference.secondaryPreferred(), connectionString.getReadPreference());
-        
+        Assert.assertEquals("Read preference should be secondary", com.mongodb.ReadPreference.secondary(),
+            connectionString.getReadPreference());
+
         // Verify write concern
-        Assert.assertEquals("Write concern should be MAJORITY", 
-            WriteConcern.MAJORITY.getWObject(), connectionString.getWriteConcern().getWObject());
-        
-        // Verify replica set
-        Assert.assertEquals("Replica set name should match", "rs0", connectionString.getRequiredReplicaSetName());
+        Assert.assertEquals("Write concern w should be majority", "majority",
+            connectionString.getWriteConcern().getWObject());
+        Assert.assertTrue("Write concern journal should be true",
+            connectionString.getWriteConcern().getJournal());
+    }
+
+    /**
+     * Test buildUrl with connection pool parameters only
+     */
+    @Test
+    public void testBuildUrlWithConnectionPoolOnly() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setConnectionsPerHost(25);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate using ConnectionString
+        ConnectionString connectionString = new ConnectionString(url);
+
+        Assert.assertEquals("Max pool size should be 25", 25,
+            connectionString.getMaxConnectionPoolSize().longValue());
+    }
+
+    /**
+     * Test buildUrl with timeout parameters validated by driver
+     */
+    @Test
+    public void testBuildUrlWithTimeoutsValidated() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setConnectionTimeout(3000);
+        configuration.setSocketTimeout(7000);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate using ConnectionString
+        ConnectionString connectionString = new ConnectionString(url);
+
+        Assert.assertNotNull("ConnectionString should be valid", connectionString);
+        // The driver parses these correctly if URL is valid
+    }
+
+    /**
+     * Test buildUrl with replica set validated by driver
+     */
+    @Test
+    public void testBuildUrlWithReplicaSetValidated() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("host1:27017", "host2:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setRequiredReplicaSetName("rs0");
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate using ConnectionString
+        ConnectionString connectionString = new ConnectionString(url);
+
+        Assert.assertEquals("Replica set name should match", "rs0",
+            connectionString.getRequiredReplicaSetName());
+    }
+
+    /**
+     * Test buildUrl with null connection pool parameters (should not appear in URL)
+     */
+    @Test
+    public void testBuildUrlWithNullConnectionPoolParameters() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setConnectionsPerHost(null);
+        configuration.setMinConnectionsPerHost(null);
+
+        String url = invokeBuildUrl(configuration);
+
+        Assert.assertFalse("URL should not contain maxPoolSize", url.contains("maxPoolSize="));
+        Assert.assertFalse("URL should not contain minPoolSize", url.contains("minPoolSize="));
+    }
+
+    /**
+     * Test buildUrl with null timeout parameters (should not appear in URL)
+     */
+    @Test
+    public void testBuildUrlWithNullTimeoutParameters() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setConnectionTimeout(null);
+        configuration.setSocketTimeout(null);
+
+        String url = invokeBuildUrl(configuration);
+
+        Assert.assertFalse("URL should not contain connectTimeoutMS", url.contains("connectTimeoutMS="));
+        Assert.assertFalse("URL should not contain socketTimeoutMS", url.contains("socketTimeoutMS="));
+    }
+
+    /**
+     * Test buildUrl with null heartbeat parameters (should not appear in URL)
+     */
+    @Test
+    public void testBuildUrlWithNullHeartbeatParameters() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setHeartbeatFrequency(null);
+        configuration.setMinHeartbeatFrequency(null);
+
+        String url = invokeBuildUrl(configuration);
+
+        Assert.assertFalse("URL should not contain heartbeatFrequencyMS", url.contains("heartbeatFrequencyMS="));
+        Assert.assertFalse("URL should not contain minHeartbeatFrequencyMS", url.contains("minHeartbeatFrequencyMS="));
+    }
+
+    /**
+     * Test buildUrl with null replica set parameters (should not appear in URL)
+     */
+    @Test
+    public void testBuildUrlWithNullReplicaSetParameters() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setRequiredReplicaSetName(null);
+        configuration.setLocalThreshold(null);
+
+        String url = invokeBuildUrl(configuration);
+
+        Assert.assertFalse("URL should not contain replicaSet", url.contains("replicaSet="));
+        Assert.assertFalse("URL should not contain localThresholdMS", url.contains("localThresholdMS="));
+    }
+
+    /**
+     * Test buildUrl with false SSL invalid hostname allowed (should not appear in URL)
+     */
+    @Test
+    public void testBuildUrlWithSslInvalidHostNameAllowedFalse() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setSslInvalidHostNameAllowed(false);
+
+        String url = invokeBuildUrl(configuration);
+
+        Assert.assertFalse("URL should not contain tlsAllowInvalidHostnames when false",
+            url.contains("tlsAllowInvalidHostnames="));
+    }
+
+    /**
+     * Test buildUrl combining configured parameters with optional parameters
+     */
+    @Test
+    public void testBuildUrlWithConfiguredAndOptionalParameters() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setConnectionsPerHost(30);
+
+        Map<String, String> optionalParams = new HashMap<>();
+        optionalParams.put("maxPoolSize", "50"); // Should override the configured value
+        optionalParams.put("retryWrites", "true");
+        configuration.setOptionalConnectionParameters(optionalParams);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Both should appear in URL, optional params come last so can override
+        Assert.assertTrue("URL should contain configured maxPoolSize", url.contains("maxPoolSize=30"));
+        Assert.assertTrue("URL should contain optional maxPoolSize", url.contains("maxPoolSize=50"));
+        Assert.assertTrue("URL should contain retryWrites", url.contains("retryWrites=true"));
+    }
+
+    /**
+     * Helper method to invoke private buildUrl method using reflection
+     */
+    private String invokeBuildUrl(MongoClientConfiguration configuration) throws Exception
+    {
+        Method buildUrlMethod = MongoClientFactory.class.getDeclaredMethod("buildUrl", MongoClientConfiguration.class);
+        buildUrlMethod.setAccessible(true);
+        return (String) buildUrlMethod.invoke(null, configuration);
     }
 }

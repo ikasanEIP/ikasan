@@ -1,4 +1,4 @@
-package org.ikasan.component.endpoint.mongo4;
+package org.ikasan.component.endpoint.mongo5;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
@@ -26,7 +26,10 @@ public class MongoClientFactory
      */
     public static MongoClient getMongoClient(MongoClientConfiguration configuration)
     {
-        if(configuration == null) throw new RuntimeException("Configuration is null!");
+        if (configuration == null)
+        {
+            throw new RuntimeException("Configuration is null!");
+        }
 
         configuration.validate();
 
