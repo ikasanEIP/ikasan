@@ -62,7 +62,12 @@ public class MongoClientFactory
             url += "?authSource=" + getAuthDatabase(configuration);
         }
 
-        url += "&ssl=" + falseIfNull(configuration.getSslEnabled());
+        if(!url.contains("?authSource=")) {
+            url += "?ssl=" + falseIfNull(configuration.getSslEnabled());
+        }
+        else {
+            url += "&ssl=" + falseIfNull(configuration.getSslEnabled());
+        }
 
         if (configuration.getApplicationName() != null)
         {

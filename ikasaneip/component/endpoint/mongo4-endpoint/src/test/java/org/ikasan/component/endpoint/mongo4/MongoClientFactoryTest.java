@@ -40,6 +40,7 @@
  */
 package org.ikasan.component.endpoint.mongo4;
 
+import com.mongodb.ConnectionString;
 import com.mongodb.client.MongoClient;
 import org.junit.After;
 import org.junit.Assert;
@@ -118,6 +119,233 @@ public class MongoClientFactoryTest
         Assert.assertTrue("URL should contain database name", url.contains("/testDb"));
         Assert.assertTrue("URL should contain ssl=false", url.contains("ssl=false"));
         Assert.assertFalse("URL should not contain username", url.contains("@"));
+    }
+
+    /**
+     * Test buildUrl with non-authenticated configuration and validate URL format
+     * This test ensures the URL is properly formatted and does not contain authentication
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedValidFormat() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setAuthenticated(false);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate URL structure
+        Assert.assertNotNull("URL should not be null", url);
+        Assert.assertTrue("URL should start with mongodb://", url.startsWith("mongodb://"));
+
+        // Validate no authentication present
+        Assert.assertFalse("URL should not contain @ symbol for credentials", url.contains("@"));
+        Assert.assertFalse("URL should not contain authSource parameter", url.contains("authSource="));
+
+        // Validate host and database
+        Assert.assertTrue("URL should contain host", url.contains("localhost:27017"));
+        Assert.assertTrue("URL should contain database after /", url.contains("/testDb"));
+
+        // Validate SSL parameter is present
+        Assert.assertTrue("URL should contain ssl parameter", url.contains("ssl=false"));
+
+        // Validate URL matches expected pattern: mongodb://host:port/database?params
+        String expectedPattern = "mongodb://localhost:27017/testDb";
+        Assert.assertTrue("URL should start with expected pattern", url.startsWith(expectedPattern));
+
+        // Ensure URL has query parameters
+        Assert.assertTrue("URL should contain query string", url.contains("?") || url.contains("&"));
+    }
+
+    /**
+     * Test buildUrl with non-authenticated configuration - verify no credentials leak
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedNoCredentials() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setAuthenticated(false);
+        // Set username and password but authenticated = false
+        configuration.setUsername("testUser");
+        configuration.setPassword("testPassword");
+
+        String url = invokeBuildUrl(configuration);
+
+        // Even though username/password are set, they should not appear in URL
+        Assert.assertFalse("URL should not contain username", url.contains("testUser"));
+        Assert.assertFalse("URL should not contain password", url.contains("testPassword"));
+        Assert.assertFalse("URL should not contain @ for credentials", url.contains("@"));
+        Assert.assertFalse("URL should not contain authSource", url.contains("authSource="));
+    }
+
+    /**
+     * Test buildUrl with non-authenticated configuration and verify URL components order
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedComponentsOrder() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("host1:27017", "host2:27017"));
+        configuration.setDatabaseName("myDatabase");
+        configuration.setAuthenticated(false);
+        configuration.setSslEnabled(true);
+        configuration.setApplicationName("TestApp");
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate URL structure: mongodb://hosts/database?params
+        Assert.assertTrue("URL should start with mongodb://", url.startsWith("mongodb://"));
+
+        // Extract parts
+        String afterProtocol = url.substring("mongodb://".length());
+
+        // Should contain hosts before /
+        int slashIndex = afterProtocol.indexOf('/');
+        Assert.assertTrue("URL should contain / separator", slashIndex > 0);
+
+        String hosts = afterProtocol.substring(0, slashIndex);
+        Assert.assertTrue("Hosts should contain host1:27017", hosts.contains("host1:27017"));
+        Assert.assertTrue("Hosts should contain host2:27017", hosts.contains("host2:27017"));
+        Assert.assertTrue("Multiple hosts should be comma-separated", hosts.contains(","));
+
+        // Should contain database after /
+        String afterSlash = afterProtocol.substring(slashIndex + 1);
+        Assert.assertTrue("Database should be after slash", afterSlash.startsWith("myDatabase"));
+
+        // Should contain query parameters
+        Assert.assertTrue("URL should contain ssl parameter", url.contains("ssl=true"));
+        Assert.assertTrue("URL should contain appName parameter", url.contains("appName=TestApp"));
+    }
+
+    /**
+     * Test buildUrl with non-authenticated null configuration
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedWithNullAuthenticated() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setAuthenticated(null); // Explicitly set to null
+
+        String url = invokeBuildUrl(configuration);
+
+        // When authenticated is null, should be treated as false
+        Assert.assertFalse("URL should not contain credentials", url.contains("@"));
+        Assert.assertFalse("URL should not contain authSource", url.contains("authSource="));
+        Assert.assertTrue("URL should be valid", url.startsWith("mongodb://"));
+    }
+
+    /**
+     * Test buildUrl with non-authenticated configuration and validate using MongoDB's ConnectionString
+     * This uses the MongoDB driver's own validation to confirm URL is correctly formatted
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedValidatedByMongoDBDriver() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setAuthenticated(false);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Use MongoDB's ConnectionString class to validate the URL
+        // If the URL is invalid, this will throw an exception
+        ConnectionString connectionString = new ConnectionString(url);
+
+        // Validate the parsed connection string
+        Assert.assertNotNull("ConnectionString should be created successfully", connectionString);
+        Assert.assertEquals("Database should match", "testDb", connectionString.getDatabase());
+        Assert.assertNotNull("Hosts should not be null", connectionString.getHosts());
+        Assert.assertEquals("Should have one host", 1, connectionString.getHosts().size());
+        Assert.assertTrue("Host should contain localhost", connectionString.getHosts().get(0).contains("localhost"));
+
+        // Verify no credentials are present
+        Assert.assertNull("Username should be null", connectionString.getUsername());
+        Assert.assertNull("Password should be null", connectionString.getPassword());
+        Assert.assertNull("Credential should be null", connectionString.getCredential());
+    }
+
+    /**
+     * Test buildUrl with non-authenticated configuration including multiple hosts
+     * validated by MongoDB's ConnectionString parser
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedMultipleHostsValidatedByDriver() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("host1:27017", "host2:27018", "host3:27019"));
+        configuration.setDatabaseName("myDatabase");
+        configuration.setAuthenticated(false);
+        configuration.setSslEnabled(true);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate using MongoDB's ConnectionString parser
+        ConnectionString connectionString = new ConnectionString(url);
+
+        Assert.assertNotNull("ConnectionString should be created", connectionString);
+        Assert.assertEquals("Database should match", "myDatabase", connectionString.getDatabase());
+        Assert.assertEquals("Should have three hosts", 3, connectionString.getHosts().size());
+
+        // Verify hosts
+        Assert.assertTrue("Should contain host1", connectionString.getHosts().stream()
+            .anyMatch(h -> h.contains("host1")));
+        Assert.assertTrue("Should contain host2", connectionString.getHosts().stream()
+            .anyMatch(h -> h.contains("host2")));
+        Assert.assertTrue("Should contain host3", connectionString.getHosts().stream()
+            .anyMatch(h -> h.contains("host3")));
+
+        // Verify SSL setting
+        Assert.assertTrue("SSL should be enabled", connectionString.getSslEnabled());
+
+        // Verify no authentication
+        Assert.assertNull("Should have no credentials", connectionString.getCredential());
+    }
+
+    /**
+     * Test buildUrl with non-authenticated configuration and optional parameters
+     * validated by MongoDB's ConnectionString parser
+     */
+    @Test
+    public void testBuildUrlNonAuthenticatedWithOptionalParamsValidatedByDriver() throws Exception
+    {
+        MongoClientConfiguration configuration = new MongoClientConfiguration();
+        configuration.setConnectionUrls(Arrays.asList("localhost:27017"));
+        configuration.setDatabaseName("testDb");
+        configuration.setAuthenticated(false);
+        configuration.setApplicationName("TestApplication");
+
+        Map<String, String> optionalParams = new HashMap<>();
+        optionalParams.put("retryReads", "true");
+        optionalParams.put("maxPoolSize", "50");
+        configuration.setOptionalConnectionParameters(optionalParams);
+
+        String url = invokeBuildUrl(configuration);
+
+        // Validate using MongoDB's ConnectionString parser
+        ConnectionString connectionString = new ConnectionString(url);
+
+        Assert.assertNotNull("ConnectionString should be created", connectionString);
+        Assert.assertEquals("Database should match", "testDb", connectionString.getDatabase());
+
+        // Verify application name
+        Assert.assertEquals("Application name should match", "TestApplication",
+            connectionString.getApplicationName());
+
+        // Verify retry writes is set
+        Assert.assertTrue("Retry writes should be enabled", connectionString.getRetryReads());
+
+        // Verify max pool size
+        Assert.assertEquals("Max pool size should be 50", 50L,
+            connectionString.getMaxConnectionPoolSize().longValue());
+
+        // Verify no authentication
+        Assert.assertNull("Should have no credentials", connectionString.getCredential());
     }
 
     /**
