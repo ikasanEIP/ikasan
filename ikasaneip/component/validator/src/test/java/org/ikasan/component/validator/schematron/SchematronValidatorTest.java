@@ -3,10 +3,8 @@ package org.ikasan.component.validator.schematron;
 import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.handler.DefaultHandler;
-import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.server.handler.ResourceHandler;
-import org.eclipse.jetty.util.log.Log;
+import org.eclipse.jetty.util.resource.ResourceFactory;
 import org.hamcrest.core.IsInstanceOf;
 import org.ikasan.component.validator.ValidationResult;
 import org.junit.*;
@@ -32,21 +30,17 @@ public class SchematronValidatorTest
     @BeforeClass
     public static void startJetty() throws Exception
     {
-        // prevent logging
-       // Log.setLog(null);
         server = new Server(0);
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(0);
         server.addConnector(connector);
 
-
+        // Create ResourceHandler for Jetty 12
         ResourceHandler resourceHandler = new ResourceHandler();
-        resourceHandler.setDirectoriesListed(true);
-        resourceHandler.setResourceBase(".");
+        resourceHandler.setDirAllowed(true);
+        resourceHandler.setBaseResource(ResourceFactory.of(resourceHandler).newResource("."));
 
-        HandlerList handlers = new HandlerList();
-        handlers.setHandlers(new Handler[] { resourceHandler, new DefaultHandler() });
-        server.setHandler(handlers);
+        server.setHandler(resourceHandler);
 
         server.start();
         int localPort = connector.getLocalPort();

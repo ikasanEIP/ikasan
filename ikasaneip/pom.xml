@@ -282,7 +282,7 @@
         <version.org.hibernate-validator>8.0.1.Final</version.org.hibernate-validator>
         <version.org.springframework>7.0.8</version.org.springframework>
         <version.org.springframework.security>7.1.0</version.org.springframework.security>
-        <version.org.springframework.ldap>3.2.8</version.org.springframework.ldap>
+        <version.org.springframework.ldap>3.3.8</version.org.springframework.ldap>
         <version.org.springframework.webflow>3.0.2</version.org.springframework.webflow>
         <version.org.springframework.webflow-spring-js>2.4.8.RELEASE</version.org.springframework.webflow-spring-js>
         <version.spring.cloud.config.client>5.0.4</version.spring.cloud.config.client>
@@ -330,7 +330,8 @@
         <version.org.liquibase>4.25.1</version.org.liquibase>
         <version.org.yaml.snakeyaml>2.2</version.org.yaml.snakeyaml>
         <version.org.subethamail>1.2</version.org.subethamail>
-        <version.org.eclipse.jetty>11.0.24</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty>12.1.13</version.org.eclipse.jetty>
+        <version.org.eclipse.jetty.servlet>11.0.26</version.org.eclipse.jetty.servlet>
         <version.net.sf.saxon>9.6.0-10</version.net.sf.saxon>
         <version.org.mongodb.mongo-java-driver>3.12.14</version.org.mongodb.mongo-java-driver>
         <version.org.mongodb4.mongo-java-driver>4.11.5</version.org.mongodb4.mongo-java-driver>
@@ -2623,13 +2624,33 @@
             <dependency>
                 <groupId>org.eclipse.jetty.http2</groupId>
                 <artifactId>http2-server</artifactId>
-                <version>${version.org.eclipse.jetty}</version>
+                <version>${version.org.eclipse.jetty.servlet}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-http</artifactId>
+                    </exclusion>
+                </exclusions>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlet</artifactId>
+                <version>${version.org.eclipse.jetty.servlet}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-servlet</artifactId>
+                <version>${version.org.eclipse.jetty}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.eclipse.jetty.ee10</groupId>
+                <artifactId>jetty-ee10-servlets</artifactId>
                 <version>${version.org.eclipse.jetty}</version>
                 <scope>test</scope>
             </dependency>
@@ -2637,7 +2658,13 @@
             <dependency>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-servlets</artifactId>
-                <version>${version.org.eclipse.jetty}</version>
+                <version>${version.org.eclipse.jetty.servlet}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>jetty-http</artifactId>
+                    </exclusion>
+                </exclusions>
                 <scope>test</scope>
             </dependency>
 
@@ -3189,12 +3216,33 @@
                         <artifactId>httpcore</artifactId>
                     </exclusion>
                     <exclusion>
-                        <groupId>org.eclipse.jetty.http2</groupId>
-                        <artifactId>http2-server</artifactId>
+                        <groupId>org.eclipse.jetty</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.eclipse.jetty.http2</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wiremock</groupId>
+                <artifactId>wiremock-jetty12</artifactId>
+                <version>${version.wiremock}</version>
+                <exclusions>
+                    <!-- Exclude wiremock-jetty12's Jetty 12.0.30 dependencies - we use 12.1.13 -->
+                    <exclusion>
                         <groupId>org.eclipse.jetty</groupId>
-                        <artifactId>jetty-proxy</artifactId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.ee10</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.eclipse.jetty.http2</groupId>
+                        <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
