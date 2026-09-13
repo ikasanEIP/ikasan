@@ -40,6 +40,7 @@
  */
 package org.ikasan.security.service.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import org.ikasan.spec.security.model.IkasanPrincipal;
 import org.ikasan.spec.security.model.Role;
 
@@ -55,6 +56,7 @@ public class IkasanPrincipalImpl implements IkasanPrincipal
     private String type;
     private Date createdDateTime;
     private Date updatedDateTime;
+    @JsonDeserialize(contentAs=RoleImpl.class)
     private Set<Role> roles = new HashSet<>();
     private String description;
     private String applicationSecurityBaseDn;
