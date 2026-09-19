@@ -15,6 +15,10 @@
     <name>Non Functional Utilities</name>
     <description>NFT utilities.</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
 
         <dependency>
