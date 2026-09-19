@@ -746,6 +746,41 @@
                     <value>true</value>
                 </property>
             </activation>
+            <modules>
+                <!-- ikasan eip core - EXCLUDING sample module for Maven Central release -->
+                <module>spec</module>
+                <module>system-event</module>
+                <module>module</module>
+                <module>scheduler</module>
+                <module>housekeeping</module>
+                <module>harvesting</module>
+                <module>serialiser</module>
+                <module>exclusion</module>
+                <module>error-reporting</module>
+                <module>recovery-manager</module>
+                <module>flow</module>
+                <module>configuration-service</module>
+                <module>wiretap</module>
+                <module>security</module>
+                <module>rest</module>
+                <module>test</module>
+                <module>monitor</module>
+                <module>marshaller</module>
+                <module>component</module>
+                <module>platform</module>
+                <module>builder</module>
+                <module>compatibility</module>
+                <module>hospital</module>
+                <module>webconsole</module>
+                <module>topology</module>
+                <module>developer</module>
+                <module>transaction</module>
+                <module>replay</module>
+                <module>persistence</module>
+                <module>cli</module>
+                <module>ootb</module>
+                <module>version</module>
+            </modules>
             <build>
                 <plugins>
                     <plugin>
@@ -754,7 +789,7 @@
                         <version>0.8.0</version>
                         <extensions>true</extensions>
                         <configuration>
-                                <publishingServerId>ikasaneip-releases</publishingServerId>
+                            <publishingServerId>ikasaneip-releases</publishingServerId>
                         </configuration>
                     </plugin>
                     <plugin>
