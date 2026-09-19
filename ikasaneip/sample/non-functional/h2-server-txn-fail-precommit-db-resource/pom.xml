@@ -15,6 +15,11 @@
     <name>H2 Server Stress With TX failing on DB pre-commit Integration Module</name>
     <description>H2 server persistence with precommit failure on the DB resource.</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
+    </properties>
+
     <dependencies>
 
         <dependency>
@@ -196,9 +201,5 @@
 
         </plugins>
     </build>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
 </project>

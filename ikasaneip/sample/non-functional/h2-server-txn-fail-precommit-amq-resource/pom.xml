@@ -17,6 +17,7 @@
 
     <properties>
         <maven.deploy.skip>true</maven.deploy.skip>
+        <maven.install.skip>true</maven.install.skip>
     </properties>
 
     <dependencies>
@@ -210,9 +211,5 @@
 
         </plugins>
     </build>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
 
 </project>

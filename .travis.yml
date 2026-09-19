@@ -65,6 +65,6 @@ jobs:
         # Push release to oss
         - provider: script
           skip_cleanup: true
-          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Pall,release-sign-artifacts -B  -V --settings .settings.xml
+          script: mvn -quiet --file ikasaneip/pom.xml deploy -DskipTests=true -Djava.security.egd=file:/dev/./urandom -Prelease-sign-artifacts -B  -V --settings .settings.xml
           on:
             tags: true
