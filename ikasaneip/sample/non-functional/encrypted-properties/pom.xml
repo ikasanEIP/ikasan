@@ -15,6 +15,10 @@
     <name>Encrypted Properties Integration Module</name>
     <description>Bootstrap a modules whose properties have been encrypted.</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
 
         <dependency>

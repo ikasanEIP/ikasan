@@ -15,6 +15,10 @@
     <name>H2 Server Component Fail Integration Module</name>
     <description>Stress test the H2 server persistence with component failure.</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
 
         <dependency>

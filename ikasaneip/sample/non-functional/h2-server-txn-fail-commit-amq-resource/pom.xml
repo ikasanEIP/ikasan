@@ -15,6 +15,10 @@
     <name>H2 Server Stress With TX failing on AMQ commit Integration Module</name>
     <description>Stress test the H2 server persistence with soak tests.</description>
 
+    <properties>
+        <maven.deploy.skip>true</maven.deploy.skip>
+    </properties>
+
     <dependencies>
 
         <dependency>
