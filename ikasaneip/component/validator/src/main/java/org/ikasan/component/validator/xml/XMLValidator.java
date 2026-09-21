@@ -52,6 +52,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import javax.xml.XMLConstants;
 import javax.xml.catalog.CatalogFeatures;
@@ -69,10 +70,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
@@ -110,12 +108,12 @@ public class XMLValidator<SOURCE, TARGET>
     /**
      * Cache of compiled schemas keyed by schema location(s)
      */
-    private Map<String, Schema> schemaCache;
+    private ConcurrentHashMap<String, Schema> schemaCache;
 
     /**
-     * Schema factory for creating schemas
+     * A map of SchemaFactory that are keyed on context. In this case the context is the thread id.
      */
-    private SchemaFactory schemaFactory;
+    protected ConcurrentHashMap<Long, SchemaFactory> schemaFactoryMap;
 
     /**
      * Catalog resolver for resolving external schemas
@@ -132,7 +130,6 @@ public class XMLValidator<SOURCE, TARGET>
      */
     public XMLValidator()
     {
-        this.schemaCache = new ConcurrentHashMap<>();
         this.xmlInputFactory = XMLInputFactory.newInstance();
         this.xmlInputFactory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, true);
     }
@@ -153,9 +150,9 @@ public class XMLValidator<SOURCE, TARGET>
         ValidationResult<SOURCE, TARGET> validationResult = new ValidationResult<>();
         validationResult.setSource(source);
 
-        if (configuration.isSkipValidation())
+        if (this.configuration.isSkipValidation())
         {
-            if (configuration.isReturnValidationResult())
+            if (this.configuration.isReturnValidationResult())
             {
                 validationResult.setResult(ValidationResult.Result.VALID);
                 return validationResult;
@@ -192,7 +189,7 @@ public class XMLValidator<SOURCE, TARGET>
             Validator validator = schema.newValidator();
             validator.validate(new StreamSource(sourceAsInputStream));
 
-            if (!configuration.isReturnValidationResult())
+            if (!this.configuration.isReturnValidationResult())
             {
                 return source;
             }
@@ -200,7 +197,7 @@ public class XMLValidator<SOURCE, TARGET>
         }
         catch (SAXException e)
         {
-            if (configuration.isThrowExceptionOnValidationFailure() || !configuration.isReturnValidationResult())
+            if (this.configuration.isThrowExceptionOnValidationFailure() || !this.configuration.isReturnValidationResult())
             {
                 throw new ValidationException(generateErrorMessage(e, source), e);
             }
@@ -209,7 +206,7 @@ public class XMLValidator<SOURCE, TARGET>
         }
         catch (IOException | XMLStreamException e)
         {
-            if (configuration.isThrowExceptionOnValidationFailure() || !configuration.isReturnValidationResult())
+            if (this.configuration.isThrowExceptionOnValidationFailure() || !this.configuration.isReturnValidationResult())
             {
                 throw new ValidationException(e);
             }
@@ -230,7 +227,7 @@ public class XMLValidator<SOURCE, TARGET>
     private List<String> extractSchemaLocations(InputStream inputStream) throws XMLStreamException
     {
         List<String> schemaLocations = new ArrayList<>();
-        XMLStreamReader reader = xmlInputFactory.createXMLStreamReader(inputStream);
+        XMLStreamReader reader = this.xmlInputFactory.createXMLStreamReader(inputStream);
 
         try
         {
@@ -299,7 +296,7 @@ public class XMLValidator<SOURCE, TARGET>
         String cacheKey = String.join("|", sortedLocations);
 
         // Check cache first
-        Schema schema = schemaCache.get(cacheKey);
+        Schema schema = this.schemaCache.get(cacheKey);
         if (schema != null)
         {
             logger.debug("Using cached schema for: {}", cacheKey);
@@ -315,11 +312,11 @@ public class XMLValidator<SOURCE, TARGET>
             String location = schemaLocations.get(i);
 
             // Use catalog resolver to resolve the location if available
-            if (catalogResolver != null)
+            if (this.catalogResolver != null)
             {
                 try
                 {
-                    InputSource resolvedSource = catalogResolver.resolveEntity(null, location);
+                    InputSource resolvedSource = this.catalogResolver.resolveEntity(null, location);
                     if (resolvedSource != null)
                     {
                         logger.debug("Resolved schema location {} via catalog", location);
@@ -343,10 +340,16 @@ public class XMLValidator<SOURCE, TARGET>
             }
         }
 
+        SchemaFactory schemaFactory = this.schemaFactoryMap.get(Thread.currentThread().threadId());
+        if(schemaFactory == null) {
+            schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            this.schemaFactoryMap.put(Thread.currentThread().threadId(), schemaFactory);
+        }
+
         schema = schemaFactory.newSchema(sources);
 
         // Cache for future use
-        schemaCache.put(cacheKey, schema);
+        this.schemaCache.put(cacheKey, schema);
 
         return schema;
     }
@@ -361,7 +364,7 @@ public class XMLValidator<SOURCE, TARGET>
     private String generateErrorMessage(Exception e, SOURCE source)
     {
         String payload;
-        if (sourceToByteArrayInputStreamConverter == null && source instanceof String string)
+        if (this.sourceToByteArrayInputStreamConverter == null && source instanceof String string)
         {
             payload = string;
         }
@@ -369,7 +372,7 @@ public class XMLValidator<SOURCE, TARGET>
         {
             try
             {
-                payload = IOUtils.toString(sourceToByteArrayInputStreamConverter.convert(source));
+                payload = IOUtils.toString(this.sourceToByteArrayInputStreamConverter.convert(source));
             }
             catch (IOException ioe)
             {
@@ -378,8 +381,7 @@ public class XMLValidator<SOURCE, TARGET>
                     ioe.getMessage());
             }
         }
-        String errorMessage = "XML validation error: %s\n\nXML:\n%s".formatted(e.getMessage(), payload);
-        return errorMessage;
+        return "XML validation error: %s\n\nXML:\n%s".formatted(e.getMessage(), payload);
     }
 
     /**
@@ -430,16 +432,20 @@ public class XMLValidator<SOURCE, TARGET>
         if(this.configuration == null) {
             throw new RuntimeException("The configuration cannot be null!");
         }
+
+        this.schemaFactoryMap = new ConcurrentHashMap<>();
+        this.schemaCache = new ConcurrentHashMap<>();
+
         // Initialize schema factory
-        schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
 
         // Set up catalog resolver if configured
-        if (configuration.getCatalogUrl() != null)
+        if (this.configuration.getCatalogUrl() != null)
         {
             try
             {
                 logger.debug("Setting up Schema Factory with catalog.xml file [{}]", configuration.getCatalogUrl());
-                catalogResolver = CatalogManager
+                this.catalogResolver = CatalogManager
                     .catalogResolver(CatalogFeatures.defaults(), new URI(configuration.getCatalogUrl()));
                 schemaFactory.setResourceResolver(catalogResolver);
             }
@@ -451,7 +457,7 @@ public class XMLValidator<SOURCE, TARGET>
         }
 
         // Clear the cache
-        schemaCache.clear();
+        this.schemaCache.clear();
 
         logger.info("XMLValidator started successfully");
     }
@@ -460,12 +466,17 @@ public class XMLValidator<SOURCE, TARGET>
     public void stopManagedResource()
     {
         // Clear the schema cache
-        if (schemaCache != null)
+        if (this.schemaCache != null)
         {
             schemaCache.clear();
+            this.schemaCache = null;
         }
-        schemaFactory = null;
-        catalogResolver = null;
+
+        // Make sure we can initialise one of these.
+        this.schemaFactoryMap.clear();
+        this.schemaFactoryMap = null;
+
+        this.catalogResolver = null;
 
         logger.info("XMLValidator stopped successfully");
     }
