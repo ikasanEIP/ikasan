@@ -10,6 +10,14 @@ import org.xml.sax.SAXException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Comprehensive test suite for XMLValidator.
@@ -552,6 +560,154 @@ public class XMLValidatorTest
         thread2.start();
         thread1.join();
         thread2.join();
+    }
+
+    /**
+     * Test concurrent validation with CyclicBarrier causes FWK005 error
+     * This test maximizes the chance that multiple threads attempt schema compilation simultaneously
+     */
+    @Test(timeout = 30000)
+    public void testConcurrentValidationNoFWK005ErrorUsingCatalog() throws Exception
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+        configuration.setCatalogUrl(XMLValidator.class.getResource("/catalog.xml").toString());
+        configuration.setSchemaLocations(java.util.List.of("http://www.books4tests.com/xsd/book.xsd"));
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        int numThreads = 10;
+        int iterationsPerThread = 100;
+        CyclicBarrier barrier = new CyclicBarrier(numThreads);
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        AtomicInteger errorCount = new AtomicInteger(0);
+        AtomicInteger validationFailureCount = new AtomicInteger(0);
+        List<Future<?>> futures = new ArrayList<>();
+
+        try
+        {
+            // Launch concurrent validation tasks
+            for (int i = 0; i < numThreads; i++)
+            {
+                final int threadId = i;
+                futures.add(executor.submit(() -> {
+                    for (int j = 0; j < iterationsPerThread; j++) {
+                        try {
+                            // All threads wait at the barrier before attempting validation
+                            // This maximizes the chance that multiple threads attempt schema
+                            // compilation simultaneously
+                            barrier.await();
+
+                            // This will trigger schema extraction and compilation
+                            // If schema is not cached, all threads will race to compile it
+                            validator.convert(this.addSchemaToString(xml));
+                        } catch (Exception e) {
+                            String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+
+                            // FWK005 is the Xerces threading error we're trying to reproduce
+                            // "parse may not be called while parsing" means trying to reuse
+                            // a non-thread-safe XMLReader
+                            if (errorMsg.contains("FWK005") || errorMsg.contains("parse may not be called")) {
+                                errorCount.incrementAndGet();
+                            } else {
+                                // Other validation errors are expected (missing schema)
+                                // We're looking specifically for concurrency/parsing errors
+                                validationFailureCount.incrementAndGet();
+                            }
+                        }
+                    }
+                }));
+            }
+
+            // Wait for all tasks to complete
+            for (Future<?> future : futures)
+            {
+                future.get();
+            }
+        }
+        finally
+        {
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        }
+
+        Assert.assertEquals("No concurrent exceptions encountered", 0, errorCount.get());
+        Assert.assertEquals("No validation failures encountered", 0, validationFailureCount.get());
+    }
+
+    /**
+     * Test concurrent validation with CyclicBarrier causes FWK005 error
+     * This test maximizes the chance that multiple threads attempt schema compilation simultaneously
+     */
+    @Test(timeout = 30000)
+    public void testConcurrentValidationNoFWK005ErrorNotUsingCatalog() throws Exception
+    {
+        XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
+        configuration.setSkipValidation(false);
+
+        XMLValidator validator = new XMLValidator();
+        validator.setConfiguration(configuration);
+        validator.startManagedResource();
+
+        int numThreads = 10;
+        int iterationsPerThread = 100;
+        CyclicBarrier barrier = new CyclicBarrier(numThreads);
+        ExecutorService executor = Executors.newFixedThreadPool(numThreads);
+        AtomicInteger errorCount = new AtomicInteger(0);
+        AtomicInteger validationFailureCount = new AtomicInteger(0);
+        List<Future<?>> futures = new ArrayList<>();
+
+        try
+        {
+            // Launch concurrent validation tasks
+            for (int i = 0; i < numThreads; i++)
+            {
+                final int threadId = i;
+                futures.add(executor.submit(() -> {
+                    for (int j = 0; j < iterationsPerThread; j++) {
+                        try {
+                            // All threads wait at the barrier before attempting validation
+                            // This maximizes the chance that multiple threads attempt schema
+                            // compilation simultaneously
+                            barrier.await();
+
+                            // This will trigger schema extraction and compilation
+                            // If schema is not cached, all threads will race to compile it
+                            validator.convert(this.addSchemaToString(xml));
+                        } catch (Exception e) {
+                            String errorMsg = e.getMessage() != null ? e.getMessage() : e.getClass().getSimpleName();
+
+                            // FWK005 is the Xerces threading error we're trying to reproduce
+                            // "parse may not be called while parsing" means trying to reuse
+                            // a non-thread-safe XMLReader
+                            if (errorMsg.contains("FWK005") || errorMsg.contains("parse may not be called")) {
+                                errorCount.incrementAndGet();
+                            } else {
+                                // Other validation errors are expected (missing schema)
+                                // We're looking specifically for concurrency/parsing errors
+                                validationFailureCount.incrementAndGet();
+                            }
+                        }
+                    }
+                }));
+            }
+
+            // Wait for all tasks to complete
+            for (Future<?> future : futures)
+            {
+                future.get();
+            }
+        }
+        finally
+        {
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        }
+
+        Assert.assertEquals("No concurrent exceptions encountered", 0, errorCount.get());
+        Assert.assertEquals("No validation failures encountered", 0, validationFailureCount.get());
     }
 
     // ========== Exception Case Tests ==========
