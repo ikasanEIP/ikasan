@@ -340,10 +340,10 @@ public class XMLValidator<SOURCE, TARGET>
             }
         }
 
-        SchemaFactory schemaFactory = this.schemaFactoryMap.get(Thread.currentThread().threadId());
+        SchemaFactory schemaFactory = this.schemaFactoryMap.get(Thread.currentThread().getId());
         if(schemaFactory == null) {
             schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            this.schemaFactoryMap.put(Thread.currentThread().threadId(), schemaFactory);
+            this.schemaFactoryMap.put(Thread.currentThread().getId(), schemaFactory);
         }
 
         schema = schemaFactory.newSchema(sources);
