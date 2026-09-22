@@ -125,6 +125,98 @@ The `optionalConnectionParameters` map allows you to specify any MongoDB connect
 
 For a complete list of available parameters, refer to the [MongoDB Connection String documentation](https://www.mongodb.com/docs/manual/reference/connection-string/).
 
+##### Configuration Override Behavior
+
+**IMPORTANT**: Parameters specified in the `optionalConnectionParameters` map will **override** any corresponding explicit configuration options. This provides maximum flexibility for fine-tuning MongoDB connections without modifying code.
+
+**Override Priority:**
+1. If a parameter exists in `optionalConnectionParameters`, it takes precedence
+2. Explicit configuration options (like `connectionsPerHost`, `applicationName`, etc.) are only used if NOT present in `optionalConnectionParameters`
+3. Parameters are appended to the connection string in the order: explicit configs first, then optional parameters last
+
+**Examples of Override Behavior:**
+
+```java
+MongoClientConfiguration config = new MongoClientConfiguration();
+config.setConnectionUrls(Arrays.asList("localhost:27017"));
+config.setDatabaseName("mydb");
+
+// Explicit configuration
+config.setConnectionsPerHost(50);
+config.setApplicationName("MyApp");
+config.setConnectionTimeout(5000);
+
+// Optional parameters that will OVERRIDE explicit settings
+Map<String, String> optionalParams = new HashMap<>();
+optionalParams.put("maxPoolSize", "100");      // Overrides connectionsPerHost(50)
+optionalParams.put("appName", "OverriddenApp"); // Overrides applicationName("MyApp")
+optionalParams.put("connectTimeoutMS", "10000"); // Overrides connectionTimeout(5000)
+config.setOptionalConnectionParameters(optionalParams);
+
+// Resulting connection string will use:
+// maxPoolSize=50 (from explicit config) AND maxPoolSize=100 (from optional params)
+// MongoDB driver uses the LAST value, so maxPoolSize=100 takes effect
+```
+
+**SSL/TLS Special Handling:**
+
+The SSL/TLS configuration has special logic to support both `ssl` and `tsl` parameters in optional connection parameters:
+
+- If both `tsl` and `ssl` are present in `optionalConnectionParameters`, the `tsl` parameter is used
+- If only `ssl` is present, it is used as-is
+- If only `tsl` is present, it is mapped to the `ssl` parameter
+- If neither is present in `optionalConnectionParameters`, the explicit `sslEnabled` configuration is used
+
+```java
+// Example 1: Using ssl parameter
+Map<String, String> params1 = new HashMap<>();
+params1.put("ssl", "true");  // Results in: ?ssl=true
+config.setOptionalConnectionParameters(params1);
+
+// Example 2: Using tsl parameter (mapped to ssl)
+Map<String, String> params2 = new HashMap<>();
+params2.put("tsl", "true");  // Results in: ?ssl=true
+config.setOptionalConnectionParameters(params2);
+
+// Example 3: Both present (tsl takes precedence)
+Map<String, String> params3 = new HashMap<>();
+params3.put("tsl", "true");
+params3.put("ssl", "false");  // tsl=true is used instead
+config.setOptionalConnectionParameters(params3);
+```
+
+**Best Practices:**
+
+1. **Use explicit configuration for common settings** - This makes your code more readable and type-safe
+2. **Use `optionalConnectionParameters` for:**
+   - Advanced/uncommon MongoDB driver options
+   - Environment-specific overrides without code changes
+   - Testing different connection parameters
+   - Parameters not yet exposed in `MongoClientConfiguration`
+3. **Avoid duplicating parameters** - If using `optionalConnectionParameters` to override, consider removing the explicit configuration to avoid confusion
+4. **Document your overrides** - When using overrides, add comments explaining why the override is necessary
+
+**Parameters that can be overridden:**
+- `appName` (overrides `applicationName`)
+- `maxPoolSize` (overrides `connectionsPerHost`)
+- `minPoolSize` (overrides `minConnectionsPerHost`)
+- `connectTimeoutMS` (overrides `connectionTimeout`)
+- `socketTimeoutMS` (overrides `socketTimeout`)
+- `waitQueueTimeoutMS` (overrides `maxWaitTime`)
+- `maxIdleTimeMS` (overrides `maxConnectionIdleTime`)
+- `maxLifeTimeMS` (overrides `maxConnectionLifeTime`)
+- `heartbeatFrequencyMS` (overrides `heartbeatFrequency`)
+- `minHeartbeatFrequencyMS` (overrides `minHeartbeatFrequency`)
+- `serverSelectionTimeoutMS` (overrides `heartbeatConnectTimeout`)
+- `heartbeatSocketTimeoutMS` (overrides `heartbeatSocketTimeout`)
+- `replicaSet` (overrides `requiredReplicaSetName`)
+- `localThresholdMS` (overrides `localThreshold`)
+- `readPreference` (overrides `readPreference`)
+- `w` (overrides `writeConcern.wObject`)
+- `journal` (overrides `writeConcern.journal`)
+- `tlsAllowInvalidHostnames` (overrides `sslInvalidHostNameAllowed`)
+- `ssl`/`tsl` (overrides `sslEnabled`)
+
 ##### Sample Usage
 (See examples above for basic usage, authenticated connections, proxy usage, advanced configuration, custom components, and replica sets)
 
