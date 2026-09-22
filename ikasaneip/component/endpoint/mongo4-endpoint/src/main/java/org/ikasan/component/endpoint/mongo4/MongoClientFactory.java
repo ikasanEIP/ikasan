@@ -62,107 +62,160 @@ public class MongoClientFactory
             url += "?authSource=" + getAuthDatabase(configuration);
         }
 
+        String sslPrefix = "&";
         if(!url.contains("?authSource=")) {
-            url += "?ssl=" + falseIfNull(configuration.getSslEnabled());
-        }
-        else {
-            url += "&ssl=" + falseIfNull(configuration.getSslEnabled());
+            sslPrefix = "?";
         }
 
-        if (configuration.getApplicationName() != null)
+        if(configuration.getOptionalConnectionParameters() != null
+            && configuration.getOptionalConnectionParameters().containsKey("tsl")
+            && configuration.getOptionalConnectionParameters().containsKey("ssl")) {
+            url += sslPrefix+"ssl=" + configuration.getOptionalConnectionParameters().get("ssl");
+        }
+        else if(configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("tsl")
+            && configuration.getOptionalConnectionParameters().containsKey("ssl")) {
+            url += sslPrefix+"ssl=" + configuration.getOptionalConnectionParameters().get("ssl");
+        }
+        else if(configuration.getOptionalConnectionParameters() != null
+            && configuration.getOptionalConnectionParameters().containsKey("tsl")
+            && !configuration.getOptionalConnectionParameters().containsKey("ssl")) {
+            url += sslPrefix+"ssl=" + configuration.getOptionalConnectionParameters().get("tsl");
+        }
+        else {
+            url += sslPrefix+"ssl=" + falseIfNull(configuration.getSslEnabled());
+        }
+
+        if (configuration.getApplicationName() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("appName"))
         {
             url += "&appName=" + configuration.getApplicationName();
         }
 
         // Connection pool settings
-        if (configuration.getConnectionsPerHost() != null)
+        if (configuration.getConnectionsPerHost() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("maxPoolSize"))
         {
             url += "&maxPoolSize=" + configuration.getConnectionsPerHost();
         }
 
-        if (configuration.getMinConnectionsPerHost() != null)
+        if (configuration.getMinConnectionsPerHost() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("minPoolSize"))
         {
             url += "&minPoolSize=" + configuration.getMinConnectionsPerHost();
         }
 
         // Timeout settings
-        if (configuration.getConnectionTimeout() != null)
+        if (configuration.getConnectionTimeout() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("connectTimeoutMS"))
         {
             url += "&connectTimeoutMS=" + configuration.getConnectionTimeout();
         }
 
-        if (configuration.getSocketTimeout() != null)
+        if (configuration.getSocketTimeout() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("socketTimeoutMS"))
         {
             url += "&socketTimeoutMS=" + configuration.getSocketTimeout();
         }
 
-        if (configuration.getMaxWaitTime() != null)
+        if (configuration.getMaxWaitTime() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("waitQueueTimeoutMS"))
         {
             url += "&waitQueueTimeoutMS=" + configuration.getMaxWaitTime();
         }
 
-        if (configuration.getMaxConnectionIdleTime() != null)
+        if (configuration.getMaxConnectionIdleTime() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("maxIdleTimeMS"))
         {
             url += "&maxIdleTimeMS=" + configuration.getMaxConnectionIdleTime();
         }
 
-        if (configuration.getMaxConnectionLifeTime() != null)
+        if (configuration.getMaxConnectionLifeTime() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("maxLifeTimeMS"))
         {
             url += "&maxLifeTimeMS=" + configuration.getMaxConnectionLifeTime();
         }
 
         // Heartbeat settings
-        if (configuration.getHeartbeatFrequency() != null)
+        if (configuration.getHeartbeatFrequency() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("heartbeatFrequencyMS"))
         {
             url += "&heartbeatFrequencyMS=" + configuration.getHeartbeatFrequency();
         }
 
-        if (configuration.getMinHeartbeatFrequency() != null)
+        if (configuration.getMinHeartbeatFrequency() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("minHeartbeatFrequencyMS"))
         {
             url += "&minHeartbeatFrequencyMS=" + configuration.getMinHeartbeatFrequency();
         }
 
-        if (configuration.getHeartbeatConnectTimeout() != null)
+        if (configuration.getHeartbeatConnectTimeout() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("serverSelectionTimeoutMS"))
         {
             url += "&serverSelectionTimeoutMS=" + configuration.getHeartbeatConnectTimeout();
         }
 
-        if (configuration.getHeartbeatSocketTimeout() != null)
+        if (configuration.getHeartbeatSocketTimeout() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("heartbeatSocketTimeoutMS"))
         {
             url += "&heartbeatSocketTimeoutMS=" + configuration.getHeartbeatSocketTimeout();
         }
 
         // Replica set settings
-        if (configuration.getRequiredReplicaSetName() != null)
+        if (configuration.getRequiredReplicaSetName() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("replicaSet"))
         {
             url += "&replicaSet=" + configuration.getRequiredReplicaSetName();
         }
 
-        if (configuration.getLocalThreshold() != null)
+        if (configuration.getLocalThreshold() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("localThresholdMS"))
         {
             url += "&localThresholdMS=" + configuration.getLocalThreshold();
         }
 
         // Read/Write concern settings
-        if (configuration.getReadPreference() != null)
+        if (configuration.getReadPreference() != null
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("readPreference"))
         {
             url += "&readPreference=" + configuration.getReadPreference().getName();
         }
 
         if (configuration.getWriteConcern() != null)
         {
-            if (configuration.getWriteConcern().getWObject() != null)
+            if (configuration.getWriteConcern().getWObject() != null
+                && configuration.getOptionalConnectionParameters() != null
+                && !configuration.getOptionalConnectionParameters().containsKey("w"))
             {
                 url += "&w=" + configuration.getWriteConcern().getWObject();
             }
-            if (configuration.getWriteConcern().getJournal() != null)
+            if (configuration.getWriteConcern().getJournal() != null
+                && configuration.getOptionalConnectionParameters() != null
+                && !configuration.getOptionalConnectionParameters().containsKey("journal"))
             {
                 url += "&journal=" + configuration.getWriteConcern().getJournal();
             }
         }
 
         // SSL/TLS settings
-        if (configuration.getSslInvalidHostNameAllowed() != null && configuration.getSslInvalidHostNameAllowed())
+        if (configuration.getSslInvalidHostNameAllowed() != null && configuration.getSslInvalidHostNameAllowed()
+            && configuration.getOptionalConnectionParameters() != null
+            && !configuration.getOptionalConnectionParameters().containsKey("tlsAllowInvalidHostnames"))
         {
             url += "&tlsAllowInvalidHostnames=" + configuration.getSslInvalidHostNameAllowed();
         }
@@ -172,6 +225,7 @@ public class MongoClientFactory
         {
             for (Map.Entry<String, String> entry : configuration.getOptionalConnectionParameters().entrySet())
             {
+                if(entry.getKey().equals("ssl") || entry.getKey().equals("tsl")) continue;
                 url += "&" + entry.getKey() + "=" + entry.getValue();
             }
         }
@@ -179,6 +233,14 @@ public class MongoClientFactory
         return url;
     }
 
+
+    /**
+     * Returns false if the provided Boolean object is null. If the Boolean object is not null,
+     * its value is returned.
+     *
+     * @param bool the Boolean object to check; may be null
+     * @return false if the Boolean object is null, or the value of the Boolean object if it is not null
+     */
     private static boolean falseIfNull(Boolean bool) {
         if (bool == null) {
             return false;
@@ -187,6 +249,14 @@ public class MongoClientFactory
         return bool;
     }
 
+    /**
+     * Retrieves the name of the authentication database to be used for the MongoClient configuration.
+     * If an authentication database name is explicitly set in the configuration, it is returned.
+     * Otherwise, the default database name from the configuration is used.
+     *
+     * @param configuration the MongoClientConfiguration that provides details about the database setup
+     * @return the name of the authentication database to use
+     */
     private static String getAuthDatabase(MongoClientConfiguration configuration)
     {
         return configuration.getAuthDatabaseName() != null ?
