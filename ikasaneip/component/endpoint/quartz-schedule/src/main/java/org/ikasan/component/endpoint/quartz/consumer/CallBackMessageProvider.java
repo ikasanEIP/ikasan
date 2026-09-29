@@ -46,7 +46,7 @@ package org.ikasan.component.endpoint.quartz.consumer;
  * Rather than simply returning a message to the consumer and allowing the consumer
  * to manage the invoking of the flow, the callback provider calls back
  * to have the flow invoked under its own control thus allowing certain
- * message provider implemenations to be more efficient.
+ * message provider implementations to be more efficent.
  * For instance, file line consumers can callback the flow for each line in the file
  *
  * @author Ikasan Development Team

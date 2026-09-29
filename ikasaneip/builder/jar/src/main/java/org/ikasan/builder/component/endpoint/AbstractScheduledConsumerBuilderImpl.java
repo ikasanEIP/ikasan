@@ -42,10 +42,7 @@ package org.ikasan.builder.component.endpoint;
 
 import org.ikasan.builder.AopProxyProvider;
 import org.ikasan.builder.component.RequiresAopProxy;
-import org.ikasan.component.endpoint.quartz.consumer.CallBackMessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.MessageProvider;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumer;
-import org.ikasan.component.endpoint.quartz.consumer.ScheduledConsumerConfiguration;
+import org.ikasan.component.endpoint.quartz.consumer.*;
 import org.ikasan.scheduler.ScheduledJobFactory;
 import org.ikasan.spec.event.EventFactory;
 import org.ikasan.spec.event.ManagedEventIdentifierService;
@@ -323,7 +320,10 @@ public abstract class AbstractScheduledConsumerBuilderImpl<BUILDER>
      */
     protected ScheduledConsumer getCallbackScheduledConsumer()
     {
-        return new org.ikasan.component.endpoint.quartz.consumer.CallBackScheduledConsumer(scheduler);
+        CallBackScheduledConsumer consumer =  new CallBackScheduledConsumer(scheduler);
+        consumer.setCallBackMessageProvider((CallBackMessageProvider) this.messageProvider);
+        ((CallBackMessageProvider) this.messageProvider).setCallBackMessageConsumer(consumer);
+        return consumer;
     }
 
     /**

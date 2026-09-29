@@ -9,6 +9,18 @@ import java.util.Set;
 public interface ESBSearchDao<RESULTS, DOCUMENT>
 {
     /**
+     * Searches for results based on the provided identifiers and sorting parameters.
+     *
+     * @param identifiers a set of unique strings representing the identifiers to filter the search.
+     * @param offset the starting point or index of the results to be fetched.
+     * @param resultSize the maximum number of results to return.
+     * @param sortField the field by which the results should be sorted.
+     * @param sortOrder the order to apply for sorting, typically "asc" for ascending or "desc" for descending.
+     * @return a RESULTS object containing the search results based on the input parameters.
+     */
+    RESULTS search(Set<String> identifiers, int offset, int resultSize, String sortField, String sortOrder);
+
+    /**
      * Perform general search against ikasan persistence.
      *
      * @param moduleName

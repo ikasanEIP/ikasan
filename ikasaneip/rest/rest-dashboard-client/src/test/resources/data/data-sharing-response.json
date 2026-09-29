@@ -1,0 +1,42 @@
+{
+  "data": [
+    {
+      "id": "doc1",
+      "type": "wiretapEvent",
+      "moduleName": "testModule",
+      "flowName": "testFlow",
+      "componentName": "testComponent",
+      "timestamp": 1000000,
+      "expiry": 2000000,
+      "eventId": "event1",
+      "event": "{\"payload\":\"test data 1\"}"
+    },
+    {
+      "id": "doc2",
+      "type": "wiretapEvent",
+      "moduleName": "testModule",
+      "flowName": "testFlow",
+      "componentName": "testComponent",
+      "timestamp": 1000100,
+      "expiry": 2000100,
+      "eventId": "event2",
+      "event": "{\"payload\":\"test data 2\"}"
+    },
+    {
+      "id": "doc3",
+      "type": "errorOccurrence",
+      "moduleName": "testModule",
+      "flowName": "testFlow",
+      "componentName": "testComponent",
+      "timestamp": 1000200,
+      "expiry": 2000200,
+      "eventId": "event3",
+      "event": "{\"payload\":\"test data 3\"}",
+      "errorMessage": "Test error message",
+      "errorDetail": "Test error detail",
+      "exceptionClass": "java.lang.RuntimeException"
+    }
+  ],
+  "totalCount": 3,
+  "hasMore": false
+}

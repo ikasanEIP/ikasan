@@ -69,7 +69,6 @@ public class DashboardClientAutoConfiguration
         , HttpComponentsClientHttpRequestFactory customHttpRequestFactory)
     {
         return new DashboardRestServiceImpl(environment, customHttpRequestFactory, WIRETAP_PATH);
-
     }
 
     @Bean(name = "errorReportingDashboardRestService")
