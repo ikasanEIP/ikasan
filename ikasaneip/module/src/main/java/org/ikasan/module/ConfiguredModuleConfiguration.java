@@ -40,7 +40,6 @@
  */
 package org.ikasan.module;
 
-import java.awt.*;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;

@@ -1145,6 +1145,12 @@
 
             <dependency>
                 <groupId>org.ikasan</groupId>
+                <artifactId>ikasan-data-sharing</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.ikasan</groupId>
                 <artifactId>ikasan-kafka-client-common</artifactId>
                 <version>${project.version}</version>
             </dependency>

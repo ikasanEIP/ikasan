@@ -1,0 +1,55 @@
+<assembly>
+<id>dist</id>
+<formats>
+    <format>zip</format>
+</formats>
+
+<fileSets>
+    <fileSet>
+        <directory>../bin</directory>
+        <filtered>true</filtered>
+        <fileMode>755</fileMode>
+        <outputDirectory>data-sharing-${version.ikasan}</outputDirectory>
+    </fileSet>
+    <fileSet>
+        <directory>../service</directory>
+        <filtered>true</filtered>
+        <fileMode>755</fileMode>
+        <outputDirectory>data-sharing-${version.ikasan}</outputDirectory>
+    </fileSet>
+    <fileSet>
+        <directory>../jar/src/main/resources</directory>
+        <filtered>true</filtered>
+        <includes>
+            <include>application.properties</include>
+            <include>logback-spring.xml</include>
+        </includes>
+        <outputDirectory>data-sharing-${version.ikasan}/config</outputDirectory>
+    </fileSet>
+</fileSets>
+
+<includeBaseDirectory>false</includeBaseDirectory>
+
+<dependencySets>
+    <dependencySet>
+        <!-- Enable access to all projects in the current multimodule build! -->
+        <useProjectArtifact>false</useProjectArtifact>
+        <!-- Now, select which projects to include in this module-set. -->
+        <includes>
+            <include>org.ikasan:data-sharing</include>
+            <include>com.h2database:h2:jar:${version.com.h2database}</include>
+        </includes>
+        <outputDirectory>data-sharing-${version.ikasan}/lib</outputDirectory>
+    </dependencySet>
+    <dependencySet>
+        <!-- Enable access to all projects in the current multimodule build! -->
+        <useProjectArtifact>false</useProjectArtifact>
+        <!-- contains lib\shell.jar and ikasan.sh -->
+        <includes>
+            <include>org.ikasan:ikasan-shell-distribution:zip:${version.ikasan}</include>
+        </includes>
+        <unpack>true</unpack>
+        <outputDirectory>data-sharing-${version.ikasan}/</outputDirectory>
+    </dependencySet>
+</dependencySets>
+</assembly>

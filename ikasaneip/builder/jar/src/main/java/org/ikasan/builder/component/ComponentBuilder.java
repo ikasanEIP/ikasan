@@ -388,7 +388,8 @@ public class ComponentBuilder
     {
         try
         {
-            return new BigQueueProducerLRCOBuilderImpl(this.applicationContext.getBean(JtaTransactionManager.class).getTransactionManager());
+            return new BigQueueProducerLRCOBuilderImpl(this.applicationContext.getBean(JtaTransactionManager.class)
+                .getTransactionManager());
         }
         catch(NoClassDefFoundError e)
         {

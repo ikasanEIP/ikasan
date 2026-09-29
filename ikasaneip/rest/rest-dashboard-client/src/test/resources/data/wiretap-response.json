@@ -1,0 +1,39 @@
+{
+  "data": [
+    {
+      "id": "wiretap1",
+      "type": "wiretapEvent",
+      "moduleName": "testModule",
+      "flowName": "testFlow",
+      "componentName": "wiretapComponent",
+      "timestamp": 1000000,
+      "expiry": 2000000,
+      "eventId": "event-wiretap-1",
+      "event": "{\"payload\":\"wiretap test data 1\"}"
+    },
+    {
+      "id": "wiretap2",
+      "type": "wiretapEvent",
+      "moduleName": "testModule",
+      "flowName": "testFlow",
+      "componentName": "wiretapComponent",
+      "timestamp": 1000100,
+      "expiry": 2000100,
+      "eventId": "event-wiretap-2",
+      "event": "{\"payload\":\"wiretap test data 2\"}"
+    },
+    {
+      "id": "wiretap3",
+      "type": "wiretapEvent",
+      "moduleName": "testModule2",
+      "flowName": "testFlow2",
+      "componentName": "wiretapComponent2",
+      "timestamp": 1000200,
+      "expiry": 2000200,
+      "eventId": "event-wiretap-3",
+      "event": "{\"payload\":\"wiretap test data 3\"}"
+    }
+  ],
+  "totalCount": 3,
+  "hasMore": false
+}

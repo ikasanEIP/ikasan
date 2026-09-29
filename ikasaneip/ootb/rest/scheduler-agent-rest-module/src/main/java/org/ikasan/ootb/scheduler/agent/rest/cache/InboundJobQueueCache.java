@@ -1,5 +1,7 @@
 package org.ikasan.ootb.scheduler.agent.rest.cache;
 
+import org.ikasan.component.endpoint.bigqueue.cache.AbstractBigQueueCache;
+
 public class InboundJobQueueCache extends AbstractBigQueueCache {
 
     private static InboundJobQueueCache INSTANCE;

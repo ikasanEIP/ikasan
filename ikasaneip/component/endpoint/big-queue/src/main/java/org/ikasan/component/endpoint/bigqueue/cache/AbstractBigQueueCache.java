@@ -1,4 +1,4 @@
-package org.ikasan.ootb.scheduler.agent.rest.cache;
+package org.ikasan.component.endpoint.bigqueue.cache;
 
 import org.ikasan.bigqueue.IBigQueue;
 import org.slf4j.Logger;
