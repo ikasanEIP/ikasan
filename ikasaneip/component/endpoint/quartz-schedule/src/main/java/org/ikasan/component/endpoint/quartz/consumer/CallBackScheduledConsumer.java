@@ -53,7 +53,7 @@ import java.util.Set;
  * @author Ikasan Development Team
  */
 @DisallowConcurrentExecution
-public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements CallBackMessageConsumer<T>
+public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements CallBackMessageConsumer<T>, Job
 {
     /**
      * default messageProvider is set to QuartzMessageProvider - can be overridden via the setter

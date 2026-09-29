@@ -1,4 +1,4 @@
-![Problem Domain](../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
+![Problem Domain](../../../developer/docs/quickstart-images/Ikasan-title-transparent.png)
 # Rest Module
 Every Ikasan Integration Module exposes a number of REST service endpoints that allow any user or client to interact with it.
  
