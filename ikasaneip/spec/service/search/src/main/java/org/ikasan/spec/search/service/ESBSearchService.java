@@ -133,6 +133,27 @@ public interface ESBSearchService<ENTITY, RESULTS>
     RESULTS search(Set<String> moduleNames, String searchString, long startTime, long endTime, int offset
         , int resultSize, List<String> entityTypes, boolean negateQuery, String sortField, String sortOrder);
 
+    /**
+     * Searches for results based on the specified harvest received time and various search parameters.
+     *
+     * @param moduleName               A set of module names to filter the search results.
+     * @param flowNames                A set of flow names to filter the search results.
+     * @param componentNames           A set of component names to filter the search results.
+     * @param eventId                  The ID of the event to filter the search results.
+     * @param searchString             The query string used for the search.
+     * @param harvestReceivedStartTime The starting timestamp (inclusive) for filtering based on the harvest received time.
+     * @param harvestReceivedEndTime   The ending timestamp (inclusive) for filtering based on the harvest received time.
+     * @param offset                   The starting index for paginated results.
+     * @param resultSize               The maximum number of results to return.
+     * @param entityTypes              A list of entity types to narrow down the search results. If empty, no filtering is applied based on entity types.
+     * @param negateQuery              A flag indicating whether to invert the search query logic.
+     * @param sortField                The field by which the results should be sorted.
+     * @param sortOrder                The order of sorting, either ascending or descending.
+     * @return A RESULTS object containing the matching results based on the provided harvest received time and search criteria.
+     */
+    RESULTS searchByHarvestReceivedTime(Set<String> moduleName, Set<String> flowNames, Set<String> componentNames, String eventId
+        , String searchString, long harvestReceivedStartTime, long harvestReceivedEndTime, int offset, int resultSize, List<String> entityTypes
+        , boolean negateQuery, String sortField, String sortOrder);
 
     /**
      * Finds an entity by its type and ID.
