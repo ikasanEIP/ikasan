@@ -53,4 +53,5 @@ public interface EntityFields {
     String FIRST_NAME = "firstName";
     String SURNAME = "surname";
     String DEPARTMENT = "department";
+    String HARVEST_RECEIVED_TIMESTAMP = "harvestReceivedTimestamp";
 }
