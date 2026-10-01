@@ -68,19 +68,19 @@ public class MongoClientFactory
         }
 
         if(configuration.getOptionalConnectionParameters() != null
-            && configuration.getOptionalConnectionParameters().containsKey("tsl")
+            && configuration.getOptionalConnectionParameters().containsKey("tls")
             && configuration.getOptionalConnectionParameters().containsKey("ssl")) {
             url += sslPrefix+"ssl=" + configuration.getOptionalConnectionParameters().get("ssl");
         }
         else if(configuration.getOptionalConnectionParameters() != null
-            && !configuration.getOptionalConnectionParameters().containsKey("tsl")
+            && !configuration.getOptionalConnectionParameters().containsKey("tls")
             && configuration.getOptionalConnectionParameters().containsKey("ssl")) {
             url += sslPrefix+"ssl=" + configuration.getOptionalConnectionParameters().get("ssl");
         }
         else if(configuration.getOptionalConnectionParameters() != null
-            && configuration.getOptionalConnectionParameters().containsKey("tsl")
+            && configuration.getOptionalConnectionParameters().containsKey("tls")
             && !configuration.getOptionalConnectionParameters().containsKey("ssl")) {
-            url += sslPrefix+"ssl=" + configuration.getOptionalConnectionParameters().get("tsl");
+            url += sslPrefix+"tls=" + configuration.getOptionalConnectionParameters().get("tls");
         }
         else {
             url += sslPrefix+"ssl=" + falseIfNull(configuration.getSslEnabled());
@@ -225,7 +225,7 @@ public class MongoClientFactory
         {
             for (Map.Entry<String, String> entry : configuration.getOptionalConnectionParameters().entrySet())
             {
-                if(entry.getKey().equals("ssl") || entry.getKey().equals("tsl")) continue;
+                if(entry.getKey().equals("ssl") || entry.getKey().equals("tls")) continue;
                 url += "&" + entry.getKey() + "=" + entry.getValue();
             }
         }
