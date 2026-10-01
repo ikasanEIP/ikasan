@@ -1122,7 +1122,7 @@ public class MongoClientFactoryTest
     }
 
     /**
-     * Test TSL parameter when only tsl is provided in optionalConnectionParameters
+     * Test TSL parameter when only tls is provided in optionalConnectionParameters
      * TSL should be mapped to ssl in the URL
      */
     @Test
@@ -1134,21 +1134,21 @@ public class MongoClientFactoryTest
         configuration.setSslEnabled(false); // Set to false explicitly
 
         Map<String, String> optionalParams = new HashMap<>();
-        optionalParams.put("tsl", "true");
+        optionalParams.put("tls", "true");
         configuration.setOptionalConnectionParameters(optionalParams);
 
         String url = invokeBuildUrl(configuration);
 
-        // The tsl parameter should be mapped to ssl in the URL
-        Assert.assertTrue("URL should contain ssl=true mapped from tsl parameter", url.contains("ssl=true"));
+        // The tls parameter should be mapped to ssl in the URL
+        Assert.assertTrue("URL should contain ssl=true mapped from tls parameter", url.contains("tls=true"));
         // Validate using MongoDB's ConnectionString parser
         ConnectionString connectionString = new ConnectionString(url);
-        Assert.assertTrue("SSL should be enabled from tsl parameter", connectionString.getSslEnabled());
+        Assert.assertTrue("SSL should be enabled from tls parameter", connectionString.getSslEnabled());
     }
 
     /**
-     * Test when both tsl and ssl are provided in optionalConnectionParameters
-     * When both are present, tsl should take precedence and be used as tsl parameter
+     * Test when both tls and ssl are provided in optionalConnectionParameters
+     * When both are present, tls should take precedence and be used as tls parameter
      */
     @Test
     public void testBothTslAndSslInOptionalParameters() throws Exception
@@ -1159,16 +1159,16 @@ public class MongoClientFactoryTest
         configuration.setSslEnabled(false);
 
         Map<String, String> optionalParams = new HashMap<>();
-        optionalParams.put("tsl", "true");
+        optionalParams.put("tls", "true");
         optionalParams.put("ssl", "false");
         configuration.setOptionalConnectionParameters(optionalParams);
 
         String url = invokeBuildUrl(configuration);
 
-        // When both tsl and ssl are present, tsl should be used as the tsl parameter
-        Assert.assertTrue("URL should contain tsl=true when both are present", url.contains("ssl=false"));
-        Assert.assertFalse("URL should not contain tsl parameter when ssl is present",
-            url.matches(".*[?&]tsl=.*"));
+        // When both tls and ssl are present, tls should be used as the tls parameter
+        Assert.assertTrue("URL should contain tls=true when both are present", url.contains("ssl=false"));
+        Assert.assertFalse("URL should not contain tls parameter when ssl is present",
+            url.matches(".*[?&]tls=.*"));
     }
 
     /**
@@ -1268,15 +1268,15 @@ public class MongoClientFactoryTest
         configuration.setSslEnabled(true); // Explicitly enabled
 
         Map<String, String> optionalParams = new HashMap<>();
-        optionalParams.put("tsl", "false");
+        optionalParams.put("tls", "false");
         configuration.setOptionalConnectionParameters(optionalParams);
 
         String url = invokeBuildUrl(configuration);
 
-        // The tsl=false from optional parameters should override explicit sslEnabled=true
-        Assert.assertTrue("URL should contain ssl=false from tsl parameter", url.contains("ssl=false"));
+        // The tls=false from optional parameters should override explicit sslEnabled=true
+        Assert.assertTrue("URL should contain ssl=false from tls parameter", url.contains("tls=false"));
         ConnectionString connectionString = new ConnectionString(url);
-        Assert.assertFalse("SSL should be disabled from tsl parameter", connectionString.getSslEnabled());
+        Assert.assertFalse("SSL should be disabled from tls parameter", connectionString.getSslEnabled());
     }
 
     /**
@@ -1366,14 +1366,14 @@ public class MongoClientFactoryTest
         configuration.setPassword("password");
 
         Map<String, String> optionalParams = new HashMap<>();
-        optionalParams.put("tsl", "true");
+        optionalParams.put("tls", "true");
         configuration.setOptionalConnectionParameters(optionalParams);
 
         String url = invokeBuildUrl(configuration);
 
-        // Should have authSource first, then ssl from tsl parameter
+        // Should have authSource first, then ssl from tls parameter
         Assert.assertTrue("URL should contain authSource", url.contains("?authSource="));
-        Assert.assertTrue("URL should contain ssl=true from tsl", url.contains("&ssl=true"));
+        Assert.assertTrue("URL should contain ssl=true from tls", url.contains("&tls=true"));
         Assert.assertTrue("URL should contain credentials", url.contains("admin:password@"));
 
         ConnectionString connectionString = new ConnectionString(url);
@@ -1382,7 +1382,7 @@ public class MongoClientFactoryTest
     }
 
     /**
-     * Test that both tsl and ssl values are different - tsl takes precedence
+     * Test that both tls and ssl values are different - tls takes precedence
      */
     @Test
     public void testSslTakesPrecedenceOverSslWhenBothPresent() throws Exception
@@ -1392,17 +1392,17 @@ public class MongoClientFactoryTest
         configuration.setDatabaseName("testDb");
 
         Map<String, String> optionalParams = new HashMap<>();
-        optionalParams.put("tsl", "false");
+        optionalParams.put("tls", "false");
         optionalParams.put("ssl", "true");
         configuration.setOptionalConnectionParameters(optionalParams);
 
         String url = invokeBuildUrl(configuration);
 
-        // When both tsl and ssl present, tsl value should be used as tsl parameter
+        // When both tls and ssl present, tls value should be used as tls parameter
         ConnectionString connectionString = new ConnectionString(url);
         Assert.assertTrue("SSL should be enabled", connectionString.getSslEnabled());
         Assert.assertTrue("URL should contain ssl=true", url.contains("ssl=true"));
-        Assert.assertFalse("URL should not contain tsl parameter",
-            url.matches(".*[?&]tsl=.*"));
+        Assert.assertFalse("URL should not contain tls parameter",
+            url.matches(".*[?&]tls=.*"));
     }
 }
