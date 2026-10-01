@@ -160,11 +160,11 @@ config.setOptionalConnectionParameters(optionalParams);
 
 **SSL/TLS Special Handling:**
 
-The SSL/TLS configuration has special logic to support both `ssl` and `tsl` parameters in optional connection parameters:
+The SSL/TLS configuration has special logic to support both `ssl` and `tls` parameters in optional connection parameters:
 
-- If both `tsl` and `ssl` are present in `optionalConnectionParameters`, the `tsl` parameter is used
+- If both `tls` and `ssl` are present in `optionalConnectionParameters`, the `tls` parameter is used
 - If only `ssl` is present, it is used as-is
-- If only `tsl` is present, it is mapped to the `ssl` parameter
+- If only `tls` is present, it is mapped to the `ssl` parameter
 - If neither is present in `optionalConnectionParameters`, the explicit `sslEnabled` configuration is used
 
 ```java
@@ -173,15 +173,15 @@ Map<String, String> params1 = new HashMap<>();
 params1.put("ssl", "true");  // Results in: ?ssl=true
 config.setOptionalConnectionParameters(params1);
 
-// Example 2: Using tsl parameter (mapped to ssl)
+// Example 2: Using tls parameter (mapped to ssl)
 Map<String, String> params2 = new HashMap<>();
-params2.put("tsl", "true");  // Results in: ?ssl=true
+params2.put("tls", "true");  // Results in: ?ssl=true
 config.setOptionalConnectionParameters(params2);
 
-// Example 3: Both present (tsl takes precedence)
+// Example 3: Both present (tls takes precedence)
 Map<String, String> params3 = new HashMap<>();
-params3.put("tsl", "true");
-params3.put("ssl", "false");  // tsl=true is used instead
+params3.put("tls", "true");
+params3.put("ssl", "false");  // tls=true is used instead
 config.setOptionalConnectionParameters(params3);
 ```
 
@@ -215,7 +215,7 @@ config.setOptionalConnectionParameters(params3);
 - `w` (overrides `writeConcern.wObject`)
 - `journal` (overrides `writeConcern.journal`)
 - `tlsAllowInvalidHostnames` (overrides `sslInvalidHostNameAllowed`)
-- `ssl`/`tsl` (overrides `sslEnabled`)
+- `ssl`/`tls` (overrides `sslEnabled`)
 
 ##### Sample Usage
 (See examples above for basic usage, authenticated connections, proxy usage, advanced configuration, custom components, and replica sets)
