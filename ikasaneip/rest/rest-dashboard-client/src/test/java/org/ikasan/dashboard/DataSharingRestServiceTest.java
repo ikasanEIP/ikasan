@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.junit.WireMockRule;
 import org.apache.commons.io.IOUtils;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.flow.FlowState;
 import org.ikasan.spec.metadata.model.ConfigurationMetaData;
 import org.ikasan.spec.metadata.model.ModuleMetaData;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -528,6 +529,207 @@ public class DataSharingRestServiceTest {
         uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
 
         uut.countReplays(0, 100000L, null);
+    }
+
+    // ========== FLOW STATES TESTS ==========
+
+    @Test
+    public void get_flow_states_success() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/flowstates-response.json"))
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<FlowState> results = uut.getFlowStates(null);
+
+        assertNotNull(results);
+        assertEquals(3, results.size());
+
+        // Verify first flow state
+        FlowState flowState1 = results.get(0);
+        assertEquals("module1", flowState1.getModuleName());
+        assertEquals("flow1", flowState1.getFlowName());
+        assertEquals("running", flowState1.getState());
+
+        // Verify second flow state
+        FlowState flowState2 = results.get(1);
+        assertEquals("module1", flowState2.getModuleName());
+        assertEquals("flow2", flowState2.getFlowName());
+        assertEquals("stopped", flowState2.getState());
+
+        // Verify third flow state
+        FlowState flowState3 = results.get(2);
+        assertEquals("module2", flowState3.getModuleName());
+        assertEquals("flow1", flowState3.getFlowName());
+        assertEquals("running", flowState3.getState());
+    }
+
+    @Test
+    public void get_flow_states_with_module_names() throws IOException {
+        stubFor(get(urlMatching("/rest/data-sharing/flowstates\\?moduleNames=.*"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/flowstates-response.json"))
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<String> moduleNames = Arrays.asList("module1", "module2");
+        List<FlowState> results = uut.getFlowStates(moduleNames);
+
+        assertNotNull(results);
+        assertEquals(3, results.size());
+        results.forEach(flowState -> Assert.assertTrue(flowState instanceof FlowState));
+    }
+
+    @Test
+    public void get_flow_states_with_single_module_name() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates?moduleNames=module1"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("[{\"moduleName\":\"module1\",\"flowName\":\"flow1\",\"state\":\"running\"}]")
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<String> moduleNames = Arrays.asList("module1");
+        List<FlowState> results = uut.getFlowStates(moduleNames);
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals("module1", results.get(0).getModuleName());
+        assertEquals("flow1", results.get(0).getFlowName());
+        assertEquals("running", results.get(0).getState());
+    }
+
+    @Test
+    public void get_flow_states_empty_list() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("[]")
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<FlowState> results = uut.getFlowStates(null);
+
+        assertNotNull(results);
+        assertEquals(0, results.size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_flow_states_exception() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("bad payload")
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.getFlowStates(null);
+    }
+
+    @Test
+    public void get_flow_states_returns_401_followed_by_authentication_and_successful_get() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/flowstates-response.json"))
+                .withStatus(401)
+            ));
+
+        stubFor(post(urlEqualTo("/authenticate"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("testModule"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .withRequestBody(containing("{\"username\":\"admin\",\"password\":\"admin\"}"))
+            .willReturn(aResponse().withBody("{\"token\":\"msamsmsamsmas\"}")
+                .withStatus(200)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString())
+            ));
+
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/flowstates-response.json"))
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<FlowState> results = uut.getFlowStates(null);
+        assertEquals(3, results.size());
+    }
+
+    @Test
+    public void get_flow_states_with_multiple_module_names_url_encoding() throws IOException {
+        stubFor(get(urlMatching("/rest/data-sharing/flowstates\\?moduleNames=module1&moduleNames=module2"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody(loadDataFile("/data/flowstates-response.json"))
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<String> moduleNames = Arrays.asList("module1", "module2");
+        List<FlowState> results = uut.getFlowStates(moduleNames);
+
+        assertNotNull(results);
+        assertEquals(3, results.size());
+    }
+
+    @Test(expected = RuntimeException.class)
+    public void get_flow_states_http_error_500() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("Internal server error")
+                .withStatus(500)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        uut.getFlowStates(null);
+    }
+
+    @Test
+    public void get_flow_states_with_null_state_values() throws IOException {
+        stubFor(get(urlEqualTo("/rest/data-sharing/flowstates"))
+            .withHeader(HttpHeaders.USER_AGENT, equalTo("user agent"))
+            .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
+            .willReturn(aResponse()
+                .withBody("[{\"moduleName\":\"module1\",\"flowName\":\"flow1\",\"state\":null}]")
+                .withStatus(200)
+            ));
+
+        uut = new DataSharingRestServiceImpl(environment, new HttpComponentsClientHttpRequestFactory());
+
+        List<FlowState> results = uut.getFlowStates(null);
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+        assertEquals("module1", results.get(0).getModuleName());
+        assertEquals("flow1", results.get(0).getFlowName());
+        Assert.assertNull(results.get(0).getState());
     }
 
     // ========== HELPER METHODS ==========
