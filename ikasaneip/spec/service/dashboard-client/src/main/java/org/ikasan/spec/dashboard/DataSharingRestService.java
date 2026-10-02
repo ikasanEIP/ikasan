@@ -42,6 +42,7 @@ package org.ikasan.spec.dashboard;
 
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.flow.FlowState;
 import org.ikasan.spec.metadata.model.ConfigurationMetaData;
 import org.ikasan.spec.metadata.model.ModuleMetaData;
 import org.ikasan.spec.replay.ReplayEvent;
@@ -166,4 +167,13 @@ public interface DataSharingRestService {
      * @return count of records
      */
     long countReplays(long fromTimestamp, long toTimestamp, List<String> moduleNames);
+
+    /**
+     * Retrieves the list of flow states for the specified module names.
+     *
+     * @param moduleNames a list of module names for which flow states are to be retrieved;
+     *                    can be null or empty to retrieve flow states for all modules.
+     * @return a list of {@link FlowState} objects representing the flow states of the specified modules.
+     */
+    List<FlowState> getFlowStates(List<String> moduleNames);
 }

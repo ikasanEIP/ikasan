@@ -1,7 +1,7 @@
 package org.ikasan.dashboard;
 
+import org.ikasan.dashboard.dto.FlowStateImpl;
 import org.ikasan.dashboard.dto.SearchResultsImpl;
-import org.ikasan.dashboard.dto.IkasanESBDocumentImpl;
 import org.ikasan.dashboard.dto.error.ErrorOccurrenceImpl;
 import org.ikasan.dashboard.dto.exclusion.ExclusionEventImpl;
 import org.ikasan.dashboard.dto.metadata.configuration.ConfigurationMetaDataImpl;
@@ -12,6 +12,7 @@ import org.ikasan.dashboard.dto.wiretap.WiretapEventImpl;
 import org.ikasan.spec.dashboard.DataSharingRestService;
 import org.ikasan.spec.error.reporting.ErrorOccurrence;
 import org.ikasan.spec.exclusion.ExclusionEvent;
+import org.ikasan.spec.flow.FlowState;
 import org.ikasan.spec.metadata.model.*;
 import org.ikasan.spec.replay.ReplayEvent;
 import org.ikasan.spec.search.SearchResults;
@@ -61,6 +62,9 @@ public class DataSharingRestServiceImpl extends AbstractRestServiceImpl implemen
     public static final String ERRORS_COUNT_PATH = ERRORS_PATH + "/count";
     public static final String EXCLUSIONS_COUNT_PATH = EXCLUSIONS_PATH + "/count";
     public static final String REPLAYS_COUNT_PATH = REPLAYS_PATH + "/count";
+
+    // Flow states endpoint
+    public static final String FLOW_STATES_PATH = DATA_SHARING_PATH + "/flowstates";
 
     private final String userAgent;
     private final JsonMapper mapper;
@@ -237,6 +241,17 @@ public class DataSharingRestServiceImpl extends AbstractRestServiceImpl implemen
     }
 
     /**
+     * Get flow states for data sharing
+     *
+     * @param moduleNames optional filter by module names
+     * @return List of FlowState objects
+     */
+    @Override
+    public List<FlowState> getFlowStates(List<String> moduleNames) {
+        return getFlowStatesBase(FLOW_STATES_PATH, moduleNames, true);
+    }
+
+    /**
      * Base method for querying data from data sharing endpoints
      *
      * @param path the API endpoint path
@@ -333,7 +348,7 @@ public class DataSharingRestServiceImpl extends AbstractRestServiceImpl implemen
             Map<String, Object> result = this.mapper.readValue(response.getBody(),
                 mapper.getTypeFactory().constructMapType(HashMap.class, String.class, Object.class));
 
-            return ((Number) result.get("totalCount")).longValue();
+            return ((Number) result.get("count")).longValue();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode().equals(HttpStatusCode.valueOf(401)) && isFirst) {
                 this.token = null;
@@ -467,4 +482,59 @@ public class DataSharingRestServiceImpl extends AbstractRestServiceImpl implemen
             throw new RuntimeException("Issue querying configuration for url [" + url + path + "] with response [{" + e.getLocalizedMessage() + "}]", e);
         }
     }
+
+    /**
+     * Base method for querying flow states from data sharing endpoints
+     *
+     * @param path the API endpoint path
+     * @param moduleNames optional filter by module names
+     * @param isFirst flag indicating if this is the first attempt (for re-authentication)
+     * @return List of FlowState objects
+     * @throws RuntimeException if there are issues with the HTTP request or response parsing
+     */
+    private List<FlowState> getFlowStatesBase(String path, List<String> moduleNames, boolean isFirst) {
+        HttpHeaders headers = super.createHttpHeaders(userAgent);
+        HttpEntity entity = new HttpEntity(headers);
+
+        try {
+            // Build URI with query parameters
+            StringBuilder uri = new StringBuilder(url + path);
+            boolean firstParam = true;
+
+            if (moduleNames != null && !moduleNames.isEmpty()) {
+                for (String moduleName : moduleNames) {
+                    if (firstParam) {
+                        uri.append("?");
+                        firstParam = false;
+                    } else {
+                        uri.append("&");
+                    }
+                    uri.append("moduleNames=").append(moduleName);
+                }
+            }
+
+            ResponseEntity<String> response = restTemplate.exchange(uri.toString(), HttpMethod.GET, entity, String.class);
+
+            // Parse the response as a list of FlowState objects
+            List<FlowState> flowStates = this.mapper.readValue(response.getBody(),
+                mapper.getTypeFactory().constructCollectionType(List.class, FlowStateImpl.class));
+
+            return flowStates;
+
+        } catch (HttpClientErrorException e) {
+            if (e.getStatusCode().equals(HttpStatusCode.valueOf(401)) && isFirst) {
+                this.token = null;
+                if (authenticate(this.userAgent)) {
+                    return getFlowStatesBase(path, moduleNames, false);
+                }
+            }
+
+            logger.warn("Issue querying flow states for url [" + url + path + "] with response [{" + e.getLocalizedMessage() + "}]");
+            throw new RuntimeException("Issue querying flow states for url [" + url + path + "] with response [{" + e.getLocalizedMessage() + "}]", e);
+        } catch (RestClientException | JacksonException e) {
+            logger.warn("Issue querying flow states for url [" + url + path + "] with response [{" + e.getLocalizedMessage() + "}]");
+            throw new RuntimeException("Issue querying flow states for url [" + url + path + "] with response [{" + e.getLocalizedMessage() + "}]", e);
+        }
+    }
+
 }
