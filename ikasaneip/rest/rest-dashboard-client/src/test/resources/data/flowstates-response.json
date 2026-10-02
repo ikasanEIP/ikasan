@@ -1,0 +1,17 @@
+[
+  {
+    "moduleName": "module1",
+    "flowName": "flow1",
+    "state": "running"
+  },
+  {
+    "moduleName": "module1",
+    "flowName": "flow2",
+    "state": "stopped"
+  },
+  {
+    "moduleName": "module2",
+    "flowName": "flow1",
+    "state": "running"
+  }
+]

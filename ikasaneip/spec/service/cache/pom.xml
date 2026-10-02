@@ -59,5 +59,10 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>org.ikasan</groupId>
+            <artifactId>ikasan-spec-flow</artifactId>
+        </dependency>
+
     </dependencies>
 </project>
