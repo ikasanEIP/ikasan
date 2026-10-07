@@ -22,36 +22,45 @@ public interface JobLockCache extends Serializable {
     void addLocks(List<JobLock> jobLocks, String environment);
 
 
+
     /**
-     * Attempt to lock a job with the given job identifier, context name, and environment.
+     * Attempts to acquire a lock for a specific job within a given context and environment.
      *
-     * @param jobIdentifier the identifier of the job to lock
-     * @param contextName the name of the context the job resides in
-     * @param environment the specific environment in which the job is being locked
-     * @return true if the job was successfully locked, false otherwise
+     * @param jobIdentifier     the identifier of the job to be locked
+     * @param parentContextName the name of the parent context of the job
+     * @param contextName       the name of the context where the job resides
+     * @param contextInstanceId the unique identifier for the specific instance of the context
+     * @param environment       the specific environment in which the job lock is being attempted
+     * @return true if the lock was successfully acquired, false otherwise
      */
-    boolean lock(String jobIdentifier, String contextName, String environment);
+    boolean lock(String jobIdentifier, String parentContextName, String contextName
+        , String contextInstanceId, String environment);
 
 
     /**
-     * Release a lock on a specific job within a given context and environment.
+     * Attempts to release a lock for a specific job within the given context and environment.
      *
-     * @param jobIdentifier the identifier of the job to release the lock from
-     * @param contextName the name of the context the job resides in
-     * @param environment the specific environment in which the job is locked
-     * @return true if the lock on the*/
-    boolean release(String jobIdentifier, String contextName, String environment);
+     * @param jobIdentifier     the identifier of the job whose lock is to be released
+     * @param parentContextName the name of the parent context of the job
+     * @param contextName       the name of the context where the job resides
+     * @param contextInstanceId the unique identifier for the specific instance of the context
+     * @param environment       the specific environment from which the lock is to be released
+     * @return true if the lock was successfully released, false otherwise
+     */
+    boolean release(String jobIdentifier, String parentContextName, String contextName
+        , String contextInstanceId, String environment);
 
 
     /**
-     * Checks if a job identified by its identifier, context name, and environment participates in a lock.
+     * Determines whether the specified job participates in a lock within the given context and environment.
      *
-     * @param jobIdentifier the identifier of the job
+     * @param jobIdentifier the identifier of the job to check
+     * @param parentContextName the name of the parent context of the job
      * @param contextName the name of the context where the job resides
-     * @param environment the specific environment where the job is being checked
+     * @param environment the specific environment in which the check is being performed
      * @return true if the job participates in a lock, false otherwise
      */
-    boolean doesJobParticipateInLock(String jobIdentifier, String contextName, String environment);
+    boolean doesJobParticipateInLock(String jobIdentifier, String parentContextName, String contextName, String environment);
 
 
     /**
@@ -66,14 +75,17 @@ public interface JobLockCache extends Serializable {
 
 
     /**
-     * Checks if a specific job identified by its job identifier, context name, and environment has a lock.
+     * Checks whether a specified job currently holds a lock in the given context and environment.
      *
-     * @param jobIdentifier the identifier of the job
-     * @param contextName the name of the context where the job resides
-     * @param environment the specific environment in which the job is being checked for a lock
-     * @return true if the job has a lock, false otherwise
+     * @param jobIdentifier     the identifier of the job to check
+     * @param parentContextName the name of the parent context of the job
+     * @param contextName       the name of the context where the job resides
+     * @param contextInstanceId the unique identifier for the specific instance of the context
+     * @param environment       the specific environment in which to check for the lock
+     * @return true if the job currently holds a lock, false otherwise
      */
-    boolean hasLock(String jobIdentifier, String contextName, String environment);
+    boolean hasLock(String jobIdentifier, String parentContextName, String contextName
+        , String contextInstanceId, String environment);
 
 
     /**
@@ -108,14 +120,17 @@ public interface JobLockCache extends Serializable {
 
 
     /**
-     * Add a queued scheduler job initiation event to the job lock cache.
+     * Adds a queued scheduler job initiation event to the job lock cache for a specific environment.
      *
-     * @param jobIdentifier the identifier of the job
-     * @param contextName the name of the context the job belongs to
-     * @param event the SchedulerJobInitiationEvent containing details of the job
-     * @param environment the specific environment in which the job is initiated
+     * @param jobIdentifier      the identifier of the job for which the initiation event is being queued
+     * @param parentContextName  the name of the parent context associated with the job
+     * @param contextName        the name of the specific context where the job resides
+     * @param contextInstanceId  the unique identifier for the specific instance of the context
+     * @param event              the scheduler job initiation event to be added to the queue
+     * @param environment        the specific environment in which the job initiation event is being queued
      */
-    void addQueuedSchedulerJobInitiationEvent(String jobIdentifier, String contextName, SchedulerJobInitiationEvent event, String environment);
+    void addQueuedSchedulerJobInitiationEvent(String jobIdentifier, String parentContextName
+        , String contextName, String contextInstanceId, SchedulerJobInitiationEvent event, String environment);
 
 
     /**
@@ -128,15 +143,18 @@ public interface JobLockCache extends Serializable {
 
 
     /**
-     * Polls the scheduler job initiation event wait queue for contextualised scheduler job initiation events.
+     * Polls the scheduler job initiation event wait queue for events associated with the specified
+     * job identifier, parent context name, context name, and environment.
      *
-     * @param jobIdentifier the identifier of the job
-     * @param contextName the name of the context the job belongs to
-     * @param environment the specific environment in which the job is initiated
-     * @return a list of ContextualisedSchedulerJobInitiationEvent objects from the wait queue
+     * @param jobIdentifier     the identifier of the job for which events are being polled
+     * @param parentContextName the name of the parent context associated with the job
+     * @param contextName       the name of the specific context where the job resides
+     * @param environment       the specific environment in which the events are being polled
+     * @return a list of {@code ContextualisedSchedulerJobInitiationEvent} objects associated
+     *         with the specified criteria
      */
     List<ContextualisedSchedulerJobInitiationEvent> pollSchedulerJobInitiationEventWaitQueue(String jobIdentifier
-        , String contextName, String environment);
+        , String parentContextName, String contextName, String environment);
 
 
     /**
