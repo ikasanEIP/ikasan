@@ -6,14 +6,16 @@ public interface JobLockCacheManagementService {
 
 
     /**
-     * Releases the lock on a job with the specified job identifier, context name, and environment.
-     * This allows other processes to access and modify the job.
+     * Releases a locked job associated with the provided identifiers and context details.
      *
      * @param jobIdentifier the unique identifier of the job to be released
-     * @param contextName the name of the context to which the job belongs
+     * @param parentContextName the name of the parent context the job belongs to
+     * @param contextName the name of the specific context the job is associated with
+     * @param contextInstanceId the unique identifier of the context instance
      * @param environment the environment in which the job is locked
      */
-    void releaseLockedJob(String jobIdentifier, String contextName, String environment);
+    void releaseLockedJob(String jobIdentifier, String parentContextName, String contextName
+        , String contextInstanceId, String environment);
 
 
     /**

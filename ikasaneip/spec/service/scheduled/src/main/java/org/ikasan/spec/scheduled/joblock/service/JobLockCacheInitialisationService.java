@@ -5,18 +5,22 @@ import org.ikasan.spec.scheduled.context.model.Context;
 public interface JobLockCacheInitialisationService {
 
     /**
-     * Method to initialise the job lock cache for a Context. If isRefresh
-     * flag is true, the underlying job lock cache will be built from the
-     * context. This typically happens when a context is reset or created.
+     * Initializes the job lock cache with the provided configuration.
      *
-     * @param context
-     * @param isRefresh
+     * @param context              The context in which the job lock cache is being initialized.
+     *                              This typically contains environment-specific details.
+     * @param isRefresh            A flag indicating whether the cache should be refreshed.
+     *                              If true, the cache will be updated to reflect the latest state.
+     * @param clearPreviousLocks   A flag indicating whether to clear existing locks in the cache
+     *                              before initialization. If true, any previously stored locks will be removed.
      */
-    void initialiseJobLockCache(Context context, boolean isRefresh);
+    void initialiseJobLockCache(Context context, boolean isRefresh, boolean clearPreviousLocks);
 
     /**
-     * Remove the job locks from the job lock cache for a Context.
-     * @param context
+     * Removes all job locks from the cache.
+     *
+     * @param context The context in which the job locks are being removed. Typically contains
+     *                environmental or session-specific information required for the operation.
      */
     void removeJobLocksFromCache(Context context);
 }

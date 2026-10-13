@@ -64,14 +64,16 @@ public interface JobLockCache extends Serializable {
 
 
     /**
-     * Checks if a job with the given job identifier, context name, and environment is currently locked.
+     * Checks if a job lock that a job belongs to with the given job identifier, parent context name
+     * , context name, and environment is currently locked.
      *
-     * @param jobIdentifier the identifier of the job to check
-     * @param contextName the name of the context where the job resides
-     * @param environment the specific environment in which the job is being checked
-     * @return true if the job is locked, false otherwise
+     * @param jobIdentifier     the identifier of the job to check
+     * @param parentContextName the name of the parent context of the job
+     * @param contextName       the name of the context where the job resides
+     * @param environment       the specific environment in which the lock status is being checked
+     * @return true if the job is currently locked, false otherwise
      */
-    boolean locked(String jobIdentifier, String contextName, String environment);
+    boolean locked(String jobIdentifier, String parentContextName, String contextName, String environment);
 
 
     /**
@@ -110,6 +112,18 @@ public interface JobLockCache extends Serializable {
      * @return true if the lock was successfully reset, false otherwise
      */
     boolean resetLock(String lockName, String environment);
+
+    /**
+     * Resets the specified lock for a given context instance ID, lock name, and environment.
+     * This operation clears any existing state associated with the lock in the provided context instance
+     * and environment.
+     *
+     * @param contextInstanceId the unique identifier of the context instance associated with the lock
+     * @param lockName          the name of the lock to be reset
+     * @param environment       the specific environment where the lock exists
+     * @return true if the lock was successfully reset, false otherwise
+     */
+    boolean resetLock(String contextInstanceId, String lockName, String environment);
 
     /**
      * Set the underlying persistence service.

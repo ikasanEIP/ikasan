@@ -1,6 +1,5 @@
 package org.ikasan.spec.scheduled.context.model;
 
-import org.ikasan.spec.scheduled.job.model.SchedulerJob;
 import org.ikasan.spec.scheduled.job.model.SchedulerJobLockParticipant;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class AbstractJobLockHolder {
 
-    protected final Map<String, List<SchedulerJobLockParticipant>> schedulerJobs = new ConcurrentHashMap<>();
+    protected Map<String, List<SchedulerJobLockParticipant>> schedulerJobs = new ConcurrentHashMap<>();
 
     /**
      * Add scheduler jobs to the map of scheduler jobs.
@@ -47,5 +46,28 @@ public class AbstractJobLockHolder {
 
         this.schedulerJobs.clear();
         this.schedulerJobs.putAll(newJobLockMap);
+    }
+
+    /**
+     * Retrieves the current map of scheduler jobs, where each entry maps a context name to a list of
+     * {@code SchedulerJobLockParticipant} instances associated with that context.
+     *
+     * @return a map containing context names as keys and their corresponding lists of
+     * {@code SchedulerJobLockParticipant} instances as values
+     */
+    public Map<String, List<SchedulerJobLockParticipant>> getSchedulerJobs() {
+        return schedulerJobs;
+    }
+
+    /**
+     * Sets the scheduler jobs to a map that associates context names with their corresponding lists
+     * of {@code SchedulerJobLockParticipant} instances.
+     *
+     * @param schedulerJobs a map where the key is a string representing the context name, and the
+     *                      value is a list of {@code SchedulerJobLockParticipant} instances associated
+     *                      with that context
+     */
+    public void setSchedulerJobs(Map<String, List<SchedulerJobLockParticipant>> schedulerJobs) {
+        this.schedulerJobs = schedulerJobs;
     }
 }
