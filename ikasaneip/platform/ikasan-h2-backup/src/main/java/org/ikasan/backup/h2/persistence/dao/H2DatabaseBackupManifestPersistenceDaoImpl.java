@@ -95,7 +95,7 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
     public void save(H2DatabaseBackupManifest h2DatabaseBackupManifest)
     {
         this.createPersistenceDir();
-        String path = getVersionFilePath();
+        String path = getManifestFilePath();
 
         try(FileOutputStream output = new FileOutputStream(path)) {
             objectMapper.writeValue(output, h2DatabaseBackupManifest);
@@ -108,12 +108,16 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
     @Override
     public H2DatabaseBackupManifest find() {
         this.createPersistenceDir();
-        String path = getVersionFilePath();
+        String path = getManifestFilePath();
         try (FileInputStream input = new FileInputStream(path)) {
             return this.objectMapper.readValue(input, H2DatabaseBackupManifest.class);
         }
         catch(IOException e) {
             logger.debug("Backup manifest file [" + path + "] not found");
+            return null;
+        }
+        catch(Exception e) {
+            logger.debug("A general error has occurred reading H2 backup manifest file [" + path + "]!", e);
             return null;
         }
     }
@@ -122,7 +126,7 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
     public void delete() {
         this.createPersistenceDir();
         if(this.find() == null) return;
-        String path = getVersionFilePath();
+        String path = getManifestFilePath();
         try {
             Files.delete(Path.of(path));
         }
@@ -137,7 +141,7 @@ public class H2DatabaseBackupManifestPersistenceDaoImpl implements H2DatabaseBac
      *
      * @return the absolute path to the version file as a String
      */
-    protected String getVersionFilePath() {
+    protected String getManifestFilePath() {
         return persistenceDir + FileSystems.getDefault().getSeparator() + this.manifestFileName;
     }
 

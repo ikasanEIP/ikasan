@@ -1,7 +1,5 @@
 package org.ikasan.backup.h2.persistence.service;
 
-import org.ikasan.backup.h2.persistence.dao.H2DatabaseBackupManifestPersistenceDao;
-import org.ikasan.backup.h2.persistence.dao.H2DatabaseBackupManifestPersistenceDaoImpl;
 import org.ikasan.backup.h2.persistence.model.H2DatabaseBackupManifest;
 import org.junit.Assert;
 import org.junit.Before;
@@ -73,10 +71,36 @@ public class H2DatabaseBackupManifestServiceImplTest {
         Assert.assertNull(found);
     }
 
+    @Test
+    public void test_find_with_empty_manifest_file() throws Exception {
+        H2DatabaseBackupManifestService h2DatabaseBackupManifestService
+                = H2DatabaseBackupManifestService.instance(PERSISTENCE_DIR, "ESB");
+
+        // Create the persistence directory
+        Path directoryPath = Paths.get(PERSISTENCE_DIR);
+        File directory = directoryPath.toFile();
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+
+        // Create an empty manifest file
+        File emptyManifestFile = new File(PERSISTENCE_DIR + "/manifest/ESB_h2_database_backup.mf");
+        emptyManifestFile.createNewFile();
+
+        // Verify the file exists and is empty
+        Assert.assertTrue(emptyManifestFile.exists());
+        Assert.assertEquals(0, emptyManifestFile.length());
+
+        // When finding a manifest from an empty file, should return null
+        H2DatabaseBackupManifest found = h2DatabaseBackupManifestService.find();
+
+        Assert.assertNull(found);
+    }
+
 
     // Helper method to delete all files between tests to provide isolation
     private void deleteFilesInDirectory() {
-        Path directoryPath = Paths.get(PERSISTENCE_DIR);
+        Path directoryPath = Paths.get(PERSISTENCE_DIR+"/manifest");
         File directory = directoryPath.toFile();
         if (directory.exists()) {
             for (File file : directory.listFiles()) {
