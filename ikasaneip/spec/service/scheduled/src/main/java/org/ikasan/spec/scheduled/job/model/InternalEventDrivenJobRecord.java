@@ -150,6 +150,19 @@ public interface InternalEventDrivenJobRecord {
     void setSkipped(boolean skipped);
 
     /**
+     * Checks if the job is disabled.
+     *
+     **/
+    boolean isDisabled();
+
+    /**
+     * Sets the disabled state for the job.
+     *
+     * @param disabled true to disable the job, false to enable it
+     */
+    void setDisabled(boolean disabled);
+
+    /**
      * Sets the flag to indicate that the job should only run in the context that it resides within.
      *
      * @param targetResidingContextOnly true to indicate that the job should only run in the residing context,

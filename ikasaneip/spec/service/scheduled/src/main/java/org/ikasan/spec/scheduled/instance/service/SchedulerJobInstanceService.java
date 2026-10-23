@@ -145,27 +145,45 @@ public interface SchedulerJobInstanceService {
     Map<String, InternalEventDrivenJobInstance> getCommandExecutionJobsForContextInstanceChildContext(String contextInstanceId);
 
     /**
-     * Hold all jobs within a context instance.
+     * Places all scheduler job instances within the specified context and child context on hold.
      *
-     * @param contextInstance
-     * @param childContextName
-     * @return
+     * @param contextInstance the context instance containing the jobs to be held
+     * @param childContextName the name of the child context within the main context instance where jobs should be held
+     * @return a list of {@link SchedulerJobInstanceRecord} representing the jobs that have been successfully placed on hold
      */
     List<SchedulerJobInstanceRecord> holdJobsWithinContext(ContextInstance contextInstance, String childContextName);
 
     /**
-     * Release all jobs withing a context instance.
+     * Retrieves a list of job instances within the specified context that are eligible to be released.
      *
-     * @param contextInstance
-     * @param childContextName
-     * @return
+     * @param contextInstance the context instance for which the jobs should be retrieved
+     * @param childContextName the name of the child context within the main context instance
+     * @return a list of {@link SchedulerJobInstanceRecord} representing the jobs to be released within the given context
      */
     List<SchedulerJobInstanceRecord> getJobsToReleaseWithinContext(ContextInstance contextInstance, String childContextName);
 
     /**
-     * Delete all scheduler job instances for a context instance.
+     * Disables all scheduler job instances within the specified context and child context.
      *
-     * @param contextInstanceId
+     * @param contextInstance the context instance containing the jobs to be disabled
+     * @param childContextName the name of the child context within the main context instance where jobs should be disabled
+     * @return a list of {@link SchedulerJobInstanceRecord} representing the jobs that have been successfully disabled
+     */
+    List<SchedulerJobInstanceRecord> disableJobsWithinContext(ContextInstance contextInstance, String childContextName);
+
+    /**
+     * Retrieves a list of job instances within the specified context that are eligible to be enabled.
+     *
+     * @param contextInstance the context instance containing the jobs to be enabled
+     * @param childContextName the name of the child context within the main context instance where jobs should be enabled
+     * @return a list of {@link SchedulerJobInstanceRecord} representing the jobs to be enabled within the given context
+     */
+    List<SchedulerJobInstanceRecord> getJobsToEnableWithinContext(ContextInstance contextInstance, String childContextName);
+
+    /**
+     * Deletes all scheduler job instances associated with the specified context instance.
+     *
+     * @param contextInstanceId the unique identifier of the context instance whose scheduler job instances are to be deleted
      */
     void deleteSchedulerJobInstances(String contextInstanceId);
 }

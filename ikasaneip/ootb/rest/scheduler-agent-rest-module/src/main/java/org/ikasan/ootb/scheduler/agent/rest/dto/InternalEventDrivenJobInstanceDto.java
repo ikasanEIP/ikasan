@@ -31,6 +31,7 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     private String childContextName;
     private boolean held = false;
     private boolean skip = false;
+    private boolean disabled = false;
     private boolean initiationEventRaised = false;
     private InstanceStatus status;
     private ScheduledProcessEvent scheduledProcessEvent;
@@ -39,6 +40,7 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     private String executionEnvironmentProperties;
     private Map<String, Boolean> skippedContexts;
     private Map<String, Boolean> heldContexts;
+    private Map<String, Boolean> disabledContexts;
     private boolean jobRepeatable;
     private boolean killed;
     private int ordinal = -1;
@@ -242,6 +244,16 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     }
 
     @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
+
+    @Override
     public boolean isInitiationEventRaised() {
         return initiationEventRaised;
     }
@@ -309,6 +321,16 @@ public class InternalEventDrivenJobInstanceDto implements InternalEventDrivenJob
     @Override
     public void setHeldContexts(Map<String, Boolean> heldContexts) {
         this.heldContexts = heldContexts;
+    }
+
+    @Override
+    public Map<String, Boolean> getDisabledContexts() {
+        return disabledContexts;
+    }
+
+    @Override
+    public void setDisabledContexts(Map<String, Boolean> disabledContexts) {
+        this.disabledContexts = disabledContexts;
     }
 
     @Override

@@ -106,6 +106,20 @@ public interface SchedulerJobInstance extends SchedulerJob, StatefulEntity, Seri
     void setSkip(boolean skip);
 
     /**
+     * Checks whether the SchedulerJobInstance is disabled.
+     *
+     * @return true if the job instance is disabled, false otherwise.
+     */
+    boolean isDisabled();
+
+    /**
+     * Sets whether the SchedulerJobInstance is disabled.
+     *
+     * @param held true if the SchedulerJobInstance should be disabled, false otherwise
+     */
+    void setDisabled(boolean held);
+
+    /**
      * Sets the error acknowledged flag for the SchedulerJobInstance.
      *
      * @param errorAcknowledged true if the error is acknowledged; false otherwise.
