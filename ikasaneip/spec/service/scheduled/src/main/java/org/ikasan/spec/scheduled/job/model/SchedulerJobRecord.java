@@ -88,6 +88,13 @@ public interface SchedulerJobRecord<T extends SchedulerJob> {
     boolean isSkipped();
 
     /**
+     * Checks if the SchedulerJobRecord is disabled.
+     *
+     * @return true if the SchedulerJobRecord is disabled, false otherwise.
+     */
+    boolean isDisabled();
+
+    /**
      * Checks if the current SchedulerJobRecord participates in a lock.
      *
      * @return {@code true} if the SchedulerJobRecord participates in a lock, {@code false} otherwise.

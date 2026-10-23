@@ -10,6 +10,7 @@ public class SchedulerJobInstanceImpl extends SchedulerJobImpl implements Schedu
     private String ChildContextName;
     private boolean held = false;
     private boolean skip = false;
+    private boolean disabled = false;
     private boolean initiationEventRaised = false;
     private InstanceStatus status;
     private ScheduledProcessEvent scheduledProcessEvent;
@@ -57,6 +58,16 @@ public class SchedulerJobInstanceImpl extends SchedulerJobImpl implements Schedu
     @Override
     public void setSkip(boolean skip) {
         this.skip = skip;
+    }
+
+    @Override
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    @Override
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
     }
 
     @Override

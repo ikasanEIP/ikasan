@@ -146,6 +146,29 @@ public interface SchedulerJob extends Serializable {
      */
     Map<String, Boolean> getHeldContexts();
 
+    /**
+     * Sets a map of contexts in which this job is disabled.
+     * Each context in the map is identified by a unique string key,
+     * and the value indicates whether the job is disabled in that context.
+     *
+     * @param heldContexts a map where the key represents the context identifier
+     *                     and the value indicates if the job is disabled
+     *                     (true for disabled, false for not disabled)
+     */
+    void setDisabledContexts(Map<String, Boolean> heldContexts);
+
+    /**
+     * Retrieves a map of contexts in which this job is disabled.
+     * Each context in the map is identified by a unique string key,
+     * and the corresponding value indicates whether the job is
+     * disabled in that specific context.
+     *
+     * @return a map where the key represents the context identifier
+     * and the value is a boolean indicating if the job is disabled
+     * (true for disabled, false for not disabled) in that context
+     */
+    Map<String, Boolean> getDisabledContexts();
+
     @JsonIgnore
     default String getAggregateJobName() {
         return this.getJobName() + "_" + this.getContextName();

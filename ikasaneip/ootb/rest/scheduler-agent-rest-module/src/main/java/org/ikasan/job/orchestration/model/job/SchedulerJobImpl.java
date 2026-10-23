@@ -17,6 +17,7 @@ public class SchedulerJobImpl implements SchedulerJob {
     protected String startupControlType = "AUTOMATIC";
     protected Map<String, Boolean> skippedContexts;
     protected Map<String, Boolean> heldContexts;
+    protected Map<String, Boolean> disabledContexts;
     private int ordinal = -1;
     protected Boolean templateJob;
     protected Boolean templateBased;
@@ -120,6 +121,16 @@ public class SchedulerJobImpl implements SchedulerJob {
     @Override
     public void setHeldContexts(Map<String, Boolean> heldContexts) {
         this.heldContexts = heldContexts;
+    }
+
+    @Override
+    public Map<String, Boolean> getDisabledContexts() {
+        return disabledContexts;
+    }
+
+    @Override
+    public void setDisabledContexts(Map<String, Boolean> disabledContexts) {
+        this.disabledContexts = disabledContexts;
     }
 
     @Override

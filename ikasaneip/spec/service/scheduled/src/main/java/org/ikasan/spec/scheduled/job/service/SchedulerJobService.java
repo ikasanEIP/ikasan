@@ -332,6 +332,23 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
     void release(T jobRecord, String actor);
 
     /**
+     * Disables the specified job record and its associated child contexts.
+     *
+     * @param jobRecord          The job record to be disabled.
+     * @param childContextNames  A list of names of child contexts associated with the job record that need to be disabled.
+     * @param actor              The identifier of the actor performing the disable operation.
+     */
+    void disable(T jobRecord, List<String> childContextNames, String actor);
+
+    /**
+     * Reinstates a previously disabled job record, enabling it to resume operations.
+     *
+     * @param jobRecord the job record that needs to be reinstated
+     * @param actor the identifier of the individual or system performing the reinstatement
+     */
+    void reinstateDisabled(T jobRecord, String actor);
+
+    /**
      * Release all jobs that are held.
      *
      * @param contextName
@@ -354,6 +371,22 @@ public interface SchedulerJobService<T extends SchedulerJobRecord> {
      * @param actor
      */
     void enableAll(String contextName, String actor);
+
+    /**
+     * Disables all relevant features or functionalities associated with the specified context.
+     *
+     * @param contextName the name of the context to be disabled
+     * @param actor the identifier of the entity or individual initiating the disable action
+     */
+    void disableAll(String contextName, String actor);
+
+    /**
+     * Reinstates all previously disabled entities or features within the specified context.
+     *
+     * @param contextName the name of the context where the disabled entities or features will be reinstated
+     * @param actor the identifier of the entity or user initiating the reinstatement process
+     */
+    void reinstateAllDisabled(String contextName, String actor);
 
     /**
      * Rename the context associated with all jobs.
