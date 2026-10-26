@@ -81,8 +81,8 @@
         <version.org.springboot>${version.org.springboot}</version.org.springboot>
         <version.activemq>${version.activemq}</version.activemq>
         <version.com.h2database>${version.com.h2database}</version.com.h2database>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <dependencyManagement>
