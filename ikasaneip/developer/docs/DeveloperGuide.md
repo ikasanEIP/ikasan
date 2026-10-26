@@ -263,8 +263,8 @@ an Ikasan module.
         <version.ikasan>3.1.0</version.ikasan>
         <version.org.springboot>2.3.4.RELEASE</version.org.springboot>
         <version.com.h2database>1.4.200</version.com.h2database>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <!-- standard Ikasan bill of materials -->
