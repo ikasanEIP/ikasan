@@ -137,6 +137,20 @@ public interface SchedulerJobSearchFilter {
     void setSkipped(boolean skipped);
 
     /**
+     * Checks if the job is disabled.
+     *
+     * @return true if the job is marked as disabled, false otherwise
+     */
+    boolean isDisabled();
+
+    /**
+     * Sets whether the job is marked as disabled.
+     *
+     * @param disabled a boolean indicating if the job should be disabled (true) or enabled (false)
+     */
+    void setDisabled(boolean disabled);
+
+    /**
      * Sets the status of the object.
      *
      * @param status The new status to be set for the object.
