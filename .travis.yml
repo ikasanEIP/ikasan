@@ -29,7 +29,7 @@ jobs:
       script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pci -B -V
     - stage: deploy
       name: "Deploy to OSS"
-      if: branch IN (3.3.x, 4.0.x, 4.1.x, 4.2.x, 5.0.x) OR tag IS present
+      if: branch IN (3.3.x, 4.0.x, 4.1.x, 4.2.x, 5.0.x, 5.1.x) OR tag IS present
       script: skip
       deploy:
         # deploy develop 3.3.x to oss
