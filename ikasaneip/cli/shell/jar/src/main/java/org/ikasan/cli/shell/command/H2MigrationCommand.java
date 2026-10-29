@@ -155,8 +155,10 @@ public class H2MigrationCommand
 
         H2DatabaseMigrationAggregateOperation h2DatabaseMigrationAggregateOperation
             = new H2DatabaseMigrationAggregateOperation(this.h2ScriptJavaCommand, this.h2RunScriptJavaCommand
-                , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version
-                , targetH2Version, h2User != null ? h2User : this.dbMigrationDatabaseUsername, h2Password != null ? h2Password : this.dbMigrationDatabasePassword
+                , this.h2ChangeLogRunScriptJavaCommand, this.determineIfDbFileAlreadyTargetVersionCommand, sourceH2Version, targetH2Version
+                // --h2-User and password has an empty-string default
+                , h2User == null || h2User.isEmpty() ? this.dbMigrationDatabaseUsername : h2User
+                , h2Password == null || h2Password.isEmpty() ? this.dbMigrationDatabasePassword : h2Password
                 , databaseLocation == null || databaseLocation.isEmpty() ? this.modulePersistenceDatabasePath: databaseLocation, this.dbMigrationWorkingDirectory
                 , this.migratedOutputSqlFileName, this.postProcessedOutputSqlFileName, this.persistenceDir, isEsbDatabase, this.forkedProcessTimeout
                 , this.previouslySupportedH2MigrationTargetVersions);
