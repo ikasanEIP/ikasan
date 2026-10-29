@@ -1,5 +1,6 @@
 package org.ikasan.cli.shell;
 
+import com.ulisesbocchio.jasyptspringboot.environment.StandardEncryptableEnvironment;
 import org.ikasan.cli.shell.noninteractive.Command;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
@@ -18,11 +19,19 @@ import java.util.List;
 @CommandScan
 public class IkasanShell
 {
+    static SpringApplication createApplication() {
+        SpringApplication application = new SpringApplication(IkasanShell.class);
+        // Resolve local ENC(...) properties before command beans receive their values,
+        // using the same environment as the scheduler-agent application.
+        application.setEnvironment(new StandardEncryptableEnvironment());
+        return application;
+    }
+
     public static void main(String[] args)
     {
         // deal with any non-interactive commands passed as args
         List<String> scriptArgs = new ArrayList<>();
-        SpringApplication app = new SpringApplication(IkasanShell.class);
+        SpringApplication app = createApplication();
         if(args.length > 0)
         {
             scriptArgs.add( Command.getNonInteractive(args) );

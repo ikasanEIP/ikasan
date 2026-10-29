@@ -177,3 +177,26 @@ Output
 
 
 
+
+### Encrypted configuration properties
+
+The shell uses Jasypt's `StandardEncryptableEnvironment`, matching the scheduler
+agent. Local properties such as `datasource.password=ENC(...)` are decrypted
+before commands receive them, including the automatic `migrate-h2` step during
+`start`. Plaintext properties and already decrypted Config Service values remain
+supported.
+
+Supply the same Jasypt key and encryption settings used by the agent to the shell
+process as well. For password-based encryption, the key can be provided through
+the `JASYPT_ENCRYPTOR_PASSWORD` environment variable. If the agent uses asymmetric
+keys or custom encryption settings, provide those matching settings instead. JVM
+options supplied only through `module.java.command` do not configure the shell JVM.
+An incorrect encryption key causes startup to fail rather than passing an
+unresolved encrypted password to H2.
+
+Omitted or empty `--h2-user` and `--h2-password` options use the resolved datasource
+properties; explicit nonempty options override them. Migration command results and
+failure command descriptions redact `-password` values. The `env` command displays
+resolved property values, including decrypted secrets. H2 tools still receive the
+password as a process argument; existing command parsing does not support passwords
+containing whitespace.
