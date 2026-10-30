@@ -2,8 +2,6 @@ package org.ikasan.cli.shell.operation;
 
 import org.ikasan.cli.shell.command.ProcessUtils;
 import org.ikasan.cli.shell.operation.model.ProcessType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
@@ -42,15 +40,20 @@ public class DefaultForkedExecutableOperationImpl implements ExecutableOperation
                 throw new RuntimeException(String.format("The forked executable process did not complete within the" +
                     " configured timeout of [%s] seconds", this.timeoutSeconds));
             }
-            return String.format("Successfully executed command [%s]", commands.stream().collect(Collectors.joining(" ")));
+            return String.format("Successfully executed command [%s]", getCommand());
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(String.format("An error has occurred processing forked executable operation"), e);
         }
     }
 
+    /**
+     * Returns the command that will be executed, excluding any password information
+     * @return String representation of the command.
+     */
     @Override
     public String getCommand() {
         return commands.stream()
+            .map(command -> command.replaceAll("(-password\\s+)\\S+", "$1[REDACTED]"))
             .collect(Collectors.joining("\r\n"));
     }
 }

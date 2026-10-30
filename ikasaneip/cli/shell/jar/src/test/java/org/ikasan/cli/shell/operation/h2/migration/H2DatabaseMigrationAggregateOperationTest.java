@@ -51,10 +51,10 @@ public class H2DatabaseMigrationAggregateOperationTest {
         Assert.assertNotNull(result);
         Assert.assertTrue(result.startsWith("{\"result\":\"Successfully executed command [java -Dmodule.name=moduleName " +
             "-cp ./src/test/resources/migration/lib/h2-1.4.200.jar org.h2.tools.Script -url jdbc:h2:./target/h2_1_4_200_sample_db/non-esb " +
-            "-user sa -password sa -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process." +
+            "-user sa -password [REDACTED] -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process." +
             " Pre process file [./db-migration/migrated.sql] - Post process file [./db-migration/post-processed-migrated.sql]\\r\\n" +
             "Successfully executed command [java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar org.h2.tools.RunScript -" +
-            "url jdbc:h2:./target/h2_1_4_200_sample_db/non-esb-new -user sa -password sa -script ./db-migration/post-processed-migrated.sql]\\r\\n" +
+            "url jdbc:h2:./target/h2_1_4_200_sample_db/non-esb-new -user sa -password [REDACTED] -script ./db-migration/post-processed-migrated.sql]\\r\\n" +
             "Successfully backed up source database from [./target/h2_1_4_200_sample_db/non-esb.mv.db] to [./target/h2_1_4_200_sample_db/non-esb.mv.db-backup-1.4"));
 
         // We try to run migration second time.
@@ -89,12 +89,12 @@ public class H2DatabaseMigrationAggregateOperationTest {
         Assert.assertNotNull(result);
         Assert.assertTrue(result.startsWith("{\"result\":\"Successfully executed command [java -Dmodule.name=moduleName " +
             "-cp ./src/test/resources/migration/lib/h2-1.4.200.jar org.h2.tools.Script -url jdbc:h2:./target/h2_1_4_200_sample_db/esb " +
-            "-user sa -password sa -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process. Pre " +
+            "-user sa -password [REDACTED] -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process. Pre " +
             "process file [./db-migration/migrated.sql] - Post process file [./db-migration/post-processed-migrated.sql]\\r\\nSuccessfully " +
             "executed command [java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar org.h2.tools.RunScript " +
-            "-url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password sa -script ./db-migration/post-processed-migrated.sql]\\r\\n" +
+            "-url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password [REDACTED] -script ./db-migration/post-processed-migrated.sql]\\r\\n" +
             "Successfully executed command [java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar org.h2.tools.RunScript " +
-            "-url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password sa -script ../sql/migration/liquibase-changelog-contents.sql]" +
+            "-url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password [REDACTED] -script ../sql/migration/liquibase-changelog-contents.sql]" +
             "\\r\\nSuccessfully backed up source database from [./target/h2_1_4_200_sample_db/esb.mv.db] to " +
             "[./target/h2_1_4_200_sample_db/esb.mv.db-backup-1.4"));
 
@@ -130,10 +130,10 @@ public class H2DatabaseMigrationAggregateOperationTest {
         Assert.assertNotNull(result);
         Assert.assertTrue(result.startsWith("{\"result\":\"Successfully executed command [java -Dmodule.name=moduleName " +
             "-cp ./src/test/resources/migration/lib/h2-1.4.200.jar org.h2.tools.Script -url jdbc:h2:./target/h2_1_4_200_sample_db/non-esb " +
-            "-user sa -password sa -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process." +
+            "-user sa -password [REDACTED] -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process." +
             " Pre process file [./db-migration/migrated.sql] - Post process file [./db-migration/post-processed-migrated.sql]\\r\\n" +
             "Successfully executed command [java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar org.h2.tools.RunScript -" +
-            "url jdbc:h2:./target/h2_1_4_200_sample_db/non-esb-new -user sa -password sa -script ./db-migration/post-processed-migrated.sql]\\r\\n" +
+            "url jdbc:h2:./target/h2_1_4_200_sample_db/non-esb-new -user sa -password [REDACTED] -script ./db-migration/post-processed-migrated.sql]\\r\\n" +
             "Successfully backed up source database from [./target/h2_1_4_200_sample_db/non-esb.mv.db] to [./target/h2_1_4_200_sample_db/non-esb.mv.db-backup-1.4"));
 
         // We try to run migration second time.
@@ -165,13 +165,13 @@ public class H2DatabaseMigrationAggregateOperationTest {
         Assert.assertNotNull(result);
         Assert.assertTrue(result.startsWith("{\"result\":\"Successfully executed command [java -Dmodule.name=moduleName " +
             "-cp ./src/test/resources/migration/lib/h2-1.4.200.jar org.h2.tools.Script -url jdbc:h2:./target/h2_1_4_200_sample_db/esb " +
-            "-user sa -password sa -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process. " +
+            "-user sa -password [REDACTED] -script ./db-migration/migrated.sql]\\r\\nSuccessfully perform migration process post process. " +
             "Pre process file [./db-migration/migrated.sql] - Post process file [./db-migration/post-processed-migrated.sql]\\r\\n" +
             "Successfully executed command [java -Dmodule.name=moduleName -cp ./src/test/resources/migration/lib/h2-2.4.240.jar " +
-            "org.h2.tools.RunScript -url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password sa -script " +
+            "org.h2.tools.RunScript -url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password [REDACTED] -script " +
             "./db-migration/post-processed-migrated.sql]\\r\\nSuccessfully executed command [java -Dmodule.name=moduleName -" +
             "cp ./src/test/resources/migration/lib/h2-2.4.240.jar org.h2.tools.RunScript " +
-            "-url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password sa -script " +
+            "-url jdbc:h2:./target/h2_1_4_200_sample_db/esb-new -user sa -password [REDACTED] -script " +
             "../sql/migration/liquibase-changelog-contents.sql]\\r\\nSuccessfully backed up source database from " +
             "[./target/h2_1_4_200_sample_db/esb.mv.db] to [./target/h2_1_4_200_sample_db/esb.mv.db-backup-1.4.200-"));
 
