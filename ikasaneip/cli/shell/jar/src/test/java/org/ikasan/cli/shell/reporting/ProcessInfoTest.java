@@ -48,6 +48,10 @@ import org.json.JSONObject;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 
+import java.util.Optional;
+
+import static org.mockito.Mockito.*;
+
 /**
  * This test class supports the <code>ProcessInfo</code> class.
  * 
@@ -64,6 +68,62 @@ class ProcessInfoTest
             setImposteriser(ByteBuddyClassImposteriser.INSTANCE);
         }
     };
+
+    @Test
+    void processMetadataIsReadFromOneSnapshotWhenProcessExits()
+    {
+        Process process = mock(Process.class);
+        ProcessHandle.Info available = mock(ProcessHandle.Info.class);
+        ProcessHandle.Info exited = mock(ProcessHandle.Info.class);
+        // Reproduce the original race: the second snapshot passes the presence
+        // check, but reading the empty third snapshot used to throw an exception.
+        when(process.info()).thenReturn(available, available, exited);
+        when(process.isAlive()).thenReturn(false);
+        when(process.pid()).thenReturn(12345L);
+        when(available.command()).thenReturn(Optional.of("java"));
+        when(available.user()).thenReturn(Optional.of("test-user"));
+        when(available.commandLine()).thenReturn(Optional.of("java sample-process"));
+        when(exited.command()).thenReturn(Optional.empty());
+        when(exited.user()).thenReturn(Optional.empty());
+        when(exited.commandLine()).thenReturn(Optional.empty());
+
+        ProcessInfo result = new ProcessInfo().setProcess(process);
+
+        Assert.assertFalse(result.isRunning());
+        Assert.assertEquals(Long.valueOf(12345L), result.getPid());
+        Assert.assertEquals("java", result.getCommand());
+        Assert.assertEquals("test-user", result.getUsername());
+        Assert.assertEquals("java sample-process", result.getCommandLine());
+        verify(process, times(1)).info();
+    }
+
+    @Test
+    void missingMetadataPreservesDetailsSuppliedByCaller()
+    {
+        Process process = mock(Process.class);
+        ProcessHandle.Info info = mock(ProcessHandle.Info.class);
+        when(process.info()).thenReturn(info);
+        when(process.isAlive()).thenReturn(false);
+        when(process.pid()).thenReturn(12345L);
+        when(info.command()).thenReturn(Optional.empty());
+        when(info.user()).thenReturn(Optional.empty());
+        when(info.commandLine()).thenReturn(Optional.empty());
+
+        ProcessInfo result = new ProcessInfo();
+        // SolrCommand supplies these before setProcess(); retain them when the
+        // completed stop process no longer exposes command/user information.
+        result.setCommand("kill");
+        result.setUsername("caller-user");
+        result.setCommandLine("kill -9 54321");
+        result.setProcess(process);
+
+        Assert.assertFalse(result.isRunning());
+        Assert.assertEquals(Long.valueOf(12345L), result.getPid());
+        Assert.assertEquals("kill", result.getCommand());
+        Assert.assertEquals("caller-user", result.getUsername());
+        Assert.assertEquals("kill -9 54321", result.getCommandLine());
+        verify(process, times(1)).info();
+    }
 
     @Test
     void successful_new_h2_processInfo()
