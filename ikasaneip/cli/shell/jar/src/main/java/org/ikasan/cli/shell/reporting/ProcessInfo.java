@@ -43,8 +43,6 @@ package org.ikasan.cli.shell.reporting;
 import org.ikasan.cli.shell.operation.model.ProcessType;
 import org.json.JSONObject;
 
-import java.util.Optional;
-
 /**
  * ProcessInfo model.
  *
@@ -160,25 +158,21 @@ public class ProcessInfo
     public ProcessInfo setProcess(Process process)
     {
         this.process = process;
-        if(process != null && process.info() != null)
+        if(process != null)
         {
             this.running = process.isAlive();
             this.pid = process.pid();
 
-            if (process.info().command().isPresent())
+            // Solr's stop command can exit before reporting completes. Repeated info()
+            // calls can then return different snapshots: an Optional present in one
+            // may be empty in the next, causing the intermittent Travis exception.
+            // Read one snapshot and preserve caller-supplied details if metadata is absent.
+            ProcessHandle.Info info = process.info();
+            if(info != null)
             {
-                this.command = process.info().command().get();
-            }
-
-            if (process.info().user().isPresent())
-            {
-                this.username = process.info().user().get();
-            }
-
-            Optional<String> commandLine = process.info().commandLine();
-            if (commandLine.isPresent())
-            {
-                this.commandLine = process.info().commandLine().get();
+                info.command().ifPresent(command -> this.command = command);
+                info.user().ifPresent(user -> this.username = user);
+                info.commandLine().ifPresent(commandLine -> this.commandLine = commandLine);
             }
         }
 
