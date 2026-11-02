@@ -83,6 +83,30 @@ public class DataSharingFlowFactory implements FlowFactory
     WiretapEntityConsumerFlowFactory wiretapEntityConsumerFlowFactory;
 
     @Autowired
+    ErrorEntityProducerFlowFactory errorEntityProducerFlowFactory;
+
+    @Autowired
+    ErrorEntityConsumerFlowFactory errorEntityConsumerFlowFactory;
+
+    @Autowired
+    ExclusionEntityConsumerFlowFactory exclusionEntityConsumerFlowFactory;
+
+    @Autowired
+    ExclusionEntityProducerFlowFactory exclusionEntityProducerFlowFactory;
+
+    @Autowired
+    ReplayEntityConsumerFlowFactory replayEntityConsumerFlowFactory;
+
+    @Autowired
+    ReplayEntityProducerFlowFactory replayEntityProducerFlowFactory;
+
+    @Autowired
+    MetaDataConsumerFlowFactory metadataConsumerFlowFactory;
+
+    @Autowired
+    MetaDataProducerFlowFactory metadataProducerFlowFactory;
+
+    @Autowired
     DataSharingConfiguredModuleConfiguration dataSharingConfiguredModuleConfiguration;
 
     @Override
@@ -105,12 +129,27 @@ public class DataSharingFlowFactory implements FlowFactory
                         continue;
                     }
                     case DataSharingEntity.ERROR_ENTITY: {
+                        this.initialiseDashboardEntityBigQueue(downstreamDashboard, DataSharingEntity.ERROR_ENTITY);
+                        flows.add(this.createErrorEntityConsumerFlow(downstreamDashboard));
+                        flows.add(this.createErrorEntityProducerFlow(downstreamDashboard));
+                        continue;
+                    }
+                    case DataSharingEntity.MODULE_METADATA_ENTITY: {
+                        this.initialiseDashboardEntityBigQueue(downstreamDashboard, DataSharingEntity.MODULE_METADATA_ENTITY);
+                        flows.add(this.metadataConsumerFlowFactory.create(downstreamDashboard));
+                        flows.add(this.metadataProducerFlowFactory.create(downstreamDashboard));
                         continue;
                     }
                     case DataSharingEntity.EXCLUSION_ENTITY: {
+                        this.initialiseDashboardEntityBigQueue(downstreamDashboard, DataSharingEntity.EXCLUSION_ENTITY);
+                        flows.add(this.exclusionEntityConsumerFlowFactory.create(downstreamDashboard));
+                        flows.add(this.exclusionEntityProducerFlowFactory.create(downstreamDashboard));
                         continue;
                     }
                     case DataSharingEntity.REPLAY_ENTITY: {
+                        this.initialiseDashboardEntityBigQueue(downstreamDashboard, DataSharingEntity.REPLAY_ENTITY);
+                        flows.add(this.replayEntityConsumerFlowFactory.create(downstreamDashboard));
+                        flows.add(this.replayEntityProducerFlowFactory.create(downstreamDashboard));
                         continue;
                     }
                     default: {
@@ -176,6 +215,31 @@ public class DataSharingFlowFactory implements FlowFactory
      */
     private Flow createWiretapEntityProducerFlow(String downstreamDashboardName) throws IOException {
         return this.wiretapEntityProducerFlowFactory.create(downstreamDashboardName);
+    }
+    /**
+     * Creates a consumer flow for processing error entity data, configured with a specified
+     * downstream dashboard name.
+     *
+     * @param downstreamDashboardName the name of the downstream dashboard to be used for configuring
+     *                                the consumer flow. Must not be null or empty.
+     * @return a Flow instance representing the configured error entity consumer flow.
+     * @throws IOException if an error occurs while creating the consumer flow.
+     */
+    private Flow createErrorEntityConsumerFlow(String downstreamDashboardName) throws IOException {
+        return this.errorEntityConsumerFlowFactory.create(downstreamDashboardName);
+    }
+
+    /**
+     * Creates a producer flow for handling error entity data, configured with the specified
+     * downstream dashboard name.
+     *
+     * @param downstreamDashboardName the name of the downstream dashboard to be used for configuring
+     *                                the producer flow. Must not be null or empty.
+     * @return a Flow instance representing the configured error entity producer flow.
+     * @throws IOException if an error occurs while creating the producer flow.
+     */
+    private Flow createErrorEntityProducerFlow(String downstreamDashboardName) throws IOException {
+        return this.errorEntityProducerFlowFactory.create(downstreamDashboardName);
     }
 }
 

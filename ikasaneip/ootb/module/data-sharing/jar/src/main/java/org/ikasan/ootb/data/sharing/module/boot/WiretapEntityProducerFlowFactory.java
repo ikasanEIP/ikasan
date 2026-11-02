@@ -70,7 +70,7 @@ import java.io.IOException;
  * - {@link WiretapEntityProducerFlowComponentFactory}: For creating the consumer components.
  * - {@link StartupControlDao}: For managing startup configuration data for flows.
  * - {@code DataSharingConfiguredModuleConfiguration}: For retrieving downstream dashboard configuration.
- * - {@link WiretapProducerFactory}: For getting the wiretap producer component for publishing data.
+ * - {@link WiretapEntityProducerFlowComponentFactory}: For getting the wiretap producer component for publishing data.
  *
  * This factory ensures that each flow is initialized with startup control set to 'AUTOMATIC',
  * making it ready for execution as soon as the application is deployed.
@@ -91,9 +91,6 @@ public class WiretapEntityProducerFlowFactory {
 
     @Autowired
     DataSharingConfiguredModuleConfiguration dataSharingConfiguredModuleConfiguration;
-
-    @Autowired
-    WiretapProducerFactory wiretapProducerFactory;
 
     /**
      * Creates and configures a new flow for processing wiretap entity data and publishing it
@@ -117,7 +114,7 @@ public class WiretapEntityProducerFlowFactory {
             .consumer("Wiretap Entity BigQueue Consumer",
                 componentFactory.bigQueueConsumer(targetDashboardName))
             .producer("Wiretap Entity REST Dashboard Publishing Producer",
-                wiretapProducerFactory.getWiretapProducer(targetDashboardName))
+                componentFactory.getWiretapProducer(targetDashboardName))
             .build();
     }
 }

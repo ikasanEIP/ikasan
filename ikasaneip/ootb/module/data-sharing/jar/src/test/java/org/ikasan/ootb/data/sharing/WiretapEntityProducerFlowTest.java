@@ -63,7 +63,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -100,6 +99,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 @Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class WiretapEntityProducerFlowTest {
 
+    private static final String REST_URL_PATH = "/rest/harvest/wiretaps";
+    private static final String CACHE_NAME = "DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue";
+    private static final String FLOW_NAME = "DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow";
+
     @ClassRule
     public static WireMockRule wireMockRule = new WireMockRule(
         WireMockConfiguration.options().port(9081));
@@ -107,7 +110,7 @@ public class WiretapEntityProducerFlowTest {
     @Autowired
     private Module<Flow> moduleUnderTest;
 
-    private static ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper();
 
     public IkasanFlowTestRule flowTestRule = new IkasanFlowTestRule();
 
@@ -122,34 +125,34 @@ public class WiretapEntityProducerFlowTest {
 
     @Before
     public void setup() throws IOException {
-        EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue").removeAll();
+        EntityBigQueueCache.instance().get(CACHE_NAME).removeAll();
         WireMock.reset();
         wireMockRule.resetAll();
     }
 
     @After
     public void teardown() throws IOException {
-        EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue").removeAll();
+        EntityBigQueueCache.instance().get(CACHE_NAME).removeAll();
     }
 
     @Test
     @DirtiesContext
     public void test_wiretap_produce_single_batch() throws IOException {
         // Setup: Create wiretap events and add to queue
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
-        List<WiretapEvent> events = createWiretapEvents(50, "module1", "flow1");
+        List<WiretapEvent> events = createWiretapEvents(50);
         WiretapEventsToBigQueueMessageSerialiser serialiser = new WiretapEventsToBigQueueMessageSerialiser();
         wiretapQueue.enqueue(serialiser.serialise(events));
 
         // Setup WireMock stub for REST endpoint
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
             .willReturn(aResponse()
                 .withStatus(200)));
 
         // Setup flow test rule
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
         flowTestRule.consumer("Wiretap Entity BigQueue Consumer")
             .producer("Wiretap Entity REST Dashboard Publishing Producer");
 
@@ -160,7 +163,7 @@ public class WiretapEntityProducerFlowTest {
             .untilAsserted(() -> Assert.assertEquals(0, wiretapQueue.size()));
 
         // Verify REST endpoint was called
-        verify(1, putRequestedFor(urlEqualTo("/rest/harvest/wiretaps"))
+        verify(1, putRequestedFor(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE)));
 
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
@@ -173,30 +176,30 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_multiple_batches() throws IOException {
         // Setup: Create multiple batches of wiretap events
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
         WiretapEventsToBigQueueMessageSerialiser serialiser = new WiretapEventsToBigQueueMessageSerialiser();
 
         // Add 3 batches to queue
-        List<WiretapEvent> batch1 = createWiretapEvents(100, "module1", "flow1");
+        List<WiretapEvent> batch1 = createWiretapEvents(100);
         wiretapQueue.enqueue(serialiser.serialise(batch1));
 
-        List<WiretapEvent> batch2 = createWiretapEvents(100, "module2", "flow2");
+        List<WiretapEvent> batch2 = createWiretapEvents(100);
         wiretapQueue.enqueue(serialiser.serialise(batch2));
 
-        List<WiretapEvent> batch3 = createWiretapEvents(50, "module3", "flow3");
+        List<WiretapEvent> batch3 = createWiretapEvents(50);
         wiretapQueue.enqueue(serialiser.serialise(batch3));
 
         assertEquals(3, wiretapQueue.size());
 
         // Setup WireMock stub for REST endpoint
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withBody("{\"success\": true}")));
 
         // Setup flow test rule
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
         flowTestRule.consumer("Wiretap Entity BigQueue Consumer")
             .producer("Wiretap Entity REST Dashboard Publishing Producer")
             .consumer("Wiretap Entity BigQueue Consumer")
@@ -211,7 +214,7 @@ public class WiretapEntityProducerFlowTest {
             .untilAsserted(() -> Assert.assertEquals(0, wiretapQueue.size()));
 
         // Verify REST endpoint was called 3 times
-        verify(3, putRequestedFor(urlEqualTo("/rest/harvest/wiretaps"))
+        verify(3, putRequestedFor(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE)));
 
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
@@ -224,11 +227,11 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_empty_queue() throws IOException, InterruptedException {
         // Setup: Empty queue
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
         assertEquals(0, wiretapQueue.size());
 
         // Setup flow test rule
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
 
         flowTestRule.startFlow();
 
@@ -236,7 +239,7 @@ public class WiretapEntityProducerFlowTest {
         Thread.sleep(2000);
 
         // Verify no REST calls were made
-        verify(0, putRequestedFor(urlEqualTo("/rest/harvest/wiretaps")));
+        verify(0, putRequestedFor(urlEqualTo(REST_URL_PATH)));
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
@@ -247,14 +250,14 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_with_rest_error_and_retry() throws IOException {
         // Setup: Create wiretap events
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
-        List<WiretapEvent> events = createWiretapEvents(50, "module1", "flow1");
+        List<WiretapEvent> events = createWiretapEvents(50);
         WiretapEventsToBigQueueMessageSerialiser serialiser = new WiretapEventsToBigQueueMessageSerialiser();
         wiretapQueue.enqueue(serialiser.serialise(events));
 
         // Setup WireMock stub to fail first, then succeed
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .inScenario("Retry Scenario")
             .whenScenarioStateIs("Started")
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
@@ -263,7 +266,7 @@ public class WiretapEntityProducerFlowTest {
                 .withBody("{\"error\": \"Internal Server Error\"}"))
             .willSetStateTo("Failed Once"));
 
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .inScenario("Retry Scenario")
             .whenScenarioStateIs("Failed Once")
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
@@ -273,7 +276,7 @@ public class WiretapEntityProducerFlowTest {
             .willSetStateTo("Succeeded"));
 
         // Setup flow test rule - error handling should retry
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
         flowTestRule.consumer("Wiretap Entity BigQueue Consumer")
             .producer("Wiretap Entity REST Dashboard Publishing Producer")
             .consumer("Wiretap Entity BigQueue Consumer")
@@ -286,7 +289,7 @@ public class WiretapEntityProducerFlowTest {
             .untilAsserted(() -> Assert.assertEquals(0, wiretapQueue.size()));
 
         // Verify REST endpoint was called at least twice (fail + retry)
-        verify(moreThan(1), putRequestedFor(urlEqualTo("/rest/harvest/wiretaps"))
+        verify(moreThan(1), putRequestedFor(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE)));
 
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
@@ -299,21 +302,21 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_large_batch() throws IOException {
         // Setup: Create a large batch of wiretap events
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
-        List<WiretapEvent> events = createWiretapEvents(500, "module1", "flow1");
+        List<WiretapEvent> events = createWiretapEvents(500);
         WiretapEventsToBigQueueMessageSerialiser serialiser = new WiretapEventsToBigQueueMessageSerialiser();
         wiretapQueue.enqueue(serialiser.serialise(events));
 
         // Setup WireMock stub
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withBody("{\"success\": true}")));
 
         // Setup flow test rule
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
         flowTestRule.consumer("Wiretap Entity BigQueue Consumer")
             .producer("Wiretap Entity REST Dashboard Publishing Producer");
 
@@ -324,10 +327,10 @@ public class WiretapEntityProducerFlowTest {
             .untilAsserted(() -> Assert.assertEquals(0, wiretapQueue.size()));
 
         // Verify REST endpoint was called
-        verify(1, putRequestedFor(urlEqualTo("/rest/harvest/wiretaps")));
+        verify(1, putRequestedFor(urlEqualTo(REST_URL_PATH)));
 
         // Verify payload size
-        List<LoggedRequest> requests = findAll(putRequestedFor(urlEqualTo("/rest/harvest/wiretaps")));
+        List<LoggedRequest> requests = findAll(putRequestedFor(urlEqualTo(REST_URL_PATH)));
         Assert.assertEquals(1, requests.size());
 
         String requestBody = requests.get(0).getBodyAsString();
@@ -344,7 +347,7 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_flow_lifecycle() throws IOException {
         // Test flow can be started, stopped, and restarted
-        Flow flow = moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow");
+        Flow flow = moduleUnderTest.getFlow(FLOW_NAME);
 
         // Start flow
         flow.start();
@@ -367,26 +370,26 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_different_modules() throws IOException {
         // Setup: Create events from different modules
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
         WiretapEventsToBigQueueMessageSerialiser serialiser = new WiretapEventsToBigQueueMessageSerialiser();
 
         // Mix of different modules and flows
         List<WiretapEvent> events = new ArrayList<>();
-        events.addAll(createWiretapEvents(20, "orderModule", "orderFlow"));
-        events.addAll(createWiretapEvents(30, "customerModule", "customerFlow"));
-        events.addAll(createWiretapEvents(25, "inventoryModule", "inventoryFlow"));
+        events.addAll(createWiretapEvents(20));
+        events.addAll(createWiretapEvents(30));
+        events.addAll(createWiretapEvents(25));
 
         wiretapQueue.enqueue(serialiser.serialise(events));
 
         // Setup WireMock stub
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withBody("{\"success\": true}")));
 
         // Setup flow test rule
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
         flowTestRule.consumer("Wiretap Entity BigQueue Consumer")
             .producer("Wiretap Entity REST Dashboard Publishing Producer");
 
@@ -397,7 +400,7 @@ public class WiretapEntityProducerFlowTest {
             .untilAsserted(() -> Assert.assertEquals(0, wiretapQueue.size()));
 
         // Verify REST endpoint was called
-        verify(1, putRequestedFor(urlEqualTo("/rest/harvest/wiretaps")));
+        verify(1, putRequestedFor(urlEqualTo(REST_URL_PATH)));
 
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> flowTestRule.assertIsSatisfied());
@@ -409,26 +412,26 @@ public class WiretapEntityProducerFlowTest {
     @DirtiesContext
     public void test_wiretap_produce_queue_persistence() throws IOException {
         // Setup: Add events to queue
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
         WiretapEventsToBigQueueMessageSerialiser serialiser = new WiretapEventsToBigQueueMessageSerialiser();
 
-        List<WiretapEvent> batch1 = createWiretapEvents(50, "module1", "flow1");
+        List<WiretapEvent> batch1 = createWiretapEvents(50);
         wiretapQueue.enqueue(serialiser.serialise(batch1));
 
-        List<WiretapEvent> batch2 = createWiretapEvents(50, "module2", "flow2");
+        List<WiretapEvent> batch2 = createWiretapEvents(50);
         wiretapQueue.enqueue(serialiser.serialise(batch2));
 
         assertEquals(2, wiretapQueue.size());
 
         // Setup WireMock stub for first batch only
-        stubFor(put(urlEqualTo("/rest/harvest/wiretaps"))
+        stubFor(put(urlEqualTo(REST_URL_PATH))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON_VALUE))
             .willReturn(aResponse()
                 .withStatus(200)
                 .withBody("{\"success\": true}")));
 
         // Start flow and process first batch
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Producer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
         flowTestRule.consumer("Wiretap Entity BigQueue Consumer")
             .producer("Wiretap Entity REST Dashboard Publishing Producer")
             .consumer("Wiretap Entity BigQueue Consumer")
@@ -452,14 +455,14 @@ public class WiretapEntityProducerFlowTest {
     /**
      * Helper method to create test WiretapEvent objects
      */
-    private List<WiretapEvent> createWiretapEvents(int count, String moduleName, String flowName) {
+    private List<WiretapEvent> createWiretapEvents(int count) {
         List<WiretapEvent> events = new ArrayList<>();
         long baseTimestamp = System.currentTimeMillis();
         for (int i = 0; i < count; i++) {
             WiretapEventImpl event = new WiretapEventImpl();
             event.setId("event-" + i);
-            event.setModuleName(moduleName);
-            event.setFlowName(flowName);
+            event.setModuleName("module" + (i % 10));
+            event.setFlowName("flow" + (i % 5));
             event.setComponentName("component" + (i % 5));
             event.setEvent("payload-" + i);
             event.setTimestamp(baseTimestamp + i);

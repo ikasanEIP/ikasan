@@ -1,6 +1,7 @@
 package org.ikasan.ootb.data.sharing.module;
 
 public class DataSharingEntity {
+    public static final String MODULE_METADATA_ENTITY = "MODULE_METADATA";
     public static final String WIRETAP_ENTITY = "WIRETAP";
     public static final String ERROR_ENTITY = "ERROR";
     public static final String EXCLUSION_ENTITY = "EXCLUSION";
