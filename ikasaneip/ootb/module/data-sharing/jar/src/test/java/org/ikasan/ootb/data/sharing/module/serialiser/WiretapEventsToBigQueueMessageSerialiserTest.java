@@ -314,7 +314,7 @@ public class WiretapEventsToBigQueueMessageSerialiserTest {
         assertEquals(499L, deserialized.get(499).getIdentifier());  // "event-499" parses to 499
     }
 
-
+    @Test(expected = RuntimeException.class)
     public void test_serialise_null_list_throws_exception() {
         serialiser.serialise(null);
     }

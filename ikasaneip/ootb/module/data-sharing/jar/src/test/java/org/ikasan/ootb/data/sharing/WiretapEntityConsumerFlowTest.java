@@ -65,7 +65,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -95,6 +94,10 @@ import static org.springframework.test.context.jdbc.Sql.ExecutionPhase.AFTER_TES
 @Sql(scripts = {"/cleanDatabaseTables.sql"}, executionPhase = AFTER_TEST_METHOD)
 public class WiretapEntityConsumerFlowTest {
 
+    private static final String REST_URL_PATH = "/rest/data-sharing/wiretap";
+    private static final String CACHE_NAME = "DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue";
+    private static final String FLOW_NAME = "DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Consumer Flow";
+
     @ClassRule
     public static WireMockRule wireMockRule = new WireMockRule(
         WireMockConfiguration.options().port(9080));
@@ -120,7 +123,7 @@ public class WiretapEntityConsumerFlowTest {
 
     @Before
     public void setup() throws IOException {
-        EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue").removeAll();
+        EntityBigQueueCache.instance().get(CACHE_NAME).removeAll();
         WireMock.reset();
     }
 
@@ -143,7 +146,7 @@ public class WiretapEntityConsumerFlowTest {
 
         this.createQueryStub(36, 36, 100000, 200000, 100, 0);
 
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Consumer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
 
         flowTestRule.consumer("Wiretap Entity Scheduled Consumer")
             .producer("Wiretap Entity Big Queue Producer")
@@ -159,7 +162,7 @@ public class WiretapEntityConsumerFlowTest {
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
         Awaitility.await().atMost(30, TimeUnit.SECONDS)
             .untilAsserted(() -> Assert.assertEquals(3, wiretapQueue.size()));
@@ -222,7 +225,7 @@ public class WiretapEntityConsumerFlowTest {
 
         this.createQueryStub(36, 36, 100000, 200000, 100, 0);
 
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Consumer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
 
         flowTestRule.consumer("Wiretap Entity Scheduled Consumer")
             .producer("Wiretap Entity Big Queue Producer")
@@ -236,7 +239,7 @@ public class WiretapEntityConsumerFlowTest {
 
         assertEquals(Flow.RUNNING, flowTestRule.getFlowState());
 
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
         Awaitility.await().atMost(3000000, TimeUnit.SECONDS)
             .untilAsserted(() -> Assert.assertEquals(3, wiretapQueue.size()));
@@ -300,11 +303,11 @@ public class WiretapEntityConsumerFlowTest {
     @Test
     @DirtiesContext
     public void test_wiretap_consume_with_service_error_bad_data_and_retry() throws Exception {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Consumer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
 
         // Create stubs for a scenario where we have 250 events requiring paging
         // First count query returns 250
-        stubFor(get(urlMatching("/rest/data-sharing/wiretap/count\\?fromTimestamp=0&toTimestamp=100000.*"))
+        stubFor(get(urlMatching(REST_URL_PATH + "/count\\?fromTimestamp=0&toTimestamp=100000.*"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -313,7 +316,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
         // First page: 100 events - will succeed
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=0&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=0&moduleNames=module1&moduleNames=module2"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -322,7 +325,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
         // Second page: 100 events - will be queried twice (once with error, once successfully)
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
             .inScenario("Retry Scenario")
             .whenScenarioStateIs(Scenario.STARTED)
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
@@ -333,7 +336,7 @@ public class WiretapEntityConsumerFlowTest {
             )
             .willSetStateTo("Success State"));
 
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
             .inScenario("Retry Scenario")
             .whenScenarioStateIs("Success State")
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
@@ -344,7 +347,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
         // Third page: 50 events
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=200&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=200&moduleNames=module1&moduleNames=module2"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -353,7 +356,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
 
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
         // Set up expectations: first attempt fails on second page, retry succeeds
         flowTestRule.consumer("Wiretap Entity Scheduled Consumer")
@@ -414,11 +417,11 @@ public class WiretapEntityConsumerFlowTest {
     @Test
     @DirtiesContext
     public void test_wiretap_consume_with_service_http_error_and_retry() throws Exception {
-        flowTestRule.withFlow(moduleUnderTest.getFlow("DASHBOARD_1 Ikasan ESB Dashboard Wiretap Entity Consumer Flow"));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
 
         // Create stubs for a scenario where we have 250 events requiring paging
         // First count query returns 250
-        stubFor(get(urlMatching("/rest/data-sharing/wiretap/count\\?fromTimestamp=0&toTimestamp=100000.*"))
+        stubFor(get(urlMatching(REST_URL_PATH + "/count\\?fromTimestamp=0&toTimestamp=100000.*"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -427,7 +430,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
         // First page: 100 events - will succeed
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=0&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=0&moduleNames=module1&moduleNames=module2"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -436,7 +439,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
         // Second page: 100 events - will be queried twice (once with error, once successfully)
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
             .inScenario("Retry Scenario")
             .whenScenarioStateIs(Scenario.STARTED)
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
@@ -446,7 +449,7 @@ public class WiretapEntityConsumerFlowTest {
             )
             .willSetStateTo("Success State"));
 
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=100&moduleNames=module1&moduleNames=module2"))
             .inScenario("Retry Scenario")
             .whenScenarioStateIs("Success State")
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
@@ -457,7 +460,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
         // Third page: 50 events
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp=0&toTimestamp=100000&limit=100&offset=200&moduleNames=module1&moduleNames=module2"))
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp=0&toTimestamp=100000&limit=100&offset=200&moduleNames=module1&moduleNames=module2"))
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
@@ -466,7 +469,7 @@ public class WiretapEntityConsumerFlowTest {
             ));
 
 
-        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get("DASHBOARD_1-Ikasan-ESB-Dashboard-WIRETAP-queue");
+        IBigQueue wiretapQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
 
         // Set up expectations: first attempt fails on second page, retry succeeds
         flowTestRule.consumer("Wiretap Entity Scheduled Consumer")
@@ -533,7 +536,7 @@ public class WiretapEntityConsumerFlowTest {
      * @throws IOException if an error occurs while creating the stub
      */
     private void createCountStub(int count, long from , long to) throws IOException {
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap/count?fromTimestamp="+from+"&toTimestamp="+to+"&" +
+        stubFor(get(urlEqualTo(REST_URL_PATH + "/count?fromTimestamp="+from+"&toTimestamp="+to+"&" +
                 "moduleNames=module1&moduleNames=module2"))
                 .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
                 .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
@@ -556,7 +559,7 @@ public class WiretapEntityConsumerFlowTest {
      * @throws IOException if an error occurs during the creation of the stub
      */
     private void createQueryStub(int resultSize, int totalCount, long from , long to, int limit, int offset) throws IOException {
-        stubFor(get(urlEqualTo("/rest/data-sharing/wiretap?fromTimestamp="+from+"&toTimestamp="+to+"&" +
+        stubFor(get(urlEqualTo(REST_URL_PATH + "?fromTimestamp="+from+"&toTimestamp="+to+"&" +
                 "limit="+limit+"&offset="+offset+"&moduleNames=module1&moduleNames=module2"))
                 .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
                 .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))

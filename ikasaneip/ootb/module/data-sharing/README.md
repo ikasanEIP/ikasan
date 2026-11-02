@@ -722,7 +722,7 @@ Flows are dynamically named following this pattern:
 | `WIRETAP` | Flow component wiretap events | ✅ Implemented |
 | `ERROR` | Flow error occurrences | 🚧 Planned |
 | `EXCLUSION` | Flow exclusion events | 🚧 Planned |
-| `REPLAY` | Replay events | 🚧 Planned |
+| `REPLAY` | Replay events | ✅ Implemented |
 | `MODULE` | Module metadata | 🚧 Planned |
 | `CONFIGURATION` | Configuration metadata | 🚧 Planned |
 
@@ -962,14 +962,134 @@ logging.level.org.ikasan.ootb.data.sharing=DEBUG
 - Check network latency to dashboards
 - Review database query performance on upstream
 
+## Error extraction windows and checkpoints
+
+These settings belong to the **Error Entity Scheduled Consumer** configuration. They
+apply only to error sharing; the wiretap provider is unchanged.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| `queryTimestamp` | `-1` | Next window start, in epoch milliseconds. `-1` initializes once from the lookback; any nonnegative value, including a saved `0`, is preserved. |
+| `initialLookbackMilliseconds` | `86400000` (one day) | Initial history to request before the safety cutoff. This is a configurable starting policy, not an inferred dashboard retention period. |
+| `safetyLagMilliseconds` | `60000` (one minute) | Delay between current time and the latest eligible window end. Choose according to dashboard indexing latency and clock differences. |
+| `queryWindowMilliseconds` | `100000` | Positive logical window duration. |
+| `batchSize` | `100` | Positive number of records per request. |
+
+A new consumer saves `max(0, now - safetyLagMilliseconds - initialLookbackMilliseconds)`
+before its first query. Restarts use the saved checkpoint; they do not recalculate the
+lookback. Configure an explicit start if more history is required. Existing persisted
+checkpoints at zero are not silently moved forward; an operator must deliberately
+choose a newer start if that historical scan is not wanted.
+
+Dashboard error queries filter **harvest-received time**, not the original module
+error timestamp. Both Mongo and Solr include both REST range boundaries. Error sharing
+therefore represents the logical window `[from, next)` as REST requests from `from`
+through `next - 1`, for both counts and pages. The checkpoint becomes `next` only after
+successful delivery of all pages, or after confirming an empty window. Eager polling
+stops when the next complete window would extend beyond `now - safetyLagMilliseconds`.
+
+The error consumer uses Ikasan's normal dynamic-configuration persistence. Before the
+final batch callback it stages the next checkpoint separately from the configuration.
+The existing queue producer applies it after enqueueing, after the flow has reloaded
+configuration; Ikasan then persists it through its normal dynamic-configuration update. If the callback throws, the provider restores its previous
+in-memory position. Empty windows (and first-run lookback initialization) use an empty-list
+callback so progress is saved even when there are no errors. These callbacks create empty
+BigQueue batches; the outbound error REST producer consumes them without making an HTTP
+request. A supplied starting timestamp avoids scanning earlier history, but quiet windows
+after that starting point still require empty callbacks.
+
+Stop the error consumer before editing its persisted configuration, then restart it to
+load the changes. Retries may repeat previously delivered pages: this is not exactly-once
+delivery, and downstream publishing must tolerate duplicates.
+
+Count and page queries do not share a database snapshot. A changed total count, missing
+page, or unexpected page size fails the attempt without advancing the checkpoint; recovery
+recounts the window. Equal-sized record replacement or page reordering cannot be detected
+this way. Stable server-side ordering/cursor pagination and, if needed, overlapping reads
+with deduplication require further dashboard API work. Safety lag reduces late-visibility
+risk but cannot guarantee capture of arbitrarily delayed indexing.
+
+## Exclusion Extraction
+
+The `EXCLUSION` entity creates scheduled extraction and queued downstream delivery
+flows, using `/rest/data-sharing/exclusions` and `/rest/harvest/exclusions`.
+It uses a separate queue and the same polling windows, safety lag, lookback,
+pagination validation, dynamic checkpoints and retry behaviour as Errors.
+Empty checkpoint batches are consumed without an HTTP publish. Retries can
+repeat pages, so downstream publishing must tolerate duplicates.
+
+```properties
+data-sharing.downStreamDashboardEntities[TARGET]=WIRETAP,ERROR,EXCLUSION
+data-sharing.downStreamDashboardEntityCronExpressions[TARGET-EXCLUSION]=0 */5 * * * ?
+data-sharing.downStreamDashboardModules[TARGET]=module1,module2
+```
+
+The scheduled consumer configuration is `ExclusionConsumerConfiguration`; stop
+its flow before editing the persisted query timestamp or polling parameters.
+
+## Replay Extraction
+
+The `REPLAY` entity creates scheduled extraction and queued downstream delivery
+flows, using `/rest/data-sharing/replays` and `/rest/harvest/replay`.
+Each downstream dashboard has a separate replay queue. Polling uses the same
+windows, safety lag, lookback, pagination validation, dynamic checkpoints and
+retry behaviour as Exclusions. Empty checkpoint batches do not make an HTTP
+publish. Retries can repeat pages, so downstream publishing must tolerate duplicates.
+Replay sharing transfers stored events; it does not execute a replay.
+
+```properties
+data-sharing.downStreamDashboardEntities[TARGET]=WIRETAP,ERROR,EXCLUSION,REPLAY
+data-sharing.downStreamDashboardEntityCronExpressions[TARGET-REPLAY]=0 */5 * * * ?
+data-sharing.downStreamDashboardModules[TARGET]=module1,module2
+```
+
+The scheduled consumer configuration is `ReplayConsumerConfiguration`; stop
+its flow before editing the persisted query timestamp or polling parameters.
+The queue serializer preserves the replay ID, event ID, module, flow, timestamps,
+expiry, binary payload and string payload.
+
+## Module Metadata Extraction
+
+The `MODULE_METADATA` entity creates a scheduled consumer → module metadata broker →
+BigQueue producer flow. The broker uses the upstream `DataSharingRestService` to query
+the target dashboard's configured module names, fetching all pages with a default page
+size of 100. It gathers distinct nonblank configuration IDs from modules, flows,
+components, invokers and decorators, and queries `/rest/data-sharing/configuration` in
+ID batches, paging each batch's results. It skips configuration queries when no IDs exist.
+Each trigger starts at offset zero and queues a `ModuleAndConfigMetaData` containing
+`modules` and `configurations` lists. The snapshot is accumulated in memory before it
+is queued. Missing configuration IDs are logged. If a configuration request fails,
+records from successful pages are retained and later ID batches are still queried.
+Module metadata and available configurations are queued even if configuration lookup
+fails completely. The next scheduled run requests the configurations again. An initial
+module metadata lookup failure still fails the flow; it does not emit a partial module list.
+Missing configurations are not deletion instructions for the receiving dashboard.
+
+To enable extraction for an existing downstream dashboard, add `MODULE_METADATA` to
+its entity list and supply a matching cron expression, for example:
+
+```properties
+data-sharing.downStreamDashboardEntities[TARGET]=WIRETAP,ERROR,MODULE_METADATA
+data-sharing.downStreamDashboardEntityCronExpressions[TARGET-MODULE_METADATA]=0 */5 * * * ?
+data-sharing.downStreamDashboardModules[TARGET]=module1,module2
+```
+
+Metadata uses a separate queue from errors. The queue producer now uses
+`ModuleAndConfigMetaDataToBigQueueMessageSerialiser`; the receiving flow must use the
+same serializer and route `getModules()` and `getConfigurations()` to their respective
+producers. Downstream splitting and publishing are not yet implemented.
+
+The combined object replaces the earlier module-list queue format. Pending module-only
+messages require migration or draining with the previous serializer before switching a
+queue consumer to the snapshot format.
+
 ## Future Enhancements
 
-1. **Additional Entity Types**: ERROR, EXCLUSION, REPLAY support
-2. **Transformation**: Data transformation between dashboards
-3. **Filtering**: Advanced filtering rules (regex, expressions)
-4. **Compression**: Optional compression for large payloads
-5. **Metrics**: Detailed throughput and latency metrics
-6. **Multi-Upstream**: Support for multiple upstream dashboards
+1. **Transformation**: Data transformation between dashboards
+2. **Filtering**: Advanced filtering rules (regex, expressions)
+3. **Compression**: Optional compression for large payloads
+4. **Metrics**: Detailed throughput and latency metrics
+5. **Multi-Upstream**: Support for multiple upstream dashboards
 
 ## Contributing
 
