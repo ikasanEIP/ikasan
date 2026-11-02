@@ -163,25 +163,16 @@ public class ProcessInfo
             this.running = process.isAlive();
             this.pid = process.pid();
 
-            // process.info() re-queries the live OS process table on every call, so it can return a
-            // different snapshot each time - for a short-lived process (e.g. the "kill -9" used to stop
-            // Solr) it can go from present to empty between two calls if the process exits in between.
-            // Take a single snapshot here and reuse it so the isPresent()/get() pairs below stay consistent.
+            // Solr's stop command can exit before reporting completes. Repeated info()
+            // calls can then return different snapshots: an Optional present in one
+            // may be empty in the next, causing the intermittent Travis exception.
+            // Read one snapshot and preserve caller-supplied details if metadata is absent.
             ProcessHandle.Info info = process.info();
-
-            if (info.command().isPresent())
+            if(info != null)
             {
-                this.command = info.command().get();
-            }
-
-            if (info.user().isPresent())
-            {
-                this.username = info.user().get();
-            }
-
-            if (info.commandLine().isPresent())
-            {
-                this.commandLine = info.commandLine().get();
+                info.command().ifPresent(command -> this.command = command);
+                info.user().ifPresent(user -> this.username = user);
+                info.commandLine().ifPresent(commandLine -> this.commandLine = commandLine);
             }
         }
 

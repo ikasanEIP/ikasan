@@ -161,16 +161,17 @@ public class H2DatabaseMigrationAggregateOperation extends AbstractAggregateOper
     /**
      * Performs token replacements in the given command by replacing specific tokens
      * with their corresponding values.
+     * String.replace is a verbatim replacement, ReplaceAll uses regex and would not work if the password contained a $ or \
      *
      * @param tokenizedCommand The command containing tokens to be replaced.
      * @return The command with token replacements performed.
      */
     private String performTokenReplacements(String tokenizedCommand) {
-        String replaceResult = tokenizedCommand.replaceAll("\\[source.h2.version\\]", this.sourceH2Version)
-            .replaceAll("\\[target.h2.version\\]", this.targetH2Version)
-            .replaceAll("\\[database.username\\]", this.h2User)
-            .replaceAll("\\[database.password\\]", this.h2Password)
-            .replaceAll("\\[database.path\\]", this.databasePath);
+        String replaceResult = tokenizedCommand.replace("[source.h2.version]", this.sourceH2Version)
+            .replace("[target.h2.version]", this.targetH2Version)
+            .replace("[database.username]", this.h2User)
+            .replace("[database.password]", this.h2Password)
+            .replace("[database.path]", this.databasePath);
 
         return replaceResult;
     }
