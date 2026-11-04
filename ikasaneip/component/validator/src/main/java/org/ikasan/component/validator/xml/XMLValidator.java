@@ -306,20 +306,32 @@ public class XMLValidator<SOURCE, TARGET>
         // Compile new schema
         logger.info("Compiling schema for: {}", cacheKey);
 
+        // Get or create SchemaFactory for this thread
+        SchemaFactory schemaFactory = this.schemaFactoryMap.get(Thread.currentThread().getId());
+        if(schemaFactory == null) {
+            schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            if (this.catalogResolver != null) {
+                schemaFactory.setResourceResolver(this.catalogResolver);
+            }
+            this.schemaFactoryMap.put(Thread.currentThread().getId(), schemaFactory);
+        }
+
+        // Create StreamSources for each schema location
+        // If catalog resolver is available, use it to resolve the locations
         StreamSource[] sources = new StreamSource[schemaLocations.size()];
         for (int i = 0; i < schemaLocations.size(); i++)
         {
             String location = schemaLocations.get(i);
 
-            // Use catalog resolver to resolve the location if available
             if (this.catalogResolver != null)
             {
                 try
                 {
+                    // Try to resolve via catalog
                     InputSource resolvedSource = this.catalogResolver.resolveEntity(null, location);
                     if (resolvedSource != null)
                     {
-                        logger.debug("Resolved schema location {} via catalog", location);
+                        logger.debug("Resolved schema location {} via catalog to {}", location, resolvedSource.getSystemId());
                         sources[i] = new StreamSource(resolvedSource.getByteStream(), resolvedSource.getSystemId());
                     }
                     else
@@ -338,15 +350,6 @@ public class XMLValidator<SOURCE, TARGET>
             {
                 sources[i] = new StreamSource(location);
             }
-        }
-
-        SchemaFactory schemaFactory = this.schemaFactoryMap.get(Thread.currentThread().getId());
-        if(schemaFactory == null) {
-            schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            if (this.catalogResolver != null) {
-                schemaFactory.setResourceResolver(this.catalogResolver);
-            }
-            this.schemaFactoryMap.put(Thread.currentThread().getId(), schemaFactory);
         }
 
         schema = schemaFactory.newSchema(sources);
