@@ -314,9 +314,21 @@ public class WiretapEventsToBigQueueMessageSerialiserTest {
         assertEquals(499L, deserialized.get(499).getIdentifier());  // "event-499" parses to 499
     }
 
-    @Test(expected = RuntimeException.class)
-    public void test_serialise_null_list_throws_exception() {
-        serialiser.serialise(null);
+    /**
+     * A null payload is supported by BigQueueMessageBuilder and is distinct from an
+     * empty list. Verify that the message envelope preserves it on a round trip;
+     * the Serialiser contract does not require null payloads to be rejected.
+     */
+    @Test
+    public void test_serialise_null_list_preserves_null_payload() throws Exception {
+        byte[] serialized = serialiser.serialise(null);
+
+        assertNotNull(serialized);
+        var envelope = new com.fasterxml.jackson.databind.ObjectMapper().readTree(serialized);
+        assertTrue("Serialized data must be a message envelope", envelope.isObject());
+        assertTrue("Envelope must contain its null payload", envelope.has("message"));
+        assertTrue(envelope.get("message").isNull());
+        assertNull(serialiser.deserialise(serialized));
     }
 
     /**

@@ -133,10 +133,12 @@ public class ErrorEntityProducerFlowTest {
 
     @After
     public void teardown() throws IOException {
+        // Always cancel scheduling and recovery, including after assertion failures.
+        moduleUnderTest.getFlow(FLOW_NAME).stop();
         EntityBigQueueCache.instance().get(CACHE_NAME).removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_empty_checkpoint_batch_is_consumed_without_rest_request() throws IOException {
         IBigQueue errorQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
@@ -157,7 +159,7 @@ public class ErrorEntityProducerFlowTest {
         }
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_single_batch() throws IOException {
         // Setup: Create error events and add to queue
@@ -194,7 +196,7 @@ public class ErrorEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_multiple_batches() throws IOException {
         // Setup: Create multiple batches of error events
@@ -245,7 +247,7 @@ public class ErrorEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_empty_queue() throws IOException, InterruptedException {
         // Setup: Empty queue
@@ -268,7 +270,7 @@ public class ErrorEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_with_rest_error_and_retry() throws IOException {
         // Setup: Create error events
@@ -320,7 +322,7 @@ public class ErrorEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_large_batch() throws IOException {
         // Setup: Create a large batch of error events
@@ -365,7 +367,7 @@ public class ErrorEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_flow_lifecycle() throws IOException {
         // Test flow can be started, stopped, and restarted
@@ -388,7 +390,7 @@ public class ErrorEntityProducerFlowTest {
         assertEquals(Flow.STOPPED, flow.getState());
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_different_modules() throws IOException {
         // Setup: Create events from different modules
@@ -430,7 +432,7 @@ public class ErrorEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_produce_queue_persistence() throws IOException {
         // Setup: Add events to queue

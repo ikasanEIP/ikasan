@@ -129,9 +129,36 @@ public class WiretapEntityConsumerFlowTest {
 
     @After
     public void teardown() throws IOException {
+        // Always cancel scheduling and recovery, including after assertion failures.
+        moduleUnderTest.getFlow(FLOW_NAME).stop();
     }
 
-    @Test
+    @Test(timeout = 60000)
+    @DirtiesContext
+    public void test_teardown_cancels_recovery_after_persistent_count_failure() throws Exception {
+        stubFor(get(urlPathEqualTo(REST_URL_PATH + "/count"))
+            .willReturn(aResponse().withStatus(503)));
+        flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
+        flowTestRule.consumer("Wiretap Entity Scheduled Consumer");
+        flowTestRule.startFlow();
+        flowTestRule.fireScheduledConsumer();
+
+        Awaitility.await().atMost(10, TimeUnit.SECONDS)
+            .untilAsserted(() -> assertEquals("recovering",
+                moduleUnderTest.getFlow(FLOW_NAME).getState()));
+
+        // Exercise the same cleanup used after a failed assertion or test timeout.
+        teardown();
+        assertEquals("stopped", moduleUnderTest.getFlow(FLOW_NAME).getState());
+        int requestsAfterStop = wireMockRule.getAllServeEvents().size();
+        // Wait beyond the configured five-second recovery delay.
+        Thread.sleep(6000);
+        assertEquals("Stopped tests must not keep making recovery requests",
+            requestsAfterStop, wireMockRule.getAllServeEvents().size());
+        assertEquals("stopped", moduleUnderTest.getFlow(FLOW_NAME).getState());
+    }
+
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_consume_success() throws IOException {
         // Setup wiremock rest service stubs
@@ -210,7 +237,7 @@ public class WiretapEntityConsumerFlowTest {
         wiretapQueue.removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_consume_stop_start_flow_to_assert_dynamic_configuration_persisted() throws IOException {
         // Setup wiremock rest service stubs
@@ -300,7 +327,7 @@ public class WiretapEntityConsumerFlowTest {
         wiretapQueue.removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_consume_with_service_error_bad_data_and_retry() throws Exception {
         flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
@@ -311,7 +338,7 @@ public class WiretapEntityConsumerFlowTest {
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-                .withBody(this.serializeWiretapEvents(List.of(), 250, false))
+                .withBody(objectMapper.writeValueAsString(Map.of("count", 250)))
                 .withStatus(200)
             ));
 
@@ -414,7 +441,7 @@ public class WiretapEntityConsumerFlowTest {
 
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_consume_with_service_http_error_and_retry() throws Exception {
         flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
@@ -425,7 +452,7 @@ public class WiretapEntityConsumerFlowTest {
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-                .withBody(this.serializeWiretapEvents(List.of(), 250, false))
+                .withBody(objectMapper.writeValueAsString(Map.of("count", 250)))
                 .withStatus(200)
             ));
 
@@ -541,7 +568,7 @@ public class WiretapEntityConsumerFlowTest {
                 .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
                 .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
                 .willReturn(aResponse()
-                    .withBody(this.serializeWiretapEvents(List.of(), count))
+                    .withBody(objectMapper.writeValueAsString(Map.of("count", count)))
                     .withStatus(200)
                 )
         );

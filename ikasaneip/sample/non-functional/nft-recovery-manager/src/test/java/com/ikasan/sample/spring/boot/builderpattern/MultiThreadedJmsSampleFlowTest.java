@@ -112,11 +112,18 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
 
     @After
     public void teardown() throws Exception {
-        browseMessagesOnQueueVerifier.stop();
-        removeAllMessages();
-        clearDatabase();
-        flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped","stoppedInError", "running"});
-        ExceptionToggle.reset();
+        try {
+            // Stop consumers and recovery before clearing resources they may still use.
+            flowTestRule.stopFlowWithAwait(name.getMethodName(), new String[]{"stopped", "stoppedInError"});
+        } finally {
+            try {
+                browseMessagesOnQueueVerifier.stop();
+                removeAllMessages();
+                clearDatabase();
+            } finally {
+                ExceptionToggle.reset();
+            }
+        }
     }
 
 
@@ -387,16 +394,26 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
     }
 
     /**
-     * Test method for verifying the flow behavior in scheduled recovery and retries until it stops in an error state.
-     * The method sets a flag to indicate that an exception should be thrown during scheduled recovery.
-     * It retrieves necessary components for testing from the flow and scheduler.
-     * Staggered messages are sent, the flow is started, and then it waits for the flow to transition to a 'stoppedInError' state.
-     * The method asserts any errors that occurred during the flow execution and checks for exclusions.
-     * Additionally, it ensures that there are no further recovery jobs scheduled after encountering an error state.
+     * Integration coverage for scheduled retry exhaustion with multiple JMS consumer threads.
+     * Five messages are sent while the sample component is configured to raise a scheduled
+     * recovery exception. The configured policy retries once per second, up to ten retries.
+     * The required outcome is a flow in stoppedInError, recorded recovery and exhaustion
+     * errors, no excluded messages, and no remaining scheduled recovery jobs.
+     *
+     * <p>Consumer execution and Quartz recovery are asynchronous. The internal recoveryAttempts
+     * counter is temporary state: scheduled retry exhaustion cancels recovery and resets it
+     * to zero. Observing an intermediate counter threshold therefore depends on when the
+     * polling thread runs relative to the consumer threads. Waiting for the terminal flow
+     * state and checking the recorded Stop error verifies the outcome without requiring a
+     * particular thread interleaving. This preserves the intended recovery scenario and
+     * does not change the production retry policy.</p>
+     *
+     * <p>The waits and overall test deadline bound execution. The shared teardown stops the
+     * flow before clearing resources, including when an assertion or a wait fails.</p>
      *
      * @throws InterruptedException if the test is interrupted during execution
      */
-    @Test
+    @Test(timeout = 90000)
     public void test_flow_in_scheduled_recovery_and_expires_retries_until_stopped_in_error() throws InterruptedException {
         ExceptionToggle.setShouldThrowScheduledRecoveryException(true);
 
@@ -409,13 +426,19 @@ public class MultiThreadedJmsSampleFlowTest extends BaseRecoveryManagerFlowTest 
         // start the flow and assert it runs
         flowTestRule.startFlow();
 
-        with().pollDelay(Duration.ofMillis(100)).pollInterval(Duration.ofMillis(10)).await().atMost(Duration.ofSeconds(60))
-            .until(() -> ((Integer) ReflectionTestUtils.getField(recoveryManager, "recoveryAttempts")) >= 5);
+        // Scheduled retry exhaustion resets recoveryAttempts to zero. With multiple
+        // consumers the intermediate count can disappear before the next poll.
+        with().pollDelay(Duration.ZERO).pollInterval(Duration.ofMillis(100)).await().atMost(Duration.ofSeconds(60))
+            .untilAsserted(() -> assertEquals("stoppedInError", flowTestRule.getFlowState()));
 
         // Verify the error was stored in DB
         List<ErrorOccurrence> errors = errorReportingService.find(null, null, null, null, null, 1000);
 
         logger.info("Number of errors: " + errors.size());
+        assertTrue("Scheduled recovery must report its failures", !errors.isEmpty());
+        assertTrue("Retry exhaustion must be reported", errors.stream().anyMatch(error ->
+            error.getExceptionClass().equals(RuntimeException.class.getName())
+                && error.getAction().equals("Stop")));
 
         errors.forEach(errorOccurrence -> {
             assertTrue(errorOccurrence.getExceptionClass().equals(RuntimeException.class.getName()) ||

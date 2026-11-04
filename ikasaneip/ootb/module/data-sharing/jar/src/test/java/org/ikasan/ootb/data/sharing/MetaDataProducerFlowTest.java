@@ -67,24 +67,24 @@ public class MetaDataProducerFlowTest {
         queue.removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_produce_modules_individually_and_configurations_in_batches() throws Exception {
         publishAndAssert(createModuleAndConfigMetaData(2), 5);
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_produce_without_configurations_retains_message_on_failure() throws Exception {
         var payload = createModuleAndConfigMetaData(2);
         payload.getConfigurations().clear();
         assertEmptyRouteFailure(payload, 2);
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_produce_empty_payload_stops_without_rest_calls() throws Exception {
         assertEmptyRouteFailure(createModuleAndConfigMetaData(0), 0);
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_produce_configuration_only_payload_stops_at_module_splitter() throws Exception {
         var payload = createModuleAndConfigMetaData(1);
         payload.getModules().clear();

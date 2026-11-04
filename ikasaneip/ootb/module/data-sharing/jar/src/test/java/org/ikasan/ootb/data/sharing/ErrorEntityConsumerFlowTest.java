@@ -143,9 +143,11 @@ public class ErrorEntityConsumerFlowTest {
 
     @After
     public void teardown() throws IOException {
+        // Always cancel scheduling and recovery, including after assertion failures.
+        moduleUnderTest.getFlow(FLOW_NAME).stop();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_consume_success() throws IOException {
         // Setup wiremock rest service stubs
@@ -220,7 +222,7 @@ public class ErrorEntityConsumerFlowTest {
         errorQueue.removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_consume_stop_start_flow_to_assert_dynamic_configuration_persisted() throws IOException {
         // Setup wiremock rest service stubs
@@ -306,7 +308,7 @@ public class ErrorEntityConsumerFlowTest {
         errorQueue.removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_entity_consume_with_service_error_bad_data_and_retry() throws Exception {
         flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
@@ -317,7 +319,7 @@ public class ErrorEntityConsumerFlowTest {
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-                .withBody(this.serializeErrorOccurrences(List.of(), 250, false))
+                .withBody(objectMapper.writeValueAsString(Map.of("count", 250)))
                 .withStatus(200)
             ));
 
@@ -420,7 +422,7 @@ public class ErrorEntityConsumerFlowTest {
 
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_error_entity_consume_with_service_http_error_and_retry() throws Exception {
         flowTestRule.withFlow(moduleUnderTest.getFlow(FLOW_NAME));
@@ -431,7 +433,7 @@ public class ErrorEntityConsumerFlowTest {
             .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
             .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
             .willReturn(aResponse()
-                .withBody(this.serializeErrorOccurrences(List.of(), 250, false))
+                .withBody(objectMapper.writeValueAsString(Map.of("count", 250)))
                 .withStatus(200)
             ));
 
@@ -532,7 +534,7 @@ public class ErrorEntityConsumerFlowTest {
 
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_empty_window_checkpoint_survives_restart_with_empty_batches() throws Exception {
         createCountStub(0, 0, 100000);
@@ -602,7 +604,7 @@ public class ErrorEntityConsumerFlowTest {
                 .withHeader(HttpHeaders.USER_AGENT, equalTo(""))
                 .withHeader(HttpHeaders.CONTENT_TYPE, equalTo(MediaType.APPLICATION_JSON.toString()))
                 .willReturn(aResponse()
-                    .withBody(this.serializeErrorOccurrences(List.of(), count))
+                    .withBody(objectMapper.writeValueAsString(Map.of("count", count)))
                     .withStatus(200)
                 )
         );

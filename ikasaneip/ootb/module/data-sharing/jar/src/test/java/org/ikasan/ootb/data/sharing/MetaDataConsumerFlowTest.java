@@ -68,7 +68,7 @@ public class MetaDataConsumerFlowTest {
         queue.removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_consume_paged_modules_and_configurations() throws Exception {
         var expected = createModuleAndConfigMetaData(2, 0);
         broker().getConfiguration().setBatchSize(1);
@@ -86,7 +86,7 @@ public class MetaDataConsumerFlowTest {
         wireMockRule.verify(2, getRequestedFor(urlPathEqualTo(CONFIGURATIONS)));
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_consume_configuration_failure_keeps_modules() throws Exception {
         var expected = createModuleAndConfigMetaData(1);
         stubPage(REST_URL_PATH, 0, expected.getModules(), 1);
@@ -96,7 +96,7 @@ public class MetaDataConsumerFlowTest {
         wireMockRule.verify(getRequestedFor(urlPathEqualTo(CONFIGURATIONS)));
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_consume_missing_configurations_keeps_modules() throws Exception {
         var expected = createModuleAndConfigMetaData(1);
         stubPage(REST_URL_PATH, 0, expected.getModules(), 1);
@@ -105,7 +105,7 @@ public class MetaDataConsumerFlowTest {
         runAndAssert(expected);
     }
 
-    @Test
+    @Test(timeout = 120000)
     public void test_metadata_consume_empty_result_skips_configuration_lookup() throws Exception {
         stubPage(REST_URL_PATH, 0, List.of(), 0);
         runAndAssert(createModuleAndConfigMetaData(0));
