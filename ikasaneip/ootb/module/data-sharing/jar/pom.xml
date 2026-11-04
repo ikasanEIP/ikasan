@@ -6,7 +6,7 @@
     <parent>
         <groupId>org.ikasan</groupId>
         <artifactId>ikasan-data-sharing-parent</artifactId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.1.1-SNAPSHOT</version>
     </parent>
 
     <groupId>org.ikasan</groupId>
@@ -250,7 +250,10 @@
                     </argLine>
                     <useSystemClassLoader>true</useSystemClassLoader>
                     <forkCount>1</forkCount>
-                    <reuseForks>true</reuseForks>
+                    <!-- Isolate scheduler threads between classes and bound a stuck fork. -->
+                    <reuseForks>false</reuseForks>
+                    <forkedProcessTimeoutInSeconds>600</forkedProcessTimeoutInSeconds>
+                    <forkedProcessExitTimeoutInSeconds>30</forkedProcessExitTimeoutInSeconds>
                 </configuration>
             </plugin>
         </plugins>

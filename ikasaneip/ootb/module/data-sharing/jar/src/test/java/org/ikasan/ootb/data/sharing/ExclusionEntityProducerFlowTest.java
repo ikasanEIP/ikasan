@@ -121,11 +121,13 @@ public class ExclusionEntityProducerFlowTest {
 
     @After
     public void teardown() throws IOException {
+        // Always cancel scheduling and recovery, including after assertion failures.
+        moduleUnderTest.getFlow(FLOW_NAME).stop();
         flowTestRule.stopFlow();
         EntityBigQueueCache.instance().get(CACHE_NAME).removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_empty_checkpoint_batch_is_consumed_without_rest_request() throws IOException {
         IBigQueue exclusionQueue = EntityBigQueueCache.instance().get(CACHE_NAME);
@@ -146,7 +148,7 @@ public class ExclusionEntityProducerFlowTest {
         }
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_exclusion_produce_single_batch() throws IOException {
         // Setup: Create exclusion events and add to queue
@@ -184,7 +186,7 @@ public class ExclusionEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_exclusion_produce_multiple_batches() throws IOException {
         // Setup: Create multiple batches of exclusion events
@@ -235,7 +237,7 @@ public class ExclusionEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_exclusion_produce_with_rest_error_and_retry() throws IOException {
         // Setup: Create exclusion events

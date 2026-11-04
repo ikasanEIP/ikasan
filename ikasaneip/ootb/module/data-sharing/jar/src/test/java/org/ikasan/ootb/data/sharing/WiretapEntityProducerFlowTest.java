@@ -132,10 +132,12 @@ public class WiretapEntityProducerFlowTest {
 
     @After
     public void teardown() throws IOException {
+        // Always cancel scheduling and recovery, including after assertion failures.
+        moduleUnderTest.getFlow(FLOW_NAME).stop();
         EntityBigQueueCache.instance().get(CACHE_NAME).removeAll();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_single_batch() throws IOException {
         // Setup: Create wiretap events and add to queue
@@ -172,7 +174,7 @@ public class WiretapEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_multiple_batches() throws IOException {
         // Setup: Create multiple batches of wiretap events
@@ -223,7 +225,7 @@ public class WiretapEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_empty_queue() throws IOException, InterruptedException {
         // Setup: Empty queue
@@ -246,7 +248,7 @@ public class WiretapEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_with_rest_error_and_retry() throws IOException {
         // Setup: Create wiretap events
@@ -298,7 +300,7 @@ public class WiretapEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_large_batch() throws IOException {
         // Setup: Create a large batch of wiretap events
@@ -343,7 +345,7 @@ public class WiretapEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_flow_lifecycle() throws IOException {
         // Test flow can be started, stopped, and restarted
@@ -366,7 +368,7 @@ public class WiretapEntityProducerFlowTest {
         assertEquals(Flow.STOPPED, flow.getState());
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_different_modules() throws IOException {
         // Setup: Create events from different modules
@@ -408,7 +410,7 @@ public class WiretapEntityProducerFlowTest {
         flowTestRule.stopFlow();
     }
 
-    @Test
+    @Test(timeout = 120000)
     @DirtiesContext
     public void test_wiretap_produce_queue_persistence() throws IOException {
         // Setup: Add events to queue
