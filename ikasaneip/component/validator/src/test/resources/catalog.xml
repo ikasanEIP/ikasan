@@ -1,3 +1,4 @@
 <catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog">
     <system systemId="http://www.books4tests.com/xsd/book.xsd" uri="xsd/book.xsd"/>
+    <system systemId="http://www.books4tests.com/xsd/common.xsd" uri="xsd/common.xsd"/>
 </catalog>

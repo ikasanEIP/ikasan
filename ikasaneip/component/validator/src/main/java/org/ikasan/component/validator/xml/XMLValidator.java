@@ -343,6 +343,9 @@ public class XMLValidator<SOURCE, TARGET>
         SchemaFactory schemaFactory = this.schemaFactoryMap.get(Thread.currentThread().getId());
         if(schemaFactory == null) {
             schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            if (this.catalogResolver != null) {
+                schemaFactory.setResourceResolver(this.catalogResolver);
+            }
             this.schemaFactoryMap.put(Thread.currentThread().getId(), schemaFactory);
         }
 
@@ -436,8 +439,7 @@ public class XMLValidator<SOURCE, TARGET>
         this.schemaFactoryMap = new ConcurrentHashMap<>();
         this.schemaCache = new ConcurrentHashMap<>();
 
-        // Initialize schema factory
-        SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+        this.catalogResolver = null;
 
         // Set up catalog resolver if configured
         if (this.configuration.getCatalogUrl() != null)
@@ -447,7 +449,6 @@ public class XMLValidator<SOURCE, TARGET>
                 logger.debug("Setting up Schema Factory with catalog.xml file [{}]", configuration.getCatalogUrl());
                 this.catalogResolver = CatalogManager
                     .catalogResolver(CatalogFeatures.defaults(), new URI(configuration.getCatalogUrl()));
-                schemaFactory.setResourceResolver(catalogResolver);
             }
             catch (Exception e)
             {
