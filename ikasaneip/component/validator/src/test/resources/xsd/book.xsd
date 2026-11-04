@@ -1,6 +1,9 @@
 <xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
             targetNamespace="urn:books"
-            xmlns:bks="urn:books">
+            xmlns:bks="urn:books"
+            xmlns:common="urn:common">
+
+    <xsd:import namespace="urn:common" schemaLocation="http://www.books4tests.com/xsd/common.xsd"/>
 
     <xsd:element name="books" type="bks:BooksForm"/>
 
@@ -15,7 +18,7 @@
 
     <xsd:complexType name="BookForm">
         <xsd:sequence>
-            <xsd:element name="author"   type="xsd:string"/>
+            <xsd:element name="author"   type="common:AuthorType"/>
             <xsd:element name="title"    type="xsd:string"/>
             <xsd:element name="genre"    type="xsd:string"/>
             <xsd:element name="price"    type="xsd:float" />
