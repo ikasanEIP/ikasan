@@ -31,7 +31,7 @@ public class XMLValidatorTest
     private String xml =
             """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" \
-            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <SCHEMA>">   <book id="bk001">      \
+            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <BOOK_SCHEMA>">   <book id="bk001">      \
             <author>Writer</author>      <title>The First Book</title>      <genre>Fiction</genre>      \
             <price>44.95</price>      <pub_date>2000-10-01</pub_date>      <review>An amazing s\
             tory of nothing.</review>   </book>   <book id="bk002">      <author>Poet</author>      \
@@ -42,7 +42,7 @@ public class XMLValidatorTest
     private String xml_bad =
             """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" \
-            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <SCHEMA>">   <book id="bk001">      \
+            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <BOOK_SCHEMA>">   <book id="bk001">      \
             <author>Writer</author>      <title>The First Book</title>      <genre>Fiction</genre>      \
             <price>44.95</price>      <pub_date>2000-10-01</pub_date>      <review>An amazing s\
             tory of nothing.</review>   </book>   <book id="bk002">      <author>Poet</author>      \
@@ -70,14 +70,14 @@ public class XMLValidatorTest
     private String xml_missing_required_field =
             """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" \
-            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <SCHEMA>">   <book id="bk001">      \
+            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <BOOK_SCHEMA>">   <book id="bk001">      \
             <author>Writer</author>      <title>The First Book</title></book></x:books>\
             """;
 
     private String xml_wrong_data_type =
             """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xs="http://www.w3.org/2001/XMLSchema" \
-            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <SCHEMA>">   <book id="bk001">      \
+            xmlns:fo="http://www.w3.org/1999/XSL/Format" xsi:schemaLocation="urn:books <BOOK_SCHEMA>">   <book id="bk001">      \
             <author>Writer</author>      <title>The First Book</title>      <genre>Fiction</genre>      \
             <price>NOT_A_NUMBER</price>      <pub_date>2000-10-01</pub_date>      <review>Review</review></book></x:books>\
             """;
@@ -869,7 +869,7 @@ public class XMLValidatorTest
         // XML with schemas in one order: schema1 then schema2
         String xml1 = """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="urn:books <SCHEMA>">
+            xsi:schemaLocation="urn:books <BOOK_SCHEMA>">
             <book id="bk001"><author>Writer</author><title>Book</title><genre>Fiction</genre>
             <price>10.00</price><pub_date>2000-01-01</pub_date><review>Review</review></book></x:books>
             """;
@@ -877,7 +877,7 @@ public class XMLValidatorTest
         // XML with same schema - should reuse cached schema
         String xml2 = """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="urn:books <SCHEMA>">
+            xsi:schemaLocation="urn:books <BOOK_SCHEMA>">
             <book id="bk002"><author>Poet</author><title>Poem</title><genre>Poetry</genre>
             <price>20.00</price><pub_date>2001-01-01</pub_date><review>Great</review></book></x:books>
             """;
@@ -914,7 +914,7 @@ public class XMLValidatorTest
         String xml1 = this.addSchemaToString(xml);
         String xml2 = """
             <?xml version="1.0"?><x:books xmlns:x="urn:books" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-            xsi:schemaLocation="urn:books <SCHEMA>">
+            xsi:schemaLocation="urn:books <BOOK_SCHEMA>">
             <book id="bk999"><author>New Author</author><title>New Book</title><genre>Novel</genre>
             <price>15.00</price><pub_date>2020-01-01</pub_date><review>Excellent</review></book></x:books>
             """;
@@ -1062,7 +1062,7 @@ public class XMLValidatorTest
     @Test
     public void testConfiguredSchemaLocation_single_schema()
     {
-        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String schemaPath = new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation();
 
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -1089,7 +1089,7 @@ public class XMLValidatorTest
     @Test
     public void testConfiguredSchemaLocation_return_validation_result()
     {
-        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String schemaPath = new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation();
 
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -1117,7 +1117,7 @@ public class XMLValidatorTest
     @Test
     public void testConfiguredSchemaLocation_overrides_xml_schema()
     {
-        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String schemaPath = new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation();
 
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -1200,7 +1200,7 @@ public class XMLValidatorTest
     @Test
     public void testConfiguredSchemaLocation_multiple_schemas()
     {
-        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String schemaPath = new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation();
 
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -1227,7 +1227,7 @@ public class XMLValidatorTest
     @Test
     public void testConfiguredSchemaLocation_caching()
     {
-        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String schemaPath = new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation();
 
         XMLValidatorConfiguration configuration = new XMLValidatorConfiguration();
         configuration.setSkipValidation(false);
@@ -1262,7 +1262,7 @@ public class XMLValidatorTest
     @Test
     public void testConfiguredSchemaLocation_sorted_for_cache_key()
     {
-        String schemaPath = new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation();
+        String schemaPath = new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation();
 
         // First validator with schemas in one order
         XMLValidatorConfiguration configuration1 = new XMLValidatorConfiguration();
@@ -1385,6 +1385,11 @@ public class XMLValidatorTest
 
     private String addSchemaToString(String xml)
     {
-        return xml.replace("<SCHEMA>", new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation());
+        return xml.replace("<BOOK_SCHEMA>", new ClasspathSchemaResolver("xsd/book_relative.xsd").getSchemaLocation());
+    }
+
+    private String addSchemaToStringForCatalog(String xml)
+    {
+        return xml.replace("<BOOK_SCHEMA>", new ClasspathSchemaResolver("xsd/book.xsd").getSchemaLocation());
     }
 }
