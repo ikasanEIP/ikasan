@@ -154,11 +154,11 @@ public class CallBackScheduledConsumerTest
                 will(returnValue(jobKey));
 
                 // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
+                exactly(1).of(consumerConfiguration).getJobName();
                 will(returnValue("jobName"));
 
                 // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
+                exactly(1).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
                 // are we in recovery (from Recovery Manager)
@@ -227,14 +227,6 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
 
-                // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
-                will(returnValue("jobName"));
-
-                // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
-                will(returnValue("jobGroupName"));
-
                 // are we in recovery (from Recovery Manager)
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(true));
@@ -282,11 +274,11 @@ public class CallBackScheduledConsumerTest
                 will(returnValue(jobKey));
 
                 // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
+                exactly(1).of(consumerConfiguration).getJobName();
                 will(returnValue("jobName"));
 
                 // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
+                exactly(1).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
                 // are we in recovery (from Recovery Manager)
@@ -368,11 +360,11 @@ public class CallBackScheduledConsumerTest
                 will(returnValue(jobKey));
 
                 // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
+                exactly(1).of(consumerConfiguration).getJobName();
                 will(returnValue("jobName"));
 
                 // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
+                exactly(1).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
                 // are we in recovery (from Recovery Manager)
@@ -609,10 +601,10 @@ public class CallBackScheduledConsumerTest
                 will(returnValue(false));
 
                 // is callback from a persistent recovery
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 // invocation
@@ -659,10 +651,10 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(scheduledJobRecoveryService).save(jobExecutionContext);
 
                 // is callback from a persistent recovery
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(jobExecutionContext).getTrigger();
@@ -745,10 +737,10 @@ public class CallBackScheduledConsumerTest
                 will(returnValue(false));
 
                 // is callback from a persistent recovery
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 // invocation
@@ -866,6 +858,11 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
 
+                oneOf(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+                oneOf(trigger).getJobDataMap();
+                will(returnValue(new JobDataMap()));
+
                 exactly(1).of(callBackMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
                 exactly(1).of(mockManagedResourceRecoveryManager).recover(rt);
@@ -918,7 +915,7 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
 
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
@@ -936,7 +933,7 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
@@ -993,7 +990,7 @@ public class CallBackScheduledConsumerTest
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
@@ -1005,7 +1002,7 @@ public class CallBackScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));

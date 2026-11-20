@@ -100,11 +100,12 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
     {
         try
         {
-            boolean isRecovering = managedResourceRecoveryManager.isRecovering();
+            boolean wasRecovering = managedResourceRecoveryManager.isRecovering();
+            boolean recoveryCallback = wasRecovering || isRecoveryCallback(context.getTrigger());
 
             // TODO - should this be saved after the event invocation?
             // only persist schedule for misfire if a business schedule ie not a recovery manager schedule
-            if(!isRecovering && this.consumerConfiguration.isPersistentRecovery())
+            if(!recoveryCallback && this.consumerConfiguration.isPersistentRecovery())
             {
                 this.scheduledJobRecoveryService.save(context);
             }
@@ -112,7 +113,7 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
             boolean isSuccessful = messageProvider.invoke(context).booleanValue();
 
             // we were recovering, but are now ok so restore eager or business trigger
-            if(isRecovering)
+            if(recoveryCallback)
             {
                 if(this.getConfiguration().isEager() && isSuccessful)
                 {
@@ -123,8 +124,10 @@ public class CallBackScheduledConsumer<T> extends ScheduledConsumer implements C
                     scheduleAsBusinessTrigger(context.getTrigger());
                 }
 
-                // cancel any remnants of the recovery
-                this.managedResourceRecoveryManager.cancel();
+                if(wasRecovering)
+                {
+                    this.managedResourceRecoveryManager.cancel();
+                }
             }
             else
             {

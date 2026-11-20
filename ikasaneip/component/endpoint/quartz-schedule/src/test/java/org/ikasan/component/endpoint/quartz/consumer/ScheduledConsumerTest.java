@@ -48,17 +48,21 @@ import org.ikasan.spec.flow.FlowEvent;
 import org.ikasan.spec.management.ManagedResourceRecoveryManager;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
+import org.jmock.States;
 import org.jmock.imposters.ByteBuddyClassImposteriser;
 import org.jmock.lib.concurrent.Synchroniser;
 import org.junit.Assert;
 import org.junit.Test;
 import org.quartz.*;
+import org.quartz.impl.StdSchedulerFactory;
 
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 /**
@@ -90,7 +94,6 @@ public class ScheduledConsumerTest
 
     /** Mock trigger */
     private final Trigger trigger = mockery.mock(Trigger.class, "mockTrigger");
-    private final Trigger trigger1 = mockery.mock(Trigger.class, "mockTrigger1");
 
     /** Mock flowEventFactory */
     private final EventFactory<FlowEvent> flowEventFactory = mockery.mock(EventFactory.class, "mockEventFactory");
@@ -152,11 +155,11 @@ public class ScheduledConsumerTest
                 will(returnValue(jobKey));
 
                 // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
+                exactly(1).of(consumerConfiguration).getJobName();
                 will(returnValue("jobName"));
 
                 // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
+                exactly(1).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
@@ -224,11 +227,11 @@ public class ScheduledConsumerTest
                 will(returnValue(jobKey));
 
                 // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
+                exactly(1).of(consumerConfiguration).getJobName();
                 will(returnValue("jobName"));
 
                 // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
+                exactly(1).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
@@ -308,11 +311,11 @@ public class ScheduledConsumerTest
                 will(returnValue(jobKey));
 
                 // get configuration job name
-                exactly(2).of(consumerConfiguration).getJobName();
+                exactly(1).of(consumerConfiguration).getJobName();
                 will(returnValue("jobName"));
 
                 // get configuration job group name
-                exactly(2).of(consumerConfiguration).getJobGroupName();
+                exactly(1).of(consumerConfiguration).getJobGroupName();
                 will(returnValue("jobGroupName"));
 
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
@@ -557,10 +560,10 @@ public class ScheduledConsumerTest
                 will(returnValue(false));
 
                 // is callback from a persistent recovery
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
             }
         });
@@ -613,10 +616,10 @@ public class ScheduledConsumerTest
                 exactly(1).of(scheduledJobRecoveryService).save(jobExecutionContext);
 
                 // is callback from a persistent recovery
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(jobExecutionContext).getTrigger();
@@ -708,10 +711,10 @@ public class ScheduledConsumerTest
                 will(returnValue(false));
 
                 // is callback from a persistent recovery
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
             }
         });
@@ -733,10 +736,7 @@ public class ScheduledConsumerTest
     public void test_execute_when_messageProvider_message_is_null_when_in_recovery_and_reinstate_business_schedule() throws SchedulerException
     {
         final MessageProvider mockMessageProvider = mockery.mock( MessageProvider.class);
-        final TriggerKey triggerKey = new TriggerKey("moduleName", "flowName");
         final JobKey jobKey = new JobKey("flowName", "moduleName");
-        final JobDataMap jobDataMap = new JobDataMap();
-        jobDataMap.put("IkasanCronExpression", "0/2 * * * * ?");
         final List<String> expressions = new ArrayList(2);
         expressions.add("0/2 * * * * ?");
         expressions.add("0/3 * * * * ?");
@@ -754,10 +754,12 @@ public class ScheduledConsumerTest
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(returnValue(null));
 
-                exactly(1).of(jobExecutionContext).getTrigger();
-                will(returnValue(trigger1));
-                exactly(1).of(trigger1).getJobKey();
+                exactly(1).of(mockJobDetail).getKey();
                 will(returnValue(jobKey));
+                oneOf(consumerConfiguration).getJobName();
+                will(returnValue(null));
+                oneOf(consumerConfiguration).getJobGroupName();
+                will(returnValue(null));
                 exactly(1).of(consumerConfiguration).getConsolidatedCronExpressions();
                 will(returnValue(expressions));
                 exactly(1).of(consumerConfiguration).getDescription();
@@ -773,10 +775,6 @@ public class ScheduledConsumerTest
                 exactly(3).of(consumerConfiguration).getTimezone();
                 will(returnValue("UTC"));
 
-                exactly(1).of(jobExecutionContext).getTrigger();
-                will(returnValue(trigger1));
-                exactly(1).of(trigger1).getJobKey();
-                will(returnValue(jobKey));
                 exactly(1).of(consumerConfiguration).getDescription();
                 will(returnValue("description"));
 
@@ -812,6 +810,156 @@ public class ScheduledConsumerTest
     }
 
     @Test
+    public void test_recovery_callback_restores_all_cron_triggers_after_recovery_ends() throws SchedulerException
+    {
+        assertRecoveryCallbackRestoresCron(false, false);
+    }
+
+    @Test
+    public void test_eager_callbacks_return_to_cron_after_recovery_ends() throws SchedulerException
+    {
+        assertRecoveryCallbackRestoresCron(true, false);
+    }
+
+    @Test
+    public void test_callback_scheduled_consumer_restores_cron_after_recovery_ends() throws SchedulerException
+    {
+        assertRecoveryCallbackRestoresCron(false, true);
+    }
+
+    private void assertRecoveryCallbackRestoresCron(boolean eager, boolean callbackConsumer) throws SchedulerException
+    {
+        Properties properties = new Properties();
+        properties.setProperty("org.quartz.scheduler.instanceName", "ScheduledConsumerRecoveryTest");
+        properties.setProperty("org.quartz.threadPool.threadCount", "1");
+        Scheduler quartz = new StdSchedulerFactory(properties).getScheduler();
+        try
+        {
+            CallBackMessageProvider<Boolean> callbackProvider = mockery.mock(CallBackMessageProvider.class);
+            MessageProvider<Object> provider = mockery.mock(MessageProvider.class);
+            ScheduledConsumer<Object> consumer;
+            if(callbackConsumer)
+            {
+                CallBackScheduledConsumer<Object> callback = new CallBackScheduledConsumer<>(quartz, scheduledJobRecoveryService);
+                callback.setCallBackMessageProvider(callbackProvider);
+                consumer = callback;
+            }
+            else
+            {
+                consumer = new ScheduledConsumer<>(quartz, scheduledJobRecoveryService);
+                consumer.setMessageProvider(provider);
+            }
+            JobDetail detail = JobBuilder.newJob(consumer.getClass()).withIdentity("flow", "module").build();
+            ScheduledConsumerConfiguration configuration = new ScheduledConsumerConfiguration();
+            Set<String> cronExpressions = Set.of("0/2 * * * * ?", "0/3 * * * * ?");
+            configuration.setCronExpressions(List.copyOf(cronExpressions));
+            configuration.setJobName("configuredFlow");
+            configuration.setJobGroupName("configuredModule");
+            configuration.setPersistentRecovery(true);
+            configuration.setEager(eager);
+            consumer.setConfiguration(configuration);
+            consumer.setJobDetail(detail);
+            consumer.setManagedResourceRecoveryManager(mockManagedResourceRecoveryManager);
+            consumer.setEventFactory(flowEventFactory);
+            consumer.setEventListener(eventListener);
+            consumer.setManagedEventIdentifierService(mockManagedEventIdentifierService);
+
+            States recovery = mockery.states("recovery").startsAs("active");
+            mockery.checking(new Expectations()
+            {{
+                allowing(mockManagedResourceRecoveryManager).isRecovering();
+                when(recovery.is("active"));
+                will(returnValue(true));
+                allowing(mockManagedResourceRecoveryManager).isRecovering();
+                when(recovery.is("cleared"));
+                will(returnValue(false));
+            }});
+            consumer.start();
+
+            Set<Trigger> initialTriggers = consumer.getTriggers();
+            Assert.assertEquals(1, initialTriggers.size());
+            SimpleTrigger recoveryTrigger = (SimpleTrigger) initialTriggers.iterator().next();
+            Assert.assertEquals(0, recoveryTrigger.getRepeatCount());
+            Assert.assertTrue(detail.getJobDataMap().isEmpty());
+
+            // Keep Quartz in standby and invoke the trigger explicitly after startup recovery clears.
+            recovery.become("cleared");
+            mockery.checking(new Expectations()
+            {{
+                allowing(jobExecutionContext).getTrigger();
+                will(returnValue(recoveryTrigger));
+                if(callbackConsumer)
+                {
+                    oneOf(callbackProvider).invoke(jobExecutionContext);
+                    will(returnValue(false));
+                    then(recovery.is("active"));
+                }
+                else
+                {
+                    oneOf(provider).invoke(jobExecutionContext);
+                    will(returnValue(eager ? jobExecutionContext : null));
+                    if(!eager)
+                    {
+                        // A newer recovery begins during the stale callback; it must not be cancelled.
+                        then(recovery.is("active"));
+                    }
+                }
+                if(eager)
+                {
+                    FlowEvent event = mockery.mock(FlowEvent.class);
+                    oneOf(mockManagedEventIdentifierService).getEventIdentifier(jobExecutionContext);
+                    will(returnValue("event"));
+                    oneOf(flowEventFactory).newEvent("event", jobExecutionContext);
+                    will(returnValue(event));
+                    oneOf(eventListener).invoke(event);
+                }
+            }});
+            consumer.execute(jobExecutionContext);
+
+            if(eager)
+            {
+                Trigger eagerTrigger = quartz.getTrigger(recoveryTrigger.getKey());
+                Assert.assertNotNull(eagerTrigger);
+                Assert.assertEquals(1, eagerTrigger.getJobDataMap().getInt(ScheduledConsumer.EAGER_CALLBACK_COUNT));
+                JobExecutionContext eagerContext = mockery.mock(JobExecutionContext.class, "eagerContext");
+                mockery.checking(new Expectations()
+                {{
+                    allowing(eagerContext).getTrigger();
+                    will(returnValue(eagerTrigger));
+                    oneOf(provider).invoke(eagerContext);
+                    will(returnValue(null));
+                }});
+                consumer.execute(eagerContext);
+            }
+
+            quartz.unscheduleJob(recoveryTrigger.getKey());
+            if(!eager)
+            {
+                Assert.assertTrue(mockManagedResourceRecoveryManager.isRecovering());
+            }
+
+            Set<Trigger> restored = consumer.getTriggers();
+            Assert.assertEquals(cronExpressions.size(), restored.size());
+            Assert.assertEquals(cronExpressions, restored.stream()
+                .map(trigger -> ((CronTrigger) trigger).getCronExpression())
+                .collect(Collectors.toSet()));
+            for(Trigger trigger : restored)
+            {
+                Assert.assertEquals("configuredModule", trigger.getKey().getGroup());
+                Assert.assertEquals("configuredFlow_" + ((CronTrigger) trigger).getCronExpression().hashCode(),
+                    trigger.getKey().getName());
+                Assert.assertEquals(Set.of(ScheduledConsumer.CRON_EXPRESSION), trigger.getJobDataMap().keySet());
+                Assert.assertNotNull(trigger.getNextFireTime());
+            }
+            mockery.assertIsSatisfied();
+        }
+        finally
+        {
+            quartz.shutdown();
+        }
+    }
+
+    @Test
     public void test_execute_when_messageProvider_throws_exception() throws SchedulerException
     {
         final FlowEvent mockFlowEvent = mockery.mock( FlowEvent.class);
@@ -825,6 +973,11 @@ public class ScheduledConsumerTest
             {
                 exactly(1).of(mockManagedResourceRecoveryManager).isRecovering();
                 will(returnValue(false));
+
+                oneOf(jobExecutionContext).getTrigger();
+                will(returnValue(trigger));
+                oneOf(trigger).getJobDataMap();
+                will(returnValue(new JobDataMap()));
 
                 exactly(1).of(mockMessageProvider).invoke(jobExecutionContext);
                 will(throwException(rt));
@@ -889,7 +1042,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
                 will(returnValue(false));
 
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
@@ -907,7 +1060,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).scheduleJob(with(any(Trigger.class)));
@@ -971,7 +1124,7 @@ public class ScheduledConsumerTest
                 will(returnValue(triggerBuilder));
                 exactly(1).of(triggerBuilder).withSchedule(with(any(ScheduleBuilder.class)));
 
-                exactly(1).of(jobExecutionContext).getTrigger();
+                exactly(2).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
                 exactly(1).of(consumerConfiguration).getMaxEagerCallbacks();
@@ -983,7 +1136,7 @@ public class ScheduledConsumerTest
                 exactly(1).of(trigger).getKey();
                 will(returnValue(triggerKey));
 
-                exactly(1).of(trigger).getJobDataMap();
+                exactly(2).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 exactly(1).of(scheduler).checkExists(with(any(TriggerKey.class)));
@@ -1029,10 +1182,10 @@ public class ScheduledConsumerTest
                 exactly(1).of(consumerConfiguration).isEager();
                 will(returnValue(true));
 
-                exactly(2).of(jobExecutionContext).getTrigger();
+                exactly(3).of(jobExecutionContext).getTrigger();
                 will(returnValue(trigger));
 
-                exactly(2).of(trigger).getJobDataMap();
+                exactly(3).of(trigger).getJobDataMap();
                 will(returnValue(jobDataMap));
 
                 // check if persistent recovery
