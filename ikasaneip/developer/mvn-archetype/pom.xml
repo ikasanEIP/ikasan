@@ -61,4 +61,152 @@
         <module>ikasan-standalone-hibernate-jms-im</module>
     </modules>
 
+    <profiles>
+        <!--
+            Archetype integration tests: generate a project from each archetype and build it
+            with a nested Maven invocation (mvn verify -Parchetype-it).
+
+            The freshly built archetype, and the Ikasan artifacts the generated projects use, are
+            staged into target/it-repo, which the nested builds use as their local repository. Everything
+            else is read from the normal local repository via maven.repo.local.tail (requires Maven 3.9+).
+        -->
+        <profile>
+            <id>archetype-it</id>
+
+            <!--
+                The Ikasan artifacts the generated projects depend on. Declared so that they are built
+                before the archetypes in a reactor build and staged into the IT repository. Transitive
+                dependencies are excluded as they are only needed by the nested builds.
+            -->
+            <dependencies>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-eip-standalone-bom</artifactId>
+                    <version>${project.version}</version>
+                    <type>pom</type>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-eip-standalone</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-h2-standalone-persistence</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-jms-spring-arjuna</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-component-converter</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-component-splitter</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-ftp-endpoint</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-sftp-endpoint</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-test-endpoint</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-test</artifactId>
+                    <version>${project.version}</version>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+                <dependency>
+                    <groupId>org.ikasan</groupId>
+                    <artifactId>ikasan-shell-distribution</artifactId>
+                    <version>${project.version}</version>
+                    <type>zip</type>
+                    <scope>test</scope>
+                    <exclusions><exclusion><groupId>*</groupId><artifactId>*</artifactId></exclusion></exclusions>
+                </dependency>
+            </dependencies>
+
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>stage-archetype</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>install</goal>
+                                </goals>
+                                <configuration>
+                                    <localRepositoryPath>${project.build.directory}/it-repo</localRepositoryPath>
+                                    <scope>test</scope>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <redirectTestOutputToFile>true</redirectTestOutputToFile>
+                            <!-- passed via argLine as settings.offline is a Boolean and systemPropertyVariables only accepts strings -->
+                            <argLine>-Dit.offline=${settings.offline}</argLine>
+                            <systemPropertyVariables>
+                                <archetype.groupId>${project.groupId}</archetype.groupId>
+                                <archetype.version>${project.version}</archetype.version>
+                                <it.workDir>${project.build.directory}/it-projects</it.workDir>
+                                <it.localRepository>${project.build.directory}/it-repo</it.localRepository>
+                                <it.localRepositoryTail>${settings.localRepository}</it.localRepositoryTail>
+                                <maven.home>${maven.home}</maven.home>
+                            </systemPropertyVariables>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
 </project>

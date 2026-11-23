@@ -44,137 +44,214 @@ import org.apache.maven.shared.invoker.*;
 import org.apache.maven.shared.utils.cli.CommandLineException;
 
 import java.io.File;
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.List;
 import java.util.Properties;
 
 /**
  * Abstract class representing the base for a Maven Command.
+ *
+ * A command fails with a {@link MavenInvocationException} when the invoked Maven build
+ * does not complete successfully; the tail of the build output is included in the message.
  * 
  * @author Ikasan Development Team
  */
 public class AbstractMavenCommand<RESULT> implements MavenCommand<RESULT>
 {
-    /** Mvn goals to execute */
+    /** number of trailing output lines reported on a failed invocation */
+    static final int OUTPUT_TAIL_LINES = 150;
+
     List<String> goals;
 
-    /** run mvn in debug or not - default no debug */
     boolean debug;
 
-    /** run mvn in batch or interactive mode - default to run in batchmode */
     boolean batchMode = true;
 
-    /** working directory within which to run the mvn command */
+    boolean offline;
+
     File workingDir;
 
-    /**
-     * Constructor
-     * @param goals
-     */
+    /** local repository for the invoked build - null for the Maven default */
+    File localRepository;
+
+    /** read-only local repositories consulted after the local repository (Maven 3.9+) - null for none */
+    String localRepositoryTail;
+
+    /** Maven installation used for the invoked build - null to let the invoker locate it */
+    File mavenHome;
+
+    /** additional user properties passed to the invoked build */
+    Properties userProperties = new Properties();
+
+    /** trailing output lines of the last invocation */
+    private final Deque<String> outputTail = new ArrayDeque<>();
+
     public AbstractMavenCommand(List<String> goals)
     {
         this.goals = goals;
     }
 
-    /**
-     * Getter for goals.
-     * @return
-     */
     public List<String> getGoals()
     {
         return goals;
     }
 
-    /**
-     * Setter for goals.
-     * @param goals
-     */
     public void setGoals(List<String> goals)
     {
         this.goals = goals;
     }
 
-    /**
-     * Getter for debug mode.
-     * @return
-     */
     public boolean isDebug()
     {
         return debug;
     }
 
-    /**
-     * Setter for debug mode.
-     * @param debug
-     */
     public void setDebug(boolean debug)
     {
         this.debug = debug;
     }
 
-    /**
-     * Setter for batch or interactive mode
-     * @return
-     */
     public boolean isBatchMode()
     {
         return batchMode;
     }
 
-    /**
-     * Getter for batch or interactive mode
-     * @param batchMode
-     */
     public void setBatchMode(boolean batchMode)
     {
         this.batchMode = batchMode;
     }
 
-    /**
-     * Getter for the working directory
-     * @return
-     */
+    public boolean isOffline()
+    {
+        return offline;
+    }
+
+    public void setOffline(boolean offline)
+    {
+        this.offline = offline;
+    }
+
     public File getWorkingDir()
     {
         return workingDir;
     }
 
-    /**
-     * Setter for the working directory
-     * @param workingDir
-     */
     public void setWorkingDir(File workingDir)
     {
         this.workingDir = workingDir;
     }
 
-    /**
-     * Getter for returning the mvn configuration as command properties
-     * @return
-     */
+    public File getLocalRepository()
+    {
+        return localRepository;
+    }
+
+    public void setLocalRepository(File localRepository)
+    {
+        this.localRepository = localRepository;
+    }
+
+    public String getLocalRepositoryTail()
+    {
+        return localRepositoryTail;
+    }
+
+    public void setLocalRepositoryTail(String localRepositoryTail)
+    {
+        this.localRepositoryTail = localRepositoryTail;
+    }
+
+    public File getMavenHome()
+    {
+        return mavenHome;
+    }
+
+    public void setMavenHome(File mavenHome)
+    {
+        this.mavenHome = mavenHome;
+    }
+
+    public Properties getUserProperties()
+    {
+        return userProperties;
+    }
+
+    public void setUserProperty(String key, String value)
+    {
+        this.userProperties.setProperty(key, value);
+    }
+
     public Properties getCommandProperties()
     {
         return null;
     }
 
     /**
-     * Base execution implementation of the configured maven command.
-     * @return
-     * @throws MavenInvocationException
+     * @return the trailing lines of output from the last invocation of this command
      */
+    public String getOutputTail()
+    {
+        synchronized (outputTail)
+        {
+            return String.join(System.lineSeparator(), outputTail);
+        }
+    }
+
     InvocationResult executeCommand() throws MavenInvocationException
     {
         InvocationRequest request = new DefaultInvocationRequest();
         request.setGoals(goals);
         request.setDebug(debug);
         request.setBatchMode(batchMode);
+        request.setOffline(offline);
+        request.setShowErrors(true);
 
-        Properties props = getCommandProperties();
-        if(props != null)
+        Properties props = new Properties();
+        Properties commandProperties = getCommandProperties();
+        if(commandProperties != null)
         {
-            request.setProperties( getCommandProperties() );
+            props.putAll(commandProperties);
+        }
+        props.putAll(userProperties);
+        if(localRepositoryTail != null && !localRepositoryTail.isEmpty())
+        {
+            props.setProperty("maven.repo.local.tail", localRepositoryTail);
+        }
+        if(!props.isEmpty())
+        {
+            request.setProperties(props);
         }
 
+        if(localRepository != null)
+        {
+            request.setLocalRepositoryDirectory(localRepository);
+        }
+
+        synchronized (outputTail)
+        {
+            outputTail.clear();
+        }
+        InvocationOutputHandler handler = line ->
+        {
+            System.out.println(line);
+            synchronized (outputTail)
+            {
+                outputTail.addLast(line);
+                if(outputTail.size() > OUTPUT_TAIL_LINES)
+                {
+                    outputTail.removeFirst();
+                }
+            }
+        };
+        request.setOutputHandler(handler);
+        request.setErrorHandler(handler);
+
         Invoker invoker = new DefaultInvoker();
+        if(mavenHome != null)
+        {
+            invoker.setMavenHome(mavenHome);
+        }
         if(workingDir != null)
         {
             invoker.setWorkingDirectory(workingDir);
@@ -182,6 +259,19 @@ public class AbstractMavenCommand<RESULT> implements MavenCommand<RESULT>
 
         InvocationResult result = invoker.execute(request);
         workingDir = invoker.getWorkingDirectory();
+
+        if(result.getExecutionException() != null)
+        {
+            throw new MavenInvocationException("Failed to invoke Maven goals " + goals
+                + " in " + workingDir, result.getExecutionException());
+        }
+        if(result.getExitCode() != 0)
+        {
+            throw new MavenInvocationException("Maven goals " + goals + " in " + workingDir
+                + " failed with exit code " + result.getExitCode() + ". Build output tail:"
+                + System.lineSeparator() + getOutputTail());
+        }
+
         return result;
     }
 

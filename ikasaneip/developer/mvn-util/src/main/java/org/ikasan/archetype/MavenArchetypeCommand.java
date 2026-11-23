@@ -40,7 +40,6 @@
  */
 package org.ikasan.archetype;
 
-import org.apache.maven.shared.invoker.InvocationResult;
 import org.apache.maven.shared.invoker.MavenInvocationException;
 import org.apache.maven.shared.utils.cli.CommandLineException;
 
@@ -191,12 +190,8 @@ public class MavenArchetypeCommand extends AbstractMavenCommand implements Maven
     @Override
     public MavenProject execute() throws MavenInvocationException, CommandLineException
     {
-        InvocationResult result = super.executeCommand();
-        if(result.getExitCode() != 0)
-        {
-            throw result.getExecutionException();
-        }
-
+        // fails with a MavenInvocationException if the archetype generation does not succeed
+        super.executeCommand();
         return MavenFactory.getMavenProject( new File(this.workingDir + File.separator + artifactId)  );
     }
 }

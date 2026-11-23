@@ -75,6 +75,7 @@ public class PersonDbConfiguration {
                 = new LocalContainerEntityManagerFactoryBean();
         localContainerEntityManagerFactoryBean.setDataSource(dataSource);
         localContainerEntityManagerFactoryBean.setJpaVendorAdapter(jpaVendorAdapter);
+        localContainerEntityManagerFactoryBean.setEntityManagerFactoryInterface(jakarta.persistence.EntityManagerFactory.class);
         localContainerEntityManagerFactoryBean.setJpaProperties(platformJpaProperties);
         localContainerEntityManagerFactoryBean.setPersistenceUnitName("person");
         localContainerEntityManagerFactoryBean.setPersistenceXmlLocation("classpath:person-persistence.xml");

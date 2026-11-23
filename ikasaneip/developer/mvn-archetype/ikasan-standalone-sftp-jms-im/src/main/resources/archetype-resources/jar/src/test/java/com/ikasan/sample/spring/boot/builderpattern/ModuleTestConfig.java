@@ -22,4 +22,13 @@ public class ModuleTestConfig
         return jmsTemplate;
     }
 
+    /**
+     * Registry the tests use for MessageListenerVerifier endpoints - it is not
+     * provided by auto-configuration in the test context.
+     */
+    @Bean
+    public JmsListenerEndpointRegistry jmsListenerEndpointRegistry()
+    {
+        return new JmsListenerEndpointRegistry();
+    }
 }
