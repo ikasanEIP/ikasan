@@ -143,10 +143,15 @@ public class JmsToSftpFlowTest
         });
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
-            .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
                 flowTestRule.assertIsSatisfied()
             );
 
-        assertNotNull(sftp.getFile("generatedSftpProducertest.out"));
+        // the producer is recorded as invoked before the upload completes, so poll for the file
+        // rather than expecting it immediately - slow CI containers lose that race
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().ignoreExceptions().await()
+            .atMost(30, TimeUnit.SECONDS).untilAsserted(()->
+                assertNotNull(sftp.getFile("generatedSftpProducertest.out"))
+            );
     }
 }

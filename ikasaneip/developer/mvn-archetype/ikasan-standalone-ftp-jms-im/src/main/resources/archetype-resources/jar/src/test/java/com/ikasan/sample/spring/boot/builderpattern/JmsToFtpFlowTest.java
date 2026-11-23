@@ -64,6 +64,9 @@ import org.springframework.test.util.TestSocketUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertNotNull;
 
 /**
@@ -142,11 +145,17 @@ public class JmsToFtpFlowTest
             }
         });
 
-        flowTestRule.sleep(2000L);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+                flowTestRule.assertIsSatisfied()
+            );
 
-        flowTestRule.assertIsSatisfied();
-
-        assertNotNull(ftp.getFile("generatedFtpProducertest.out"));
+        // the producer is recorded as invoked before the upload completes, so poll for the file
+        // rather than expecting it immediately - slow CI containers lose that race
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().ignoreExceptions().await()
+            .atMost(30, TimeUnit.SECONDS).untilAsserted(()->
+                assertNotNull(ftp.getFile("generatedFtpProducertest.out"))
+            );
 
     }
 }

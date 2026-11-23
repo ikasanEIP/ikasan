@@ -73,7 +73,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
+import static org.awaitility.Awaitility.with;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -154,13 +156,17 @@ public class ApplicationTest
 
         flowTestRule.fireScheduledConsumer();
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-
-        flowTestRule.assertIsSatisfied();
+        // wait for the flow to complete - polled rather than a fixed sleep so slow CI containers do not fail
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+                flowTestRule.assertIsSatisfied()
+            );
 
         // Set expectation
-        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(30, TimeUnit.SECONDS).untilAsserted(()->
+                assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1)
+            );
         assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
             FILE_CONSUMER_FILE_NAME);
     }
@@ -201,13 +207,17 @@ public class ApplicationTest
         flowTestRule.startFlow();
         flowTestRule.sleep(1000L);
 
-        // wait for a brief while to let the flow complete
-        flowTestRule.sleep(2000L);
-
-        flowTestRule.assertIsSatisfied();
+        // wait for the flow to complete - polled rather than a fixed sleep so slow CI containers do not fail
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+                flowTestRule.assertIsSatisfied()
+            );
 
         // Set expectation
-        assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(30, TimeUnit.SECONDS).untilAsserted(()->
+                assertTrue(messageListenerVerifierTarget.getCaptureResults().size()>=1)
+            );
         assertEquals(((TextMessage)messageListenerVerifierTarget.getCaptureResults().get(0)).getText(),
             FILE_CONSUMER_FILE_NAME);
     }
@@ -238,15 +248,20 @@ public class ApplicationTest
         System.out.println("Sending a JMS message.[" + message + "]");
         jmsTemplate.convertAndSend("private.file.queue.test", message);
 
-        flowTestRule.sleep(1000L);
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
+                flowTestRule.assertIsSatisfied()
+            );
 
-        flowTestRule.assertIsSatisfied();
-
+        // poll for the file as the producer may still be writing it when the flow is satisfied
         File result = FileSystems.getDefault().getPath(FILE_PRODUCER_FILE_NAME).toFile();
-
-        assertTrue("File does not exist.", result.exists());
-        assertEquals("Generated file, has different content.", message,
-            new String(Files.readAllBytes(result.toPath())));
+        with().pollInterval(500, TimeUnit.MILLISECONDS).and().ignoreExceptions().await()
+            .atMost(30, TimeUnit.SECONDS).untilAsserted(()->
+            {
+                assertTrue("File does not exist.", result.exists());
+                assertEquals("Generated file, has different content.", message,
+                    new String(Files.readAllBytes(result.toPath())));
+            });
     }
 
 }
