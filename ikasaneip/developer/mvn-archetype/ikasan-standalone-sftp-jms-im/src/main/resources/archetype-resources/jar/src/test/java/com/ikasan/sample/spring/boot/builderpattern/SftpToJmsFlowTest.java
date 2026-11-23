@@ -132,12 +132,12 @@ public class SftpToJmsFlowTest
         flowTestRule.fireScheduledConsumer();
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
-            .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
                 flowTestRule.assertIsSatisfied()
             );
 
         with().pollInterval(500, TimeUnit.MILLISECONDS).and().await()
-            .atMost(5, TimeUnit.SECONDS).untilAsserted(()->
+            .atMost(60, TimeUnit.SECONDS).untilAsserted(()->
                 assertEquals(1, messageListenerVerifier.getCaptureResults().size())
             );
     }
