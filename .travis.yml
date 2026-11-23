@@ -22,11 +22,24 @@ before_install:
   - if [ ! -d $M2_HOME/bin ]; then curl https://archive.apache.org/dist/maven/maven-3/3.9.16/binaries/apache-maven-3.9.16-bin.tar.gz | tar zxf - -C $HOME; fi
   - export PATH=$M2_HOME/bin:$PATH
 
+stages:
+  - build
+  - archetype tests
+  - deploy
+
 jobs:
   include:
     - stage: build
       name: "Build and CI Tests"
-      script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pci,archetype-it  -B -V
+      script: mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Pci  -B -V
+    # Each stage runs on a fresh VM, so install the Ikasan modules the archetypes need (no tests), then
+    # generate a project from each archetype and build it (see ikasaneip/developer/mvn-archetype/Readme.md).
+    # ci must be named with archetype-it as -P switches off the activeByDefault profiles that declare the modules.
+    - stage: archetype tests
+      name: "Archetype Integration Tests"
+      script:
+        - mvn --file ikasaneip/pom.xml --settings .settings.xml clean install -DskipTests -Dmaven.javadoc.skip=true -Pci,archetype-it -pl developer/mvn-archetype -am -B -V
+        - mvn --file ikasaneip/developer/mvn-archetype/pom.xml --settings .settings.xml clean verify -Dmaven.javadoc.skip=true -Djava.security.egd=file:/dev/./urandom -Parchetype-it -B -V
     - stage: deploy
       name: "Deploy to OSS"
       if: branch IN (3.3.x, 4.0.x, 4.1.x, 4.2.x, 5.0.x, 5.1.x) OR tag IS present
