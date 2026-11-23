@@ -74,8 +74,11 @@ mvn clean verify -Parchetype-it -pl ikasan-standalone-jms-im
 From `ikasaneip`:
 
 ```
-mvn clean install -Parchetype-it
+mvn clean install -Pci,archetype-it
 ```
+
+The modules of the full build are declared in the `ci` and `all` profiles, which are active by default.
+Naming any profile with `-P` switches the defaults off, so `ci` must be listed alongside `archetype-it`.
 
 With the profile enabled, the archetype modules depend on the Ikasan artifacts the generated projects
 use, so Maven builds those first.
