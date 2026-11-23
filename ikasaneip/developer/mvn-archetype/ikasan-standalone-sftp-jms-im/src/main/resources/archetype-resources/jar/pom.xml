@@ -21,31 +21,26 @@
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-eip-standalone</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-sftp-endpoint</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-jms-spring-arjuna</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-component-converter</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-h2-standalone-persistence</artifactId>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <!-- junit should be with scope test however for the sample purpose we
@@ -55,19 +50,22 @@
             <groupId>org.ikasan</groupId>
             <artifactId>ikasan-test</artifactId>
             <scope>test</scope>
-            <version>${version.ikasan}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
-            <version>\${version.activemq}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
-            <version>\${version.activemq}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>jakarta.annotation</groupId>
+                    <artifactId>jakarta.annotation-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
     </dependencies>
@@ -78,7 +76,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>\${version.org.springboot}</version>
                 <executions>
                     <execution>
                         <goals>

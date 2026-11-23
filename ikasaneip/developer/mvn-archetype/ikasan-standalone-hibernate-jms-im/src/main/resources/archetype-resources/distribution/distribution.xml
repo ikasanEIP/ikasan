@@ -31,7 +31,7 @@
         <!-- Now, select which projects to include in this module-set. -->
         <includes>
             <include>\${groupId}:\${artifactId}</include>
-            <include>com.h2database:h2:jar:${version.com.h2database}</include>
+            <include>com.h2database:h2:jar</include>
         </includes>
         <outputDirectory>\${artifactId}-\${version}/lib</outputDirectory>
     </dependencySet>
@@ -40,7 +40,7 @@
         <useProjectArtifact>false</useProjectArtifact>
         <!-- contains lib\shell,jar and ikasan.sh -->
         <includes>
-            <include>org.ikasan:ikasan-shell-distribution:zip:${version.ikasan}</include>
+            <include>org.ikasan:ikasan-shell-distribution:zip</include>
         </includes>
         <unpack>true</unpack>
         <outputDirectory>\${artifactId}-\${version}/</outputDirectory>
