@@ -100,4 +100,17 @@ public interface SchedulerJobInstanceDao {
      * @param contextInstanceId
      */
     void deleteSchedulerJobInstances(String contextInstanceId);
+
+    /**
+     * Find the scheduler job instance identified by its context instance, job name and child context name.
+     * <p>
+     * A job name is only unique within a child context, as the same job can appear in several child job
+     * plans. These three values together identify at most one job instance.
+     *
+     * @param contestInstanceId the id of the context instance the job instance belongs to
+     * @param jobName the name of the job
+     * @param childContextName the name of the child context (job plan) containing the job
+     * @return the matching scheduler job instance record, or <code>null</code> if no job instance matches
+     */
+    SchedulerJobInstanceRecord findByContextIdJobNameChildContextName(String contestInstanceId, String jobName, String childContextName);
 }
